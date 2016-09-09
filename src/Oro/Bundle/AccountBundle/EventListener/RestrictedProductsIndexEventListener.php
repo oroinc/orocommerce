@@ -49,41 +49,37 @@ class RestrictedProductsIndexEventListener
     public function onRestrictIndexEntityEvent(RestrictIndexEntityEvent $event)
     {
         $context = $event->getContext();
-        $queryBuilder = $event->getQueryBuilder();
 
-        if (!$websiteId = $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY]) {
-            return;
+        if (!isset($context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY])) {
+            throw new \LogicException('"%s" required', AbstractIndexer::CONTEXT_WEBSITE_ID_KEY);
         }
 
-        $queryBuilder->join(Account::class, self::ACCOUNT_ALIAS, Join::WITH, $queryBuilder->expr()->neq(self::ACCOUNT_ALIAS, 0));
+        $qb = $event->getQueryBuilder();
 
-        $productVisibility = [$this->getProductVisibilityResolvedQueryPart($queryBuilder, $websiteId)];
-        $productVisibility[] = $this->getAccountGroupProductVisibilityResolvedQueryPart($queryBuilder, $websiteId);
-        $productVisibility[] = $this->getAccountProductVisibilityResolvedQueryPart($queryBuilder, $websiteId);
+        $websiteId = $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY];
 
-        $queryBuilder->andWhere($queryBuilder->expr()->gt(implode(' + ', $productVisibility), 0));
-        $queryBuilder->distinct();
+        $this->configureProductVisibility($qb, $websiteId);
+        $this->configureAccountGroupProductVisibility($qb, $websiteId);
+        $this->configureAccountProductVisibility($qb, $websiteId);
+        $this->configureAccountVisibility($qb);
+
+        $productVisibility = [];
+        $productVisibility[] = $this->getProductVisibilityResolvedQueryPart($qb, $websiteId);
+        $productVisibility[] = $this->getAccountGroupProductVisibilityResolvedQueryPart($qb, $websiteId);
+        $productVisibility[] = $this->getAccountProductVisibilityResolvedQueryPart($qb, $websiteId);
+
+        $qb
+            ->distinct()
+            ->andWhere($qb->expr()->gt(implode(' + ', $productVisibility), 0));
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
+     * @param QueryBuilder $qb
      * @param int $websiteId
      * @return string
      */
-    protected function getProductVisibilityResolvedQueryPart(QueryBuilder $queryBuilder, $websiteId)
+    protected function getProductVisibilityResolvedQueryPart(QueryBuilder $qb, $websiteId)
     {
-        $queryBuilder->leftJoin(
-            ProductVisibilityResolved::class,
-            'product_visibility_resolved',
-            Join::WITH,
-            $queryBuilder->expr()->andX(
-                $queryBuilder->expr()->eq($this->getRootAlias($queryBuilder), 'product_visibility_resolved.product'),
-                $queryBuilder->expr()->eq('product_visibility_resolved.website', ':website')
-            )
-        );
-
-        $queryBuilder->setParameter('website', $websiteId);
-
         return sprintf(
             'COALESCE(%s, %s)',
             $this->addCategoryConfigFallback('product_visibility_resolved.visibility'),
@@ -92,31 +88,12 @@ class RestrictedProductsIndexEventListener
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
+     * @param QueryBuilder $qb
      * @param int $websiteId
      * @return string
      */
-    protected function getAccountGroupProductVisibilityResolvedQueryPart(QueryBuilder $queryBuilder, $websiteId)
+    protected function getAccountGroupProductVisibilityResolvedQueryPart(QueryBuilder $qb, $websiteId)
     {
-        $queryBuilder->leftJoin(
-            AccountGroupProductVisibilityResolved::class,
-            'account_group_product_visibility_resolved',
-            Join::WITH,
-            $queryBuilder->expr()->andX(
-                $queryBuilder->expr()->eq(
-                    $this->getRootAlias($queryBuilder),
-                    'account_group_product_visibility_resolved.product'
-                ),
-                $queryBuilder->expr()->eq('account_group_product_visibility_resolved.website', ':_website'),
-                $queryBuilder->expr()->eq(
-                    'account_group_product_visibility_resolved.accountGroup',
-                    self::ACCOUNT_ALIAS . '.group'
-                )
-            )
-        );
-
-        $queryBuilder->setParameter('_website', $websiteId);
-
         return sprintf(
             'COALESCE(%s, 0) * 10',
             $this->addCategoryConfigFallback('account_group_product_visibility_resolved.visibility')
@@ -124,28 +101,12 @@ class RestrictedProductsIndexEventListener
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
+     * @param QueryBuilder $qb
      * @param int $websiteId
      * @return string
      */
-    protected function getAccountProductVisibilityResolvedQueryPart(QueryBuilder $queryBuilder, $websiteId)
+    protected function getAccountProductVisibilityResolvedQueryPart(QueryBuilder $qb, $websiteId)
     {
-        $queryBuilder->leftJoin(
-            AccountProductVisibilityResolved::class,
-            'account_product_visibility_resolved',
-            Join::WITH,
-            $queryBuilder->expr()->andX(
-                $queryBuilder->expr()->eq(
-                    $this->getRootAlias($queryBuilder),
-                    'account_product_visibility_resolved.product'
-                ),
-                $queryBuilder->expr()->eq('account_product_visibility_resolved.account', self::ACCOUNT_ALIAS),
-                $queryBuilder->expr()->eq('account_product_visibility_resolved.website', ':_website')
-            )
-        );
-
-        $queryBuilder->setParameter('_website', $websiteId);
-
         $productFallback = $this->addCategoryConfigFallback('product_visibility_resolved.visibility');
         $accountFallback = $this->addCategoryConfigFallback('account_product_visibility_resolved.visibility');
 
@@ -162,6 +123,89 @@ TERM;
             $this->getProductConfigValue(),
             $accountFallback
         );
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param int $websiteId
+     */
+    protected function configureProductVisibility(QueryBuilder $qb, $websiteId)
+    {
+        $qb->leftJoin(
+            ProductVisibilityResolved::class,
+            'product_visibility_resolved',
+            Join::WITH,
+            $qb->expr()->andX(
+                $qb->expr()->eq($this->getRootAlias($qb), 'product_visibility_resolved.product'),
+                $qb->expr()->eq('product_visibility_resolved.website', ':website')
+            )
+        );
+
+        $qb->setParameter('website', $websiteId);
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param int $websiteId
+     */
+    protected function configureAccountGroupProductVisibility(QueryBuilder $qb, $websiteId)
+    {
+        $qb->leftJoin(
+            AccountGroupProductVisibilityResolved::class,
+            'account_group_product_visibility_resolved',
+            Join::WITH,
+            $qb->expr()->andX(
+                $qb->expr()->eq(
+                    $this->getRootAlias($qb),
+                    'account_group_product_visibility_resolved.product'
+                ),
+                $qb->expr()->eq('account_group_product_visibility_resolved.website', ':website')
+            )
+        );
+
+        $qb->setParameter('website', $websiteId);
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param int $websiteId
+     */
+    protected function configureAccountProductVisibility(QueryBuilder $qb, $websiteId)
+    {
+        $qb->leftJoin(
+            AccountProductVisibilityResolved::class,
+            'account_product_visibility_resolved',
+            Join::WITH,
+            $qb->expr()->andX(
+                $qb->expr()->eq(
+                    $this->getRootAlias($qb),
+                    'account_product_visibility_resolved.product'
+                ),
+                $qb->expr()->eq('account_product_visibility_resolved.website', ':website')
+            )
+        );
+
+        $qb->setParameter('website', $websiteId);
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     */
+    protected function configureAccountVisibility(QueryBuilder $qb)
+    {
+        $qb
+            ->leftJoin(
+                Account::class,
+                self::ACCOUNT_ALIAS,
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq(
+                        'account_group_product_visibility_resolved.accountGroup',
+                        self::ACCOUNT_ALIAS . '.group'
+                    ),
+                    $qb->expr()->eq('account_product_visibility_resolved.account', self::ACCOUNT_ALIAS)
+                )
+            );
     }
 
     /**
@@ -205,7 +249,7 @@ TERM;
 
     /**
      * @param string $path
-     * @return integer
+     * @return int
      */
     protected function getConfigValue($path)
     {

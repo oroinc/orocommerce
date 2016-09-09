@@ -17,7 +17,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class AbstractIndexer implements IndexerInterface
 {
-    const BATCH_SIZE = 100;
+    const BATCH_SIZE = 10000;
     const CONTEXT_WEBSITE_ID_KEY = 'website_id';
 
     /** @var EventDispatcherInterface */
@@ -153,6 +153,7 @@ abstract class AbstractIndexer implements IndexerInterface
 
         $entityRepository = $this->doctrineHelper->getEntityRepositoryForClass($entityClass);
         $entityManager = $this->doctrineHelper->getEntityManager($entityClass);
+
         $queryBuilder = $entityRepository->createQueryBuilder('entity');
         $queryBuilder->select('entity.id');
 
@@ -247,7 +248,9 @@ abstract class AbstractIndexer implements IndexerInterface
 
         $queryBuilder
             ->select('entity.id')
-            ->andWhere($queryBuilder->expr()->in('entity.id', $entityIds));
+            ->andWhere($queryBuilder->expr()->in('entity.id', ':entityIds'));
+
+        $queryBuilder->setParameter('entityIds', $entityIds);
 
         $result = $queryBuilder->getQuery()->getArrayResult();
 
