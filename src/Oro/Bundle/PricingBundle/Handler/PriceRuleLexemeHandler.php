@@ -107,13 +107,13 @@ class PriceRuleLexemeHandler
 
             if (strpos($class, '::') !== false) {
                 list($containerClass, $fieldName) = explode('::', $class);
-                    $lexeme = new PriceRuleLexeme();
-                    $lexeme->setPriceRule($priceRule);
-                    $lexeme->setPriceList($priceList);
-                    $lexeme->setClassName($containerClass);
-                    $lexeme->setFieldName($fieldName);
-                    $lexeme->setRelationId($containerId);
-                    $lexemeEntities[] = $lexeme;
+                $lexeme = new PriceRuleLexeme();
+                $lexeme->setPriceRule($priceRule);
+                $lexeme->setPriceList($priceList);
+                $lexeme->setClassName($containerClass);
+                $lexeme->setFieldName($fieldName);
+                $lexeme->setRelationId($containerId);
+                $lexemeEntities[] = $lexeme;
             }
 
             foreach ($fieldNames as $fieldName) {
