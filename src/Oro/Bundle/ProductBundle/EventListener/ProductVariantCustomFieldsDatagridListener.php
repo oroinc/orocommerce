@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\DataGridBundle\Event\GridResultAfter;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -64,9 +64,9 @@ class ProductVariantCustomFieldsDatagridListener
     }
 
     /**
-     * @param GridResultAfter $event
+     * @param OrmResultAfter $event
      */
-    public function onResultAfter(GridResultAfter $event)
+    public function onResultAfter(OrmResultAfter $event)
     {
         $propertyAccessor = new PropertyAccessor();
 

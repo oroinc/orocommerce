@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class LineItemsExtension extends \Twig_Extension
 {
-    const NAME = 'orob2b_checkout_order_line_items';
+    const NAME = 'oro_checkout_order_line_items';
 
     /**
      * @var TotalProcessorProvider

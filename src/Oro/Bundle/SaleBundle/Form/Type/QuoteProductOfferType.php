@@ -14,7 +14,7 @@ use Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 
 class QuoteProductOfferType extends AbstractType
 {
-    const NAME = 'orob2b_sale_quote_product_offer';
+    const NAME = 'oro_sale_quote_product_offer';
 
     /**
      * @var QuoteProductOfferFormatter

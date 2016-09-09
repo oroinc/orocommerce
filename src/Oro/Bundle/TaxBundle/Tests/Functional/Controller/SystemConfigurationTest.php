@@ -25,9 +25,9 @@ class SystemConfigurationTest extends WebTestCase
 
     protected function tearDown()
     {
-        $this->configManager->reset('orob2b_tax.tax_enable');
-        $this->configManager->reset('orob2b_tax.tax_provider');
-        $this->configManager->reset('orob2b_tax.origin_address');
+        $this->configManager->reset('oro_tax.tax_enable');
+        $this->configManager->reset('oro_tax.tax_provider');
+        $this->configManager->reset('oro_tax.origin_address');
         $this->configManager->flush();
 
         parent::tearDown();
@@ -35,8 +35,8 @@ class SystemConfigurationTest extends WebTestCase
 
     public function testConfig()
     {
-        $this->assertTrue($this->configManager->get('orob2b_tax.tax_enable'));
-        $this->assertEquals(BuiltInTaxProvider::NAME, $this->configManager->get('orob2b_tax.tax_provider'));
+        $this->assertTrue($this->configManager->get('oro_tax.tax_enable'));
+        $this->assertEquals(BuiltInTaxProvider::NAME, $this->configManager->get('oro_tax.tax_provider'));
 
         $crawler = $this->client->request(
             'GET',
@@ -54,15 +54,15 @@ class SystemConfigurationTest extends WebTestCase
             $form->getPhpValues(),
             [
                 'tax_calculation' => [
-                    'orob2b_tax___tax_enable' => [
+                    'oro_tax___tax_enable' => [
                         'use_parent_scope_value' => false,
                         'value' => false,
                     ],
-                    'orob2b_tax___tax_provider' => [
+                    'oro_tax___tax_provider' => [
                         'use_parent_scope_value' => false,
                         'value' => BuiltInTaxProvider::NAME,
                     ],
-                    'orob2b_tax___origin_address' => [
+                    'oro_tax___origin_address' => [
                         'use_parent_scope_value' => false,
                         'value' => ['country' => 'US', 'region' => 'US-NY', 'postal_code' => '00501'],
                     ],
@@ -78,8 +78,8 @@ class SystemConfigurationTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->configManager->reload();
-        $this->assertFalse($this->configManager->get('orob2b_tax.tax_enable'));
-        $this->assertEquals(BuiltInTaxProvider::NAME, $this->configManager->get('orob2b_tax.tax_provider'));
+        $this->assertFalse($this->configManager->get('oro_tax.tax_enable'));
+        $this->assertEquals(BuiltInTaxProvider::NAME, $this->configManager->get('oro_tax.tax_provider'));
         $this->assertEquals(
             [
                 'country' => 'US',
@@ -87,13 +87,13 @@ class SystemConfigurationTest extends WebTestCase
                 'region_text' => null,
                 'postal_code' => '00501',
             ],
-            $this->configManager->get('orob2b_tax.origin_address')
+            $this->configManager->get('oro_tax.origin_address')
         );
     }
 
     public function testBuiltInProvider()
     {
-        $providers = $this->getContainer()->get('orob2b_tax.provider.tax_provider_registry')->getProviders();
+        $providers = $this->getContainer()->get('oro_tax.provider.tax_provider_registry')->getProviders();
 
         $provider = reset($providers);
 

@@ -10,7 +10,7 @@ use Oro\Bundle\SaleBundle\Form\EventListener\QuoteToOrderResizeFormSubscriber;
 
 class QuoteProductDemandCollectionType extends CollectionType
 {
-    const NAME = 'orob2b_sale_quote_product_demand_collection';
+    const NAME = 'oro_sale_quote_product_demand_collection';
 
     /**
      * {@inheritdoc}

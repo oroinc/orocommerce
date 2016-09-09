@@ -17,8 +17,8 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 class AjaxOrderController extends BaseAjaxOrderController
 {
     /**
-     * @Route("/entry-point/{id}", name="orob2b_order_frontend_entry_point", defaults={"id" = 0})
-     * @AclAncestor("orob2b_order_frontend_update")
+     * @Route("/entry-point/{id}", name="oro_order_frontend_entry_point", defaults={"id" = 0})
+     * @AclAncestor("oro_order_frontend_update")
      *
      * @param Request $request
      * @param Order|null $order
@@ -50,6 +50,6 @@ class AjaxOrderController extends BaseAjaxOrderController
      */
     protected function getOrderHandler()
     {
-        return $this->get('orob2b_order.request_handler.frontend_order_data_handler');
+        return $this->get('oro_order.request_handler.frontend_order_data_handler');
     }
 }

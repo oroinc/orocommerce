@@ -1,15 +1,15 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 
-{% set formAction = entity.id ? path('orob2b_tax_update', {id: entity.id}) : path('orob2b_tax_create') %}
+{% set formAction = entity.id ? path('oro_tax_update', {id: entity.id}) : path('oro_tax_create') %}
 
 {% oro_title_set({params : {"%taxCode%": entity.code|default('N/A'|trans), '%entityName%': 'oro.tax.entity_label'|trans} }) %}
 
 {% block navButtons %}
     {{ parent() }}
 
-    {{ UI.cancelButton(path('orob2b_tax_index')) }}
+    {{ UI.cancelButton(path('oro_tax_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_tax_update') %}
+    {% if entity.id or resource_granted('oro_tax_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -19,7 +19,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_tax_index'),
+            'indexPath':   path('oro_tax_index'),
             'indexLabel': 'oro.tax.entity_plural_label'|trans,
             'entityTitle': entity.code|default('N/A'|trans)
         } %}

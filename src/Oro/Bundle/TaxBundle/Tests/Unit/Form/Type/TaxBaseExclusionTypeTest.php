@@ -32,7 +32,7 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_tax_base_exclusion', $this->formType->getName());
+        $this->assertEquals('oro_tax_base_exclusion', $this->formType->getName());
     }
 
     public function testConfigureOptions()

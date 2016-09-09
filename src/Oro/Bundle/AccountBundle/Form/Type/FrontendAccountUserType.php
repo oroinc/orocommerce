@@ -13,7 +13,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class FrontendAccountUserType extends AbstractType
 {
-    const NAME = 'orob2b_account_frontend_account_user';
+    const NAME = 'oro_account_frontend_account_user';
 
     /**
      * @var SecurityFacade

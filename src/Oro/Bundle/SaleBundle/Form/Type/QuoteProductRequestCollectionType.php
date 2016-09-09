@@ -9,7 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class QuoteProductRequestCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_sale_quote_product_request_collection';
+    const NAME = 'oro_sale_quote_product_request_collection';
 
     /**
      * {@inheritdoc}

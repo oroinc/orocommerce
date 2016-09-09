@@ -9,7 +9,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 
 class OrderEvent extends Event
 {
-    const NAME = 'orob2b_order.order';
+    const NAME = 'oro_order.order';
 
     /** @var FormInterface */
     protected $form;

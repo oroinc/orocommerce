@@ -95,20 +95,6 @@ class ExampleMockEngine implements EngineV2Interface
     }
 
     /**
-     * @param Query $query
-     * @param QueryBuilder $queryBuilder
-     */
-    private function applyPagination(Query $query, QueryBuilder $queryBuilder)
-    {
-        $criteria = $query->getCriteria();
-        $offset = $criteria->getFirstResult();
-        $limit = $criteria->getMaxResults();
-
-        $queryBuilder->setMaxResults($limit);
-        $queryBuilder->setFirstResult($offset);
-    }
-
-    /**
      * @param QueryBuilder $queryBuilder
      * @param Expression $expression
      */
@@ -144,10 +130,17 @@ class ExampleMockEngine implements EngineV2Interface
                 return;
             }
 
-            if ($fieldName == 'cat_id' && is_array($value)) {
-                $queryBuilder->andWhere('category.id in (:catIds)');
-                $queryBuilder->setParameter('catIds', $value);
-                
+            if ($fieldName == 'cat_id') {
+                if (is_array($value)) {
+                    $queryBuilder->andWhere('category.id in (:catIds)');
+                    $queryBuilder->setParameter('catIds', $value);
+
+                    return;
+                }
+
+                $queryBuilder->andWhere('category.id = :catId');
+                $queryBuilder->setParameter('catId', $value);
+
                 return;
             }
 
@@ -160,7 +153,6 @@ class ExampleMockEngine implements EngineV2Interface
                 $fieldNameMapped = $this->selectFieldsMapping[$fieldName];
 
                 $queryBuilder->andWhere('lower('.$fieldNameMapped.') '.$operator.' :p_'.$fieldName);
-
                 $queryBuilder->setParameter('p_'.$fieldName, $value);
 
                 return;
@@ -170,6 +162,20 @@ class ExampleMockEngine implements EngineV2Interface
             $queryBuilder->andHaving($fieldName.' '.$operator.' :p_'.$paramName);
             $queryBuilder->setParameter('p_'.$paramName, $value);
         }
+    }
+
+    /**
+     * @param Query $query
+     * @param QueryBuilder $queryBuilder
+     */
+    private function applyPagination(Query $query, QueryBuilder $queryBuilder)
+    {
+        $criteria = $query->getCriteria();
+        $offset = $criteria->getFirstResult();
+        $limit = $criteria->getMaxResults();
+
+        $queryBuilder->setMaxResults($limit);
+        $queryBuilder->setFirstResult($offset);
     }
 
     /**

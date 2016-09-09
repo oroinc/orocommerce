@@ -125,11 +125,11 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'accountUser' => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser'),
-                'route' => 'orob2b_account_frontend_account_user_create'
+                'route' => 'oro_account_frontend_account_user_create'
             ],
             [
                 'accountUser' => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', ['id' => 42]),
-                'route' => 'orob2b_account_frontend_account_user_update',
+                'route' => 'oro_account_frontend_account_user_update',
                 'routeParameters' => ['id' => 42]
             ]
         ];
@@ -143,7 +143,7 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'accountUser' => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', ['id' => 42]),
-                'route' => 'orob2b_account_frontend_account_user_profile_update',
+                'route' => 'oro_account_frontend_account_user_profile_update',
                 'routeParameters' => ['id' => 42]
             ]
         ];

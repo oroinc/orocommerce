@@ -6,7 +6,7 @@
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
-        'indexPath': path('orob2b_pricing_price_list_index'),
+        'indexPath': path('oro_pricing_price_list_index'),
         'indexLabel': 'oro.pricing.pricelist.entity_plural_label'|trans,
         'entityTitle': entity.name|default('N/A'|trans)
     } %}
@@ -17,9 +17,9 @@
     {% include 'OroImportExportBundle:ImportExport:buttons.html.twig' with {
         entity_class: product_price_entity_class,
         exportJob: 'price_list_product_prices_export_to_csv',
-        exportProcessor: 'orob2b_pricing_product_price',
-        exportTemplateProcessor: 'orob2b_pricing_product_price',
-        importProcessor: 'orob2b_pricing_product_price.add_or_replace',
+        exportProcessor: 'oro_pricing_product_price',
+        exportTemplateProcessor: 'oro_pricing_product_price',
+        importProcessor: 'oro_pricing_product_price.add_or_replace',
         importJob: 'price_list_product_prices_entity_import_from_csv',
         importTitle: 'oro.pricing.productprice.import'|trans,
         dataGridName: 'price-list-product-prices-grid',
@@ -34,7 +34,7 @@
         {{ oro_widget_render({
             'widgetType': 'block',
             'title': 'oro.pricing.widgets.pricing_information'|trans,
-            'url': path('orob2b_pricing_price_list_info', {id: entity.id})
+            'url': path('oro_pricing_price_list_info', {id: entity.id})
         }) }}
     {% endset %}
 

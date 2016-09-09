@@ -4,7 +4,7 @@ Upgrade from beta.3
 General
 -------
 - All code was moved from `OroB2B` namespace to `Oro` namespace
-- Name prefix for all OroCommerce tables was changed from `orob2b_` to `oro_` 
+- Name prefix for all OroCommerce tables, routes and ACL identities was changed from `orob2b_` to `oro_` 
 
 FrontendBundle:
 ---------------

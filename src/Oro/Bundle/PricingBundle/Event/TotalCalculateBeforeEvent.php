@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 class TotalCalculateBeforeEvent extends Event
 {
     /** Event can be used for prepare entity from request for dynamic totals calculation */
-    const NAME = 'orob2b_pricing.total_calculate_before_event';
+    const NAME = 'oro_pricing.total_calculate_before_event';
 
     /** @var object */
     protected $entity;

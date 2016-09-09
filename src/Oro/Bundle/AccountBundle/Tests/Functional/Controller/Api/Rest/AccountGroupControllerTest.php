@@ -29,7 +29,7 @@ class AccountGroupControllerTest extends WebTestCase
         $id = $entity->getId();
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_account_delete_account_group', ['id' => $id])
+            $this->getUrl('oro_api_account_delete_account_group', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
@@ -43,7 +43,7 @@ class AccountGroupControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_account_delete_account_group', ['id' => $id])
+            $this->getUrl('oro_api_account_delete_account_group', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertSame(403, $result->getStatusCode());

@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormView;
 
 class ShippingOriginConfigType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_origin_config';
+    const NAME = 'oro_shipping_origin_config';
 
     /**
      * {@inheritdoc}

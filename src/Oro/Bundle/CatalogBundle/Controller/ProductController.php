@@ -8,7 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class ProductController extends BaseProductController
 {
     /**
-     * @Route("/sidebar", name="orob2b_catalog_category_product_sidebar")
+     * @Route("/sidebar", name="oro_catalog_category_product_sidebar")
      * @Template
      *
      * @return array

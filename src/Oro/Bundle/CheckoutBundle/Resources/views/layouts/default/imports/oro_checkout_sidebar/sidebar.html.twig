@@ -1,0 +1,83 @@
+{% block __oro_checkout_sidebar__checkout_sidebar_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-sidebar"}) %}
+    <div {{ block('block_attributes') }}
+        data-role="checkout-sidebar"
+        data-page-component-module="oroui/js/app/components/view-component"
+        data-page-component-options="{{ {
+            view: 'orocheckout/js/app/views/checkout-content-view',
+        }|json_encode }}">
+        <ul class="checkout-navigation">
+            {% set isComplete = true %}
+            {% for key, step in steps %}
+                {% set pageNum = key+1 %}
+                {% set isCurrent = currentStep.name == step.name %}
+                {% if isCurrent %}
+                    {% set isComplete = false %}
+                {% endif %}
+                <li class="checkout-navigation__step {{ isComplete ? 'checkout-navigation__step--past' : '' }}" data-role="transition-trigger-container">
+                    {% set badgeClass = 'badge_ll_gray' %}
+                    {% if isComplete %}
+                        {% set badgeClass = 'badge_complete' %}
+                    {% elseif isCurrent %}
+                        {% set badgeClass = 'badge_orange' %}
+                    {% endif %}
+                    <span class="badge badge_xmd badge_circle {{ badgeClass }}" data-role="transition-trigger">
+                        {% if isComplete %}
+                            <i class="cf-check"></i>
+                        {% else %}
+                            {{ pageNum }}
+                        {% endif %}
+                    </span>
+                    <h3 class="checkout-navigation__title">
+                        <span data-role="transition-trigger">{{ step.label }}</span>
+                        {% if isComplete and editTransitions[step.name] is defined and block.step_edit_button is defined %}
+                            {% set editTransitionData = editTransitions[step.name] %}
+                            {{ block_widget(block.step_edit_button,
+                                {
+                                    'transitionData': editTransitionData,
+                                    'checkout': checkout
+                                }
+                            ) }}
+                        {% endif %}
+                    </h3>
+                    {% set informationBlockId = step.name ~ '_information' %}
+                    {% if isComplete and block[informationBlockId] is defined %}
+                        <div class="checkout-navigation__content">
+                            {{ block_widget(block.offsetGet(informationBlockId), {'checkout': checkout}) }}
+                        </div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_sidebar__enter_billing_address_information_widget %}
+    {% if checkout.billingAddress %}
+        <div>{{ checkout.billingAddress|oro_format_address }}</div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_checkout_sidebar__enter_shipping_address_information_widget %}
+    {% if checkout.shippingAddress %}
+        <div>{{ checkout.shippingAddress|oro_format_address }}</div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_checkout_sidebar__enter_shipping_method_information_widget %}
+    {% if checkout.shippingMethod %}
+        <div>{{ get_shipping_method_label(checkout.shippingMethod)|trans }}</div>
+    {% endif %}
+    {% if checkout.shippingMethodType %}
+        <div>{{ get_shipping_method_type_label(checkout.shippingMethod, checkout.shippingMethodType)|trans }}</div>
+    {% endif %}
+    {% if checkout.shippingCost %}
+        <div>{{ checkout.shippingCost|oro_format_price }}</div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_checkout_sidebar__enter_payment_information_widget %}
+    {% if checkout.paymentMethod %}
+        <div>{{ get_payment_method_label(checkout.paymentMethod) }}</div>
+    {% endif %}
+{% endblock %}
