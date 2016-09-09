@@ -33,7 +33,7 @@ class CategoryListener
     {
         if ($event->hasChangedField(self::FIELD_PARENT_CATEGORY)) {
             $this->categoryMessageHandler->addCategoryMessageToSchedule(
-                'oro_account.visibility.change_category_visibility',
+                'oro_account.visibility.category_position_change',
                 $category
             );
         }

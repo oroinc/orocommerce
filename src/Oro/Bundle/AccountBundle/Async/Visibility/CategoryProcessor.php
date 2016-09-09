@@ -8,11 +8,14 @@ use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
 use Oro\Bundle\CatalogBundle\Model\CategoryMessageFactory;
+use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
 class CategoryProcessor implements MessageProcessorInterface
@@ -33,18 +36,34 @@ class CategoryProcessor implements MessageProcessorInterface
     protected $logger;
 
     /**
+     * @var CategoryMessageFactory
+     */
+    protected $messageFactory;
+
+    /**
+     * @var CacheBuilder
+     */
+    protected $cacheBuilder;
+
+    /**
      * @param ManagerRegistry $registry
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      * @param LoggerInterface $logger
+     * @param CategoryMessageFactory $messageFactory
+     * @param CacheBuilder $cacheBuilder
      */
     public function __construct(
         ManagerRegistry $registry,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        CategoryMessageFactory $messageFactory,
+        CacheBuilder $cacheBuilder
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
+        $this->messageFactory = $messageFactory;
+        $this->cacheBuilder = $cacheBuilder;
     }
 
     /**
@@ -59,9 +78,26 @@ class CategoryProcessor implements MessageProcessorInterface
         $em = $this->registry->getManagerForClass(CategoryVisibility::class);
         $em->beginTransaction();
         try {
-            $this->setToDefaultProductVisibilityWithoutCategory();
-            $this->setToDefaultAccountGroupProductVisibilityWithoutCategory();
-            $this->setToDefaultAccountProductVisibilityWithoutCategory();
+            $messageData = JSON::decode($message->getBody());
+            $category = $this->messageFactory->getCategoryFromMessage($messageData);
+            if ($category) {
+                $this->cacheBuilder->categoryPositionChanged($category);
+            } else {
+                $this->setToDefaultProductVisibilityWithoutCategory();
+                $this->setToDefaultAccountGroupProductVisibilityWithoutCategory();
+                $this->setToDefaultAccountProductVisibilityWithoutCategory();
+            }
+        } catch (InvalidArgumentException $e) {
+            $em->rollback();
+            $this->logger->error(
+                sprintf(
+                    'Message is invalid: %s. Original message: "%s"',
+                    $e->getMessage(),
+                    $message->getBody()
+                )
+            );
+
+            return self::REJECT;
         } catch (\Exception $e) {
             $em->rollback();
             $this->logger->error(
