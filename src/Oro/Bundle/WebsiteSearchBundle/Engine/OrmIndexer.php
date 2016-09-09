@@ -23,19 +23,23 @@ class OrmIndexer extends AbstractIndexer
     {
         $entities = $this->convertToArray($entities);
 
-        if (empty($entities)) {
-            return true;
+        $sortedEntitiesData = [];
+        foreach ($entities as $entity) {
+            $entityClass = $this->doctrineHelper->getEntityClass($entity);
+
+            if ($this->mappingProvider->isClassSupported($entityClass)) {
+                $sortedEntitiesData[$entityClass][] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
+            }
         }
 
-        $doctrineHelper = $this->doctrineHelper;
-        usort($entities, function ($leftEntity, $rightEntity) use ($doctrineHelper) {
-            return strcmp($doctrineHelper->getEntityClass($leftEntity), $doctrineHelper->getEntityClass($rightEntity));
-        });
+        foreach ($sortedEntitiesData as $entityClass => $entityIds) {
+            $entityAlias = null;
+            if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
+                $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
+                $entityAlias = $this->applyPlaceholders($entityAlias, $context);
+            }
 
-        while (!empty($entities)) {
-            $entitiesBatch = $this->extractEntitiesBatch($entities);
-
-            $this->removeEntitiesBatch($entitiesBatch, $context);
+            $this->getItemRepository()->removeEntities($entityIds, $entityClass, $entityAlias);
         }
 
         return true;
@@ -50,51 +54,6 @@ class OrmIndexer extends AbstractIndexer
 
         return $entityManager->getRepository(Item::class);
     }
-
-    /**
-     * @param array $entities
-     * @param array $context
-     */
-    private function removeEntitiesBatch(array $entities, array $context)
-    {
-        $entitiesClass = $this->doctrineHelper->getEntityClass(reset($entities));
-        if (!$this->mappingProvider->isClassSupported($entitiesClass)) {
-            return;
-        }
-
-        $entityAlias = null;
-        if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
-            $entityAlias = $this->mappingProvider->getEntityAlias($entitiesClass);
-            $entityAlias = $this->applyPlaceholders($entityAlias, $context);
-        }
-
-        $entityIds = [];
-        foreach ($entities as $entity) {
-            $entityIds[] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
-        }
-
-        $this->getItemRepository()->removeEntities($entityIds, $entitiesClass, $entityAlias);
-    }
-
-    /**
-     * @param array $sortedEntities
-     * @return array
-     */
-    private function extractEntitiesBatch(array &$sortedEntities)
-    {
-        $firstEntityClass = $this->doctrineHelper->getEntityClass(current($sortedEntities));
-        $entitiesCount = 0;
-        foreach ($sortedEntities as $entity) {
-            if ($this->doctrineHelper->getEntityClass($entity) != $firstEntityClass) {
-                break;
-            }
-
-            $entitiesCount++;
-        }
-
-        return array_splice($sortedEntities, 0, $entitiesCount);
-    }
-
 
     /**
      * @param object|array $entities

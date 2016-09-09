@@ -255,7 +255,7 @@ class OrmIndexerTest extends WebTestCase
     public function testDeleteWhenProductEntitiesForSpecificWebsiteRemoved()
     {
         $this->mappingProviderMock
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('isClassSupported')
             ->with(Product::class)
             ->willReturn(true);
@@ -287,10 +287,16 @@ class OrmIndexerTest extends WebTestCase
     public function testDeleteForSpecificWebsiteAndEntitiesWithoutMappingConfiguration()
     {
         $this->mappingProviderMock
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(4))
             ->method('isClassSupported')
-            ->withConsecutive([Product::class], ['stdClass'])
-            ->will($this->onConsecutiveCalls(true, false));
+            ->withConsecutive([Product::class], [Product::class], ['stdClass'], ['stdClass'])
+            ->willReturnCallback(function ($class) {
+                if ($class === Product::class) {
+                    return true;
+                }
+
+                return false;
+            });
 
         $this->mappingProviderMock
             ->expects($this->once())
@@ -321,7 +327,7 @@ class OrmIndexerTest extends WebTestCase
     public function testDeleteWhenProductEntitiesForAllWebsitesRemoved()
     {
         $this->mappingProviderMock
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('isClassSupported')
             ->with(Product::class)
             ->willReturn(true);

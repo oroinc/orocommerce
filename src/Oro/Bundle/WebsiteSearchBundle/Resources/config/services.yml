@@ -18,12 +18,6 @@ services:
     oro_website_search.search.indexer:
         abstract: true
 
-    oro_website_search.orm.engine:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\ORMEngine'
-        parent: oro_website_search.search.engine
-        calls:
-            - [setDoctrine, ['@doctrine']]
-
     oro_website_search.placeholder.registry:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry'
         calls:

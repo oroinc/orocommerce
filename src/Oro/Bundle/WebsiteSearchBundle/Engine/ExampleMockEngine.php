@@ -56,6 +56,7 @@ class ExampleMockEngine implements EngineV2Interface
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     private function getFullDataset()
     {
