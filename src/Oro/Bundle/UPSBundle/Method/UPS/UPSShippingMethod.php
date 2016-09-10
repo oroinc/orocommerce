@@ -18,9 +18,6 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
 {
     const IDENTIFIER = 'ups';
 
-    /** @var  ManagerRegistry */
-    protected $registry;
-
     /** @var UPSTransportProvider */
     protected $transportProvider;
 
@@ -28,17 +25,13 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
     protected $channel;
 
     /**
-     * @param ManagerRegistry $registry
      * @param UPSTransportProvider $transportProvider
-     * @param int $channelId
+     * @param Channel $channel
      */
-    public function __construct(ManagerRegistry $registry, UPSTransportProvider $transportProvider, $channelId)
+    public function __construct(UPSTransportProvider $transportProvider, Channel $channel)
     {
-        $this->registry = $registry;
-        $this->channel = $registry->getManagerForClass('OroIntegrationBundle:Channel')
-            ->getRepository('OroIntegrationBundle:Channel')->find($channelId)
-        ;
         $this->transportProvider = $transportProvider;
+        $this->channel = $channel;
     }
 
     /**
