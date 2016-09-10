@@ -21,8 +21,8 @@ class BlockPrefixExtension extends AbstractBlockTypeExtension
     public function buildView(BlockView $view, BlockInterface $block, Options $options)
     {
         $blockPrefixes = [];
-        if ($view->vars->offsetExists('block_prefixes')) {
-            $blockPrefixes = $view->vars['block_prefixes']->toArray();
+        if (isset($view->vars['block_prefixes'])) {
+            $blockPrefixes = $view->vars['block_prefixes'];
         }
 
         if ($options->offsetExists('block_prefixes')) {
