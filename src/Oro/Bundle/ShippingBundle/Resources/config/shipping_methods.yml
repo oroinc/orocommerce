@@ -3,11 +3,11 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry'
         public: false
 
-    orob2b_shipping.shipping_method.flat_rate:
-        class: 'Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod'
+    orob2b_shipping.shipping_method_provider.flat_rate:
+        class: 'Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodProvider'
         public: false
         tags:
-            - { name: orob2b_shipping_method }
+            - { name: oro_shipping_method_provider }
 
     orob2b_shipping.provider.shipping_rules:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider'

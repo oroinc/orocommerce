@@ -8,8 +8,17 @@ services:
     oro_ups.provider.transport:
         class: 'Oro\Bundle\UPSBundle\Provider\UPSTransport'
         arguments:
-            - "@doctrine"
+            - '@doctrine'
         calls:
             - [setRestClientFactory, ['@oro_integration.transport.rest.client_factory']]
         tags:
             - { name: oro_integration.transport, type: ups, channel_type: ups }
+
+    oro_ups.shipping_method_provider.ups:
+        class: 'Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider'
+        public: false
+        arguments:
+            - '@oro_ups.provider.transport'
+            - '@doctrine'
+        tags:
+            - { name: oro_shipping_method_provider }

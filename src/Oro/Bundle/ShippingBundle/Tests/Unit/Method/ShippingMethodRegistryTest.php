@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method;
 
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 
 class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
 {
@@ -13,9 +14,9 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
-     * @var ShippingMethodInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $method;
+    protected $provider;
 
     /**
      * {@inheritDoc}
@@ -24,17 +25,9 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
     {
         $this->registry = new ShippingMethodRegistry();
 
-        $this->method = $this->getMockBuilder('Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface')
+        $this->provider = $this->getMockBuilder(ShippingMethodProviderInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->registry, $this->method);
     }
 
     public function testGetMethods()
@@ -44,21 +37,27 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($shippingMethods);
     }
 
-    public function testAddShippingMethod()
-    {
-        $this->registry->addShippingMethod($this->method);
-        $this->assertContains($this->method, $this->registry->getShippingMethods());
-    }
-
     public function testRegistry()
     {
-        $this->method->expects($this->any())
-            ->method('getIdentifier')
-            ->willReturn('test_name');
+        $method = $this->getMock(ShippingMethodInterface::class);
 
-        $this->registry->addShippingMethod($this->method);
-        $this->assertEquals($this->method, $this->registry->getShippingMethod('test_name'));
-        $this->assertEquals(['test_name' => $this->method], $this->registry->getShippingMethods());
+        $this->provider->expects($this->once())
+            ->method('getShippingMethods')
+            ->willReturn(['test_name' => $method]);
+
+        $this->provider->expects($this->once())
+            ->method('getShippingMethod')
+            ->with('test_name')
+            ->willReturn($method);
+
+        $this->provider->expects($this->once())
+            ->method('hasShippingMethod')
+            ->with('test_name')
+            ->willReturn(true);
+
+        $this->registry->addProvider($this->provider);
+        $this->assertEquals($method, $this->registry->getShippingMethod('test_name'));
+        $this->assertEquals(['test_name' => $method], $this->registry->getShippingMethods());
     }
 
     public function testRegistryWrongMethod()
