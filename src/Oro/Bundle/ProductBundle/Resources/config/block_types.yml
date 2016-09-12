@@ -49,7 +49,7 @@ services:
         tags:
              - { name: layout.block_type, alias: product_datagrid_options }
 
-    orob2b_product.layout.block_type.navigation:
+    oro_product.layout.block_type.navigation:
         class: Oro\Bundle\ProductBundle\Layout\Block\Type\BreadcrumbsNavigationBlockType
         tags:
             - { name: layout.block_type, alias: product_search_navigation }
