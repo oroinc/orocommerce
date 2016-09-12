@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
