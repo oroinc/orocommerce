@@ -44,9 +44,9 @@ class ProductControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            LoadProductData::class,
-            LoadCombinedPriceLists::class,
-        ]);
+                                LoadProductData::class,
+                                LoadCombinedPriceLists::class,
+                            ]);
 
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
 
@@ -80,7 +80,7 @@ class ProductControllerTest extends WebTestCase
         $this->markTestSkipped('Test awaits for a implementation of the new search engine.');
 
         // default view is DataGridThemeHelper::VIEW_GRID
-        $response = $this->client->requestFrontendGrid('frontend-product-search-grid', [], true);
+        $response = $this->client->requestFrontendGrid('frontend-products-grid', [], true);
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayHasKey('image', $result['data'][0]);
         $this->assertArrayHasKey('shortDescription', $result['data'][0]);
