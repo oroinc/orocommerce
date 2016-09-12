@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraint;
 
 class SchedulesIntersection extends Constraint
 {
-    const ALIAS = 'orob2b_pricing_schedules_intersection_validator';
+    const ALIAS = 'oro_pricing_schedules_intersection_validator';
 
     /**
      * @var string

@@ -100,7 +100,7 @@ class AddPaymentStatuses extends AbstractFixture implements ContainerAwareInterf
     public function getPaymentStatusProvider()
     {
         if (!$this->paymentStatusProvider) {
-            $this->paymentStatusProvider = $this->container->get('orob2b_payment.provider.payment_status');
+            $this->paymentStatusProvider = $this->container->get('oro_payment.provider.payment_status');
         }
 
         return $this->paymentStatusProvider;

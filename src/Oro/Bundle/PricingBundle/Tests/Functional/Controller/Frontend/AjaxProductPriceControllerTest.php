@@ -27,12 +27,12 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     /**
      * @var string
      */
-    protected $pricesByAccountActionUrl = 'orob2b_pricing_frontend_price_by_account';
+    protected $pricesByAccountActionUrl = 'oro_pricing_frontend_price_by_account';
 
     /**
      * @var string
      */
-    protected $matchingPriceActionUrl = 'orob2b_pricing_frontend_matching_price';
+    protected $matchingPriceActionUrl = 'oro_pricing_frontend_matching_price';
 
     /**
      * @var PriceListToWebsiteRepository
@@ -141,7 +141,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             'currency' => $currency
         ];
 
-        $this->client->request('GET', $this->getUrl('orob2b_pricing_frontend_units_by_pricelist', $params));
+        $this->client->request('GET', $this->getUrl('oro_pricing_frontend_units_by_pricelist', $params));
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
@@ -206,7 +206,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     public function testSetCurrentCurrencyAction($currency, $expectedResult)
     {
         $params = ['currency' => $currency];
-        $this->client->request('POST', $this->getUrl('orob2b_pricing_frontend_set_current_currency'), $params);
+        $this->client->request('POST', $this->getUrl('oro_pricing_frontend_set_current_currency'), $params);
         $result = $this->client->getResponse();
 
         $this->assertJsonResponseStatusCodeEquals($result, 200);

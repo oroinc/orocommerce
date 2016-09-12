@@ -53,7 +53,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->em = $this->client->getContainer()
             ->get('doctrine')
             ->getManagerForClass(User::class);
-        $this->website = $this->getContainer()->get('orob2b_website.manager')->getDefaultWebsite();
+        $this->website = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
 
         $this->configManager = $this->client->getContainer()->get('oro_config.manager');
     }
@@ -195,20 +195,20 @@ class RequestControllerNotificationTest extends WebTestCase
         $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
         $this->initClient([], $authParams);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
         $form = $crawler->selectButton('Submit Request For Quote')->form();
 
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('orob2b_rfp_frontend_request');
+        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('oro_rfp_frontend_request');
 
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.1');
 
         $parameters = [
             'input_action' => 'save_and_stay',
-            'orob2b_rfp_frontend_request' => $this->getFormData()
+            'oro_rfp_frontend_request' => $this->getFormData()
         ];
-        $parameters['orob2b_rfp_frontend_request']['_token'] = $crfToken;
-        $parameters['orob2b_rfp_frontend_request']['requestProducts'] = [
+        $parameters['oro_rfp_frontend_request']['_token'] = $crfToken;
+        $parameters['oro_rfp_frontend_request']['requestProducts'] = [
             [
                 'product' => $productPrice->getProduct()->getId(),
                 'requestProductItems' => [

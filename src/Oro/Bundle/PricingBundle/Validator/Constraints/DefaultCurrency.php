@@ -16,6 +16,6 @@ class DefaultCurrency extends Constraint
      */
     public function validatedBy()
     {
-        return 'orob2b_pricing_default_currency_validator';
+        return 'oro_pricing_default_currency_validator';
     }
 }

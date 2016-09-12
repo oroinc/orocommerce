@@ -8,8 +8,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class ConditionExpressionLanguageProvidersCompilerPass implements CompilerPassInterface
 {
-    const TAG_NAME = 'orob2b_menu.condition.expression_language_provider';
-    const CONDITION_SERVICE_ID = 'orob2b_menu.menu.condition.condition_extension';
+    const TAG_NAME = 'oro_menu.condition.expression_language_provider';
+    const CONDITION_SERVICE_ID = 'oro_menu.menu.condition.condition_extension';
 
     /**
      * {@inheritdoc}

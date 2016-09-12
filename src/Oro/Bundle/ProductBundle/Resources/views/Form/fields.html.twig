@@ -1,4 +1,4 @@
-{% block orob2b_product_primary_unit_precision_widget %}
+{% block oro_product_primary_unit_precision_widget %}
     {% set precisions = {} %}
 
     {% for choice in form.unit.vars.choices %}
@@ -26,7 +26,7 @@
     </div>
 {% endblock %}
 
-{% block orob2b_product_unit_precision_widget %}
+{% block oro_product_unit_precision_widget %}
     {% set name = form.vars.full_name %}
 
             <tr data-content="{{ name }}" data-validation-optional-group class="oro-multiselect-holder grid-row">
@@ -99,7 +99,7 @@
     {% endspaceless %}
 {% endblock %}
 
-{% block orob2b_product_unit_precision_collection_widget %}
+{% block oro_product_unit_precision_collection_widget %}
     {% set precisions = {} %}
 
     {% for choice in form.vars.prototype.unit.vars.choices %}
@@ -113,7 +113,7 @@
     </div>
 {% endblock %}
 
-{% macro orob2b_product_image_collection_item_prototype(widget) %}
+{% macro oro_product_image_collection_item_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -139,10 +139,10 @@
     </tr>
 {% endmacro %}
 
-{% block orob2b_product_image_collection_widget %}
+{% block oro_product_image_collection_widget %}
     {% spaceless %}
         {% if prototype is defined %}
-            {% set prototype_html = _self.orob2b_product_image_collection_item_prototype(form) %}
+            {% set prototype_html = _self.oro_product_image_collection_item_prototype(form) %}
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'image-collection oro-item-collection grid-container' }) %}
         {% set id = id ~ '_collection' %}
@@ -170,7 +170,7 @@
                     >
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.orob2b_product_image_collection_item_prototype(child) }}
+                            {{ _self.oro_product_image_collection_item_prototype(child) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {% for i in 0..(form.vars.row_count_initial - 1) %}
@@ -190,7 +190,7 @@
     {% endspaceless %}
 {% endblock %}
 
-{% block orob2b_product_image_widget %}
+{% block oro_product_image_widget %}
     <td><div class="pull-left">{{ form_widget(form.image) }}{{ form_errors(form) }}</div></td>
 
     {% for imageType in form.vars.imageTypes|keys %}

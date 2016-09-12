@@ -31,7 +31,7 @@ class AccountUserFrontendActionsTest extends AbstractAccountUserActionsTestCase
      */
     protected function getAccountUserEnableOperationName()
     {
-        return 'orob2b_account_frontend_accountuser_enable';
+        return 'oro_account_frontend_accountuser_enable';
     }
 
     /**
@@ -39,7 +39,7 @@ class AccountUserFrontendActionsTest extends AbstractAccountUserActionsTestCase
      */
     protected function getAccountUserDisableOperationName()
     {
-        return 'orob2b_account_frontend_accountuser_disable';
+        return 'oro_account_frontend_accountuser_disable';
     }
 
     /**
@@ -50,10 +50,10 @@ class AccountUserFrontendActionsTest extends AbstractAccountUserActionsTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_frontend_action_operation_execute',
+                'oro_frontend_action_operation_execute',
                 [
                     'operationName' => $operationName,
-                    'route' => 'orob2b_account_frontend_account_user_view',
+                    'route' => 'oro_account_frontend_account_user_view',
                     'entityId' => $accountUser->getId(),
                     'entityClass' => 'Oro\Bundle\AccountBundle\Entity\AccountUser'
                 ]

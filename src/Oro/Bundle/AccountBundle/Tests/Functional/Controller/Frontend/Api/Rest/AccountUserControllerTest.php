@@ -39,7 +39,7 @@ class AccountUserControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_account_frontend_delete_account_user', ['id' => $id])
+            $this->getUrl('oro_api_account_frontend_delete_account_user', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);

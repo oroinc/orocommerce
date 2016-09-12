@@ -56,7 +56,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
             'entityId' => $shoppingList->getId()
         ];
 
-        $this->client->request('GET', $this->getUrl('orob2b_pricing_frontend_entity_totals', $params));
+        $this->client->request('GET', $this->getUrl('oro_pricing_frontend_entity_totals', $params));
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
@@ -74,14 +74,14 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
 
     public function testGetEntityTotalsAction()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_pricing_frontend_entity_totals'));
+        $this->client->request('GET', $this->getUrl('oro_pricing_frontend_entity_totals'));
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
 
     public function testRecalculateTotalsAction()
     {
-        $this->client->request('POST', $this->getUrl('orob2b_pricing_frontend_recalculate_entity_totals'));
+        $this->client->request('POST', $this->getUrl('oro_pricing_frontend_recalculate_entity_totals'));
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 404);
     }

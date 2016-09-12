@@ -40,7 +40,7 @@ class AjaxCheckoutControllerTest extends FrontendWebTestCase
 
     public function testGetTotalsActionNotFound()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_checkout_frontend_totals', ['entityId' => 0]));
+        $this->client->request('GET', $this->getUrl('oro_checkout_frontend_totals', ['entityId' => 0]));
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
@@ -51,7 +51,7 @@ class AjaxCheckoutControllerTest extends FrontendWebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_checkout_frontend_totals', ['entityId' => $checkout->getId()])
+            $this->getUrl('oro_checkout_frontend_totals', ['entityId' => $checkout->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);

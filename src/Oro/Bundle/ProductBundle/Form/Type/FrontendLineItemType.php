@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FrontendLineItemType extends AbstractType
 {
-    const NAME = 'orob2b_product_frontend_line_item';
+    const NAME = 'oro_product_frontend_line_item';
 
     /**
      * @var string

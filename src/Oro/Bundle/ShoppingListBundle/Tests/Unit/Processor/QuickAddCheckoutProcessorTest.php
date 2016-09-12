@@ -78,7 +78,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         $this->processor->setOperationManager($this->operationManager);
         $this->processor->setTranslator($this->translator);
         $this->processor->setDateFormatter($this->dateFormatter);
-        $this->processor->setOperationName('orob2b_shoppinglist_frontend_createorder');
+        $this->processor->setOperationName('oro_shoppinglist_frontend_createorder');
     }
 
     /**

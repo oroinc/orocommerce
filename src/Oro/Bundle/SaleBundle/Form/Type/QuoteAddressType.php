@@ -22,7 +22,7 @@ use Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
 
 class QuoteAddressType extends AbstractType
 {
-    const NAME = 'orob2b_quote_address_type';
+    const NAME = 'oro_quote_address_type';
 
     /** @var string */
     protected $dataClass;

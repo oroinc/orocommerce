@@ -29,7 +29,7 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = $this->getContainer();
-        $container->get('orob2b_pricing.resolver.combined_product_schedule_resolver')->updateRelations();
+        $container->get('oro_pricing.resolver.combined_product_schedule_resolver')->updateRelations();
         $this->combinePricesForScheduledCPL();
     }
 
@@ -44,7 +44,7 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
             ->getRepository(CombinedPriceList::class)
             ->getCPLsForPriceCollectByTimeOffset($offsetHours);
 
-        $combinedProductPriceResolver = $container->get('orob2b_pricing.resolver.combined_product_price_resolver');
+        $combinedProductPriceResolver = $container->get('oro_pricing.resolver.combined_product_price_resolver');
 
         foreach ($combinedPriceLists as $combinedPriceList) {
             $combinedProductPriceResolver->combinePrices($combinedPriceList);

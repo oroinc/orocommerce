@@ -11,7 +11,7 @@ use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber;
 
 class ShippingRuleConfigurationCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_rule_config_collection';
+    const NAME = 'oro_shipping_rule_config_collection';
 
     /** @var RuleConfigurationSubscriber */
     protected $subscriber;

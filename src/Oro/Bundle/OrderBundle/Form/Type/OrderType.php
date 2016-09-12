@@ -25,7 +25,7 @@ use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 
 class OrderType extends AbstractType
 {
-    const NAME = 'orob2b_order_type';
+    const NAME = 'oro_order_type';
 
     /** @var string */
     protected $dataClass;
@@ -225,7 +225,7 @@ class OrderType extends AbstractType
      */
     protected function isOverridePaymentTermGranted()
     {
-        return $this->securityFacade->isGranted('orob2b_order_payment_term_account_can_override');
+        return $this->securityFacade->isGranted('oro_order_payment_term_account_can_override');
     }
 
     /**
