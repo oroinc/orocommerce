@@ -39,17 +39,17 @@ class OrderControllerTest extends WebTestCase
         $this->client->followRedirects();
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_rfp_request_create_order', ['id' => $request->getId()])
+            $this->getUrl('oro_rfp_request_create_order', ['id' => $request->getId()])
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertStringStartsWith(
-            $this->getUrl('orob2b_order_create'),
+            $this->getUrl('oro_order_create'),
             $this->client->getRequest()->getRequestUri()
         );
         $this->assertEquals(true, $this->client->getRequest()->get(ProductDataStorage::STORAGE_KEY));
 
-        $content = $crawler->filter('[data-ftid=orob2b_order_type_lineItems]')->html();
+        $content = $crawler->filter('[data-ftid=oro_order_type_lineItems]')->html();
         foreach ($request->getRequestProducts() as $lineItem) {
             $this->assertContains($lineItem->getProduct()->getSku(), $content);
 
@@ -68,17 +68,17 @@ class OrderControllerTest extends WebTestCase
 
         $this->assertEquals(
             $request->getId(),
-            $crawler->filter('[data-ftid=orob2b_order_type_sourceEntityId]')->attr('value')
+            $crawler->filter('[data-ftid=oro_order_type_sourceEntityId]')->attr('value')
         );
 
         $this->assertEquals(
             $request->getIdentifier(),
-            $crawler->filter('[data-ftid=orob2b_order_type_sourceEntityIdentifier]')->attr('value')
+            $crawler->filter('[data-ftid=oro_order_type_sourceEntityIdentifier]')->attr('value')
         );
 
         $this->assertEquals(
             ClassUtils::getClass($request),
-            $crawler->filter('[data-ftid=orob2b_order_type_sourceEntityClass]')->attr('value')
+            $crawler->filter('[data-ftid=oro_order_type_sourceEntityClass]')->attr('value')
         );
     }
 }

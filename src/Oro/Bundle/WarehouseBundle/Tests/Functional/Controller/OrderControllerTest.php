@@ -25,7 +25,7 @@ class OrderControllerTest extends WebTestCase
     public function testViewOrderShouldDisplayWarehouseField()
     {
         $order = $this->getReference(LoadOrders::ORDER_1);
-        $this->client->request('GET', $this->getUrl('orob2b_order_view', ['id' => $order->getId()]));
+        $this->client->request('GET', $this->getUrl('oro_order_view', ['id' => $order->getId()]));
 
         $this->assertContains('Warehouse', $this->client->getResponse()->getContent());
         $this->assertContains($order->getWarehouse()->getName(), $this->client->getResponse()->getContent());
@@ -34,14 +34,14 @@ class OrderControllerTest extends WebTestCase
     public function testEditOrderWarehouse()
     {
         $order = $this->getReference(LoadOrders::ORDER_1);
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $order->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $order->getId()]));
 
         $form = $crawler->selectButton('Save')->form();
         $warehouse2 = $this->getReference(LoadWarehousesAndInventoryLevels::WAREHOUSE2);
-        $form['orob2b_order_type[warehouse]'] = $warehouse2->getId();
+        $form['oro_order_type[warehouse]'] = $warehouse2->getId();
         $this->client->submit($form);
 
-        $this->client->request('GET', $this->getUrl('orob2b_order_view', ['id' => $order->getId()]));
+        $this->client->request('GET', $this->getUrl('oro_order_view', ['id' => $order->getId()]));
         $this->assertContains('Warehouse', $this->client->getResponse()->getContent());
         $this->assertContains($warehouse2->getName(), $this->client->getResponse()->getContent());
     }

@@ -11,7 +11,7 @@ use Oro\Bundle\FormBundle\Utils\FormUtils;
 
 class ShipToBillingAddressType extends AbstractType
 {
-    const NAME = 'orob2b_ship_to_billing_address';
+    const NAME = 'oro_ship_to_billing_address';
     const SHIPPING_ADDRESS_FORM_FIELD = 'shipping_address';
 
     /**

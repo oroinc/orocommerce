@@ -22,6 +22,6 @@ services:
         arguments:
             - '@oro_pricing.user_currency_manager'
         tags:
-            - { name: layout.data_provider, alias: orob2b_pricing_currency }
+            - { name: layout.data_provider, alias: oro_pricing_currency }
 
 

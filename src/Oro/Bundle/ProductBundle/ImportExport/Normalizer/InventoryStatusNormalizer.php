@@ -13,8 +13,8 @@ class InventoryStatusNormalizer implements NormalizerInterface
     public function supportsNormalization($data, $format = null, array $context = array())
     {
         $processors = [
-            'orob2b_product.inventory_status_only',
-            'orob2b_product.inventory_status_only_template'
+            'oro_product.inventory_status_only',
+            'oro_product.inventory_status_only_template'
         ];
 
         return isset($context['processorAlias'])

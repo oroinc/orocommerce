@@ -11,10 +11,10 @@ system_configuration:
         shipping_options_settings:
             title: oro.shipping.system_configuration.groups.shipping_options.title
     fields:
-        orob2b_shipping.shipping_origin:
+        oro_shipping.shipping_origin:
             data_type: array
             type: 'Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType'
-        orob2b_shipping.length_units:
+        oro_shipping.length_units:
             data_type: array
             type: 'Oro\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType'
             options:
@@ -24,7 +24,7 @@ system_configuration:
                 data_transformer: oro_shipping.form.data_transformer.length_unit
                 constraints:
                     - NotBlank: ~
-        orob2b_shipping.weight_units:
+        oro_shipping.weight_units:
             data_type: array
             type: 'Oro\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType'
             options:
@@ -34,7 +34,7 @@ system_configuration:
                 data_transformer: oro_shipping.form.data_transformer.weight_unit
                 constraints:
                     - NotBlank: ~
-        orob2b_shipping.freight_classes:
+        oro_shipping.freight_classes:
             data_type: array
             type: 'Oro\Bundle\ShippingBundle\Form\Type\FreightClassSelectType'
             options:
@@ -56,12 +56,12 @@ system_configuration:
                                 children:
                                     shipping_origin_settings:
                                         children:
-                                            - orob2b_shipping.shipping_origin
+                                            - oro_shipping.shipping_origin
                             shipping_options:
                                 priority: 100
                                 children:
                                     shipping_options_settings:
                                         children:
-                                            - orob2b_shipping.length_units
-                                            - orob2b_shipping.weight_units
-                                            - orob2b_shipping.freight_classes
+                                            - oro_shipping.length_units
+                                            - oro_shipping.weight_units
+                                            - oro_shipping.freight_classes

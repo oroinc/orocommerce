@@ -22,7 +22,7 @@ define(function (require) {
             currenciesSelector: '.currenciesSelectorContainer',
             showTierPricesSelector: '.showTierPricesSelectorContainer',
             sidebarAlias: 'products-sidebar',
-            routeName: 'orob2b_pricing_price_list_currency_list',
+            routeName: 'oro_pricing_price_list_currency_list',
             routingParams: {},
             currencyTemplate: '<input type="checkbox" id="<%- id %>" value="<%- value %>">' +
             '<label for="<%- id %>"><%- text %></label>'

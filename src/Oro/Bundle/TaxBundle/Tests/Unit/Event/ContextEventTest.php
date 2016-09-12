@@ -16,6 +16,6 @@ class ContextEventTest extends \PHPUnit_Framework_TestCase
 
     public function testEventName()
     {
-        $this->assertEquals('orob2b_tax.mapper.context', ContextEvent::NAME);
+        $this->assertEquals('oro_tax.mapper.context', ContextEvent::NAME);
     }
 }

@@ -30,8 +30,8 @@ define(function(require) {
                 priceSelector: '.rfp-lineitem-requested-price input',
                 currencySelector: '.rfp-lineitem-requested-currency select'
             },
-            unitLoaderRouteName: 'orob2b_pricing_frontend_units_by_pricelist',
-            unitsRoute: 'orob2b_product_frontend_ajaxproductunit_productunits',
+            unitLoaderRouteName: 'oro_pricing_frontend_units_by_pricelist',
+            unitsRoute: 'oro_product_frontend_ajaxproductunit_productunits',
             compactUnits: false,
             itemsContainer: '.rfp-lineitem-requested-items',
             itemWidget: '.rfp-lineitem-requested-item',

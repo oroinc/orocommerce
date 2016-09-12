@@ -24,7 +24,7 @@ class TwigSandboxConfigurationPass implements CompilerPassInterface
             $filters = array_merge(
                 $filters,
                 [
-                    'orob2b_format_short_product_unit_value'
+                    'oro_format_short_product_unit_value'
                 ]
             );
             $securityPolicyDef->replaceArgument(1, $filters);

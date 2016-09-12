@@ -67,7 +67,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
     public function testGetExtendedType()
     {
         $this->assertInternalType('string', $this->extension->getExtendedType());
-        $this->assertEquals('orob2b_order_line_item', $this->extension->getExtendedType());
+        $this->assertEquals('oro_order_line_item', $this->extension->getExtendedType());
     }
 
     public function testBuildViewNoFeatures()

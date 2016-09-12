@@ -3,5 +3,5 @@ layout:
         - '@setOption':
             id: __products
             optionName: items_data.productShoppingLists
-            optionValue: '=data["orob2b_shopping_list_product_units_quantity"].getByProducts(items)'
+            optionValue: '=data["oro_shopping_list_product_units_quantity"].getByProducts(items)'
     conditions: 'context["is_logged_in"]'

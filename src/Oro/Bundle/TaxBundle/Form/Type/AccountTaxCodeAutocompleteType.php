@@ -9,7 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 
 class AccountTaxCodeAutocompleteType extends AbstractType
 {
-    const NAME = 'orob2b_account_tax_code_autocomplete';
+    const NAME = 'oro_account_tax_code_autocomplete';
 
     /**
      * {@inheritdoc}
@@ -42,9 +42,9 @@ class AccountTaxCodeAutocompleteType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'orob2b_account_tax_code',
+                'autocomplete_alias' => 'oro_account_tax_code',
                 'grid_name' => 'accounts-tax-code-select-grid',
-                'create_form_route' => 'orob2b_tax_account_tax_code_create',
+                'create_form_route' => 'oro_tax_account_tax_code_create',
             ]
         );
     }

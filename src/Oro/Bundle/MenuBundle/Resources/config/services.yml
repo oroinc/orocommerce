@@ -6,14 +6,14 @@ services:
         public: false
         parent: oro.cache.abstract
         calls:
-            - [ setNamespace, [ 'orob2b_menu_item' ] ]
+            - [ setNamespace, [ 'oro_menu_item' ] ]
 
     oro_menu.form.type.menu_item:
         class: 'Oro\Bundle\MenuBundle\Form\Type\MenuItemType'
         calls:
             - [setDataClass, ['%oro_menu.entity.menu_item.class%']]
         tags:
-            - { name: form.type, alias: orob2b_menu_item }
+            - { name: form.type, alias: oro_menu_item }
 
     oro_menu.tree.menu_item_tree_handler:
         class: 'Oro\Bundle\MenuBundle\JsTree\MenuItemTreeHandler'
@@ -92,7 +92,7 @@ services:
         arguments:
             - "@oro_config.manager"
         tags:
-            - { name: orob2b_menu.condition.expression_language_provider, alias: config_value }
+            - { name: oro_menu.condition.expression_language_provider, alias: config_value }
 
     oro_menu.menu.condition.logged_in_expression_language_provider:
         class: 'Oro\Bundle\MenuBundle\Menu\Condition\LoggedInExpressionLanguageProvider'
@@ -100,7 +100,7 @@ services:
         arguments:
             - "@oro_security.security_facade"
         tags:
-            - { name: orob2b_menu.condition.expression_language_provider, alias: is_logged_in }
+            - { name: oro_menu.condition.expression_language_provider, alias: is_logged_in }
 
     oro_menu.event_listener.orm.menu_item_cache_listener:
         class: Oro\Bundle\MenuBundle\Entity\Listener\MenuItemListener
@@ -125,7 +125,7 @@ services:
         arguments:
             - "@oro_menu.menu_provider"
         tags:
-            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.orob2b_menu_item,  method: afterEntityFlush }
+            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush.oro_menu_item,  method: afterEntityFlush }
 
     oro_menu.menu.acl_extension:
         class: 'Oro\Bundle\NavigationBundle\Menu\AclAwareMenuFactoryExtension'

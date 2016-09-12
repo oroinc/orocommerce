@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OffersType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_request_offers';
+    const NAME = 'oro_rfp_request_offers';
 
     const OFFERS_OPTION = 'offers';
 

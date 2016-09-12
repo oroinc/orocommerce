@@ -3,10 +3,10 @@ navigation:
     #    items:
     #        invoices_list:
     #            label:           'oro.invoice.entity_plural_label'
-    #            route:           'orob2b_invoice_index'
+    #            route:           'oro_invoice_index'
     #            extras:
     #                position:    750
-    #                routes: ['/^orob2b_invoice_/']
+    #                routes: ['/^oro_invoice_/']
     #
     #    tree:
     #        application_menu:
@@ -16,6 +16,6 @@ navigation:
     #                        invoices_list: ~
 
     titles:
-        orob2b_invoice_index: ~
-        orob2b_invoice_view:   'Invoice #%%identifier%%'
-        orob2b_invoice_update:   'Invoice #%%identifier%%'
+        oro_invoice_index: ~
+        oro_invoice_view:   'Invoice #%%identifier%%'
+        oro_invoice_update:   'Invoice #%%identifier%%'

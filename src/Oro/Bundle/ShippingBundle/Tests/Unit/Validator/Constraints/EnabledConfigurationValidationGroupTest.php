@@ -37,7 +37,7 @@ class EnabledConfigurationValidationGroupTest extends \PHPUnit_Framework_TestCas
     public function testConfiguration()
     {
         $this->assertEquals(
-            'orob2b_shipping_enabled_configuration_validation_group_validator',
+            'oro_shipping_enabled_configuration_validation_group_validator',
             $this->constraint->validatedBy()
         );
         $this->assertEquals(Constraint::PROPERTY_CONSTRAINT, $this->constraint->getTargets());

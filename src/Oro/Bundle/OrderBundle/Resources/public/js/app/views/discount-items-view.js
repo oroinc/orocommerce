@@ -17,7 +17,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            discountsSumSelector: '[data-ftid=orob2b_order_type_discountsSum]',
+            discountsSumSelector: '[data-ftid=oro_order_type_discountsSum]',
             discountType: null,
             totalType: null
         },

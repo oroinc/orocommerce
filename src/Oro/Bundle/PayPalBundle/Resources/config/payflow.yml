@@ -12,10 +12,10 @@ services:
         calls:
             - ['setLogger', ['@logger']]
         tags:
-            - { name: kernel.event_listener, event: orob2b_payment.callback.error.payflow_gateway, method: onError }
-            - { name: kernel.event_listener, event: orob2b_payment.callback.notify.payflow_gateway, method: onNotify }
-            - { name: kernel.event_listener, event: orob2b_payment.callback.error.paypal_payments_pro, method: onError }
-            - { name: kernel.event_listener, event: orob2b_payment.callback.notify.paypal_payments_pro, method: onNotify }
+            - { name: kernel.event_listener, event: oro_payment.callback.error.payflow_gateway, method: onError }
+            - { name: kernel.event_listener, event: oro_payment.callback.notify.payflow_gateway, method: onNotify }
+            - { name: kernel.event_listener, event: oro_payment.callback.error.paypal_payments_pro, method: onError }
+            - { name: kernel.event_listener, event: oro_payment.callback.notify.paypal_payments_pro, method: onNotify }
 
     oro_paypal.event_listener.callback.payflow_express_checkout:
         class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutListener'
@@ -25,10 +25,10 @@ services:
         calls:
             - ['setLogger', ['@logger']]
         tags:
-            - { name: kernel.event_listener, event: orob2b_payment.callback.error.payflow_express_checkout, method: onError }
-            - { name: kernel.event_listener, event: orob2b_payment.callback.return.payflow_express_checkout, method: onReturn }
-            - { name: kernel.event_listener, event: orob2b_payment.callback.error.paypal_payments_pro_express_checkout, method: onError }
-            - { name: kernel.event_listener, event: orob2b_payment.callback.return.paypal_payments_pro_express_checkout, method: onReturn }
+            - { name: kernel.event_listener, event: oro_payment.callback.error.payflow_express_checkout, method: onError }
+            - { name: kernel.event_listener, event: oro_payment.callback.return.payflow_express_checkout, method: onReturn }
+            - { name: kernel.event_listener, event: oro_payment.callback.error.paypal_payments_pro_express_checkout, method: onError }
+            - { name: kernel.event_listener, event: oro_payment.callback.return.paypal_payments_pro_express_checkout, method: onReturn }
 
     oro_paypal.event_listener.ip_check.payflow:
         class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListener'
@@ -36,8 +36,8 @@ services:
         arguments:
             - '@request_stack'
         tags:
-            - { name: kernel.event_listener, event: orob2b_payment.callback.notify.payflow_gateway, method: onNotify, priority: 255 }
-            - { name: kernel.event_listener, event: orob2b_payment.callback.notify.paypal_payments_pro, method: onNotify, priority: 255 }
+            - { name: kernel.event_listener, event: oro_payment.callback.notify.payflow_gateway, method: onNotify, priority: 255 }
+            - { name: kernel.event_listener, event: oro_payment.callback.notify.paypal_payments_pro, method: onNotify, priority: 255 }
 
     oro_paypal.paypal.payflow_gateway.request.registry:
         class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\RequestRegistry'

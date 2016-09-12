@@ -25,7 +25,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_product_tax_code_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_tax_product_tax_code_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('tax-product-tax-codes-grid', $crawler->html());
@@ -33,7 +33,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_product_tax_code_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_tax_product_tax_code_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -58,7 +58,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_product_tax_code_update', ['id' => $id])
+            $this->getUrl('oro_tax_product_tax_code_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -80,7 +80,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_product_tax_code_view', ['id' => $id])
+            $this->getUrl('oro_tax_product_tax_code_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -105,8 +105,8 @@ class ProductTaxCodeControllerTest extends WebTestCase
     {
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'orob2b_tax_product_tax_code_type[code]' => $code,
-                'orob2b_tax_product_tax_code_type[description]' => $description,
+                'oro_tax_product_tax_code_type[code]' => $code,
+                'oro_tax_product_tax_code_type[description]' => $description,
             ]
         );
 

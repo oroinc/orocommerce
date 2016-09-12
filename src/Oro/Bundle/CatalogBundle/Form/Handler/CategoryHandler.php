@@ -62,7 +62,7 @@ class CategoryHandler
                 $this->onSuccess($category, $appendProducts, $removeProducts);
 
                 $this->eventDispatcher->dispatch(
-                    'orob2b_catalog.category.edit',
+                    'oro_catalog.category.edit',
                     new AfterFormProcessEvent($this->form, $category)
                 );
 

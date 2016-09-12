@@ -19,6 +19,6 @@ class UniqueProductPrices extends Constraint
      */
     public function validatedBy()
     {
-        return 'orob2b_pricing_unique_product_prices_validator';
+        return 'oro_pricing_unique_product_prices_validator';
     }
 }

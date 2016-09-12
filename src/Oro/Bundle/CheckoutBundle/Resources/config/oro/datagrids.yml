@@ -115,7 +115,7 @@ datagrids:
             id: ~
             view_link:
                 type: url
-                route: orob2b_checkout_frontend_checkout
+                route: oro_checkout_frontend_checkout
                 params:
                     - id
         actions:
@@ -124,5 +124,5 @@ datagrids:
                 label: oro.checkout.grid.checkout_link.label
                 link: view_link
                 icon: shopping-cart
-                acl_resource: orob2b_checkout_frontend_checkout
+                acl_resource: oro_checkout_frontend_checkout
                 rowAction: true

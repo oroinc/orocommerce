@@ -6,7 +6,7 @@
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
-        'indexPath': path('orob2b_product_index'),
+        'indexPath': path('oro_product_index'),
         'indexLabel': 'oro.product.entity_plural_label'|trans,
         'entityTitle': entity.sku ~ ' - ' ~ entity.defaultName
     } %}
@@ -30,7 +30,7 @@
     {% set productInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'url': path('orob2b_product_info', {id: entity.id})
+            'url': path('oro_product_info', {id: entity.id})
         }) }}
     {% endset %}
     {% set productDescription %}
@@ -59,7 +59,7 @@
                 'useSpan': false,
                 'data' : [
                     dataGrid.renderGrid(
-                        'orob2b_product-product_variants-product_view',
+                        'oro_product-product_variants-product_view',
                         {'parentProduct': entity.id},
                         { cssClass: 'inner-grid' }
                     )

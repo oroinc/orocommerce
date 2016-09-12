@@ -83,14 +83,14 @@ class PurchaseActionTest extends AbstractActionTest
             ->method('generate')
             ->withConsecutive(
                 [
-                    'orob2b_payment_callback_error',
+                    'oro_payment_callback_error',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
                     RouterInterface::ABSOLUTE_URL
                 ],
                 [
-                    'orob2b_payment_callback_return',
+                    'oro_payment_callback_return',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
@@ -129,8 +129,8 @@ class PurchaseActionTest extends AbstractActionTest
                 ],
                 'expected' => [
                     'paymentMethod' => self::PAYMENT_METHOD,
-                    'errorUrl' => 'orob2b_payment_callback_error',
-                    'returnUrl' => 'orob2b_payment_callback_return',
+                    'errorUrl' => 'oro_payment_callback_error',
+                    'returnUrl' => 'oro_payment_callback_return',
                     'testResponse' => 'testResponse',
                     'paymentMethodSupportsValidation' => false,
                     'testOption' => 'testOption',
@@ -149,8 +149,8 @@ class PurchaseActionTest extends AbstractActionTest
                 ],
                 'expected' => [
                     'paymentMethod' => self::PAYMENT_METHOD,
-                    'errorUrl' => 'orob2b_payment_callback_error',
-                    'returnUrl' => 'orob2b_payment_callback_return',
+                    'errorUrl' => 'oro_payment_callback_error',
+                    'returnUrl' => 'oro_payment_callback_return',
                     'testResponse' => 'testResponse',
                     'paymentMethodSupportsValidation' => false,
                 ],
@@ -171,8 +171,8 @@ class PurchaseActionTest extends AbstractActionTest
                 ],
                 'expected' => [
                     'paymentMethod' => self::PAYMENT_METHOD,
-                    'errorUrl' => 'orob2b_payment_callback_error',
-                    'returnUrl' => 'orob2b_payment_callback_return',
+                    'errorUrl' => 'oro_payment_callback_error',
+                    'returnUrl' => 'oro_payment_callback_return',
                     'paymentMethodSupportsValidation' => false,
                     'testOption' => 'testOption',
                 ],

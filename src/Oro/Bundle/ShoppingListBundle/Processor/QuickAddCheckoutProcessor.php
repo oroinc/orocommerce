@@ -19,7 +19,7 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
 {
-    const NAME = 'orob2b_shopping_list_to_checkout_quick_add_processor';
+    const NAME = 'oro_shopping_list_to_checkout_quick_add_processor';
 
     /**
      * @var ShoppingListManager

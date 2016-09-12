@@ -60,93 +60,93 @@ navigation:
 
             account_list:
                 label:           'oro.account.entity_plural_label'
-                route:           'orob2b_account_index'
+                route:           'oro_account_index'
                 extras:
                     position:    10
                     routes:
-                        - 'orob2b_account_index'
-                        - 'orob2b_account_view'
-                        - 'orob2b_account_create'
-                        - 'orob2b_account_update'
+                        - 'oro_account_index'
+                        - 'oro_account_view'
+                        - 'oro_account_create'
+                        - 'oro_account_update'
                     description: 'oro.account.menu.account_list.description'
 
             account_group_list:
                 label:           'oro.account.accountgroup.entity_plural_label'
-                route:           'orob2b_account_group_index'
+                route:           'oro_account_group_index'
                 extras:
                     position:    20
                     routes:
-                        - 'orob2b_account_group_index'
-                        - 'orob2b_account_group_view'
-                        - 'orob2b_account_group_create'
-                        - 'orob2b_account_group_update'
+                        - 'oro_account_group_index'
+                        - 'oro_account_group_view'
+                        - 'oro_account_group_create'
+                        - 'oro_account_group_update'
                     description: 'oro.account.menu.account_group_list.description'
 
             shortcut_account_list:
                 label:           'oro.account.entity_plural_label'
-                route:           'orob2b_account_index'
+                route:           'oro_account_index'
                 extras:
                     description: 'oro.account.menu.shortcut_account_list.description'
 
             shortcut_account_group_list:
                 label:           'oro.account.accountgroup.entity_plural_label'
-                route:           'orob2b_account_group_index'
+                route:           'oro_account_group_index'
                 extras:
                     description: 'oro.account.menu.shortcut_account_list.description'
 
             account_users:
                 label: 'oro.account.accountuser.entity_plural_label'
-                route: 'orob2b_account_account_user_index'
+                route: 'oro_account_account_user_index'
                 extras:
                     position: 30
-                    routes: ['/^orob2b_account_account_user/']
+                    routes: ['/^oro_account_account_user/']
                     description: 'oro.account.menu.account_users.description'
 
             shortcut_new_account_user:
                 label: 'oro.account.menu.shortcut_new_account_user.label'
-                route: 'orob2b_account_account_user_create'
+                route: 'oro_account_account_user_create'
                 extras:
                     description: 'oro.account.menu.shortcut_new_account_user.description'
 
             shortcut_list_account_users:
                 label: 'oro.account.menu.shortcut_list_account_users.label'
-                route: 'orob2b_account_account_user_index'
+                route: 'oro_account_account_user_index'
                 extras:
                     description: 'oro.account.menu.shortcut_list_account_users.description'
 
             frontend_shortcut_list_account_users:
                 label: 'oro.account.menu.shortcut_list_account_users.label'
-                route: 'orob2b_account_frontend_account_user_index'
+                route: 'oro_account_frontend_account_user_index'
                 extras:
                     description: 'oro.account.menu.shortcut_list_account_users.description'
 
             account_user_roles:
                 label: 'oro.account.accountuserrole.entity_plural_label'
-                route: 'orob2b_account_account_user_role_index'
+                route: 'oro_account_account_user_role_index'
                 extras:
                     position: 40
                     routes:
-                        - 'orob2b_account_account_user_role_index'
-                        - 'orob2b_account_account_user_role_view'
-                        - 'orob2b_account_account_user_role_update'
-                        - 'orob2b_account_account_user_role_create'
+                        - 'oro_account_account_user_role_index'
+                        - 'oro_account_account_user_role_view'
+                        - 'oro_account_account_user_role_update'
+                        - 'oro_account_account_user_role_create'
                     description: 'oro.account.menu.account_user_roles.description'
 
             shortcut_new_account_user_role:
                 label: 'oro.account.menu.shortcut_new_account_user_role.label'
-                route: 'orob2b_account_account_user_role_create'
+                route: 'oro_account_account_user_role_create'
                 extras:
                     description: 'oro.account.menu.shortcut_new_account_user_role.description'
 
             shortcut_list_account_user_groups:
                 label: 'oro.account.menu.shortcut_list_account_user_roles.label'
-                route: 'orob2b_account_account_user_role_index'
+                route: 'oro_account_account_user_role_index'
                 extras:
                     description: 'oro.account.menu.shortcut_list_account_user_roles.description'
 
-            orob2b_account_frontend_account_user_profile:
+            oro_account_frontend_account_user_profile:
                 label: 'oro.account.menu.account_user_profile.label'
-                route: 'orob2b_account_frontend_account_user_profile'
+                route: 'oro_account_frontend_account_user_profile'
                 extras:
                     position: 10
 
@@ -158,18 +158,18 @@ navigation:
 
             frontend_account_users:
                 label: 'oro.account.accountuser.entity_plural_label'
-                route: 'orob2b_account_frontend_account_user_index'
+                route: 'oro_account_frontend_account_user_index'
                 extras:
                     position: 100
-                    routes: ['/^orob2b_account_frontend_account_user/']
+                    routes: ['/^oro_account_frontend_account_user/']
                     description: 'oro.account.menu.account_users.description'
 
             frontend_account_user_roles:
                  label: 'oro.account.menu.frontend_account_user_roles.label'
-                 route: 'orob2b_account_frontend_account_user_role_index'
+                 route: 'oro_account_frontend_account_user_role_index'
                  extras:
                      position: 200
-                     routes: ['/^orob2b_account_frontend_account_user_role/']
+                     routes: ['/^oro_account_frontend_account_user_role/']
 
         tree:
             application_menu:
@@ -197,7 +197,7 @@ navigation:
 
             account_usermenu:
                 children:
-                    orob2b_account_frontend_account_user_profile: ~
+                    oro_account_frontend_account_user_profile: ~
 
             shortcuts:
                 children:
@@ -209,45 +209,45 @@ navigation:
                     shortcut_list_account_user_groups: ~
 
     titles:
-        orob2b_account_pinbar_help: 'How To Use Pinbar'
+        oro_account_pinbar_help: 'How To Use Pinbar'
 
-        orob2b_account_index: ~
-        orob2b_account_view:  '%%title%%'
-        orob2b_account_update: %%accountName%% - oro.ui.edit
-        orob2b_account_create: oro.ui.create_entity
+        oro_account_index: ~
+        oro_account_view:  '%%title%%'
+        oro_account_update: %%accountName%% - oro.ui.edit
+        oro_account_create: oro.ui.create_entity
 
-        orob2b_account_group_index: ~
-        orob2b_account_group_view:  '%%title%%'
-        orob2b_account_group_update: %%accountGroupName%% - oro.ui.edit
-        orob2b_account_group_create: oro.ui.create_entity
+        oro_account_group_index: ~
+        oro_account_group_view:  '%%title%%'
+        oro_account_group_update: %%accountGroupName%% - oro.ui.edit
+        oro_account_group_create: oro.ui.create_entity
 
-        orob2b_account_account_user_index:   ~
-        orob2b_account_account_user_view:    '%%email%%'
-        orob2b_account_account_user_update:  %%email%% - oro.ui.edit
-        orob2b_account_account_user_create:  oro.ui.create_entity
+        oro_account_account_user_index:   ~
+        oro_account_account_user_view:    '%%email%%'
+        oro_account_account_user_update:  %%email%% - oro.ui.edit
+        oro_account_account_user_create:  oro.ui.create_entity
 
-        orob2b_account_frontend_account_user_index:   ~
-        orob2b_account_frontend_account_user_view:    '%%email%%'
-        orob2b_account_frontend_account_user_update:  %%email%% - oro.ui.edit
-        orob2b_account_frontend_account_user_create:  oro.ui.create_entity
+        oro_account_frontend_account_user_index:   ~
+        oro_account_frontend_account_user_view:    '%%email%%'
+        oro_account_frontend_account_user_update:  %%email%% - oro.ui.edit
+        oro_account_frontend_account_user_create:  oro.ui.create_entity
 
-        orob2b_account_account_user_role_index:     ~
-        orob2b_account_account_user_role_view:      '%%label%% - oro.ui.view'
-        orob2b_account_account_user_role_update:    '%%label%% - oro.ui.edit'
-        orob2b_account_account_user_role_create:    oro.ui.create_entity
+        oro_account_account_user_role_index:     ~
+        oro_account_account_user_role_view:      '%%label%% - oro.ui.view'
+        oro_account_account_user_role_update:    '%%label%% - oro.ui.edit'
+        oro_account_account_user_role_create:    oro.ui.create_entity
 
-        orob2b_account_frontend_account_user_profile: '%%email%%'
-        orob2b_account_frontend_account_user_profile_update: oro.account.accountuser.profile.edit
+        oro_account_frontend_account_user_profile: '%%email%%'
+        oro_account_frontend_account_user_profile_update: oro.account.accountuser.profile.edit
 
-        orob2b_account_account_user_security_login: oro.account.accountuser.profile.login
-        orob2b_account_frontend_account_user_register: oro.account.accountuser.profile.registration.title
-        orob2b_account_frontend_account_user_reset_request: oro.account.accountuser.profile.forgot_password
-        orob2b_account_frontend_account_user_reset_check_email: oro.account.accountuser.profile.check_email.title
-        orob2b_account_frontend_account_user_password_reset: oro.account.accountuser.profile.reset_password.title
+        oro_account_account_user_security_login: oro.account.accountuser.profile.login
+        oro_account_frontend_account_user_register: oro.account.accountuser.profile.registration.title
+        oro_account_frontend_account_user_reset_request: oro.account.accountuser.profile.forgot_password
+        oro_account_frontend_account_user_reset_check_email: oro.account.accountuser.profile.check_email.title
+        oro_account_frontend_account_user_password_reset: oro.account.accountuser.profile.reset_password.title
 
-        orob2b_account_frontend_account_user_role_index:  ~
-        orob2b_account_frontend_account_user_role_view:   '%%label%% - oro.ui.view'
-        orob2b_account_frontend_account_user_role_update: '%%label%% - oro.ui.edit'
-        orob2b_account_frontend_account_user_role_create: oro.ui.create_entity
+        oro_account_frontend_account_user_role_index:  ~
+        oro_account_frontend_account_user_role_view:   '%%label%% - oro.ui.view'
+        oro_account_frontend_account_user_role_update: '%%label%% - oro.ui.edit'
+        oro_account_frontend_account_user_role_create: oro.ui.create_entity
 
-        orob2b_product_visibility_edit: '%%sku%% - %%name%% - Edit'
+        oro_product_visibility_edit: '%%sku%% - %%name%% - Edit'

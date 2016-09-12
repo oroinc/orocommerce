@@ -4,14 +4,14 @@ services:
         arguments:
             - '@oro_layout.theme_manager'
         tags:
-            - { name: form.type, alias: 'orob2b_frontend_theme_select' }
+            - { name: form.type, alias: 'oro_frontend_theme_select' }
 
     oro_frontend.form.type.country:
         class: 'Oro\Bundle\FrontendBundle\Form\Type\CountryType'
         tags:
-            - { name: form.type, alias: orob2b_country }
+            - { name: form.type, alias: oro_frontend_country }
 
     oro_frontend.form.type.region:
         class: 'Oro\Bundle\FrontendBundle\Form\Type\RegionType'
         tags:
-            - { name: form.type, alias: orob2b_region }
+            - { name: form.type, alias: oro_frontend_region }

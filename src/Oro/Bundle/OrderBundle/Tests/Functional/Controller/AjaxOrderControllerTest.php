@@ -33,7 +33,7 @@ class AjaxOrderControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_order_create')
+            $this->getUrl('oro_order_create')
         );
 
         $this->assertTotal($crawler);
@@ -45,7 +45,7 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_order_update', ['id' => $order->getId()])
+            $this->getUrl('oro_order_update', ['id' => $order->getId()])
         );
 
         $this->assertTotal($crawler, $order->getId());
@@ -59,7 +59,7 @@ class AjaxOrderControllerTest extends WebTestCase
     {
         $form = $crawler->selectButton('Save and Close')->form();
 
-        $form->getFormNode()->setAttribute('action', $this->getUrl('orob2b_order_entry_point', ['id' => $id]));
+        $form->getFormNode()->setAttribute('action', $this->getUrl('oro_order_entry_point', ['id' => $id]));
 
         $this->client->submit($form);
 
@@ -93,7 +93,7 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_order_entry_point'),
+            $this->getUrl('oro_order_entry_point'),
             [
                 OrderType::NAME => [
                     'account' => $accountEntity->getId(),

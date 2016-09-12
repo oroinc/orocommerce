@@ -18,7 +18,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
 use Oro\Bundle\AccountBundle\Entity\AccountAddress;
 
 /**
- * @NamePrefix("orob2b_api_account_")
+ * @NamePrefix("oro_api_account_")
  */
 class AccountUserAddressController extends RestController implements ClassResourceInterface
 {
@@ -32,7 +32,7 @@ class AccountUserAddressController extends RestController implements ClassResour
      *      description="Get account user address",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_account_account_user_view")
+     * @AclAncestor("oro_account_account_user_view")
      * @return Response
      */
     public function getAction($entityId, $addressId)
@@ -58,7 +58,7 @@ class AccountUserAddressController extends RestController implements ClassResour
      *      description="Get all addresses items",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_account_account_user_view")
+     * @AclAncestor("oro_account_account_user_view")
      * @param int $entityId
      *
      * @return JsonResponse
@@ -87,7 +87,7 @@ class AccountUserAddressController extends RestController implements ClassResour
      *      description="Delete address items",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_account_account_user_delete")
+     * @AclAncestor("oro_account_account_user_delete")
      * @param int $entityId
      * @param int $addressId
      *
@@ -117,7 +117,7 @@ class AccountUserAddressController extends RestController implements ClassResour
      *      description="Get account user address by type",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_account_account_user_view")
+     * @AclAncestor("oro_account_account_user_view")
      * @return Response
      */
     public function getByTypeAction($entityId, $typeName)
@@ -145,7 +145,7 @@ class AccountUserAddressController extends RestController implements ClassResour
      *      description="Get account user primary address",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_account_account_user_view")
+     * @AclAncestor("oro_account_account_user_view")
      * @return Response
      */
     public function getPrimaryAction($entityId)

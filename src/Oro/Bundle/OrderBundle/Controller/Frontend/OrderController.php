@@ -19,10 +19,10 @@ use Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler;
 class OrderController extends AbstractOrderController
 {
     /**
-     * @Route("/", name="orob2b_order_frontend_index")
+     * @Route("/", name="oro_order_frontend_index")
      * @Layout(vars={"entity_class"})
      * @Acl(
-     *      id="orob2b_order_frontend_view",
+     *      id="oro_order_frontend_view",
      *      type="entity",
      *      class="OroOrderBundle:Order",
      *      permission="ACCOUNT_VIEW",
@@ -39,8 +39,8 @@ class OrderController extends AbstractOrderController
     }
     
     /**
-     * @Route("/view/{id}", name="orob2b_order_frontend_view", requirements={"id"="\d+"})
-     * @AclAncestor("orob2b_order_frontend_view")
+     * @Route("/view/{id}", name="oro_order_frontend_view", requirements={"id"="\d+"})
+     * @AclAncestor("oro_order_frontend_view")
      * @Layout()
      *
      * @param Order $order
@@ -57,9 +57,9 @@ class OrderController extends AbstractOrderController
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_order_frontend_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_order_frontend_info", requirements={"id"="\d+"})
      * @Template("OroOrderBundle:Order/Frontend:info.html.twig")
-     * @AclAncestor("orob2b_order_frontend_view")
+     * @AclAncestor("oro_order_frontend_view")
      *
      * @param Order $order
      * @return array
@@ -77,10 +77,10 @@ class OrderController extends AbstractOrderController
 //    /**
 //     * Create order form
 //     *
-//     * @Route("/create", name="orob2b_order_frontend_create")
+//     * @Route("/create", name="oro_order_frontend_create")
 //     * @Template("OroOrderBundle:Order/Frontend:update.html.twig")
 //     * @Acl(
-//     *      id="orob2b_order_frontend_create",
+//     *      id="oro_order_frontend_create",
 //     *      type="entity",
 //     *      class="OroOrderBundle:Order",
 //     *      permission="CREATE",
@@ -103,10 +103,10 @@ class OrderController extends AbstractOrderController
 //    /**
 //     * Edit order form
 //     *
-//     * @Route("/update/{id}", name="orob2b_order_frontend_update", requirements={"id"="\d+"})
+//     * @Route("/update/{id}", name="oro_order_frontend_update", requirements={"id"="\d+"})
 //     * @Template("OroOrderBundle:Order/Frontend:update.html.twig")
 //     * @Acl(
-//     *      id="orob2b_order_frontend_update",
+//     *      id="oro_order_frontend_update",
 //     *      type="entity",
 //     *      class="OroOrderBundle:Order",
 //     *      permission="EDIT",
@@ -124,10 +124,10 @@ class OrderController extends AbstractOrderController
     /**
      * Success order
      *
-     * @Route("/success/{id}", name="orob2b_order_frontend_success", requirements={"id"="\d+"})
+     * @Route("/success/{id}", name="oro_order_frontend_success", requirements={"id"="\d+"})
      * @Layout()
      * @Acl(
-     *      id="orob2b_order_view",
+     *      id="oro_order_view",
      *      type="entity",
      *      class="OroOrderBundle:Order",
      *      permission="EDIT"
@@ -168,13 +168,13 @@ class OrderController extends AbstractOrderController
 //            $form,
 //            function (Order $order) {
 //                return [
-//                    'route' => 'orob2b_order_frontend_update',
+//                    'route' => 'oro_order_frontend_update',
 //                    'parameters' => ['id' => $order->getId()],
 //                ];
 //            },
 //            function (Order $order) {
 //                return [
-//                    'route' => 'orob2b_order_frontend_view',
+//                    'route' => 'oro_order_frontend_view',
 //                    'parameters' => ['id' => $order->getId()],
 //                ];
 //            },

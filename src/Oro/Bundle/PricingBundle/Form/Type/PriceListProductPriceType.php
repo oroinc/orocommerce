@@ -16,7 +16,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class PriceListProductPriceType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_price_list_product_price';
+    const NAME = 'oro_pricing_price_list_product_price';
 
     /**
      * @var string

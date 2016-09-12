@@ -27,7 +27,7 @@ services:
                 - setOptionsConfig
                 -
                     -
-                        route: {default: 'orob2b_pricing_frontend_entity_totals'}
+                        route: {default: 'oro_pricing_frontend_entity_totals'}
                         pageComponent: ~
                         events: ~
                         selectors: ~

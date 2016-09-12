@@ -15,7 +15,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 /**
- * @NamePrefix("orob2b_api_")
+ * @NamePrefix("oro_api_")
  */
 class CategoryController extends RestController implements ClassResourceInterface
 {
@@ -25,7 +25,7 @@ class CategoryController extends RestController implements ClassResourceInterfac
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_catalog_category_delete",
+     *      id="oro_catalog_category_delete",
      *      type="entity",
      *      class="OroCatalogBundle:Category",
      *      permission="DELETE"

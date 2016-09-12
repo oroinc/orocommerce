@@ -46,8 +46,8 @@ services:
             - [setDataConverter, ['@oro_product.importexport.data_converter.product']]
             - [setStrategy, ['@oro_product.importexport.strategy.product']]
         tags:
-            - { name: oro_importexport.processor, type: import, entity: '%oro_product.entity.product.class%', alias: orob2b_product_product.add_or_replace }
-            - { name: oro_importexport.processor, type: import_validation, entity: '%oro_product.entity.product.class%', alias: orob2b_product_product.add_or_replace }
+            - { name: oro_importexport.processor, type: import, entity: '%oro_product.entity.product.class%', alias: oro_product_product.add_or_replace }
+            - { name: oro_importexport.processor, type: import_validation, entity: '%oro_product.entity.product.class%', alias: oro_product_product.add_or_replace }
 
     # Export processor
     oro_product.importexport.processor.export.product:
@@ -56,7 +56,7 @@ services:
         calls:
             - [setDataConverter, ['@oro_product.importexport.data_converter.product']]
         tags:
-            - { name: oro_importexport.processor, type: export, entity: '%oro_product.entity.product.class%', alias: orob2b_product_product }
+            - { name: oro_importexport.processor, type: export, entity: '%oro_product.entity.product.class%', alias: oro_product_product }
 
     oro_product.importexport.processor.export_template.product:
         public: false
@@ -64,13 +64,13 @@ services:
         calls:
             - [setDataConverter, ['@oro_product.importexport.data_converter.product_template']]
         tags:
-            - { name: oro_importexport.processor, type: export_template, entity: '%oro_product.entity.product.class%', alias: orob2b_product_product_export_template }
+            - { name: oro_importexport.processor, type: export_template, entity: '%oro_product.entity.product.class%', alias: oro_product_product_export_template }
 
     oro_product.event_listener.product_normalizer:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductNormalizerEventListener'
         tags:
-            - { name: kernel.event_listener, event: orob2b_product.normalizer.normalizer, method: onNormalize }
-            - { name: kernel.event_listener, event: orob2b_product.normalizer.denormalizer, method: onDenormalize }
+            - { name: kernel.event_listener, event: oro_product.normalizer.normalizer, method: onNormalize }
+            - { name: kernel.event_listener, event: oro_product.normalizer.denormalizer, method: onDenormalize }
 
     oro_product.importexport.inventory_status_converter:
         parent: oro_importexport.data_converter.configurable
@@ -81,7 +81,7 @@ services:
         calls:
              - [setDataConverter, ["@oro_product.importexport.inventory_status_converter"]]
         tags:
-            - { name: oro_importexport.processor, type: export, entity: %oro_product.entity.product.class%, alias: orob2b_product.inventory_status_only }
+            - { name: oro_importexport.processor, type: export, entity: %oro_product.entity.product.class%, alias: oro_product.inventory_status_only }
 
     oro_product.importexport.normalizer.inventory_status:
         class: Oro\Bundle\ProductBundle\ImportExport\Normalizer\InventoryStatusNormalizer
@@ -95,4 +95,4 @@ services:
         calls:
             - [setDataConverter, ['@oro_product.importexport.inventory_status_converter']]
         tags:
-            - { name: oro_importexport.processor, type: export_template, entity: '%oro_product.entity.product.class%', alias: orob2b_product.inventory_status_only_template }
+            - { name: oro_importexport.processor, type: export_template, entity: '%oro_product.entity.product.class%', alias: oro_product.inventory_status_only_template }

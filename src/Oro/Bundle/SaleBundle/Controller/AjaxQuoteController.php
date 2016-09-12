@@ -24,9 +24,9 @@ class AjaxQuoteController extends Controller
     /**
      * Get order related data
      *
-     * @Route("/related-data", name="orob2b_quote_related_data")
+     * @Route("/related-data", name="oro_quote_related_data")
      * @Method({"GET"})
-     * @AclAncestor("orob2b_quote_update")
+     * @AclAncestor("oro_quote_update")
      *
      * @return JsonResponse
      */

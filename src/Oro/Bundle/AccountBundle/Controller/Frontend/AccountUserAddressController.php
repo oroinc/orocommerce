@@ -21,9 +21,9 @@ use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
 class AccountUserAddressController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_account_frontend_account_user_address_index")
+     * @Route("/", name="oro_account_frontend_account_user_address_index")
      * @Layout(vars={"entity_class", "account_address_count", "account_user_address_count"})
-     * @AclAncestor("orob2b_account_frontend_account_user_address_view")
+     * @AclAncestor("oro_account_frontend_account_user_address_view")
      *
      * @return array
      */
@@ -42,11 +42,11 @@ class AccountUserAddressController extends Controller
     /**
      * @Route(
      *     "/{entityId}/address-create",
-     *     name="orob2b_account_frontend_account_user_address_create",
+     *     name="oro_account_frontend_account_user_address_create",
      *     requirements={"entityId":"\d+"}
      * )
      * @Acl(
-     *      id="orob2b_account_frontend_account_user_address_create",
+     *      id="oro_account_frontend_account_user_address_create",
      *      type="entity",
      *      class="OroAccountBundle:AccountUserAddress",
      *      permission="CREATE",
@@ -68,11 +68,11 @@ class AccountUserAddressController extends Controller
     /**
      * @Route(
      *     "/{entityId}/address/{id}/update",
-     *     name="orob2b_account_frontend_account_user_address_update",
+     *     name="oro_account_frontend_account_user_address_update",
      *     requirements={"entityId":"\d+", "id":"\d+"}
      * )
      * @Acl(
-     *      id="orob2b_account_frontend_account_user_address_update",
+     *      id="oro_account_frontend_account_user_address_update",
      *      type="entity",
      *      class="OroAccountBundle:AccountUserAddress",
      *      permission="EDIT",
@@ -119,16 +119,16 @@ class AccountUserAddressController extends Controller
             $form,
             function (AccountUserAddress $accountAddress) use ($accountUser) {
                 return [
-                    'route' => 'orob2b_account_frontend_account_user_address_update',
+                    'route' => 'oro_account_frontend_account_user_address_update',
                     'parameters' => ['id' => $accountAddress->getId(), 'entityId' => $accountUser->getId()],
                 ];
             },
             function (AccountUserAddress $accountAddress) use ($accountUser, $currentUser) {
                 if ($currentUser instanceof AccountUser && $currentUser->getId() === $accountUser->getId()) {
-                    return ['route' => 'orob2b_account_frontend_account_user_address_index'];
+                    return ['route' => 'oro_account_frontend_account_user_address_index'];
                 } else {
                     return [
-                        'route' => 'orob2b_account_frontend_account_user_view',
+                        'route' => 'oro_account_frontend_account_user_view',
                         'parameters' => ['id' => $accountUser->getId()],
                     ];
                 }

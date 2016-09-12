@@ -62,7 +62,7 @@ class TaxationSettingsProvider
      */
     public function isEnabled()
     {
-        return (bool)$this->configManager->get('orob2b_tax.tax_enable');
+        return (bool)$this->configManager->get('oro_tax.tax_enable');
     }
 
     /**
@@ -70,7 +70,7 @@ class TaxationSettingsProvider
      */
     public function getStartCalculationWith()
     {
-        return $this->configManager->get('orob2b_tax.start_calculation_with');
+        return $this->configManager->get('oro_tax.start_calculation_with');
     }
 
     /**
@@ -94,7 +94,7 @@ class TaxationSettingsProvider
      */
     public function getStartCalculationOn()
     {
-        return $this->configManager->get('orob2b_tax.start_calculation_on');
+        return $this->configManager->get('oro_tax.start_calculation_on');
     }
 
     /**
@@ -118,7 +118,7 @@ class TaxationSettingsProvider
      */
     public function isProductPricesIncludeTax()
     {
-        return $this->configManager->get('orob2b_tax.product_prices_include_tax');
+        return $this->configManager->get('oro_tax.product_prices_include_tax');
     }
 
     /**
@@ -126,7 +126,7 @@ class TaxationSettingsProvider
      */
     public function getDestination()
     {
-        return $this->configManager->get('orob2b_tax.destination');
+        return $this->configManager->get('oro_tax.destination');
     }
 
     /**
@@ -134,7 +134,7 @@ class TaxationSettingsProvider
      */
     public function getDigitalProductsTaxCodesUS()
     {
-        return $this->configManager->get('orob2b_tax.digital_products_us');
+        return $this->configManager->get('oro_tax.digital_products_us');
     }
 
     /**
@@ -142,7 +142,7 @@ class TaxationSettingsProvider
      */
     public function getDigitalProductsTaxCodesEU()
     {
-        return $this->configManager->get('orob2b_tax.digital_products_eu');
+        return $this->configManager->get('oro_tax.digital_products_eu');
     }
 
     /**
@@ -166,7 +166,7 @@ class TaxationSettingsProvider
      */
     public function getBaseByDefaultAddressType()
     {
-        return $this->configManager->get('orob2b_tax.use_as_base_by_default');
+        return $this->configManager->get('oro_tax.use_as_base_by_default');
     }
 
     /**
@@ -190,7 +190,7 @@ class TaxationSettingsProvider
      */
     public function getBaseAddressExclusions()
     {
-        $exclusionsData = $this->configManager->get('orob2b_tax.use_as_base_exclusions');
+        $exclusionsData = $this->configManager->get('oro_tax.use_as_base_exclusions');
 
         $exclusions = [];
         foreach ($exclusionsData as $exclusionData) {
@@ -205,7 +205,7 @@ class TaxationSettingsProvider
      */
     public function getOrigin()
     {
-        $originAddressValues = $this->configManager->get('orob2b_tax.origin_address');
+        $originAddressValues = $this->configManager->get('oro_tax.origin_address');
 
         return $this->addressModelFactory->create($originAddressValues);
     }

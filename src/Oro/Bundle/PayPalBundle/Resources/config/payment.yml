@@ -31,7 +31,7 @@ services:
             - '@oro_paypal.payment_method.payflow_gateway.config'
             - '@router'
         tags:
-            - { name: orob2b_payment.payment_method }
+            - { name: oro_payment.payment_method }
 
     oro_paypal.payment_method.paypal_payments_pro:
         class: 'Oro\Bundle\PayPalBundle\Method\PayPalPaymentsPro'
@@ -41,7 +41,7 @@ services:
             - '@oro_paypal.payment_method.paypal_payments_pro.config'
             - '@router'
         tags:
-            - { name: orob2b_payment.payment_method }
+            - { name: oro_payment.payment_method }
 
     oro_paypal.payment_method.payflow_express_checkout:
         class: 'Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout'
@@ -53,7 +53,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_paypal.provider.extract_options'
         tags:
-            - { name: orob2b_payment.payment_method }
+            - { name: oro_payment.payment_method }
 
     oro_paypal.payment_method.paypal_payments_pro_express_checkout:
         class: 'Oro\Bundle\PayPalBundle\Method\PayPalPaymentsProExpressCheckout'
@@ -65,7 +65,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_paypal.provider.extract_options'
         tags:
-            - { name: orob2b_payment.payment_method }
+            - { name: oro_payment.payment_method }
 
     oro_paypal.payment_method.view.payflow_gateway:
         class: 'Oro\Bundle\PayPalBundle\Method\View\PayflowGatewayView'
@@ -75,7 +75,7 @@ services:
             - '@oro_paypal.payment_method.payflow_gateway.config'
             - '@oro_payment.provider.payment_transaction'
         tags:
-            - { name: orob2b_payment.payment_method_view }
+            - { name: oro_payment.payment_method_view }
 
     oro_paypal.payment_method.view.payflow_express_checkout:
         class: 'Oro\Bundle\PayPalBundle\Method\View\PayflowExpressCheckoutView'
@@ -83,7 +83,7 @@ services:
         arguments:
             - '@oro_paypal.payment_method.payflow_express_checkout.config'
         tags:
-            - { name: orob2b_payment.payment_method_view }
+            - { name: oro_payment.payment_method_view }
 
     oro_paypal.payment_method.view.paypal_payments_pro_express_checkout:
         class: 'Oro\Bundle\PayPalBundle\Method\View\PayPalPaymentsProExpressCheckoutView'
@@ -91,7 +91,7 @@ services:
         arguments:
             - '@oro_paypal.payment_method.paypal_payments_pro_express_checkout.config'
         tags:
-            - { name: orob2b_payment.payment_method_view }
+            - { name: oro_payment.payment_method_view }
 
     oro_paypal.payment_method.view.paypal_payments_pro:
         class: 'Oro\Bundle\PayPalBundle\Method\View\PayPalPaymentsProView'
@@ -101,7 +101,7 @@ services:
             - '@oro_paypal.payment_method.paypal_payments_pro.config'
             - '@oro_payment.provider.payment_transaction'
         tags:
-            - { name: orob2b_payment.payment_method_view }
+            - { name: oro_payment.payment_method_view }
 
     oro_paypal.provider.extract_options:
         class: 'Oro\Bundle\PayPalBundle\Provider\ExtractOptionsProvider'

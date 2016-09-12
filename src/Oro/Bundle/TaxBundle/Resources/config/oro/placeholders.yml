@@ -1,8 +1,8 @@
 placeholders:
     placeholders:
-        orob2b_pricing_totals_before:
+        oro_pricing_totals_before:
             items:
-                orob2b_pricing_tax_totals: ~
+                oro_pricing_tax_totals: ~
         order_edit_section_unitPriceIncludingTax_after: { items: { order_edit_section_unitPriceIncludingTax_after_item: ~ } }
         order_edit_section_unitPriceExcludingTax_after: { items: { order_edit_section_unitPriceExcludingTax_after_item: ~ } }
         order_edit_section_unitPriceTaxAmount_after: { items: { order_edit_section_unitPriceTaxAmount_after_item: ~ } }
@@ -18,7 +18,7 @@ placeholders:
                 order_taxes_item_items_template: ~
 
     items:
-        orob2b_pricing_tax_totals:
+        oro_pricing_tax_totals:
             template: OroTaxBundle::placeholder.html.twig
             applicable: "@oro_tax.provider.taxation_settings_provider->isEnabled()"
         order_edit_section_unitPriceIncludingTax_after_item:

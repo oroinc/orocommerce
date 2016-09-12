@@ -16,7 +16,7 @@ use Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 
 class FrontendAccountUserRoleSelectType extends AbstractType
 {
-    const NAME = 'orob2b_account_frontend_account_user_role_select';
+    const NAME = 'oro_account_frontend_account_user_role_select';
 
     /** @var SecurityFacade */
     protected $securityFacade;

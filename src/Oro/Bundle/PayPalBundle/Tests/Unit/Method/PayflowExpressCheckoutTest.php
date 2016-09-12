@@ -221,13 +221,13 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             ->method('generate')
             ->withConsecutive(
                 [
-                    'orob2b_payment_callback_return',
+                    'oro_payment_callback_return',
                     [
                         'accessIdentifier' => 'testAccessIdentifier',
                     ],
                 ],
                 [
-                    'orob2b_payment_callback_error',
+                    'oro_payment_callback_error',
                     [
                         'accessIdentifier' => 'testAccessIdentifier',
                     ],
@@ -314,13 +314,13 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             ->method('generate')
             ->withConsecutive(
                 [
-                    'orob2b_payment_callback_return',
+                    'oro_payment_callback_return',
                     [
                         'accessIdentifier' => 'testAccessIdentifier',
                     ],
                 ],
                 [
-                    'orob2b_payment_callback_error',
+                    'oro_payment_callback_error',
                     [
                         'accessIdentifier' => 'testAccessIdentifier',
                     ],
@@ -421,13 +421,13 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             ->method('generate')
             ->withConsecutive(
                 [
-                    'orob2b_payment_callback_return',
+                    'oro_payment_callback_return',
                     [
                         'accessIdentifier' => 'testAccessIdentifier',
                     ],
                 ],
                 [
-                    'orob2b_payment_callback_error',
+                    'oro_payment_callback_error',
                     [
                         'accessIdentifier' => 'testAccessIdentifier',
                     ],

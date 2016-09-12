@@ -30,7 +30,7 @@ class AccountUserProviderTest extends WebTestCase
     public function testAccountPermissions()
     {
         // init tokens
-        $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_profile'));
+        $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_profile'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $this->assertRoleHasPermission(LoadAccountUserRoles::ADMINISTRATOR, [true, true, true, true, true]);

@@ -26,7 +26,7 @@ class PriceListDeleteOperationTest extends ActionTestCase
         $this->assertDeleteOperation(
             $priceList->getId(),
             'oro_pricing.entity.price_list.class',
-            'orob2b_pricing_price_list_index'
+            'oro_pricing_price_list_index'
         );
     }
 
