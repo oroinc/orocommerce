@@ -94,7 +94,8 @@ class OrmEngineTest extends WebTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $frontendHelperMock->expects($this->any())
+        $frontendHelperMock
+            ->expects($this->any())
             ->method('isFrontendRequest')
             ->willReturn(true);
 
