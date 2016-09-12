@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
@@ -87,6 +88,17 @@ class OrmEngineTest extends WebTestCase
         if ($this->getContainer()->getParameter('oro_website_search.engine') != 'orm') {
             $this->markTestSkipped('Should be tested only with ORM search engine');
         }
+
+        /** @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject */
+        $frontendHelperMock = $this->getMockBuilder(FrontendHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $frontendHelperMock->expects($this->any())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
+
+        $this->getContainer()->set('orob2b_frontend.request.frontend_helper', $frontendHelperMock);
 
         $this->loadFixtures([LoadSearchItemData::class]);
 

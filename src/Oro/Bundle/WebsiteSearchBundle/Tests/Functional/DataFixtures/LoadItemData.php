@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\SearchBundle\Entity\ItemFieldInterface;
@@ -75,6 +76,11 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
     ];
 
     /**
+     * @var ReferenceRepository
+     */
+    private static $searchReferenceRepository;
+
+    /**
      * {@inheritdoc}
      */
     public function getDependencies()
@@ -94,6 +100,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
             ->getWebsiteIdentifiers();
 
         $manager = $this->container->get('oro_entity.doctrine_helper')->getEntityManager(Item::class);
+        self::$searchReferenceRepository = new ReferenceRepository($manager);
 
         foreach ($websiteIds as $websiteId) {
             foreach (self::$itemsData as $reference => $itemData) {
@@ -134,10 +141,25 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
                 if (isset($itemData['textFields'])) {
                     $this->populateFields($item, $item->getTextFields(), new IndexText, $itemData['textFields']);
                 }
+
+                self::getSearchReferenceRepository()->addReference(
+                    self::getReferenceName($reference, $websiteId),
+                    $item
+                );
             }
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @param string $referenceName
+     * @param int $websiteId
+     * @return string
+     */
+    public static function getReferenceName($referenceName, $websiteId)
+    {
+        return $referenceName . '_website_' . $websiteId;
     }
 
     /**
@@ -168,5 +190,18 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
 
             $collection->add($field);
         }
+    }
+
+    /**
+     * @return ReferenceRepository
+     * @throw \LogicException
+     */
+    public static function getSearchReferenceRepository()
+    {
+        if (null === self::$searchReferenceRepository) {
+            throw new \LogicException('The reference repository is not set. Have you loaded fixtures?');
+        }
+
+        return self::$searchReferenceRepository;
     }
 }
