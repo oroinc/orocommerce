@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Storage;
 
 class ProductDataStorage extends AbstractSessionDataStorage
 {
-    const PRODUCT_DATA_KEY = 'orob2b_product_data';
+    const PRODUCT_DATA_KEY = 'oro_product_data';
 
     const ENTITY_DATA_KEY = 'entity_data';
     const ENTITY_ITEMS_DATA_KEY = 'entity_items_data';

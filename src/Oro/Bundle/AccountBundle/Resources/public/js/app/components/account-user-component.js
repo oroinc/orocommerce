@@ -57,7 +57,7 @@ define(function(require) {
                 }
 
                 widget.setUrl(
-                    routing.generate('orob2b_account_account_user_roles', params)
+                    routing.generate('oro_account_account_user_roles', params)
                 );
                 widget.render();
             });

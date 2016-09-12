@@ -39,7 +39,7 @@ class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwar
             ->getMock();
         $resolver->expects($this->once())
             ->method('setDefault')
-            ->with('grid_widget_route', 'orob2b_frontend_datagrid_widget');
+            ->with('grid_widget_route', 'oro_frontend_datagrid_widget');
 
         $this->extension->configureOptions($resolver);
     }
@@ -73,7 +73,7 @@ class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwar
         return [
             [new \stdClass(), 'oro_form_autocomplete_search', 'oro_form_autocomplete_search'],
             [new AccountUser(), 'custom_route', 'custom_route'],
-            [new AccountUser(), 'oro_form_autocomplete_search', 'orob2b_frontend_autocomplete_search'],
+            [new AccountUser(), 'oro_form_autocomplete_search', 'oro_frontend_autocomplete_search'],
         ];
     }
 }

@@ -8,7 +8,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class WebType extends AbstractType
 {
-    const NAME = 'orob2b_frontend_install_configuration_web';
+    const NAME = 'oro_frontend_install_configuration_web';
 
     /**
      * {@inheritdoc}
@@ -19,10 +19,10 @@ class WebType extends AbstractType
             'oro_installer_web_backend_prefix',
             'text',
             [
-                'label' => 'orob2b_frontend.form.install_configuration.web.backend_prefix',
+                'label' => 'oro_frontend.form.install_configuration.web.backend_prefix',
                 'constraints' => [
                     new Assert\NotBlank(),
-                    new Assert\Regex(['pattern' => '~^/\w+$~', 'message' => 'orob2b_frontend.regex.backend_prefix'])
+                    new Assert\Regex(['pattern' => '~^/\w+$~', 'message' => 'oro_frontend.regex.backend_prefix'])
                 ],
             ]
         );

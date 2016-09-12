@@ -17,7 +17,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
  */
 class ProductControllerTest extends WebTestCase
 {
-    const SIDEBAR_ROUTE = 'orob2b_catalog_category_product_sidebar';
+    const SIDEBAR_ROUTE = 'oro_catalog_category_product_sidebar';
 
     /**
      * @var Client
@@ -101,7 +101,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertEquals($arr['defaultCategoryId'], $categoryId);
         $this->assertCount(8, $arr['data']);
     }
-
+    
     /**
      * @dataProvider defaultUnitPrecisionDataProvider
      *
@@ -111,8 +111,8 @@ class ProductControllerTest extends WebTestCase
     public function testDefaultProductUnitPrecision($category, $expected)
     {
         $configManager = $this->client->getContainer()->get('oro_config.manager');
-        $systemDefaultUnit = $configManager->get('orob2b_product.default_unit');
-        $systemDefaultPrecision = $configManager->get('orob2b_product.default_unit_precision');
+        $systemDefaultUnit = $configManager->get('oro_product.default_unit');
+        $systemDefaultPrecision = $configManager->get('oro_product.default_unit_precision');
 
         $categoryReference = $category ? $this->getReference($category) : null;
 
@@ -135,18 +135,18 @@ class ProductControllerTest extends WebTestCase
             'categoryPrecision' => $categoryPrecision,
         ];
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
         $form = $crawler->selectButton('Continue')->form();
         $formValues = $form->getPhpValues();
-        $formValues['input_action'] = 'orob2b_product_create';
+        $formValues['input_action'] = 'oro_product_create';
         if ($categoryReference) {
-            $formValues['orob2b_product_step_one']['category'] = $categoryReference->getId();
+            $formValues['oro_product_step_one']['category'] = $categoryReference->getId();
         }
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request(
             'POST',
-            $this->getUrl('orob2b_product_create'),
+            $this->getUrl('oro_product_create'),
             $formValues
         );
 
@@ -198,11 +198,11 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertEquals(
             $unit,
-            $formValues['orob2b_product[primaryUnitPrecision][unit]']
+            $formValues['oro_product[primaryUnitPrecision][unit]']
         );
         $this->assertEquals(
             $precision,
-            $formValues['orob2b_product[primaryUnitPrecision][precision]']
+            $formValues['oro_product[primaryUnitPrecision][precision]']
         );
     }
 }

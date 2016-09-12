@@ -16,7 +16,7 @@ use Oro\Bundle\AccountBundle\Entity\Account;
 
 class AccountType extends AbstractType
 {
-    const NAME = 'orob2b_account_type';
+    const NAME = 'oro_account_type';
     const GROUP_FIELD = 'group';
 
     /**

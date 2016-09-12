@@ -105,7 +105,7 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
     protected function getEmailProcessor()
     {
         if (!$this->emailProcessor) {
-            $this->emailProcessor = $this->container->get('orob2b_account.mailer.processor');
+            $this->emailProcessor = $this->container->get('oro_account.mailer.processor');
         }
 
         return $this->emailProcessor;

@@ -15,7 +15,7 @@ use Oro\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSet;
 
 class EntityVisibilityType extends AbstractType
 {
-    const NAME = 'orob2b_account_entity_visibility_type';
+    const NAME = 'oro_account_entity_visibility_type';
 
     const VISIBILITY = 'visibility';
 

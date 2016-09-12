@@ -14,7 +14,7 @@ use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 
 class FlatRateShippingConfigurationType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_flat_rate_rule_config';
+    const NAME = 'oro_shipping_flat_rate_rule_config';
 
     /**
      * @var RoundingServiceInterface
@@ -67,7 +67,7 @@ class FlatRateShippingConfigurationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => FlatRateRuleConfiguration::class,
-            'label' => 'oro.shipping.form.orob2b_shipping_flat_rate_rule_config.label',
+            'label' => 'oro.shipping.form.oro_shipping_flat_rate_rule_config.label',
         ]);
     }
 

@@ -1,16 +1,16 @@
 services:
-    orob2b_checkout.form.type.checkout_address:
+    oro_checkout.form.type.checkout_address:
         class: 'Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType'
-        parent: orob2b_order.form.type.order_address
+        parent: oro_order.form.type.order_address
         tags:
-            - { name: form.type, alias: orob2b_checkout_address }
+            - { name: form.type, alias: oro_checkout_address }
 
-    orob2b_checkout.form.type.ship_to_billing_address:
+    oro_checkout.form.type.ship_to_billing_address:
         class: 'Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType'
         tags:
-            - { name: form.type, alias: orob2b_ship_to_billing_address }
+            - { name: form.type, alias: oro_ship_to_billing_address }
 
-    orob2b_checkout.form.extension.checkout_workflow:
+    oro_checkout.form.extension.checkout_workflow:
         class: 'Oro\Bundle\CheckoutBundle\Form\Extension\CheckoutWorkflowExtension'
         arguments:
             - '@session.flash_bag'

@@ -41,27 +41,27 @@ class ProductControllerTest extends WebTestCase
             LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1
         );
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
         $form = $crawler->selectButton('Continue')->form();
         $formValues = $form->getPhpValues();
-        $formValues['input_action'] = 'orob2b_product_create';
-        $formValues['orob2b_product_step_one']['category'] = self::CATEGORY_ID;
+        $formValues['input_action'] = 'oro_product_create';
+        $formValues['oro_product_step_one']['category'] = self::CATEGORY_ID;
 
         $this->client->followRedirects(true);
-        $crawler = $this->client->request('POST', $this->getUrl('orob2b_product_create'), $formValues);
+        $crawler = $this->client->request('POST', $this->getUrl('oro_product_create'), $formValues);
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
-        $formValues['orob2b_product']['sku'] = self::TEST_SKU;
-        $formValues['orob2b_product']['owner'] = $this->getBusinessUnitId();
-        $formValues['orob2b_product']['inventoryStatus'] = Product::INVENTORY_STATUS_IN_STOCK;
-        $formValues['orob2b_product']['status'] = Product::STATUS_DISABLED;
-        $formValues['orob2b_product']['names']['values']['default'] = self::DEFAULT_NAME;
-        $formValues['orob2b_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
-        $formValues['orob2b_product']['taxCode'] = $productTaxCode->getId();
-        $formValues['orob2b_product']['primaryUnitPrecision'] = [
+        $formValues['oro_product']['sku'] = self::TEST_SKU;
+        $formValues['oro_product']['owner'] = $this->getBusinessUnitId();
+        $formValues['oro_product']['inventoryStatus'] = Product::INVENTORY_STATUS_IN_STOCK;
+        $formValues['oro_product']['status'] = Product::STATUS_DISABLED;
+        $formValues['oro_product']['names']['values']['default'] = self::DEFAULT_NAME;
+        $formValues['oro_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
+        $formValues['oro_product']['taxCode'] = $productTaxCode->getId();
+        $formValues['oro_product']['primaryUnitPrecision'] = [
             'unit' => self::FIRST_UNIT_CODE,
             'precision' => self::FIRST_UNIT_PRECISION,
         ];
@@ -90,7 +90,7 @@ class ProductControllerTest extends WebTestCase
         );
 
         $product = $this->getProductDataBySku(self::TEST_SKU);
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $product->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -109,7 +109,7 @@ class ProductControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_product_tax_code_view', ['id' => $productTaxCode->getId()])
+            $this->getUrl('oro_tax_product_tax_code_view', ['id' => $productTaxCode->getId()])
         );
 
         $result = $this->client->getResponse();

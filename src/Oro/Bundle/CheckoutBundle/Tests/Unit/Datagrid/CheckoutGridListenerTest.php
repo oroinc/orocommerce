@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Event\GridResultAfter;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -251,16 +251,16 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfter()
     {
-        /** @var GridResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder(GridResultAfter::class)->disableOriginalConstructor()->getMock();
+        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
         $event->expects($this->once())->method('getRecords')->will($this->returnValue([]));
         $this->listener->onResultAfter($event);
     }
 
     public function testBuildItemsCountColumn()
     {
-        /** @var GridResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder(GridResultAfter::class)->disableOriginalConstructor()->getMock();
+        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
 
         $data = array_combine(range(1, 10), range(1, 10));
 
@@ -298,8 +298,8 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildStartedFromColumn()
     {
-        /** @var GridResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder(GridResultAfter::class)->disableOriginalConstructor()->getMock();
+        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
 
         $shoppingList = new ShoppingList();
         $shoppingList->setLabel('test');
@@ -393,8 +393,8 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildTotalColumn()
     {
-        /** @var GridResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder(GridResultAfter::class)->disableOriginalConstructor()->getMock();
+        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
 
         $this->totalProcessor->expects($this->once())
                              ->method('getTotal')

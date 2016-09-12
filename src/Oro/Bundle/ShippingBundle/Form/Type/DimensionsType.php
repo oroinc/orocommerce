@@ -10,7 +10,7 @@ use Oro\Bundle\ShippingBundle\Form\DataTransformer\DimensionsTransformer;
 
 class DimensionsType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_dimensions';
+    const NAME = 'oro_shipping_dimensions';
 
     /** @var string */
     protected $dataClass;

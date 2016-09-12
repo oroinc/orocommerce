@@ -156,8 +156,8 @@ class ProductVisibilityControllerTest extends WebTestCase
             $this->getUrl(
                 'oro_action_operation_execute',
                 [
-                    'operationName' => 'orob2b_product_duplicate',
-                    'route' => 'orob2b_product_view',
+                    'operationName' => 'oro_product_duplicate',
+                    'route' => 'oro_product_view',
                     'entityId' => $this->product->getId(),
                     'entityClass' => 'Oro\Bundle\ProductBundle\Entity\Product'
                 ]
@@ -249,7 +249,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         ];
         $crawler = $this->client->request(
             'POST',
-            $this->getUrl('orob2b_product_visibility_edit', ['id' => $this->product->getId()]),
+            $this->getUrl('oro_product_visibility_edit', ['id' => $this->product->getId()]),
             $parameters
         );
         $response = $this->client->getResponse();
@@ -268,7 +268,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_product_visibility_website',
+                'oro_product_visibility_website',
                 ['productId' => $productId, 'id' => $websiteId]
             ),
             ['_widgetContainer' => 'widget']
@@ -334,7 +334,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->client->followRedirects();
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_product_visibility_edit', ['id' => $this->product->getId()])
+            $this->getUrl('oro_product_visibility_edit', ['id' => $this->product->getId()])
         );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 

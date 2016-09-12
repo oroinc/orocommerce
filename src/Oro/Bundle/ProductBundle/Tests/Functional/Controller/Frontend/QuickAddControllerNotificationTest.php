@@ -99,22 +99,22 @@ class QuickAddControllerNotificationTest extends WebTestCase
      */
     public function testNotificationForMultiplyProductsNotAllowedRFQ($group)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $form = $crawler->filter('form[name="orob2b_product_quick_add"]')->form();
+        $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
 
         /** @var DataStorageAwareComponentProcessor $processor */
-        $processor = $this->getContainer()->get('orob2b_rfp.processor.quick_add');
+        $processor = $this->getContainer()->get('oro_rfp.processor.quick_add');
 
         $this->client->followRedirects(true);
         $this->client->request(
             $form->getMethod(),
             $form->getUri(),
             [
-                'orob2b_product_quick_add' => [
-                    '_token' => $form['orob2b_product_quick_add[_token]']->getValue(),
+                'oro_product_quick_add' => [
+                    '_token' => $form['oro_product_quick_add[_token]']->getValue(),
                     'products' => $this->productGroups[$group],
                     'component' => $processor->getName(),
                 ],

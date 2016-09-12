@@ -42,9 +42,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      )
  * })
  * @Config(
- *      routeName="orob2b_account_account_user_index",
- *      routeView="orob2b_account_account_user_view",
- *      routeUpdate="orob2b_account_account_user_update",
+ *      routeName="oro_account_account_user_index",
+ *      routeView="oro_account_account_user_view",
+ *      routeUpdate="oro_account_account_user_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
@@ -60,7 +60,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *              "organization_column_name"="organization_id"
  *          },
  *          "form"={
- *              "form_type"="orob2b_account_account_user_select",
+ *              "form_type"="oro_account_account_user_select",
  *              "grid_name"="account-account-user-select-grid"
  *          },
  *          "security"={

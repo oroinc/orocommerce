@@ -33,10 +33,10 @@ class RFPFrontendActionsTest extends WebTestCase
 
     public function testQuickAdd()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $form = $crawler->filter('form[name="orob2b_product_quick_add"]')->form();
+        $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
 
         /** @var Product $product */
         $product = $this->getReference('product.3');
@@ -49,15 +49,15 @@ class RFPFrontendActionsTest extends WebTestCase
         ];
 
         /** @var DataStorageAwareComponentProcessor $processor */
-        $processor = $this->getContainer()->get('orob2b_rfp.processor.quick_add');
+        $processor = $this->getContainer()->get('oro_rfp.processor.quick_add');
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request(
             $form->getMethod(),
             $form->getUri(),
             [
-                'orob2b_product_quick_add' => [
-                    '_token' => $form['orob2b_product_quick_add[_token]']->getValue(),
+                'oro_product_quick_add' => [
+                    '_token' => $form['oro_product_quick_add[_token]']->getValue(),
                     'products' => $products,
                     'component' => $processor->getName(),
                 ],
@@ -76,15 +76,15 @@ class RFPFrontendActionsTest extends WebTestCase
         $this->assertEquals($expectedQuickAddLineItems, $this->getActualLineItems($crawler, 1));
 
         $form = $crawler->selectButton('Submit Request For Quote')->form();
-        $form['orob2b_rfp_frontend_request[firstName]'] = 'Firstname';
-        $form['orob2b_rfp_frontend_request[lastName]'] = 'Lastname';
-        $form['orob2b_rfp_frontend_request[email]'] = 'email@example.com';
-        $form['orob2b_rfp_frontend_request[phone]'] = '55555555';
-        $form['orob2b_rfp_frontend_request[company]'] = 'Test Company';
-        $form['orob2b_rfp_frontend_request[role]'] = 'Test Role';
-        $form['orob2b_rfp_frontend_request[note]'] = 'Test notes';
-        $form['orob2b_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][value]'] = 100;
-        $form['orob2b_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][currency]'] = 'USD';
+        $form['oro_rfp_frontend_request[firstName]'] = 'Firstname';
+        $form['oro_rfp_frontend_request[lastName]'] = 'Lastname';
+        $form['oro_rfp_frontend_request[email]'] = 'email@example.com';
+        $form['oro_rfp_frontend_request[phone]'] = '55555555';
+        $form['oro_rfp_frontend_request[company]'] = 'Test Company';
+        $form['oro_rfp_frontend_request[role]'] = 'Test Role';
+        $form['oro_rfp_frontend_request[note]'] = 'Test notes';
+        $form['oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][value]'] = 100;
+        $form['oro_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][currency]'] = 'USD';
 
         $crawler = $this->client->submit($form);
 
@@ -100,7 +100,7 @@ class RFPFrontendActionsTest extends WebTestCase
     protected function getActualLineItems(Crawler $crawler, $count)
     {
         $result = [];
-        $basePath = 'input[name="orob2b_rfp_frontend_request[requestProducts]';
+        $basePath = 'input[name="oro_rfp_frontend_request[requestProducts]';
 
         for ($i = 0; $i < $count; $i++) {
             $value = $crawler->filter($basePath.'['.$i.'][product]"]')->extract('value');

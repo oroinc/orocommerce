@@ -30,7 +30,7 @@ class ShoppingListAddButtonTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_shopping_list_frontend_create',
+                'oro_shopping_list_frontend_create',
                 [
                     'createOnly' => 'true',
                     '_widgetContainer' => 'dialog',
@@ -44,12 +44,12 @@ class ShoppingListAddButtonTest extends WebTestCase
         $this->assertContains('Shopping List Name', $result->getContent());
 
         $form = $crawler->selectButton('Create')->form();
-        $form['orob2b_shopping_list_type[label]'] = 'TestShoppingList';
+        $form['oro_shopping_list_type[label]'] = 'TestShoppingList';
 
         $this->client->request(
             $form->getMethod(),
             $this->getUrl(
-                'orob2b_shopping_list_frontend_create',
+                'oro_shopping_list_frontend_create',
                 [
                     'createOnly' => 'true',
                     '_widgetContainer' => 'dialog',

@@ -28,6 +28,7 @@ oro:
         variant_links.label: Product Variant Links
         images.label: Images
         anything.label: Any Text
+        featured_products.label: Featured Products
 
         status:
             enabled: Enabled

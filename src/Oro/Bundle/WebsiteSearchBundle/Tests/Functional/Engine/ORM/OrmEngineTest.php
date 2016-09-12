@@ -98,7 +98,7 @@ class OrmEngineTest extends WebTestCase
             ->method('isFrontendRequest')
             ->willReturn(true);
 
-        $this->getContainer()->set('orob2b_frontend.request.frontend_helper', $frontendHelperMock);
+        $this->getContainer()->set('oro_frontend.request.frontend_helper', $frontendHelperMock);
 
         $this->loadFixtures([LoadSearchItemData::class]);
 

@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
@@ -13,8 +14,6 @@ use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Bundle\DataGridBundle\Event\GridResultAfter;
 
 class FrontendProductDatagridListener
 {
@@ -37,26 +36,18 @@ class FrontendProductDatagridListener
     protected $attachmentManager;
 
     /**
-     * @var ProductUnitLabelFormatter
-     */
-    protected $unitFormatter;
-
-    /**
      * @param DataGridThemeHelper $themeHelper
      * @param RegistryInterface $registry
      * @param AttachmentManager $attachmentManager
-     * @param ProductUnitLabelFormatter $unitFormatter
      */
     public function __construct(
         DataGridThemeHelper $themeHelper,
         RegistryInterface $registry,
-        AttachmentManager $attachmentManager,
-        ProductUnitLabelFormatter $unitFormatter
+        AttachmentManager $attachmentManager
     ) {
         $this->themeHelper = $themeHelper;
         $this->registry = $registry;
         $this->attachmentManager = $attachmentManager;
-        $this->unitFormatter = $unitFormatter;
     }
 
     /**
@@ -148,9 +139,9 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param GridResultAfter $event
+     * @param OrmResultAfter $event
      */
-    public function onResultAfter(GridResultAfter $event)
+    public function onResultAfter(OrmResultAfter $event)
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
@@ -167,11 +158,11 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param GridResultAfter $event
+     * @param OrmResultAfter $event
      * @param array $productIds
      * @param ResultRecord[] $records
      */
-    protected function addProductImages(GridResultAfter $event, array $productIds, array $records)
+    protected function addProductImages(OrmResultAfter $event, array $productIds, array $records)
     {
         $gridName = $event->getDatagrid()->getName();
         $supportedViews = [DataGridThemeHelper::VIEW_GRID, DataGridThemeHelper::VIEW_TILES];
@@ -208,7 +199,7 @@ class FrontendProductDatagridListener
             $productId = $record->getValue('id');
             if (array_key_exists($productId, $productUnits)) {
                 foreach ($productUnits[$productId] as $unitCode) {
-                    $units[$unitCode] = $this->unitFormatter->format($unitCode);
+                    $units[] = $unitCode;
                 }
             }
             $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);

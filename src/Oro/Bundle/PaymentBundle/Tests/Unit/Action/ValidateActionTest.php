@@ -87,14 +87,14 @@ class ValidateActionTest extends AbstractActionTest
             ->method('generate')
             ->withConsecutive(
                 [
-                    'orob2b_payment_callback_error',
+                    'oro_payment_callback_error',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
                     RouterInterface::ABSOLUTE_URL
                 ],
                 [
-                    'orob2b_payment_callback_return',
+                    'oro_payment_callback_return',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
@@ -126,8 +126,8 @@ class ValidateActionTest extends AbstractActionTest
                 ],
                 'expected' => [
                     'paymentMethod' => self::PAYMENT_METHOD,
-                    'errorUrl' => 'orob2b_payment_callback_error',
-                    'returnUrl' => 'orob2b_payment_callback_return',
+                    'errorUrl' => 'oro_payment_callback_error',
+                    'returnUrl' => 'oro_payment_callback_return',
                     'testOption' => 'testOption',
                 ]
             ],
@@ -145,8 +145,8 @@ class ValidateActionTest extends AbstractActionTest
                 ],
                 'expected' => [
                     'paymentMethod' => self::PAYMENT_METHOD,
-                    'errorUrl' => 'orob2b_payment_callback_error',
-                    'returnUrl' => 'orob2b_payment_callback_return',
+                    'errorUrl' => 'oro_payment_callback_error',
+                    'returnUrl' => 'oro_payment_callback_return',
                     'testResponse' => 'testResponse',
                     'testOption' => 'testOption',
                 ]
@@ -162,8 +162,8 @@ class ValidateActionTest extends AbstractActionTest
                 ],
                 'expected' => [
                     'paymentMethod' => self::PAYMENT_METHOD,
-                    'errorUrl' => 'orob2b_payment_callback_error',
-                    'returnUrl' => 'orob2b_payment_callback_return',
+                    'errorUrl' => 'oro_payment_callback_error',
+                    'returnUrl' => 'oro_payment_callback_return',
                     'testResponse' => 'testResponse',
                 ]
             ],

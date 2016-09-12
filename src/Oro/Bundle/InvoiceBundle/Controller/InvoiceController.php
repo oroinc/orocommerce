@@ -22,24 +22,24 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 class InvoiceController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_invoice_index")
+     * @Route("/", name="oro_invoice_index")
      * @Template()
-     * @AclAncestor("orob2b_invoice_view")
+     * @AclAncestor("oro_invoice_view")
      *
      * @return array
      */
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_invoice.entity.invoice.class'),
+            'entity_class' => $this->container->getParameter('oro_invoice.entity.invoice.class'),
             'gridName' => 'invoices-grid'
         ];
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_invoice_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_invoice_info", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_invoice_view")
+     * @AclAncestor("oro_invoice_view")
      *
      * @param Invoice $invoice
      *
@@ -53,10 +53,10 @@ class InvoiceController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_invoice_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_invoice_view", requirements={"id"="\d+"})
      * @Template()
      * @Acl(
-     *      id="orob2b_invoice_view",
+     *      id="oro_invoice_view",
      *      type="entity",
      *      class="OroInvoiceBundle:Invoice",
      *      permission="VIEW"
@@ -76,10 +76,10 @@ class InvoiceController extends Controller
     /**
      * Create invoice form
      *
-     * @Route("/create", name="orob2b_invoice_create")
+     * @Route("/create", name="oro_invoice_create")
      * @Template("OroInvoiceBundle:Invoice:update.html.twig")
      * @Acl(
-     *      id="orob2b_invoice_create",
+     *      id="oro_invoice_create",
      *      type="entity",
      *      class="OroInvoiceBundle:Invoice",
      *      permission="CREATE"
@@ -90,7 +90,7 @@ class InvoiceController extends Controller
     public function createAction()
     {
         $invoice = new Invoice();
-        $invoice->setWebsite($this->get('orob2b_website.manager')->getDefaultWebsite());
+        $invoice->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
         //TODO: BB-3824 Change the getting currency from system configuration
         $invoice->setCurrency($this->get('oro_locale.settings')->getCurrency());
 
@@ -100,10 +100,10 @@ class InvoiceController extends Controller
     /**
      * Update invoice form
      *
-     * @Route("/update/{id}", name="orob2b_invoice_update")
+     * @Route("/update/{id}", name="oro_invoice_update")
      * @Template("OroInvoiceBundle:Invoice:update.html.twig")
      * @Acl(
-     *      id="orob2b_invoice_update",
+     *      id="oro_invoice_update",
      *      type="entity",
      *      class="OroInvoiceBundle:Invoice",
      *      permission="EDIT"
@@ -130,13 +130,13 @@ class InvoiceController extends Controller
             $form,
             function (Invoice $invoice) {
                 return [
-                    'route' => 'orob2b_invoice_update',
+                    'route' => 'oro_invoice_update',
                     'parameters' => ['id' => $invoice->getId()],
                 ];
             },
             function (Invoice $invoice) {
                 return [
-                    'route' => 'orob2b_invoice_view',
+                    'route' => 'oro_invoice_view',
                     'parameters' => ['id' => $invoice->getId()],
                 ];
             },
@@ -174,9 +174,9 @@ class InvoiceController extends Controller
         );
 
         if ($productIds) {
-            $tierPrices = $this->get('orob2b_pricing.provider.combined_product_price')
+            $tierPrices = $this->get('oro_pricing.provider.combined_product_price')
                 ->getPriceByPriceListIdAndProductIds(
-                    $this->get('orob2b_pricing.model.price_list_request_handler')->getPriceListByAccount()->getId(),
+                    $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByAccount()->getId(),
                     $productIds->toArray(),
                     $invoice->getCurrency()
                 );
@@ -209,9 +209,9 @@ class InvoiceController extends Controller
         );
 
         if ($productsPriceCriteria) {
-            $matchedPrices = $this->get('orob2b_pricing.provider.combined_product_price')->getMatchedPrices(
+            $matchedPrices = $this->get('oro_pricing.provider.combined_product_price')->getMatchedPrices(
                 $productsPriceCriteria->toArray(),
-                $this->get('orob2b_pricing.model.price_list_request_handler')->getPriceListByAccount()
+                $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByAccount()
             );
         }
 
@@ -233,6 +233,6 @@ class InvoiceController extends Controller
      */
     protected function getTotalProcessor()
     {
-        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
+        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
     }
 }
