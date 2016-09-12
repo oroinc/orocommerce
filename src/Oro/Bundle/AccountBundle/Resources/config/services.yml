@@ -880,7 +880,7 @@ services:
         tags:
              - { name: layout.data_provider, alias: account_user_address_provider }
 
-    orob2b_account.event_listener.restricted_products_index:
+    oro_account.event_listener.restricted_products_index:
         class: 'Oro\Bundle\AccountBundle\EventListener\RestrictedProductsIndexEventListener'
         arguments:
             - '@oro_config.global'
