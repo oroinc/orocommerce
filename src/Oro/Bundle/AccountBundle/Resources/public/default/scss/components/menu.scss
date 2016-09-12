@@ -6,12 +6,8 @@
     border-radius: 3px;
     background: $theme-lightest-gray-color;
 
-    &__section {
+    &__section:not(:first-child) {
         margin-top: 18px;
-    }
-
-    &__section:first-child {
-        margin-top: 0;
     }
 
     &__title {
@@ -19,7 +15,6 @@
 
         font-size: 15px;
         font-weight: 400;
-
         text-transform: uppercase;
     }
 
