@@ -163,4 +163,17 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
 
         $this->listener->onWebsiteSearchIndex($this->event);
     }
+
+    public function testOnWebsiteSearchIndexEmptyIds()
+    {
+        $this->event->expects($this->once())->method('getEntityClass')->willReturn(Product::class);
+
+        $this->event->expects($this->once())
+            ->method('getEntityIds')
+            ->willReturn([]);
+
+        $this->event->expects($this->never())->method('addField');
+
+        $this->listener->onWebsiteSearchIndex($this->event);
+    }
 }
