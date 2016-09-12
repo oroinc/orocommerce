@@ -1,6 +1,4 @@
-input.error,
-textarea.error,
-.input-widget-select.error{
+.input-widget-select.error {
   border: 1px solid $theme-input-error;
   box-shadow: 0 1px 7px 0 rgba(223,96,96,.6);
 }
@@ -9,14 +7,14 @@ textarea.error,
 .validation-passed {
   display: block;
 
-  min-height: 2.4rem;
+  min-height: 24px;
 
-  padding: 0 1rem;
+  padding: 0 10px;
 
-  line-height: 2.4rem;
-  font-size: 1.3rem;
+  line-height: 24px;
+  font-size: 13px;
 
-  border-radius: .3rem;
+  border-radius: 3px;
 }
 
 .validation-failed {
@@ -28,9 +26,9 @@ textarea.error,
 
     display: inline-block;
 
-    width: 1.1em;
+    width: 11px;
 
-    margin-right: .1em;
+    margin-right: 1px;
 
     font-style: normal;
     font-family: $base-font-icon;

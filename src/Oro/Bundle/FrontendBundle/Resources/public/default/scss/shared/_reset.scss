@@ -21,3 +21,8 @@ article, aside, details, figcaption, figure, main,
 footer, header, hgroup, menu, nav, section {
   display: block;
 }
+
+*:focus {
+  outline: none;
+}
+
