@@ -12,7 +12,7 @@ use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 
 class ProductImageCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_product_image_collection';
+    const NAME = 'oro_product_image_collection';
 
     /**
      * @var ImageTypeProvider

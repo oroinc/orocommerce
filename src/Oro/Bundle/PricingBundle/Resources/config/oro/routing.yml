@@ -1,41 +1,41 @@
-orob2b_pricing:
+oro_pricing:
     resource:     "@OroPricingBundle/Controller/PriceListController.php"
     type:         annotation
     prefix:       /pricelist
 
-orob2b_price_attribute_price_list:
+oro_price_attribute_price_list:
     resource:     "@OroPricingBundle/Controller/PriceAttributePriceListController.php"
     type:         annotation
     prefix:       /priceattribute
 
-orob2b_pricing_ajax:
+oro_pricing_ajax:
     resource:     "@OroPricingBundle/Controller/AjaxPriceListController.php"
     type:         annotation
     prefix:       /pricelist
 
-orob2b_product_price_ajax:
+oro_product_price_ajax:
     resource:     "@OroPricingBundle/Controller/AjaxProductPriceController.php"
     type:         annotation
     prefix:       /productprice
 
-orob2b_product_price_product:
+oro_product_price_product:
     resource:     "@OroPricingBundle/Controller/ProductController.php"
     type:         annotation
     prefix:       /productprice/product
 
-orob2b_product_price_frontend_ajax:
+oro_product_price_frontend_ajax:
     resource:     "@OroPricingBundle/Controller/Frontend/AjaxProductPriceController.php"
     type:         annotation
     prefix:       /productprice
     options:
         frontend: true
 
-orob2b_entity_totals_ajax:
+oro_entity_totals_ajax:
     resource:     "@OroPricingBundle/Controller/AjaxEntityTotalsController.php"
     type:         annotation
     prefix:       /entitytotals
 
-orob2b_entity_totals_frontend_ajax:
+oro_entity_totals_frontend_ajax:
     resource:     "@OroPricingBundle/Controller/Frontend/AjaxEntityTotalsController.php"
     type:         annotation
     prefix:       /entitytotals

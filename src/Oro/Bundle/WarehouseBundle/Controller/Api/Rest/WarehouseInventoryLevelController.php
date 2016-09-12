@@ -15,7 +15,7 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
  * @RouteResource("warehouse_inventory_level")
- * @NamePrefix("orob2b_api_warehouse_")
+ * @NamePrefix("oro_api_warehouse_")
  */
 class WarehouseInventoryLevelController extends RestController implements ClassResourceInterface
 {
@@ -25,7 +25,7 @@ class WarehouseInventoryLevelController extends RestController implements ClassR
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_warehouse_inventory_level_delete",
+     *      id="oro_warehouse_inventory_level_delete",
      *      type="entity",
      *      class="OroWarehouseBundle:WarehouseInventoryLevel",
      *      permission="DELETE"
@@ -44,7 +44,7 @@ class WarehouseInventoryLevelController extends RestController implements ClassR
      */
     public function getManager()
     {
-        return $this->get('orob2b_warehouse.warehouse_inventory_level.manager.api');
+        return $this->get('oro_warehouse.warehouse_inventory_level.manager.api');
     }
 
     /**

@@ -33,7 +33,7 @@ class OroWebsiteExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $result = $this->extension->getFunctions();
         $functions = [
-            'orob2b_website_get_current_website'
+            'oro_website_get_current_website'
         ];
 
         /** @var $function \Twig_SimpleFunction */

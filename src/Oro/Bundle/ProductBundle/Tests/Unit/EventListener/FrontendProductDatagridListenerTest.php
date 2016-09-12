@@ -16,7 +16,6 @@ use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -42,11 +41,6 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $attachmentManager;
 
-    /**
-     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $unitFormatter;
-
     public function setUp()
     {
         $this->themeHelper = $this->getMockBuilder('Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper')
@@ -58,14 +52,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->attachmentManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\AttachmentManager')
             ->disableOriginalConstructor()->getMock();
 
-        $this->unitFormatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
-            ->disableOriginalConstructor()->getMock();
-
         $this->listener = new FrontendProductDatagridListener(
             $this->themeHelper,
             $this->doctrine,
-            $this->attachmentManager,
-            $this->unitFormatter
+            $this->attachmentManager
         );
     }
 
@@ -252,13 +242,6 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getProductsUnits')
             ->with($ids)
             ->willReturn($units);
-        $this->unitFormatter->expects($this->any())
-            ->method('format')
-            ->willReturnCallback(
-                function ($string) {
-                    return $string . 'Formatted';
-                }
-            );
 
         $this->listener->onResultAfter($event);
         foreach ($expectedData as $expectedRecord) {
@@ -289,15 +272,15 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'id' => 1,
                         'image' => 1,
                         'expectedUnits' => [
-                            'item' => 'itemFormatted',
-                            'pack' => 'packFormatted'
+                            'item',
+                            'pack'
                         ]
                     ],
                     [
                         'id' => 2,
                         'image' => null,
                         'expectedUnits' => [
-                            'bottle' => 'bottleFormatted',
+                            'bottle',
                         ]
                     ],
                     [

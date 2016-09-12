@@ -10,7 +10,7 @@ use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 
 class PriceListSelectWithPriorityType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_price_list_select_with_priority';
+    const NAME = 'oro_pricing_price_list_select_with_priority';
 
     const PRICE_LIST_FIELD = 'priceList';
     const PRIORITY_FIELD = 'priority';

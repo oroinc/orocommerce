@@ -18,24 +18,24 @@ use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
 class AccountUserRoleController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_account_account_user_role_index")
+     * @Route("/", name="oro_account_account_user_role_index")
      * @Template
-     * @AclAncestor("orob2b_account_account_user_role_view")
+     * @AclAncestor("oro_account_account_user_role_view")
      *
      * @return array
      */
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_account.entity.account_user_role.class')
+            'entity_class' => $this->container->getParameter('oro_account.entity.account_user_role.class')
         ];
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_account_account_user_role_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_account_account_user_role_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_account_account_user_role_view",
+     *      id="oro_account_account_user_role_view",
      *      type="entity",
      *      class="OroAccountBundle:AccountUserRole",
      *      permission="VIEW"
@@ -60,10 +60,10 @@ class AccountUserRoleController extends Controller
     }
 
     /**
-     * @Route("/create", name="orob2b_account_account_user_role_create")
+     * @Route("/create", name="oro_account_account_user_role_create")
      * @Template("OroAccountBundle:AccountUserRole:update.html.twig")
      * @Acl(
-     *      id="orob2b_account_account_user_role_create",
+     *      id="oro_account_account_user_role_create",
      *      type="entity",
      *      class="OroAccountBundle:AccountUserRole",
      *      permission="CREATE"
@@ -73,16 +73,16 @@ class AccountUserRoleController extends Controller
      */
     public function createAction()
     {
-        $roleClass = $this->container->getParameter('orob2b_account.entity.account_user_role.class');
+        $roleClass = $this->container->getParameter('oro_account.entity.account_user_role.class');
 
         return $this->update(new $roleClass());
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_account_account_user_role_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_account_account_user_role_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_account_account_user_role_update",
+     *      id="oro_account_account_user_role_update",
      *      type="entity",
      *      class="OroAccountBundle:AccountUserRole",
      *      permission="EDIT"
@@ -102,7 +102,7 @@ class AccountUserRoleController extends Controller
      */
     protected function update(AccountUserRole $role)
     {
-        $handler = $this->get('orob2b_account.form.handler.update_account_user_role');
+        $handler = $this->get('oro_account.form.handler.update_account_user_role');
         $handler->createForm($role);
 
         if ($handler->process($role)) {

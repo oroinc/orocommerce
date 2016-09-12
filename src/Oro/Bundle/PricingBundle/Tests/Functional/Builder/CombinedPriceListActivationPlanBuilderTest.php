@@ -40,7 +40,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->cplActivationPlanBuilder = $this->getContainer()
-            ->get('orob2b_pricing.builder.combined_price_list_activation_plan_builder');
+            ->get('oro_pricing.builder.combined_price_list_activation_plan_builder');
         $this->now = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->loadFixtures(
             [

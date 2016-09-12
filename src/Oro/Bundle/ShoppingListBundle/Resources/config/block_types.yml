@@ -1,5 +1,5 @@
 services:
-    orob2b_shopping_list.layout.type.shopping_list_awere_block:
+    oro_shopping_list.layout.type.shopping_list_awere_block:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             - [setOptionsConfig, [{shoppingList: {required: true}}]]
@@ -7,7 +7,7 @@ services:
         tags:
              - { name: layout.block_type, alias: shopping_list_awere_block }
 
-    orob2b_shopping_list.layout.type.shopping_list_line_items_list:
+    oro_shopping_list.layout.type.shopping_list_line_items_list:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             -
@@ -22,7 +22,7 @@ services:
         tags:
              - { name: layout.block_type, alias: shopping_list_line_items_list }
 
-    orob2b_shopping_list.layout.type.shopping_lists_awere_container:
+    oro_shopping_list.layout.type.shopping_lists_awere_container:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
             - [setOptionsConfig, [{shoppingLists: {required: true}}]]
@@ -30,7 +30,7 @@ services:
         tags:
              - { name: layout.block_type, alias: shopping_lists_awere_container }
 
-    orob2b_shopping_list.layout.type.add_to_shopping_list_form_button:
+    oro_shopping_list.layout.type.add_to_shopping_list_form_button:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
             -
@@ -38,12 +38,12 @@ services:
                 -
                     -
                         shoppingLists: {required: true}
-                        unitsQuantity: {default: []}
+                        productShoppingLists: {default: []}
             - [setName, ['add_to_shopping_list_form_button']]
         tags:
              - { name: layout.block_type, alias: add_to_shopping_list_form_button }
 
-    orob2b_shopping_list.layout.block_type.extension.widget_content:
+    oro_shopping_list.layout.block_type.extension.widget_content:
         parent: oro_layout.block_type.extension.abstract_configurable
         calls:
             - [setOptionsConfig, [{savedId: ~, shoppingList: ~}]]
@@ -51,18 +51,32 @@ services:
         tags:
             - { name: layout.block_type_extension, alias: widget_content }
 
-    orob2b_shopping_list.layout.type.product_shopping_lists:
+    oro_shopping_list.layout.type.product_shopping_lists:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
-            - [setOptionsConfig, [{shoppingLists: {required: true}}]]
+            - [setOptionsConfig, [{productShoppingLists: {required: true}}]]
             - [setName, ['product_shopping_lists']]
         tags:
              - { name: layout.block_type, alias: product_shopping_lists }
 
-    orob2b_shopping_list.layout.block.type.shopping_lists_menu:
+    oro_shopping_list.layout.block.type.shopping_lists_menu:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
             - [setOptionsConfig, [{shoppingLists: {required: true}, selectedShoppingList: {required: true}}]]
             - [setName, ['shopping_lists_menu']]
         tags:
              - { name: layout.block_type, alias: shopping_lists_menu }
+
+    oro_shopping_list.layout.type.shopping_list_dropdown_item:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setName, ['shopping_list_dropdown_item']]
+        tags:
+             - { name: layout.block_type, alias: shopping_list_dropdown_item }
+
+    oro_shopping_list.layout.type.shopping_list_dropdown_create:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setName, ['shopping_list_dropdown_create']]
+        tags:
+             - { name: layout.block_type, alias: shopping_list_dropdown_create }

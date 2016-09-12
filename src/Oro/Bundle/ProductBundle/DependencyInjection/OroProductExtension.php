@@ -31,6 +31,6 @@ class OroProductExtension extends Extension
      */
     public function getAlias()
     {
-        return 'orob2b_product';
+        return 'oro_product';
     }
 }

@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints\Regex;
 
 class QuickAddCopyPasteType extends AbstractType
 {
-    const NAME = 'orob2b_product_quick_add_copy_paste';
+    const NAME = 'oro_product_quick_add_copy_paste';
     const COPY_PASTE_FIELD_NAME = 'copyPaste';
     const FORMAT_REGEX
         = '/^([^\s]+[\t\,\ ]\s*?[0-9]+\.?[0-9]*(\n|\r\n))*([^\s]+[\t\,\ ]\s*?[0-9]+\.?[0-9]*)(\n|\r\n)*$/';

@@ -1,0 +1,25 @@
+layout:
+    imports:
+        - oro_account_menu
+        -
+            id: oro_account_user_role_grid
+            root: content
+            namespace: account_user_roles
+
+    actions:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.account.menu.account_user.label'
+                - 'oro.account.frontend.account_user.role.entity_plural_label'
+
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue: 'oro.account.frontend.account_user.role.entity_plural_label'
+
+        - '@setOption':
+            id: content
+            optionName: class_prefix
+            optionValue: 'account-user-roles'

@@ -5,16 +5,16 @@
     '%identifier%': entity.invoiceNumber|default('N/A'|trans),
     '%entityName%': 'oro.invoice.entity_label'|trans
 } }) %}
-{% set formAction = entity.id ? path('orob2b_invoice_update', { 'id': entity.id }) : path('orob2b_invoice_create')  %}
+{% set formAction = entity.id ? path('oro_invoice_update', { 'id': entity.id }) : path('oro_invoice_create')  %}
 
 {% form_theme form with ['OroInvoiceBundle:Form:fields.html.twig'] %}
 
 {% block navButtons %}
     {{ parent() }}
 
-    {{ UI.cancelButton(path('orob2b_invoice_index')) }}
+    {{ UI.cancelButton(path('oro_invoice_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_invoice_update') %}
+    {% if entity.id or resource_granted('oro_invoice_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -24,7 +24,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_invoice_index'),
+            'indexPath':   path('oro_invoice_index'),
             'indexLabel': 'oro.invoice.entity_plural_label'|trans,
             'entityTitle': entity.invoiceNumber|default('N/A'|trans)
         } %}
@@ -41,7 +41,7 @@
     {% set totals %}
         {% include 'OroPricingBundle:Totals:totals.html.twig' with {
             options: {
-                route: 'orob2b_pricing_recalculate_entity_totals',
+                route: 'oro_pricing_recalculate_entity_totals',
                 selectors: {
                     template: '#totals-template',
                     form: '#' ~ form.vars.id
@@ -65,8 +65,8 @@
                  view: 'oroinvoice/js/app/views/invoice-line-items-view',
                  tierPrices: tierPrices|default({}),
                  matchedPrices: matchedPrices|default({}),
-                 tierPricesRoute: 'orob2b_pricing_price_by_account',
-                 matchedPricesRoute: 'orob2b_pricing_matching_price',
+                 tierPricesRoute: 'oro_pricing_price_by_account',
+                 matchedPricesRoute: 'oro_pricing_matching_price',
                  currency: entity.currency,
                  account: entity.account is null ? null : entity.account.id
              }|json_encode }}"

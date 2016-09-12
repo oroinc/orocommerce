@@ -21,6 +21,6 @@ class EnabledConfigurationValidationGroup extends Constraint
      */
     public function validatedBy()
     {
-        return 'orob2b_shipping_enabled_configuration_validation_group_validator';
+        return 'oro_shipping_enabled_configuration_validation_group_validator';
     }
 }

@@ -167,7 +167,7 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
         $isAllowedRFP = true;
         if (!empty($this->container)) {
             $isAllowedRFP = $this->container
-                ->get('orob2b_rfp.form.type.extension.frontend_request_data_storage')
+                ->get('oro_rfp.form.type.extension.frontend_request_data_storage')
                 ->isAllowedRFP($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]);
 
             if ($isAllowedRFP === false) {

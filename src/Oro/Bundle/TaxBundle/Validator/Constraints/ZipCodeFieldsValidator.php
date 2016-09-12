@@ -11,7 +11,7 @@ use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 
 class ZipCodeFieldsValidator extends ConstraintValidator
 {
-    const ALIAS = 'orob2b_tax_zip_code_fields';
+    const ALIAS = 'oro_tax_zip_code_fields';
 
     /**
      * {@inheritdoc}

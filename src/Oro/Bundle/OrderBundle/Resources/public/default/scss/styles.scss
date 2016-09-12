@@ -1,5 +1,7 @@
 @import 'orofrontend/default/scss/shared/_vars.scss';
 @import 'orofrontend/default/scss/shared/_mixins.scss';
+@import 'orofrontend/default/scss/components/commerce/partials/variables';
+@import 'orofrontend/default/scss/components/commerce/partials/mixins';
 
 @import './components/success';
 @import './components/order';
