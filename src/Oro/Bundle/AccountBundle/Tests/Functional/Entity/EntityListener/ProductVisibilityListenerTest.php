@@ -11,6 +11,7 @@ use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
+use Oro\Bundle\AccountBundle\Model\VisibilityMessageHandler;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\AccountBundle\Tests\Functional\MessageQueueTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -61,6 +62,14 @@ class ProductVisibilityListenerTest extends WebTestCase
         $this->account = $this->getReference('account.level_1');
 
         $this->cleanQueueMessageTraces();
+    }
+
+    /**
+     * @return VisibilityMessageHandler
+     */
+    protected function getMessageHandler()
+    {
+        return $this->getContainer()->get('oro_account.product_visibility_message_handler');
     }
 
     public function testChangeProductVisibilityToHidden()

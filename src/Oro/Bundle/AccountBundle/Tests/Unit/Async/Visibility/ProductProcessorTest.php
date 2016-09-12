@@ -5,9 +5,9 @@ namespace Oro\Bundle\AccountBundle\Tests\Unit\Async\Visibility;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AccountBundle\Async\Visibility\ProductProcessor;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
 use Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductMessageFactory;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -22,7 +22,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
-     * @var VisibilityMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductMessageFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $messageFactory;
 
@@ -44,7 +44,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->getMock(RegistryInterface::class);
-        $this->messageFactory = $this->getMockBuilder(VisibilityMessageFactory::class)
+        $this->messageFactory = $this->getMockBuilder(ProductMessageFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->cacheBuilder = $this->getMock(ProductCaseCacheBuilderInterface::class);
@@ -89,7 +89,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
         $product = new Product();
 
         $this->messageFactory->expects($this->once())
-            ->method('getEntityFromMessage')
+            ->method('getProductFromMessage')
             ->with($data)
             ->willReturn($product);
 

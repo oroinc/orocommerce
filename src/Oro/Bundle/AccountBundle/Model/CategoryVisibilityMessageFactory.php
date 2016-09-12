@@ -16,7 +16,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 class CategoryVisibilityMessageFactory implements MessageFactoryInterface
 {
     const ID = 'id';
-    const ENTITY_CLASS_NAME = 'entity';
+    const ENTITY_CLASS_NAME = 'entity_class_name';
     const CATEGORY_ID = 'category';
     const ACCOUNT_ID = 'account';
     const ACCOUNT_GROUP_ID = 'account_group';

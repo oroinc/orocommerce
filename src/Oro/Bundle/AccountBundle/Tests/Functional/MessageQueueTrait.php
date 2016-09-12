@@ -4,6 +4,7 @@ namespace Oro\Bundle\AccountBundle\Tests\Functional;
 
 use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
+use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -39,10 +40,16 @@ trait MessageQueueTrait
         );
     }
 
+    /**
+     * @return ProductMessageHandler
+     */
+    abstract function getMessageHandler();
+
     protected function sendScheduledMessages()
     {
-        self::getContainer()->get('oro_account.visibility_message_handler')
-            ->sendScheduledMessages();
+        if ($this->getMessageHandler()) {
+            $this->getMessageHandler()->sendScheduledMessages();
+        }
     }
 
     /**

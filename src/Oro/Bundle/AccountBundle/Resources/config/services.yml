@@ -680,25 +680,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
 
-    # Actions
-    orob2b_account.model.action.abstract_entity_aware_action:
-        class: 'Oro\Bundle\AccountBundle\Model\Action\AbstractEntityAwareAction'
-        abstract: true
-        arguments:
-            - "@oro_action.context_accessor"
-
-    orob2b_account.model.action.abstract_visibility_action:
-        parent: orob2b_account.model.action.abstract_entity_aware_action
-        class: 'Oro\Bundle\AccountBundle\Model\Action\AbstractVisibilityAction'
-        abstract: true
-
-    orob2b_account.model.action.abstract_visibility_registry_aware_action:
-        parent: orob2b_account.model.action.abstract_visibility_action
-        class: 'Oro\Bundle\AccountBundle\Model\Action\AbstractVisibilityRegistryAwareAction'
-        abstract: true
-        calls:
-            - [setRegistry, ["@doctrine"]]
-
     orob2b_account.entity.entity_listener.category_listener:
         class: 'Oro\Bundle\AccountBundle\Entity\EntityListener\CategoryListener'
         public: false

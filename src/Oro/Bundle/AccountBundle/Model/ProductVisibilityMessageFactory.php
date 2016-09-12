@@ -17,7 +17,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 class ProductVisibilityMessageFactory implements MessageFactoryInterface
 {
     const ID = 'id';
-    const ENTITY_CLASS_NAME = 'entity';
+    const ENTITY_CLASS_NAME = 'entity_class_name';
     const PRODUCT_ID = 'product';
     const WEBSITE_ID = 'website';
     const ACCOUNT_ID = 'account';

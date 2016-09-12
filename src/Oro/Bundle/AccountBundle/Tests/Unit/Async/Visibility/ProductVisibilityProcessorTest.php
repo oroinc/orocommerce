@@ -3,11 +3,11 @@
 namespace Oro\Bundle\AccountBundle\Tests\Unit\Async\Visibility;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\AccountBundle\Async\Visibility\VisibilityEntityProcessor;
+use Oro\Bundle\AccountBundle\Async\Visibility\ProductVisibilityProcessor;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
+use Oro\Bundle\AccountBundle\Model\ProductVisibilityMessageFactory;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -15,7 +15,7 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class VisibilityEntityProcessorTest extends \PHPUnit_Framework_TestCase
+class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -23,7 +23,7 @@ class VisibilityEntityProcessorTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
-     * @var VisibilityMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductVisibilityMessageFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $messageFactory;
 
@@ -38,20 +38,20 @@ class VisibilityEntityProcessorTest extends \PHPUnit_Framework_TestCase
     protected $logger;
 
     /**
-     * @var VisibilityEntityProcessor
+     * @var ProductVisibilityProcessor
      */
     protected $visibilityProcessor;
 
     protected function setUp()
     {
         $this->registry = $this->getMock(RegistryInterface::class);
-        $this->messageFactory = $this->getMockBuilder(VisibilityMessageFactory::class)
+        $this->messageFactory = $this->getMockBuilder(ProductVisibilityMessageFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->cacheBuilder = $this->getMock(CacheBuilderInterface::class);
         $this->logger = $this->getMock(LoggerInterface::class);
 
-        $this->visibilityProcessor = new VisibilityEntityProcessor(
+        $this->visibilityProcessor = new ProductVisibilityProcessor(
             $this->registry,
             $this->messageFactory,
             $this->logger,

@@ -40,9 +40,6 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
             $accounts
         );
 
-        $this->getContainer()->get('oro_account.visibility_message_handler')->sendScheduledMessages();
-        $this->getContainer()->get('oro_message_queue.test.message_consumer')->consume();
-
         $actualVisibility = $this->getRepository()
             ->getVisibilitiesForAccounts($category, $accounts);
 
