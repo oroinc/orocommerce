@@ -65,7 +65,7 @@ class ProductControllerTest extends WebTestCase
     {
         $this->markTestSkipped('Test awaits for a implementation of the new search engine.');
 
-        $this->client->request('GET', $this->getUrl('orob2b_product_frontend_product_index'));
+        $this->client->request('GET', $this->getUrl('oro_product_frontend_product_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
@@ -77,8 +77,6 @@ class ProductControllerTest extends WebTestCase
 
     public function testIndexDatagridViews()
     {
-        $this->markTestSkipped('Test awaits for a implementation of the new search engine.');
-
         // default view is DataGridThemeHelper::VIEW_GRID
         $response = $this->client->requestFrontendGrid('frontend-products-grid', [], true);
         $result = $this->getJsonResponseContent($response, 200);
