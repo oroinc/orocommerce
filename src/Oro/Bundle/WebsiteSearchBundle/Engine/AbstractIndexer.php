@@ -167,15 +167,13 @@ abstract class AbstractIndexer implements IndexerInterface
         foreach ($iterator as $entity) {
             $entityIds[] = $entity['id'];
             $itemsCount++;
-
             if (0 === $itemsCount % static::BATCH_SIZE) {
                 $restrictedEntityIds = $this->restrictIndexEntity($entityIds, $context, $entityClass);
                 if (count($restrictedEntityIds) === 0) {
                     continue;
                 }
-                $realItemsCount += count($restrictedEntityIds);
                 $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
-                $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
+                $realItemsCount += $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
                 $entityIds = [];
                 $entityManager->clear($entityClass);
             }
@@ -184,9 +182,8 @@ abstract class AbstractIndexer implements IndexerInterface
         if ($itemsCount % static::BATCH_SIZE > 0) {
             $restrictedEntityIds = $this->restrictIndexEntity($entityIds, $context, $entityClass);
             if (count($restrictedEntityIds) !== 0) {
-                $realItemsCount += count($restrictedEntityIds);
                 $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
-                $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
+                $realItemsCount += $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
                 $entityManager->clear($entityClass);
             }
         }
@@ -215,6 +212,9 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     protected function indexEntities($entityClass, array $entityIds, array $context)
     {
+        if (!$entityIds) {
+            return [];
+        }
         $indexEntityEvent = new IndexEntityEvent($entityClass, $entityIds, $context);
         $this->eventDispatcher->dispatch(IndexEntityEvent::NAME, $indexEntityEvent);
 

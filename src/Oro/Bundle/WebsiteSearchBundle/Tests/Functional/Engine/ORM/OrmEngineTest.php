@@ -104,7 +104,7 @@ class OrmEngineTest extends WebTestCase
 
         $this->listener = $this->setListener();
 
-        $indexer = $this->getContainer()->get('oro_website_search.engine.orm_indexer');
+        $indexer = $this->getContainer()->get('oro_website_search.indexer');
         $indexer->reindex(TestEntity::class, []);
 
         $this->ormEngine = $this->getContainer()->get('oro_website_search.engine');

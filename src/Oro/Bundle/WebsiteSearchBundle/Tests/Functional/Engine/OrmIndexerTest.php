@@ -73,7 +73,6 @@ class OrmIndexerTest extends WebTestCase
         $this->dispatcher = $this->getContainer()->get('event_dispatcher');
 
         $this->indexer = new OrmIndexer($this->dispatcher, $this->doctrineHelper, $this->mappingProviderMock);
-
     }
 
     protected function tearDown()
@@ -140,6 +139,7 @@ class OrmIndexerTest extends WebTestCase
             ]
         );
 
+        /** @var Item[] $items */
         $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_website_1']);
 
         $this->assertCount(2, $items);
@@ -173,6 +173,7 @@ class OrmIndexerTest extends WebTestCase
             ]
         );
 
+        /** @var Item[] $items */
         $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_website_1']);
 
         $this->assertCount(1, $items);
@@ -188,6 +189,7 @@ class OrmIndexerTest extends WebTestCase
         $this->indexer->reindex();
 
         $otherWebsite = $this->getReference(LoadOtherWebsite::REFERENCE_OTHER_WEBSITE);
+        /** @var Item[] $items */
         $items = $this->getItemRepository()->findBy([
             'alias' => 'oro_product_website_' . $otherWebsite->getId()
         ]);

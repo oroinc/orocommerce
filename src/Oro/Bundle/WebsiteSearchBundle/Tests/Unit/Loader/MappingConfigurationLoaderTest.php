@@ -104,6 +104,7 @@ class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
             $bundleName,
             'Resources',
             'config',
+            'oro',
             $resourceFileName,
         ]);
     }

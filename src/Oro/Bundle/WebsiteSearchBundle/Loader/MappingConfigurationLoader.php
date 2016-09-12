@@ -16,7 +16,7 @@ class MappingConfigurationLoader implements ConfigurationLoaderInterface
      */
     public function getResources()
     {
-        $ymlLoader = new YamlCumulativeFileLoader('Resources/config/website_search.yml');
+        $ymlLoader = new YamlCumulativeFileLoader('Resources/config/oro/website_search.yml');
         $configurationLoader = new CumulativeConfigLoader('oro_website_search', $ymlLoader);
 
         return $configurationLoader->load();
