@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -92,6 +92,17 @@ class OrmIndexerTest extends WebTestCase
     }
 
     /**
+     * @return Website
+     */
+    private function getDefaultWebsite()
+    {
+        return $this
+            ->getDoctrine()
+            ->getRepository('OroWebsiteBundle:Website')
+            ->getDefaultWebsite();
+    }
+
+    /**
      * @return callable
      */
     private function setListener()
@@ -122,7 +133,12 @@ class OrmIndexerTest extends WebTestCase
             ->willReturn($this->mappingConfig);
 
         $this->listener = $this->setListener();
-        $this->indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => 1]);
+        $this->indexer->reindex(
+            Product::class,
+            [
+                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsite()->getId()
+            ]
+        );
 
         $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_website_1']);
 
@@ -150,7 +166,12 @@ class OrmIndexerTest extends WebTestCase
         );
 
         $this->listener = $this->setListener();
-        $this->indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => 1]);
+        $this->indexer->reindex(
+            Product::class,
+            [
+                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsite()->getId()
+            ]
+        );
 
         $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_website_1']);
 
@@ -175,9 +196,8 @@ class OrmIndexerTest extends WebTestCase
         $this->assertContains('Reindexed product', $items[0]->getTitle());
         $this->assertContains('Reindexed product', $items[1]->getTitle());
 
-        $defaultWebsite =$this->getDoctrine()->getRepository('OroWebsiteBundle:Website')->getDefaultWebsite();
         $items = $this->getItemRepository()->findBy([
-            'alias' => 'oro_product_website_' . $defaultWebsite->getId()
+            'alias' => 'oro_product_website_' . $this->getDefaultWebsite()->getId()
         ]);
 
         $this->assertCount(2, $items);
