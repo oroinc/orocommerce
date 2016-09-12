@@ -879,3 +879,12 @@ services:
             - [setUpdateRouteName, ['orob2b_account_frontend_account_user_address_update']]
         tags:
              - { name: layout.data_provider, alias: account_user_address_provider }
+
+    orob2b_account.event_listener.restricted_products_index:
+        class: 'Oro\Bundle\AccountBundle\EventListener\RestrictedProductsIndexEventListener'
+        arguments:
+            - '@oro_config.global'
+            - 'oro_b2b_account.product_visibility'
+            - 'oro_b2b_account.category_visibility'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.restrict_index_entity.product, method: onRestrictIndexEntityEvent }

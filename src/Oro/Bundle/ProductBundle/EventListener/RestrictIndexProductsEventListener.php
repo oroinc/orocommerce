@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntitiesEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
@@ -34,14 +34,10 @@ class RestrictIndexProductsEventListener
     }
 
     /**
-     * @param RestrictIndexEntitiesEvent $event
+     * @param RestrictIndexEntityEvent $event
      */
-    public function onRestrictIndexEntitiesEvent(RestrictIndexEntitiesEvent $event)
+    public function onRestrictIndexEntityEvent(RestrictIndexEntityEvent $event)
     {
-        if ($event->getEntityClass() !== Product::class) {
-            return;
-        }
-
         $this->modifier->modifyByStatus($event->getQueryBuilder(), [Product::STATUS_ENABLED]);
         $inventoryStatuses = $this->configManager->get($this->configPath);
         $this->modifier->modifyByInventoryStatus($event->getQueryBuilder(), $inventoryStatuses);

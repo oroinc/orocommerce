@@ -6,28 +6,24 @@ use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Component\EventDispatcher\Event;
 
-class RestrictIndexEntitiesEvent extends Event
+class RestrictIndexEntityEvent extends Event
 {
-    const NAME = 'oro_website_search.event.restrict_index_entities';
+    const NAME = 'oro_website_search.event.restrict_index_entity';
 
     /** @var QueryBuilder */
     protected $queryBuilder;
-
-    /** @var string */
-    protected $entityClass;
 
     /** @var array */
     protected $context;
 
     /**
      * @param QueryBuilder $qb
-     * @param string $entityClass
+     * @param array $context
      * @param array $context
      */
-    public function __construct(QueryBuilder $qb, $entityClass, array $context)
+    public function __construct(QueryBuilder $qb, array $context)
     {
         $this->queryBuilder = $qb;
-        $this->entityClass = $entityClass;
         $this->context = $context;
     }
 
@@ -45,14 +41,6 @@ class RestrictIndexEntitiesEvent extends Event
     public function setQueryBuilder(QueryBuilder $queryBuilder)
     {
         $this->queryBuilder = $queryBuilder;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEntityClass()
-    {
-        return $this->entityClass;
     }
 
     /**

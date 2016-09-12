@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Event;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntitiesEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 
 class RestrictIndexEntitiesEventTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,15 +18,14 @@ class RestrictIndexEntitiesEventTest extends \PHPUnit_Framework_TestCase
     /** @var array */
     protected $context;
 
-    /** @var RestrictIndexEntitiesEvent */
+    /** @var RestrictIndexEntityEvent */
     protected $event;
 
     protected function setUp()
     {
         $this->qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
-        $this->entityClass = 'Some\Class\Name';
         $this->context = ['website_id' => 1];
-        $this->event = new RestrictIndexEntitiesEvent($this->qb, $this->entityClass, $this->context);
+        $this->event = new RestrictIndexEntityEvent($this->qb, $this->context);
     }
 
     public function testQueryBuilderAccessors()
@@ -36,11 +35,6 @@ class RestrictIndexEntitiesEventTest extends \PHPUnit_Framework_TestCase
         $qb = new QueryBuilder($em);
         $this->event->setQueryBuilder($qb);
         $this->assertSame($qb, $this->event->getQueryBuilder());
-    }
-
-    public function testGetEntityClass()
-    {
-        $this->assertEquals($this->entityClass, $this->event->getEntityClass());
     }
 
     public function testGetContext()

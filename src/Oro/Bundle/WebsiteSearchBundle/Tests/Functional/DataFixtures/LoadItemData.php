@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures;
 
+use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -37,7 +38,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
      */
     private static $itemsData = [
         self::REFERENCE_GOOD_PRODUCT => [
-            'entity' => Product::class,
+            'entity' => TestProduct::class,
             'alias' => 'oro_product_website_',
             'recordId' => LoadProductsToIndex::REFERENCE_PRODUCT1,
             'title' => 'Good product',
@@ -55,7 +56,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
             ],
         ],
         self::REFERENCE_BETTER_PRODUCT => [
-            'entity' => Product::class,
+            'entity' => TestProduct::class,
             'alias' => 'oro_product_website_',
             'recordId' => LoadProductsToIndex::REFERENCE_PRODUCT2,
             'title' => 'Better product',
@@ -90,8 +91,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
      */
     public function load(ObjectManager $manager)
     {
-        $websiteIds = $manager->getRepository('OroWebsiteBundle:Website')
-            ->getWebsiteIdentifiers();
+        $websiteIds = $manager->getRepository('OroWebsiteBundle:Website')->getWebsiteIdentifiers();
 
         $manager = $this->container->get('oro_entity.doctrine_helper')->getEntityManager(Item::class);
 
