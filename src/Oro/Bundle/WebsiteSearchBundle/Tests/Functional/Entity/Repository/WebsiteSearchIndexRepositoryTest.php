@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\Common\DataFixtures\ReferenceRepository;
+
 use Oro\Bundle\SearchBundle\Engine\Orm\PdoMysql;
 use Oro\Bundle\SearchBundle\Engine\Orm\PdoPgsql;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
-use Oro\Bundle\TestFrameworkBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
@@ -67,7 +69,7 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
             ->getDefaultWebsite()
             ->getId();
 
-        $alias = 'oro_product_website_' . $websiteId;
+        $alias = 'oro_product_' . $websiteId;
         $query = new Query();
         $query->from($alias);
 
@@ -130,7 +132,7 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
             ->getId();
 
         $query = new Query();
-        $query->from('oro_product_website_' . $websiteId);
+        $query->from('oro_product_' . $websiteId);
         $query->getCriteria()->andWhere(Criteria::expr()->contains('long_description', 'Long description'));
 
         $referenceName = LoadItemData::getReferenceName(LoadItemData::REFERENCE_GOOD_PRODUCT, $websiteId);
@@ -161,7 +163,7 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
         );
 
         $query = new Query();
-        $query->from('oro_product_website_' . $websiteId);
+        $query->from('oro_product_' . $websiteId);
         $query->getCriteria()->andWhere(Criteria::expr()->eq('integer.lucky_number', 777));
 
         $itemResults = $this->getRepositoryWithDrivers()->search($query);
@@ -173,21 +175,21 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
 
     public function testRemoveIndexByAlias()
     {
-        $this->getItemRepository()->removeIndexByAlias('oro_product_website_1');
-        $realAliasesLeft = $this->getItemRepository()->findBy(['alias' => 'oro_product_website_1']);
+        $this->getItemRepository()->removeIndexByAlias('oro_product_1');
+        $realAliasesLeft = $this->getItemRepository()->findBy(['alias' => 'oro_product_1']);
         $this->assertEmpty($realAliasesLeft);
     }
 
     public function testRenameIndexAlias()
     {
-        $this->getItemRepository()->renameIndexAlias('oro_product_website_1', 'oro_product_website_temp_alias_1');
+        $this->getItemRepository()->renameIndexAlias('oro_product_1', 'oro_product_website_temp_alias_1');
         $realAliasesLeft = $this->getItemRepository()->findBy(['alias' => 'oro_product_website_temp_alias_1']);
         $this->assertCount(2, $realAliasesLeft);
     }
 
     public function testRemoveEntitiesWhenEmptyIdsArrayGiven()
     {
-        $this->getItemRepository()->removeEntities([], Product::class);
+        $this->getItemRepository()->removeEntities([], TestProduct::class);
 
         $this->assertEntityCount(4, Item::class);
         $this->assertEntityCount(2, IndexInteger::class);
@@ -206,8 +208,8 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
                 $product1->getId(),
                 $product2->getId(),
             ],
-            Product::class,
-            'oro_product_website_1'
+            TestProduct::class,
+            'oro_product_1'
         );
 
         $this->assertEntityCount(2, Item::class);
@@ -227,7 +229,7 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
                 $product1->getId(),
                 $product2->getId(),
             ],
-            Product::class
+            TestProduct::class
         );
 
         $this->assertEntityCount(0, Item::class);

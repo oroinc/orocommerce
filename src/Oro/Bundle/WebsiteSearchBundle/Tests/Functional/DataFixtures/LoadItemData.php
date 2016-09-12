@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures;
 
-use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -13,7 +12,7 @@ use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\SearchBundle\Entity\ItemFieldInterface;
-use Oro\Bundle\TestFrameworkBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
@@ -40,7 +39,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
     private static $itemsData = [
         self::REFERENCE_GOOD_PRODUCT => [
             'entity' => TestProduct::class,
-            'alias' => 'oro_product_website_',
+            'alias' => 'oro_product_',
             'recordId' => LoadProductsToIndex::REFERENCE_PRODUCT1,
             'title' => 'Good product',
             'datetimeFields' => [
@@ -58,7 +57,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
         ],
         self::REFERENCE_BETTER_PRODUCT => [
             'entity' => TestProduct::class,
-            'alias' => 'oro_product_website_',
+            'alias' => 'oro_product_',
             'recordId' => LoadProductsToIndex::REFERENCE_PRODUCT2,
             'title' => 'Better product',
             'decimalFields' => [

@@ -139,6 +139,7 @@ class OrmEngineTest extends WebTestCase
                 ->getRepository(TestEntity::class)
                 ->findBy(['id' => $event->getEntityIds()]);
 
+            /** @var TestEntity $item */
             foreach ($items as $item) {
                 $event->addField(
                     $item->getId(),
@@ -302,7 +303,7 @@ class OrmEngineTest extends WebTestCase
     public function testSearchByAliasWithSelect()
     {
         $query = new Query();
-        $query->from('oro_test_item_website_WEBSITE_ID');
+        $query->from('oro_test_item_WEBSITE_ID');
         $query->select('stringValue_1');
 
         $expectedResult = new Result(
@@ -417,7 +418,7 @@ class OrmEngineTest extends WebTestCase
     public function testSearchByAliasWithCriteria()
     {
         $query = new Query();
-        $query->from('oro_test_item_website_WEBSITE_ID');
+        $query->from('oro_test_item_WEBSITE_ID');
         $expr = new Comparison("integer.integerValue", "=", 5000);
         $criteria = new Criteria();
         $criteria->where($expr);
