@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Functional\Grid\Frontend;
+namespace Oro\Bundle\CatalogBundle\Tests\Functional\Grid\Frontend;
 
 use Oro\Bundle\DataGridBundle\Extension\Sorter\AbstractSorterExtension;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
@@ -141,14 +141,40 @@ class ProductSearchGridTest extends WebTestCase
         $this->assertTrue($found);
     }
 
+    public function testPagination()
+    {
+        $first2Rows = $this->getDatagridData('frontend-product-search-grid', [], [], [
+            '[_page]'     => 1,
+            '[_per_page]' => 2,
+        ]);
+        $first2Skus = array_column($first2Rows, 'sku');
+
+        $second2Rows = $this->getDatagridData('frontend-product-search-grid', [], [], [
+            '[_page]'     => 2,
+            '[_per_page]' => 2,
+        ]);
+        $second2Skus = array_column($second2Rows, 'sku');
+
+        $first4Rows = $this->getDatagridData('frontend-product-search-grid', [], [], [
+            '[_page]'     => 1,
+            '[_per_page]' => 4,
+        ]);
+        $first4Skus = array_column($first4Rows, 'sku');
+
+        $this->assertEquals($first4Skus, array_merge($first2Skus, $second2Skus));
+    }
+
     /**
      * @param string $gridName
      * @param array  $filters
      * @param array  $sorters
+     * @param int|null $page
      * @return array
      */
-    protected function getDatagridData($gridName, array $filters = [], array $sorters = [])
+    protected function getDatagridData($gridName, array $filters = [], array $sorters = [], array $pager = [])
     {
+        $gridParameters = ['gridName' => $gridName];
+
         $result = [];
         foreach ($filters as $filter => $value) {
             $result[$gridName . '[_filter]' . $filter] = $value;
@@ -156,7 +182,11 @@ class ProductSearchGridTest extends WebTestCase
         foreach ($sorters as $sorter => $value) {
             $result[$gridName . '[_sort_by]' . $sorter] = $value;
         }
-        $response = $this->client->requestFrontendGrid(['gridName' => $gridName], $result);
+        foreach ($pager as $param => $value) {
+            $result[$gridName . '[_pager]' . $param] = $value;
+        }
+
+        $response = $this->client->requestFrontendGrid($gridParameters, $result);
 
         return json_decode($response->getContent(), true)['data'];
     }
