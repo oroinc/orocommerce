@@ -17,7 +17,7 @@
         {% set found = false %}
 
         {% for child in block if child.vars.visible %}
-            {% set currentUrl = path(child.vars.route_name, child.vars.route_parameters.toArray()) %}
+            {% set currentUrl = path(child.vars.route_name, child.vars.route_parameters) %}
 
             <li class="account-menu__item {% if currentUrl in requestUrl and not found %}account-menu__item--current{% endif %}">
                 {{ block_widget(child, {
