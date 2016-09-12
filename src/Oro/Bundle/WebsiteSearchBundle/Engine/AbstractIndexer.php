@@ -172,9 +172,8 @@ abstract class AbstractIndexer implements IndexerInterface
                 if (count($restrictedEntityIds) === 0) {
                     continue;
                 }
-                $realItemsCount += count($restrictedEntityIds);
                 $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
-                $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
+                $realItemsCount += $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
                 $entityIds = [];
                 $entityManager->clear($entityClass);
             }
@@ -183,9 +182,8 @@ abstract class AbstractIndexer implements IndexerInterface
         if ($itemsCount % static::BATCH_SIZE > 0) {
             $restrictedEntityIds = $this->restrictIndexEntity($entityIds, $context, $entityClass);
             if (count($restrictedEntityIds) !== 0) {
-                $realItemsCount += count($restrictedEntityIds);
                 $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
-                $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
+                $realItemsCount += $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
                 $entityManager->clear($entityClass);
             }
         }
