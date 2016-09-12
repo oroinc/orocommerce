@@ -17,7 +17,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class AbstractIndexer implements IndexerInterface
 {
-    const BATCH_SIZE = 10000;
+    const BATCH_SIZE = 10;
     const CONTEXT_WEBSITE_ID_KEY = 'website_id';
 
     /** @var EventDispatcherInterface */
@@ -170,6 +170,9 @@ abstract class AbstractIndexer implements IndexerInterface
 
             if (0 === $itemsCount % static::BATCH_SIZE) {
                 $restrictedEntityIds = $this->restrictIndexEntity($entityIds, $context, $entityClass);
+                if (count($restrictedEntityIds) === 0) {
+                    continue;
+                }
                 $realItemsCount += count($restrictedEntityIds);
                 $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
                 $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
@@ -180,10 +183,12 @@ abstract class AbstractIndexer implements IndexerInterface
 
         if ($itemsCount % static::BATCH_SIZE > 0) {
             $restrictedEntityIds = $this->restrictIndexEntity($entityIds, $context, $entityClass);
-            $realItemsCount += count($restrictedEntityIds);
-            $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
-            $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
-            $entityManager->clear($entityClass);
+            if (count($restrictedEntityIds) !== 0) {
+                $realItemsCount += count($restrictedEntityIds);
+                $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
+                $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
+                $entityManager->clear($entityClass);
+            }
         }
 
         $this->renameIndex($temporaryAlias, $currentAlias);
@@ -254,11 +259,6 @@ abstract class AbstractIndexer implements IndexerInterface
 
         $result = $queryBuilder->getQuery()->getArrayResult();
 
-        return array_map(
-            function ($entityId) {
-                return $entityId['id'];
-            },
-            $result
-        );
+        return array_column($result, 'id');
     }
 }
