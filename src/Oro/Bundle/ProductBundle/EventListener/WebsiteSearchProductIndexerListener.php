@@ -37,15 +37,12 @@ class WebsiteSearchProductIndexerListener
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         $entityClass = $event->getEntityClass();
-        $productIds = $event->getEntityIds();
 
         if ($entityClass !== Product::class) {
             return;
-        } elseif (!$productIds) {
-            return;
         }
 
-        $products = $this->productRepository->getProductsByIds($productIds);
+        $products = $this->productRepository->getProductsByIds($event->getEntityIds());
 
         $localizations = $this->localizationHelper->getLocalizations();
 

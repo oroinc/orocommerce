@@ -184,6 +184,9 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     protected function indexEntities($entityClass, array $entityIds, array $context)
     {
+        if (!$entityIds) {
+            return [];
+        }
         $indexEntityEvent = new IndexEntityEvent($entityClass, $entityIds, $context);
         $this->eventDispatcher->dispatch(IndexEntityEvent::NAME, $indexEntityEvent);
 
