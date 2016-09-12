@@ -30,7 +30,7 @@ class WarehouseSystemConfigSubscriber
     {
         $settingKey = $this->getSettingsKey(ConfigManager::SECTION_VIEW_SEPARATOR);
         $settings = $event->getSettings();
-        if (is_array($settings) && array_key_exists($settingKey, $settings)) {
+        if ($this->isSettingsApplicable($settings, $settingKey)) {
             $settings[$settingKey]['value'] = $this->converter->convertFromSaved($settings[$settingKey]['value']);
             $event->setSettings($settings);
         }
@@ -50,11 +50,11 @@ class WarehouseSystemConfigSubscriber
     }
 
     /**
-     * @param array $settings
+     * @param mixed $settings
      * @param string $settingsKey
      * @return bool
      */
-    protected function isSettingsApplicable(array $settings, $settingsKey)
+    protected function isSettingsApplicable($settings, $settingsKey)
     {
         return is_array($settings) && array_key_exists($settingsKey, $settings);
     }

@@ -23,7 +23,7 @@ class WarehouseConfig
     public function __construct(Warehouse $warehouse = null, $priority = null)
     {
         $this->warehouse = $warehouse;
-        $this->priority = (int)$priority;
+        $this->priority = $priority;
     }
 
     /**
@@ -46,7 +46,7 @@ class WarehouseConfig
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getPriority()
     {
