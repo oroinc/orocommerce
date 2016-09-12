@@ -32,7 +32,7 @@ services:
     oro_website_search.website_id.placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder'
         arguments:
-            - '@orob2b_website.manager'
+            - '@oro_website.manager'
 
     oro_website_search.localization_id.placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder'
