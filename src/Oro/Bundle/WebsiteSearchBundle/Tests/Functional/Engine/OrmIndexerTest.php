@@ -17,7 +17,7 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
-use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntitiesEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
@@ -139,8 +139,8 @@ class OrmIndexerTest extends WebTestCase
         $restrictedProduct = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
 
         $this->dispatcher->addListener(
-            RestrictIndexEntitiesEvent::NAME,
-            function (RestrictIndexEntitiesEvent $event) use ($restrictedProduct) {
+            RestrictIndexEntityEvent::NAME,
+            function (RestrictIndexEntityEvent $event) use ($restrictedProduct) {
                 $qb = $event->getQueryBuilder();
                 list($rootAlias) = $qb->getRootAliases();
                 $qb->where($qb->expr()->neq($rootAlias . '.id', ':id'))
