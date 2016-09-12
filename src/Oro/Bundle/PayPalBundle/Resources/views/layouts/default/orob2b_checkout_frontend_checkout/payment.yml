@@ -1,8 +1,0 @@
-layout:
-    actions:
-        - '@setBlockTheme':
-            themes:
-                - 'OroPayPalBundle:layouts:default/orob2b_payment_methods/layout.html.twig'
-        - '@setFormTheme':
-            themes:
-                - 'OroPayPalBundle:layouts:default/orob2b_payment_methods/form.html.twig'

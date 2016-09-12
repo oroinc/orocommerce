@@ -15,9 +15,10 @@ use Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper;
 
 class TotalCalculateListener
 {
+    /** @var array */
     protected $forms = [
-        ActionApplicationsHelper::FRONTEND => FrontendOrderType::NAME,
-        ActionApplicationsHelper::BACKEND => OrderType::NAME
+        ActionApplicationsHelper::COMMERCE_APPLICATION => FrontendOrderType::NAME,
+        ActionApplicationsHelper::DEFAULT_APPLICATION => OrderType::NAME
     ];
 
     /** @var FormFactory */
@@ -49,7 +50,7 @@ class TotalCalculateListener
             $currentApplication = $this->applicationsHelper->getCurrentApplication();
             $entity->resetLineItems();
 
-            if ($currentApplication === ActionApplicationsHelper::BACKEND) {
+            if ($currentApplication === ActionApplicationsHelper::DEFAULT_APPLICATION) {
                 $entity->resetDiscounts();
             }
 

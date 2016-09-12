@@ -32,7 +32,7 @@ class LoginPageControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_cms_loginpage_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_loginpage_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('cms-login-page-grid', $crawler->html());
@@ -45,7 +45,7 @@ class LoginPageControllerTest extends WebTestCase
      */
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_cms_loginpage_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_loginpage_create'));
 
         $this->assertLoginPageSave($crawler, static::TOP_CONTENT, static::BOTTOM_CONTENT, static::CSS);
 
@@ -67,7 +67,7 @@ class LoginPageControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_cms_loginpage_update', ['id' => $id])
+            $this->getUrl('oro_cms_loginpage_update', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -91,7 +91,7 @@ class LoginPageControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_cms_loginpage_view', ['id' => $id])
+            $this->getUrl('oro_cms_loginpage_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -113,9 +113,9 @@ class LoginPageControllerTest extends WebTestCase
     {
         $form = $crawler->selectButton('Save and Close')->form();
 
-        $form['orob2b_cms_login_page[topContent]'] = $topContent;
-        $form['orob2b_cms_login_page[bottomContent]'] = $bottomContent;
-        $form['orob2b_cms_login_page[css]'] = $css;
+        $form['oro_cms_login_page[topContent]'] = $topContent;
+        $form['oro_cms_login_page[bottomContent]'] = $bottomContent;
+        $form['oro_cms_login_page[css]'] = $css;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

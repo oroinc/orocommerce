@@ -68,24 +68,24 @@ class OroOrderBundleInstaller implements
         /** Tables generation **/
         $this->createOroOrderTable($schema);
         $this->createOroOrderAddressTable($schema);
-        $this->createOrob2BOrderLineItemTable($schema);
-        $this->createOrob2BOrderDiscountTable($schema);
+        $this->createOroOrderLineItemTable($schema);
+        $this->createOroOrderDiscountTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroOrderForeignKeys($schema);
         $this->addOroOrderAddressForeignKeys($schema);
-        $this->addOrob2BOrderLineItemForeignKeys($schema);
-        $this->addOrob2BOrderDiscountForeignKeys($schema);
+        $this->addOroOrderLineItemForeignKeys($schema);
+        $this->addOroOrderDiscountForeignKeys($schema);
     }
 
     /**
-     * Create orob2b_order table
+     * Create oro_order table
      *
      * @param Schema $schema
      */
     protected function createOroOrderTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_order');
+        $table = $schema->createTable('oro_order');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
@@ -128,8 +128,8 @@ class OroOrderBundleInstaller implements
         $table->addColumn('source_entity_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_entity_identifier', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['created_at'], 'orob2b_order_created_at_index', []);
-        $table->addUniqueIndex(['identifier'], 'uniq_orob2b_order_identifier');
+        $table->addIndex(['created_at'], 'oro_order_created_at_index', []);
+        $table->addUniqueIndex(['identifier'], 'uniq_oro_order_identifier');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_c036ff904d4cff2b');
         $table->addUniqueIndex(['billing_address_id'], 'uniq_c036ff9079d0c0e4');
 
@@ -140,13 +140,13 @@ class OroOrderBundleInstaller implements
     }
 
     /**
-     * Create orob2b_order_address table
+     * Create oro_order_address table
      *
      * @param Schema $schema
      */
     protected function createOroOrderAddressTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_order_address');
+        $table = $schema->createTable('oro_order_address');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_address_id', 'integer', ['notnull' => false]);
@@ -172,12 +172,12 @@ class OroOrderBundleInstaller implements
     }
 
     /**
-     * Create orob2b_order_discount table
+     * Create oro_order_discount table
      * @param Schema $schema
      */
-    protected function createOrob2BOrderDiscountTable(Schema $schema)
+    protected function createOroOrderDiscountTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_order_discount');
+        $table = $schema->createTable('oro_order_discount');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('order_id', 'integer', ['notnull' => true]);
         $table->addColumn('description', 'text', ['notnull' => false]);
@@ -197,13 +197,13 @@ class OroOrderBundleInstaller implements
     }
 
     /**
-     * Create orob2b_order_line_item table
+     * Create oro_order_line_item table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BOrderLineItemTable(Schema $schema)
+    protected function createOroOrderLineItemTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_order_line_item');
+        $table = $schema->createTable('oro_order_line_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
@@ -229,15 +229,15 @@ class OroOrderBundleInstaller implements
     }
 
     /**
-     * Add orob2b_order foreign keys.
+     * Add oro_order foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroOrderForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_order');
+        $table = $schema->getTable('oro_order');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_payment_term'),
+            $schema->getTable('oro_payment_term'),
             ['payment_term_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
@@ -255,31 +255,31 @@ class OroOrderBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order_address'),
+            $schema->getTable('oro_order_address'),
             ['shipping_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order_address'),
+            $schema->getTable('oro_order_address'),
             ['billing_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account'),
+            $schema->getTable('oro_account'),
             ['account_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['account_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
+            $schema->getTable('oro_website'),
             ['website_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
@@ -287,21 +287,21 @@ class OroOrderBundleInstaller implements
     }
 
     /**
-     * Add orob2b_order_address foreign keys.
+     * Add oro_order_address foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroOrderAddressForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_order_address');
+        $table = $schema->getTable('oro_order_address');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_address'),
+            $schema->getTable('oro_account_address'),
             ['account_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user_address'),
+            $schema->getTable('oro_account_user_address'),
             ['account_user_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
@@ -321,27 +321,27 @@ class OroOrderBundleInstaller implements
     }
 
     /**
-     * Add orob2b_order_line_item foreign keys.
+     * Add oro_order_line_item foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BOrderLineItemForeignKeys(Schema $schema)
+    protected function addOroOrderLineItemForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_order_line_item');
+        $table = $schema->getTable('oro_order_line_item');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product_unit'),
+            $schema->getTable('oro_product_unit'),
             ['product_unit_id'],
             ['code'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+            $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order'),
+            $schema->getTable('oro_order'),
             ['order_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -349,17 +349,17 @@ class OroOrderBundleInstaller implements
     }
 
     /**
-     * Add orob2b_order_discount foreign keys.
+     * Add oro_order_discount foreign keys.
      *
      * @param Schema $schema
      *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    protected function addOrob2BOrderDiscountForeignKeys(Schema $schema)
+    protected function addOroOrderDiscountForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_order_discount');
+        $table = $schema->getTable('oro_order_discount');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order'),
+            $schema->getTable('oro_order'),
             ['order_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']

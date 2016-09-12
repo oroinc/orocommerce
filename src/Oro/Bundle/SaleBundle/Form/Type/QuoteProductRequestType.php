@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class QuoteProductRequestType extends AbstractType
 {
-    const NAME = 'orob2b_sale_quote_product_request';
+    const NAME = 'oro_sale_quote_product_request';
 
     /**
      * @var string

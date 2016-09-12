@@ -16,4 +16,4 @@ layout:
                     quick_access_container:
                         quick_access_menu: ~
 
-    conditions: 'context["logged_user"]!=null'
+    conditions: 'context["is_logged_in"]'

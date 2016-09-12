@@ -19,7 +19,7 @@ use Oro\Bundle\WarehouseBundle\Form\DataTransformer\WarehouseInventoryLevelGridD
 
 class WarehouseInventoryLevelGridType extends AbstractType
 {
-    const NAME = 'orob2b_warehouse_inventory_level_grid';
+    const NAME = 'oro_warehouse_inventory_level_grid';
 
     /**
      * @var FormFactoryInterface

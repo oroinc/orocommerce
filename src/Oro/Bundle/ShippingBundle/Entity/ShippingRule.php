@@ -20,10 +20,10 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingRule;
  * )
  * @ORM\HasLifecycleCallbacks()
  * @Config(
- *      routeName="orob2b_shipping_rule_index",
- *      routeView="orob2b_shipping_rule_view",
- *      routeCreate="orob2b_shipping_rule_create",
- *      routeUpdate="orob2b_shipping_rule_update",
+ *      routeName="oro_shipping_rule_index",
+ *      routeView="oro_shipping_rule_view",
+ *      routeCreate="oro_shipping_rule_create",
+ *      routeUpdate="oro_shipping_rule_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"

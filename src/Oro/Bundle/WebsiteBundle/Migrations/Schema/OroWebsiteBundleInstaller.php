@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
@@ -10,7 +11,7 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInterface
 {
-    const WEBSITE_TABLE_NAME = 'orob2b_website';
+    const WEBSITE_TABLE_NAME = 'oro_website';
 
     /** @var NoteExtension */
     protected $noteExtension;
@@ -28,7 +29,7 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_4';
     }
 
     /**
@@ -37,34 +38,34 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BRelatedWebsiteTable($schema);
-        $this->createOrob2BWebsiteTable($schema);
+        $this->createOroRelatedWebsiteTable($schema);
+        $this->createOroWebsiteTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BRelatedWebsiteForeignKeys($schema);
-        $this->addOrob2BWebsiteForeignKeys($schema);
+        $this->addOroRelatedWebsiteForeignKeys($schema);
+        $this->addOroWebsiteForeignKeys($schema);
         $this->addNoteAssociations($schema);
     }
 
     /**
-     * Create orob2b_related_website table
+     * Create oro_related_website table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BRelatedWebsiteTable(Schema $schema)
+    protected function createOroRelatedWebsiteTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_related_website');
+        $table = $schema->createTable('oro_related_website');
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('related_website_id', 'integer', []);
         $table->setPrimaryKey(['website_id', 'related_website_id']);
     }
 
     /**
-     * Create orob2b_website table
+     * Create oro_website table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BWebsiteTable(Schema $schema)
+    protected function createOroWebsiteTable(Schema $schema)
     {
         $table = $schema->createTable(self::WEBSITE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -78,26 +79,26 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
         $table->setPrimaryKey(['id']);
 
         $table->addUniqueIndex(['name']);
-        $table->addIndex(['created_at'], 'idx_orob2b_website_created_at', []);
-        $table->addIndex(['updated_at'], 'idx_orob2b_website_updated_at', []);
+        $table->addIndex(['created_at'], 'idx_oro_website_created_at', []);
+        $table->addIndex(['updated_at'], 'idx_oro_website_updated_at', []);
     }
 
     /**
-     * Add orob2b_related_website foreign keys.
+     * Add oro_related_website foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BRelatedWebsiteForeignKeys(Schema $schema)
+    protected function addOroRelatedWebsiteForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_related_website');
+        $table = $schema->getTable('oro_related_website');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
+            $schema->getTable('oro_website'),
             ['website_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
+            $schema->getTable('oro_website'),
             ['related_website_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -105,11 +106,11 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
-     * Add orob2b_website foreign keys.
+     * Add oro_website foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BWebsiteForeignKeys(Schema $schema)
+    protected function addOroWebsiteForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::WEBSITE_TABLE_NAME);
         $table->addForeignKeyConstraint(

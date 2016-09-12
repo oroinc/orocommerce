@@ -10,7 +10,7 @@ use Oro\Bundle\MenuBundle\JsTree\MenuItemTreeHandler;
 
 class MenuItemExtension extends \Twig_Extension
 {
-    const NAME = 'orob2b_menu_item_extension';
+    const NAME = 'oro_menu_item_extension';
 
     /**
      * @var MenuItemTreeHandler
@@ -46,9 +46,9 @@ class MenuItemExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            'orob2b_menu_item_list' => new \Twig_Function_Method($this, 'getTree'),
-            'orob2b_menu_is_current' => new \Twig_Function_Method($this, 'isCurrent'),
-            'orob2b_menu_is_ancestor' => new \Twig_Function_Method($this, 'isAncestor'),
+            'oro_menu_item_list' => new \Twig_Function_Method($this, 'getTree'),
+            'oro_menu_is_current' => new \Twig_Function_Method($this, 'isCurrent'),
+            'oro_menu_is_ancestor' => new \Twig_Function_Method($this, 'isAncestor'),
         ];
     }
 

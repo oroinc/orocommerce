@@ -6,5 +6,5 @@
 
 <h1>Thank you for registration, {{ entity.username }}</h1>
 <div>
-    <p>Please follow this link to confirm your email address: <a href="{{ website_path('orob2b_account_frontend_account_user_confirmation', {'username': entity.username, 'token': token}, entity.website) }}">Confirm</a></p>
+    <p>Please follow this link to confirm your email address: <a href="{{ website_path('oro_account_frontend_account_user_confirmation', {'username': entity.username, 'token': token}, entity.website) }}">Confirm</a></p>
 </div>

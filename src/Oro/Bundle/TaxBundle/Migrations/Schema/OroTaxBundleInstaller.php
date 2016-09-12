@@ -17,7 +17,7 @@ class OroTaxBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -47,13 +47,13 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_tax table
+     * Create oro_tax table
      *
      * @param Schema $schema
      */
     protected function createOroTaxTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_tax');
+        $table = $schema->createTable('oro_tax');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('description', 'text', ['notnull' => false]);
@@ -65,13 +65,13 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_tax_acc_grp_tc_acc_grp table
+     * Create oro_tax_acc_grp_tc_acc_grp table
      *
      * @param Schema $schema
      */
     protected function createOroTaxAccGrpTcAccGrpTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_tax_acc_grp_tc_acc_grp');
+        $table = $schema->createTable('oro_tax_acc_grp_tc_acc_grp');
         $table->addColumn('account_group_tax_code_id', 'integer', []);
         $table->addColumn('account_group_id', 'integer', []);
         $table->setPrimaryKey(['account_group_tax_code_id', 'account_group_id']);
@@ -79,13 +79,13 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_tax_acc_tax_code_acc table
+     * Create oro_tax_acc_tax_code_acc table
      *
      * @param Schema $schema
      */
     protected function createOroTaxAccTaxCodeAccTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_tax_acc_tax_code_acc');
+        $table = $schema->createTable('oro_tax_acc_tax_code_acc');
         $table->addColumn('account_tax_code_id', 'integer', []);
         $table->addColumn('account_id', 'integer', []);
         $table->setPrimaryKey(['account_tax_code_id', 'account_id']);
@@ -93,13 +93,13 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_tax_account_tax_code table
+     * Create oro_tax_account_tax_code table
      *
      * @param Schema $schema
      */
     protected function createOroTaxAccountTaxCodeTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_tax_account_tax_code');
+        $table = $schema->createTable('oro_tax_account_tax_code');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('description', 'text', ['notnull' => false]);
@@ -110,13 +110,13 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_tax_jurisdiction table
+     * Create oro_tax_jurisdiction table
      *
      * @param Schema $schema
      */
     protected function createOroTaxJurisdictionTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_tax_jurisdiction');
+        $table = $schema->createTable('oro_tax_jurisdiction');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
@@ -130,13 +130,13 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_tax_prod_tax_code_prod table
+     * Create oro_tax_prod_tax_code_prod table
      *
      * @param Schema $schema
      */
     protected function createOroTaxProdTaxCodeProdTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_tax_prod_tax_code_prod');
+        $table = $schema->createTable('oro_tax_prod_tax_code_prod');
         $table->addColumn('product_tax_code_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->setPrimaryKey(['product_tax_code_id', 'product_id']);
@@ -144,13 +144,13 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_tax_product_tax_code table
+     * Create oro_tax_product_tax_code table
      *
      * @param Schema $schema
      */
     protected function createOroTaxProductTaxCodeTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_tax_product_tax_code');
+        $table = $schema->createTable('oro_tax_product_tax_code');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('description', 'text', ['notnull' => false]);
@@ -161,13 +161,13 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_tax_rule table
+     * Create oro_tax_rule table
      *
      * @param Schema $schema
      */
     protected function createOroTaxRuleTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_tax_rule');
+        $table = $schema->createTable('oro_tax_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('tax_jurisdiction_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_tax_code_id', 'integer', ['notnull' => false]);
@@ -180,13 +180,13 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_tax_zip_code table
+     * Create oro_tax_zip_code table
      *
      * @param Schema $schema
      */
     protected function createOroTaxZipCodeTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_tax_zip_code');
+        $table = $schema->createTable('oro_tax_zip_code');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('tax_jurisdiction_id', 'integer', []);
         $table->addColumn('zip_code', 'string', ['notnull' => false, 'length' => 255]);
@@ -198,13 +198,13 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_tax_value table
+     * Create oro_tax_value table
      *
      * @param Schema $schema
      */
     protected function createOroTaxValueTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_tax_value');
+        $table = $schema->createTable('oro_tax_value');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('result', 'object', ['comment' => '(DC2Type:object)']);
         $table->addColumn('entity_class', 'string', ['length' => 255]);
@@ -213,25 +213,25 @@ class OroTaxBundleInstaller implements Installation
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['entity_class', 'entity_id'], 'orob2b_tax_value_class_id_idx');
+        $table->addIndex(['entity_class', 'entity_id'], 'oro_tax_value_class_id_idx');
     }
 
     /**
-     * Add orob2b_tax_acc_grp_tc_acc_grp foreign keys.
+     * Add oro_tax_acc_grp_tc_acc_grp foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroTaxAccGrpTcAccGrpForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_tax_acc_grp_tc_acc_grp');
+        $table = $schema->getTable('oro_tax_acc_grp_tc_acc_grp');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_group'),
+            $schema->getTable('oro_account_group'),
             ['account_group_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_tax_account_tax_code'),
+            $schema->getTable('oro_tax_account_tax_code'),
             ['account_group_tax_code_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -239,21 +239,21 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Add orob2b_tax_acc_tax_code_acc foreign keys.
+     * Add oro_tax_acc_tax_code_acc foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroTaxAccTaxCodeAccForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_tax_acc_tax_code_acc');
+        $table = $schema->getTable('oro_tax_acc_tax_code_acc');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_tax_account_tax_code'),
+            $schema->getTable('oro_tax_account_tax_code'),
             ['account_tax_code_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account'),
+            $schema->getTable('oro_account'),
             ['account_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -261,13 +261,13 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Add orob2b_tax_jurisdiction foreign keys.
+     * Add oro_tax_jurisdiction foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroTaxJurisdictionForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_tax_jurisdiction');
+        $table = $schema->getTable('oro_tax_jurisdiction');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_dictionary_country'),
             ['country_code'],
@@ -283,21 +283,21 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Add orob2b_tax_prod_tax_code_prod foreign keys.
+     * Add oro_tax_prod_tax_code_prod foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroTaxProdTaxCodeProdForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_tax_prod_tax_code_prod');
+        $table = $schema->getTable('oro_tax_prod_tax_code_prod');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_tax_product_tax_code'),
+            $schema->getTable('oro_tax_product_tax_code'),
             ['product_tax_code_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+            $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -305,33 +305,33 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Add orob2b_tax_rule foreign keys.
+     * Add oro_tax_rule foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroTaxRuleForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_tax_rule');
+        $table = $schema->getTable('oro_tax_rule');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_tax_jurisdiction'),
+            $schema->getTable('oro_tax_jurisdiction'),
             ['tax_jurisdiction_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_tax_account_tax_code'),
+            $schema->getTable('oro_tax_account_tax_code'),
             ['account_tax_code_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_tax_product_tax_code'),
+            $schema->getTable('oro_tax_product_tax_code'),
             ['product_tax_code_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_tax'),
+            $schema->getTable('oro_tax'),
             ['tax_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -339,15 +339,15 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Add orob2b_tax_zip_code foreign keys.
+     * Add oro_tax_zip_code foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroTaxZipCodeForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_tax_zip_code');
+        $table = $schema->getTable('oro_tax_zip_code');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_tax_jurisdiction'),
+            $schema->getTable('oro_tax_jurisdiction'),
             ['tax_jurisdiction_id'],
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]

@@ -9,7 +9,7 @@
             {% if entity.group %}
                 {% if is_granted('VIEW', entity.group) %}
                     {% set groupData %}
-                    <a href="{{ path('orob2b_account_group_view', {id: entity.group.id}) }}">
+                    <a href="{{ path('oro_account_group_view', {id: entity.group.id}) }}">
                         {{ entity.group.name }}
                     </a>
                     {% endset %}
@@ -22,7 +22,7 @@
             {% if entity.parent %}
                 {% if is_granted('VIEW', entity.parent) %}
                     {% set parentData %}
-                        <a href="{{ path('orob2b_account_view', {id: entity.parent.id}) }}">
+                        <a href="{{ path('oro_account_view', {id: entity.parent.id}) }}">
                             {{ entity.parent.name }}
                         </a>
                     {% endset %}
@@ -33,7 +33,7 @@
             {% endif %}
 
             {% if entity.users | length %}
-                {{ UI.renderHtmlProperty('oro.account.users.label'|trans, UI.entityViewLinks(entity.users, 'fullName', 'orob2b_account_account_user_view')) }}
+                {{ UI.renderHtmlProperty('oro.account.users.label'|trans, UI.entityViewLinks(entity.users, 'fullName', 'oro_account_account_user_view')) }}
             {% endif %}
 
             {% if entity.salesRepresentatives | length %}

@@ -5,13 +5,20 @@ namespace Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_1;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroCheckoutBundle implements Migration, OrderedMigrationInterface
+class OroCheckoutBundle implements Migration, OrderedMigrationInterface, RenameExtensionAwareInterface
 {
+    /**
+     * @var RenameExtension
+     */
+    protected $renameExtension;
+
     /**
      * {@inheritdoc}
      */
@@ -28,7 +35,7 @@ class OroCheckoutBundle implements Migration, OrderedMigrationInterface
         $this->addCheckoutTypeColumn($schema);
         $this->setTypeExistingCheckouts($queries);
         $this->createOroDefaultCheckoutTable($schema);
-        $this->addOroDefaultCheckoutForeignKeys($schema);
+        $this->addOroDefaultCheckoutForeignKeys($schema, $queries);
         $this->copyExistingCheckoutsData($queries);
     }
 
@@ -102,8 +109,9 @@ class OroCheckoutBundle implements Migration, OrderedMigrationInterface
      * Add orob2b_default_checkout foreign keys
      *
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function addOroDefaultCheckoutForeignKeys(Schema $schema)
+    protected function addOroDefaultCheckoutForeignKeys(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_default_checkout');
 
@@ -113,20 +121,29 @@ class OroCheckoutBundle implements Migration, OrderedMigrationInterface
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order'),
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_default_checkout',
+            'oro_order',
             ['order_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => null]
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order_address'),
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_default_checkout',
+            'oro_order_address',
             ['billing_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order_address'),
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_default_checkout',
+            'oro_order_address',
             ['shipping_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
@@ -156,5 +173,13 @@ class OroCheckoutBundle implements Migration, OrderedMigrationInterface
      FROM orob2b_checkout
 SQL;
         $queries->addQuery($sql);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRenameExtension(RenameExtension $renameExtension)
+    {
+        $this->renameExtension = $renameExtension;
     }
 }

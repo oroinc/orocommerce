@@ -1,0 +1,9 @@
+.grid {
+    &__row--offset-l {
+        margin-bottom: 20px;
+    }
+
+    &__group-column {
+        padding-left: $offset-x;
+    }
+}

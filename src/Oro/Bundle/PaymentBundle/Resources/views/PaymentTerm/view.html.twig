@@ -8,8 +8,8 @@
 
     {% if resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_delete_paymentterm', {'id': entity.id}),
-            'dataRedirect': path('orob2b_payment_term_index'),
+            'dataUrl': path('oro_api_delete_paymentterm', {'id': entity.id}),
+            'dataRedirect': path('oro_payment_term_index'),
             'aCss': 'no-hash remove-button',
             'dataId': entity.id,
             'entity_label': 'oro.payment.paymentterm.entity_label'|trans,
@@ -23,7 +23,7 @@
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity':      entity,
-        'indexPath':   path('orob2b_payment_term_index'),
+        'indexPath':   path('oro_payment_term_index'),
         'indexLabel':  'oro.payment.paymentterm.entity_plural_label'|trans,
         'entityTitle': entity.label,
     } %}
@@ -34,7 +34,7 @@
     {% set paymentTermInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'url': path('orob2b_payment_term_widget_info', {id: entity.id})
+            'url': path('oro_payment_term_widget_info', {id: entity.id})
         }) }}
     {% endset %}
 

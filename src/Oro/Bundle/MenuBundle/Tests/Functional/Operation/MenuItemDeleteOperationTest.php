@@ -28,8 +28,8 @@ class MenuItemDeleteOperationTest extends ActionTestCase
 
         $this->assertDeleteOperation(
             $menuItem->getId(),
-            'orob2b_menu.entity.menu_item.class',
-            'orob2b_menu_item_roots'
+            'oro_menu.entity.menu_item.class',
+            'oro_menu_item_roots'
         );
     }
 }

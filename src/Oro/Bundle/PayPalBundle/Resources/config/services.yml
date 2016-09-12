@@ -12,7 +12,7 @@ services:
         arguments:
             - '@session'
         tags:
-            - { name: kernel.event_listener, event: orob2b_payment.callback.error, method: onError, priority: 20 }
+            - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError, priority: 20 }
 
     oro_paypal.event_listener.config.paypal_encrypt:
         class: 'Oro\Bundle\PayPalBundle\EventListener\Config\PayPalConfigurationEncryptListener'
@@ -37,3 +37,17 @@ services:
         class: 'Oro\Bundle\PayPalBundle\EventListener\Config\PayPalSelectedCountriesListener'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+
+    oro_paypal.event_listener.payflow_require_payment_redirect:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\ZeroAmountAuthorizationRedirectListener'
+        arguments:
+            - '@oro_paypal.payment_method.payflow_gateway.config'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.require_payment_redirect.payflow_gateway, method: onRequirePaymentRedirect }
+
+    oro_paypal.event_listener.paypal_payments_pro_require_payment_redirect:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\ZeroAmountAuthorizationRedirectListener'
+        arguments:
+            - '@oro_paypal.payment_method.paypal_payments_pro.config'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.require_payment_redirect.paypal_payments_pro, method: onRequirePaymentRedirect }

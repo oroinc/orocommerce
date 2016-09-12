@@ -13,8 +13,8 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class OroWarehouseBundle implements Migration, ExtendExtensionAwareInterface
 {
     const WAREHOUSE_TABLE_NAME = 'orob2b_warehouse';
-    const ORDER_TABLE_NAME = 'orob2b_order';
-    const ORDER_LINE_ITEM_TABLE_NAME = 'orob2b_order_line_item';
+    const ORDER_TABLE_NAME = 'oro_order';
+    const ORDER_LINE_ITEM_TABLE_NAME = 'oro_order_line_item';
 
     /** @var ExtendExtension */
     protected $extendExtension;

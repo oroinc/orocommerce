@@ -25,7 +25,7 @@ class ProductPriceDeleteOperationTest extends ActionTestCase
         $this->assertExecuteOperation(
             'DELETE',
             $productPrice->getId(),
-            $this->getContainer()->getParameter('orob2b_pricing.entity.product_price.class'),
+            $this->getContainer()->getParameter('oro_pricing.entity.product_price.class'),
             ['datagrid' => 'price-list-product-prices-grid']
         );
 

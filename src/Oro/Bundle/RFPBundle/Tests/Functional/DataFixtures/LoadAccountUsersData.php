@@ -97,7 +97,7 @@ class LoadAccountUsersData extends AbstractFixture implements DependentFixtureIn
     public function load(ObjectManager $manager)
     {
         /* @var $userManager BaseUserManager */
-        $userManager = $this->container->get('orob2b_account_user.manager');
+        $userManager = $this->container->get('oro_account_user.manager');
         $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
         /* @var $accountUserRoleRepository AccountUserRoleRepository */
         $accountUserRoleRepository =  $this->container

@@ -15,18 +15,18 @@ use Oro\Bundle\WarehouseBundle\Model\ExtendWarehouse;
 
 /**
  * @ORM\Table(
- *     name="orob2b_warehouse",
+ *     name="oro_warehouse",
  *      indexes={
- *          @ORM\Index(name="idx_orob2b_warehouse_created_at", columns={"created_at"}),
- *          @ORM\Index(name="idx_orob2b_warehouse_updated_at", columns={"updated_at"})
+ *          @ORM\Index(name="idx_oro_warehouse_created_at", columns={"created_at"}),
+ *          @ORM\Index(name="idx_oro_warehouse_updated_at", columns={"updated_at"})
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
- *      routeName="orob2b_warehouse_index",
- *      routeView="orob2b_warehouse_view",
- *      routeUpdate="orob2b_warehouse_update",
+ *      routeName="oro_warehouse_index",
+ *      routeView="oro_warehouse_view",
+ *      routeUpdate="oro_warehouse_update",
  *      defaultValues={
  *          "ownership"={
  *              "owner_type"="BUSINESS_UNIT",

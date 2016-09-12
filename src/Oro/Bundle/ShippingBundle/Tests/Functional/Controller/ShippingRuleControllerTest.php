@@ -28,12 +28,12 @@ class ShippingRuleControllerTest extends WebTestCase
     {
         $auth = $this->generateBasicAuthHeader(LoadUserData::USER_VIEWER_CREATOR, LoadUserData::USER_VIEWER_CREATOR);
         $this->initClient([], $auth);
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_shipping_rule_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_rule_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('shipping-rule-grid', $crawler->html());
         $href = $crawler->selectLink('Create Shipping Rule')->attr('href');
-        $this->assertEquals($this->getUrl('orob2b_shipping_rule_create'), $href);
+        $this->assertEquals($this->getUrl('oro_shipping_rule_create'), $href);
 
         $response = $this->client->requestGrid([
             'gridName' => 'shipping-rule-grid',
@@ -94,13 +94,12 @@ class ShippingRuleControllerTest extends WebTestCase
                 $this->assertEquals($value, $data[$i][$key]);
             }
         }
-
     }
 
     public function testIndexWithoutCreate()
     {
         $this->initClient([], $this->generateBasicAuthHeader(LoadUserData::USER_VIEWER, LoadUserData::USER_VIEWER));
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_shipping_rule_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_rule_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals(0, $crawler->selectLink('Create Shipping Rule')->count());
@@ -115,7 +114,7 @@ class ShippingRuleControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadUserData::USER_VIEWER_CREATOR, LoadUserData::USER_VIEWER_CREATOR)
         );
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_shipping_rule_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_rule_create'));
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
@@ -176,7 +175,7 @@ class ShippingRuleControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shipping_rule_view', ['id' => $shippingRule->getId()])
+            $this->getUrl('oro_shipping_rule_view', ['id' => $shippingRule->getId()])
         );
 
         $result = $this->client->getResponse();
@@ -204,7 +203,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->assertNotEmpty($shippingRule);
 
         $id = $shippingRule->getId();
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_shipping_rule_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_shipping_rule_update', ['id' => $id]));
 
         $html = $crawler->html();
 
@@ -281,7 +280,7 @@ class ShippingRuleControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shipping_rule_update', ['id' => $shippingRule->getId()])
+            $this->getUrl('oro_shipping_rule_update', ['id' => $shippingRule->getId()])
         );
 
         $html = $crawler->html();
@@ -314,7 +313,7 @@ class ShippingRuleControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shipping_rule_update', ['id' => $shippingRule->getId()])
+            $this->getUrl('oro_shipping_rule_update', ['id' => $shippingRule->getId()])
         );
 
         $html = $crawler->html();
@@ -343,7 +342,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $shippingRule1 = $this->getReference('shipping_rule.1');
         $shippingRule2 = $this->getReference('shipping_rule.2');
         $url = $this->getUrl(
-            'orob2b_status_shipping_rule_massaction',
+            'oro_status_shipping_rule_massaction',
             [
                 'gridName' => 'shipping-rule-grid',
                 'actionName' => 'disable',
@@ -377,7 +376,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $shippingRule1 = $this->getReference('shipping_rule.1');
         $shippingRule2 = $this->getReference('shipping_rule.2');
         $url = $this->getUrl(
-            'orob2b_status_shipping_rule_massaction',
+            'oro_status_shipping_rule_massaction',
             [
                 'gridName' => 'shipping-rule-grid',
                 'actionName' => 'enable',
@@ -412,7 +411,7 @@ class ShippingRuleControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shipping_rule_update', ['id' => $shippingRule->getId()])
+            $this->getUrl('oro_shipping_rule_update', ['id' => $shippingRule->getId()])
         );
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 403);
@@ -428,7 +427,7 @@ class ShippingRuleControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shipping_rule_update', ['id' => $shippingRule->getId()])
+            $this->getUrl('oro_shipping_rule_update', ['id' => $shippingRule->getId()])
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);

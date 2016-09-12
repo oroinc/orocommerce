@@ -15,7 +15,7 @@ use Oro\Bundle\FormBundle\Form\DataTransformer\EntitiesToIdsTransformer;
 
 class ProductInventoryStatusSelectType extends AbstractType
 {
-    const NAME = 'orob2b_product_inventory_status_select';
+    const NAME = 'oro_product_inventory_status_select';
 
     const PROD_INVENTORY_STATUS_ENUM_CODE = 'prod_inventory_status';
 

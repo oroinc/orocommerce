@@ -3,42 +3,42 @@
     {{ form_row(form, attrs) }}
 {% endmacro %}
 
-{% block _shipping_origin_orob2b_shipping___shipping_origin_row %}
+{% block _shipping_origin_oro_shipping___shipping_origin_row %}
     <div class="controls control-group shipping-origin-address">
         {{ form_widget(form) }}
         {{ form_errors(form) }}
     </div>
 {% endblock %}
 
-{% block _shipping_origin_orob2b_shipping___shipping_origin_value_country_row %}
+{% block _shipping_origin_oro_shipping___shipping_origin_value_country_row %}
     {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
-{% block _shipping_origin_orob2b_shipping___shipping_origin_value_region_row %}
+{% block _shipping_origin_oro_shipping___shipping_origin_value_region_row %}
     {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
-{% block _shipping_origin_orob2b_shipping___shipping_origin_value_region_text_row %}
+{% block _shipping_origin_oro_shipping___shipping_origin_value_region_text_row %}
     {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
-{% block _shipping_origin_orob2b_shipping___shipping_origin_value_postalCode_row %}
+{% block _shipping_origin_oro_shipping___shipping_origin_value_postalCode_row %}
     {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
-{% block _shipping_origin_orob2b_shipping___shipping_origin_value_city_row %}
+{% block _shipping_origin_oro_shipping___shipping_origin_value_city_row %}
     {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
-{% block _shipping_origin_orob2b_shipping___shipping_origin_value_street_row %}
+{% block _shipping_origin_oro_shipping___shipping_origin_value_street_row %}
     {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
-{% block _shipping_origin_orob2b_shipping___shipping_origin_value_street2_row %}
+{% block _shipping_origin_oro_shipping___shipping_origin_value_street2_row %}
     {{ _self.shipping_origin_block(form, use_parent_scope_value) }}
 {% endblock %}
 
-{% block orob2b_shipping_origin_warehouse_widget %}
+{% block oro_shipping_origin_warehouse_widget %}
     <div
         data-page-component-module="oroui/js/app/components/view-component"
         data-page-component-options="{{ {
@@ -60,7 +60,7 @@
     </div>
 {% endblock %}
 
-{% block orob2b_shipping_weight_widget %}
+{% block oro_shipping_weight_widget %}
     <div class="float-holder shipping-weight">
         <table>
             <tr>
@@ -78,7 +78,7 @@
     </div>
 {% endblock %}
 
-{% block orob2b_shipping_dimensions_widget %}
+{% block oro_shipping_dimensions_widget %}
     <div class="float-holder shipping-dimensions">
         <table>
             <tr>
@@ -96,7 +96,7 @@
     </div>
 {% endblock %}
 
-{% block orob2b_shipping_dimensions_value_widget %}
+{% block oro_shipping_dimensions_value_widget %}
     <table>
         <tr>
             <td>{{ form_widget(form.length) }}</td>
@@ -115,7 +115,7 @@
     </table>
 {% endblock %}
 
-{% block orob2b_shipping_freight_class_select_widget %}
+{% block oro_shipping_freight_class_select_widget %}
     <div class="float-holder shipping-freight-class">
         <table>
             <tr><td>{{ form_widget(form) }}</td></tr>
@@ -124,9 +124,9 @@
     </div>
 {% endblock %}
 
-{% block orob2b_shipping_product_shipping_options_collection_widget %}
+{% block oro_shipping_product_shipping_options_collection_widget %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.orob2b_shipping_product_shipping_options_prototype(form) %}
+        {% set prototype_html = _self.oro_shipping_product_shipping_options_prototype(form) %}
     {% endif %}
     <div class="row-oro">
         {% set prototype_name = form.vars.prototype_name %}
@@ -150,7 +150,7 @@
                 >
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.orob2b_shipping_product_shipping_options_prototype(child) }}
+                            {{ _self.oro_shipping_product_shipping_options_prototype(child) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -162,7 +162,7 @@
     </div>
 {% endblock %}
 
-{% macro orob2b_shipping_product_shipping_options_prototype(widget) %}
+{% macro oro_shipping_product_shipping_options_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -180,7 +180,7 @@
     </tr>
 {% endmacro %}
 
-{% block orob2b_shipping_product_shipping_options_widget %}
+{% block oro_shipping_product_shipping_options_widget %}
     <td>{{ form_widget(form.productUnit) }}</td>
     <td>{{ form_widget(form.weight) }}</td>
     <td>{{ form_widget(form.dimensions) }}</td>

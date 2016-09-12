@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
 
-        $rootNode = $treeBuilder->root('orob2b_product');
+        $rootNode = $treeBuilder->root('oro_product');
 
         SettingsBuilder::append(
             $rootNode,

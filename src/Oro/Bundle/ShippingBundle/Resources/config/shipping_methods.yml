@@ -1,28 +1,28 @@
 services:
-    orob2b_shipping.shipping_method.registry:
+    oro_shipping.shipping_method.registry:
         class: 'Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry'
         public: false
 
-    orob2b_shipping.shipping_method.flat_rate:
+    oro_shipping.shipping_method.flat_rate:
         class: 'Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod'
         public: false
         tags:
-            - { name: orob2b_shipping_method }
+            - { name: oro_shipping_method }
 
-    orob2b_shipping.provider.shipping_rules:
+    oro_shipping.provider.shipping_rules:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider'
         arguments:
             - '@oro_entity.doctrine_helper'
 
-    orob2b_shipping.formatter.shipping_method_label:
+    oro_shipping.formatter.shipping_method_label:
         class: 'Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter'
         arguments:
-            - "@orob2b_shipping.shipping_method.registry"
+            - "@oro_shipping.shipping_method.registry"
 
-    orob2b_shipping.twig.shipping_method_extension:
+    oro_shipping.twig.shipping_method_extension:
         class: 'Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension'
         public: false
         arguments:
-            - "@orob2b_shipping.formatter.shipping_method_label"
+            - "@oro_shipping.formatter.shipping_method_label"
         tags:
             - { name: twig.extension }

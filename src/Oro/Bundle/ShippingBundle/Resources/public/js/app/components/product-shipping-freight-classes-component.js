@@ -22,15 +22,15 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            routeFreightClassUpdate: 'orob2b_shipping_freight_classes',
+            routeFreightClassUpdate: 'oro_shipping_freight_classes',
             errorMessage: 'Sorry, unexpected error was occurred',
             triggerTimeout: 1500,
             activeUnitCodeParam: 'activeUnitCode',
             excludeFields: ['descriptions', 'shortDescriptions', 'prices'],
-            excludeFilter: ':not([name^="orob2b_product[{{name}}]"])',
+            excludeFilter: ':not([name^="oro_product[{{name}}]"])',
             selectors: {
                 itemContainer: 'tr.list-item',
-                unitSelect: 'select[name^="orob2b_product[product_shipping_options]"][name$="[productUnit]"]',
+                unitSelect: 'select[name^="oro_product[product_shipping_options]"][name$="[productUnit]"]',
                 freightClassSelector: '.freight-class-select',
                 freightClassUpdateSelector: 'input, select:not(".freight-class-select")'
             }

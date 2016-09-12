@@ -57,7 +57,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testCreate($email, $password, $isPasswordGenerate, $isSendEmail, $emailsCount)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_account_user_create'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         /** @var \Oro\Bundle\AccountBundle\Entity\Account $account */
@@ -72,35 +72,35 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->assertNotNull($role);
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_account_account_user[enabled]'] = true;
-        $form['orob2b_account_account_user[namePrefix]'] = self::NAME_PREFIX;
-        $form['orob2b_account_account_user[firstName]'] = self::FIRST_NAME;
-        $form['orob2b_account_account_user[middleName]'] = self::MIDDLE_NAME;
-        $form['orob2b_account_account_user[lastName]'] = self::LAST_NAME;
-        $form['orob2b_account_account_user[nameSuffix]'] = self::NAME_SUFFIX;
-        $form['orob2b_account_account_user[email]'] = $email;
-        $form['orob2b_account_account_user[birthday]'] = date('Y-m-d');
-        $form['orob2b_account_account_user[plainPassword][first]'] = $password;
-        $form['orob2b_account_account_user[plainPassword][second]'] = $password;
-        $form['orob2b_account_account_user[account]'] = $account->getId();
-        $form['orob2b_account_account_user[passwordGenerate]'] = $isPasswordGenerate;
-        $form['orob2b_account_account_user[sendEmail]'] = $isSendEmail;
-        $form['orob2b_account_account_user[roles][0]']->tick();
-        $form['orob2b_account_account_user[salesRepresentatives]'] = implode(',', [
+        $form['oro_account_account_user[enabled]'] = true;
+        $form['oro_account_account_user[namePrefix]'] = self::NAME_PREFIX;
+        $form['oro_account_account_user[firstName]'] = self::FIRST_NAME;
+        $form['oro_account_account_user[middleName]'] = self::MIDDLE_NAME;
+        $form['oro_account_account_user[lastName]'] = self::LAST_NAME;
+        $form['oro_account_account_user[nameSuffix]'] = self::NAME_SUFFIX;
+        $form['oro_account_account_user[email]'] = $email;
+        $form['oro_account_account_user[birthday]'] = date('Y-m-d');
+        $form['oro_account_account_user[plainPassword][first]'] = $password;
+        $form['oro_account_account_user[plainPassword][second]'] = $password;
+        $form['oro_account_account_user[account]'] = $account->getId();
+        $form['oro_account_account_user[passwordGenerate]'] = $isPasswordGenerate;
+        $form['oro_account_account_user[sendEmail]'] = $isSendEmail;
+        $form['oro_account_account_user[roles][0]']->tick();
+        $form['oro_account_account_user[salesRepresentatives]'] = implode(',', [
             $this->getReference(LoadUserData::USER1)->getId(),
             $this->getReference(LoadUserData::USER2)->getId()
         ]);
 
         $this->client->submit($form);
 
-        /** @var MessageDataCollector $collector */
-        $collector = $this->client->getProfile()->getCollector('swiftmailer');
-        $collectedMessages = $collector->getMessages();
+        /** @var \Swift_Plugins_MessageLogger $emailLogging */
+        $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
+        $emailMessages = $emailLogger->getMessages();
 
-        $this->assertCount($emailsCount, $collectedMessages);
+        $this->assertCount($emailsCount, $emailMessages);
 
         if ($isSendEmail) {
-            $this->assertMessage($email, array_shift($collectedMessages));
+            $this->assertMessage($email, array_shift($emailMessages));
         }
 
         $crawler = $this->client->followRedirect();
@@ -117,7 +117,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_account_user_index'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -140,16 +140,16 @@ class AccountUserControllerTest extends AbstractUserControllerTest
             ->findOneBy(['email' => self::EMAIL, 'firstName' => self::FIRST_NAME, 'lastName' => self::LAST_NAME]);
         $id = $accountUser->getId();
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_account_user_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_account_account_user[enabled]'] = false;
-        $form['orob2b_account_account_user[namePrefix]'] = self::UPDATED_NAME_PREFIX;
-        $form['orob2b_account_account_user[firstName]'] = self::UPDATED_FIRST_NAME;
-        $form['orob2b_account_account_user[middleName]'] = self::UPDATED_MIDDLE_NAME;
-        $form['orob2b_account_account_user[lastName]'] = self::UPDATED_LAST_NAME;
-        $form['orob2b_account_account_user[nameSuffix]'] = self::UPDATED_NAME_SUFFIX;
-        $form['orob2b_account_account_user[email]'] = self::UPDATED_EMAIL;
+        $form['oro_account_account_user[enabled]'] = false;
+        $form['oro_account_account_user[namePrefix]'] = self::UPDATED_NAME_PREFIX;
+        $form['oro_account_account_user[firstName]'] = self::UPDATED_FIRST_NAME;
+        $form['oro_account_account_user[middleName]'] = self::UPDATED_MIDDLE_NAME;
+        $form['oro_account_account_user[lastName]'] = self::UPDATED_LAST_NAME;
+        $form['oro_account_account_user[nameSuffix]'] = self::UPDATED_NAME_SUFFIX;
+        $form['oro_account_account_user[email]'] = self::UPDATED_EMAIL;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -168,7 +168,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testView($id)
     {
-        $this->client->request('GET', $this->getUrl('orob2b_account_account_user_view', ['id' => $id]));
+        $this->client->request('GET', $this->getUrl('oro_account_account_user_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -196,7 +196,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_info', ['id' => $id]),
+            $this->getUrl('oro_account_account_user_info', ['id' => $id]),
             ['_widgetContainer' => 'dialog']
         );
 
@@ -233,7 +233,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_roles'),
+            $this->getUrl('oro_account_account_user_roles'),
             ['_widgetContainer' => 'widget']
         );
         $response = $this->client->getResponse();
@@ -247,7 +247,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_roles', ['accountId' => $foreignAccount->getId()])
+            $this->getUrl('oro_account_account_user_roles', ['accountId' => $foreignAccount->getId()])
         );
 
         $response = $this->client->getResponse();
@@ -279,7 +279,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_account_account_user_roles',
+                'oro_account_account_user_roles',
                 [
                     'accountUserId' => $accountUser->getId(),
                     'accountId'     => $userAccount->getId(),
@@ -301,7 +301,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_account_account_user_roles',
+                'oro_account_account_user_roles',
                 [
                     'accountUserId' => $accountUser->getId(),
                 ]

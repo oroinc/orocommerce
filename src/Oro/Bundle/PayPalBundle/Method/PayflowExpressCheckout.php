@@ -106,7 +106,11 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      */
     public function supports($actionName)
     {
-        return in_array($actionName, [self::PURCHASE, self::AUTHORIZE, self::CHARGE, self::CAPTURE, self::COMPLETE]);
+        return in_array(
+            $actionName,
+            [self::PURCHASE, self::AUTHORIZE, self::CHARGE, self::CAPTURE, self::COMPLETE],
+            true
+        );
     }
 
     /**
@@ -278,14 +282,14 @@ class PayflowExpressCheckout implements PaymentMethodInterface
                 Option\Amount::AMT => $paymentTransaction->getAmount(),
                 Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
                 Option\ReturnUrl::RETURNURL => $this->router->generate(
-                    'orob2b_payment_callback_return',
+                    'oro_payment_callback_return',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 ),
                 Option\CancelUrl::CANCELURL => $this->router->generate(
-                    'orob2b_payment_callback_error',
+                    'oro_payment_callback_error',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],

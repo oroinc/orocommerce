@@ -145,7 +145,7 @@ class ShoppingListLineItemHandler
             return false;
         }
 
-        $isAllowed = $this->securityFacade->isGranted('orob2b_shopping_list_line_item_frontend_add');
+        $isAllowed = $this->securityFacade->isGranted('oro_shopping_list_line_item_frontend_add');
 
         if (!$shoppingList) {
             return $isAllowed;

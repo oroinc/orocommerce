@@ -1,0 +1,51 @@
+{% block _shopping_lists_menu_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        'data-page-component-options': {
+            view: 'oroshoppinglist/js/app/views/shoppinglist-sidebar-view'
+        },
+        'data-dropdown-trigger': true,
+        '~class': ' shopping-list-navigation'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <ul class="shopping-list">
+            {% for shoppingList in shoppingLists  %}
+                {% do block|merge_context({
+                    shoppingList: shoppingList,
+                    selectedShoppingList: selectedShoppingList
+                }) %}
+                {{ block('container_widget') }}
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block _shopping_lists_menu_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list__item' ~ (shoppingList.id == selectedShoppingList.id ? ' shopping-list__item--current')
+    }) %}
+    <li {{ block('block_attributes') }}>
+        <a href="{{ path('oro_shopping_list_frontend_view', {'id' : shoppingList.id}) }}"
+           title="{{ shoppingList.label }}"
+           class="shopping-list__link"
+        >
+            <div class="shopping-list__name">
+                <span class="shopping-list__title text-uppercase">
+                    <span class='badge badge_sm badge_orange badge_circled-corners shopping-list__item-indicator'>
+                        <i class="cf-basket"></i>
+                    </span>
+                    <span {% if shoppingList.id == selectedShoppingList.id %}class="current-title"{% endif %}>
+                        {{ shoppingList.label }}
+                    </span>
+                </span>
+                {% set itemsCount = shoppingList.lineItems.count %}
+                {% if itemsCount %}
+                    <div class="shopping-list__desc">
+                        <b>{{ shoppingList.lineItems.count }}</b> {{ 'oro.shoppinglist.items.label'|transchoice(itemsCount) }}
+                    </div>
+                {% endif %}
+            </div>
+        </a>
+    </li>
+{% endblock %}

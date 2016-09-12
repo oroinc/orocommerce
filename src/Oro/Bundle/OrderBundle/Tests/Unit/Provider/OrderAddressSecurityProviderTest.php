@@ -66,10 +66,10 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
     public function manualEditDataProvider()
     {
         return [
-            ['billing', 'orob2b_order_address_billing_allow_manual_backend', true],
-            ['billing', 'orob2b_order_address_billing_allow_manual_backend', false],
-            ['shipping', 'orob2b_order_address_shipping_allow_manual_backend', true],
-            ['shipping', 'orob2b_order_address_shipping_allow_manual_backend', false],
+            ['billing', 'oro_order_address_billing_allow_manual_backend', true],
+            ['billing', 'oro_order_address_billing_allow_manual_backend', false],
+            ['shipping', 'oro_order_address_shipping_allow_manual_backend', true],
+            ['shipping', 'oro_order_address_shipping_allow_manual_backend', false],
         ];
     }
 

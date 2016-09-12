@@ -123,7 +123,7 @@ abstract class AbstractAccountUserRoleType extends AbstractType
         $resolver->setRequired(['privilege_config']);
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
-            'access_level_route' => 'orob2b_account_acl_access_levels',
+            'access_level_route' => 'oro_account_acl_access_levels',
         ]);
     }
 

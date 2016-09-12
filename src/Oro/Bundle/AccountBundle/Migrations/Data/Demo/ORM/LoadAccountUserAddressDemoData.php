@@ -25,7 +25,7 @@ class LoadAccountUserAddressDemoData extends AbstractLoadAddressDemoData impleme
     {
         parent::load($manager);
 
-        $userManager = $this->container->get('orob2b_account_user.manager');
+        $userManager = $this->container->get('oro_account_user.manager');
 
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroAccountBundle/Migrations/Data/Demo/ORM/data/account-users.csv');

@@ -11,7 +11,7 @@ use Oro\Bundle\RFPBundle\Form\DataTransformer\UserIdToEmailTransformer;
 
 class UserSelectType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_user_select';
+    const NAME = 'oro_rfp_user_select';
 
     /**
      * @var ManagerRegistry

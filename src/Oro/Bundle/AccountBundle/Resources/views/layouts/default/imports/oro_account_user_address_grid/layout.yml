@@ -1,0 +1,118 @@
+layout:
+    imports:
+        -
+            id: datagrid
+            root: __root
+            namespace: user_addresses
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@addTree':
+            items:
+                __user_addresses_head:
+                    blockType: container
+                    options:
+                        visible: '=data["acl"].isGranted("oro_account_frontend_account_user_address_view")'
+                __user_addresses_head_title:
+                    blockType: text
+                    options:
+                        text: 'oro.account.frontend.account_user_address_book.account_user_addresses'
+            tree:
+                __root:
+                    __user_addresses_head:
+                        __user_addresses_head_title: ~
+
+        - '@move':
+            id: __user_addresses_datagrid
+            siblingId: __user_addresses_head
+
+        - '@setOption':
+            id: __user_addresses_datagrid
+            optionName: grid_name
+            optionValue: frontend-account-account-user-address-grid
+
+        - '@setOption':
+            id: __user_addresses_datagrid
+            optionName: grid_parameters
+            optionValue:
+                frontend_owner_id: '=data["entity"].getId()'
+
+        - '@setOption':
+            id: __user_addresses_datagrid
+            optionName: grid_render_parameters
+            optionValue:
+                themeOptions:
+                    toolbarTemplateSelector: '#template-account-user-address-book-addresses-grid-toolbar'
+                    cellActionsHideCount: 4
+
+        - '@setOption':
+              id: __user_addresses_datagrid_toolbar_button_container
+              optionName: visible
+              optionValue: true
+
+        - '@add':
+            id: __user_addresses_create_button
+            parentId: __user_addresses_datagrid_toolbar_button_container
+            blockType: link
+            options:
+                visible: '=data["acl"].isGranted("oro_account_frontend_account_address_create") && data["acl"].isGranted("oro_account_frontend_account_address_view")'
+                route_name: oro_account_frontend_account_user_address_create
+                route_parameters:
+                    entityId: '=data["entity"].getId()'
+                text: 'oro.account.address.add'
+
+        - '@setOption':
+            id: __user_addresses_datagrid_toolbar_sorting
+            optionName: visible
+            optionValue: '=false'
+
+        - '@setOption':
+            id: __user_addresses_datagrid_toolbar_mass_actions
+            optionName: visible
+            optionValue: '=false'
+
+        - '@setOption':
+            id: __user_addresses_datagrid_toolbar_extra_actions
+            optionName: visible
+            optionValue: '=false'
+
+        - '@move':
+            id: __user_addresses_datagrid_toolbar_mass_actions
+            parentId: __user_addresses_datagrid_toolbar
+            siblingId: __user_addresses_datagrid_toolbar_sorting
+
+        - '@move':
+            id: __user_addresses_datagrid_toolbar_extra_actions
+            parentId: __user_addresses_datagrid_toolbar
+            siblingId: __user_addresses_datagrid_toolbar_mass_actions
+
+        - '@move':
+            id: __user_addresses_datagrid_toolbar_pagination
+            parentId: __user_addresses_datagrid_toolbar
+            siblingId: __user_addresses_datagrid_toolbar_extra_actions
+
+        - '@move':
+            id: __user_addresses_datagrid_toolbar_page_size
+            parentId: __user_addresses_datagrid_toolbar
+            siblingId: __user_addresses_datagrid_toolbar_pagination
+
+        - '@move':
+            id: __user_addresses_datagrid_toolbar_actions
+            parentId: __user_addresses_datagrid_toolbar
+            siblingId: __user_addresses_datagrid_toolbar_page_size
+
+        - '@remove':
+            id: __user_addresses_datagrid_toolbar_actions_container
+
+        - '@remove':
+            id: __user_addresses_datagrid_toolbar_tools_container
+
+        - '@setOption':
+            id: __user_addresses_datagrid_toolbar
+            optionName: attr.class
+            optionValue: 'grid__toolbar grid__toolbar--extended grid-toolbar'
+
+#    TODO: return condition in BB-4263
+#    conditions: 'context["account_address_count"]>=8'

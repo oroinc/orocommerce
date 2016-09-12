@@ -36,8 +36,8 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_T
     public function testBuildFormShouldCreateCorrectChoices()
     {
         $processorAliases = [
-            'orob2b_product.inventory_status_only_template',
-            'orob2b_warehouse.detailed_inventory_levels_template'
+            'oro_product.inventory_status_only_template',
+            'oro_warehouse.detailed_inventory_levels_template'
         ];
 
         $builder = $this->getBuilderMock();

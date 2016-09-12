@@ -1,5 +1,7 @@
 @import 'orofrontend/default/scss/shared/_vars.scss';
 @import 'orofrontend/default/scss/shared/_mixins.scss';
+@import 'orofrontend/default/scss/components/commerce/partials/variables';
+@import 'orofrontend/default/scss/components/commerce/partials/mixins';
 
 @import 'components/elevatezoom';
 @import 'components/description';
@@ -8,5 +10,5 @@
 @import 'components/grid';
 @import 'components/quick-order';
 @import 'components/review';
-
-
+@import 'components/featured-products/featured-products.scss';
+@import 'components/featured-product/featured-product.scss';

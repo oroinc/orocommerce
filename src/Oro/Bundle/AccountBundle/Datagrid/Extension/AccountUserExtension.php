@@ -10,7 +10,7 @@ use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 
 class AccountUserExtension extends AbstractExtension implements ContainerAwareInterface
 {
-    const ROUTE = 'orob2b_frontend_datagrid_index';
+    const ROUTE = 'oro_frontend_datagrid_index';
 
     /**
      * @var ContainerInterface
@@ -35,7 +35,7 @@ class AccountUserExtension extends AbstractExtension implements ContainerAwareIn
         }
 
         $accountUser = $this->container->get('oro_security.security_facade')->getLoggedUser();
-        $accountUserClass = $this->container->getParameter('orob2b_account.entity.account_user.class');
+        $accountUserClass = $this->container->getParameter('oro_account.entity.account_user.class');
 
         return !is_object($accountUser) || is_a($accountUser, $accountUserClass, true);
     }

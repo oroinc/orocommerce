@@ -16,6 +16,7 @@ oro.pricing:
         withoutPrice: N/A
 
     pricelist:
+        actual.label: Actual
         entity_label: Price List
         entity_plural_label: Price Lists
         entity_description: Represents price list information
@@ -58,6 +59,8 @@ oro.pricing:
         duplicate:
             label: Duplicate Price List
             message: Price List was Duplicated successfull
+        not_actual:
+            recalculation: This price list is currently being recalculated. You may make further edits, but please allow for additional time to see the updated prices on the store frontend.
     priceattributepricelist:
         entity_label: Price Attribute
         entity_plural_label: Price Attributes
@@ -235,6 +238,6 @@ oro.pricing:
 oro:
     importexport:
         import:
-            orob2b_pricing_product_price:
+            oro_pricing_product_price:
                 add_or_replace: Add and Replace
                 reset: Reset and Add

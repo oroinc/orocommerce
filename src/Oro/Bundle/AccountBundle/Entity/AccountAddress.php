@@ -10,7 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\AccountBundle\Model\ExtendAccountAddress;
 
 /**
- * @ORM\Table("orob2b_account_address")
+ * @ORM\Table("oro_account_address")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *       defaultValues={
@@ -44,7 +44,7 @@ use Oro\Bundle\AccountBundle\Model\ExtendAccountAddress;
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository")
  */
-class AccountAddress extends ExtendAccountAddress
+class AccountAddress extends ExtendAccountAddress implements AddressPhoneAwareInterface
 {
     /**
      * @ORM\ManyToOne(targetEntity="Account", inversedBy="addresses", cascade={"persist"})

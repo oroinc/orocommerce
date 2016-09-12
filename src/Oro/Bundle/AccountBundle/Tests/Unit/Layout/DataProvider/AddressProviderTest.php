@@ -38,9 +38,9 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetComponentOptions()
     {
         $this->provider->setEntityClass('Oro\Bundle\AccountBundle\Entity\Account');
-        $this->provider->setListRouteName('orob2b_api_account_frontend_get_account_addresses');
-        $this->provider->setCreateRouteName('orob2b_account_frontend_account_address_create');
-        $this->provider->setUpdateRouteName('orob2b_account_frontend_account_address_update');
+        $this->provider->setListRouteName('oro_api_account_frontend_get_account_addresses');
+        $this->provider->setCreateRouteName('oro_account_frontend_account_address_create');
+        $this->provider->setUpdateRouteName('oro_account_frontend_account_address_update');
 
         /** @var Account $entity */
         $entity = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 40]);
@@ -49,13 +49,13 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
             ->method('generate')
             ->willReturnMap([
                 [
-                    'orob2b_api_account_frontend_get_account_addresses',
+                    'oro_api_account_frontend_get_account_addresses',
                     ['entityId' => $entity->getId()],
                     UrlGeneratorInterface::ABSOLUTE_PATH,
                     '/address/list/test/url'
                 ],
                 [
-                    'orob2b_account_frontend_account_address_create',
+                    'oro_account_frontend_account_address_create',
                     ['entityId' => $entity->getId()],
                     UrlGeneratorInterface::ABSOLUTE_PATH,
                     '/address/create/test/url'
@@ -74,7 +74,7 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
                 'entityId' => 40,
                 'addressListUrl' => '/address/list/test/url',
                 'addressCreateUrl' => '/address/create/test/url',
-                'addressUpdateRouteName' => 'orob2b_account_frontend_account_address_update',
+                'addressUpdateRouteName' => 'oro_account_frontend_account_address_update',
                 'currentAddresses' => ['data'],
             ],
             $data

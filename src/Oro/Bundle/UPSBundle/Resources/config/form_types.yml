@@ -3,7 +3,7 @@ services:
         class: 'Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType'
         arguments:
             - "@oro_ups.provider.transport"
-            - '@orob2b_shipping.shipping_origin.provider'
+            - '@oro_shipping.shipping_origin.provider'
             - '@oro_entity.doctrine_helper'
         tags:
             - { name: form.type }
@@ -11,6 +11,6 @@ services:
     oro_ups.form.type.shipping_method_config_options:
         class: Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType
         arguments:
-            - '@orob2b_pricing.rounding.price_rounding_service'
+            - '@oro_pricing.rounding.price_rounding_service'
         tags:
             - { name: form.type }

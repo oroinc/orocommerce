@@ -4,6 +4,11 @@ Upgrade from beta.3
 General
 -------
 - All code was moved from `OroB2B` namespace to `Oro` namespace
+- Name prefix for all OroCommerce tables, routes and ACL identities was changed from `orob2b_` to `oro_` 
+
+FrontendBundle:
+---------------
+- Value for parameter `applications` for `Frontend` part of OroCommerce in operation configuration renamed from `frontend` to `commerce`.
 
 CheckoutBundle:
 ---------------
@@ -15,6 +20,7 @@ CheckoutBundle:
 - Interface `Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface` no longer implements `Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface`.
 - Added new property `string $workflowName` to `Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent` and added related `setter` and `getter`.
 - Added argument `CheckoutInterface $checkout` to method `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener::getWorkflowName`.
+- `oro_checkout.repository.checkout` inherits `oro_entity.abstract_repository`
 
 AlternativeCheckoutBundle:
 --------------------------
@@ -47,8 +53,10 @@ PaymentBundle
 - Added `PaymentTransactionProvider` argument to `Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodsProvider` constructor.
 - Added `Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager` for saving payment status for certain entity.
 - Added `Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter` for translating payment status labels and getting all available payment statuses.
-- Added `Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension` with twig function `get_payment_status_label` which returns translated payment
-label.
+- Added `Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension` with twig function `get_payment_status_label` which returns translated payment label.
+- Argument `context` of `Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider::processContext` was removed.
+- Added `Oro\Bundle\PaymentBundle\Event\ResolvePaymentTermEvent`.
+- Added `oropayment\js\app\views\payment-term-view` js component.
 
 OrderBundle:
 ------------
@@ -57,3 +65,35 @@ OrderBundle:
 - Removed `Oro\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentMethodProvider`.
 - Removed method `Oro\Bundle\OrderBundle\Twig\OrderExtension::formatSourceDocument`
 - Removed `Oro\Bundle\OrderBundle\Twig\OrderExtension` constructor first argument `Doctrine\Common\Persistence\ManagerRegistry`
+
+PricingBundle:
+-------------
+
+- Removed `getWebsiteIdsByAccountGroup` method from `PriceListToAccountGroupRepository`
+- Removed method `getAccountWebsitePairsByAccountGroup` from `PriceListToAccountRepository`
+- Removed method `getAccountWebsitePairsByAccountGroupQueryBuilder` from `PriceListToAccountRepository`
+- Removed method `getAccountWebsitePairsByAccountGroup` from `PriceListToAccountRepository`
+- Changed arguments of `PriceListChangeTriggerHandler` constructor
+
+SaleBundle:
+-----------
+- Modified `Oro\Bundle\SaleBundle\Entity\Quote` with property `paymentTerm` as many-to-one relation to `Oro\Bundle\PaymentBundle\Entity\PaymentTerm`.
+
+CatalogBundle
+-------------
+- `oro_catalog.repository.category` inherits `oro_entity.abstract_repository`
+
+ProductBundle
+-------------
+- `oro_product.repository.product` inherits `oro_entity.abstract_repository`
+
+ShippingBundle
+--------------
+- `oro_shipping.repository.product_shipping_options` inherits `oro_entity.abstract_repository`
+- `oro_shipping.repository.length_unit` inherits `oro_entity.abstract_repository`
+- `oro_shipping.repository.weight_unit` inherits `oro_entity.abstract_repository`
+- `oro_shipping.repository.freight_class` inherits `oro_entity.abstract_repository`
+
+ShoppingListBundle
+------------------
+- `oro_shopping_list.repository.line_item` inherits `oro_entity.abstract_repository`

@@ -281,17 +281,17 @@ class PayflowGateway implements PaymentMethodInterface
             GatewayOption\CreateSecureToken::CREATESECURETOKEN => true,
             GatewayOption\TransparentRedirect::SILENTTRAN => true,
             Option\ReturnUrl::RETURNURL => $this->router->generate(
-                'orob2b_payment_callback_return',
+                'oro_payment_callback_return',
                 ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
             GatewayOption\ErrorUrl::ERRORURL => $this->router->generate(
-                'orob2b_payment_callback_error',
+                'oro_payment_callback_error',
                 ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
             GatewayOption\SilentPost::SILENTPOSTURL => $this->router->generate(
-                'orob2b_payment_callback_notify',
+                'oro_payment_callback_notify',
                 [
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => $paymentTransaction->getAccessToken(),

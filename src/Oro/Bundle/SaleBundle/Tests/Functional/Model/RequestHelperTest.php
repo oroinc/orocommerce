@@ -35,7 +35,7 @@ class RequestHelperTest extends WebTestCase
 
         $this->assertEquals(
             $expectedRequests,
-            $this->getContainer()->get('orob2b_sale.service.request_helper')->getRequestsWoQuote($days)
+            $this->getContainer()->get('oro_sale.service.request_helper')->getRequestsWoQuote($days)
         );
     }
 
