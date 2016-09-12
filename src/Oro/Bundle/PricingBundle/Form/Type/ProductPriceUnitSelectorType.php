@@ -14,7 +14,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
  */
 class ProductPriceUnitSelectorType extends ProductUnitSelectionType
 {
-    const NAME = 'orob2b_pricing_product_price_unit_selector';
+    const NAME = 'oro_pricing_product_price_unit_selector';
 
     /**
      * @param FormInterface $form

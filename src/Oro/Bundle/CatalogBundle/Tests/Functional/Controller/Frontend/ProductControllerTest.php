@@ -15,7 +15,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
  */
 class ProductControllerTest extends WebTestCase
 {
-    const SIDEBAR_ROUTE = 'orob2b_catalog_frontend_category_product_sidebar';
+    const SIDEBAR_ROUTE = 'oro_catalog_frontend_category_product_sidebar';
 
     /**
      * @var Client
@@ -109,7 +109,7 @@ class ProductControllerTest extends WebTestCase
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
         $this->client->request('GET', $this->getUrl(
-            'orob2b_product_frontend_product_index',
+            'oro_product_frontend_product_index',
             [
                 RequestProductHandler::CATEGORY_ID_KEY => $secondLevelCategory->getId(),
             ]
@@ -147,7 +147,7 @@ class ProductControllerTest extends WebTestCase
         $gridUrlPart = urlencode(http_build_query($gridParams));
 
         $url = $this->getUrl(
-            'orob2b_product_frontend_product_index',
+            'oro_product_frontend_product_index',
             $requestParams
         ).'&grid[frontend-product-search-grid]='.$gridUrlPart;
 

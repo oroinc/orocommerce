@@ -1,0 +1,14 @@
+search:
+    Oro\Bundle\OrderBundle\Entity\Order:
+        alias:                          oro_order
+        title_fields:                   [identifier]
+        route:
+            name:                       oro_order_view
+            parameters:
+                id:                     id
+        search_template:                OroOrderBundle:Order:searchResult.html.twig
+        fields:
+            -
+                name:                   identifier
+                target_type:            text
+                target_fields:          [identifier]

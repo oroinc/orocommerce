@@ -14,8 +14,8 @@ class InventoryLevelExportTypeExtension extends InventoryLevelExportTemplateType
     public static function getProcessorAliases()
     {
         return [
-            'orob2b_product.inventory_status_only' => 'oro.product.export.inventory_status_only',
-            'orob2b_warehouse.detailed_inventory_levels' => 'oro.warehouse.export.detailed_inventory_levels',
+            'oro_product.inventory_status_only' => 'oro.product.export.inventory_status_only',
+            'oro_warehouse.detailed_inventory_levels' => 'oro.warehouse.export.detailed_inventory_levels',
         ];
     }
 

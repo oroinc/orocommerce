@@ -3,12 +3,12 @@
 
 {% oro_title_set({params : {'%title%': entity.__toString(), '%entityName%' : 'oro.rfp.request.entity_label'|trans} }) %}
 
-{% set formAction = path('orob2b_rfp_request_update', { 'id': entity.id }) %}
+{% set formAction = path('oro_rfp_request_update', { 'id': entity.id }) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity':      entity,
-        'indexPath':   path('orob2b_rfp_request_index'),
+        'indexPath':   path('oro_rfp_request_index'),
         'indexLabel':  'oro.rfp.request.entity_plural_label'|trans,
         'entityTitle': entity|default('N/A'|trans)
     } %}
@@ -18,9 +18,9 @@
 {% block navButtons %}
     {{ parent() }}
 
-    {{ UI.cancelButton(path('orob2b_rfp_request_index')) }}
+    {{ UI.cancelButton(path('oro_rfp_request_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_rfp_frontend_request_create') %}
+    {% if entity.id or resource_granted('oro_rfp_frontend_request_create') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}

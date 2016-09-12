@@ -7,7 +7,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\DataGridBundle\Event\GridResultAfter;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener;
@@ -121,7 +121,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
             ->method('addData')
             ->with([self::FIELD_SIZE => self::SIZE]);
 
-        $this->listener->onResultAfter($this->prepareGridResultAfterEvent($resultRecord));
+        $this->listener->onResultAfter($this->prepareOrmResultAfterEvent($resultRecord));
     }
 
     /**
@@ -147,11 +147,11 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
 
     /**
      * @param ResultRecord $resultRecord
-     * @return GridResultAfter
+     * @return OrmResultAfter
      */
-    private function prepareGridResultAfterEvent(ResultRecord $resultRecord)
+    private function prepareOrmResultAfterEvent(ResultRecord $resultRecord)
     {
-        return new GridResultAfter($this->prepareDatagrid(), [$resultRecord]);
+        return new OrmResultAfter($this->prepareDatagrid(), [$resultRecord]);
     }
 
     /**

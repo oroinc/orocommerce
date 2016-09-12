@@ -10,7 +10,7 @@ use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 
 class PaymentTermType extends AbstractType
 {
-    const NAME = 'orob2b_payment_term';
+    const NAME = 'oro_payment_term';
 
     /** @var string */
     private $dataClass;

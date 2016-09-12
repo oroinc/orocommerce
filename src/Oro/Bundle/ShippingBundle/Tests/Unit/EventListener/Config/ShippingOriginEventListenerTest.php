@@ -71,7 +71,7 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getSettings')
             ->willReturn(
                 [
-                    'orob2b_shipping___shipping_origin' => [
+                    'oro_shipping___shipping_origin' => [
                         'value' => [
                             'region_text' => 'Alabama',
                             'postalCode' => '35004',
@@ -91,10 +91,10 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
                 $this->callback(
                     function ($settings) use ($shippingOrigin) {
                         $this->assertInternalType('array', $settings);
-                        $this->assertArrayHasKey('orob2b_shipping___shipping_origin', $settings);
-                        $this->assertInternalType('array', $settings['orob2b_shipping___shipping_origin']);
-                        $this->assertArrayHasKey('value', $settings['orob2b_shipping___shipping_origin']);
-                        $value = $settings['orob2b_shipping___shipping_origin']['value'];
+                        $this->assertArrayHasKey('oro_shipping___shipping_origin', $settings);
+                        $this->assertInternalType('array', $settings['oro_shipping___shipping_origin']);
+                        $this->assertArrayHasKey('value', $settings['oro_shipping___shipping_origin']);
+                        $value = $settings['oro_shipping___shipping_origin']['value'];
                         $this->assertInstanceOf('Oro\Bundle\ShippingBundle\Model\ShippingOrigin', $value);
                         $this->assertEquals($shippingOrigin, $value);
 
@@ -132,7 +132,7 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent')
             ->disableOriginalConstructor()->getMock();
         $event->expects($this->once())->method('getSettings')
-            ->willReturn(['orob2b_shipping.shipping_origin' => ['value' => null]]);
+            ->willReturn(['oro_shipping.shipping_origin' => ['value' => null]]);
         $event->expects($this->never())->method('setSettings');
 
         $this->listener->beforeSave($event);
@@ -150,7 +150,7 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
         $shippingOrigin->setRegion($region);
 
         $event->expects($this->once())->method('getSettings')
-            ->willReturn(['orob2b_shipping.shipping_origin' => ['value' => $shippingOrigin]]);
+            ->willReturn(['oro_shipping.shipping_origin' => ['value' => $shippingOrigin]]);
 
         $this->shippingOriginModelFactory->expects($this->never())->method($this->anything());
 
@@ -158,23 +158,23 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
             $this->callback(
                 function ($settings) {
                     $this->assertInternalType('array', $settings);
-                    $this->assertArrayHasKey('orob2b_shipping.shipping_origin', $settings);
-                    $this->assertInternalType('array', $settings['orob2b_shipping.shipping_origin']);
-                    $this->assertArrayHasKey('value', $settings['orob2b_shipping.shipping_origin']);
-                    $this->assertInternalType('array', $settings['orob2b_shipping.shipping_origin']['value']);
-                    $this->assertArrayHasKey('country', $settings['orob2b_shipping.shipping_origin']['value']);
-                    $this->assertEquals('US', $settings['orob2b_shipping.shipping_origin']['value']['country']);
-                    $this->assertArrayHasKey('region', $settings['orob2b_shipping.shipping_origin']['value']);
-                    $this->assertEquals('US-AL', $settings['orob2b_shipping.shipping_origin']['value']['region']);
-                    $this->assertArrayHasKey('region_text', $settings['orob2b_shipping.shipping_origin']['value']);
+                    $this->assertArrayHasKey('oro_shipping.shipping_origin', $settings);
+                    $this->assertInternalType('array', $settings['oro_shipping.shipping_origin']);
+                    $this->assertArrayHasKey('value', $settings['oro_shipping.shipping_origin']);
+                    $this->assertInternalType('array', $settings['oro_shipping.shipping_origin']['value']);
+                    $this->assertArrayHasKey('country', $settings['oro_shipping.shipping_origin']['value']);
+                    $this->assertEquals('US', $settings['oro_shipping.shipping_origin']['value']['country']);
+                    $this->assertArrayHasKey('region', $settings['oro_shipping.shipping_origin']['value']);
+                    $this->assertEquals('US-AL', $settings['oro_shipping.shipping_origin']['value']['region']);
+                    $this->assertArrayHasKey('region_text', $settings['oro_shipping.shipping_origin']['value']);
                     $this->assertEquals(
                         'Alabama',
-                        $settings['orob2b_shipping.shipping_origin']['value']['region_text']
+                        $settings['oro_shipping.shipping_origin']['value']['region_text']
                     );
-                    $this->assertArrayHasKey('postalCode', $settings['orob2b_shipping.shipping_origin']['value']);
+                    $this->assertArrayHasKey('postalCode', $settings['oro_shipping.shipping_origin']['value']);
                     $this->assertEquals(
                         '35004',
-                        $settings['orob2b_shipping.shipping_origin']['value']['postalCode']
+                        $settings['oro_shipping.shipping_origin']['value']['postalCode']
                     );
 
                     return true;
@@ -191,7 +191,7 @@ class ShippingOriginEventListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
         $address = 'some_value';
         $event->expects($this->once())->method('getSettings')
-            ->willReturn(['orob2b_shipping.shipping_origin' => ['value' => $address]]);
+            ->willReturn(['oro_shipping.shipping_origin' => ['value' => $address]]);
         $this->shippingOriginModelFactory->expects($this->never())->method($this->anything());
         $event->expects($this->never())->method('setSettings');
         $this->listener->beforeSave($event);

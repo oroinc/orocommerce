@@ -30,13 +30,13 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         parent::setUp();
 
         $this->configManager = $this->getContainer()->get('oro_config.global');
-        $this->configManager->set('orob2b_money_order.' . Configuration::MONEY_ORDER_ENABLED_KEY, true);
+        $this->configManager->set('oro_money_order.' . Configuration::MONEY_ORDER_ENABLED_KEY, true);
         $this->configManager->set(
-            'orob2b_money_order.' . Configuration::MONEY_ORDER_PAY_TO_KEY,
+            'oro_money_order.' . Configuration::MONEY_ORDER_PAY_TO_KEY,
             self::MONEY_ORDER_PAY_TO_VALUE
         );
         $this->configManager->set(
-            'orob2b_money_order.' . Configuration::MONEY_ORDER_SEND_TO_KEY,
+            'oro_money_order.' . Configuration::MONEY_ORDER_SEND_TO_KEY,
             self::MONEY_ORDER_SEND_TO_VALUE
         );
         $this->configManager->flush();

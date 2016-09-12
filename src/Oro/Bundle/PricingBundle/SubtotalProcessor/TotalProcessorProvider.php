@@ -17,7 +17,7 @@ use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class TotalProcessorProvider extends AbstractSubtotalProvider
 {
-    const NAME = 'orob2b_pricing.subtotal_total';
+    const NAME = 'oro_pricing.subtotal_total';
     const TYPE = 'total';
     const SUBTOTALS = 'subtotals';
 

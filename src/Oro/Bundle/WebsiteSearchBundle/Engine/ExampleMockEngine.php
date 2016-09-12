@@ -60,6 +60,8 @@ class ExampleMockEngine implements EngineV2Interface
             ->getQuery()
             ->getArrayResult();
 
+        $this->translateQuerySelectAliases($results, $query);
+
         return new Result($query, $results, $count);
     }
 
@@ -81,11 +83,11 @@ class ExampleMockEngine implements EngineV2Interface
         ;
 
         foreach ($selectedColumns as $column) {
-            $column = $this->getRawFieldName($column);
+            $columnTranslated = $this->getRawFieldName($column, true);
 
-            if (isset($this->selectFieldsMapping[$column])) {
-                $queryBuilder->addSelect($this->selectFieldsMapping[$column].' as '.$column);
-                $queryBuilder->addGroupBy($column);
+            if (isset($this->selectFieldsMapping[$columnTranslated])) {
+                $queryBuilder->addSelect($this->selectFieldsMapping[$columnTranslated].' as '.$columnTranslated);
+                $queryBuilder->addGroupBy($columnTranslated);
             }
         }
 
@@ -109,7 +111,7 @@ class ExampleMockEngine implements EngineV2Interface
         if ($expression instanceof Comparison) {
             $fieldName = $expression->getField();
 
-            $fieldName = $this->getRawFieldName($fieldName);
+            $fieldName = $this->getRawFieldName($fieldName, true);
 
             $value = $expression->getValue()->getValue();
             $operator = $expression->getOperator();
@@ -206,14 +208,56 @@ class ExampleMockEngine implements EngineV2Interface
 
     /**
      * @param $column
+     * @param bool $removeLocalePlaceholder
      * @return array|mixed
      */
-    private function getRawFieldName($column)
+    private function getRawFieldName($column, $removeLocalePlaceholder = false)
     {
         $column = explode('.', $column);
         $column = array_pop($column);
-        $column = str_replace('_LOCALIZATION_ID', '', $column);
+
+        if ($removeLocalePlaceholder) {
+            $column = str_replace('_LOCALIZATION_ID', '', $column);
+        }
 
         return $column;
+    }
+
+    /**
+     * Iterate over results and change keys to aliases
+     * if they were set in the query
+     *
+     * @param array $data
+     * @param Query $query
+     */
+    private function translateQuerySelectAliases(array & $data, Query $query)
+    {
+        $aliases = $query->getSelectAliases();
+
+        if (empty($aliases)) {
+            return;
+        }
+
+        $aliasesTranslatedToRawFieldNames = [];
+
+        foreach ($aliases as $k => $v) {
+            $aliasesTranslatedToRawFieldNames[$this->getRawFieldName($k, true)] = $v;
+        }
+
+        foreach ($data as $rowIndex => $row) {
+            $newRow = [];
+
+            foreach ($row as $k => $v) {
+                $k = $this->getRawFieldName($k, true);
+
+                if (isset($aliasesTranslatedToRawFieldNames[$k])) {
+                    $k = $aliasesTranslatedToRawFieldNames[$k];
+                }
+
+                $newRow[$k] = $v;
+            }
+
+            $data[$rowIndex] = $newRow;
+        }
     }
 }
