@@ -9,8 +9,8 @@ class CollectContextEventTest extends \PHPUnit_Framework_TestCase
 
     public function testAddContextValue()
     {
-        $context['website_id'] = 1;
-        $event = new CollectContextEvent($context);
+        $websiteId = 1;
+        $event = new CollectContextEvent([], $websiteId);
         $stdClass = new \stdClass();
         $array = ['key' => 'value'];
 
@@ -22,7 +22,6 @@ class CollectContextEventTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([
             'some_string_name' => 'some_string_value',
             'some_integer_name' => 1,
-            'website_id' => 1,
             'some_object_name' => $stdClass,
             'some_array_name' => $array
         ], $event->getContext());
@@ -51,8 +50,8 @@ class CollectContextEventTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddContextValueWhenNameIsNotString($name)
     {
-        $context['website_id'] = 1;
-        $event = new CollectContextEvent($context);
+        $websiteId = 1;
+        $event = new CollectContextEvent([], $websiteId);
         $event->addContextValue($name, 'some value');
     }
 
@@ -63,8 +62,8 @@ class CollectContextEventTest extends \PHPUnit_Framework_TestCase
      */
     public function testAddContextValueWhenNameIsEmptyString()
     {
-        $context['website_id'] = 1;
-        $event = new CollectContextEvent($context);
+        $websiteId = 1;
+        $event = new CollectContextEvent([], $websiteId);
         $event->addContextValue('', 'some_value');
     }
 }

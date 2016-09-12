@@ -1,14 +1,11 @@
 services:
     oro_website_search.engine.orm_indexer:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer'
-        arguments:
-            - '@event_dispatcher'
-            - '@oro_entity.doctrine_helper'
-            - '@oro_website_search.provider.search_mapping'
+        parent: 'oro_website_search.search.indexer'
 
     oro_website_search.engine:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine'
-        parent: oro_website_search.search.engine
+        parent: 'oro_website_search.search.engine'
         calls:
             - [setRegistry, ['@doctrine']]
             - [setDrivers, ['%oro_search.drivers%']]

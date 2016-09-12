@@ -4,15 +4,14 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional;
 
 use Doctrine\ORM\EntityRepository;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\EntityBundle\ORM\Registry;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
-
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 trait SearchTestTrait
 {
@@ -25,8 +24,7 @@ trait SearchTestTrait
         $manager = $this->getDoctrine()->getManager('search');
 
         if ($manager->getConnection()->getDatabasePlatform()->getName() === DatabasePlatformInterface::DATABASE_MYSQL) {
-            /** @var EntityRepository $repository */
-            $repository = $this->getDoctrine()->getRepository(IndexText::class, 'search');
+            $repository = $manager->getRepository(IndexText::class);
 
             $repository->createQueryBuilder('t')
                 ->delete()
@@ -34,6 +32,9 @@ trait SearchTestTrait
                 ->execute();
         }
     }
+
+    /** @return ContainerInterface */
+    abstract protected function getContainer();
 
     /**
      * @return WebsiteSearchIndexRepository
@@ -48,7 +49,6 @@ trait SearchTestTrait
      */
     private function getDoctrine()
     {
-        /** @var ContainerAwareTrait $this */
         return $this->getContainer()->get('doctrine');
     }
 
@@ -67,7 +67,6 @@ trait SearchTestTrait
      */
     private function assertEntityCount($count, $entityClass)
     {
-        /** @var WebTestCase $this */
         $repository = $this->getRepository($entityClass);
 
         $actualCount = $repository->createQueryBuilder('t')
