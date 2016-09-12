@@ -24,3 +24,7 @@ oro:
               is_not_enabled: "Currency %currency% is not enabled"
               price_for_product_unit_exists.message: "Units: '%units%', are used in price attribute prices and can't be removed"
               field_are_not_allowed.message: 'Field "%fieldName%" is not allowed'
+              circular_reference:
+                  message: 'Circular references are not allowed'
+                  invalid_node_message: 'Invalid expression'
+

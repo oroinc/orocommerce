@@ -1,6 +1,9 @@
 Oro\Bundle\PricingBundle\Entity\PriceList:
     constraints:
         - Oro\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrency: ~
+        - Oro\Bundle\PricingBundle\Validator\Constraints\CircularReference:
+            fields:
+                - productAssignmentRule
     properties:
         name:
             - NotBlank: ~
