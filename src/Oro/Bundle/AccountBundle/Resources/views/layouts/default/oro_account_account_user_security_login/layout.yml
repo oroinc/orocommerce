@@ -1,98 +1,18 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroAccountBundle:layouts:default/oro_account_account_user_security_login/layout.html.twig'
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue: 'oro.account.menu.account_user_login.label'
-        - '@addTree':
-            items:
-                login_page:
-                    blockType: login_page
-                    options:
-                        class_prefix: 'create-account'
-                login_form:
-                    blockType: container
-                login_form_label:
-                    blockType: text
-                    options:
-                        text: oro.account.accountuser.profile.login
-                login_form_error:
-                    blockType: text
-                    options:
-                        visible: '=data["oro_account_sign_in"].getError()!=null'
-                        text: '=data["oro_account_sign_in"].getError()'
-                login_form_username:
-                    blockType: input
-                    options:
-                        id: userNameSignIn
-                        name: _username
-                        value: '=data["oro_account_sign_in"].getLastName()'
-                        placeholder: oro.account.accountuser.email.label
-                        label: oro.account.accountuser.email.label
-                login_form_password:
-                    blockType: input
-                    options:
-                        type: password
-                        id: passwordSignIn
-                        name: _password
-                        placeholder: oro.account.accountuser.profile.enter_password
-                        label: oro.account.accountuser.password.label
-                login_form_remember:
-                    blockType: input
-                    options:
-                        type: checkbox
-                        id: rememberMe
-                        name: _remember_me
-                        value: on
-                        label: oro.account.accountuser.profile.remember_me
-                login_form_target:
-                    blockType: input
-                    options:
-                        type: hidden
-                        name: _target_path
-                login_form_csrf:
-                    blockType: input
-                    options:
-                        type: hidden
-                        name: _csrf_token
-                        value: '=data["oro_account_sign_in"].getCSRFToken()'
-                login_form_submit:
-                    blockType: button
-                    options:
-                        type: input
-                        action: submit
-                        text: oro.account.accountuser.profile.login
-                        style: auto
-                login_form_forgot:
-                    blockType: link
-                    options:
-                        route_name: oro_account_frontend_account_user_reset_request
-                        text: oro.account.accountuser.profile.forgot_password
-                        attr:
-                            class: col-md-12
-                login_form_register:
-                    blockType: link
-                    options:
-                        visible: '=data["registrationAllowed"]==true'
-                        route_name: oro_account_frontend_account_user_register
-                        text: oro.account.accountuser.profile.create_an_account
-                        attr:
-                            class: col-md-12
-            tree:
-                content:
-                    login_page:
-                        login_form:
-                            login_form_label: ~
-                            login_form_error: ~
-                            login_form_username: ~
-                            login_form_password: ~
-                            login_form_remember: ~
-                            login_form_submit: ~
-                            login_form_forgot: ~
-                            login_form_register: ~
-                            login_form_target: ~
-                            login_form_csrf: ~
+            themes: 'layout.html.twig'
+        - '@move':
+            id: notification
+            parentId: wrapper
+        - '@move':
+            id: sticky_panel
+            parentId: wrapper
+        - '@remove':
+            id: main
+        - '@setOption':
+            id: login_form_submit
+            optionName: attr.class
+            optionValue: 'button--large'
     imports:
         - 'only_content'
