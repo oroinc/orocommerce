@@ -2,6 +2,7 @@ system_configuration:
     groups:
         warehouse:
             title: oro.warehouse.system_configuration.groups.warehouse.title
+            icon: icon-building
         warehouse_configuration:
             title: oro.warehouse.system_configuration.groups.warehouse_configuration.title
 

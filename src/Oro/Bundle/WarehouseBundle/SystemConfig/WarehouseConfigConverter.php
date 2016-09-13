@@ -71,7 +71,7 @@ class WarehouseConfigConverter
                 function ($a, $b) {
                     /** @var WarehouseConfig $a */
                     /** @var WarehouseConfig $b */
-                    return ($a->getPriority() > $b->getPriority()) ? -1 : 1;
+                    return ($a->getPriority() > $b->getPriority()) ? 1 : -1;
                 }
             );
         }

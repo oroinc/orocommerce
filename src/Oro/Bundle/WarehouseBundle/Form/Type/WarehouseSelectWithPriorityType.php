@@ -39,8 +39,7 @@ class WarehouseSelectWithPriorityType extends AbstractType
                     'label' => 'oro.warehouse.priority.label',
                     'constraints' => [new NotBlank(), new Integer()],
                 ]
-            )
-        ;
+            );
     }
 
     /**
