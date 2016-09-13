@@ -66,7 +66,7 @@ class PriceListExpressionQueryConverter extends GroupingOrmQueryConverter
                 $joinCondition = $this->qb->expr()->eq($priceTableAlias . '.priceList', $priceListTableAlias);
 
                 $this->addJoinStatement(
-                    self::INNER_JOIN,
+                    self::LEFT_JOIN,
                     PriceList::class,
                     $priceListTableAlias,
                     self::CONDITIONAL_JOIN,
@@ -98,7 +98,7 @@ class PriceListExpressionQueryConverter extends GroupingOrmQueryConverter
                 $this->qb->setParameter($priceListParameter, $priceListId);
 
                 $this->addJoinStatement(
-                    self::INNER_JOIN,
+                    self::LEFT_JOIN,
                     ProductPrice::class,
                     $priceTableAlias,
                     self::CONDITIONAL_JOIN,

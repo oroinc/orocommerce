@@ -708,6 +708,7 @@ services:
         abstract: true
         arguments:
             - '@oro_pricing.expression.parser'
+            - '@oro_pricing.expression.preprocessor'
             - '@oro_pricing.expression.node_to_query_designer_converter'
             - '@oro_pricing.query.price_list_expression_query_converter'
             - '@oro_pricing.expression.query_expression_builder'
@@ -759,9 +760,52 @@ services:
         arguments:
             - '@oro_pricing.provider.price_rule_fields_provider'
 
+    oro_pricing.expression.query_expression.converter.binary_node:
+        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\BinaryNodeConverter'
+        public: false
+
+    oro_pricing.expression.query_expression.converter.name_node:
+        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\NameNodeConverter'
+        public: false
+
+    oro_pricing.expression.query_expression.converter.relation_node:
+        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\RelationNodeConverter'
+        public: false
+
+    oro_pricing.expression.query_expression.converter.unary_node:
+        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\UnaryNodeConverter'
+        public: false
+
+    oro_pricing.expression.query_expression.converter.value_node:
+        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\ValueNodeConverter'
+        public: false
+
+    oro_pricing.expression.query_expression.converter.assigned_products:
+        class: Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\AssignedProductsConverter
+        arguments:
+            - '@oro_pricing.provider.price_rule_fields_provider'
+        public: false
+
     oro_pricing.expression.query_expression_builder:
         class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionBuilder'
+        calls:
+            - ['registerConverter', ['@oro_pricing.expression.query_expression.converter.assigned_products', 10]]
+            - ['registerConverter', ['@oro_pricing.expression.query_expression.converter.binary_node']]
+            - ['registerConverter', ['@oro_pricing.expression.query_expression.converter.name_node']]
+            - ['registerConverter', ['@oro_pricing.expression.query_expression.converter.relation_node']]
+            - ['registerConverter', ['@oro_pricing.expression.query_expression.converter.unary_node']]
+            - ['registerConverter', ['@oro_pricing.expression.query_expression.converter.value_node']]
+
+    oro_pricing.expression.preprocessor.product_assignment_rule:
+        class: Oro\Bundle\PricingBundle\Expression\Preprocessor\ProductAssignmentRuleExpressionPreprocessor
+        arguments:
+            - '@doctrine'
         public: false
+
+    oro_pricing.expression.preprocessor:
+        class: Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessor
+        calls:
+            - ['registerPreprocessor', ['@oro_pricing.expression.preprocessor.product_assignment_rule']]
 
     oro_pricing.query.price_list_expression_query_converter:
         class: 'Oro\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter'
@@ -778,6 +822,7 @@ services:
         public: true
         arguments:
             - '@oro_pricing.expression.parser'
+            - '@oro_pricing.expression.preprocessor'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.logical_expression_validator }
 
@@ -786,6 +831,7 @@ services:
         public: true
         arguments:
             - '@oro_pricing.expression.parser'
+            - '@oro_pricing.expression.preprocessor'
             - '@oro_pricing.provider.price_rule_fields_provider'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.price_rule_expression_validator }

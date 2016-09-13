@@ -60,6 +60,11 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected $qbSelectPart = [];
 
     /**
+     * @var array
+     */
+    protected $processedConditions = [];
+
+    /**
      * @param PriceRuleFieldsProvider $fieldsProvider
      */
     public function setFieldsProvider(PriceRuleFieldsProvider $fieldsProvider)
@@ -109,7 +114,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      */
     protected function createQueryBuilder(PriceRule $rule)
     {
-        $ruleCondition = $rule->getRuleCondition();
+        $ruleCondition = $this->getProcessedRuleCondition($rule);
         if ($ruleCondition) {
             $expression = sprintf('%s and (%s) > 0', $ruleCondition, $rule->getRule());
         } else {
@@ -214,7 +219,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     {
         $additionalConditions = $this->getAdditionalConditions($rule);
         $conditions = [];
-        $condition = $rule->getRuleCondition();
+        $condition = $this->getProcessedRuleCondition($rule);
         if ($condition) {
             $conditions[] = '(' . $condition . ')';
         }
@@ -395,7 +400,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      */
     protected function getAdditionalConditions(PriceRule $rule)
     {
-        $ruleCondition = $rule->getRuleCondition();
+        $ruleCondition = $this->getProcessedRuleCondition($rule);
         $reverseNameMapping = $this->expressionParser->getReverseNameMapping();
         if ($ruleCondition) {
             $parsedCondition = $this->expressionParser->parse($ruleCondition);
@@ -563,5 +568,20 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         $aliases = $qb->getRootAliases();
 
         return reset($aliases);
+    }
+
+    /**
+     * @param PriceRule $rule
+     * @return string
+     */
+    protected function getProcessedRuleCondition(PriceRule $rule)
+    {
+        $conditionKey = md5($rule->getRuleCondition());
+        if (!array_key_exists($conditionKey, $this->processedConditions)) {
+            $this->processedConditions[$conditionKey] = $this->expressionPreprocessor
+                ->process($rule->getRuleCondition());
+        }
+
+        return $this->processedConditions[$conditionKey];
     }
 }

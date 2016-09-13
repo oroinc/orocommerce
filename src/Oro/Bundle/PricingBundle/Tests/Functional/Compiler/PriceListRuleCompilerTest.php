@@ -102,8 +102,9 @@ class PriceListRuleCompilerTest extends WebTestCase
         $product2 = $this->getReference(LoadProductData::PRODUCT_2);
 
         $condition = sprintf(
-            'product.category == %s',
-            $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId()
+            'product.category in [%s, %s]',
+            $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId(),
+            $this->getReference(LoadCategoryData::THIRD_LEVEL2)->getId()
         );
         $rule = 'product.price_attribute_price_list_1.value * 10';
 
@@ -175,7 +176,6 @@ class PriceListRuleCompilerTest extends WebTestCase
 
     public function testApplyRuleConditionsWithTwoBaseRelations()
     {
-        $this->markTestIncomplete('Will be enhanced in BB-4368');
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
         $product2 = $this->getReference(LoadProductData::PRODUCT_2);
 
@@ -185,9 +185,20 @@ class PriceListRuleCompilerTest extends WebTestCase
         );
         /** @var PriceList $basePriceList */
         $basePriceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        /** @var PriceList $basePriceList2 */
+        $basePriceList2 = $this->getReference(LoadPriceLists::PRICE_LIST_2);
+        $price = (new ProductPrice())
+            ->setUnit($this->getReference('product_unit.liter'))
+            ->setPrice(Price::create('10', 'USD'))
+            ->setQuantity(1)
+            ->setPriceList($basePriceList2)
+            ->setProduct($product1);
+        $em = $this->registry->getManagerForClass(PriceList::class);
+        $em->persist($price);
         $rule = sprintf(
-            'pricelist[%s].prices.value + product.price_attribute_price_list_1.value',
-            $basePriceList->getId()
+            'pricelist[%s].prices.value + product.price_attribute_price_list_1.value + pricelist[%s].prices.value',
+            $basePriceList->getId(),
+            $basePriceList2->getId()
         );
 
         $priceList = $this->createPriceList();
@@ -212,26 +223,17 @@ class PriceListRuleCompilerTest extends WebTestCase
                 $priceList->getId(),
                 'liter',
                 'USD',
-                '1',
+                1,
                 'product.1',
                 $priceRule->getId(),
-                '21',
+                '31.0000',
             ],
-            [
-                $product1->getId(),
-                $priceList->getId(),
-                'bottle',
-                'EUR',
-                '1',
-                'product.1',
-                $priceRule->getId(),
-                '32.2',
-            ]
         ];
+
 
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
     }
 
     public function testApplyRuleConditionsWithExpressionsAndDefinedValues()
