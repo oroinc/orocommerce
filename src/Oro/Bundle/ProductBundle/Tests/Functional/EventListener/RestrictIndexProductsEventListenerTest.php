@@ -2,32 +2,26 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 
-use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\FrontendRequestTrait;
 
 /**
  * @dbIsolationPerTest
  */
 class RestrictIndexProductsEventListenerTest extends WebTestCase
 {
+    use FrontendRequestTrait;
+
     protected function setUp()
     {
         $this->initClient();
 
-        /** @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $frontendHelperMock = $this->getMockBuilder(FrontendHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->substituteRequestStack();
 
-        $frontendHelperMock->expects($this->any())
-            ->method('isFrontendRequest')
-            ->willReturn(true);
-
-        $this->getContainer()->set('orob2b_frontend.request.frontend_helper', $frontendHelperMock);
         $this->loadFixtures([LoadProductData::class]);
     }
 

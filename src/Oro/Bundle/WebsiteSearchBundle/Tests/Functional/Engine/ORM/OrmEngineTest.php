@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
@@ -14,6 +13,7 @@ use Oro\Bundle\SearchBundle\Tests\Functional\Controller\DataFixtures\LoadSearchI
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\FrontendRequestTrait;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item as TestEntity;
 
@@ -23,6 +23,7 @@ use Oro\Bundle\TestFrameworkBundle\Entity\Item as TestEntity;
 class OrmEngineTest extends WebTestCase
 {
     use SearchTestTrait;
+    use FrontendRequestTrait;
 
     /**
      * @var callable
@@ -85,21 +86,11 @@ class OrmEngineTest extends WebTestCase
     {
         $this->initClient();
 
-        if ($this->getContainer()->getParameter('oro_website_search.engine') != 'orm') {
+        if ($this->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
             $this->markTestSkipped('Should be tested only with ORM search engine');
         }
 
-        /** @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject */
-        $frontendHelperMock = $this->getMockBuilder(FrontendHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $frontendHelperMock
-            ->expects($this->any())
-            ->method('isFrontendRequest')
-            ->willReturn(true);
-
-        $this->getContainer()->set('oro_frontend.request.frontend_helper', $frontendHelperMock);
+        $this->substituteRequestStack();
 
         $this->loadFixtures([LoadSearchItemData::class]);
 
