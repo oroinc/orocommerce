@@ -20,7 +20,7 @@ define(function(require) {
             productSelector: '.product-product [data-name="field__product"]',
             quantitySelector: '.product-quantity input',
             unitSelector: '.product-unit select',
-            routeName: 'orob2b_product_unit_product_units',
+            routeName: 'oro_product_unit_product_units',
             routingParams: {},
             errorMessage: 'Sorry, unexpected error was occurred',
             loadingMaskEnabled: true,

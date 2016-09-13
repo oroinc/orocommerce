@@ -13,10 +13,10 @@
             {{ UI.renderProperty('oro.rfp.request.po_number.label'|trans, entity.poNumber|default('N/A'|trans)) }}
             {{ UI.renderProperty('oro.rfp.request.ship_until.label'|trans, entity.shipUntil|oro_format_date|default('N/A'|trans)) }}
             {% if entity.account %}
-                {{ UI.renderHtmlProperty('oro.rfp.request.account.label'|trans, UI.entityViewLink(entity.account, entity.account.name, 'orob2b_account_view')) }}
+                {{ UI.renderHtmlProperty('oro.rfp.request.account.label'|trans, UI.entityViewLink(entity.account, entity.account.name, 'oro_account_view')) }}
             {% endif %}
             {% if entity.accountUser %}
-                {{ UI.renderHtmlProperty('oro.rfp.request.account_user.label'|trans, UI.entityViewLink(entity.accountUser, entity.accountUser.fullName, 'orob2b_account_account_user_view')) }}
+                {{ UI.renderHtmlProperty('oro.rfp.request.account_user.label'|trans, UI.entityViewLink(entity.accountUser, entity.accountUser.fullName, 'oro_account_account_user_view')) }}
             {% endif %}
             {{ UI.renderProperty('oro.rfp.request.status.label'|trans, entity.status.label) }}
             {% if entity.status.name =='canceled' %}
@@ -26,7 +26,7 @@
                 {{ UI.renderHtmlProperty('oro.rfp.request.assigned_users.label'|trans, UI.entityViewLinks(entity.assignedUsers, 'fullName', 'oro_user_view')) }}
             {% endif %}
             {% if entity.assignedAccountUsers | length %}
-                {{ UI.renderHtmlProperty('oro.rfp.request.assigned_account_users.label'|trans, UI.entityViewLinks(entity.assignedAccountUsers, 'fullName', 'orob2b_account_account_user_view')) }}
+                {{ UI.renderHtmlProperty('oro.rfp.request.assigned_account_users.label'|trans, UI.entityViewLinks(entity.assignedAccountUsers, 'fullName', 'oro_account_account_user_view')) }}
             {% endif %}
         </div>
     </div>

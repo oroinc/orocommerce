@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Controller;
 
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,13 +24,14 @@ use Oro\Bundle\OrderBundle\Event\OrderEvent;
 class OrderController extends AbstractOrderController
 {
     /**
-     * @Route("/view/{id}", name="orob2b_order_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_order_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_order_view",
+     *      id="oro_order_view",
      *      type="entity",
      *      class="OroOrderBundle:Order",
-     *      permission="VIEW"
+     *      permission="VIEW",
+     *      category="orders"
      * )
      *
      * @param Order $order
@@ -44,9 +47,9 @@ class OrderController extends AbstractOrderController
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_order_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_order_info", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_order_view")
+     * @AclAncestor("oro_order_view")
      *
      * @param Order $order
      *
@@ -71,26 +74,26 @@ class OrderController extends AbstractOrderController
     }
 
     /**
-     * @Route("/", name="orob2b_order_index")
+     * @Route("/", name="oro_order_index")
      * @Template
-     * @AclAncestor("orob2b_order_view")
+     * @AclAncestor("oro_order_view")
      *
      * @return array
      */
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_order.entity.order.class'),
+            'entity_class' => $this->container->getParameter('oro_order.entity.order.class'),
         ];
     }
 
     /**
      * Create order form
      *
-     * @Route("/create", name="orob2b_order_create")
+     * @Route("/create", name="oro_order_create")
      * @Template("OroOrderBundle:Order:update.html.twig")
      * @Acl(
-     *      id="orob2b_order_create",
+     *      id="oro_order_create",
      *      type="entity",
      *      class="OroOrderBundle:Order",
      *      permission="CREATE"
@@ -102,17 +105,17 @@ class OrderController extends AbstractOrderController
     public function createAction(Request $request)
     {
         $order = new Order();
-        $order->setWebsite($this->get('orob2b_website.manager')->getCurrentWebsite());
+        $order->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
         return $this->update($order, $request);
     }
 
     /**
      * Edit order form
      *
-     * @Route("/update/{id}", name="orob2b_order_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_order_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_order_update",
+     *      id="oro_order_update",
      *      type="entity",
      *      class="OroOrderBundle:Order",
      *      permission="EDIT"
@@ -148,13 +151,13 @@ class OrderController extends AbstractOrderController
             $form,
             function (Order $order) {
                 return [
-                    'route' => 'orob2b_order_update',
+                    'route' => 'oro_order_update',
                     'parameters' => ['id' => $order->getId()],
                 ];
             },
             function (Order $order) {
                 return [
-                    'route' => 'orob2b_order_view',
+                    'route' => 'oro_order_view',
                     'parameters' => ['id' => $order->getId()],
                 ];
             },
@@ -186,7 +189,7 @@ class OrderController extends AbstractOrderController
      */
     protected function getOrderRequestHandler()
     {
-        return $this->get('orob2b_order.request_handler.order_request_handler');
+        return $this->get('oro_order.request_handler.order_request_handler');
     }
 
     /**
@@ -194,6 +197,6 @@ class OrderController extends AbstractOrderController
      */
     protected function getTotalProcessor()
     {
-        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
+        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
     }
 }

@@ -2,9 +2,13 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
@@ -20,10 +24,10 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
             true
         );
         $this->loadFixtures([
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-            'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
-            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
+            LoadAccountAddresses::class,
+            LoadProductUnitPrecisions::class,
+            LoadShoppingListLineItems::class,
+            LoadCombinedProductPrices::class,
         ], true);
         $this->registry = $this->getContainer()->get('doctrine');
     }
@@ -68,7 +72,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->assertContains($noProductsError, $crawler->html());
 
         $productId = $this->getReference(LoadProductData::PRODUCT_5)->getId();
-        $url = $this->getUrl('orob2b_shopping_list_frontend_remove_product', [
+        $url = $this->getUrl('oro_shopping_list_frontend_remove_product', [
             'productId' => $productId,
             'shoppingListId' => $shoppingList->getId(),
         ]);

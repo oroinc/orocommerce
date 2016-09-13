@@ -19,12 +19,12 @@ class OroCatalogBundleInstaller implements
     NoteExtensionAwareInterface,
     AttachmentExtensionAwareInterface
 {
-    const ORO_B2B_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME = 'orob2b_catalog_cat_short_desc';
-    const ORO_B2B_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME = 'orob2b_catalog_cat_long_desc';
-    const ORO_B2B_CATALOG_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
-    const ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME ='oro_fallback_localization_val';
-    const ORO_B2B_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME = 'orob2b_category_def_prod_opts';
-    const ORO_B2B_PRODUCT_UNIT_TABLE_NAME = 'orob2b_product_unit';
+    const ORO_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME = 'oro_catalog_cat_short_desc';
+    const ORO_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME = 'oro_catalog_cat_long_desc';
+    const ORO_CATALOG_CATEGORY_TABLE_NAME = 'oro_catalog_category';
+    const ORO_FALLBACK_LOCALIZE_TABLE_NAME ='oro_fallback_localization_val';
+    const ORO_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME = 'oro_category_def_prod_opts';
+    const ORO_PRODUCT_UNIT_TABLE_NAME = 'oro_product_unit';
     const MAX_CATEGORY_IMAGE_SIZE_IN_MB = 10;
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
     const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
@@ -69,7 +69,7 @@ class OroCatalogBundleInstaller implements
         /** Tables generation **/
         $this->createOroCatalogCategoryTable($schema);
         $this->createOroCatalogCategoryTitleTable($schema);
-        $this->createOrob2BCategoryToProductTable($schema);
+        $this->createOroCategoryToProductTable($schema);
         $this->createOroCatalogCategoryShortDescriptionTable($schema);
         $this->createOroCatalogCategoryLongDescriptionTable($schema);
         $this->createOroCategoryDefaultProductOptionsTable($schema);
@@ -77,7 +77,7 @@ class OroCatalogBundleInstaller implements
         /** Foreign keys generation **/
         $this->addOroCatalogCategoryForeignKeys($schema);
         $this->addOroCatalogCategoryTitleForeignKeys($schema);
-        $this->addOrob2BCategoryToProductForeignKeys($schema);
+        $this->addOroCategoryToProductForeignKeys($schema);
         $this->addOroCatalogCategoryShortDescriptionForeignKeys($schema);
         $this->addOroCatalogCategoryLongDescriptionForeignKeys($schema);
         $this->addOroCategoryDefaultProductOptionsForeignKeys($schema);
@@ -86,13 +86,13 @@ class OroCatalogBundleInstaller implements
     }
 
     /**
-     * Create orob2b_catalog_category table
+     * Create oro_catalog_category table
      *
      * @param Schema $schema
      */
     protected function createOroCatalogCategoryTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_catalog_category');
+        $table = $schema->createTable('oro_catalog_category');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('tree_left', 'integer', []);
@@ -104,17 +104,17 @@ class OroCatalogBundleInstaller implements
         $table->addColumn('default_product_options_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['default_product_options_id']);
-        $this->noteExtension->addNoteAssociation($schema, 'orob2b_catalog_category');
+        $this->noteExtension->addNoteAssociation($schema, 'oro_catalog_category');
     }
 
     /**
-     * Create orob2b_catalog_category_title table
+     * Create oro_catalog_category_title table
      *
      * @param Schema $schema
      */
     protected function createOroCatalogCategoryTitleTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_catalog_category_title');
+        $table = $schema->createTable('oro_catalog_category_title');
         $table->addColumn('category_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['category_id', 'localized_value_id']);
@@ -122,13 +122,13 @@ class OroCatalogBundleInstaller implements
     }
 
     /**
-     * Create orob2b_category_to_product table
+     * Create oro_category_to_product table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BCategoryToProductTable(Schema $schema)
+    protected function createOroCategoryToProductTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_category_to_product');
+        $table = $schema->createTable('oro_category_to_product');
         $table->addColumn('category_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->setPrimaryKey(['category_id', 'product_id']);
@@ -140,7 +140,7 @@ class OroCatalogBundleInstaller implements
      */
     protected function createOroCategoryDefaultProductOptionsTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('product_unit_precision', 'integer', ['notnull' => false]);
@@ -148,21 +148,21 @@ class OroCatalogBundleInstaller implements
     }
 
     /**
-     * Add orob2b_catalog_category foreign keys.
+     * Add oro_catalog_category foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroCatalogCategoryForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_catalog_category');
+        $table = $schema->getTable('oro_catalog_category');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_catalog_category'),
+            $schema->getTable('oro_catalog_category'),
             ['parent_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME),
+            $schema->getTable(self::ORO_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME),
             ['default_product_options_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
@@ -170,21 +170,21 @@ class OroCatalogBundleInstaller implements
     }
 
     /**
-     * Add orob2b_catalog_category_title foreign keys.
+     * Add oro_catalog_category_title foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroCatalogCategoryTitleForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_catalog_category_title');
+        $table = $schema->getTable('oro_catalog_category_title');
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME),
+            $schema->getTable(self::ORO_FALLBACK_LOCALIZE_TABLE_NAME),
             ['localized_value_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_catalog_category'),
+            $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -192,21 +192,21 @@ class OroCatalogBundleInstaller implements
     }
 
     /**
-     * Add orob2b_category_to_product foreign keys.
+     * Add oro_category_to_product foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BCategoryToProductForeignKeys(Schema $schema)
+    protected function addOroCategoryToProductForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_category_to_product');
+        $table = $schema->getTable('oro_category_to_product');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_catalog_category'),
+            $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+            $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -214,13 +214,13 @@ class OroCatalogBundleInstaller implements
     }
 
     /**
-     * Create orob2b_catalog_category_short_description table
+     * Create oro_catalog_category_short_description table
      *
      * @param Schema $schema
      */
     protected function createOroCatalogCategoryShortDescriptionTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME);
         $table->addColumn('category_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->addUniqueIndex(['localized_value_id'], 'uniq_a2b14ef5eb576e89');
@@ -228,13 +228,13 @@ class OroCatalogBundleInstaller implements
     }
 
     /**
-     * Create orob2b_catalog_category_long_description table
+     * Create oro_catalog_category_long_description table
      *
      * @param Schema $schema
      */
     protected function createOroCatalogCategoryLongDescriptionTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME);
         $table->addColumn('category_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->addUniqueIndex(['localized_value_id'], 'uniq_4f7c279feb576e89');
@@ -242,21 +242,21 @@ class OroCatalogBundleInstaller implements
     }
 
     /**
-     * Add orob2b_catalog_category_short_description foreign keys.
+     * Add oro_catalog_category_short_description foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroCatalogCategoryShortDescriptionForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME),
+            $schema->getTable(self::ORO_FALLBACK_LOCALIZE_TABLE_NAME),
             ['localized_value_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME),
+            $schema->getTable(self::ORO_CATALOG_CATEGORY_TABLE_NAME),
             ['category_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -264,21 +264,21 @@ class OroCatalogBundleInstaller implements
     }
 
     /**
-     * Add orob2b_catalog_category_long_description foreign keys.
+     * Add oro_catalog_category_long_description foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroCatalogCategoryLongDescriptionForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME),
+            $schema->getTable(self::ORO_FALLBACK_LOCALIZE_TABLE_NAME),
             ['localized_value_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME),
+            $schema->getTable(self::ORO_CATALOG_CATEGORY_TABLE_NAME),
             ['category_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -290,9 +290,9 @@ class OroCatalogBundleInstaller implements
      */
     protected function addOroCategoryDefaultProductOptionsForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_CATEGORY_DEFAULT_PRODUCT_OPTIONS_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_PRODUCT_UNIT_TABLE_NAME),
+            $schema->getTable(self::ORO_PRODUCT_UNIT_TABLE_NAME),
             ['product_unit_code'],
             ['code'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -307,7 +307,7 @@ class OroCatalogBundleInstaller implements
     {
         $this->attachmentExtension->addImageRelation(
             $schema,
-            self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME,
+            self::ORO_CATALOG_CATEGORY_TABLE_NAME,
             $fieldName,
             [],
             self::MAX_CATEGORY_IMAGE_SIZE_IN_MB,

@@ -9,7 +9,7 @@ use Oro\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository;
 
 class RequestStatusSelectType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_request_status_select';
+    const NAME = 'oro_rfp_request_status_select';
 
     /**
      * @var string

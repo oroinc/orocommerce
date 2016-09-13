@@ -1,1 +1,33 @@
-{% include '@OroFrontend/Organization/logo.html.twig' with { route: 'orob2b_frontend_root' } %}
+{% set route = 'oro_frontend_root' %}
+{% if isDesktopVersion() %}
+    {% if organization_name|length %}
+        {% set logo = oro_theme_logo() %}
+        <h1 class="logo logo-{{ logo ? 'image' : 'text' }}">
+            <a href="{{ path(route) }}" title="{{ organization_name }}">
+                {% if logo %}
+                    <img src="{{ asset(logo) }}" alt="{{- organization_name -}}">
+                {% else %}
+                    {{- organization_name -}}
+                {% endif %}
+            </a>
+        </h1>
+    {% else %}
+        <span class="logo-placeholder"></span>
+    {% endif %}
+{% else %}
+    {# Mobile view #}
+    <span id="main-menu-toggle">
+        <i class="icon-menu-bars"></i>
+    </span>
+    <h1 class="logo">
+        <span>
+            <a href="{{ path(route) }}" title="{{ organization_name|striptags|trim }}">
+                {% if oro_theme_logo() %}
+                    <img src="{{ asset(oro_theme_logo()) }}" alt="{{ organization_name|striptags|trim }}">
+                {% else %}
+                    {{- organization_name -}}
+                {% endif %}
+            </a>
+        </span>
+    </h1>
+{% endif %}

@@ -86,9 +86,9 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             'frontend user' => [
                 'token' => $this->createToken(new AccountUser(), $this->any()),
                 'routes' => [
-                    'widget' => 'orob2b_frontend_action_widget_buttons',
-                    'dialog' => 'orob2b_frontend_action_widget_form',
-                    'execution' => 'orob2b_frontend_action_operation_execute',
+                    'widget' => 'oro_frontend_action_widget_buttons',
+                    'dialog' => 'oro_frontend_action_widget_form',
+                    'execution' => 'oro_frontend_action_operation_execute',
                 ],
             ],
             'not supported user' => [
@@ -118,11 +118,11 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
         return [
             'backend user' => [
                 'token' => $this->createToken(new User(), $this->exactly(2)),
-                'expectedResult' => 'backend',
+                'expectedResult' => 'default',
             ],
             'frontend user' => [
                 'token' => $this->createToken(new AccountUser()),
-                'expectedResult' => 'frontend',
+                'expectedResult' => 'commerce',
             ],
             'not supported user' => [
                 'token' => $this->createToken('anon.', $this->exactly(2)),
@@ -146,47 +146,47 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
 
         return [
             [
-                'applications' => ['backend', 'frontend'],
+                'applications' => ['default', 'commerce'],
                 'token' => $this->createToken($user, $this->exactly(2)),
                 'expectedResult' => true
             ],
             [
-                'applications' => ['backend', 'frontend'],
+                'applications' => ['default', 'commerce'],
                 'token' => $this->createToken($accountUser),
                 'expectedResult' => true
             ],
             [
-                'applications' => ['backend'],
+                'applications' => ['default'],
                 'token' => $this->createToken($user, $this->exactly(2)),
                 'expectedResult' => true
             ],
             [
-                'applications' => ['backend'],
+                'applications' => ['default'],
                 'token' => $this->createToken($accountUser),
                 'expectedResult' => false
             ],
             [
-                'applications' => ['frontend'],
+                'applications' => ['commerce'],
                 'token' => $this->createToken($user, $this->exactly(2)),
                 'expectedResult' => false
             ],
             [
-                'applications' => ['frontend'],
+                'applications' => ['commerce'],
                 'token' => $this->createToken($accountUser),
                 'expectedResult' => true
             ],
             [
-                'applications' => ['backend'],
+                'applications' => ['default'],
                 'token' => $this->createToken($otherUser, $this->exactly(2)),
                 'expectedResult' => false
             ],
             [
-                'applications' => ['frontend'],
+                'applications' => ['commerce'],
                 'token' => $this->createToken($otherUser, $this->exactly(2)),
                 'expectedResult' => false
             ],
             [
-                'applications' => ['backend', 'frontend'],
+                'applications' => ['default', 'commerce'],
                 'token' => null,
                 'expectedResult' => false
             ],

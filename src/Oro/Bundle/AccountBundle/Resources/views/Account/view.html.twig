@@ -6,7 +6,7 @@
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
-        'indexPath': path('orob2b_account_index'),
+        'indexPath': path('oro_account_index'),
         'indexLabel': 'oro.account.entity_plural_label'|trans,
         'entityTitle': entity.name|default('N/A'|trans)
     } %}
@@ -18,7 +18,7 @@
     {% set accountInfo %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'url': path('orob2b_account_info', {id: entity.id}),
+            'url': path('oro_account_info', {id: entity.id}),
             'alias': 'account-info-widget'
         }) }}
     {% endset %}
@@ -27,7 +27,7 @@
         {{ oro_widget_render({
             'widgetType': 'block',
             'contentClasses': [],
-            'url': path('orob2b_account_address_book', {id: entity.id}),
+            'url': path('oro_account_address_book', {id: entity.id}),
             'title': 'oro.account.address_book.label'|trans
         }) }}
     {% endset %}

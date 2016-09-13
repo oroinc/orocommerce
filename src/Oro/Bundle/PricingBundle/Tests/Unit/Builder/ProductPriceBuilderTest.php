@@ -6,16 +6,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use Oro\Bundle\PricingBundle\TriggersFiller\ScopeRecalculateTriggersFiller;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\PricingBundle\Entity\PriceRule;
-use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 
 class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,9 +35,9 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
     protected $ruleCompiler;
 
     /**
-     * @var ScopeRecalculateTriggersFiller|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $triggersFiller;
+    protected $priceListTriggerHandler;
 
     /**
      * @var ProductPriceBuilder
@@ -53,14 +53,14 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $this->ruleCompiler = $this->getMockBuilder(PriceListRuleCompiler::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->triggersFiller = $this->getMockBuilder(ScopeRecalculateTriggersFiller::class)
+        $this->priceListTriggerHandler = $this->getMockBuilder(PriceListTriggerHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->productPriceBuilder = new ProductPriceBuilder(
             $this->registry,
             $this->insertFromSelectQueryExecutor,
             $this->ruleCompiler,
-            $this->triggersFiller
+            $this->priceListTriggerHandler
         );
     }
 
@@ -80,9 +80,9 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $this->insertFromSelectQueryExecutor->expects($this->never())
             ->method($this->anything());
 
-        $this->triggersFiller->expects($this->once())
-            ->method('createTriggerByPriceListProduct')
-            ->with($priceList, $product);
+        $this->priceListTriggerHandler->expects($this->once())
+            ->method('addTriggersForPriceList')
+            ->with(Topics::PRICE_LIST_CHANGE, $priceList, $product);
 
         $this->productPriceBuilder->buildByPriceList($priceList, $product);
     }
@@ -100,9 +100,10 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $this->insertFromSelectQueryExecutor->expects($this->never())
             ->method($this->anything());
 
-        $this->triggersFiller->expects($this->once())
-            ->method('fillTriggersByPriceList')
-            ->with($priceList);
+        $product = null;
+        $this->priceListTriggerHandler->expects($this->once())
+            ->method('addTriggersForPriceList')
+            ->with(Topics::PRICE_LIST_CHANGE, $priceList, $product);
 
         $this->productPriceBuilder->buildByPriceList($priceList);
     }
@@ -138,9 +139,9 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
                 $qb
             );
 
-        $this->triggersFiller->expects($this->once())
-            ->method('createTriggerByPriceListProduct')
-            ->with($priceList, $product);
+        $this->priceListTriggerHandler->expects($this->once())
+            ->method('addTriggersForPriceList')
+            ->with(Topics::PRICE_LIST_CHANGE, $priceList, $product);
 
         $this->productPriceBuilder->buildByPriceList($priceList, $product);
     }
@@ -160,7 +161,7 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
             ->with(ProductPrice::class)
             ->willReturn($repo);
 
-        $this->registry->expects($this->once())
+        $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->with(ProductPrice::class)
             ->willReturn($em);

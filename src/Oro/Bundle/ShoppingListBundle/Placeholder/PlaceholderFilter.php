@@ -24,6 +24,6 @@ class PlaceholderFilter
      */
     public function userCanCreateLineItem()
     {
-        return $this->securityFacade->isGranted('orob2b_shopping_list_line_item_frontend_add');
+        return $this->securityFacade->isGranted('oro_shopping_list_line_item_frontend_add');
     }
 }

@@ -190,7 +190,7 @@ class ShoppingListManager
         $objectManager = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
         $repository = $objectManager->getRepository('OroShoppingListBundle:LineItem');
 
-        $lineItems = $repository->getItemsByShoppingListAndProduct($shoppingList, $product);
+        $lineItems = $repository->getItemsByShoppingListAndProducts($shoppingList, [$product]);
 
         foreach ($lineItems as $lineItem) {
             $shoppingList->removeLineItem($lineItem);

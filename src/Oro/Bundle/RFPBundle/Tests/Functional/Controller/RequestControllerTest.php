@@ -28,7 +28,7 @@ class RequestControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_request_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('rfp-requests-grid', $crawler->html());
@@ -54,7 +54,7 @@ class RequestControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_rfp_request_view', ['id' => $id])
+            $this->getUrl('oro_rfp_request_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -87,18 +87,18 @@ class RequestControllerTest extends WebTestCase
         $updatedEmail = LoadRequestData::EMAIL . '_update';
         $updatedPoNumber = LoadRequestData::PO_NUMBER . '_update';
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_request_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form->remove('orob2b_rfp_request[requestProducts][0]');
+        $form->remove('oro_rfp_request[requestProducts][0]');
 
-        $form['orob2b_rfp_request[firstName]'] = $updatedFirstName;
-        $form['orob2b_rfp_request[lastName]'] = $updatedLastName;
-        $form['orob2b_rfp_request[email]'] = $updatedEmail;
-        $form['orob2b_rfp_request[poNumber]'] = $updatedPoNumber;
+        $form['oro_rfp_request[firstName]'] = $updatedFirstName;
+        $form['oro_rfp_request[lastName]'] = $updatedLastName;
+        $form['oro_rfp_request[email]'] = $updatedEmail;
+        $form['oro_rfp_request[poNumber]'] = $updatedPoNumber;
 
-        $form['orob2b_rfp_request[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
-        $form['orob2b_rfp_request[assignedAccountUsers]'] = implode(',', [
+        $form['oro_rfp_request[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
+        $form['oro_rfp_request[assignedAccountUsers]'] = implode(',', [
             $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
             $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
         ]);

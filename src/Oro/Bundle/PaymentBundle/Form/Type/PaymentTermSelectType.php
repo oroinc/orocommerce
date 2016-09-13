@@ -9,7 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 
 class PaymentTermSelectType extends AbstractType
 {
-    const NAME = 'orob2b_payment_term_select';
+    const NAME = 'oro_payment_term_select';
 
     /**
      * {@inheritdoc}
@@ -18,10 +18,11 @@ class PaymentTermSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'orob2b_payment_term',
-                'create_form_route' => 'orob2b_payment_term_create',
+                'autocomplete_alias' => 'oro_payment_term',
+                'create_form_route' => 'oro_payment_term_create',
                 'configs' => [
-                    'placeholder' => 'oro.payment.paymentterm.form.choose'
+                    'placeholder' => 'oro.payment.paymentterm.form.choose',
+                    'allowClear' => true,
                 ]
             ]
         );

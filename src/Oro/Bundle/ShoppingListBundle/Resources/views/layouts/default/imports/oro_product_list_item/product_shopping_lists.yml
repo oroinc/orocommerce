@@ -1,0 +1,11 @@
+layout:
+    imports:
+        -
+            id: product_shopping_lists
+            root: __product_line_item_form
+            namespace: product
+    actions:
+        - '@move':
+            id: __product_shopping_lists
+            parentId: __product_line_item_form
+            prepend: true

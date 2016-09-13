@@ -14,11 +14,11 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInterface, ExtendExtensionAwareInterface
 {
-    const WAREHOUSE_TABLE_NAME = 'orob2b_warehouse';
-    const WAREHOUSE_INVENTORY_LEVEL_TABLE_NAME = 'orob2b_warehouse_inventory_lev';
+    const WAREHOUSE_TABLE_NAME = 'oro_warehouse';
+    const WAREHOUSE_INVENTORY_LEVEL_TABLE_NAME = 'oro_warehouse_inventory_lev';
 
-    const ORDER_TABLE_NAME = 'orob2b_order';
-    const ORDER_LINE_ITEM_TABLE_NAME = 'orob2b_order_line_item';
+    const ORDER_TABLE_NAME = 'oro_order';
+    const ORDER_LINE_ITEM_TABLE_NAME = 'oro_order_line_item';
 
     /** @var  NoteExtension */
     protected $noteExtension;
@@ -62,7 +62,7 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
     }
 
     /**
-     * Create orob2b_warehouse table
+     * Create oro_warehouse table
      *
      * @param Schema $schema
      */
@@ -76,14 +76,14 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['created_at'], 'idx_orob2b_warehouse_created_at', []);
-        $table->addIndex(['updated_at'], 'idx_orob2b_warehouse_updated_at', []);
+        $table->addIndex(['created_at'], 'idx_oro_warehouse_created_at', []);
+        $table->addIndex(['updated_at'], 'idx_oro_warehouse_updated_at', []);
 
         $this->noteExtension->addNoteAssociation($schema, $table->getName());
     }
 
     /**
-     * Create orob2b_warehouse_inventory_level table
+     * Create oro_warehouse_inventory_level table
      *
      * @param Schema $schema
      */
@@ -98,12 +98,12 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(
             ['warehouse_id', 'product_unit_precision_id'],
-            'uidx_orob2b_wh_wh_inventory_lev'
+            'uidx_oro_wh_wh_inventory_lev'
         );
     }
 
     /**
-     * Add orob2b_warehouse foreign keys.
+     * Add oro_warehouse foreign keys.
      *
      * @param Schema $schema
      */
@@ -125,7 +125,7 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
     }
 
     /**
-     * Add orob2b_warehouse_inventory_level foreign keys.
+     * Add oro_warehouse_inventory_level foreign keys.
      *
      * @param Schema $schema
      */
@@ -135,7 +135,7 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
 
         /** WAREHOUSE */
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_warehouse'),
+            $schema->getTable('oro_warehouse'),
             ['warehouse_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -143,7 +143,7 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
 
         /** PRODUCT */
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+            $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -151,7 +151,7 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
 
         /** PRODUCT UNIT PRECISION */
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product_unit_precision'),
+            $schema->getTable('oro_product_unit_precision'),
             ['product_unit_precision_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]

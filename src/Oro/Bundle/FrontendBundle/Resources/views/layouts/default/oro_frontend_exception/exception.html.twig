@@ -1,0 +1,20 @@
+{% block _exception_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " text-center"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <h1><span>{{ status_code }}</span> {{ status_text }}</h1>
+        <p>
+            {% if status_code == 404 %}
+                {{ 'oro_frontend.exception.code.404'|trans }}
+            {% elseif status_code == 403 %}
+                {{ 'oro_frontend.exception.code.403'|trans }}
+            {% else %}
+                {{ 'oro_frontend.exception.default'|trans }}
+            {% endif %}
+        </p>
+        {% if status_code == 404 or status_code == 403 %}
+            <p><a href="#" onclick="window.history.back(); return false;">{{ 'oro_frontend.exception.back'|trans }}</a></p>
+        {% endif %}
+    </div>
+{% endblock %}

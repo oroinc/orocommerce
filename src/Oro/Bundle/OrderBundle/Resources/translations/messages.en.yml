@@ -45,6 +45,7 @@ oro:
         discounts.label: Discounts
         discountitem.add_label: Add Discount
         order_history.label: Order History
+        top_selling_items.label: Top Selling Items
 
         orderdiscount:
             entity_label: Order Discount
@@ -195,6 +196,9 @@ oro:
             click_to_review: 'click here to review'
             receive_email: 'You will receive a confirmation email with your order details.'
             done: 'Done'
+
+        privilege:
+            category.orders.label: 'Orders'
 
     frontend:
         order:

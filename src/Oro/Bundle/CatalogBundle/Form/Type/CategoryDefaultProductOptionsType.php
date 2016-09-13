@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CategoryDefaultProductOptionsType extends AbstractType
 {
-    const NAME = 'orob2b_catalog_category_default_product_options';
+    const NAME = 'oro_catalog_category_default_product_options';
 
     /**
      * @var string

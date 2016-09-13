@@ -5,28 +5,26 @@ namespace Oro\Bundle\FrontendBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 class FrontendController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_frontend_root")
-     * @return RedirectResponse
+     * @Layout
+     * @Route("/", name="oro_frontend_root")
      */
     public function indexAction()
     {
-        return $this->redirectToRoute('orob2b_product_frontend_product_index');
+        return [];
     }
 
     /**
      * @Layout()
-     * @Route("/exception/{code}/{text}", name="orob2b_frontend_exception", requirements={"code"="\d+"})
+     * @Route("/exception/{code}/{text}", name="oro_frontend_exception", requirements={"code"="\d+"})
      * @param int $code
      * @param string $text
-     * @return Response
+     * @return array
      */
     public function exceptionAction($code, $text)
     {

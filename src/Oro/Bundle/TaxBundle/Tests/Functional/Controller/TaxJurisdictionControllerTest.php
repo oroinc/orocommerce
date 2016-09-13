@@ -51,7 +51,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_jurisdiction_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_tax_jurisdiction_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('tax-jurisdiction-grid', $crawler->html());
@@ -59,7 +59,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_jurisdiction_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_tax_jurisdiction_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -93,7 +93,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_jurisdiction_update', ['id' => $id])
+            $this->getUrl('oro_tax_jurisdiction_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -120,7 +120,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_jurisdiction_view', ['id' => $id])
+            $this->getUrl('oro_tax_jurisdiction_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -159,10 +159,10 @@ class TaxJurisdictionControllerTest extends WebTestCase
         array $zipCodes
     ) {
         $token = $this->getContainer()->get('security.csrf.token_manager')
-            ->getToken('orob2b_tax_jurisdiction_type')->getValue();
+            ->getToken('oro_tax_jurisdiction_type')->getValue();
 
         $formData = [
-            'orob2b_tax_jurisdiction_type' => [
+            'oro_tax_jurisdiction_type' => [
                 'code' => $code,
                 'description' => $description,
                 'zipCodes' => $zipCodes,
@@ -198,26 +198,26 @@ class TaxJurisdictionControllerTest extends WebTestCase
     {
         $doc = new \DOMDocument("1.0");
         $doc->loadHTML(
-            '<select name="orob2b_tax_jurisdiction_type[country]" ' .
-            'id="orob2b_tax_jurisdiction_type_country" ' .
+            '<select name="oro_tax_jurisdiction_type[country]" ' .
+            'id="oro_tax_jurisdiction_type_country" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
             '<option value="' . $country . '">' . $countryFull . '</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $formData['orob2b_tax_jurisdiction_type']['country'] = $country;
+        $formData['oro_tax_jurisdiction_type']['country'] = $country;
 
         $doc->loadHTML(
-            '<select name="orob2b_tax_jurisdiction_type[region]" ' .
-            'id="orob2b_tax_jurisdiction_type_region" ' .
+            '<select name="oro_tax_jurisdiction_type[region]" ' .
+            'id="oro_tax_jurisdiction_type_region" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
             '<option value="' . $state . '">' . $stateFull . '</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $formData['orob2b_tax_jurisdiction_type']['region'] = $state;
+        $formData['oro_tax_jurisdiction_type']['region'] = $state;
 
         return $formData;
     }

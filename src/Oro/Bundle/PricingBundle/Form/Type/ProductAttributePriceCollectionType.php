@@ -11,7 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductAttributePriceCollectionType extends FormType
 {
-    const NAME = 'orob2b_pricing_product_attribute_price_collection';
+    const NAME = 'oro_pricing_product_attribute_price_collection';
 
     /**
      * {@inheritdoc}

@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler\CheckoutStateDiffCompilerPass;
 use Oro\Bundle\CheckoutBundle\DependencyInjection\OroCheckoutExtension;
 use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
 use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler\CheckoutCompilerPass;
@@ -18,6 +19,7 @@ class OroCheckoutBundle extends Bundle
     {
         $container->addCompilerPass(new CheckoutCompilerPass());
         $container->addCompilerPass(new TwigSandboxConfigurationPass());
+        $container->addCompilerPass(new CheckoutStateDiffCompilerPass());
         parent::build($container);
     }
 

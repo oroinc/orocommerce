@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Security;
 
+use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -28,7 +29,7 @@ class AddressACLTest extends AbstractAddressACLTest
     protected $role;
 
     /** @var string */
-    protected $formName = 'orob2b_sale_quote';
+    protected $formName = 'oro_sale_quote';
 
     protected function setUp()
     {
@@ -41,7 +42,7 @@ class AddressACLTest extends AbstractAddressACLTest
             ->findOneBy(['role' => User::ROLE_ADMINISTRATOR]);
 
         $this->loadFixtures([
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData'
+            LoadQuoteData::class
         ]);
     }
 
@@ -68,7 +69,7 @@ class AddressACLTest extends AbstractAddressACLTest
         /** @var Quote $quote */
         $quote = $this->getReference('sale.quote.3');
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_update', ['id' => $quote->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_update', ['id' => $quote->getId()]));
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -95,10 +96,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => true,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => true
+                    'oro_quote_address_shipping_account_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
                     'account' => [
@@ -116,10 +117,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => false,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => false,
+                    'oro_quote_address_shipping_account_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_allow_manual_backend' => false,
                 ],
                 'expected' => []
             ],
@@ -129,10 +130,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::NONE_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => false,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => false,
+                    'oro_quote_address_shipping_account_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_allow_manual_backend' => false,
                 ],
                 'expected' => []
             ],
@@ -142,10 +143,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => false,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => true
+                    'oro_quote_address_shipping_account_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
                     'account' => [
@@ -161,10 +162,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::NONE_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => false,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => true
+                    'oro_quote_address_shipping_account_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
                     'account' => [
@@ -180,10 +181,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::NONE_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => false,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => true
+                    'oro_quote_address_shipping_account_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
                     'account' => [],
@@ -197,10 +198,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => false,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => false
+                    'oro_quote_address_shipping_account_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
                     'account' => [
@@ -219,10 +220,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => false,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => false
+                    'oro_quote_address_shipping_account_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
                     'account' => [],
@@ -239,10 +240,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::NONE_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => false,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => false
+                    'oro_quote_address_shipping_account_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
                     'account' => [
@@ -258,10 +259,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::NONE_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => false,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => false
+                    'oro_quote_address_shipping_account_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => []
             ],
@@ -271,10 +272,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => false,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => true
+                    'oro_quote_address_shipping_account_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
                     'account' => [
@@ -293,10 +294,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => true,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => false
+                    'oro_quote_address_shipping_account_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
                     'account' => [
@@ -314,10 +315,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => true,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => true
+                    'oro_quote_address_shipping_account_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
                     'account' => [
@@ -335,10 +336,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => true,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => false
+                    'oro_quote_address_shipping_account_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
                     'account' => [
@@ -357,10 +358,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => true,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => true
+                    'oro_quote_address_shipping_account_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
                     'account' => [
@@ -379,10 +380,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => false,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => false
+                    'oro_quote_address_shipping_account_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
                     'account' => [
@@ -399,10 +400,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => false,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => true
+                    'oro_quote_address_shipping_account_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
                     'account' => [
@@ -419,10 +420,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => false,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => false
+                    'oro_quote_address_shipping_account_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
                     'account' => [
@@ -442,10 +443,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => false,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => true
+                    'oro_quote_address_shipping_account_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
                     'account' => [
@@ -465,10 +466,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => true,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => false
+                    'oro_quote_address_shipping_account_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
                     'account' => [
@@ -487,10 +488,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => false,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => true,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => true
+                    'oro_quote_address_shipping_account_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
                     'account' => [
@@ -509,10 +510,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => true,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => false
+                    'oro_quote_address_shipping_account_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
                     'account' => [
@@ -532,10 +533,10 @@ class AddressACLTest extends AbstractAddressACLTest
                     'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'orob2b_quote_address_shipping_account_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_any_backend' => true,
-                    'orob2b_quote_address_shipping_account_user_use_default_backend' => true,
-                    'orob2b_quote_address_shipping_allow_manual_backend' => true
+                    'oro_quote_address_shipping_account_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
                     'account' => [

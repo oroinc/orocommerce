@@ -4,6 +4,22 @@
     {% set grid_render_parameters = {
         viewLoading: true
     }|merge(grid_render_parameters) %}
+    {% if split_to_cells != false %}
+        {% set themeOptions = grid_render_parameters.themeOptions|default({}) %}
+        {% set themeOptions = layout_attr_defaults(themeOptions, {
+            'headerRowTemplateSelector': '#template-datagrid-header-row',
+            'rowTemplateSelector': '#template-datagrid-row'
+        }) %}
+        {% set toolbarOptions = grid_render_parameters.toolbarOptions|default({}) %}
+        {% set toolbarOptions = layout_attr_defaults(toolbarOptions, {
+            'columnManager': {'addSorting': false}
+        }) %}
+        {% set grid_render_parameters = grid_render_parameters|merge({
+            'themeOptions': themeOptions,
+            'toolbarOptions': toolbarOptions
+        }) %}
+        {{ block("container_widget") }}
+    {% endif %}
     {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
     {{ dataGrid.renderGrid(grid_full_name, grid_parameters, grid_render_parameters) }}
 {% endblock %}
@@ -51,10 +67,10 @@
         {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
         {% set hasVariants = actionsCount > 1 %}
         {% set additionalCss = "btn" %}
-        {% if block.parent.vars.id == 'datagrid_toolbar_button_container' %}
+        {% if block.parent.vars.class_prefix == 'datagrid_toolbar_button_container' %}
             {% set additionalCss = additionalCss ~ " btn_xsm btn-dark btn-block oq-group-btn" %}
         {% else %}
-            {% set additionalCss = additionalCss ~ " theme-btn btn-orange" %}
+            {% set additionalCss = additionalCss ~ " btn_xlg theme-btn theme-btn_xlg btn-orange" %}
         {% endif %}
         {% if hasVariants %}
             {% set additionalCss = additionalCss ~ " btn_has-dropdown btn_has-dropdown_xlg" %}
@@ -112,5 +128,68 @@
 {% block back_link_widget %}
     <div class="order-builder-clear-btn">
         {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block input_widget %}
+    {% if type == 'checkbox' %}
+        {% set attr = layout_attr_defaults(attr, {
+        '~class': ' custom-checkbox__input'
+        }) %}
+
+        <label for="{{ id }}" class="custom-checkbox">
+            {{ parent() }}
+            <span class="custom-checkbox__icon"></span>
+            <span class="custom-checkbox__text">{{ label|block_text(translation_domain) }} </span>
+        </label>
+    {% else %}
+        {% set attr = layout_attr_defaults(attr, {
+        '~class': ' input'
+        }) %}
+
+        {{ parent() }}
+    {% endif %}
+{% endblock %}
+
+{% block embedded_list_widget %}
+    <div class="embedded-list">
+        {% set attr = layout_attr_defaults(attr, {
+            'class': 'embedded-list__container'
+        }) %}
+
+        {% if use_slider %}
+            {% set attr = layout_attr_defaults(attr, {
+                'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
+                '~data-page-component-options': slider_options,
+                '~class': ' embedded-list__container--slider'
+            }) %}
+        {% else %}
+            {% set attr = layout_attr_defaults(attr, {
+                '~class': ' embedded-list__container--tiles'
+            }) %}
+        {% endif %}
+
+        {% if label is defined %}
+            <h2 class="embedded-list__label">
+                <span class="embedded-list__label-inner">{{ label|trans }}</span>
+            </h2>
+        {% endif %}
+
+        <div {{ block('block_attributes') }}>
+            {% for item in items %}
+                <div class="embedded-list__item">
+                    {% set context = {
+                        (item_key): item
+                    } %}
+                    {% for dataKey, dataValue in items_data %}
+                        {% set context = context|merge({
+                            (dataKey): dataValue[item.id]|default(null)
+                        }) %}
+                    {% endfor %}
+                    {% do block|merge_context(context) %}
+                    {{ block('container_widget') }}
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}

@@ -8,9 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
 /**
- * QuoteProductOffer
- *
- * @ORM\Table(name="orob2b_sale_quote_prod_offer")
+ * @ORM\Table(name="oro_sale_quote_prod_offer")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @Config(
