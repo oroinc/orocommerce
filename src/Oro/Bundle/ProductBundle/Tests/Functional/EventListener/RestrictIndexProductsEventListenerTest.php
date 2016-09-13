@@ -39,6 +39,8 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
         $query = new Query();
         $query->from('oro_product_product_WEBSITE_ID');
         $query->select('recordTitle');
+        $query->getCriteria()->orderBy(['title_1' => Query::ORDER_ASC]);
+
         $result = $searchEngine->search($query);
         $values = $result->getElements();
 
