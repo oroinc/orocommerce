@@ -85,6 +85,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
      */
     public function theOrderTotalIsRecalculatedTo($total)
     {
+        $this->waitForAjax();
         self::assertEquals($total, $this->createElement('CheckoutTotalSum')->getText());
     }
 
@@ -203,7 +204,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $this->getSession()->getPage()->clickLink('Back');
         $this->waitForAjax();
         $checkoutStep->assertTitle('Shipping Information');
-        
+
         /** @var Form $form */
         $form = $this->createElement('Address');
         $form->fillField('SELECT SHIPPING ADDRESS', 'Enter other address');
