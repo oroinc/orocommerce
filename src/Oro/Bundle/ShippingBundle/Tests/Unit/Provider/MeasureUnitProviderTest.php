@@ -10,7 +10,7 @@ use Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider;
 
 class MeasureUnitProviderTest extends \PHPUnit_Framework_TestCase
 {
-    const CONFIG_ENTRY_NAME = 'orob2b_shipping.weight_units';
+    const CONFIG_ENTRY_NAME = 'oro_shipping.weight_units';
 
     /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $repository;

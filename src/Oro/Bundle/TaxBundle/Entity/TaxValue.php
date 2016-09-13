@@ -12,9 +12,9 @@ use Oro\Bundle\TaxBundle\Model\Result;
 /**
  * @ORM\Entity
  * @ORM\Table(
- *     name="orob2b_tax_value",
+ *     name="oro_tax_value",
  *     indexes={
- *         @ORM\Index(name="orob2b_tax_value_class_id_idx", columns={"entity_class", "entity_id"})
+ *         @ORM\Index(name="oro_tax_value_class_id_idx", columns={"entity_class", "entity_id"})
  *     }
  * )
  */

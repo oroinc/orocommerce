@@ -5,9 +5,9 @@ namespace Oro\Bundle\PaymentBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="orob2b_payment_status",
+ * @ORM\Table(name="oro_payment_status",
  *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="orob2b_payment_status_unique", columns={
+ *          @ORM\UniqueConstraint(name="oro_payment_status_unique", columns={
  *              "entity_class",
  *              "entity_identifier"
  *          })

@@ -55,7 +55,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testCreate($email, $password, $isPasswordGenerate, $isSendEmail, $emailsCount)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_create'));
 
         /** @var AccountUser $loggedUser */
         $loggedUser = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
@@ -76,29 +76,30 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->assertNotNull($role);
 
         $form = $crawler->selectButton('Save')->form();
-        $form['orob2b_account_frontend_account_user[enabled]'] = true;
-        $form['orob2b_account_frontend_account_user[namePrefix]'] = self::NAME_PREFIX;
-        $form['orob2b_account_frontend_account_user[firstName]'] = self::FIRST_NAME;
-        $form['orob2b_account_frontend_account_user[middleName]'] = self::MIDDLE_NAME;
-        $form['orob2b_account_frontend_account_user[lastName]'] = self::LAST_NAME;
-        $form['orob2b_account_frontend_account_user[nameSuffix]'] = self::NAME_SUFFIX;
-        $form['orob2b_account_frontend_account_user[email]'] = $email;
-        $form['orob2b_account_frontend_account_user[birthday]'] = date('Y-m-d');
-        $form['orob2b_account_frontend_account_user[plainPassword][first]'] = $password;
-        $form['orob2b_account_frontend_account_user[plainPassword][second]'] = $password;
-        $form['orob2b_account_frontend_account_user[passwordGenerate]'] = $isPasswordGenerate;
-        $form['orob2b_account_frontend_account_user[sendEmail]'] = $isSendEmail;
-        $form['orob2b_account_frontend_account_user[roles]'] = [$role->getId()];
+        $form['oro_account_frontend_account_user[enabled]'] = true;
+        $form['oro_account_frontend_account_user[namePrefix]'] = self::NAME_PREFIX;
+        $form['oro_account_frontend_account_user[firstName]'] = self::FIRST_NAME;
+        $form['oro_account_frontend_account_user[middleName]'] = self::MIDDLE_NAME;
+        $form['oro_account_frontend_account_user[lastName]'] = self::LAST_NAME;
+        $form['oro_account_frontend_account_user[nameSuffix]'] = self::NAME_SUFFIX;
+        $form['oro_account_frontend_account_user[email]'] = $email;
+        $form['oro_account_frontend_account_user[birthday]'] = date('Y-m-d');
+        $form['oro_account_frontend_account_user[plainPassword][first]'] = $password;
+        $form['oro_account_frontend_account_user[plainPassword][second]'] = $password;
+        $form['oro_account_frontend_account_user[passwordGenerate]'] = $isPasswordGenerate;
+        $form['oro_account_frontend_account_user[sendEmail]'] = $isSendEmail;
+        $form['oro_account_frontend_account_user[roles]'] = [$role->getId()];
 
         $this->client->submit($form);
-        /** @var MessageDataCollector $collector */
-        $collector = $this->client->getProfile()->getCollector('swiftmailer');
-        $collectedMessages = $collector->getMessages();
 
-        $this->assertCount($emailsCount, $collectedMessages);
+        /** @var \Swift_Plugins_MessageLogger $emailLogging */
+        $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
+        $emailMessages = $emailLogger->getMessages();
+
+        $this->assertCount($emailsCount, $emailMessages);
 
         if ($isSendEmail) {
-            $this->assertMessage($email, array_shift($collectedMessages));
+            $this->assertMessage($email, array_shift($emailMessages));
         }
 
         $crawler = $this->client->followRedirect();
@@ -113,7 +114,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_index'));
+        $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_index'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -144,17 +145,17 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_frontend_account_user_update', ['id' => $id])
+            $this->getUrl('oro_account_frontend_account_user_update', ['id' => $id])
         );
 
         $form = $crawler->selectButton('Save')->form();
-        $form['orob2b_account_frontend_account_user[enabled]'] = false;
-        $form['orob2b_account_frontend_account_user[namePrefix]'] = self::UPDATED_NAME_PREFIX;
-        $form['orob2b_account_frontend_account_user[firstName]'] = self::UPDATED_FIRST_NAME;
-        $form['orob2b_account_frontend_account_user[middleName]'] = self::UPDATED_MIDDLE_NAME;
-        $form['orob2b_account_frontend_account_user[lastName]'] = self::UPDATED_LAST_NAME;
-        $form['orob2b_account_frontend_account_user[nameSuffix]'] = self::UPDATED_NAME_SUFFIX;
-        $form['orob2b_account_frontend_account_user[email]'] = self::UPDATED_EMAIL;
+        $form['oro_account_frontend_account_user[enabled]'] = false;
+        $form['oro_account_frontend_account_user[namePrefix]'] = self::UPDATED_NAME_PREFIX;
+        $form['oro_account_frontend_account_user[firstName]'] = self::UPDATED_FIRST_NAME;
+        $form['oro_account_frontend_account_user[middleName]'] = self::UPDATED_MIDDLE_NAME;
+        $form['oro_account_frontend_account_user[lastName]'] = self::UPDATED_LAST_NAME;
+        $form['oro_account_frontend_account_user[nameSuffix]'] = self::UPDATED_NAME_SUFFIX;
+        $form['oro_account_frontend_account_user[email]'] = self::UPDATED_EMAIL;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -173,7 +174,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testView($id)
     {
-        $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_view', ['id' => $id]));
+        $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
 

@@ -1,0 +1,14 @@
+search:
+    Oro\Bundle\PricingBundle\Entity\PriceList:
+        alias:                          oro_pricing_price_list
+        title_fields:                   [name]
+        route:
+            name:                       oro_pricing_price_list_view
+            parameters:
+                id:                     id
+        search_template:                OroPricingBundle:PriceList:searchResult.html.twig
+        fields:
+            -
+                name:                   name
+                target_type:            text
+                target_fields:          [name]

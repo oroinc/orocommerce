@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\CheckoutBundle\DependencyInjection\OroCheckoutExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
+use Oro\Bundle\CheckoutBundle\DependencyInjection\OroCheckoutExtension;
 
 class OroCheckoutExtensionTest extends ExtensionTestCase
 {
@@ -25,9 +25,10 @@ class OroCheckoutExtensionTest extends ExtensionTestCase
         $this->loadExtension($this->extension);
 
         $expectedDefinitions = [
-            'orob2b_checkout.layout.data_provider.shipping_context',
-            'orob2b_checkout.condition.has_applicable_shipping_methods',
-            'orob2b_checkout.condition.shipping_method_supports'
+            'oro_checkout.layout.data_provider.shipping_methods',
+            'oro_checkout.shipping_cost.calculator',
+            'oro_checkout.condition.has_applicable_shipping_methods',
+            'oro_checkout.condition.shipping_method_supports'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

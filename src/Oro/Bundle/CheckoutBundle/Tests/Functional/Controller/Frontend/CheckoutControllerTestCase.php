@@ -2,21 +2,27 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as TestAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
+use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
-abstract class CheckoutControllerTestCase extends WebTestCase
+abstract class CheckoutControllerTestCase extends FrontendWebTestCase
 {
     const MANUAL_ADDRESS = 0;
     const FIRST_NAME = 'Jackie';
@@ -57,17 +63,17 @@ abstract class CheckoutControllerTestCase extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(TestAccountUserData::AUTH_USER, TestAccountUserData::AUTH_PW)
         );
         $this->loadFixtures(
             [
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
-                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-                'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices',
-                'Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData',
-                'Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules',
+                LoadAccountUserData::class,
+                LoadAccountAddresses::class,
+                LoadProductUnitPrecisions::class,
+                LoadShoppingListLineItems::class,
+                LoadCombinedProductPrices::class,
+                LoadPaymentTermData::class,
+                LoadShippingRules::class,
             ]
         );
         $this->registry = $this->getContainer()->get('doctrine');
@@ -79,14 +85,15 @@ abstract class CheckoutControllerTestCase extends WebTestCase
      */
     protected function startCheckout(ShoppingList $shoppingList)
     {
+        $this->setCurrentWebsite('default');
         $user = $this->registry
             ->getRepository('OroAccountBundle:AccountUser')
-            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
+            ->findOneBy(['username' => TestAccountUserData::AUTH_USER]);
         $user->setAccount($this->getReference('account.level_1'));
         $token = new UsernamePasswordToken($user, false, 'key');
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
         $data = $this->getCheckoutData($shoppingList);
-        $action = $this->client->getContainer()->get('orob2b_checkout.model.action.start_checkout');
+        $action = $this->client->getContainer()->get('oro_checkout.model.action.start_checkout');
         $action->initialize($data['options']);
         $action->execute($data['context']);
         CheckoutControllerTestCase::$checkoutUrl = $data['context']['redirectUrl'];
@@ -172,12 +179,11 @@ abstract class CheckoutControllerTestCase extends WebTestCase
     {
         /** @var ShippingRule $shippingRule */
         $shippingRule = $this->getReference('shipping_rule.8');
-        /** @var ShippingRuleMethodConfig $shippingRuleConfig */
-        $shippingRuleConfig = $shippingRule->getMethodConfigs()->first();
+        /** @var ShippingRuleConfiguration $shippingRuleConfig */
+        $shippingRuleConfig = $shippingRule->getConfigurations()->first();
         $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method'] = $shippingRuleConfig->getMethod();
-        /** @var ShippingRuleMethodTypeConfig $type */
-        $type = $shippingRuleConfig->getTypeConfigs()->first();
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = $type->getType();
+        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = null;
+        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_rule_config'] = $shippingRuleConfig->getId();
         $values['_widgetContainer'] = 'ajax';
         $values['_wid'] = 'ajax_checkout';
 

@@ -17,24 +17,24 @@ use Symfony\Component\HttpFoundation\Request;
 class ShippingRuleController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_shipping_rule_index")
+     * @Route("/", name="oro_shipping_rule_index")
      * @Template
-     * @AclAncestor("orob2b_shipping_rule_view")
+     * @AclAncestor("oro_shipping_rule_view")
      *
      * @return array
      */
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_shipping.entity.shipping_rule.class')
+            'entity_class' => $this->container->getParameter('oro_shipping.entity.shipping_rule.class')
         ];
     }
 
     /**
-     * @Route("/create", name="orob2b_shipping_rule_create")
+     * @Route("/create", name="oro_shipping_rule_create")
      * @Template("OroShippingBundle:ShippingRule:update.html.twig")
      * @Acl(
-     *     id="orob2b_shipping_rule_create",
+     *     id="oro_shipping_rule_create",
      *     type="entity",
      *     permission="CREATE",
      *     class="OroShippingBundle:ShippingRule"
@@ -49,10 +49,10 @@ class ShippingRuleController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_shipping_rule_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_shipping_rule_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_shipping_rule_view",
+     *      id="oro_shipping_rule_view",
      *      type="entity",
      *      class="OroShippingBundle:ShippingRule",
      *      permission="VIEW"
@@ -70,10 +70,10 @@ class ShippingRuleController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_shipping_rule_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_shipping_rule_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *     id="orob2b_shipping_rule_update",
+     *     id="oro_shipping_rule_update",
      *     type="entity",
      *     permission="EDIT",
      *     class="OroShippingBundle:ShippingRule"
@@ -118,9 +118,9 @@ class ShippingRuleController extends Controller
     }
 
     /**
-     * @Route("/{gridName}/massAction/{actionName}", name="orob2b_status_shipping_rule_massaction")
+     * @Route("/{gridName}/massAction/{actionName}", name="oro_status_shipping_rule_massaction")
      * @Acl(
-     *     id="orob2b_shipping_rule_update",
+     *     id="oro_shipping_rule_update",
      *     type="entity",
      *     permission="EDIT",
      *     class="OroShippingBundle:ShippingRule"

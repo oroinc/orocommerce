@@ -14,7 +14,7 @@ class OroRedirectBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -23,17 +23,17 @@ class OroRedirectBundleInstaller implements Installation
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BRedirectSlugTable($schema);
+        $this->createOroRedirectSlugTable($schema);
     }
 
     /**
-     * Create orob2b_redirect_slug table
+     * Create oro_redirect_slug table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BRedirectSlugTable(Schema $schema)
+    protected function createOroRedirectSlugTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_redirect_slug');
+        $table = $schema->createTable('oro_redirect_slug');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('url', 'string', ['length' => 1024]);
         $table->addColumn('route_name', 'string', ['notnull' => false, 'length' => 255]);

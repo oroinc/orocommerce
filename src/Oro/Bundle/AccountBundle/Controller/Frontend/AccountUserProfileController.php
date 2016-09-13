@@ -15,9 +15,9 @@ use Oro\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
 class AccountUserProfileController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_account_frontend_account_user_profile")
+     * @Route("/", name="oro_account_frontend_account_user_profile")
      * @Layout
-     * @AclAncestor("orob2b_account_frontend_account_user_view")
+     * @AclAncestor("oro_account_frontend_account_user_view")
      *
      * @return array
      */
@@ -33,9 +33,9 @@ class AccountUserProfileController extends Controller
     /**
      * Edit account user form
      *
-     * @Route("/update", name="orob2b_account_frontend_account_user_profile_update")
+     * @Route("/update", name="oro_account_frontend_account_user_profile_update")
      * @Layout()
-     * @AclAncestor("orob2b_account_frontend_account_user_update")
+     * @AclAncestor("oro_account_frontend_account_user_update")
      *
      * @param Request $request
      * @return array|RedirectResponse
@@ -43,19 +43,19 @@ class AccountUserProfileController extends Controller
     public function updateAction(Request $request)
     {
         $accountUser = $this->getUser();
-        $form = $this->get('orob2b_account.provider.frontend_account_user_form')
+        $form = $this->get('oro_account.provider.frontend_account_user_form')
             ->getProfileForm($accountUser)
             ->getForm();
         $handler = new FrontendAccountUserHandler(
             $form,
             $request,
-            $this->get('orob2b_account_user.manager')
+            $this->get('oro_account_user.manager')
         );
         $resultHandler = $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,
-            ['route' => 'orob2b_account_frontend_account_user_profile_update'],
-            ['route' => 'orob2b_account_frontend_account_user_profile'],
+            ['route' => 'oro_account_frontend_account_user_profile_update'],
+            ['route' => 'oro_account_frontend_account_user_profile'],
             $this->get('translator')->trans('oro.account.controller.accountuser.profile_updated.message'),
             $handler
         );

@@ -41,7 +41,7 @@ class TaxRulesControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_rule_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_tax_rule_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('tax-taxe-rules-grid', $crawler->html());
@@ -49,7 +49,7 @@ class TaxRulesControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_rule_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_tax_rule_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -117,7 +117,7 @@ class TaxRulesControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_rule_update', ['id' => $id])
+            $this->getUrl('oro_tax_rule_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -142,7 +142,7 @@ class TaxRulesControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_rule_view', ['id' => $id])
+            $this->getUrl('oro_tax_rule_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -179,11 +179,11 @@ class TaxRulesControllerTest extends WebTestCase
     ) {
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'orob2b_tax_rule_type[description]' => $description,
-                'orob2b_tax_rule_type[accountTaxCode]' => $accountTaxCode->getId(),
-                'orob2b_tax_rule_type[productTaxCode]' => $productTaxCode->getId(),
-                'orob2b_tax_rule_type[tax]' => $tax->getId(),
-                'orob2b_tax_rule_type[taxJurisdiction]' => $taxJurisdiction->getId(),
+                'oro_tax_rule_type[description]' => $description,
+                'oro_tax_rule_type[accountTaxCode]' => $accountTaxCode->getId(),
+                'oro_tax_rule_type[productTaxCode]' => $productTaxCode->getId(),
+                'oro_tax_rule_type[tax]' => $tax->getId(),
+                'oro_tax_rule_type[taxJurisdiction]' => $taxJurisdiction->getId(),
             ]
         );
 

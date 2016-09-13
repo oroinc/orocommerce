@@ -16,24 +16,24 @@ use Oro\Bundle\AccountBundle\Form\Type\AccountType;
 class AccountController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_account_index")
+     * @Route("/", name="oro_account_index")
      * @Template
-     * @AclAncestor("orob2b_account_view")
+     * @AclAncestor("oro_account_view")
      *
      * @return array
      */
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_account.entity.account.class')
+            'entity_class' => $this->container->getParameter('oro_account.entity.account.class')
         ];
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_account_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_account_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_account_view",
+     *      id="oro_account_view",
      *      type="entity",
      *      class="OroAccountBundle:Account",
      *      permission="VIEW"
@@ -50,10 +50,10 @@ class AccountController extends Controller
     }
 
     /**
-     * @Route("/create", name="orob2b_account_create")
+     * @Route("/create", name="oro_account_create")
      * @Template("OroAccountBundle:Account:update.html.twig")
      * @Acl(
-     *      id="orob2b_account_create",
+     *      id="oro_account_create",
      *      type="entity",
      *      class="OroAccountBundle:Account",
      *      permission="CREATE"
@@ -67,10 +67,10 @@ class AccountController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_account_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_account_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_account_update",
+     *      id="oro_account_update",
      *      type="entity",
      *      class="OroAccountBundle:Account",
      *      permission="EDIT"
@@ -95,13 +95,13 @@ class AccountController extends Controller
             $this->createForm(AccountType::NAME, $account),
             function (Account $account) {
                 return [
-                    'route' => 'orob2b_account_update',
+                    'route' => 'oro_account_update',
                     'parameters' => ['id' => $account->getId()],
                 ];
             },
             function (Account $account) {
                 return [
-                    'route' => 'orob2b_account_view',
+                    'route' => 'oro_account_view',
                     'parameters' => ['id' => $account->getId()],
                 ];
             },
@@ -110,9 +110,9 @@ class AccountController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_account_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_account_info", requirements={"id"="\d+"})
      * @Template("OroAccountBundle:Account/widget:info.html.twig")
-     * @AclAncestor("orob2b_account_view")
+     * @AclAncestor("oro_account_view")
      *
      * @param Account $account
      * @return array
@@ -121,7 +121,7 @@ class AccountController extends Controller
     {
         return [
             'entity' => $account,
-            'treeData' => $this->get('orob2b_account.account_tree_handler')->createTree($account),
+            'treeData' => $this->get('oro_account.account_tree_handler')->createTree($account),
         ];
     }
 }

@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 class AccountUserPasswordRequestType extends AbstractType
 {
-    const NAME = 'orob2b_account_account_user_password_request';
+    const NAME = 'oro_account_account_user_password_request';
 
     /**
      * {@inheritdoc}

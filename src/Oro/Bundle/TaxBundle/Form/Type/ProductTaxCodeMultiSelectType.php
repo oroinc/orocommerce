@@ -7,7 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductTaxCodeMultiSelectType extends AbstractType
 {
-    const NAME = 'orob2b_tax_product_tax_code_multiselect';
+    const NAME = 'oro_tax_product_tax_code_multiselect';
 
     /**
      * {@inheritdoc}

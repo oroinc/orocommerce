@@ -20,7 +20,7 @@ class CallbackController extends Controller
     /**
      * @Route(
      *     "/return/{accessIdentifier}",
-     *     name="orob2b_payment_callback_return",
+     *     name="oro_payment_callback_return",
      *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+"}
      * )
      * @ParamConverter("paymentTransaction", options={"accessIdentifier" = "accessIdentifier"})
@@ -34,13 +34,13 @@ class CallbackController extends Controller
         $event = new CallbackReturnEvent($request->request->all() + $request->query->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get('orob2b_payment.event.callback_handler')->handle($event);
+        return $this->get('oro_payment.event.callback_handler')->handle($event);
     }
 
     /**
      * @Route(
      *     "/error/{accessIdentifier}",
-     *     name="orob2b_payment_callback_error",
+     *     name="oro_payment_callback_error",
      *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+"}
      * )
      * @ParamConverter("paymentTransaction", options={"accessIdentifier" = "accessIdentifier"})
@@ -54,13 +54,13 @@ class CallbackController extends Controller
         $event = new CallbackErrorEvent($request->request->all() + $request->query->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get('orob2b_payment.event.callback_handler')->handle($event);
+        return $this->get('oro_payment.event.callback_handler')->handle($event);
     }
 
     /**
      * @Route(
      *     "/notify/{accessIdentifier}/{accessToken}",
-     *     name="orob2b_payment_callback_notify",
+     *     name="oro_payment_callback_notify",
      *     requirements={"accessIdentifier"="[a-zA-Z0-9\-]+", "accessToken"="[a-zA-Z0-9\-]+"}
      * )
      * @ParamConverter(
@@ -77,6 +77,6 @@ class CallbackController extends Controller
         $event = new CallbackNotifyEvent($request->request->all());
         $event->setPaymentTransaction($paymentTransaction);
 
-        return $this->get('orob2b_payment.event.callback_handler')->handle($event);
+        return $this->get('oro_payment.event.callback_handler')->handle($event);
     }
 }

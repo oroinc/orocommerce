@@ -7,14 +7,14 @@ use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class ActionApplicationsHelper extends ApplicationsHelper
 {
-    const FRONTEND = 'frontend';
+    const COMMERCE_APPLICATION = 'commerce';
 
     /**
      * @return string|null
      */
     public function getCurrentApplication()
     {
-        return $this->isFrontend() ? self::FRONTEND : parent::getCurrentApplication();
+        return $this->isFrontend() ? self::COMMERCE_APPLICATION : parent::getCurrentApplication();
     }
 
     /**
@@ -22,7 +22,7 @@ class ActionApplicationsHelper extends ApplicationsHelper
      */
     public function getWidgetRoute()
     {
-        return $this->isFrontend() ? 'orob2b_frontend_action_widget_buttons' : parent::getWidgetRoute();
+        return $this->isFrontend() ? 'oro_frontend_action_widget_buttons' : parent::getWidgetRoute();
     }
 
     /**
@@ -30,7 +30,7 @@ class ActionApplicationsHelper extends ApplicationsHelper
      */
     public function getDialogRoute()
     {
-        return $this->isFrontend() ? 'orob2b_frontend_action_widget_form' : parent::getDialogRoute();
+        return $this->isFrontend() ? 'oro_frontend_action_widget_form' : parent::getDialogRoute();
     }
 
     /**
@@ -38,7 +38,7 @@ class ActionApplicationsHelper extends ApplicationsHelper
      */
     public function getExecutionRoute()
     {
-        return $this->isFrontend() ? 'orob2b_frontend_action_operation_execute' : parent::getExecutionRoute();
+        return $this->isFrontend() ? 'oro_frontend_action_operation_execute' : parent::getExecutionRoute();
     }
 
     /**

@@ -29,7 +29,7 @@ class ProductPriceAllowedUnits extends Constraint
      */
     public function validatedBy()
     {
-        return 'orob2b_pricing_product_price_allowed_units_validator';
+        return 'oro_pricing_product_price_allowed_units_validator';
     }
 
     /**

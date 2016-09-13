@@ -13,8 +13,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 class AjaxProductUnitController extends AbstractAjaxProductUnitController
 {
     /**
-     * @Route("/product-units", name="orob2b_product_unit_all_product_units")
-     * @AclAncestor("orob2b_product_view")
+     * @Route("/product-units", name="oro_product_unit_all_product_units")
+     * @AclAncestor("oro_product_view")
      *
      * @return JsonResponse
      */
@@ -24,8 +24,8 @@ class AjaxProductUnitController extends AbstractAjaxProductUnitController
     }
 
     /**
-     * @Route("/product-units/{id}", name="orob2b_product_unit_product_units", requirements={"id"="\d+"})
-     * @AclAncestor("orob2b_product_view")
+     * @Route("/product-units/{id}", name="oro_product_unit_product_units", requirements={"id"="\d+"})
+     * @AclAncestor("oro_product_view")
      *
      * @param Request $request
      * @param Product $product

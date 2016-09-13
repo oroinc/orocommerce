@@ -8,38 +8,49 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class ShippingMethodsCompilerPass implements CompilerPassInterface
 {
-    const TAG = 'oro_shipping_method_provider';
-    const SERVICE = 'orob2b_shipping.shipping_method.registry';
+    const TAG = 'oro_shipping_method';
+    const SERVICE = 'oro_shipping.shipping_method.registry';
 
     /**
      * {@inheritDoc}
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition(static::SERVICE)) {
+        if (!$container->hasDefinition($this->getService())) {
             return;
         }
 
-        $taggedServices = $container->findTaggedServiceIds(static::TAG);
+        $taggedServices = $container->findTaggedServiceIds(
+            $this->getTag()
+        );
         if (!$taggedServices) {
             return;
         }
 
-        $providers = new \SplPriorityQueue();
-
-        $definition = $container->getDefinition(static::SERVICE);
+        $definition = $container->getDefinition(
+            $this->getService()
+        );
         foreach ($taggedServices as $id => $tags) {
-            foreach ($tags as $tag) {
-                $priority = 0;
-                if (array_key_exists('priority', $tag)) {
-                    $priority = $tag['priority'];
-                }
-                $providers->insert(new Reference($id), $priority);
-            }
+            $definition->addMethodCall(
+                'addShippingMethod',
+                [new Reference($id)]
+            );
         }
+    }
 
-        foreach ($providers as $provider) {
-            $definition->addMethodCall('addProvider', [$provider]);
-        }
+    /**
+     * {@inheritdoc}
+     */
+    protected function getTag()
+    {
+        return self::TAG;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getService()
+    {
+        return self::SERVICE;
     }
 }

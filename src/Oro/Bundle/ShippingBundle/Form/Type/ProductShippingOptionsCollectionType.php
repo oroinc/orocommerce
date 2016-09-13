@@ -9,7 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class ProductShippingOptionsCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_product_shipping_options_collection';
+    const NAME = 'oro_shipping_product_shipping_options_collection';
 
     /** @var string */
     protected $dataClass;

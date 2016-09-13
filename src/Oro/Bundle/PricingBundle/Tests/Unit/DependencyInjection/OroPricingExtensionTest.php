@@ -14,8 +14,8 @@ class OroPricingExtensionTest extends ExtensionTestCase
         $this->loadExtension($extension);
 
         $expectedParameters = [
-            'orob2b_pricing.entity.price_list.class',
-            'orob2b_pricing.entity.price_list_currency.class'
+            'oro_pricing.entity.price_list.class',
+            'oro_pricing.entity.price_list_currency.class'
         ];
 
         $this->assertParametersLoaded($expectedParameters);

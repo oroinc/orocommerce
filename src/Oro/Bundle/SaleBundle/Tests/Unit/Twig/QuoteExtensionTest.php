@@ -80,13 +80,13 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(3, $filters);
 
         $this->assertInstanceOf('Twig_SimpleFilter', $filters[0]);
-        $this->assertEquals('orob2b_format_sale_quote_product_offer', $filters[0]->getName());
+        $this->assertEquals('oro_format_sale_quote_product_offer', $filters[0]->getName());
 
         $this->assertInstanceOf('Twig_SimpleFilter', $filters[1]);
-        $this->assertEquals('orob2b_format_sale_quote_product_type', $filters[1]->getName());
+        $this->assertEquals('oro_format_sale_quote_product_type', $filters[1]->getName());
 
         $this->assertInstanceOf('Twig_SimpleFilter', $filters[2]);
-        $this->assertEquals('orob2b_format_sale_quote_product_request', $filters[2]->getName());
+        $this->assertEquals('oro_format_sale_quote_product_request', $filters[2]->getName());
     }
 
     public function testGetFunctions()

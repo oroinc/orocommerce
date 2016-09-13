@@ -10,7 +10,7 @@ use Oro\Bundle\ShippingBundle\Entity\FreightClass;
 
 class FreightClassSelectType extends AbstractShippingOptionSelectType
 {
-    const NAME = 'orob2b_shipping_freight_class_select';
+    const NAME = 'oro_shipping_freight_class_select';
 
     /**
      * {@inheritdoc}

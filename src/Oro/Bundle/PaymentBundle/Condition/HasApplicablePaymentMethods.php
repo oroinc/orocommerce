@@ -70,7 +70,7 @@ class HasApplicablePaymentMethods extends AbstractCondition implements ContextAc
     protected function isConditionAllowed($context)
     {
         $entity = $this->resolveValue($context, $this->entity, false);
-        $paymentContext = $this->paymentContextProvider->processContext($context, $entity);
+        $paymentContext = $this->paymentContextProvider->processContext($entity);
 
         $paymentMethods = $this->paymentMethodRegistry->getPaymentMethods();
         foreach ($paymentMethods as $paymentMethod) {

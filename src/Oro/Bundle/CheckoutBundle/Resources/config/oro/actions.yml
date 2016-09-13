@@ -2,9 +2,9 @@ operations:
     UPDATE:
         exclude_datagrids:
             - frontend-checkouts-grid
-    orob2b_checkout_delete_order:
+    oro_checkout_delete_order:
         extends: DELETE
-        applications: [frontend]
+        applications: [commerce]
         for_all_datagrids: false
         for_all_entities: false
         label: oro.checkout.grid.delete.label

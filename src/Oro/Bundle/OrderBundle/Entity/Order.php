@@ -25,16 +25,16 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Table(name="orob2b_order",indexes={@ORM\Index(name="orob2b_order_created_at_index", columns={"created_at"})})
+ * @ORM\Table(name="oro_order",indexes={@ORM\Index(name="oro_order_created_at_index", columns={"created_at"})})
  * @ORM\Entity
  * @Config(
- *      routeName="orob2b_order_index",
- *      routeView="orob2b_order_view",
- *      routeCreate="orob2b_order_create",
- *      routeUpdate="orob2b_order_update",
- *      routeCommerceName="orob2b_order_frontend_index",
- *      routeCommerceView="orob2b_order_frontend_view",
- *      routeCommerceCreate="orob2b_order_frontend_create",
+ *      routeName="oro_order_index",
+ *      routeView="oro_order_view",
+ *      routeCreate="oro_order_create",
+ *      routeUpdate="oro_order_update",
+ *      routeCommerceName="oro_order_frontend_index",
+ *      routeCommerceView="oro_order_frontend_view",
+ *      routeCommerceCreate="oro_order_frontend_create",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
@@ -54,13 +54,15 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"="commerce"
+ *              "group_name"="commerce",
+ *              "category"="orders"
  *          }
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)

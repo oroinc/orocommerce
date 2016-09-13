@@ -17,7 +17,7 @@ use Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 
 class QuoteProductDemandType extends AbstractType
 {
-    const NAME = 'orob2b_sale_quote_product_demand';
+    const NAME = 'oro_sale_quote_product_demand';
 
     const FIELD_QUANTITY = 'quantity';
     const FIELD_QUOTE_PRODUCT_OFFER = 'quoteProductOffer';

@@ -6,7 +6,7 @@
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
-        'indexPath': path('orob2b_rfp_request_index'),
+        'indexPath': path('oro_rfp_request_index'),
         'indexLabel': 'oro.rfp.request.entity_plural_label'|trans,
         'entityTitle': 'oro.rfp.request.id.label'|trans ~ entity.id
     } %}
@@ -18,10 +18,10 @@
     {% block navButtons %}
         {{ parent() }}
 
-        {% if resource_granted('orob2b_order_create') %}
+        {% if resource_granted('oro_order_create') %}
             <div class="btn-group">
                 {{ UI.link({
-                    path: path('orob2b_rfp_request_create_order', {id: entity.id}),
+                    path: path('oro_rfp_request_create_order', {id: entity.id}),
                     label: 'oro.ui.create_entity'|trans({'%entityName%': 'oro.order.entity_label'|trans}),
                     class: 'btn',
                     iCss: 'icon-briefcase',
@@ -36,7 +36,7 @@
     {% set requestInfo %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'url': path('orob2b_rfp_request_info', {id: entity.id}),
+            'url': path('oro_rfp_request_info', {id: entity.id}),
             'alias': 'request-info-widget'
         }) }}
     {% endset %}
@@ -76,7 +76,7 @@
                                     </td>
                                 {% endif %}
                                 <td class="rfp-line_item-requested_quantity rfp-line_item-requested_quantity-{% if loop.first %}first{% else %}not_first{% endif %}">
-                                    {{ quantity ? quantity|orob2b_format_short_product_unit_value(subItem.productUnit) : 'N/A'|trans }}
+                                    {{ quantity ? quantity|oro_format_short_product_unit_value(subItem.productUnit) : 'N/A'|trans }}
                                 </td>
                                 <td class="rfp-line_item-target_price rfp-line_item-target_price-{% if loop.first %}first{% else %}not_first{% endif %}">
                                     {{ price ? price|oro_format_price : ''|trans }}

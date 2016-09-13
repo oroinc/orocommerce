@@ -16,22 +16,22 @@ use Oro\Bundle\AccountBundle\Form\Handler\AccountUserPasswordResetHandler;
 
 class ResetController extends Controller
 {
-    const SESSION_EMAIL = 'orob2b_account_user_reset_email';
+    const SESSION_EMAIL = 'oro_account_user_reset_email';
 
     /**
      * @Layout()
-     * @Route("/reset-request", name="orob2b_account_frontend_account_user_reset_request")
+     * @Route("/reset-request", name="oro_account_frontend_account_user_reset_request")
      * @Method({"GET", "POST"})
      */
     public function requestAction()
     {
         if ($this->getUser()) {
-            return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_profile'));
+            return $this->redirect($this->generateUrl('oro_account_frontend_account_user_profile'));
         }
 
         /** @var AccountUserPasswordRequestHandler $handler */
-        $handler = $this->get('orob2b_account.account_user.password_request.handler');
-        $form = $this->get('orob2b_account.provider.frontend_account_user_form')
+        $handler = $this->get('oro_account.account_user.password_request.handler');
+        $form = $this->get('oro_account.provider.frontend_account_user_form')
             ->getForgotPasswordForm()
             ->getForm();
 
@@ -39,7 +39,7 @@ class ResetController extends Controller
         $user = $handler->process($form, $request);
         if ($user) {
             $this->get('session')->set(static::SESSION_EMAIL, $this->getObfuscatedEmail($user));
-            return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_reset_check_email'));
+            return $this->redirect($this->generateUrl('oro_account_frontend_account_user_reset_check_email'));
         }
 
         return [];
@@ -49,7 +49,7 @@ class ResetController extends Controller
      * Tell the user to check his email
      *
      * @Layout()
-     * @Route("/check-email", name="orob2b_account_frontend_account_user_reset_check_email")
+     * @Route("/check-email", name="oro_account_frontend_account_user_reset_check_email")
      * @Method({"GET"})
      */
     public function checkEmailAction()
@@ -60,7 +60,7 @@ class ResetController extends Controller
 
         if (empty($email)) {
             // the user does not come from the sendEmail action
-            return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_reset_request'));
+            return $this->redirect($this->generateUrl('oro_account_frontend_account_user_reset_request'));
         }
 
         return [
@@ -73,8 +73,8 @@ class ResetController extends Controller
     /**
      * Reset user password
      *
-     * @Layout(vars={"user"})
-     * @Route("/reset", name="orob2b_account_frontend_account_user_password_reset")
+     * @Layout
+     * @Route("/reset", name="oro_account_frontend_account_user_password_reset")
      * @Method({"GET", "POST"})
      * @return array|RedirectResponse
      */
@@ -101,12 +101,12 @@ class ResetController extends Controller
                 'oro.account.accountuser.profile.password.reset.ttl_expired.message'
             );
 
-            return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_reset_request'));
+            return $this->redirect($this->generateUrl('oro_account_frontend_account_user_reset_request'));
         }
 
         /** @var AccountUserPasswordResetHandler $handler */
-        $handler = $this->get('orob2b_account.account_user.password_reset.handler');
-        $form = $this->get('orob2b_account.provider.frontend_account_user_form')
+        $handler = $this->get('oro_account.account_user.password_reset.handler');
+        $form = $this->get('oro_account.provider.frontend_account_user_form')
             ->getResetPasswordForm($user)
             ->getForm();
 
@@ -120,11 +120,13 @@ class ResetController extends Controller
                 'oro.account.accountuser.profile.password_reset.message'
             );
 
-            return $this->redirect($this->generateUrl('orob2b_account_account_user_security_login'));
+            return $this->redirect($this->generateUrl('oro_account_account_user_security_login'));
         }
 
         return [
-            'user' => $user
+            'data' => [
+                'user' => $user
+            ]
         ];
     }
 
@@ -152,6 +154,6 @@ class ResetController extends Controller
      */
     protected function getUserManager()
     {
-        return $this->get('orob2b_account_user.manager');
+        return $this->get('oro_account_user.manager');
     }
 }

@@ -38,7 +38,7 @@ class QuoteControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_frontend_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_frontend_index'));
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains('frontend-quotes-grid', $crawler->html());
@@ -220,7 +220,7 @@ class QuoteControllerTest extends WebTestCase
         $quote = $this->getReference($inputData['qid']);
 
         $crawler = $this->client->request('GET', $this->getUrl(
-            'orob2b_sale_quote_frontend_view',
+            'oro_sale_quote_frontend_view',
             ['id' => $quote->getId()]
         ));
 
@@ -418,6 +418,10 @@ class QuoteControllerTest extends WebTestCase
                         [
                             'label' => 'oro.sale.quote.ship_until.label',
                             'property' => 'ship_until',
+                        ],
+                        [
+                            'label' => 'oro.sale.quote.payment_term.label',
+                            'property' => 'payment_term.label',
                         ],
                     ],
                 ],

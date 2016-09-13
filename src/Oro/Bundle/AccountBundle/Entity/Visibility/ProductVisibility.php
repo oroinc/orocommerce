@@ -12,10 +12,10 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\Visibility\Repository\ProductVisibilityRepository")
  * @ORM\Table(
- *      name="orob2b_product_visibility",
+ *      name="oro_product_visibility",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="orob2b_prod_vis_uidx",
+ *              name="oro_prod_vis_uidx",
  *              columns={"website_id", "product_id"}
  *          )
  *      }

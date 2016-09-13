@@ -14,7 +14,7 @@ use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductPriceFilterType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_product_price_filter';
+    const NAME = 'oro_pricing_product_price_filter';
 
     /**
      * @var TranslatorInterface

@@ -30,7 +30,7 @@ class BaseProductController extends Controller
      */
     protected function getCatalogRequestHandler()
     {
-        return $this->get('orob2b_catalog.handler.request_product');
+        return $this->get('oro_catalog.handler.request_product');
     }
 
     /**

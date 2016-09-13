@@ -150,7 +150,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->will($this->returnValue(true));
 
-        $this->request->request->add(['orob2b_product_frontend_line_item' => ['shoppingListLabel' => 'label']]);
+        $this->request->request->add(['oro_product_frontend_line_item' => ['shoppingListLabel' => 'label']]);
 
         $shoppingList = new ShoppingList();
         $this->lineItem->expects($this->once())
