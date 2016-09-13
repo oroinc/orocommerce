@@ -41,7 +41,7 @@ services:
         tags:
             - { name: oro.api.processor, action: create, group: normalize_input, priority: -45, class: '%oro_warehouse.entity.warehouse_inventory_level.class%' }
 
-    orob2b_warehouse.event_listener.product_form_view:
+    oro_warehouse.event_listener.product_form_view:
         class: 'Oro\Bundle\WarehouseBundle\EventListener\ProductWarehouseFormViewListener'
         arguments:
             - "@request_stack"
@@ -49,7 +49,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
 
-    orob2b_warehouse.event_listener.category_form_view:
+    oro_warehouse.event_listener.category_form_view:
         class: 'Oro\Bundle\WarehouseBundle\EventListener\CategoryWarehouseFormViewListener'
         arguments:
             - "@request_stack"

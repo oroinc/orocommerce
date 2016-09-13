@@ -201,7 +201,7 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
      */
     protected function addManageInventoryFieldToCategory(Schema $schema)
     {
-        $categoryTable = $schema->getTable('orob2b_catalog_category');
+        $categoryTable = $schema->getTable('oro_catalog_category');
         $fallbackTable = $schema->getTable('oro_entity_fallback_value');
         $this->extendExtension->addManyToOneRelation(
             $schema,
@@ -235,7 +235,7 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
      */
     protected function addManageInventoryFieldToProduct(Schema $schema)
     {
-        $productTable = $schema->getTable('orob2b_product');
+        $productTable = $schema->getTable('oro_product');
         $fallbackTable = $schema->getTable('oro_entity_fallback_value');
         $this->extendExtension->addManyToOneRelation(
             $schema,

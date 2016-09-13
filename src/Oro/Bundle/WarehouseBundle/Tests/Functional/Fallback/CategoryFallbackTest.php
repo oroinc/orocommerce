@@ -27,7 +27,7 @@ class CategoryFallbackTest extends WebTestCase
     public function testProductNoManageInventoryValue()
     {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $product->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
         $manageInventoryValue = $crawler->filterXPath(self::VIEW_MANAGED_INVENTORY_XPATH)->html();
         $this->assertEquals('N/A', $manageInventoryValue);
     }
@@ -83,7 +83,7 @@ class CategoryFallbackTest extends WebTestCase
         }
         $this->setCategoryManageInventoryField($categoryViewValue, $categoryUseFallbackValue, $categoryFallbackValue);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $product->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
         $this->assertProductManageInventoryValue($crawler, $expectedProductValue);
     }
 
@@ -129,11 +129,11 @@ class CategoryFallbackTest extends WebTestCase
         );
         $form = $crawler->selectButton('Save settings')->form();
         $formValues = $form->getPhpValues();
-        $formValues['product_options']['orob2b_product___manage_inventory']['use_parent_scope_value'] = false;
-        $formValues['product_options']['orob2b_product___manage_inventory']['value'] = $systemValue;
+        $formValues['product_options']['oro_warehouse___manage_inventory']['use_parent_scope_value'] = false;
+        $formValues['product_options']['oro_warehouse___manage_inventory']['value'] = $systemValue;
         $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $product->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
         $this->assertProductManageInventoryValue($crawler, $expectedProductValue);
     }
 
@@ -159,23 +159,23 @@ class CategoryFallbackTest extends WebTestCase
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_catalog_category_update', ['id' => $category->getId()])
+            $this->getUrl('oro_catalog_category_update', ['id' => $category->getId()])
         );
 
         $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getPhpValues();
         if (!is_null($viewValue)) {
-            $formValues['orob2b_catalog_category']['manageInventory']['viewValue'] = $viewValue;
+            $formValues['oro_catalog_category']['manageInventory']['viewValue'] = $viewValue;
         }
 
         if (!is_null($useFallbackValue)) {
-            $formValues['orob2b_catalog_category']['manageInventory']['useFallback'] = $useFallbackValue;
+            $formValues['oro_catalog_category']['manageInventory']['useFallback'] = $useFallbackValue;
         }
         if (!is_null($fallbackValue)) {
-            $formValues['orob2b_catalog_category']['manageInventory']['fallback'] = $fallbackValue;
+            $formValues['oro_catalog_category']['manageInventory']['fallback'] = $fallbackValue;
         }
 
-        $formValues['orob2b_catalog_category']['_token'] =
+        $formValues['oro_catalog_category']['_token'] =
             $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
 
         $this->client->followRedirects(true);
@@ -192,18 +192,18 @@ class CategoryFallbackTest extends WebTestCase
      */
     protected function setProductManageInventoryField($product, $viewValue, $useFallbackValue, $fallbackValue)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $product->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
 
         $form = $crawler->selectButton('Save and Close')->form();
         $form['input_action'] = 'save_and_close';
         if (!is_null($viewValue)) {
-            $form['orob2b_product[manageInventory][viewValue]'] = $viewValue;
+            $form['oro_product[manageInventory][viewValue]'] = $viewValue;
         }
         if (!is_null($useFallbackValue)) {
-            $form['orob2b_product[manageInventory][useFallback]'] = $useFallbackValue;
+            $form['oro_product[manageInventory][useFallback]'] = $useFallbackValue;
         }
         if ($fallbackValue) {
-            $form['orob2b_product[manageInventory][fallback]'] = $fallbackValue;
+            $form['oro_product[manageInventory][fallback]'] = $fallbackValue;
         }
 
         $this->client->followRedirects(true);

@@ -1,4 +1,4 @@
-oro_system_configuration:
+system_configuration:
     groups:
         product_options:
             title: oro.warehouse.system_configuration.groups.product_options.title
