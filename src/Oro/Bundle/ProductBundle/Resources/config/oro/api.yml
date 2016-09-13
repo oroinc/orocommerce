@@ -1,0 +1,5 @@
+api:
+    entities:
+        Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision: ~
+        Oro\Bundle\ProductBundle\Entity\ProductUnit: ~
+        Oro\Bundle\ProductBundle\Entity\Product: ~

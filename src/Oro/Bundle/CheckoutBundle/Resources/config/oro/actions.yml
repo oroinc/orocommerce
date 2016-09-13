@@ -1,0 +1,18 @@
+operations:
+    UPDATE:
+        exclude_datagrids:
+            - frontend-checkouts-grid
+    oro_checkout_delete_order:
+        extends: DELETE
+        applications: [commerce]
+        for_all_datagrids: false
+        for_all_entities: false
+        label: oro.checkout.grid.delete.label
+        preconditions:
+            '@not_blank': $.data
+        datagrids:
+            - frontend-checkouts-grid
+        replace:
+            - applications
+            - preconditions
+            - datagrids

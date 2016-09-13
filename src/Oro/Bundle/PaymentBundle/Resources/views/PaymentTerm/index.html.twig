@@ -1,0 +1,15 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set gridName = 'payment-terms-grid' %}
+{% set pageTitle = 'oro.payment.paymentterm.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('oro_payment_term_create') %}
+        <div class="btn-group">
+            {{ UI.addButton({
+                'path': path('oro_payment_term_create'),
+                'entity_label': 'oro.payment.paymentterm.entity_label'|trans
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,5 +1,0 @@
-orob2b:
-    sale:
-        quote:
-            actions:
-                quote_expire_confirm: Are you sure you want to expire this Quote?

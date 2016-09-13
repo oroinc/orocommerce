@@ -1,6 +1,0 @@
-orob2b_checkout:
-    resource:     "@OroB2BCheckoutBundle/Controller/Frontend/CheckoutController.php"
-    type:         annotation
-    prefix:       account/checkout
-    options:
-        frontend: true

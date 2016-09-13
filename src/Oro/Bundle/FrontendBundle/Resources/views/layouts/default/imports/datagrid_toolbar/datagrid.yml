@@ -1,0 +1,51 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'datagrid.html.twig'
+        - '@setOption':
+            id: __datagrid_toolbar_sorting
+            optionName: visible
+            optionValue: false
+        - '@setOption':
+            id: __datagrid_toolbar_mass_actions
+            optionName: visible
+            optionValue: false
+        - '@setOption':
+            id: __datagrid_toolbar_extra_actions
+            optionName: visible
+            optionValue: false
+        - '@move':
+            id: __datagrid_toolbar_mass_actions
+            parentId: __datagrid_toolbar
+            siblingId: __datagrid_toolbar_sorting
+        - '@move':
+            id: __datagrid_toolbar_extra_actions
+            parentId: __datagrid_toolbar
+            siblingId: __datagrid_toolbar_mass_actions
+        - '@move':
+            id: __datagrid_toolbar_pagination
+            parentId: __datagrid_toolbar
+            siblingId: __datagrid_toolbar_extra_actions
+        - '@move':
+            id: __datagrid_toolbar_page_size
+            parentId: __datagrid_toolbar
+            siblingId: __datagrid_toolbar_pagination
+        - '@move':
+            id: __datagrid_toolbar_actions
+            parentId: __datagrid_toolbar
+            siblingId: __datagrid_toolbar_page_size
+        - '@remove':
+            id: __datagrid_toolbar_actions_container
+        - '@remove':
+            id: __datagrid_toolbar_tools_container
+        - '@setOption':
+            id: __datagrid_toolbar
+            optionName: attr.class
+            optionValue: 'grid__toolbar grid__toolbar--extended'
+        - '@add':
+            id: __datagrid_toolbar_button_container
+            parentId: __datagrid_toolbar
+            blockType: container
+            options:
+                visible: false
+                class_prefix: datagrid_toolbar_button_container

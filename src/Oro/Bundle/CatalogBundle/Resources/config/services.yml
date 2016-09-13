@@ -1,0 +1,101 @@
+parameters:
+    oro_catalog.entity.category.class: Oro\Bundle\CatalogBundle\Entity\Category
+    oro_catalog.entity.category_default_product_options.class: Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions
+    oro_catalog.entity.category_unit_precision.class: Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision
+
+services:
+    oro_catalog.category_tree_handler:
+        class: 'Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler'
+        arguments:
+            - '%oro_catalog.entity.category.class%'
+            - '@doctrine'
+            - '@oro_security.security_facade'
+            - '@oro_catalog.provider.category_tree_provider'
+
+    oro_catalog.provider.category_tree_provider:
+        class: 'Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider'
+        public: false
+        arguments:
+            - '@oro_catalog.repository.category'
+            - '@event_dispatcher'
+
+    oro_catalog.repository.category:
+        class: 'Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_catalog.entity.category.class%'
+
+    oro_catalog.category.manager.api:
+        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - '%oro_catalog.entity.category.class%'
+            - "@doctrine.orm.entity_manager"
+
+    oro_catalog.event_listener.form_view:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\FormViewListener'
+        arguments:
+            - "@translator"
+            - "@oro_entity.doctrine_helper"
+            - "@request_stack"
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-one, method: onProductEdit }
+
+    oro_catalog.event_listener.datagrid:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\DatagridListener'
+        arguments:
+            - "@doctrine"
+            - "@oro_catalog.handler.request_product"
+        calls:
+            - [setDataClass, ['%oro_catalog.entity.category.class%']]
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.products-grid, method: onPreBuildProducts }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuildProducts }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid, method: onBuildBeforeProductsSelect }
+
+    oro_catalog.event_listener.product_duplicate:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\ProductDuplicateListener'
+        calls:
+            - [setCategoryClass, ['%oro_catalog.entity.category.class%']]
+            - [setDoctrineHelper, ["@oro_entity.doctrine_helper"]]
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }
+
+    oro_catalog.event_listener.abstract_product_import:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\AbstractProductImportEventListener'
+        abstract: true
+        arguments:
+            - "@doctrine"
+            - '%oro_catalog.entity.category.class%'
+
+    oro_catalog.event_listener.product_strategy:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\ProductStrategyEventListener'
+        parent: oro_catalog.event_listener.abstract_product_import
+        tags:
+            - { name: kernel.event_listener, event: oro_product.strategy.process_after, method: onProcessAfter }
+            - { name: doctrine.event_listener, event: onClear, method: onClear }
+
+    oro_catalog.event_listener.product_data_converter:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\ProductDataConverterEventListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.data_converter.backend_header, method: onBackendHeader }
+
+    oro_catalog.event_listener.product_normalizer:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\ProductNormalizerEventListener'
+        parent: oro_catalog.event_listener.abstract_product_import
+        tags:
+            - { name: kernel.event_listener, event: oro_product.normalizer.normalizer, method: onNormalize }
+            - { name: doctrine.event_listener, event: onClear, method: onClear }
+
+    oro_catalog.handler.request_product:
+        class: 'Oro\Bundle\CatalogBundle\Handler\RequestProductHandler'
+        arguments:
+            - "@request_stack"
+
+    oro_catalog.provider.default_product_unit_provider.category:
+        class: 'Oro\Bundle\CatalogBundle\Provider\CategoryDefaultProductUnitProvider'
+        public: true
+        tags:
+            - {name: oro_product.default_product_unit_provider, priority: 10}

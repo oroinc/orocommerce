@@ -1,0 +1,218 @@
+parameters:
+    oro_shopping_list.entity.shopping_list.class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
+    oro_shopping_list.entity.shopping_list_total.class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal
+    oro_shopping_list.entity.line_item.class: Oro\Bundle\ShoppingListBundle\Entity\LineItem
+
+services:
+    oro_shopping_list.validator.line_item:
+        class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator'
+        arguments:
+            - "@doctrine"
+        tags:
+            - { name: validator.constraint_validator, alias: oro_shopping_list_line_item_validator }
+
+    oro_shopping_list.line_item.manager.api:
+        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - '%oro_shopping_list.entity.line_item.class%'
+            - "@doctrine.orm.entity_manager"
+
+    oro_shopping_list.shopping_list.manager.api:
+        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - '%oro_shopping_list.entity.shopping_list.class%'
+            - "@doctrine.orm.entity_manager"
+
+    oro_shopping_list.shopping_list.manager:
+        class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager'
+        arguments:
+            - "@doctrine"
+            - "@security.token_storage"
+            - "@translator"
+            - "@oro_product.service.quantity_rounding"
+            - '@oro_pricing.user_currency_manager'
+            - "@oro_website.manager"
+            - "@oro_shopping_list.manager.shopping_list_total"
+
+    oro_shopping_list.placeholder.filter:
+        class: 'Oro\Bundle\ShoppingListBundle\Placeholder\PlaceholderFilter'
+        public: false
+        arguments:
+            - "@oro_security.security_facade"
+
+    oro_shopping_list.handler.shopping_list_line_item:
+        class: 'Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler'
+        arguments:
+            - "@doctrine"
+            - "@oro_shopping_list.shopping_list.manager"
+            - "@oro_security.security_facade"
+            - "@oro_shopping_list.manager.shopping_list_total"
+        calls:
+            - [setProductClass, ['%oro_product.entity.product.class%']]
+            - [setShoppingListClass, ['%oro_shopping_list.entity.shopping_list.class%']]
+
+    oro_shopping_list.service.message_generator:
+        class: 'Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator'
+        arguments:
+            - "@translator"
+            - "@router"
+
+    oro_shopping_list.processor.abstract_quick_add:
+        class: 'Oro\Bundle\ShoppingListBundle\Processor\AbstractShoppingListQuickAddProcessor'
+        abstract: true
+        arguments:
+            - "@oro_shopping_list.handler.shopping_list_line_item"
+            - "@doctrine"
+            - "@oro_shopping_list.service.message_generator"
+        calls:
+            - [setProductClass, ['%oro_product.entity.product.class%']]
+
+    oro_shopping_list.processor.quick_add:
+        class: 'Oro\Bundle\ShoppingListBundle\Processor\QuickAddProcessor'
+        parent: oro_shopping_list.processor.abstract_quick_add
+        tags:
+            - { name: oro_product.quick_add_processor }
+
+    oro_shopping_list.processor.quick_add_to_checkout:
+        class: 'Oro\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor'
+        parent: oro_shopping_list.processor.abstract_quick_add
+        calls:
+            - [setShoppingListManager, ['@oro_shopping_list.shopping_list.manager']]
+            - [setOperationManager, ['@oro_action.operation_manager']]
+            - [setTranslator, ['@translator']]
+            - [setDateFormatter, ['@oro_locale.formatter.date_time']]
+            - [setOperationName, ['oro_shoppinglist_frontend_createorder']]
+        tags:
+            - { name: oro_product.quick_add_processor }
+
+    oro_shopping_list.service.product_data_storage:
+        class: 'Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage'
+        arguments:
+            - "@oro_product.storage.product_data_storage"
+
+    oro_shopping_list.event_listener.product_select_db_query:
+        class: '%oro_product.event_listener.scoped_product_select_db_query.common_class%'
+        parent: oro_product.event_listener.abstract_product_select_db_query
+        calls:
+            - [setScope, ['shopping_list']]
+            - [setBackendSystemConfigurationPath, ['oro_b2b_shopping_list.backend_product_visibility']]
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+
+    oro_shopping_list.layout.data_provider.shopping_list_form:
+        class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListFormProvider'
+        arguments:
+            - "@form.factory"
+        tags:
+            - { name: layout.data_provider, alias: oro_shopping_list_shopping_list_form }
+
+    oro_shopping_list.layout.data_provider.account_user_shopping_lists:
+        class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider'
+        arguments:
+            - "@oro_entity.doctrine_helper"
+            - "@oro_security.security_facade"
+            - "@request_stack"
+            - "@oro_shopping_list.manager.shopping_list_total"
+        calls:
+            - [setShoppingListClass, ['%oro_shopping_list.entity.shopping_list.class%']]
+        tags:
+            - { name: layout.data_provider, alias: oro_shopping_list_account_user_shopping_lists }
+
+    oro_shopping_list.layout.data_provider.frontend_shopping_list_products:
+        class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider'
+        arguments:
+            - '@oro_shopping_list.data_provider.frontend_product_prices'
+            - '@oro_shopping_list.data_provider.shopping_list_line_items'
+            - '@oro_pricing.formatter.product_price_formatter'
+        tags:
+            - { name: layout.data_provider, alias: oro_shopping_list_products }
+
+    oro_shopping_list.data_provider.frontend_product_prices:
+        class: 'Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider'
+        public: false
+        arguments:
+            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_security.security_facade'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.model.price_list_request_handler'
+
+    oro_shopping_list.layout.data_provider.frontend_shopping_list_products_units:
+        class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsUnitsProvider'
+        arguments:
+            - "@doctrine"
+            - "@oro_pricing.model.price_list_request_handler"
+            - '@oro_pricing.user_currency_manager'
+        tags:
+            - { name: layout.data_provider, alias: oro_shopping_list_products_units }
+
+    oro_shopping_list.action.datagrid.mass_action_provider:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider'
+        arguments:
+            - "@oro_shopping_list.shopping_list.manager"
+            - "@translator"
+        tags:
+            - { name: oro_action.datagrid.mass_action_provider, alias: oro_shopping_list_add_products }
+
+    oro_shopping_list.data_provider.checkout_line_item:
+        class: 'Oro\Bundle\ShoppingListBundle\DataProvider\CheckoutLineItemDataProvider'
+        public: false
+        arguments:
+             - '@oro_shopping_list.data_provider.frontend_product_prices'
+             - '@doctrine'
+        tags:
+             - { name: checkout.data_provider.line_item }
+
+    oro_shopping_list.event_listener.frontend_product_datagrid:
+        class: 'Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener'
+        arguments:
+            - "@oro_security.security_facade"
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
+
+    oro_shopping_list.data_provider.product_shopping_lists:
+        class: 'Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider'
+        arguments:
+            - '@oro_shopping_list.shopping_list.manager'
+            - '@oro_shopping_list.repository.line_item'
+            - '@oro_security.security_facade'
+
+    oro_shopping_list.layout.data_provider.frontend_shopping_list_product_units:
+        class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityProvider'
+        arguments:
+            - '@oro_shopping_list.data_provider.product_shopping_lists'
+        tags:
+            - { name: layout.data_provider, alias: oro_shopping_list_product_units_quantity }
+
+    oro_shopping_list.repository.line_item:
+        class: 'Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_shopping_list.entity.line_item.class%'
+
+    oro_shopping_list.data_provider.shopping_list_line_items:
+        class: 'Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider'
+        public: false
+        arguments:
+            - '@doctrine'
+
+    oro_shopping_list.manager.shopping_list_total:
+        class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager'
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_config.global'
+
+    oro_shopping_list.provider.shopping_list_entity_name:
+        class: Oro\Bundle\ShoppingListBundle\Provider\ShoppingListEntityNameProvider
+        public: false
+        tags:
+            - { name: oro_entity.name_provider, priority: 100 }
+
+    oro_shopping_list.provider.privilege_category_provider:
+        class: 'Oro\Bundle\ShoppingListBundle\Provider\PrivilegeCategoryProvider'
+        tags:
+            - { name: oro_user.privilege_category}

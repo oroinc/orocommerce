@@ -1,0 +1,84 @@
+CREATESECURETOKEN:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Request\AuthorizationRequest'
+    request: |
+        TRXTYPE=A&BILLTOSTREET=123 Main St.&BILLTOZIP=95131&AMT=23.45&CURRENCY=USD&INVNUM=INV12345
+        &PONUM=PO9876&CREATESECURETOKEN=Y&SECURETOKENID=9a9ea8208de1413abc3d60c86cb1f4c5
+    error:
+        - 'Symfony\Component\OptionsResolver\Exception\MissingOptionsException'
+        - 'The required options "PARTNER", "PWD", "TENDER", "USER", "VENDOR" are missing.'
+CREATESECURETOKEN_SILENTTRAN:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Request\AuthorizationRequest'
+    request: |
+        TRXTYPE=A&BILLTOSTREET=123 Main St.&BILLTOZIP=95131&AMT=24.35&INVNUM=INV12345&PONUM=PO12345&CURRENCY=USD
+        &CREATESECURETOKEN=Y&SECURETOKENID=9a9ea8208de1413abc3d60c86cb1f4c5&SILENTTRAN=TRUE
+    error:
+        - 'Symfony\Component\OptionsResolver\Exception\MissingOptionsException'
+        - 'The required options "PARTNER", "PWD", "TENDER", "USER", "VENDOR" are missing.'
+Verifications:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Request\AuthorizationRequest'
+    request: |
+        TRXTYPE=A&TENDER=C&PARTNER=PayPal&USER=SuperUser&PWD=SuperUserPassword&AMT=0.00&ACCT=378282246310005
+        &EXPDATE=1215&INVNUM=PONUM1&VERBOSITY=HIGH&BILLTOZIP=95031
+    error:
+        - 'Symfony\Component\OptionsResolver\Exception\MissingOptionsException'
+        - 'The required options "CURRENCY", "VENDOR" are missing.'
+PARTIALAUTH:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Request\AuthorizationRequest'
+    request: |
+        TRXTYPE=A&TENDER=C&AMT=100.00&ACCT=4111111111111111&EXPDATE=0119
+        &PARTIALAUTH=Y&VERBOSITY=HIGH&CURRENCY=USD
+    error:
+        - 'Symfony\Component\OptionsResolver\Exception\MissingOptionsException'
+        - 'The required options "PARTNER", "PWD", "USER", "VENDOR" are missing.'
+PNREF:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Request\AuthorizationRequest'
+    request: |
+        TRXTYPE=A&TENDER=C&PWD=x1y2z3&PARTNER=PayPal&VENDOR=SuperMerchant
+        &USER=SuperMerchant&ACCT=5555555555554444&EXPDATE=1215&AMT=100.00
+        &INVNUM=123456789&BILLTOSTREET=5199 MAPLE&BILLTOZIP=94588&CURRENCY=USD
+RATELOOKUPID:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Request\AuthorizationRequest'
+    request: |
+        TRXTYPE=A&VENDOR=PayflowMerchant&PARTNER=Partner&PWD=Password&USER=Username&TENDER=C
+        &ACCT=4051700000003926&EXPDATE=1215&AMT=50.00&VERBOSITY=HIGH&RATELOOKUPID=MEPR9E547033&CURRENCY=USD
+    error:
+        - 'Symfony\Component\OptionsResolver\Exception\InvalidOptionsException'
+        - 'The option "PARTNER" with value "Partner" is invalid. Accepted values are: "PayPal"'
+AddressVerification:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Request\AuthorizationRequest'
+    request: |
+        TRXTYPE=A&TENDER=C&PWD=SuperUserPassword&PARTNER=PayPal&VENDOR=Vendor&USER=SuperMerchant
+        &ACCT=5555555555554444&EXPDATE=1215&AMT=123.00&BILLTOSTREET=5199 Maple&BILLTOZIP=98765&CURRENCY=USD
+VERBOSITY:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Request\AuthorizationRequest'
+    request: |
+        TRXTYPE=A&BILLTOSTREET=123 Main St&BILLTOZIP=00382&TENDER=C&PARTNER=PayPal
+        &USER=SuperMerchant&PWD=SuperUserPassword&AMT=1.00&ACCT=4111111111111111
+        &EXPDATE=1215&INVNUM=PONUM1&VERBOSITY=HIGH&CURRENCY=USD
+    error:
+        - 'Symfony\Component\OptionsResolver\Exception\MissingOptionsException'
+        - 'The required option "VENDOR" is missing.'
+BALAMT:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Request\AuthorizationRequest'
+    request: |
+        TRXTYPE=A&TENDER=C&PWD=x1y2z3&PARTNER=PayPal&VENDOR=SuperMerchant
+        &USER=SuperMerchant&ACCT=5555555555554444&EXPDATE=1215&AMT=123.00
+        &BILLTOSTREET=5199 MAPLE&BILLTOZIP=94588&CURRENCY=USD
+#TeleCheck:
+#    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Request\AuthorizationRequest'
+#    request: |
+#        TRXTYPE=A&TENDER=K&PARTNER=partner&USER=user&VENDOR=vendor&PWD=pwd&AMT=35.00
+#        &BILLTOSTREET=1234 Main&BILLTOCITY=Buffalo&DL=CA123456&CHKNUM=1001&BILLTOEMAIL=john@xyz.com
+#        &MICR=3333333333&AUTHTYPE=I&INVNUM=12345&BILLTOFIRSTNAME=Sally&BILLTOLASTNAME=Smith
+#        &BILLTOSTATE=CA&BILLTOZIP=95050&BILLTOCOUNTRY=US&CUSTIP=10.15.5.23&BILLTOPHONENUM=9876542143
+#        &VERBOSITY=HIGH RESULT=0&PNREF=EQRB8A32CD69&RESPMSG=Approved&AUTHCODE=12&TRACEID=1234567890
+#        &ACHSTATUS=A&HOSTCODE=07&TRANSTIME=2012-02-09 15:23:37&BILLTOFIRSTNAME=Sally
+#        &BILLTOLASTNAME=Smith&AMT=35.00&CARDTYPE=P
+#MagTek:
+#    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Request\AuthorizationRequest'
+#    request: |
+#        TRXTYPE=A&TENDER=C&VENDOR=MerchantUserID&PARTNER=PayPal&USER=UserIDIfAvailOrSameAsVendor
+#        &PWD=Pwd4Gateway&VERBOSITY=HIGH&AMT=18&SWIPEDECRHOST=MAGT&PCODE=23456789
+#        &MERCHANTID=MerchantID123&MERCHANTNAME=MerchantName&PAN4=1234&BILLTOLASTNAME=Miller
+#        &BILLTOZIP=95131&SHIPTOZIP=94089&AUTHVALUE1=1234&AUTHVALUE2=5678
+#        &AUTHVALUE3=9012

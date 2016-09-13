@@ -1,0 +1,24 @@
+oro_tax_product_tax_code:
+    resource:     "@OroTaxBundle/Controller/ProductTaxCodeController.php"
+    type:         annotation
+    prefix:       /tax/product
+
+oro_tax_account_tax_code:
+    resource:     "@OroTaxBundle/Controller/AccountTaxCodeController.php"
+    type:         annotation
+    prefix:       /tax/account
+
+oro_tax:
+    resource:     "@OroTaxBundle/Controller/TaxController.php"
+    type:         annotation
+    prefix:       /tax
+
+oro_tax_rule:
+    resource:     "@OroTaxBundle/Controller/TaxRuleController.php"
+    type:         annotation
+    prefix:       /tax/rule
+
+oro_tax_jurisdiction:
+    resource:     "@OroTaxBundle/Controller/TaxJurisdictionController.php"
+    type:         annotation
+    prefix:       /tax/jurisdiction

@@ -1,0 +1,8 @@
+layout:
+    actions:
+        - '@changeBlockType':
+            id: sticky_element_notification
+            blockType: container
+        - '@move':
+            id: notification
+            parentId: sticky_element_notification

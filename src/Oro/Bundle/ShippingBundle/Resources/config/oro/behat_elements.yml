@@ -1,0 +1,24 @@
+behat_elements:
+    CheckoutTotalSum:
+      selector: 'td.order-checkout-widget__total span.blue'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    CheckoutFormRow:
+      selector: '.checkout__form__row'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    Shipping Rule:
+       selector: 'div#container'
+       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+       options:
+          mapping:
+             Enabled: 'oro_shipping_rule[enabled]'
+             Name: 'oro_shipping_rule[name]'
+             Sort Order: 'oro_shipping_rule[priority]'
+             Currency: 'oro_shipping_rule[currency]'
+             Country: 'oro_shipping_rule[destinations][0][country]'
+             Country2: 'oro_shipping_rule[destinations][2][country]'
+             Congif Enable: 'oro_shipping_rule[configurations][0][enabled]'
+             Price: 'oro_shipping_rule[configurations][0][value]'
+             HandlingFee: 'oro_shipping_rule[configurations][0][handlingFeeValue]'
+             Type:  'oro_shipping_rule[configurations][0][processingType]'

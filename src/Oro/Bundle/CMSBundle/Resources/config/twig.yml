@@ -1,0 +1,9 @@
+services:
+    # Twig extensions
+    oro_cms.twig.page_extension:
+        class: 'Oro\Bundle\CMSBundle\Twig\PageExtension'
+        public: false
+        arguments:
+            - '@oro_cms.page_tree_handler'
+        tags:
+            - { name: twig.extension }

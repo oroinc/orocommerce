@@ -1,0 +1,42 @@
+parameters:
+    oro_warehouse.entity.warehouse.class: Oro\Bundle\WarehouseBundle\Entity\Warehouse
+    oro_warehouse.entity.warehouse_inventory_level.class: Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel
+
+services:
+    oro_warehouse.warehouse_inventory_level.manager.api:
+        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - '%oro_warehouse.entity.warehouse_inventory_level.class%'
+            - "@doctrine.orm.entity_manager"
+
+    oro_warehouse.entity.helper.warehouse_counter:
+        class: 'Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter'
+        arguments: ["@oro_entity.doctrine_helper"]
+
+    oro_warehouse.api.processor.product_id.normalize_input:
+        class: 'Oro\Bundle\ProductBundle\Api\Processor\NormalizeProductId'
+        tags:
+            - { name: oro.api.processor, action: update, group: normalize_input, priority: -105, class: '%oro_warehouse.entity.warehouse_inventory_level.class%' }
+
+    oro_warehouse.api.processor.entity_id.load_data:
+        class: 'Oro\Bundle\ProductBundle\Api\Processor\LoadEntityId'
+        tags:
+            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_warehouse.entity.warehouse_inventory_level.class%' }
+
+    oro_warehouse.api.processor.update_warehouse_inventory_level.build_query:
+        class: 'Oro\Bundle\WarehouseBundle\Api\Processor\BuildSingleWarehouseInventoryLevelQuery'
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.criteria_connector'
+            - '@oro_warehouse.entity.helper.warehouse_counter'
+        tags:
+            - { name: oro.api.processor, action: update, group: build_query, priority: -95, class: '%oro_warehouse.entity.warehouse_inventory_level.class%' }
+
+    oro_warehouse.api.processor.create_warehouse_inventory_level.normalize_input:
+        class: 'Oro\Bundle\WarehouseBundle\Api\Processor\NormalizeInventoryLevelRequestData'
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_warehouse.entity.helper.warehouse_counter'
+        tags:
+            - { name: oro.api.processor, action: create, group: normalize_input, priority: -45, class: '%oro_warehouse.entity.warehouse_inventory_level.class%' }

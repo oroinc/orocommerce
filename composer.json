@@ -24,7 +24,7 @@
         }
     ],
     "require": {
-        "oro/platform": "self.version",
+        "oro/platform": "1.x-dev",
         "box/spout": "2.3.*",
         "nicholas-eden/math": "0.6.*",
         "myclabs/deep-copy": "1.5.*",
@@ -40,9 +40,7 @@
     "autoload": {
         "psr-0": {
             "Oro\\Component": "src/",
-            "Oro\\Bundle": "src/",
-            "OroB2B\\Component": "src/",
-            "OroB2B\\Bundle": "src/"
+            "Oro\\Bundle": "src/"
         }
     }
 }

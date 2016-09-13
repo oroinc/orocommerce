@@ -1,5 +1,0 @@
-config:
-    paths:
-        'orob2brfp/js/app/components/request-status-delete-restore-component': 'bundles/orob2brfp/js/app/components/request-status-delete-restore-component.js'
-        'orob2brfp/js/app/components/order-line-item-offers': 'bundles/orob2brfp/js/app/components/order-line-item-offers.js'
-        'orob2brfp/js/app/views/line-items-view': 'bundles/orob2brfp/js/app/views/line-items-view.js'

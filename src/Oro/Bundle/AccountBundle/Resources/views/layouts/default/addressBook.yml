@@ -1,0 +1,4 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroAccountBundle:layouts:default/addressBook.html.twig'

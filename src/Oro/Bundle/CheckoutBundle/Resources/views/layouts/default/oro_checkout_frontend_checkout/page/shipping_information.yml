@@ -1,0 +1,12 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '../templates/shipping_information.html.twig'
+        - '@setFormTheme':
+            themes: '../templates/form_theme.html.twig'
+        - '@setOption':
+            id: checkout_information
+            optionName: stepOrder
+            optionValue: 2
+    conditions: 'context["workflowStepName"]=="enter_shipping_address"'
+

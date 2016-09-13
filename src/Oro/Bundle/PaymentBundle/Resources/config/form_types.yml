@@ -1,0 +1,34 @@
+services:
+    oro_payment.form.type.payment_term:
+        class: 'Oro\Bundle\PaymentBundle\Form\Type\PaymentTermType'
+        arguments: ['%oro_payment.entity.payment_term.class%']
+        tags:
+            - { name: form.type, alias: oro_payment_term }
+        calls:
+            - [setAccountClass, ['%oro_account.entity.account.class%']]
+            - [setAccountGroupClass, ['%oro_account.entity.account_group.class%']]
+
+    oro_payment.form.type.payment_term_select:
+        class: 'Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType'
+        tags:
+            - { name: form.type, alias: oro_payment_term_select }
+
+    oro_payment.form.extension.abstract:
+        class: 'Oro\Bundle\PaymentBundle\Form\Extension\AbstractPaymentTermExtension'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@translator'
+            - '%oro_payment.entity.payment_term.class%'
+        abstract: true
+
+    oro_payment.form.extension.account_type:
+        class: 'Oro\Bundle\PaymentBundle\Form\Extension\AccountFormExtension'
+        parent: oro_payment.form.extension.abstract
+        tags:
+            - { name: form.type_extension, alias: oro_account_type }
+
+    oro_payment.form.extension.account_group_type:
+        class: 'Oro\Bundle\PaymentBundle\Form\Extension\AccountGroupFormExtension'
+        parent: oro_payment.form.extension.abstract
+        tags:
+            - { name: form.type_extension, alias: oro_account_group_type }

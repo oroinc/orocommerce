@@ -1,0 +1,43 @@
+{% block oro_catalog_category_tree_row %}
+    {{ block('form_row') }}
+{% endblock %}
+
+{% block oro_catalog_category_tree_widget %}
+    <div class="category category-tree-form-type">
+        {% set treeOptions = {
+            'key' : 'b2b-category',
+            'data' : oro_category_list(),
+            'nodeId' : form.vars.value,
+            'fieldSelector': '#' ~ form.vars.id
+        } %}
+        <div
+            data-page-component-module="orocatalog/js/app/components/tree-form-type-component"
+            data-page-component-options="{{ treeOptions|json_encode }}"
+        ></div>
+    </div>
+
+    {{ form_widget(form) }}
+    {{ form_errors(form) }}
+{% endblock %}
+
+{% block oro_catalog_category_unit_precision_widget %}
+    <div class="control-group">
+        <table
+            class="category-precision-holder"
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'orocatalog/js/app/views/category-unit-limitations-view',
+            }|json_encode }}"
+        >
+            <tr>
+                <td>{{ form_widget(form.unit, { 'attr': {'class': 'unit'}}) }}</td>
+                <td><div class="control-label"><label>{{ 'oro.catalog.category.precision.label'|trans }}&nbsp;</label></div></td>
+                <td>{{ form_widget(form.precision, { 'attr': {'class': 'precision'} }) }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_errors(form.unit) }}</td>
+                <td>{{ form_errors(form.precision) }}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,19 @@
+layout:
+    imports:
+        -
+            id: datagrid
+            root: __root
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@setOption':
+            id: __datagrid
+            optionName: grid_name
+            optionValue: frontend-orders-grid
+
+        - '@setOption':
+            id: __datagrid_toolbar_button_container
+            optionName: visible
+            optionValue: true

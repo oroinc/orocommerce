@@ -1,0 +1,17 @@
+{% block _checkout_form_fields_widget -%}
+    {% if workflowItem.data.get('allowed') and workflowItem.data.get('allow_request_date') %}
+        <div class="notification notification_xmd notification_notice notification-radiused mb1-md">
+            {{ 'oro.alternativecheckout.messages.approved_at'|trans }} {{ workflowItem.data.get('allow_request_date')|oro_format_datetime }}
+        </div>
+    {% else %}
+        <div class="notification notification_xmd notification_alert notification-radiused mb1-md">
+            {{ 'oro.alternativecheckout.messages.waiting_for_approve'|trans }}
+        </div>
+    {% endif %}
+    {% if workflowItem.data.get('request_approval_notes') %}
+        <label>{{ 'oro.alternativecheckout.requestApprovalNotes.label'|trans }}:</label>
+        <span>{{ workflowItem.data.get('request_approval_notes')|nl2br|raw }}</span>
+    {% endif %}
+
+    {{ block_widget(block) }}
+{%- endblock %}

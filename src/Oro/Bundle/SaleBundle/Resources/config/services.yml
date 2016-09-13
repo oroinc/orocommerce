@@ -1,0 +1,155 @@
+parameters:
+    oro_sale.entity.quote.class: Oro\Bundle\SaleBundle\Entity\Quote
+    oro_sale.entity.quote_address.class: Oro\Bundle\SaleBundle\Entity\QuoteAddress
+    oro_sale.entity.quote_product.class: Oro\Bundle\SaleBundle\Entity\QuoteProduct
+    oro_sale.entity.quote_product_offer.class: Oro\Bundle\SaleBundle\Entity\QuoteProductOffer
+    oro_sale.entity.quote_product_request.class: Oro\Bundle\SaleBundle\Entity\QuoteProductRequest
+
+services:
+    oro_sale.provider.quote_product_price:
+        class: 'Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider'
+        arguments:
+            - "@oro_pricing.provider.combined_product_price"
+            - "@oro_pricing.model.price_list_tree_handler"
+
+    oro_sale.validator.quote_product:
+        class: 'Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProductValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_sale.validator.quote_product }
+
+    oro_sale.twig.quote:
+        class: 'Oro\Bundle\SaleBundle\Twig\QuoteExtension'
+        public: false
+        arguments:
+            - "@oro_sale.formatter.quote_product"
+            - "@oro_config.manager"
+        tags:
+            - { name: twig.extension }
+
+    oro_sale.formatter.quote_product:
+        class: 'Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
+        public: false
+        arguments:
+            - "@translator"
+            - "@oro_locale.formatter.number"
+            - "@oro_product.formatter.product_unit_value"
+            - "@oro_product.formatter.product_unit_label"
+
+    oro_sale.formatter.quote_product_offer:
+        class: 'Oro\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter'
+        public: false
+        arguments:
+            - "@translator"
+
+    oro_sale.service.quote_to_order_converter:
+        class: 'Oro\Bundle\SaleBundle\Model\QuoteToOrderConverter'
+        public: false
+        arguments:
+            - '@oro_order.handler.order_currency_handler'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@doctrine'
+
+    oro_sale.service.quote_product_offer_matcher:
+        class: 'Oro\Bundle\SaleBundle\Model\QuoteProductOfferMatcher'
+
+    oro_sale.event_listener.product_select_db_query:
+        class: '%oro_product.event_listener.scoped_product_select_db_query.common_class%'
+        parent: oro_product.event_listener.abstract_product_select_db_query
+        calls:
+            - [setScope, ['quote']]
+            - [setBackendSystemConfigurationPath, ['oro_b2b_sale.backend_product_visibility']]
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+
+    oro_sale.helper.notification:
+        class: 'Oro\Bundle\SaleBundle\Notification\NotificationHelper'
+        scope: request
+        arguments:
+            - "@doctrine"
+            - "@request"
+            - "@oro_email.email.model.builder"
+            - "@oro_email.mailer.processor"
+        calls:
+            - [ setQuoteClassName, [ '%oro_sale.entity.quote.class%' ] ]
+            - [ setEmailTemplateClassName, [ '%oro_email.emailtemplate.entity.class%' ] ]
+
+    oro_sale.service.request_helper:
+        class: 'Oro\Bundle\SaleBundle\Model\RequestHelper'
+        arguments:
+            - "@doctrine"
+            - '%oro_sale.entity.quote.class%'
+            - '%oro_rfp.entity.request.class%'
+
+    oro_sale.manager.quote_address:
+        class: 'Oro\Bundle\SaleBundle\Model\QuoteAddressManager'
+        public: false
+        arguments:
+            - "@oro_sale.provider.quote_address"
+            - "@doctrine"
+            - '%oro_sale.entity.quote_address.class%'
+        calls:
+            - [addEntity, ['a', '%oro_account.entity.account_address.class%']]
+            - [addEntity, ['au', '%oro_account.entity.account_user_address.class%']]
+
+    oro_sale.provider.quote_address:
+        class: 'Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider'
+        public: false
+        arguments:
+            - "@oro_security.security_facade"
+            - "@doctrine"
+            - "@oro_security.acl_helper"
+            - '%oro_account.entity.account_address.class%'
+            - '%oro_account.entity.account_user_address.class%'
+
+    oro_sale.provider.quote_address_security:
+        class: 'Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider'
+        arguments:
+            - "@oro_security.security_facade"
+            - "@oro_sale.provider.quote_address"
+            - '%oro_account.entity.account_address.class%'
+            - '%oro_account.entity.account_user_address.class%'
+
+    oro_sale.service.quote_request_handler:
+        class: 'Oro\Bundle\SaleBundle\Model\QuoteRequestHandler'
+        arguments:
+            - "@doctrine"
+            - "@request_stack"
+            - '%oro_account.entity.account.class%'
+            - '%oro_account.entity.account_user.class%'
+
+    oro_sale.data_provider.checkout_line_item:
+        class: 'Oro\Bundle\SaleBundle\Provider\QuoteCheckoutLineItemDataProvider'
+        tags:
+             - { name: checkout.data_provider.line_item }
+
+    oro_sale.manager.quote_demand_manager:
+        class: 'Oro\Bundle\SaleBundle\Manager\QuoteDemandManager'
+        public: true
+        arguments:
+            - "@oro_pricing.subtotal_processor.total_processor_provider"
+            - "@oro_pricing.subtotal_processor.provider.subtotal_line_item"
+
+    oro_sale.event_listener.account_view:
+        class: 'Oro\Bundle\SaleBundle\EventListener\AccountViewListener'
+        public: true
+        arguments:
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
+
+    oro_sale.provider.quote_entity_name:
+          class: Oro\Bundle\SaleBundle\Provider\QuoteEntityNameProvider
+          public: false
+          arguments:
+            - "@translator"
+          tags:
+            - { name: oro_entity.name_provider, priority: 100 }
+
+    oro_sale.provider.privilege_category_provider:
+        class: 'Oro\Bundle\SaleBundle\Provider\PrivilegeCategoryProvider'
+        tags:
+            - { name: oro_user.privilege_category}
