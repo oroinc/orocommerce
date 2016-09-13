@@ -214,6 +214,42 @@ class OrmIndexerTest extends WebTestCase
         $this->assertContains('Reindexed product', $items[0]->getTitle());
     }
 
+    public function testReindexWithAllRestricted()
+    {
+        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
+            ->willReturn($this->mappingConfig);
+
+        $restrictedProduct1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
+        $restrictedProduct2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
+        $restrictedProduct3 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
+
+        $restrictedIds = [$restrictedProduct1->getId(), $restrictedProduct2->getId(), $restrictedProduct3->getId()];
+
+        $this->dispatcher->addListener(
+            $this->getRestrictEntityEventName(),
+            function (RestrictIndexEntityEvent $event) use ($restrictedIds) {
+                $qb = $event->getQueryBuilder();
+                list($rootAlias) = $qb->getRootAliases();
+                $qb->where($qb->expr()->notIn($rootAlias . '.id', ':id'))
+                    ->setParameter('id', $restrictedIds);
+            },
+            -255
+        );
+
+        $this->listener = $this->setListener();
+        $this->indexer->reindex(
+            TestProduct::class,
+            [
+                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsite()->getId()
+            ]
+        );
+
+        /** @var Item[] $items */
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_1']);
+
+        $this->assertCount(0, $items);
+    }
+
     public function testReindexOfAllWebsites()
     {
         $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
@@ -262,7 +298,6 @@ class OrmIndexerTest extends WebTestCase
         $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
             ->willReturn($this->mappingConfig);
         $this->indexer->reindex(\stdClass::class, []);
-        $this->indexer = new OrmIndexer($this->dispatcher, $this->doctrineHelper, $this->mappingProviderMock);
     }
 
     public function testDeleteWhenNonExistentEntityRemoved()
