@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSettingsQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
@@ -11,7 +12,7 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
-class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
+class OroProductBundle implements Migration, RenameExtensionAwareInterface
 {
     /**
      * @var RenameExtension
@@ -97,6 +98,28 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             ['product_id', 'unit_code'],
             'uidx_oro_product_unit_precision'
         );
+
+        // system configuration
+        $this->renameSystemConfigurationSettings(
+            $queries,
+            [
+                'unit_rounding_type',
+                'default_unit',
+                'default_unit_precision',
+                'general_frontend_product_visibility'
+            ]
+        );
+    }
+
+    /**
+     * @param QueryBag $queries
+     * @param array $settings
+     */
+    private function renameSystemConfigurationSettings(QueryBag $queries, array $settings)
+    {
+        foreach ($settings as $name) {
+            $queries->addPostQuery(new RenameConfigSettingsQuery("orob2b_product.$name", "oro_product.$name"));
+        }
     }
 
     /**

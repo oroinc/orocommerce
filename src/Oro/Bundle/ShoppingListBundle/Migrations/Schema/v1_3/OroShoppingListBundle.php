@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_3;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSettingsQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
@@ -12,7 +13,7 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Migration\SqlSchemaUpdateMigrationQuery;
 
-class RenameTables implements Migration, RenameExtensionAwareInterface, DatabasePlatformAwareInterface
+class OroShoppingListBundle implements Migration, RenameExtensionAwareInterface, DatabasePlatformAwareInterface
 {
     /**
      * @var RenameExtension
@@ -56,6 +57,13 @@ class RenameTables implements Migration, RenameExtensionAwareInterface, Database
             'oro_shopping_list_line_item',
             ['product_id', 'shopping_list_id', 'unit_code'],
             'orob2b_shopping_list_line_item_uidx'
+        );
+
+        $queries->addPostQuery(
+            new RenameConfigSettingsQuery(
+                'oro_b2b_shopping_list.backend_product_visibility',
+                'oro_shopping_list.backend_product_visibility'
+            )
         );
     }
 

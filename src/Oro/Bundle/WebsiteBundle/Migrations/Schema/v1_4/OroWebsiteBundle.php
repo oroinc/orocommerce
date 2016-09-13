@@ -8,6 +8,8 @@ use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Types\Type;
+
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSettingsQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
@@ -16,6 +18,7 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\WebsiteBundle\DependencyInjection\Configuration;
 
 class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface, RenameExtensionAwareInterface
 {
@@ -37,6 +40,7 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface, Ren
         $this->changeLocalizationRelations($queries);
         $this->updateWebsiteTable($schema, $queries);
         $this->renameTables($schema, $queries);
+        $this->renameSystemConfigurationSettings($queries, [Configuration::URL, Configuration::SECURE_URL]);
     }
 
     /**
@@ -248,6 +252,17 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface, Ren
                 'new_default_url' => Type::STRING,
             ]
         );
+    }
+
+    /**
+     * @param QueryBag $queries
+     * @param array $settings
+     */
+    private function renameSystemConfigurationSettings(QueryBag $queries, array $settings)
+    {
+        foreach ($settings as $name) {
+            $queries->addPostQuery(new RenameConfigSettingsQuery("oro_b2b_website.$name", "oro_website.$name"));
+        }
     }
 
     /**
