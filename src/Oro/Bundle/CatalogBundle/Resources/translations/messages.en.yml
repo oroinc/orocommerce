@@ -51,14 +51,3 @@ oro:
         system_configuration:
             groups:
                 catalog.title: 'Catalog'
-
-        manage_inventory:
-            label:
-                'true': Yes
-                'false': No
-                1: Yes
-                0: No
-
-        fallback:
-            systemConfig: System Defaults
-            parentCategory: Parent Category

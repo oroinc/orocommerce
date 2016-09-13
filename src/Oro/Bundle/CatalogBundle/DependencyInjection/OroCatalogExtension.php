@@ -19,6 +19,5 @@ class OroCatalogExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('twig.yml');
         $loader->load('layout.yml');
-        $loader->load('fallbacks.yml');
     }
 }

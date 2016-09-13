@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Fallback\Provider;
+namespace Oro\Bundle\WarehouseBundle\Fallback\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\EntityBundle\Exception\InvalidFallbackArgumentException;
+use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackArgumentException;
 use Oro\Bundle\EntityBundle\Fallback\Provider\AbstractEntityFallbackProvider;
 
 class ParentCategoryFallbackProvider extends AbstractEntityFallbackProvider

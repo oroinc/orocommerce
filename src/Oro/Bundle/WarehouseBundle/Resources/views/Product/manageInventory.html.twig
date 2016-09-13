@@ -1,0 +1,6 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set manageInventory = oro_get_fallback(entity, 'manageInventory') %}
+{% set manageInventory = (manageInventory is not null) ? (manageInventory == true) ? 'true' : 'false' : manageInventory %}
+{% set manageInventoryValue = manageInventory is not null ? 'oro.warehouse.manage_inventory.choice.' ~ manageInventory : null %}
+{{ UI.renderHtmlProperty('oro.warehouse.manage_inventory.label'|trans, manageInventoryValue|trans) }}

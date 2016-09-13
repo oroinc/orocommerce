@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -399,29 +398,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      * )
      */
     protected $images;
-
-    /**
-     * @var EntityFieldFallbackValue
-     *
-     * @ORM\OneToOne(targetEntity="Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue", cascade={"All"})
-     * @ORM\JoinColumn(name="manage_inventory_fallback_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *     defaultValues={
-     *          "fallback": {
-     *              "fallbackType": "boolean",
-     *              "fallbackList": {
-     *                  "category" : {
-     *                      "fieldName": "manageInventory"
-     *                  },
-     *                  "systemConfig": {
-     *                      "configName": "orob2b_product.manage_inventory"
-     *                  }
-     *              }
-     *          }
-     *     }
-     * )
-     */
-    protected $manageInventory;
 
     /**
      * {@inheritdoc}
@@ -1068,25 +1044,5 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         $additionalPrecisionsSorted = new ArrayCollection(array_values($additionalPrecisions->toArray()));
 
         return $additionalPrecisionsSorted;
-    }
-
-    /**
-     * @return EntityFieldFallbackValue
-     */
-    public function getManageInventory()
-    {
-        return $this->manageInventory;
-    }
-
-    /**
-     * @param EntityFieldFallbackValue $manageInventory
-     *
-     * @return $this
-     */
-    public function setManageInventory($manageInventory)
-    {
-        $this->manageInventory = $manageInventory;
-
-        return $this;
     }
 }

@@ -11,7 +11,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\CatalogBundle\Model\ExtendCategory;
 use Oro\Component\Tree\Entity\TreeTrait;
@@ -232,29 +231,6 @@ class Category extends ExtendCategory
      * )
      */
     protected $defaultProductOptions;
-
-    /**
-     * @var EntityFieldFallbackValue
-     *
-     * @ORM\OneToOne(targetEntity="Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue", cascade={"All"})
-     * @ORM\JoinColumn(name="manage_inventory_fallback_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *     defaultValues={
-     *          "fallback": {
-     *              "fallbackType": "boolean",
-     *              "fallbackList": {
-     *                  "systemConfig" : {
-     *                      "configName": "orob2b_product.manage_inventory"
-     *                  },
-     *                  "parentCategory": {
-     *                      "fieldName": "manageInventory"
-     *                  }
-     *              }
-     *          }
-     *     }
-     * )
-     */
-    protected $manageInventory;
 
     /**
      * Constructor
@@ -555,26 +531,6 @@ class Category extends ExtendCategory
     public function setDefaultProductOptions(CategoryDefaultProductOptions $defaultProductOptions = null)
     {
         $this->defaultProductOptions = $defaultProductOptions;
-
-        return $this;
-    }
-
-    /**
-     * @return EntityFieldFallbackValue
-     */
-    public function getManageInventory()
-    {
-        return $this->manageInventory;
-    }
-
-    /**
-     * @param EntityFieldFallbackValue $manageInventory
-     *
-     * @return $this
-     */
-    public function setManageInventory($manageInventory)
-    {
-        $this->manageInventory = $manageInventory;
 
         return $this;
     }

@@ -8,9 +8,6 @@
             {{ UI.renderProperty('oro.product.sku.label'|trans, product.sku) }}
             {{ UI.renderProperty('oro.product.names.label'|trans, product.defaultName) }}
             {{ UI.renderHtmlProperty('oro.product.inventory_status.label'|trans, product.inventoryStatus) }}
-            {% set manageInventory = oro_get_fallback(product, 'manageInventory') %}
-            {% set manageInventoryValue = manageInventory ? 'oro.product.manage_inventory.label.' ~ manageInventory : null %}
-            {{ UI.renderHtmlProperty('oro.product.manage_inventory.label'|trans, manageInventoryValue|trans) }}
 
             {% if product.images.count %}
                 {{ UI.renderHtmlProperty(

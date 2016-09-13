@@ -70,6 +70,24 @@ oro:
             order:
                 label: Warehouse
 
+        fallback:
+            category: Category Defaults
+            systemConfig: System Config
+            parentCategory: Parent Category
+
+        manage_inventory:
+            label: Managed Inventory
+            choice:
+                'true': Yes
+                'false': No
+
+        system_configuration:
+            groups:
+                product_options.title: 'Product Options'
+                product_inventory_options.title: 'Product Inventory Options'
+            fields:
+                manage_inventory.label: 'Managed Inventory'
+
     order:
         orderlineitem:
             warehouse:

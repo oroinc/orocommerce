@@ -7,11 +7,6 @@ oro_system_configuration:
         allowed_statuses:
             title: oro.product.system_configuration.groups.allowed_statuses.title
             icon: 'icon-list'
-        product_options:
-            title: oro.product.system_configuration.groups.product_options.title
-            icon: 'icon-gears'
-        product_inventory_options:
-            title: oro.product.system_configuration.groups.product_inventory_options.title
         product_unit:
             title: oro.product.system_configuration.groups.product_unit.title
             icon: 'icon-briefcase'
@@ -61,17 +56,6 @@ oro_system_configuration:
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.default_unit_precision.label
-
-        orob2b_product.manage_inventory:
-            data_type: boolean
-            type: choice
-            options:
-                label: oro.product.system_configuration.fields.manage_inventory.label
-                choice_translation_domain: messages
-                choices:
-                    false: oro.product.manage_inventory.label.false
-                    true: oro.product.manage_inventory.label.true
-
     tree:
         system_configuration:
             commerce:
@@ -98,9 +82,3 @@ oro_system_configuration:
                                     frontend_inventory_statuses_visibility:
                                         children:
                                             - orob2b_product.general_frontend_product_visibility
-                            product_options:
-                                priority: 90
-                                children:
-                                    product_inventory_options:
-                                        children:
-                                            - orob2b_product.manage_inventory

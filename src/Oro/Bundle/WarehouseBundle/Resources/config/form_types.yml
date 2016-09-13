@@ -23,3 +23,13 @@ services:
         class: Oro\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension
         tags:
             - { name: form.type_extension, alias: oro_importexport_export_template }
+
+    orob2b_warehouse.form.type.extension.warehouse_product_type_extension:
+        class: Oro\Bundle\WarehouseBundle\Form\Extension\WarehouseProductTypeFormExtension
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
+
+    orob2b_warehouse.form.type.extension.warehouse_category_type_extension:
+        class: Oro\Bundle\WarehouseBundle\Form\Extension\WarehouseCategoryTypeFormExtension
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }

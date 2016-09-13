@@ -4,6 +4,7 @@ namespace Oro\Bundle\WarehouseBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -37,31 +38,67 @@ class AddManageInventoryFields implements Migration, ExtendExtensionAwareInterfa
      */
     protected function addManageInventoryFieldToCategory(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_catalog_category');
-
-        $table->addColumn('manage_inventory_fallback_id', 'integer', ['notnull' => false]);
-        $table->addUniqueIndex(['manage_inventory_fallback_id'], 'UNIQ_FBD712DDA4E4A513');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_entity_fallback_value'),
-            ['manage_inventory_fallback_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => 'CASCADE']
+        $categoryTable = $schema->getTable('orob2b_catalog_category');
+        $fallbackTable = $schema->getTable('oro_entity_fallback_value');
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $categoryTable,
+            'manageInventory',
+            $fallbackTable,
+            'id',
+            [
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['all'],
+                ],
+                'form' => [
+                    'is_enabled' => false,
+                ],
+                'view' => [
+                    'is_displayable' => false,
+                ],
+                'fallback' => [
+                    'fallbackList' => [
+                        'systemConfig' => ['configName' => 'oro_warehouse.manage_inventory'],
+                        'parentCategory' => ['fieldName' => 'manageInventory'],
+                    ],
+                ],
+            ]
         );
     }
 
     /**
      * @param Schema $schema
      */
-    protected function addManageInventoryFieldToProduct($schema)
+    protected function addManageInventoryFieldToProduct(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_product');
-        $table->addColumn('manage_inventory_fallback_id', 'integer', ['notnull' => false]);
-        $table->addUniqueIndex(['manage_inventory_fallback_id'], 'UNIQ_5F9796C9A4E4A513');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_entity_fallback_value'),
-            ['manage_inventory_fallback_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => 'CASCADE']
+        $productTable = $schema->getTable('orob2b_product');
+        $fallbackTable = $schema->getTable('oro_entity_fallback_value');
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $productTable,
+            'manageInventory',
+            $fallbackTable,
+            'id',
+            [
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['all'],
+                ],
+                'form' => [
+                    'is_enabled' => false,
+                ],
+                'view' => [
+                    'is_displayable' => false,
+                ],
+                'fallback' => [
+                    'fallbackList' => [
+                        'systemConfig' => ['configName' => 'oro_warehouse.manage_inventory'],
+                        'category' => ['fieldName' => 'manageInventory'],
+                    ],
+                ],
+            ]
         );
     }
+
 }

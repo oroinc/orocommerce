@@ -1,13 +1,12 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Fallback\Provider;
+namespace Oro\Bundle\WarehouseBundle\Fallback\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\Fallback\Provider\AbstractEntityFallbackProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\EntityBundle\Exception\InvalidFallbackArgumentException;
+use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackArgumentException;
 
 class CategoryFallbackProvider extends AbstractEntityFallbackProvider
 {

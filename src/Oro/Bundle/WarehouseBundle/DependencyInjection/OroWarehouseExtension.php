@@ -14,6 +14,9 @@ class OroWarehouseExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+        $configuration = new Configuration();
+        $config =  $this->processConfiguration($configuration, $configs);
+
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
 
         $bundles = $container->getParameter('kernel.bundles');
@@ -24,5 +27,16 @@ class OroWarehouseExtension extends Extension
         $loader->load('services.yml');
         $loader->load('form_types.yml');
         $loader->load('importexport.yml');
+        $loader->load('fallbacks.yml');
+
+        $container->prependExtensionConfig($this->getAlias(), $config);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAlias()
+    {
+        return 'oro_warehouse';
     }
 }
