@@ -130,7 +130,7 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
         $prices = [];
 
         $types = $this->getTypes();
-        if (!empty($types)) {
+        if (count($types) > 0) {
             foreach ($types as $type) {
                 $prices[$type->getIdentifier()] = $type->calculatePrice($context, $methodOptions, $optionsByTypes);
             }
