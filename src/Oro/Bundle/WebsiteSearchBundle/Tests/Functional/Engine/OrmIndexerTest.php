@@ -27,6 +27,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
 
 /**
  * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class OrmIndexerTest extends WebTestCase
 {
@@ -174,7 +175,7 @@ class OrmIndexerTest extends WebTestCase
         );
 
         /** @var Item[] $items */
-        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_1']);
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_' . $this->getDefaultWebsite()->getId()]);
 
         $this->assertCount(2, $items);
         $this->assertContains('Reindexed product', $items[0]->getTitle());
@@ -208,7 +209,7 @@ class OrmIndexerTest extends WebTestCase
         );
 
         /** @var Item[] $items */
-        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_1']);
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_' . $this->getDefaultWebsite()->getId()]);
 
         $this->assertCount(1, $items);
         $this->assertContains('Reindexed product', $items[0]->getTitle());
@@ -220,10 +221,9 @@ class OrmIndexerTest extends WebTestCase
             ->willReturn($this->mappingConfig);
 
         $restrictedProduct1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
-        $restrictedProduct2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
-        $restrictedProduct3 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
+        $restrictedProduct2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
 
-        $restrictedIds = [$restrictedProduct1->getId(), $restrictedProduct2->getId(), $restrictedProduct3->getId()];
+        $restrictedIds = [$restrictedProduct1->getId(), $restrictedProduct2->getId()];
 
         $this->dispatcher->addListener(
             $this->getRestrictEntityEventName(),
@@ -245,7 +245,7 @@ class OrmIndexerTest extends WebTestCase
         );
 
         /** @var Item[] $items */
-        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_1']);
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_' . $this->getDefaultWebsite()->getId()]);
 
         $this->assertCount(0, $items);
     }
