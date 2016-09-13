@@ -841,6 +841,7 @@ services:
         public: true
         arguments:
             - '@oro_pricing.expression.parser'
+            - '@oro_pricing.expression.preprocessor'
             - '@doctrine'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.circular_reference_validator }

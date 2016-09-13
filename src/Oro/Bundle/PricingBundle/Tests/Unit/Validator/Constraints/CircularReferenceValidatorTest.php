@@ -7,12 +7,13 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Expression\BinaryNode;
 use Oro\Bundle\PricingBundle\Expression\NameNode;
+use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Oro\Bundle\PricingBundle\Expression\ValueNode;
 use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
 use Oro\Bundle\PricingBundle\Validator\Constraints\CircularReference;
 use Oro\Bundle\PricingBundle\Validator\Constraints\CircularReferenceValidator;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
@@ -25,7 +26,12 @@ class CircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
     protected $expressionParser;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ExpressionPreprocessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $preprocessor;
+
+    /**
+     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $doctrine;
 
@@ -49,8 +55,11 @@ class CircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
         $this->expressionParser = $this->getMockBuilder(ExpressionParser::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->preprocessor = $this->getMockBuilder(ExpressionPreprocessorInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->doctrine = $this->getMockBuilder(ManagerRegistry::class)
+        $this->doctrine = $this->getMockBuilder(RegistryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -62,7 +71,11 @@ class CircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->validator = new CircularReferenceValidator($this->expressionParser, $this->doctrine);
+        $this->validator = new CircularReferenceValidator(
+            $this->expressionParser,
+            $this->preprocessor,
+            $this->doctrine
+        );
     }
 
     public function testValidateNameNodeValid()
@@ -112,12 +125,12 @@ class CircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 $finalEntity
             );
 
-        $this->entityManager->expects($this->once())
+        $this->entityManager->expects($this->any())
             ->method('getRepository')
             ->withAnyParameters()
             ->willReturn($this->entityRepository);
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->withAnyParameters()
             ->willReturn($this->entityManager);
@@ -180,12 +193,12 @@ class CircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 $entity
             );
 
-        $this->entityManager->expects($this->once())
+        $this->entityManager->expects($this->any())
             ->method('getRepository')
             ->withAnyParameters()
             ->willReturn($this->entityRepository);
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->withAnyParameters()
             ->willReturn($this->entityManager);
@@ -229,12 +242,12 @@ class CircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
             ->with(2)
             ->willReturn($referenceEntity);
 
-        $this->entityManager->expects($this->once())
+        $this->entityManager->expects($this->any())
             ->method('getRepository')
             ->withAnyParameters()
             ->willReturn($this->entityRepository);
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->withAnyParameters()
             ->willReturn($this->entityManager);
@@ -290,12 +303,12 @@ class CircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 $referenceEntity
             );
 
-        $this->entityManager->expects($this->once())
+        $this->entityManager->expects($this->any())
             ->method('getRepository')
             ->withAnyParameters()
             ->willReturn($this->entityRepository);
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->withAnyParameters()
             ->willReturn($this->entityManager);
@@ -352,12 +365,12 @@ class CircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 $rightEntity
             );
 
-        $this->entityManager->expects($this->once())
+        $this->entityManager->expects($this->any())
             ->method('getRepository')
             ->withAnyParameters()
             ->willReturn($this->entityRepository);
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->withAnyParameters()
             ->willReturn($this->entityManager);
@@ -422,12 +435,12 @@ class CircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 $rightEntity
             );
 
-        $this->entityManager->expects($this->once())
+        $this->entityManager->expects($this->any())
             ->method('getRepository')
             ->withAnyParameters()
             ->willReturn($this->entityRepository);
 
-        $this->doctrine->expects($this->once())
+        $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->withAnyParameters()
             ->willReturn($this->entityManager);

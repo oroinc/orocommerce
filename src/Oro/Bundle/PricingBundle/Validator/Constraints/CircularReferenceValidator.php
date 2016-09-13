@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
-use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
 use Oro\Bundle\PricingBundle\Expression\NameNode;
 use Oro\Bundle\PricingBundle\Expression\RelationNode;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\ExpressionLanguage\SyntaxError;
+use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
+
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
 
 class CircularReferenceValidator extends ConstraintValidator
 {
@@ -20,33 +20,55 @@ class CircularReferenceValidator extends ConstraintValidator
     protected $expressionParser;
 
     /**
-     * @var ManagerRegistry
+     * @var ExpressionPreprocessorInterface
+     */
+    protected $preprocessor;
+
+    /**
+     * @var RegistryInterface
      */
     protected $doctrine;
 
-    protected $references = [];
+    /**
+     * @var array
+     */
+    protected $references;
 
+    /**
+     * @var string|null
+     */
     protected $container = null;
 
     /**
-     * @var EntityRepository
+     * @var PropertyAccess
      */
-    protected $entityRepository;
+    protected $accessor;
 
     /**
-     * @param ExpressionParser $expressionParser
+     * @var bool
      */
-    public function __construct(ExpressionParser $expressionParser, ManagerRegistry $doctrine)
-    {
-        $this->expressionParser = $expressionParser;
-        $this->doctrine = $doctrine;
-    }
-
     public $isValid = true;
 
     /**
+     * @param ExpressionParser $expressionParser
+     * @param ExpressionPreprocessorInterface $preprocessor
+     * @param RegistryInterface $doctrine
+     */
+    public function __construct(
+        ExpressionParser $expressionParser,
+        ExpressionPreprocessorInterface $preprocessor,
+        RegistryInterface $doctrine
+    ) {
+        $this->expressionParser = $expressionParser;
+        $this->preprocessor = $preprocessor;
+        $this->doctrine = $doctrine;
+
+        $this->accessor = PropertyAccess::createPropertyAccessor();
+    }
+
+    /**
      * @param $value
-     * @param LogicalExpression $constraint
+     * @param CircularReference $constraint
      *
      * {@inheritdoc}
      */
@@ -58,25 +80,43 @@ class CircularReferenceValidator extends ConstraintValidator
 
         try {
             foreach ($constraint->fields as $field) {
-                $expressions = [$this->getFieldExpression($object, ('get' . ucfirst($field)))];
-                $this->references[$field][] = $object->getId();
+                $expressions = [$this->getFieldExpression($object, $field)];
+                $this->references[$field] = [$object->getId()];
                 while (true) {
                     $nodes = $this->parseExpression($expressions);
-
                     $references = $this->findReferences($nodes);
 
-                    if ($this->isValid === false) {
+                    if ($this->hasCircularReference($references)) {
                         $this->context->buildViolation($constraint->message)->atPath($field)->addViolation();
+                        break;
                     }
+
+                    $this->references = array_merge_recursive($this->references, $references);
                     if (count($references) === 0) {
                         break;
                     }
                     $expressions = $this->findExpressions($references);
                 }
             }
-        } catch (SyntaxError $ex) {
+        } catch (\Exception $ex) {
             $this->context->buildViolation($constraint->invalidNodeMessage)->atPath($field)->addViolation();
         }
+    }
+
+    /**
+     * @param array $references
+     * @return bool
+     */
+    protected function hasCircularReference($references)
+    {
+        foreach ($references as $field => $referenceIds) {
+            foreach ($referenceIds as $id) {
+                if (array_key_exists($field, $this->references) && in_array($id, $this->references[$field], true)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -85,8 +125,10 @@ class CircularReferenceValidator extends ConstraintValidator
      */
     protected function parseExpression($expressions)
     {
+
         $nodes = [];
         foreach ($expressions as $expression) {
+            $expression = $this->preprocessor->process($expression);
             $rootNode = $this->expressionParser->parse($expression);
             if ($rootNode !== null) {
                 $nodes = array_merge($nodes, $rootNode->getNodes());
@@ -105,38 +147,28 @@ class CircularReferenceValidator extends ConstraintValidator
         $references = [];
 
         foreach ($nodes as $node) {
-            if (!$this->isNode($node)) {
+            if (!$this->isSupportedNode($node)) {
                 continue;
             }
-
             $containerId = $node->getContainerId();
-
             if (empty($containerId)) {
                 continue;
             }
 
             $field = $node->getField();
 
-            if (array_key_exists($field, $this->references) && in_array($containerId, $this->references[$field])) {
-                $this->isValid = false;
-                return [];
-            }
-
             if ($this->container === null) {
-                $this->setContainer($node->getContainer());
-                $this->setEntityRepository();
+                $this->container = $node->getContainer();
             }
 
             if (empty($references[$field])) {
                 $references[$field] = [];
             }
 
-            if (!in_array($containerId, $references[$field])) {
+            if (!in_array($containerId, $references[$field], true)) {
                 $references[$field][] = $containerId;
             }
         }
-        $references = array_unique($references);
-        $this->references = array_merge_recursive($this->references, $references);
         return $references;
     }
 
@@ -149,10 +181,9 @@ class CircularReferenceValidator extends ConstraintValidator
         $expressions = [];
 
         foreach ($references as $field => $referenceIds) {
-            $methodName = 'get' . ucfirst($field);
             foreach ($referenceIds as $id) {
                 $entity = $this->getEntity($id);
-                $expression = $this->getFieldExpression($entity, $methodName);
+                $expression = $this->getFieldExpression($entity, $field);
                 if ($expression !== null) {
                     $expressions[] = $expression;
                 }
@@ -163,32 +194,17 @@ class CircularReferenceValidator extends ConstraintValidator
 
     /**
      * @param $entity
-     * @param string $methodName
+     * @param string $field
      *
-     * @return string
+     * @return string|null
      */
-    protected function getFieldExpression($entity, $methodName)
+    protected function getFieldExpression($entity, $field)
     {
         $expression = null;
-        if (method_exists($entity, $methodName)) {
-            $expression = call_user_func(array($entity, $methodName));
+        if ($this->accessor->isReadable($entity, $field)) {
+            $expression = $this->accessor->getValue($entity, $field);
         }
         return $expression;
-    }
-
-    /**
-     * @param string $containerName
-     */
-    protected function setContainer($containerName)
-    {
-        $this->container = $containerName;
-    }
-
-    protected function setEntityRepository()
-    {
-        $this->entityRepository = $this->doctrine
-            ->getManagerForClass($this->container)
-            ->getRepository($this->container);
     }
 
     /**
@@ -198,16 +214,19 @@ class CircularReferenceValidator extends ConstraintValidator
      */
     protected function getEntity($id)
     {
-        return $this->entityRepository->find($id);
+        return $this->doctrine
+            ->getManagerForClass($this->container)
+            ->getRepository($this->container)
+            ->find($id);
     }
 
     /**
-     * Check if node must be checked by validator
+     * Check if node must be supported by validator
      * @param $node
      *
      * @return bool
      */
-    protected function isNode($node)
+    protected function isSupportedNode($node)
     {
         return (($node instanceof NameNode) || ($node instanceof RelationNode));
     }
