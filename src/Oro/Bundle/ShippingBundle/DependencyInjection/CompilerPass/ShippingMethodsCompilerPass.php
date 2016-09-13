@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class ShippingMethodsCompilerPass implements CompilerPassInterface
 {
     const TAG = 'oro_shipping_method_provider';
-    const SERVICE = 'orob2b_shipping.shipping_method.registry';
+    const SERVICE = 'oro_shipping.shipping_method.registry';
 
     /**
      * {@inheritDoc}
