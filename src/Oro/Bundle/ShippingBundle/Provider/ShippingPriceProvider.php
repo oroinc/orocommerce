@@ -50,7 +50,10 @@ class ShippingPriceProvider
             if (count($methodConfigs) > 0) {
                 /** @var ShippingRuleMethodConfig $methodConfig */
                 foreach ($methodConfigs as $methodConfig) {
-                    $prices[$methodConfig->getMethod()] = $this->fillMethodData($context, $methodConfig);
+                    $methodData = $this->fillMethodData($context, $methodConfig);
+                    if ($methodData !== null) {
+                        $prices[$methodConfig->getMethod()] = $this->fillMethodData($context, $methodConfig);
+                    }
                 }
             }
         }

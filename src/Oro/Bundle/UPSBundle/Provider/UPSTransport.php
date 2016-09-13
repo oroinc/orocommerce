@@ -4,7 +4,6 @@ namespace Oro\Bundle\UPSBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\IntegrationBundle\Entity\Channel as Integration;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Exception\InvalidConfigurationException;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
@@ -99,6 +98,9 @@ class UPSTransport extends AbstractRestTransport
 
             $json = $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
             $priceResponse = new PriceResponse();
+            if (!is_string($json)) {
+                return null;
+            }
             $priceResponse->parseJSON($json);
 
             return $priceResponse;

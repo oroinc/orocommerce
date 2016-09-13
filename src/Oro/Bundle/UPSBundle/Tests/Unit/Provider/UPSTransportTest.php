@@ -128,6 +128,6 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             ->willReturn($restResponse);
 
         //TODO: add test assertions
-        $this->transport->getPrices($rateRequest);
+        $this->transport->getPrices($rateRequest, $transportEntity);
     }
 }

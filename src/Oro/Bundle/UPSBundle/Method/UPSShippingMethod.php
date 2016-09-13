@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\UPSBundle\Method\UPS;
+namespace Oro\Bundle\UPSBundle\Method;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -24,14 +24,19 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
     /** @var Channel */
     protected $channel;
 
+    /** @var ManagerRegistry */
+    protected $registry;
+
     /**
      * @param UPSTransportProvider $transportProvider
      * @param Channel $channel
+     * @param ManagerRegistry $registry
      */
-    public function __construct(UPSTransportProvider $transportProvider, Channel $channel)
+    public function __construct(UPSTransportProvider $transportProvider, Channel $channel, ManagerRegistry $registry)
     {
         $this->transportProvider = $transportProvider;
         $this->channel = $channel;
+        $this->registry = $registry;
     }
 
     /**
@@ -39,7 +44,7 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
      */
     public function isGrouped()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -59,11 +64,28 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
     }
 
     /**
-     * @return ShippingMethodTypeInterface[]|null
+     * @return ShippingMethodTypeInterface[]|array
      */
     public function getTypes()
     {
-        return $this->getApplicableMethodTypes();
+        $types = [];
+
+        /** @var UPSTransport $transport */
+        $transport = $this->channel->getTransport();
+        /** @var ShippingService[] $shippingServices */
+        $shippingServices = $transport->getApplicableShippingServices();
+        if (count($shippingServices) > 0) {
+            foreach ($shippingServices as $shippingService) {
+                $types[] = new UPSShippingMethodType(
+                    $transport,
+                    $this->transportProvider,
+                    $shippingService,
+                    $this->registry
+                );
+            }
+        }
+
+        return $types;
     }
 
     /**
@@ -72,7 +94,7 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
      */
     public function getType($identifier)
     {
-        $methodTypes = $this->getApplicableMethodTypes();
+        $methodTypes = $this->getTypes();
         if ($methodTypes !== null) {
             foreach ($methodTypes as $methodType) {
                 if ($methodType->getIdentifier() === $identifier) {
@@ -101,33 +123,19 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
     }
 
     /**
-     * @param ShippingContextInterface $context
-     * @param array $methodOptions
-     * @param array $optionsByTypes
-     * @return array
+     * {@inheritdoc}
      */
     public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes)
     {
-        // TODO: Implement calculatePrices() method.
-    }
+        $prices = [];
 
-    /**
-     * @return ShippingMethodTypeInterface[]|null
-     */
-    protected function getApplicableMethodTypes()
-    {
-        $types = null;
-
-        /** @var UPSTransport $transport */
-        $transport = $this->channel->getTransport();
-        /** @var ShippingService[] $shippingServices */
-        $shippingServices = $transport->getApplicableShippingServices();
-        if (count($shippingServices) > 0) {
-            foreach ($shippingServices as $shippingService) {
-                $types[] = new UPSShippingMethodType($transport, $this->transportProvider, $shippingService);
+        $types = $this->getTypes();
+        if (!empty($types)) {
+            foreach ($types as $type) {
+                $prices[$type->getIdentifier()] = $type->calculatePrice($context, $methodOptions, $optionsByTypes);
             }
         }
 
-        return $types;
+        return $prices;
     }
 }

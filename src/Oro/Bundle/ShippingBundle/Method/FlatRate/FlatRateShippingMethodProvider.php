@@ -6,14 +6,9 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 class FlatRateShippingMethodProvider implements ShippingMethodProviderInterface
 {
-    /**
-     * @var FlatRateShippingMethod
-     */
+    /** @var FlatRateShippingMethod */
     protected $method;
 
-    /**
-     * FlatRateMethodProvider construct
-     */
     public function __construct()
     {
         $this->method = new FlatRateShippingMethod();

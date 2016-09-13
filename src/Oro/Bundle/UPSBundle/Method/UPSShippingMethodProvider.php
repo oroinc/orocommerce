@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\UPSBundle\Method;
 
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
-use Oro\Bundle\UPSBundle\Method\UPS\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Provider\ChannelType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
+
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class UPSShippingMethodProvider implements ShippingMethodProviderInterface
@@ -47,9 +48,10 @@ class UPSShippingMethodProvider implements ShippingMethodProviderInterface
                     'type' => ChannelType::TYPE,
                 ]);
             $this->methods = [];
+            /** @var Channel $channel */
             foreach ($channels as $channel) {
                 if ($channel->isEnabled()) {
-                    $method = new UPSShippingMethod($this->transportProvider, $channel);
+                    $method = new UPSShippingMethod($this->transportProvider, $channel, $this->doctrine);
                     $this->methods[$method->getIdentifier()] = $method;
                 }
             }
@@ -66,6 +68,7 @@ class UPSShippingMethodProvider implements ShippingMethodProviderInterface
         if ($this->hasShippingMethod($name)) {
             return $this->getShippingMethods()[$name];
         }
+
         return null;
     }
 
