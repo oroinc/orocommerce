@@ -203,6 +203,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $this->getSession()->getPage()->clickLink('Back');
         $this->waitForAjax();
         $checkoutStep->assertTitle('Shipping Information');
+        $this->waitForAjax();
 
         /** @var Form $form */
         $form = $this->createElement('Address');
