@@ -69,11 +69,9 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
             ->getDefaultWebsite()
             ->getId();
 
-        $alias = 'oro_product_' . $websiteId;
         $query = new Query();
-        $query->from($alias);
-
-        $query->getCriteria()->orderBy(['id' => 'ASC']);
+        $query->from('oro_product_' . $websiteId);
+        $query->getCriteria()->orderBy(['id' => Query::ORDER_ASC]);
 
         $searchReferenceRepository = $this->getSearchReferenceRepository();
 
