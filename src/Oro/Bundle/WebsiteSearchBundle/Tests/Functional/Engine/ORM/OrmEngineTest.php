@@ -197,6 +197,7 @@ class OrmEngineTest extends WebTestCase
     {
         $query = new Query();
         $query->from('*');
+        $query->getCriteria()->orderBy(['stringValue_1' => Query::ORDER_ASC]);
 
         $expectedResult = new Result(
             $query,
@@ -297,6 +298,7 @@ class OrmEngineTest extends WebTestCase
         $query = new Query();
         $query->from('oro_test_item_WEBSITE_ID');
         $query->select('stringValue_1');
+        $query->getCriteria()->orderBy(['stringValue_1' => Query::ORDER_ASC]);
 
         $expectedResult = new Result(
             $query,
@@ -411,6 +413,7 @@ class OrmEngineTest extends WebTestCase
     {
         $query = new Query();
         $query->from('oro_test_item_WEBSITE_ID');
+
         $expr = new Comparison("integer.integerValue", "=", 5000);
         $criteria = new Criteria();
         $criteria->where($expr);
