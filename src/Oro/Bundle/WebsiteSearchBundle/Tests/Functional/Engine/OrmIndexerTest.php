@@ -28,6 +28,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
 /**
  * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class OrmIndexerTest extends WebTestCase
 {
