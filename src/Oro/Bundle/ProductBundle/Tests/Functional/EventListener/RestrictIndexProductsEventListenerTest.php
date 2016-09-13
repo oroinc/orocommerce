@@ -40,13 +40,14 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
         $query->from('oro_product_product_WEBSITE_ID');
         $query->select('recordTitle');
         $result = $searchEngine->search($query);
-        $this->assertEquals(6, $result->getRecordsCount());
         $values = $result->getElements();
-        $this->assertEquals($this->getReference('product.1'), $values[0]->getEntity());
-        $this->assertEquals($this->getReference('product.2'), $values[1]->getEntity());
-        $this->assertEquals($this->getReference('product.3'), $values[2]->getEntity());
-        $this->assertEquals($this->getReference('product.6'), $values[3]->getEntity());
-        $this->assertEquals($this->getReference('product.7'), $values[4]->getEntity());
-        $this->assertEquals($this->getReference('product.8'), $values[5]->getEntity());
+
+        $this->assertEquals(6, $result->getRecordsCount());
+        $this->assertEquals('product.1', $values[0]->getRecordTitle());
+        $this->assertEquals('product.2', $values[1]->getRecordTitle());
+        $this->assertEquals('product.3', $values[2]->getRecordTitle());
+        $this->assertEquals('product.6', $values[3]->getRecordTitle());
+        $this->assertEquals('product.7', $values[4]->getRecordTitle());
+        $this->assertEquals('product.8', $values[5]->getRecordTitle());
     }
 }

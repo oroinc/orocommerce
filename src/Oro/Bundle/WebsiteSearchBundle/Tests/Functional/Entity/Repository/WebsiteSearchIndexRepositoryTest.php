@@ -40,7 +40,7 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
 
     private function skipIfEngineIsNotOrm()
     {
-        if ($this->getContainer()->getParameter('oro_search.engine') != 'orm') {
+        if ($this->getContainer()->getParameter('oro_search.engine') !== 'orm') {
             $this->markTestSkipped('Should be tested only with ORM search engine');
         }
     }
@@ -73,6 +73,8 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
         $query = new Query();
         $query->from($alias);
 
+        $query->getCriteria()->orderBy(['id' => 'ASC']);
+
         $searchReferenceRepository = $this->getSearchReferenceRepository();
 
         $goodProductReference = $searchReferenceRepository->getReference(
@@ -86,9 +88,11 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
         $expectedProducts = [
             [
                 'item' => $this->convertItemToArray($goodProductReference),
+                'value' => null
             ],
             [
                 'item' => $this->convertItemToArray($betterProductReference),
+                'value' => null
             ]
         ];
 
