@@ -30,12 +30,12 @@ trait MessageQueueTrait
     {
         $this->sendScheduledMessages();
 
-        return array_filter(
+        return array_values(array_filter(
             $this->getMessageProducer()->getSentMessages(),
             function (array $trace) {
                 return $this->topic === $trace['topic'];
             }
-        );
+        ));
     }
 
     protected function sendScheduledMessages()

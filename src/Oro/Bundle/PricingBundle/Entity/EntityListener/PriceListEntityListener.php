@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Handler\AffectedPriceListsHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 
@@ -26,21 +27,29 @@ class PriceListEntityListener
     /**
      * @var PriceListTriggerHandler
      */
-    protected $priceRuleChangeTriggerHandler;
+    protected $priceListTriggerHandler;
+
+    /**
+     * @var AffectedPriceListsHandler
+     */
+    protected $affectedPriceListsHandler;
 
     /**
      * @param PriceListRelationTriggerHandler $triggerHandler
      * @param Cache $cache
-     * @param PriceListTriggerHandler $priceRuleChangeTriggerHandler
+     * @param PriceListTriggerHandler $priceListTriggerHandler
+     * @param AffectedPriceListsHandler $affectedPriceListsHandler
      */
     public function __construct(
         PriceListRelationTriggerHandler $triggerHandler,
         Cache $cache,
-        PriceListTriggerHandler $priceRuleChangeTriggerHandler
+        PriceListTriggerHandler $priceListTriggerHandler,
+        AffectedPriceListsHandler $affectedPriceListsHandler
     ) {
         $this->triggerHandler = $triggerHandler;
         $this->cache = $cache;
-        $this->priceRuleChangeTriggerHandler = $priceRuleChangeTriggerHandler;
+        $this->priceListTriggerHandler = $priceListTriggerHandler;
+        $this->affectedPriceListsHandler = $affectedPriceListsHandler;
     }
 
     /**
@@ -54,7 +63,13 @@ class PriceListEntityListener
         if ($event->hasChangedField(self::FIELD_PRODUCT_ASSIGNMENT_RULES)) {
             $this->clearCache($priceList);
             $priceList->setActual(false);
-            $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
+            $this->priceListTriggerHandler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
+            
+            $this->affectedPriceListsHandler->recalculateByPriceList(
+                $priceList,
+                AffectedPriceListsHandler::FIELD_PRODUCT_ASSIGNMENT_RULES,
+                false
+            );
         }
     }
 
@@ -76,7 +91,13 @@ class PriceListEntityListener
     {
         if ($priceList->getProductAssignmentRule()) {
             $priceList->setActual(false);
-            $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
+            $this->priceListTriggerHandler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
+
+            $this->affectedPriceListsHandler->recalculateByPriceList(
+                $priceList,
+                AffectedPriceListsHandler::FIELD_PRODUCT_ASSIGNMENT_RULES,
+                false
+            );
         }
     }
 

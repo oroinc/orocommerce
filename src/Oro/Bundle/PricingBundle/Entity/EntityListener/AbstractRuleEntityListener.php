@@ -16,7 +16,7 @@ abstract class AbstractRuleEntityListener
     /**
      * @var PriceListTriggerHandler
      */
-    protected $priceRuleChangeTriggerHandler;
+    protected $priceListTriggerHandler;
 
     /**
      * @var PriceRuleFieldsProvider
@@ -29,16 +29,16 @@ abstract class AbstractRuleEntityListener
     protected $registry;
 
     /**
-     * @param PriceListTriggerHandler $priceRuleChangeTriggerHandler
+     * @param PriceListTriggerHandler $priceListTriggerHandler
      * @param PriceRuleFieldsProvider $fieldsProvider
      * @param RegistryInterface $registry
      */
     public function __construct(
-        PriceListTriggerHandler $priceRuleChangeTriggerHandler,
+        PriceListTriggerHandler $priceListTriggerHandler,
         PriceRuleFieldsProvider $fieldsProvider,
         RegistryInterface $registry
     ) {
-        $this->priceRuleChangeTriggerHandler = $priceRuleChangeTriggerHandler;
+        $this->priceListTriggerHandler = $priceListTriggerHandler;
         $this->fieldsProvider = $fieldsProvider;
         $this->registry = $registry;
     }
@@ -61,7 +61,7 @@ abstract class AbstractRuleEntityListener
             $priceLists[$priceList->getId()] = $priceList;
         }
 
-        $this->priceRuleChangeTriggerHandler->addTriggersForPriceLists(Topics::CALCULATE_RULE, $priceLists, $product);
+        $this->priceListTriggerHandler->addTriggersForPriceLists(Topics::CALCULATE_RULE, $priceLists, $product);
         $this->updatePriceListActuality($priceLists);
     }
 

@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
+use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
@@ -15,6 +16,8 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
  */
 class PriceListProductEntityListenerTest extends WebTestCase
 {
+    use MessageQueueTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -22,48 +25,115 @@ class PriceListProductEntityListenerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            LoadProductPrices::class
+            LoadProductPrices::class,
+            LoadPriceRuleLexemes::class
         ]);
+
+        $this->topic = Topics::CALCULATE_RULE;
+
+        $this->cleanQueueMessageTraces();
+    }
+
+    public function testPostPersist()
+    {
+        $priceListToProduct = new PriceListToProduct();
+        $product = $this->getReference(LoadProductData::PRODUCT_8);
+        $priceListToProduct->setProduct($product);
+        $priceListToProduct->setPriceList($this->getReference(LoadPriceLists::PRICE_LIST_1));
+
+        $em = $this->getContainer()->get('doctrine')
+            ->getManagerForClass(PriceListToProduct::class);
+
+        $em->persist($priceListToProduct);
+        $em->flush();
+
+        $traces = $this->getQueueMessageTraces();
+        $this->assertCount(1, $traces);
+
+        $trace = $traces[0];
+        $productId = $this->getProductIdFromTrace($trace);
+        $this->assertNotEmpty($productId);
+        $this->assertEquals($product->getId(), $productId);
+
+        /** @var PriceList $expectedPriceList */
+        $expectedAffectedPriceList = $this->getReference(LoadPriceLists::PRICE_LIST_2);
+        $this->assertEquals($expectedAffectedPriceList->getId(), $this->getPriceListIdFromTrace($trace));
+
+        // Delete created entity
+        $em->remove($priceListToProduct);
+        $em->flush();
+    }
+
+    public function testPreUpdate()
+    {
+        // Create PriceListToProduct
+        $priceListToProduct = new PriceListToProduct();
+        $product = $this->getReference(LoadProductData::PRODUCT_7);
+        $priceListToProduct->setProduct($product);
+        $priceListToProduct->setPriceList($this->getReference(LoadPriceLists::PRICE_LIST_1));
+
+        $em = $this->getContainer()->get('doctrine')
+            ->getManagerForClass(PriceListToProduct::class);
+
+        $em->persist($priceListToProduct);
+        $em->flush();
+
+        $this->cleanQueueMessageTraces();
+
+        // Edit PriceListToProduct
+        $changedProduct = $this->getReference(LoadProductData::PRODUCT_6);
+        $priceListToProduct->setProduct($changedProduct);
+
+        $em->persist($priceListToProduct);
+        $em->flush();
+
+        $traces = $this->getQueueMessageTraces();
+        $this->assertCount(1, $traces);
+
+        $trace = $traces[0];
+        $productId = $this->getProductIdFromTrace($trace);
+        $this->assertNotEmpty($productId);
+        $this->assertEquals($changedProduct->getId(), $productId);
+
+        /** @var PriceList $expectedPriceList */
+        $expectedAffectedPriceList = $this->getReference(LoadPriceLists::PRICE_LIST_2);
+        $this->assertEquals($expectedAffectedPriceList->getId(), $this->getPriceListIdFromTrace($trace));
+
+        // Delete created entity
+        $em->remove($priceListToProduct);
+        $em->flush();
     }
 
     public function testPostRemove()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroPricingBundle:PriceListToProduct');
+        // Create PriceListToProduct
+        $priceListToProduct = new PriceListToProduct();
+        $product = $this->getReference(LoadProductData::PRODUCT_7);
+        $priceListToProduct->setProduct($product);
+        $priceListToProduct->setPriceList($this->getReference(LoadPriceLists::PRICE_LIST_1));
 
-        /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
-        $priceListToProduct = $em->getRepository('OroPricingBundle:PriceListToProduct')
-            ->findOneBy([
-                'product' => $product,
-                'priceList' => $priceList
-            ]);
+        $em = $this->getContainer()->get('doctrine')
+            ->getManagerForClass(PriceListToProduct::class);
 
-        // Check prices for this relation
-        $this->assertPricesCount($priceList, $product, 4);
+        $em->persist($priceListToProduct);
+        $em->flush();
 
+        $this->cleanQueueMessageTraces();
+
+        // Remove created PriceListToProduct
         $em->remove($priceListToProduct);
         $em->flush();
 
-        // Check all prices for this relation deleted
-        $this->assertPricesCount($priceList, $product, 0);
-    }
+        $traces = $this->getQueueMessageTraces();
+        $this->assertCount(1, $traces);
 
-    /**
-     * @param PriceList $priceList
-     * @param Product $product
-     * @param int $priceCount
-     */
-    protected function assertPricesCount(PriceList $priceList, Product $product, $priceCount)
-    {
-        $prices = $this->getContainer()->get('doctrine')->getManagerForClass('OroPricingBundle:ProductPrice')
-            ->getRepository('OroPricingBundle:ProductPrice')
-            ->findBy([
-                'priceList' => $priceList,
-                'product' => $product
-            ]);
+        $trace = $traces[0];
+        $productId = $this->getProductIdFromTrace($trace);
+        $this->assertNotEmpty($productId);
+        $this->assertEquals($product->getId(), $productId);
 
-        $this->assertCount($priceCount, $prices);
+        /** @var PriceList $expectedPriceList */
+        $expectedAffectedPriceList = $this->getReference(LoadPriceLists::PRICE_LIST_2);
+        $this->assertEquals($expectedAffectedPriceList->getId(), $this->getPriceListIdFromTrace($trace));
     }
 }

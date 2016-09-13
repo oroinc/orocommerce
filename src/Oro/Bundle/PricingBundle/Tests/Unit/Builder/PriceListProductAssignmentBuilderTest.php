@@ -14,6 +14,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\BasePriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
+use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,6 +35,11 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
     protected $ruleCompiler;
 
     /**
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $eventDispatcher;
+
+    /**
      * @var PriceListProductAssignmentBuilder
      */
     protected $priceListProductAssignmentBuilder;
@@ -46,10 +53,13 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
         $this->ruleCompiler = $this->getMockBuilder(ProductAssignmentRuleCompiler::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
+
         $this->priceListProductAssignmentBuilder = new PriceListProductAssignmentBuilder(
             $this->registry,
             $this->insertFromSelectQueryExecutor,
-            $this->ruleCompiler
+            $this->ruleCompiler,
+            $this->eventDispatcher
         );
     }
 
@@ -97,6 +107,12 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
                 $fields,
                 $qb
             );
+
+        $event = new AssignmentBuilderBuildEvent();
+        $event->setPriceList($priceList);
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(AssignmentBuilderBuildEvent::NAME, $event);
 
         $this->priceListProductAssignmentBuilder->buildByPriceList($priceList);
     }

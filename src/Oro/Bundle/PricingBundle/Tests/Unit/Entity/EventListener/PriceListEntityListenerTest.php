@@ -7,6 +7,7 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListEntityListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Handler\AffectedPriceListsHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -28,7 +29,12 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var PriceListTriggerHandler|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $priceRuleChangeTriggerHandler;
+    protected $priceListTriggerHandler;
+
+    /**
+     * @var AffectedPriceListsHandler|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $affectedPriceListsHandler;
 
     /**
      * @var PriceListEntityListener
@@ -41,13 +47,18 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->cache = $this->getMock(Cache::class);
-        $this->priceRuleChangeTriggerHandler = $this->getMockBuilder(PriceListTriggerHandler::class)
+        $this->priceListTriggerHandler = $this->getMockBuilder(PriceListTriggerHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->affectedPriceListsHandler = $this->getMockBuilder(AffectedPriceListsHandler::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->listener = new PriceListEntityListener(
             $this->triggerHandler,
             $this->cache,
-            $this->priceRuleChangeTriggerHandler
+            $this->priceListTriggerHandler,
+            $this->affectedPriceListsHandler
         );
     }
 
@@ -58,7 +69,7 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->cache->expects($this->once())
             ->method('delete')
             ->with('ar_42');
-        $this->priceRuleChangeTriggerHandler->expects($this->once())
+        $this->priceListTriggerHandler->expects($this->once())
             ->method('addTriggersForPriceList')
             ->with(Topics::CALCULATE_RULE, $priceList);
 
@@ -70,6 +81,11 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('hasChangedField')
             ->with('productAssignmentRule')
             ->willReturn(true);
+
+        $this->affectedPriceListsHandler->expects($this->once())
+            ->method('recalculateByPriceList')
+            ->with($priceList, AffectedPriceListsHandler::FIELD_PRODUCT_ASSIGNMENT_RULES, false);
+        
         $this->listener->preUpdate($priceList, $event);
         $this->assertFalse($priceList->isActual());
     }
@@ -80,7 +96,7 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
         $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
         $this->cache->expects($this->never())
             ->method('delete');
-        $this->priceRuleChangeTriggerHandler->expects($this->never())
+        $this->priceListTriggerHandler->expects($this->never())
             ->method('addTriggersForPriceList');
 
         /** @var PreUpdateEventArgs|\PHPUnit_Framework_MockObject_MockObject $event */
@@ -100,8 +116,13 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
         $priceList->setProductAssignmentRule('product.id == 1');
-        $this->priceRuleChangeTriggerHandler->expects($this->once())
+        $this->priceListTriggerHandler->expects($this->once())
             ->method('addTriggersForPriceList');
+
+        $this->affectedPriceListsHandler->expects($this->once())
+            ->method('recalculateByPriceList')
+            ->with($priceList, AffectedPriceListsHandler::FIELD_PRODUCT_ASSIGNMENT_RULES, false);
+
         $this->listener->prePersist($priceList);
         $this->assertFalse($priceList->isActual());
     }
@@ -110,7 +131,7 @@ class PriceListEntityListenerTest extends \PHPUnit_Framework_TestCase
     {
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
-        $this->priceRuleChangeTriggerHandler->expects($this->never())
+        $this->priceListTriggerHandler->expects($this->never())
             ->method('addTriggersForPriceList');
         $this->listener->prePersist($priceList);
         $this->assertTrue($priceList->isActual());

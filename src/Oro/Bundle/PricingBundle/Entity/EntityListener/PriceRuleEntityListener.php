@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\Handler\AffectedPriceListsHandler;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 
 class PriceRuleEntityListener
@@ -17,16 +18,26 @@ class PriceRuleEntityListener
     /**
      * @var PriceListTriggerHandler
      */
-    protected $priceRuleChangeTriggerHandler;
+    protected $priceListTriggerHandler;
+
+    /**
+     * @var AffectedPriceListsHandler
+     */
+    protected $affectedPriceListsHandler;
 
     /**
      * @param Cache $cache
      * @param PriceListTriggerHandler $priceRuleChangeTriggerHandler
+     * @param AffectedPriceListsHandler $affectedPriceListsHandler
      */
-    public function __construct(Cache $cache, PriceListTriggerHandler $priceRuleChangeTriggerHandler)
-    {
+    public function __construct(
+        Cache $cache,
+        PriceListTriggerHandler $priceRuleChangeTriggerHandler,
+        AffectedPriceListsHandler $affectedPriceListsHandler
+    ) {
         $this->cache = $cache;
-        $this->priceRuleChangeTriggerHandler = $priceRuleChangeTriggerHandler;
+        $this->priceListTriggerHandler = $priceRuleChangeTriggerHandler;
+        $this->affectedPriceListsHandler = $affectedPriceListsHandler;
     }
 
     /**
@@ -37,9 +48,14 @@ class PriceRuleEntityListener
     public function postPersist(PriceRule $priceRule)
     {
         $priceRule->getPriceList()->setActual(false);
-        $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(
-            Topics::CALCULATE_RULE,
-            $priceRule->getPriceList()
+        $priceList = $priceRule->getPriceList();
+
+        $this->priceListTriggerHandler->addTriggersForPriceList(Topics::CALCULATE_RULE, $priceList);
+
+        $this->affectedPriceListsHandler->recalculateByPriceList(
+            $priceList,
+            AffectedPriceListsHandler::FIELD_PRODUCT_ASSIGNMENT_RULES,
+            true
         );
     }
 
@@ -52,9 +68,17 @@ class PriceRuleEntityListener
     {
         $priceRule->getPriceList()->setActual(false);
         $this->clearCache($priceRule);
-        $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(
+        $priceList = $priceRule->getPriceList();
+
+        $this->priceListTriggerHandler->addTriggersForPriceList(
             Topics::CALCULATE_RULE,
-            $priceRule->getPriceList()
+            $priceList
+        );
+
+        $this->affectedPriceListsHandler->recalculateByPriceList(
+            $priceList,
+            AffectedPriceListsHandler::FIELD_PRODUCT_ASSIGNMENT_RULES,
+            true
         );
     }
 
@@ -67,9 +91,17 @@ class PriceRuleEntityListener
     {
         $priceRule->getPriceList()->setActual(false);
         $this->clearCache($priceRule);
-        $this->priceRuleChangeTriggerHandler->addTriggersForPriceList(
+        $priceList = $priceRule->getPriceList();
+        
+        $this->priceListTriggerHandler->addTriggersForPriceList(
             Topics::CALCULATE_RULE,
-            $priceRule->getPriceList()
+            $priceList
+        );
+
+        $this->affectedPriceListsHandler->recalculateByPriceList(
+            $priceList,
+            AffectedPriceListsHandler::FIELD_PRODUCT_ASSIGNMENT_RULES,
+            true
         );
     }
 

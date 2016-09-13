@@ -2,49 +2,39 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Event\LifecycleEventArgs;
-
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 
-class PriceListProductEntityListener
+class PriceListProductEntityListener extends AbstractRuleEntityListener
 {
     /**
-     * @var RegistryInterface
+     * @param PriceListToProduct $priceListToProduct
      */
-    protected $registry;
-
-    /**
-     * @param RegistryInterface $registry
-     */
-    public function __construct(RegistryInterface $registry)
+    public function preRemove(PriceListToProduct $priceListToProduct)
     {
-        $this->registry = $registry;
+        $this->recalculateByEntity($priceListToProduct->getProduct(), $priceListToProduct->getPriceList()->getId());
+    }
+    /**
+     * @param PriceListToProduct $priceListToProduct
+     */
+    public function postPersist(PriceListToProduct $priceListToProduct)
+    {
+        $this->recalculateByEntity($priceListToProduct->getProduct(), $priceListToProduct->getPriceList()->getId());
+    }
+    /**
+     * @param PriceListToProduct $priceListToProduct
+     */
+    public function preUpdate(PriceListToProduct $priceListToProduct)
+    {
+        $this->recalculateByEntity($priceListToProduct->getProduct(), $priceListToProduct->getPriceList()->getId());
     }
 
     /**
-     * @param PriceListToProduct $priceListToProduct
-     * @param LifecycleEventArgs $args
+     * {@inheritdoc}
      */
-    public function postRemove(PriceListToProduct $priceListToProduct, LifecycleEventArgs $args)
+    protected function getEntityClassName()
     {
-        $priceList = $priceListToProduct->getPriceList();
-        $product = $priceListToProduct->getProduct();
-
-        /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass('OroPricingBundle:ProductPrice');
-        $prices = $em->getRepository('OroPricingBundle:ProductPrice')
-            ->findBy([
-                'priceList' => $priceList,
-                'product' => $product
-            ]);
-
-        foreach ($prices as $price) {
-            $em->remove($price);
-        }
-
-        $em->flush();
+        return ProductPrice::class;
     }
 }

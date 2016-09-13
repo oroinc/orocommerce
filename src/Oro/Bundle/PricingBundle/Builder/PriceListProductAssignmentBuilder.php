@@ -9,6 +9,8 @@ use Oro\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PriceListProductAssignmentBuilder
 {
@@ -28,18 +30,26 @@ class PriceListProductAssignmentBuilder
     protected $ruleCompiler;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * @param ManagerRegistry $registry
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      * @param ProductAssignmentRuleCompiler $ruleCompiler
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         ManagerRegistry $registry,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
-        ProductAssignmentRuleCompiler $ruleCompiler
+        ProductAssignmentRuleCompiler $ruleCompiler,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->registry = $registry;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
         $this->ruleCompiler = $ruleCompiler;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -58,6 +68,10 @@ class PriceListProductAssignmentBuilder
         $this->registry->getManagerForClass(ProductPrice::class)
             ->getRepository(ProductPrice::class)
             ->deleteInvalidPrices($priceList);
+
+        $event = new AssignmentBuilderBuildEvent();
+        $event->setPriceList($priceList);
+        $this->eventDispatcher->dispatch(AssignmentBuilderBuildEvent::NAME, $event);
     }
 
     /**
