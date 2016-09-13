@@ -742,6 +742,11 @@ workflows:
                                 is_ajax: true
                                 expected_key: _wid
                                 expected_value: ajax_checkout
+                        - '@not':
+                            - '@check_request':
+                                is_ajax: true
+                                expected_key: transition
+                                expected_value: continue_to_order_review
 
             place_order_definition:
                 preactions:
