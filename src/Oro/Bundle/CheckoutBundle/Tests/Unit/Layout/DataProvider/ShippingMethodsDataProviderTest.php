@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Tests\Unit\Layout\DataProvider;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;

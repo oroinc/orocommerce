@@ -36,7 +36,6 @@ class UPSShippingMethodOptionsType extends AbstractType
             'scale' => $this->roundingService->getPrecision(),
             'rounding_mode' => $this->roundingService->getRoundType(),
             'attr' => ['data-scale' => $this->roundingService->getPrecision()],
-            'constraints' => [new Type(['type' => 'numeric'])],
         ]);
     }
 
