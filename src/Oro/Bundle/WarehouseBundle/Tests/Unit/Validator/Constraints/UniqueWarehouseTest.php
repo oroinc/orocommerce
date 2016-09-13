@@ -9,18 +9,13 @@ use Oro\Bundle\WarehouseBundle\Validator\Constraints\UniqueWarehouse;
 class UniqueWarehouseTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var |\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $options;
-
-    /**
      * @var UniqueWarehouse
      */
     protected $uniqueWarehouse;
 
     protected function setUp()
     {
-        $this->uniqueWarehouse = new UniqueWarehouse($this->options);
+        $this->uniqueWarehouse = new UniqueWarehouse();
     }
 
     public function testGetTargets()

@@ -16,7 +16,7 @@ class WarehouseConfigConverter
     protected $doctrineHelper;
 
     /** @var EntityRepository|null */
-    protected $repositoryForWarehouse;
+    protected $warehouseRepository;
 
     /** @var string */
     protected $warehouseClass;
@@ -34,8 +34,7 @@ class WarehouseConfigConverter
     public function convertBeforeSave(array $configs)
     {
         return array_map(
-            function ($config) {
-                /** @var WarehouseConfig $config */
+            function (WarehouseConfig $config) {
                 return [
                     self::WAREHOUSE_KEY => $config->getWarehouse()->getId(),
                     self::PRIORITY_KEY => $config->getPriority(),
@@ -68,10 +67,8 @@ class WarehouseConfigConverter
 
             usort(
                 $result,
-                function ($a, $b) {
-                    /** @var WarehouseConfig $a */
-                    /** @var WarehouseConfig $b */
-                    return ($a->getPriority() > $b->getPriority()) ? 1 : -1;
+                function (WarehouseConfig $firstWarehouse, WarehouseConfig $secondWarehouse) {
+                    return ($firstWarehouse->getPriority() > $secondWarehouse->getPriority()) ? 1 : -1;
                 }
             );
         }
@@ -81,10 +78,10 @@ class WarehouseConfigConverter
 
     /**
      * @param array $config
-     * @param Warehouse[] $warehouses
+     * @param array|Warehouse[] $warehouses
      * @return WarehouseConfig
      */
-    protected function createWarehouseConfig(array $config, $warehouses)
+    protected function createWarehouseConfig(array $config, array $warehouses)
     {
         foreach ($warehouses as $warehouse) {
             if ($config[self::WAREHOUSE_KEY] === $warehouse->getId()) {
@@ -101,10 +98,10 @@ class WarehouseConfigConverter
      */
     protected function getRepositoryForWarehouse()
     {
-        if (!$this->repositoryForWarehouse) {
-            $this->repositoryForWarehouse = $this->doctrineHelper->getEntityRepository($this->warehouseClass);
+        if (!$this->warehouseRepository) {
+            $this->warehouseRepository = $this->doctrineHelper->getEntityRepository($this->warehouseClass);
         }
 
-        return $this->repositoryForWarehouse;
+        return $this->warehouseRepository;
     }
 }

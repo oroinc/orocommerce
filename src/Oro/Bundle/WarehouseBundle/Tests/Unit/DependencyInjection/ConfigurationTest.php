@@ -20,7 +20,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     public function testProcessConfiguration()
     {
         $configuration = new Configuration();
-        $processor     = new Processor();
+        $processor = new Processor();
 
         $expected = [
             'settings' => [

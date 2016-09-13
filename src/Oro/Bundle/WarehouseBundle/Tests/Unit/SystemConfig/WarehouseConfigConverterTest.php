@@ -18,7 +18,7 @@ class WarehouseConfigConverterTest extends \PHPUnit_Framework_TestCase
     protected $doctrineHelper;
 
     /**
-     * @var |\PHPUnit_Framework_MockObject_MockObject
+     * @var string
      */
     protected $warehouseClass;
 
@@ -62,8 +62,8 @@ class WarehouseConfigConverterTest extends \PHPUnit_Framework_TestCase
         /** @var Warehouse $warehouse2 */
         $warehouse2 = $this->getEntity(Warehouse::class, ['id' => 2]);
         $expected = [
-            new WarehouseConfig($warehouse2, 200),
             new WarehouseConfig($warehouse1, 100),
+            new WarehouseConfig($warehouse2, 200),
         ];
         $testData = [
             ['warehouse' => 1, 'priority' => 100],
@@ -103,7 +103,8 @@ class WarehouseConfigConverterTest extends \PHPUnit_Framework_TestCase
      */
     protected function mockFindById(array $ids, array $warehouses)
     {
-        $repository = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectRepository')
+        $repository = $this
+            ->getMockBuilder('\Doctrine\Common\Persistence\ObjectRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $this

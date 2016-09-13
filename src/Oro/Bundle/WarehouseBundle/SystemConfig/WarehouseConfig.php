@@ -6,14 +6,10 @@ use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class WarehouseConfig
 {
-    /**
-     * @var Warehouse
-     */
+    /** @var Warehouse */
     protected $warehouse;
 
-    /**
-     * @var int
-     */
+    /** @var int|null */
     protected $priority;
 
     /**
