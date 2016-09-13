@@ -78,7 +78,7 @@ class WarehouseSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
 
     public function testBeforeSaveEmptySettings()
     {
-        $this->event->expects($this->once())->method('getSettings')->willReturn(null);
+        $this->event->expects($this->once())->method('getSettings')->willReturn([]);
         $this->event->expects($this->never())->method('setSettings');
 
         $this->warehouseSystemConfigSubscriber->beforeSave($this->event);
