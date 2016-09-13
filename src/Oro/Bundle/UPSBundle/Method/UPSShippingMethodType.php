@@ -198,12 +198,12 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
                     foreach ($productsParams as $productsParam) {
                         if (($weight + $productsParam['weight']) >= self::MAX_PACKAG_WEIGHT) {
                             $packages[] = Package::create(
-                                $dimensionUnit,
-                                $dimensionHeight,
-                                $dimensionWidth,
-                                $dimensionLength,
-                                $weightUnit,
-                                $weight
+                                (string)$dimensionUnit,
+                                (string)$dimensionHeight,
+                                (string)$dimensionWidth,
+                                (string)$dimensionLength,
+                                (string)$weightUnit,
+                                (string)$weight
                             );
 
                             $weight = 0;
@@ -220,12 +220,12 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
 
                     if ($weight > 0) {
                         $packages[] = Package::create(
-                            $dimensionUnit,
-                            $dimensionHeight,
-                            $dimensionWidth,
-                            $dimensionLength,
-                            $weightUnit,
-                            $weight
+                            (string)$dimensionUnit,
+                            (string)$dimensionHeight,
+                            (string)$dimensionWidth,
+                            (string)$dimensionLength,
+                            (string)$weightUnit,
+                            (string)$weight
                         );
                     }
                 }

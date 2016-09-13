@@ -21,6 +21,7 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodConfigType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodTypeConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
+use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodProvider;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
@@ -80,8 +81,8 @@ class RuleMethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCa
 
     public function testPreSet()
     {
-        $flatRate = new FlatRateShippingMethod();
-        $this->methodRegistry->addShippingMethod($flatRate);
+        $flatRate = new FlatRateShippingMethodProvider();
+        $this->methodRegistry->addProvider($flatRate);
         $form = $this->factory->create(ShippingRuleType::class);
         $shippingRule = new ShippingRule();
         $methodConfig = new ShippingRuleMethodConfig();
@@ -108,8 +109,8 @@ class RuleMethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCa
 
     public function testPreSetWithData()
     {
-        $flatRate = new FlatRateShippingMethod();
-        $this->methodRegistry->addShippingMethod($flatRate);
+        $flatRate = new FlatRateShippingMethodProvider();
+        $this->methodRegistry->addProvider($flatRate);
         $form = $this->factory->create(ShippingRuleType::class);
         $shippingRule = new ShippingRule();
         $methodConfig = new ShippingRuleMethodConfig();
@@ -134,8 +135,8 @@ class RuleMethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCa
 
     public function testPreSubmitWithData()
     {
-        $flatRate = new FlatRateShippingMethod();
-        $this->methodRegistry->addShippingMethod($flatRate);
+        $flatRate = new FlatRateShippingMethodProvider();
+        $this->methodRegistry->addProvider($flatRate);
         $form = $this->factory->create(ShippingRuleType::class);
         $shippingRule = new ShippingRule();
 

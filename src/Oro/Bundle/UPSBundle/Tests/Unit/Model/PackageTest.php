@@ -96,4 +96,23 @@ class PackageTest extends \PHPUnit_Framework_TestCase
                 ],
         ];
     }
+
+    public function testCreate()
+    {
+        $package = Package::create(
+            self::DIMENSION_CODE,
+            self::DIMENSION_HEIGHT,
+            self::DIMENSION_WIDTH,
+            self::DIMENSION_LENGTH,
+            self::WEIGHT_CODE,
+            self::WEIGHT
+        );
+
+        $this->assertEquals(self::DIMENSION_CODE, $package->getDimensionCode());
+        $this->assertEquals(self::DIMENSION_HEIGHT, $package->getDimensionHeight());
+        $this->assertEquals(self::DIMENSION_WIDTH, $package->getDimensionWidth());
+        $this->assertEquals(self::DIMENSION_LENGTH, $package->getDimensionLength());
+        $this->assertEquals(self::WEIGHT_CODE, $package->getWeightCode());
+        $this->assertEquals(self::WEIGHT, $package->getWeight());
+    }
 }
