@@ -1,0 +1,118 @@
+{% block _account_user_view_page_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
+    }) %}
+    <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _account_user_top_actions_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-order__controls-list oro-account__controls-list" }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _account_user_view_information_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-account__block" }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _account_user_view_information_title_widget %}
+    <div class="account-oq__item account-oq__item_full mb0-sm">
+        <h2 class="account-oq__item__title">
+            {{ block_widget(block) }}
+        </h2>
+    </div>
+{% endblock %}
+
+{% block _account_user_view_information_content_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
+    {% import 'OroEmailBundle::macros.html.twig' as Email %}
+
+    <div class="account-oq__item__body">
+        <div class="widget-content">
+            <div class="row-fluid form-horizontal">
+                <div class="responsive-block">
+                    {% if  accountUser.namePrefix is defined %}
+                        {{ UI.renderProperty('oro.account.accountuser.name_prefix.label'|trans, accountUser.namePrefix) }}
+                    {% endif %}
+                    {{ UI.renderProperty('oro.account.accountuser.first_name.label'|trans, accountUser.firstName) }}
+                    {% if  accountUser.middleName is defined %}
+                        {{ UI.renderProperty('oro.account.accountuser.middle_name.label'|trans, accountUser.middleName) }}
+                    {% endif %}
+                    {{ UI.renderProperty('oro.account.accountuser.last_name.label'|trans, accountUser.lastName) }}
+                    {% if  accountUser.nameSuffix is defined %}
+                        {{ UI.renderProperty('oro.account.accountuser.name_suffix.label'|trans, accountUser.nameSuffix) }}
+                    {% endif %}
+
+                    {% set birthday_string %}
+                        {{ accountUser.birthday is empty ? 'N/A'|trans : accountUser.birthday|oro_format_date }}
+                        {% if accountUser.birthday is not empty %}
+                            ({{ accountUser.birthday|age_string({'default': 'N/A'}) }})
+                        {% endif %}
+                    {% endset %}
+                    {{ UI.renderProperty('oro.account.accountuser.birthday.label'|trans, birthday_string) }}
+                    {{ UI.renderHtmlProperty('oro.account.accountuser.email.label'|trans, Email.email_address_simple(accountUser.email)) }}
+
+                    {% if accountUser.account %}
+                        {{ UI.renderHtmlProperty('oro.account.accountuser.profile.company_name'|trans, accountUser.account.name) }}
+                    {% endif %}
+
+                    {% if resource_granted('oro_account_account_user_role_view') %}
+                        {% set roles = [] %}
+                        {% for accountUserRole in accountUser.roles %}
+                            {% set roles = roles|merge([accountUserRole.label]) %}
+                        {% endfor %}
+                        {{ UI.renderHtmlProperty('oro.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
+                    {% endif %}
+
+                    {% if accountUser.salesRepresentatives | length %}
+                        {{ UI.renderHtmlProperty('oro.account.accountuser.sales_representatives.label'|trans, UI.entityViewLinks(accountUser.salesRepresentatives, 'fullName', 'oro_user_view')) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _account_user_address_book_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-account__block" }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _account_user_address_book_head_widget %}
+    <div class="account-oq__item account-oq__item_full mb0-sm">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _account_user_address_book_title_widget %}
+    <h2 class="account-oq__item__title">
+        {{ block_widget(block) }}
+    </h2>
+{% endblock %}
+
+{% block _account_user_address_add_link_widget %}
+    {% if block.vars.visible %}
+        <div class="oro-account-user-address__add-link pull-right">
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _account_user_address_book_content_widget %}
+    <div class="account-oq__item__body">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _account_user_list_link_widget %}
+    <div class="">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

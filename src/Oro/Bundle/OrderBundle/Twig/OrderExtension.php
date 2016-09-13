@@ -6,7 +6,7 @@ use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 
 class OrderExtension extends \Twig_Extension
 {
-    const NAME = 'orob2b_order_order';
+    const NAME = 'oro_order_order';
 
     /**
      * @var SourceDocumentFormatter
@@ -28,7 +28,7 @@ class OrderExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter(
-                'orob2b_order_format_source_document',
+                'oro_order_format_source_document',
                 [$this->sourceDocumentFormatter, 'format'],
                 ['is_safe' => ['html']]
             )

@@ -51,7 +51,7 @@ system_configuration:
                 required: false
         oro_b2b_account.category_visibility:
             data_type: string
-            type: orob2b_account_catalog_default_visibility
+            type: oro_account_catalog_default_visibility
             priority: 10
             options:
                 label: oro.account.catalog.visibility.form_label
@@ -60,7 +60,7 @@ system_configuration:
                     - NotBlank: ~
         oro_b2b_account.product_visibility:
             data_type: string
-            type: orob2b_account_catalog_default_visibility
+            type: oro_account_catalog_default_visibility
             priority: 10
             options:
                 label: oro.account.catalog.visibility.form_label

@@ -24,9 +24,9 @@ use Oro\Bundle\WarehouseBundle\Model\ExtendWarehouse;
  * @ORM\Entity(repositoryClass="Oro\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
- *      routeName="orob2b_warehouse_index",
- *      routeView="orob2b_warehouse_view",
- *      routeUpdate="orob2b_warehouse_update",
+ *      routeName="oro_warehouse_index",
+ *      routeView="oro_warehouse_view",
+ *      routeUpdate="oro_warehouse_update",
  *      defaultValues={
  *          "ownership"={
  *              "owner_type"="BUSINESS_UNIT",

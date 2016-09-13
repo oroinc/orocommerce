@@ -24,10 +24,10 @@ use Oro\Bundle\OrderBundle\Event\OrderEvent;
 class OrderController extends AbstractOrderController
 {
     /**
-     * @Route("/view/{id}", name="orob2b_order_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_order_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_order_view",
+     *      id="oro_order_view",
      *      type="entity",
      *      class="OroOrderBundle:Order",
      *      permission="VIEW",
@@ -47,9 +47,9 @@ class OrderController extends AbstractOrderController
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_order_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_order_info", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_order_view")
+     * @AclAncestor("oro_order_view")
      *
      * @param Order $order
      *
@@ -74,9 +74,9 @@ class OrderController extends AbstractOrderController
     }
 
     /**
-     * @Route("/", name="orob2b_order_index")
+     * @Route("/", name="oro_order_index")
      * @Template
-     * @AclAncestor("orob2b_order_view")
+     * @AclAncestor("oro_order_view")
      *
      * @return array
      */
@@ -90,10 +90,10 @@ class OrderController extends AbstractOrderController
     /**
      * Create order form
      *
-     * @Route("/create", name="orob2b_order_create")
+     * @Route("/create", name="oro_order_create")
      * @Template("OroOrderBundle:Order:update.html.twig")
      * @Acl(
-     *      id="orob2b_order_create",
+     *      id="oro_order_create",
      *      type="entity",
      *      class="OroOrderBundle:Order",
      *      permission="CREATE"
@@ -112,10 +112,10 @@ class OrderController extends AbstractOrderController
     /**
      * Edit order form
      *
-     * @Route("/update/{id}", name="orob2b_order_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_order_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_order_update",
+     *      id="oro_order_update",
      *      type="entity",
      *      class="OroOrderBundle:Order",
      *      permission="EDIT"
@@ -151,13 +151,13 @@ class OrderController extends AbstractOrderController
             $form,
             function (Order $order) {
                 return [
-                    'route' => 'orob2b_order_update',
+                    'route' => 'oro_order_update',
                     'parameters' => ['id' => $order->getId()],
                 ];
             },
             function (Order $order) {
                 return [
-                    'route' => 'orob2b_order_view',
+                    'route' => 'oro_order_view',
                     'parameters' => ['id' => $order->getId()],
                 ];
             },

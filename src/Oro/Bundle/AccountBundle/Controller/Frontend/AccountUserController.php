@@ -17,10 +17,10 @@ use Oro\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
 class AccountUserController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_account_frontend_account_user_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_account_frontend_account_user_view", requirements={"id"="\d+"})
      * @Layout
      * @Acl(
-     *      id="orob2b_account_frontend_account_user_view",
+     *      id="oro_account_frontend_account_user_view",
      *      type="entity",
      *      class="OroAccountBundle:AccountUser",
      *      permission="VIEW",
@@ -40,9 +40,9 @@ class AccountUserController extends Controller
     }
 
     /**
-     * @Route("/", name="orob2b_account_frontend_account_user_index")
+     * @Route("/", name="oro_account_frontend_account_user_index")
      * @Layout(vars={"entity_class"})
-     * @AclAncestor("orob2b_account_frontend_account_user_view")
+     * @AclAncestor("oro_account_frontend_account_user_view")
      *
      * @return array
      */
@@ -56,10 +56,10 @@ class AccountUserController extends Controller
     /**
      * Create account user form
      *
-     * @Route("/create", name="orob2b_account_frontend_account_user_create")
+     * @Route("/create", name="oro_account_frontend_account_user_create")
      * @Layout
      * @Acl(
-     *      id="orob2b_account_frontend_account_user_create",
+     *      id="oro_account_frontend_account_user_create",
      *      type="entity",
      *      class="OroAccountBundle:AccountUser",
      *      permission="CREATE",
@@ -76,10 +76,10 @@ class AccountUserController extends Controller
     /**
      * Edit account user form
      *
-     * @Route("/update/{id}", name="orob2b_account_frontend_account_user_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_account_frontend_account_user_update", requirements={"id"="\d+"})
      * @Layout
      * @Acl(
-     *      id="orob2b_account_frontend_account_user_update",
+     *      id="oro_account_frontend_account_user_update",
      *      type="entity",
      *      class="OroAccountBundle:AccountUser",
      *      permission="EDIT",
@@ -122,13 +122,13 @@ class AccountUserController extends Controller
             $form,
             function (AccountUser $accountUser) {
                 return [
-                    'route' => 'orob2b_account_frontend_account_user_update',
+                    'route' => 'oro_account_frontend_account_user_update',
                     'parameters' => ['id' => $accountUser->getId()]
                 ];
             },
             function (AccountUser $accountUser) {
                 return [
-                    'route' => 'orob2b_account_frontend_account_user_view',
+                    'route' => 'oro_account_frontend_account_user_view',
                     'parameters' => ['id' => $accountUser->getId()]
                 ];
             },

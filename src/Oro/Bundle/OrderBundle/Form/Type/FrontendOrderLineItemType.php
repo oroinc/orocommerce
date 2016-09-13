@@ -21,7 +21,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class FrontendOrderLineItemType extends AbstractOrderLineItemType
 {
-    const NAME = 'orob2b_order_line_item_frontend';
+    const NAME = 'oro_order_line_item_frontend';
 
     /**
      * @var ManagerRegistry

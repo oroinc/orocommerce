@@ -24,7 +24,7 @@ class StatusEnableMassAction extends AbstractMassAction
         }
 
         if (empty($options['route'])) {
-            $options['route'] = 'orob2b_status_shipping_rule_massaction';
+            $options['route'] = 'oro_status_shipping_rule_massaction';
         }
 
         if (empty($options['route_parameters'])) {

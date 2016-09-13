@@ -118,7 +118,7 @@ class StartCheckoutTest extends WebTestCase
         // Check redirection
         $this->assertEquals(
             $this->client->getContainer()->get('router')->generate(
-                'orob2b_checkout_frontend_checkout',
+                'oro_checkout_frontend_checkout',
                 ['id' => $checkout->getId()]
             ),
             $context->offsetGet('redirectUrl')

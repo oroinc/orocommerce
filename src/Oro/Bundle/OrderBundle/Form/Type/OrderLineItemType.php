@@ -16,7 +16,7 @@ use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class OrderLineItemType extends AbstractOrderLineItemType
 {
-    const NAME = 'orob2b_order_line_item';
+    const NAME = 'oro_order_line_item';
 
     /**
      * @var ManagerRegistry

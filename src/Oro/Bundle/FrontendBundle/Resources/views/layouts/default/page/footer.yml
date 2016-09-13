@@ -9,7 +9,7 @@ layout:
                 footer_copyright:
                     blockType: text
                     options:
-                        text: 'orob2b_frontend.copyright'
+                        text: 'oro_frontend.copyright'
                         escape: false
             tree:
                 wrapper:

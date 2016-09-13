@@ -135,7 +135,7 @@
 
                 transform: translate(-50%, -50%);
 
-                background: url('components/embedded-list/__arrow/embedded-list__arrow--prev.svg') 0 0 no-repeat;
+                background: url('#{$global-url}/orofrontend/default/images/arrow-prev.svg') 0 0 no-repeat;
                 background-size: cover;
             }
         }
@@ -150,7 +150,7 @@
 
                 transform: translate(-50%, -50%);
 
-                background: url('components/embedded-list/__arrow/embedded-list__arrow--next.svg') 0 0 no-repeat;
+                background: url('#{$global-url}/orofrontend/default/images/arrow-next.svg') 0 0 no-repeat;
                 background-size: cover;
             }
         }

@@ -8,8 +8,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductNormalizerEvent extends Event
 {
-    const NORMALIZE = 'orob2b_product.normalizer.normalizer';
-    const DENORMALIZE = 'orob2b_product.normalizer.denormalizer';
+    const NORMALIZE = 'oro_product.normalizer.normalizer';
+    const DENORMALIZE = 'oro_product.normalizer.denormalizer';
 
     /**
      * @var Product

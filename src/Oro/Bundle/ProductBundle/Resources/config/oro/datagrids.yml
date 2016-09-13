@@ -89,7 +89,7 @@ datagrids:
         extends: products-select-grid-base
 
     products-select-grid-frontend:
-        acl_resource: orob2b_product_frontend_view
+        acl_resource: oro_product_frontend_view
         extends: products-select-grid-base
         source:
             skip_acl_apply: true
@@ -101,7 +101,7 @@ datagrids:
         properties:
             view_link:
                 type:  url
-                route: orob2b_product_view
+                route: oro_product_view
                 params:
                     - id
         actions:
@@ -110,7 +110,7 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_product_view
+                acl_resource:  oro_product_view
                 rowAction:     true
 
     frontend-products-grid:
@@ -147,7 +147,7 @@ datagrids:
                 data_name: names
             view_link:
                 type:  url
-                route: orob2b_product_frontend_product_view
+                route: oro_product_frontend_product_view
                 params: [ id ]
         sorters:
             columns:
@@ -173,8 +173,8 @@ datagrids:
                 icon:          eye-open
                 rowAction:     true
 
-    orob2b_product-product_variants:
-        acl_resource: orob2b_product_view
+    oro_product-product_variants:
+        acl_resource: oro_product_view
         options:
             entityHint:        parentProduct
             entity_pagination: true
@@ -230,8 +230,8 @@ datagrids:
                     data_name: inventoryStatusId
                     enum_code: prod_inventory_status
 
-    orob2b_product-product_variants-product_edit:
-        extends: orob2b_product-product_variants
+    oro_product-product_variants-product_edit:
+        extends: oro_product-product_variants
         options:
             rowSelection:
                 dataField: id
@@ -287,8 +287,8 @@ datagrids:
             default:
                 sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
 
-    orob2b_product-product_variants-product_view:
-        extends: orob2b_product-product_variants
+    oro_product-product_variants-product_view:
+        extends: oro_product-product_variants
         source:
             query:
                 select:

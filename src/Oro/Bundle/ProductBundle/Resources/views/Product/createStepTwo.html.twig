@@ -3,14 +3,14 @@
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
 
-{% set formAction = path('orob2b_product_create_step_two')  %}
+{% set formAction = path('oro_product_create_step_two')  %}
 
 {% block navButtons %}
     {{ parent() }}
 
-    {{ UI.cancelButton(path('orob2b_product_index')) }}
+    {{ UI.cancelButton(path('oro_product_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if resource_granted('orob2b_product_create') %}
+    {% if resource_granted('oro_product_create') %}
         {% set saveAndDuplicateButton = UI.buttonType({
             'type': 'button',
             'class': 'btn-success main-group',
@@ -19,7 +19,7 @@
         }) %}
         {% set html = html ~ saveAndDuplicateButton %}
     {% endif %}
-    {% if entity.id or resource_granted('orob2b_product_update') %}
+    {% if entity.id or resource_granted('oro_product_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -29,7 +29,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_product_index'),
+            'indexPath':   path('oro_product_index'),
             'indexLabel': 'oro.product.entity_plural_label'|trans,
             'entityTitle': entity.sku ~ ' - ' ~ entity.defaultName
         } %}

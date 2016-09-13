@@ -13,21 +13,21 @@ layout:
                 main_menu_shopping_lists_dropdown:
                     blockType: shopping_lists_awere_container
                     options:
-                        shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+                        shoppingLists: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists()'
                 main_menu_shopping_dropdown:
                     blockType: shopping_lists_awere_container
                     options:
-                        shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+                        shoppingLists: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists()'
                 main_menu_shopping_lists_dropdown_content:
                     blockType: container
                 main_menu_shopping_lists_dropdown_container:
                     blockType: shopping_lists_awere_container
                     options:
-                        shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+                        shoppingLists: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists()'
                 main_menu_shopping_lists_dropdown_container_sync:
                     blockType: shopping_lists_awere_container
                     options:
-                        shoppingLists: '=data["orob2b_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+                        shoppingLists: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists()'
                 main_menu_shopping_lists_dropdown_item:
                     blockType: shopping_list_dropdown_item
                 main_menu_shopping_lists_dropdown_item_sync:

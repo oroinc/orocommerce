@@ -105,7 +105,7 @@ services:
             - '%oro_account.entity.account_group.class%'
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_group, acl_resource: orob2b_account_group_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_account_group, acl_resource: oro_account_group_view }
 
     oro_account.form.autocomplete.account.search_handler:
         public: false
@@ -114,7 +114,7 @@ services:
             - '%oro_account.entity.account.class%'
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account, acl_resource: orob2b_account_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_account, acl_resource: oro_account_view }
 
     oro_account.form.autocomplete.account_parent.search_handler:
         public: false
@@ -124,7 +124,7 @@ services:
             - '%oro_account.entity.account.class%'
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_parent, acl_resource: orob2b_account_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_account_parent, acl_resource: oro_account_view }
 
     oro_account.form.autocomplete.account_user_account.search_handler:
         public: false
@@ -134,7 +134,7 @@ services:
             - '%oro_account.entity.account_user.class%'
             - ["firstname", "lastname"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_account_user, acl_resource: orob2b_account_account_user_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_account_account_user, acl_resource: oro_account_account_user_view }
 
     oro_account.frontend_form.autocomplete.account_user_account.search_handler:
         public: false
@@ -144,7 +144,7 @@ services:
             - '%oro_account.entity.account_user.class%'
             - ["firstname", "lastname"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_frontend_account_user, acl_resource: orob2b_account_frontend_account_user_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_account_frontend_account_user, acl_resource: oro_account_frontend_account_user_view }
 
     oro_account.account_user.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
@@ -487,7 +487,7 @@ services:
         arguments:
             - "@doctrine"
         tags:
-            - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateProduct }
+            - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateProduct }
         calls:
             - [ setVisibilityToAllClassName, ['%oro_account.entity.product_visibility.class%'] ]
             - [ setVisibilityAccountGroupClassName, ['%oro_account.entity.account_group_product_visibility.class%'] ]
@@ -504,13 +504,13 @@ services:
         class: 'Oro\Bundle\AccountBundle\Form\EventListener\CategoryVisibilityPostSubmitListener'
         parent: oro_account.form.event_listener.abstract_visibility_post_submit
         tags:
-            - { name: kernel.event_listener, event: orob2b_catalog.category.edit, method: onPostSubmit }
+            - { name: kernel.event_listener, event: oro_catalog.category.edit, method: onPostSubmit }
 
     oro_account.form.event_listener.product_visibility_post_submit:
         class: 'Oro\Bundle\AccountBundle\Form\EventListener\ProductVisibilityPostSubmitListener'
         parent: oro_account.form.event_listener.abstract_visibility_post_submit
         tags:
-            - { name: kernel.event_listener, event: orob2b_product.product.edit, method: onPostSubmit }
+            - { name: kernel.event_listener, event: oro_product.product.edit, method: onPostSubmit }
 
     oro_account.account_delete_handler:
         class: 'Oro\Bundle\AccountBundle\Handler\UserDeleteHandler'
@@ -533,7 +533,7 @@ services:
         class: 'Oro\Bundle\AccountBundle\Audit\DiscriminatorMapListener'
         public: false
         calls:
-            - [ addClass, ['orob2b_audit', '%oro_account.entity.audit.class%'] ]
+            - [ addClass, ['oro_audit', '%oro_account.entity.audit.class%'] ]
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata }
 
@@ -549,7 +549,7 @@ services:
             - "@oro_account.visibility.resolver.category_visibility_resolver"
             - "@oro_account.provider.account_user_relations_provider"
         tags:
-            - {name: kernel.event_listener, event: orob2b_catalog.category.tree.create_after, method: onCreateAfter }
+            - {name: kernel.event_listener, event: oro_catalog.category.tree.create_after, method: onCreateAfter }
 
     oro_account.event_listener.frontend_dataaudit_history_grid_listener:
         class: '%oro_dataaudit.event_listener.dataaudit_history_grid_listener.class%'
@@ -679,7 +679,7 @@ services:
             - "@oro_frontend.request.frontend_helper"
             - "@oro_account.model.product_visibility_query_builder_modifier"
         tags:
-            - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
 
     # Actions
     oro_account.model.action.abstract_entity_aware_action:
@@ -761,7 +761,7 @@ services:
             - "@oro_website.manager"
             - "@oro_user.manager"
         tags:
-            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_register }
+            - { name: layout.data_provider, alias: oro_account_frontend_account_user_register }
 
     oro_account.manager.windows_state:
         parent: oro_windows.manager.windows_state.abstract
@@ -776,7 +776,7 @@ services:
             - "@oro_security.security_facade"
             - "@security.csrf.token_manager"
         tags:
-            - { name: layout.data_provider, alias: orob2b_account_sign_in }
+            - { name: layout.data_provider, alias: oro_account_sign_in }
 
     oro_account.doctrine.filters_listener:
         class: 'Oro\Bundle\AccountBundle\Doctrine\DoctrineFiltersListener'
@@ -792,28 +792,28 @@ services:
             - '@form.factory'
             - '@oro_account.form.handler.update_account_user_role_frontend='
         tags:
-            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_role_form }
+            - { name: layout.data_provider, alias: oro_account_frontend_account_user_role_form }
 
     oro_account.provider.fronted_account_user_address_form:
         class: Oro\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserAddressFormProvider
         arguments:
             - '@form.factory'
         tags:
-            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_address_form }
+            - { name: layout.data_provider, alias: oro_account_frontend_account_user_address_form }
 
     oro_account.provider.frontend_account_address_form:
         class: Oro\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountAddressFormProvider
         arguments:
             - '@form.factory'
         tags:
-            - { name: layout.data_provider, alias: orob2b_account_frontend_account_address_form }
+            - { name: layout.data_provider, alias: oro_account_frontend_account_address_form }
 
     oro_account.provider.frontend_account_user_form:
         class: 'Oro\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserFormProvider'
         arguments:
               - '@form.factory'
         tags:
-            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_form }
+            - { name: layout.data_provider, alias: oro_account_frontend_account_user_form }
 
     oro_account.provider.account_user_relations_provider:
         class: 'Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider'
@@ -828,7 +828,7 @@ services:
             - '@oro_user.provider.role_privilege_category_provider'
             - '@translator'
         tags:
-            - { name: layout.data_provider, alias: orob2b_account_fronted_account_user_role_options }
+            - { name: layout.data_provider, alias: oro_account_fronted_account_user_role_options }
 
     oro_account.datagrid.datasource.account_role_frontend_permission_datasource:
         class: 'Oro\Bundle\AccountBundle\Datagrid\RolePermissionDatasource'
@@ -864,9 +864,9 @@ services:
         parent: oro_account.layout.data_provider.address_provider_abstract
         calls:
             - [setEntityClass, ['Oro\Bundle\AccountBundle\Entity\Account']]
-            - [setListRouteName, ['orob2b_api_account_frontend_get_account_addresses']]
-            - [setCreateRouteName, ['orob2b_account_frontend_account_address_create']]
-            - [setUpdateRouteName, ['orob2b_account_frontend_account_address_update']]
+            - [setListRouteName, ['oro_api_account_frontend_get_account_addresses']]
+            - [setCreateRouteName, ['oro_account_frontend_account_address_create']]
+            - [setUpdateRouteName, ['oro_account_frontend_account_address_update']]
         tags:
              - { name: layout.data_provider, alias: account_address_provider }
 
@@ -874,8 +874,8 @@ services:
         parent: oro_account.layout.data_provider.address_provider_abstract
         calls:
             - [setEntityClass, ['Oro\Bundle\AccountBundle\Entity\AccountUser']]
-            - [setListRouteName, ['orob2b_api_account_frontend_get_accountuser_addresses']]
-            - [setCreateRouteName, ['orob2b_account_frontend_account_user_address_create']]
-            - [setUpdateRouteName, ['orob2b_account_frontend_account_user_address_update']]
+            - [setListRouteName, ['oro_api_account_frontend_get_accountuser_addresses']]
+            - [setCreateRouteName, ['oro_account_frontend_account_user_address_create']]
+            - [setUpdateRouteName, ['oro_account_frontend_account_user_address_update']]
         tags:
              - { name: layout.data_provider, alias: account_user_address_provider }

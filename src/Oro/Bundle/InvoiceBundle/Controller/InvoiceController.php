@@ -22,9 +22,9 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 class InvoiceController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_invoice_index")
+     * @Route("/", name="oro_invoice_index")
      * @Template()
-     * @AclAncestor("orob2b_invoice_view")
+     * @AclAncestor("oro_invoice_view")
      *
      * @return array
      */
@@ -37,9 +37,9 @@ class InvoiceController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_invoice_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_invoice_info", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_invoice_view")
+     * @AclAncestor("oro_invoice_view")
      *
      * @param Invoice $invoice
      *
@@ -53,10 +53,10 @@ class InvoiceController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_invoice_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_invoice_view", requirements={"id"="\d+"})
      * @Template()
      * @Acl(
-     *      id="orob2b_invoice_view",
+     *      id="oro_invoice_view",
      *      type="entity",
      *      class="OroInvoiceBundle:Invoice",
      *      permission="VIEW"
@@ -76,10 +76,10 @@ class InvoiceController extends Controller
     /**
      * Create invoice form
      *
-     * @Route("/create", name="orob2b_invoice_create")
+     * @Route("/create", name="oro_invoice_create")
      * @Template("OroInvoiceBundle:Invoice:update.html.twig")
      * @Acl(
-     *      id="orob2b_invoice_create",
+     *      id="oro_invoice_create",
      *      type="entity",
      *      class="OroInvoiceBundle:Invoice",
      *      permission="CREATE"
@@ -100,10 +100,10 @@ class InvoiceController extends Controller
     /**
      * Update invoice form
      *
-     * @Route("/update/{id}", name="orob2b_invoice_update")
+     * @Route("/update/{id}", name="oro_invoice_update")
      * @Template("OroInvoiceBundle:Invoice:update.html.twig")
      * @Acl(
-     *      id="orob2b_invoice_update",
+     *      id="oro_invoice_update",
      *      type="entity",
      *      class="OroInvoiceBundle:Invoice",
      *      permission="EDIT"
@@ -130,13 +130,13 @@ class InvoiceController extends Controller
             $form,
             function (Invoice $invoice) {
                 return [
-                    'route' => 'orob2b_invoice_update',
+                    'route' => 'oro_invoice_update',
                     'parameters' => ['id' => $invoice->getId()],
                 ];
             },
             function (Invoice $invoice) {
                 return [
-                    'route' => 'orob2b_invoice_view',
+                    'route' => 'oro_invoice_view',
                     'parameters' => ['id' => $invoice->getId()],
                 ];
             },

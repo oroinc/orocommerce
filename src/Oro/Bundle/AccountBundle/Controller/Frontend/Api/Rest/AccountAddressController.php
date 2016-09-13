@@ -7,7 +7,7 @@ use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use Oro\Bundle\AccountBundle\Controller\Api\Rest\AccountAddressController as BaseAccountAddressController;
 
 /**
- * @NamePrefix("orob2b_api_account_frontend_")
+ * @NamePrefix("oro_api_account_frontend_")
  */
 class AccountAddressController extends BaseAccountAddressController
 {

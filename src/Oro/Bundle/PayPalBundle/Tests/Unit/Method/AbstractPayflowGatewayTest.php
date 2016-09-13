@@ -607,21 +607,21 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
             ->method('generate')
             ->withConsecutive(
                 [
-                    'orob2b_payment_callback_return',
+                    'oro_payment_callback_return',
                     [
                         'accessIdentifier' => $transaction->getAccessIdentifier(),
                     ],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 ],
                 [
-                    'orob2b_payment_callback_error',
+                    'oro_payment_callback_error',
                     [
                         'accessIdentifier' => $transaction->getAccessIdentifier(),
                     ],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 ],
                 [
-                    'orob2b_payment_callback_notify',
+                    'oro_payment_callback_notify',
                     [
                         'accessIdentifier' => $transaction->getAccessIdentifier(),
                         'accessToken' => $transaction->getAccessToken(),

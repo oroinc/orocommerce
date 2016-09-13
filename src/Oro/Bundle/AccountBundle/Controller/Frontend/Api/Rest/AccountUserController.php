@@ -14,7 +14,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
- * @NamePrefix("orob2b_api_account_frontend_")
+ * @NamePrefix("oro_api_account_frontend_")
  */
 class AccountUserController extends RestController implements ClassResourceInterface
 {
@@ -24,7 +24,7 @@ class AccountUserController extends RestController implements ClassResourceInter
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_account_frontend_account_user_delete",
+     *      id="oro_account_frontend_account_user_delete",
      *      type="entity",
      *      class="OroAccountBundle:AccountUser",
      *      permission="DELETE",

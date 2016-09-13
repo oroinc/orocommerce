@@ -50,20 +50,20 @@ class RequestACLTest extends WebTestCase
         $this->assertInstanceOf('Oro\Bundle\AccountBundle\Entity\AccountUser', $user);
         $this->assertEquals(LoadAccountUsersData::USER_EMAIL, $user->getUsername());
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Form $form */
         $form = $crawler->selectButton('Submit Request For Quote')->form();
-        $form->remove('orob2b_rfp_frontend_request[requestProducts][0]');
-        $form['orob2b_rfp_frontend_request[firstName]'] = LoadAccountUsersData::USER_NAME;
-        $form['orob2b_rfp_frontend_request[lastName]']  = LoadAccountUsersData::USER_LAST_NAME;
-        $form['orob2b_rfp_frontend_request[email]']     = LoadAccountUsersData::USER_EMAIL;
-        $form['orob2b_rfp_frontend_request[phone]']     = 123456789;
-        $form['orob2b_rfp_frontend_request[company]']   = 'Company name';
-        $form['orob2b_rfp_frontend_request[role]']      = 'Manager';
-        $form['orob2b_rfp_frontend_request[note]']      = 'This is test Request For Quote';
+        $form->remove('oro_rfp_frontend_request[requestProducts][0]');
+        $form['oro_rfp_frontend_request[firstName]'] = LoadAccountUsersData::USER_NAME;
+        $form['oro_rfp_frontend_request[lastName]']  = LoadAccountUsersData::USER_LAST_NAME;
+        $form['oro_rfp_frontend_request[email]']     = LoadAccountUsersData::USER_EMAIL;
+        $form['oro_rfp_frontend_request[phone]']     = 123456789;
+        $form['oro_rfp_frontend_request[company]']   = 'Company name';
+        $form['oro_rfp_frontend_request[role]']      = 'Manager';
+        $form['oro_rfp_frontend_request[note]']      = 'This is test Request For Quote';
 
         $this->client->followRedirects(true);
         $this->client->submit($form);

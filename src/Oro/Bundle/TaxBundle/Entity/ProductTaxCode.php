@@ -15,9 +15,9 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
  * @ORM\Table(name="oro_tax_product_tax_code")
  * @ORM\HasLifecycleCallbacks
  * @Config(
- *      routeName="orob2b_tax_product_tax_code_index",
- *      routeView="orob2b_tax_product_tax_code_view",
- *      routeUpdate="orob2b_tax_product_tax_code_update",
+ *      routeName="oro_tax_product_tax_code_index",
+ *      routeView="oro_tax_product_tax_code_view",
+ *      routeUpdate="oro_tax_product_tax_code_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-list-alt"

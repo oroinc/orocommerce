@@ -1,9 +1,9 @@
 search:
     Oro\Bundle\OrderBundle\Entity\Order:
-        alias:                          orob2b_order
+        alias:                          oro_order
         title_fields:                   [identifier]
         route:
-            name:                       orob2b_order_view
+            name:                       oro_order_view
             parameters:
                 id:                     id
         search_template:                OroOrderBundle:Order:searchResult.html.twig

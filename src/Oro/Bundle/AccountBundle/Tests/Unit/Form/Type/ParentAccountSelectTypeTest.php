@@ -39,7 +39,7 @@ class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
                 function (array $options) {
                     $this->assertArrayHasKey('autocomplete_alias', $options);
                     $this->assertArrayHasKey('configs', $options);
-                    $this->assertEquals('orob2b_account_parent', $options['autocomplete_alias']);
+                    $this->assertEquals('oro_account_parent', $options['autocomplete_alias']);
                     $this->assertEquals(
                         [
                             'component' => 'autocomplete-entity-parent',

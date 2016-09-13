@@ -102,4 +102,4 @@ placeholders:
             applicable:
                 - "@oro_dataaudit.placeholder.filter->isEntityAuditable($entity$, $audit_show_change_history$)"
                 - "@oro_account.placeholder.filter->isUserApplicable()"
-            acl: orob2b_account_dataaudit_history
+            acl: oro_account_dataaudit_history

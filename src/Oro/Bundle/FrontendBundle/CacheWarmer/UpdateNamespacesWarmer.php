@@ -78,6 +78,12 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
             $this->fixClassNames($defaultConnection, 'oro_email_template', 'entityname');
             $this->fixClassNames($searchConnection, 'oro_search_item', 'entity');
 
+            $this->fixStringPrefix($defaultConnection, 'acl_classes', 'class_type');
+            $this->fixStringPrefix($defaultConnection, 'oro_email_template', 'content');
+            $this->fixStringPrefix($defaultConnection, 'oro_navigation_title', 'route');
+            $this->fixStringPrefix($searchConnection, 'oro_search_item', 'alias');
+            $this->fixStringPrefix($searchConnection, 'oro_search_index_integer', 'field');
+
             $this->updateEntityConfigTable($configConnection);
             $this->updateEntityConfigFieldTables($configConnection);
 
@@ -197,6 +203,24 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
     }
 
     /**
+     * @param Connection $connection
+     * @param string $table
+     * @param string $column
+     */
+    protected function fixStringPrefix(Connection $connection, $table, $column)
+    {
+        $rows = $connection->fetchAll("SELECT id, $column FROM $table");
+        foreach ($rows as $row) {
+            $id = $row['id'];
+            $originalValue = $row[$column];
+            $alteredValue = str_replace('orob2b_', 'oro_', $originalValue);
+            if ($alteredValue !== $originalValue) {
+                $connection->executeQuery("UPDATE $table SET $column = ? WHERE id = ?", [$alteredValue, $id]);
+            }
+        }
+    }
+
+    /**
      * @param array $data
      * @return array
      */
@@ -237,8 +261,8 @@ class UpdateNamespacesWarmer implements CacheWarmerInterface
         }
 
         return str_replace(
-            ['OroB2B\\Bundle\\', 'orob2b.', 'Extend\Entity\EX_OroB2B'],
-            ['Oro\\Bundle\\', 'oro.', 'Extend\Entity\EX_Oro'],
+            ['OroB2B\\Bundle\\', 'orob2b.', 'Extend\Entity\EX_OroB2B', 'orob2b_'],
+            ['Oro\\Bundle\\', 'oro.', 'Extend\Entity\EX_Oro', 'oro_'],
             $value
         );
     }
