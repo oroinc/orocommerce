@@ -162,6 +162,10 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
             }
         }
 
+        if ($price === null) {
+            return null;
+        }
+
         $surcharge = $typeOptions[self::OPTION_SURCHARGE];
 
         return Price::create($price + (float)$surcharge, $context->getCurrency());
