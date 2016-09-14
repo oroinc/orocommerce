@@ -9,7 +9,6 @@ use Oro\Bundle\SearchBundle\Engine\Orm\PdoPgsql;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
@@ -17,15 +16,13 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchWebTestCase;
 
 /**
  * @dbIsolationPerTest
  */
-class WebsiteSearchIndexRepositoryTest extends WebTestCase
+class WebsiteSearchIndexRepositoryTest extends SearchWebTestCase
 {
-    use SearchTestTrait;
-
     protected function setUp()
     {
         $this->initClient();
@@ -34,7 +31,7 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
 
     protected function tearDown()
     {
-        $this->truncateIndexTextTable();
+        $this->clearIndexTextTable();
     }
 
     private function skipIfEngineIsNotOrm()

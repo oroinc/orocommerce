@@ -5,22 +5,17 @@ namespace Oro\Bundle\AccountBundle\Tests\Functional\EventListener;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\FrontendRequestTrait;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestInterface;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchWebTestCase;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @dbIsolationPerTest
  */
-class RestrictedProductsIndexEventListenerTest extends WebTestCase implements SearchTestInterface
+class RestrictedProductsIndexEventListenerTest extends SearchWebTestCase
 {
-    use FrontendRequestTrait;
-    use SearchTestTrait;
-
     /**
      * @var EventDispatcherInterface
      */
@@ -30,11 +25,19 @@ class RestrictedProductsIndexEventListenerTest extends WebTestCase implements Se
     {
         $this->initClient();
 
-        $this->substituteRequestStack();
+        $this->addFrontendRequest();
 
         $this->dispatcher = $this->getContainer()->get('event_dispatcher');
-        $this->clearRestrictListeners();
-        $this->setListener();
+        $this->clearRestrictListeners($this->getRestrictEntityEventName());
+
+        $this->dispatcher->addListener(
+            $this->getRestrictEntityEventName(),
+            [
+                $this->getContainer()->get('oro_account.event_listener.restricted_products_index'),
+                'onRestrictIndexEntityEvent'
+            ],
+            -255
+        );
 
         $this->loadFixtures([LoadProductVisibilityData::class]);
     }
@@ -68,17 +71,5 @@ class RestrictedProductsIndexEventListenerTest extends WebTestCase implements Se
     public function getRestrictEntityEventName()
     {
         return sprintf('%s.%s', RestrictIndexEntityEvent::NAME, 'product');
-    }
-
-    private function setListener()
-    {
-        $this->dispatcher->addListener(
-            $this->getRestrictEntityEventName(),
-            [
-                $this->getContainer()->get('oro_account.event_listener.restricted_products_index'),
-                'onRestrictIndexEntityEvent'
-            ],
-            -255
-        );
     }
 }

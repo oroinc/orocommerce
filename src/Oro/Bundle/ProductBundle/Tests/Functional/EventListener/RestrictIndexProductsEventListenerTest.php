@@ -5,24 +5,19 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\FrontendRequestTrait;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchWebTestCase;
 
 /**
  * @dbIsolationPerTest
  */
-class RestrictIndexProductsEventListenerTest extends WebTestCase
+class RestrictIndexProductsEventListenerTest extends SearchWebTestCase
 {
-    use FrontendRequestTrait;
-    use SearchTestTrait;
-
     protected function setUp()
     {
         $this->initClient();
 
-        $this->substituteRequestStack();
+        $this->addFrontendRequest();
 
         $this->loadFixtures([LoadProductData::class]);
     }

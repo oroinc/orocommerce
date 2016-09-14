@@ -9,22 +9,17 @@ use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Tests\Functional\Controller\DataFixtures\LoadSearchItemData;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item as TestEntity;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\FrontendRequestTrait;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchWebTestCase;
 
 /**
  * @dbIsolationPerTest
  */
-class OrmEngineTest extends WebTestCase
+class OrmEngineTest extends SearchWebTestCase
 {
-    use SearchTestTrait;
-    use FrontendRequestTrait;
-
     /** @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $mappingProviderMock;
 
@@ -99,7 +94,7 @@ class OrmEngineTest extends WebTestCase
             ->with(TestEntity::class)
             ->willReturn($this->mappingConfig[TestEntity::class]);
 
-        $this->substituteRequestStack();
+        $this->addFrontendRequest();
 
         $this->loadFixtures([LoadSearchItemData::class]);
 
@@ -120,7 +115,7 @@ class OrmEngineTest extends WebTestCase
 
     protected function tearDown()
     {
-        $this->truncateIndexTextTable();
+        $this->clearIndexTextTable();
 
         unset($this->listener, $this->ormEngine, $this->expectedSearchItems);
     }

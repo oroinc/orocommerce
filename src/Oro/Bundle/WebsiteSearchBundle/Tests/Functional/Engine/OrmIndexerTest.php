@@ -8,8 +8,6 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
@@ -23,8 +21,7 @@ use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadOtherWebsite;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestInterface;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchWebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Stub\OrmIndexerStub;
 
 /**
@@ -32,10 +29,8 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Stub\OrmIndexerStub;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class OrmIndexerTest extends WebTestCase implements SearchTestInterface
+class OrmIndexerTest extends SearchWebTestCase
 {
-    use SearchTestTrait;
-
     /** @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $mappingProviderMock;
 
@@ -89,7 +84,7 @@ class OrmIndexerTest extends WebTestCase implements SearchTestInterface
             $this->entityAliasResolver
         );
 
-        $this->clearRestrictListeners();
+        $this->clearRestrictListeners($this->getRestrictEntityEventName());
     }
 
     /**
@@ -103,23 +98,12 @@ class OrmIndexerTest extends WebTestCase implements SearchTestInterface
 
     protected function tearDown()
     {
-        $this->truncateIndexTextTable();
+        $this->clearIndexTextTable();
 
         //Remove listener to not to interract with other tests
         $this->dispatcher->removeListener(IndexEntityEvent::NAME, $this->listener);
 
         unset($this->doctrineHelper, $this->mappingProviderMock, $this->dispatcher, $this->indexer);
-    }
-
-    /**
-     * @return Website
-     */
-    private function getDefaultWebsite()
-    {
-        return $this
-            ->getDoctrine()
-            ->getRepository('OroWebsiteBundle:Website')
-            ->getDefaultWebsite();
     }
 
     /**
@@ -156,12 +140,12 @@ class OrmIndexerTest extends WebTestCase implements SearchTestInterface
         $this->indexer->reindex(
             TestProduct::class,
             [
-                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsite()->getId()
+                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
             ]
         );
 
         /** @var Item[] $items */
-        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_' . $this->getDefaultWebsite()->getId()]);
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_' . $this->getDefaultWebsiteId()]);
 
         $this->assertCount(2, $items);
         $this->assertContains('Reindexed product', $items[0]->getTitle());
@@ -184,12 +168,12 @@ class OrmIndexerTest extends WebTestCase implements SearchTestInterface
         $this->indexer->reindex(
             TestProduct::class,
             [
-                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsite()->getId()
+                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
             ]
         );
 
         /** @var Item[] $items */
-        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_' . $this->getDefaultWebsite()->getId()]);
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_' . $this->getDefaultWebsiteId()]);
 
         $this->assertCount(2, $items);
         $this->assertContains('Reindexed product', $items[0]->getTitle());
@@ -218,12 +202,12 @@ class OrmIndexerTest extends WebTestCase implements SearchTestInterface
         $this->indexer->reindex(
             TestProduct::class,
             [
-                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsite()->getId()
+                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
             ]
         );
 
         /** @var Item[] $items */
-        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_' . $this->getDefaultWebsite()->getId()]);
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_' . $this->getDefaultWebsiteId()]);
 
         $this->assertCount(1, $items);
         $this->assertContains('Reindexed product', $items[0]->getTitle());
@@ -254,12 +238,12 @@ class OrmIndexerTest extends WebTestCase implements SearchTestInterface
         $this->indexer->reindex(
             TestProduct::class,
             [
-                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsite()->getId()
+                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
             ]
         );
 
         /** @var Item[] $items */
-        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_' . $this->getDefaultWebsite()->getId()]);
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_' . $this->getDefaultWebsiteId()]);
 
         $this->assertCount(0, $items);
     }
@@ -283,7 +267,7 @@ class OrmIndexerTest extends WebTestCase implements SearchTestInterface
         $this->assertContains('Reindexed product', $items[1]->getTitle());
 
         $items = $this->getItemRepository()->findBy([
-            'alias' => 'oro_product_' . $this->getDefaultWebsite()->getId()
+            'alias' => 'oro_product_' . $this->getDefaultWebsiteId()
         ]);
 
         $this->assertCount(2, $items);
