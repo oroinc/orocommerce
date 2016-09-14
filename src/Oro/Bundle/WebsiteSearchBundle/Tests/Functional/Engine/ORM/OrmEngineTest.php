@@ -126,15 +126,6 @@ class OrmEngineTest extends WebTestCase
     }
 
     /**
-     * @return int
-     */
-    private function getDefaultLocalizationId()
-    {
-        $localizationManager = $this->getContainer()->get('oro_locale.manager.localization');
-        return $localizationManager->getDefaultLocalization()->getId();
-    }
-
-    /**
      * @param Query $query
      * @return Result\Item[]
      */

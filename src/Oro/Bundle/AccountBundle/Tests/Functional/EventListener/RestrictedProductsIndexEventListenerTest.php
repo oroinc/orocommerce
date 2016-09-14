@@ -41,11 +41,9 @@ class RestrictedProductsIndexEventListenerTest extends WebTestCase implements Se
 
     public function testRestrictIndexEntityEventListener()
     {
-        $websiteId = $this->getDefaultWebsiteId();
-
         $indexer = $this->getContainer()->get('oro_website_search.indexer');
         $searchEngine = $this->getContainer()->get('oro_website_search.engine');
-        $indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $websiteId]);
+        $indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]);
 
         $query = new Query();
         $query->from('oro_product_product_WEBSITE_ID');

@@ -164,13 +164,12 @@ abstract class AbstractIndexer implements IndexerInterface
             $itemsCount++;
             if (0 === $itemsCount % static::BATCH_SIZE) {
                 $restrictedEntityIds = $this->restrictIndexEntity($entityIds, $context, $entityClass);
-                if (count($restrictedEntityIds) === 0) {
-                    continue;
+                if (count($restrictedEntityIds) !== 0) {
+                    $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
+                    $realItemsCount += $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
+                    $entityIds = [];
+                    $entityManager->clear($entityClass);
                 }
-                $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
-                $realItemsCount += $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
-                $entityIds = [];
-                $entityManager->clear($entityClass);
             }
         }
 

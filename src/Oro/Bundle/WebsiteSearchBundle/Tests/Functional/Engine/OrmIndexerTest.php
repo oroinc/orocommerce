@@ -25,6 +25,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToI
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadOtherWebsite;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestInterface;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Stub\OrmIndexerStub;
 
 /**
  * @dbIsolationPerTest
@@ -148,6 +149,34 @@ class OrmIndexerTest extends WebTestCase implements SearchTestInterface
 
     public function testReindexForSpecificWebsite()
     {
+        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
+            ->willReturn($this->mappingConfig);
+
+        $this->listener = $this->setListener();
+        $this->indexer->reindex(
+            TestProduct::class,
+            [
+                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsite()->getId()
+            ]
+        );
+
+        /** @var Item[] $items */
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_' . $this->getDefaultWebsite()->getId()]);
+
+        $this->assertCount(2, $items);
+        $this->assertContains('Reindexed product', $items[0]->getTitle());
+        $this->assertContains('Reindexed product', $items[1]->getTitle());
+    }
+
+    public function testReindexForSpecificWebsiteWithCustomBatchSize()
+    {
+        $this->indexer = new OrmIndexerStub(
+            $this->dispatcher,
+            $this->doctrineHelper,
+            $this->mappingProviderMock,
+            $this->entityAliasResolver
+        );
+
         $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
             ->willReturn($this->mappingConfig);
 

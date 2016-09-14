@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\FrontendRequestTrait;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
 
 /**
  * @dbIsolationPerTest
@@ -15,6 +16,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\FrontendRequestTrait;
 class RestrictIndexProductsEventListenerTest extends WebTestCase
 {
     use FrontendRequestTrait;
+    use SearchTestTrait;
 
     protected function setUp()
     {
@@ -27,19 +29,14 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
 
     public function testRestrictIndexProductsEventListener()
     {
-        $website = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroWebsiteBundle:Website')
-            ->getDefaultWebsite();
-
         $indexer = $this->getContainer()->get('oro_website_search.indexer');
         $searchEngine = $this->getContainer()->get('oro_website_search.engine');
-        $indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $website->getId()]);
+        $indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]);
 
         $query = new Query();
         $query->from('oro_product_product_WEBSITE_ID');
         $query->select('recordTitle');
-        $query->getCriteria()->orderBy(['title_1' => Query::ORDER_ASC]);
+        $query->getCriteria()->orderBy(['title_' . $this->getDefaultLocalizationId() => Query::ORDER_ASC]);
 
         $result = $searchEngine->search($query);
         $values = $result->getElements();

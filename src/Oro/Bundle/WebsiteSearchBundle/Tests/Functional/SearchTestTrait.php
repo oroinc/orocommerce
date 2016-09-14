@@ -100,4 +100,13 @@ trait SearchTestTrait
             $dispatcher->removeListener($eventName, $listener);
         }
     }
+
+    /**
+     * @return int
+     */
+    protected function getDefaultLocalizationId()
+    {
+        $localizationManager = $this->getContainer()->get('oro_locale.manager.localization');
+        return $localizationManager->getDefaultLocalization()->getId();
+    }
 }
