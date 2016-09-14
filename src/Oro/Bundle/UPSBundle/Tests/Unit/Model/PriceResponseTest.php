@@ -19,21 +19,22 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
 
     public function testParseResponsePriceAsObject()
     {
-        $this->priceResponse->parseJSON(
+        $this->priceResponse->parse(json_decode(
             '{
-               "RateResponse":{
-                  "RatedShipment":{
-                     "Service": {
-                        "Code":"02"
-                     },
-                     "TotalCharges":{
-                        "CurrencyCode":"USD",
-                        "MonetaryValue":"8.60"
-                     }
-                  }
-               }
-            }'
-        );
+                "RateResponse":{
+                    "RatedShipment":{
+                        "Service": {
+                            "Code":"02"
+                        },
+                        "TotalCharges":{
+                            "CurrencyCode":"USD",
+                            "MonetaryValue":"8.60"
+                        }
+                    }
+                }
+            }',
+            true
+        ));
         $expected = [
             '02' => Price::create('8.60', 'USD'),
         ];
@@ -42,46 +43,27 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
 
     public function testParseResponsePriceAsArray()
     {
-        $this->priceResponse->parseJSON(
+        $this->priceResponse->parse(json_decode(
             '{
-               "RateResponse":{
-                  "RatedShipment":[
-                     {
-                         "Service": {
+                "RateResponse":{
+                    "RatedShipment":{
+                        "Service": {
                             "Code":"01"
-                         },
-                         "TotalCharges":{
+                        },
+                        "TotalCharges":{
                             "CurrencyCode":"USD",
                             "MonetaryValue":"8.60"
-                         }
-                     },
-                     {
-                         "Service": {
-                            "Code":"02"
-                         },
-                         "TotalCharges":{
-                            "CurrencyCode":"EUR",
-                            "MonetaryValue":"3.40"
-                         }
-                     },
-                     {
-                         "Service": {
-                            "Code":"03"
-                         },
-                         "TotalCharges":{
-                            "CurrencyCode":"EUR",
-                            "WrongMonetaryValue":"3.40"
-                         }
-                     }
-                  ]
-               }
-            }'
-        );
+                        }
+                    }
+                }
+            }',
+            true
+        ));
 
         $pricesExpected = [
             '01' => Price::create('8.60', 'USD'),
-            '02' => Price::create('3.40', 'EUR'),
         ];
+
         static::assertEquals($pricesExpected, $this->priceResponse->getPricesByServices());
         static::assertEquals($pricesExpected['01'], $this->priceResponse->getPriceByService('01'));
     }
@@ -92,7 +74,7 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseEmptyResponse()
     {
-        $this->priceResponse->parseJSON('');
+        $this->priceResponse->parse(json_decode('', true));
     }
 
     /**

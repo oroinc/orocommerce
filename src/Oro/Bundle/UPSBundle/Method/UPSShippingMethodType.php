@@ -158,6 +158,9 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
         if (count($packages) > 0) {
             $priceRequest = $priceRequest->setPackages($packages);
             $prices = $this->transportProvider->getPrices($priceRequest, $this->transport);
+            if ($prices === null) {
+                return null;
+            }
             $packagePrice = $prices->getPriceByService($this->shippingService->getCode());
             if ($packagePrice !== null) {
                 $price += (float)$packagePrice->getValue();

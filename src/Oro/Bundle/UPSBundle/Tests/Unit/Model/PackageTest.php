@@ -56,12 +56,14 @@ class PackageTest extends \PHPUnit_Framework_TestCase
     public function testToArray()
     {
         $this->initPackage();
+
         static::assertEquals($this->resultArray, $this->model->toArray());
     }
 
     public function testToJson()
     {
         $this->initPackage();
+
         static::assertEquals(json_encode($this->resultArray), $this->model->toJson());
     }
 
@@ -78,22 +80,14 @@ class PackageTest extends \PHPUnit_Framework_TestCase
 
         $this->resultArray = [
             'PackagingType' => [
-                    'Code' => self::PACKAGING_TYPE_CODE,
-                ],
-            'Dimensions'    => [
-                    'UnitOfMeasurement' => [
-                            'Code' => self::DIMENSION_CODE,
-                        ],
-                    'Length'            => self::DIMENSION_LENGTH,
-                    'Width'             => self::DIMENSION_WIDTH,
-                    'Height'            => self::DIMENSION_HEIGHT,
-                ],
+                'Code' => self::PACKAGING_TYPE_CODE,
+            ],
             'PackageWeight' => [
-                    'UnitOfMeasurement' => [
-                            'Code' => self::WEIGHT_CODE,
-                        ],
-                    'Weight'            => self::WEIGHT,
+                'UnitOfMeasurement' => [
+                    'Code' => self::WEIGHT_CODE,
                 ],
+                'Weight' => self::WEIGHT,
+            ],
         ];
     }
 

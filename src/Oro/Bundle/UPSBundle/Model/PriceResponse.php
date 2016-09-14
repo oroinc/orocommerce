@@ -17,13 +17,14 @@ class PriceResponse
      * @param array $data
      * @throws \InvalidArgumentException
      */
-    public function parseJSON($data)
+    public function parse($data)
     {
         if ($data === null || !$data['RateResponse'] || !$data['RateResponse']['RatedShipment']) {
             throw new \InvalidArgumentException('No price data in provided string');
         }
 
         $this->pricesByServices = [];
+
         if ($data['RateResponse']['RatedShipment'][self::TOTAL_CHARGES]) {
             $this->addRatedShipment($data['RateResponse']['RatedShipment']);
         } else {

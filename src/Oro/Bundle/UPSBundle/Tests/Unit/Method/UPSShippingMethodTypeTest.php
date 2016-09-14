@@ -21,6 +21,7 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 use Oro\Bundle\UPSBundle\Model\Package;
+use Oro\Bundle\UPSBundle\Model\PriceResponse;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodType;
@@ -136,9 +137,13 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
         );
 
         $methodOptions = [];
-        $typeOptions = ['surcharge' => 20];
+        $this->shippingService->expects(self::any())->method('getCode')->willReturn('02');
+        $typeOptions = ['02' => ['surcharge' => 20]];
 
-        $this->transportProvider->expects(self::once())->method('getPrices')->willReturn(50);
+        $priceResponse = $this->getMockBuilder(PriceResponse::class)->disableOriginalConstructor()->getMock();
+        $priceResponse->expects(self::once())->method('getPriceByService')->willReturn(Price::create(50, 'USD'));
+
+        $this->transportProvider->expects(self::once())->method('getPrices')->willReturn($priceResponse);
 
         /** @var UPSShippingMethodType|\PHPUnit_Framework_MockObject_MockObject $upsShippingMethodType */
         $upsShippingMethodType = $this->getMockBuilder(UPSShippingMethodType::class)
@@ -208,7 +213,7 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
         $createPackagesReflection = self::getMethod('createPackages');
         $packages = $createPackagesReflection->invokeArgs(
             $this->upsShippingMethodType,
-            [[$lineItem]]
+            [[$lineItem], 'KG']
         );
 
         $this->assertCount(1, $packages);

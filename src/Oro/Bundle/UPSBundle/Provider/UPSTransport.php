@@ -96,12 +96,12 @@ class UPSTransport extends AbstractRestTransport
                 ->setShipperName($parameterBag->get('shipping_account_name'))
                 ->setShipperNumber($parameterBag->get('shipping_account_number'));
 
-            $json = $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
+            $data = $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
             $priceResponse = new PriceResponse();
-            if (!array($json)) {
+            if (!is_array($data)) {
                 return null;
             }
-            $priceResponse->parseJSON($json);
+            $priceResponse->parse($data);
 
             return $priceResponse;
         }
