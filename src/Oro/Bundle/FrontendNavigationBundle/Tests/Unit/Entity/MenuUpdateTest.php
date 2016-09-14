@@ -29,17 +29,20 @@ class MenuUpdateTest extends \PHPUnit_Framework_TestCase
     {
         $website = new Website();
         $image = new File();
+        $priority = 10;
 
         $update = new MenuUpdateStub();
         $update
             ->setImage($image)
             ->setCondition('test condition')
-            ->setWebsite($website);
+            ->setWebsite($website)
+            ->setPriority($priority);
 
         $expected = [
             'image' => $image,
             'condition' => 'test condition',
             'website' => $website,
+            'position' => $priority,
         ];
 
         $this->assertSame($expected, $update->getExtras());
