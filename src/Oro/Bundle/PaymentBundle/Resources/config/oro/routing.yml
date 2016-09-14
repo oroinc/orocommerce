@@ -1,4 +1,4 @@
-orob2b_payment:
+oro_payment:
     resource:     "@OroPaymentBundle/Controller/PaymentTermController.php"
     type:         annotation
     prefix:       /payment/term
@@ -13,7 +13,7 @@ oro_organziation_api:
     defaults:
         version:  latest
 
-orob2b_payment_callback:
+oro_payment_callback:
     resource:     "@OroPaymentBundle/Controller/Frontend/CallbackController.php"
     type:         annotation
     prefix:       /payment/callback

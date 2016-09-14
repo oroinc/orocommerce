@@ -46,6 +46,25 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             'warehouse_c913b87',
             RelationType::MANY_TO_ONE
         ));
+
+        // rename entities
+        $extension->renameTable($schema, $queries, 'orob2b_warehouse', 'oro_warehouse');
+        $extension->renameTable($schema, $queries, 'orob2b_warehouse_inventory_lev', 'oro_warehouse_inventory_lev');
+
+        // rename indexes
+        $schema->getTable('orob2b_warehouse')->dropIndex('idx_orob2b_warehouse_created_at');
+        $schema->getTable('orob2b_warehouse')->dropIndex('idx_orob2b_warehouse_updated_at');
+        $schema->getTable('orob2b_warehouse_inventory_lev')->dropIndex('uidx_orob2b_wh_wh_inventory_lev');
+
+        $extension->addIndex($schema, $queries, 'oro_warehouse', ['created_at'], 'idx_oro_warehouse_created_at');
+        $extension->addIndex($schema, $queries, 'oro_warehouse', ['updated_at'], 'idx_oro_warehouse_updated_at');
+        $extension->addUniqueIndex(
+            $schema,
+            $queries,
+            'oro_warehouse_inventory_lev',
+            ['warehouse_id', 'product_unit_precision_id'],
+            'uidx_oro_wh_wh_inventory_lev'
+        );
     }
 
     /**

@@ -14,7 +14,7 @@ use Oro\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 
 class RequestProductType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_frontend_request_product';
+    const NAME = 'oro_rfp_frontend_request_product';
 
     /**
      * @var string
@@ -40,10 +40,10 @@ class RequestProductType extends AbstractType
                 'label' => 'oro.product.entity_label',
                 'create_enabled' => false,
                 'grid_name' => 'products-select-grid-frontend',
-                'grid_widget_route' => 'orob2b_frontend_datagrid_widget',
-                'grid_view_widget_route' => 'orob2b_frontend_datagrid_widget',
+                'grid_widget_route' => 'oro_frontend_datagrid_widget',
+                'grid_view_widget_route' => 'oro_frontend_datagrid_widget',
                 'configs' => [
-                    'route_name' => 'orob2b_frontend_autocomplete_search'
+                    'route_name' => 'oro_frontend_autocomplete_search'
                 ],
                 'data_parameters' => [
                     'scope' => 'rfp',

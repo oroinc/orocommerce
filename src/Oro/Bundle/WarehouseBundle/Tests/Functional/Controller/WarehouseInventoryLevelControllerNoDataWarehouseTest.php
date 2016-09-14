@@ -28,7 +28,7 @@ class WarehouseInventoryLevelControllerNoDataWarehouseTest extends WebTestCase
         $product = $this->getReference('product.1');
 
         // open product view page
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $product->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $inventoryButton = $crawler->filterXPath('//a[@title="Inventory"]');

@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 class ProductController extends Controller
 {
     /**
-     * @Route("/sidebar", name="orob2b_pricing_frontend_product_sidebar")
+     * @Route("/sidebar", name="oro_pricing_frontend_product_sidebar")
      * @Template
      *
      * @return array
@@ -32,9 +32,9 @@ class ProductController extends Controller
      */
     protected function createCurrenciesForm()
     {
-        $relationsProvider = $this->get('orob2b_account.provider.account_user_relations_provider');
+        $relationsProvider = $this->get('oro_account.provider.account_user_relations_provider');
 
-        $priceList = $this->get('orob2b_pricing.model.price_list_tree_handler')
+        $priceList = $this->get('oro_pricing.model.price_list_tree_handler')
             ->getPriceList($relationsProvider->getAccountIncludingEmpty($this->getUser()));
 
         $currenciesList = null;
@@ -79,6 +79,6 @@ class ProductController extends Controller
      */
     protected function getHandler()
     {
-        return $this->get('orob2b_pricing.model.price_list_request_handler');
+        return $this->get('oro_pricing.model.price_list_request_handler');
     }
 }

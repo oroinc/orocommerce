@@ -1,0 +1,33 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'price.html.twig'
+        - '@addTree':
+            items:
+                __product_price_container:
+                    blockType: product_prices
+                    options:
+                        productPrices: []
+                __product_listed_price:
+                    blockType: block
+                __product_msrp:
+                    blockType: block
+                    options:
+                        visible: false
+                __product_price:
+                    blockType: container
+                __product_price_value:
+                    blockType: block
+                __product_price_not_found:
+                    blockType: block
+                __product_price_hint:
+                    blockType: block
+            tree:
+                __product_secondary_content_first_container:
+                    __product_price_container:
+                        __product_price_hint: ~
+                        __product_listed_price: ~
+                        __product_msrp: ~
+                        __product_price:
+                            __product_price_value: ~
+                            __product_price_not_found: ~

@@ -2,20 +2,20 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 
 /**
  * @dbIsolation
  */
-class AjaxCheckoutControllerTest extends WebTestCase
+class AjaxCheckoutControllerTest extends FrontendWebTestCase
 {
     public function setUp()
     {
@@ -23,6 +23,7 @@ class AjaxCheckoutControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::EMAIL, LoadAccountUserData::PASSWORD)
         );
+        $this->setCurrentWebsite('default');
         $this->loadFixtures(
             [
                 LoadAccountUserData::class,
@@ -39,7 +40,7 @@ class AjaxCheckoutControllerTest extends WebTestCase
 
     public function testGetTotalsActionNotFound()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_checkout_frontend_totals', ['entityId' => 0]));
+        $this->client->request('GET', $this->getUrl('oro_checkout_frontend_totals', ['entityId' => 0]));
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
@@ -50,7 +51,7 @@ class AjaxCheckoutControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_checkout_frontend_totals', ['entityId' => $checkout->getId()])
+            $this->getUrl('oro_checkout_frontend_totals', ['entityId' => $checkout->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);

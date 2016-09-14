@@ -15,7 +15,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 
 class RequestProductType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_request_product';
+    const NAME = 'oro_rfp_request_product';
 
     /**
      * @var string
