@@ -18,6 +18,7 @@ config:
         'oropricing/js/validator/unique-product-prices': 'bundles/oropricing/js/validator/unique-product-prices.js'
 
         'oropricing/js/app/views/base-product-prices-view': 'bundles/oropricing/js/app/views/base-product-prices-view.js'
+        'oropricing/js/app/views/product-prices-editable-view': 'bundles/oropricing/js/app/views/product-prices-editable-view.js'
         'oropricing/js/app/views/price-list-schedule-view': 'bundles/oropricing/js/app/views/price-list-schedule-view.js'
 
         'oro/filter/product-price-filter': 'bundles/oropricing/js/filter/product-price-filter.js'

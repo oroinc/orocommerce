@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     var ProductPricesEditableView;
-    var BaseProductPricesView = require('orob2bpricing/js/app/views/base-product-prices-view');
+    var BaseProductPricesView = require('oropricing/js/app/views/base-product-prices-view');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var layout = require('oroui/js/layout');
     var $ = require('jquery');

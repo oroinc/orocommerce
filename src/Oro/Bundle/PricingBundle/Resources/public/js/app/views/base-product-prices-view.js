@@ -9,6 +9,8 @@ define(function(require) {
     var NumberFormatter = require('orolocale/js/formatter/number');
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
+        autoRender: true,
+
         options: {
             unitLabel: 'oro.product.product_unit.%s.label.full',
             defaultQuantity: 1
@@ -25,10 +27,20 @@ define(function(require) {
 
         modelAttr: {
             prices: {},
+            price: 0,
             quantityWasChanged: false
         },
 
-        prices: {},
+        modelEvents: {
+            'prices setPrices': ['change', 'setPrices'],
+            'quantity updatePrice': ['change', 'updatePriceWithoutQuantity'],
+            'unit updatePrice': ['change', 'updatePriceWithQuantity'],
+            'price updateUI': ['change', 'updateUI']
+        },
+
+        prices: null,
+
+        foundPrice: null,
 
         initialize: function(options) {
             BaseProductPricesView.__super__.initialize.apply(this, arguments);
@@ -38,26 +50,18 @@ define(function(require) {
                 return;
             }
             this.initializeElements(options);
-
-            this.setPrices(this.model.get('prices'));
-
-            this.model.on('change:quantity', this.updatePriceWithoutQuantity, this);
-            this.model.on('change:unit', this.updatePriceWithQuantity, this);
-
-            this.render();
         },
 
         dispose: function() {
             delete this.modelAttr;
+            delete this.prices;
+            delete this.foundPrice;
             this.disposeElements();
-            this.model.off('change:quantity', this.updatePriceWithoutQuantity, this);
-            this.model.off('change:unit', this.updatePriceWithQuantity, this);
             BaseProductPricesView.__super__.dispose.apply(this, arguments);
         },
 
         render: function() {
-            this.updatePrice();
-            this.renderHint();
+            this.setPrices();
         },
 
         initModel: function(options) {
@@ -75,20 +79,33 @@ define(function(require) {
 
         renderHint: function() {
             var $pricesHint = this.getElement('pricesHint');
+            if (!$pricesHint.length) {
+                return;
+            }
 
-            if ($pricesHint.length) {
-                var $pricesHintContent = this.getElement('pricesHintContent');
-                $pricesHint.data('content', $pricesHintContent.html());
+            var content = this.getHintContent();
+            $pricesHint.toggleClass('disabled', content.length === 0);
+
+            if (!$pricesHint.data('popover')) {
                 $pricesHint.popover({
                     animation: false,
-                    html: true
+                    html: true,
+                    container: 'body'
                 });
             }
+
+            $pricesHint.data('popover').updateContent(content);
         },
 
-        setPrices: function(prices) {
+        getHintContent: function() {
+            return this.getElement('pricesHintContent').html();
+        },
+
+        setPrices: function() {
             this.prices = {};
-            _.each(prices, function(price) {
+            this.foundPrice = {};
+
+            _.each(this.model.get('prices'), function(price) {
                 if (!this.prices[price.unit]) {
                     this.prices[price.unit] = [];
                 }
@@ -101,6 +118,8 @@ define(function(require) {
                 unitPrices.reverse();
                 this.prices[unit] = unitPrices;
             }, this);
+
+            this.updatePrice();
         },
 
         updatePriceWithoutQuantity: function() {
@@ -109,42 +128,43 @@ define(function(require) {
         },
 
         updatePriceWithQuantity: function() {
-            this.updatePrice(true);
+            this.updatePrice();
         },
 
         updatePrice: function(quantityUpdate) {
             quantityUpdate = typeof quantityUpdate !== 'undefined' ? quantityUpdate : true;
-
-            var priceData = {
-                quantity: this.model.get('quantity'),
-                unit: this.model.get('unit')
-            };
-
-            this.renderPrice(this.findPrice(priceData, quantityUpdate));
+            this.model.set('price', this.findPrice(quantityUpdate));
         },
 
-        findPrice: function(priceData, quantityUpdate) {
+        findPrice: function(quantityUpdate) {
+            var quantity = this.model.get('quantity');
+            var unit = this.model.get('unit');
+            var foundKey = unit + ' ' + quantity + ' ' + (quantityUpdate ? 1 : 0);
 
-            if (!priceData || !_.isObject(priceData)) {
-                return null;
+            if (!this.foundPrice[foundKey]) {
+                var smallestPrice = null;
+                this.foundPrice[foundKey] = _.find(this.prices[unit], function(price) {
+                    smallestPrice = price;
+                    return price.quantity <= quantity;
+                }) || null;
+
+                if (!this.modelAttr.quantityWasChanged && quantityUpdate) {
+                    this.model.set('quantity', smallestPrice ? smallestPrice.quantity : this.options.defaultQuantity);
+                    this.modelAttr.quantityWasChanged = false;
+                    this.foundPrice[foundKey]=smallestPrice;
+                }
             }
 
-            var smallestPrice = null;
-            var price =  _.find(this.prices[priceData.unit], function(price) {
-                smallestPrice = price;
-                return price.quantity <= priceData.quantity;
-            }) || null;
-
-            if (!this.modelAttr.quantityWasChanged && quantityUpdate) {
-                this.model.set('quantity', smallestPrice ? smallestPrice.quantity : this.options.defaultQuantity);
-                this.modelAttr.quantityWasChanged = false;
-                price=smallestPrice;
-            }
-
-            return price;
+            return this.foundPrice[foundKey];
         },
 
-        renderPrice: function(price) {
+        findPriceValue: function() {
+            var price = this.findPrice();
+            return price ? price.price : null;
+        },
+
+        updateUI: function() {
+            var price = this.model.get('price');
             if (price === null) {
                 this.getElement('price').addClass('hidden');
                 this.getElement('priceNotFound').removeClass('hidden');
@@ -157,6 +177,7 @@ define(function(require) {
                 this.getElement('priceNotFound').addClass('hidden');
                 this.getElement('price').removeClass('hidden');
             }
+            this.renderHint();
         }
     }));
 
