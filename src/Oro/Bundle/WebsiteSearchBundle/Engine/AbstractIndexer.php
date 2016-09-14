@@ -75,6 +75,18 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     public function reindex($class = null, array $context = [])
     {
+        $entitiesToIndex = $this->getMapping($class);
+        $websitesToIndex = $this->getWebsitesToIndex($context);
+
+        return $this->reindexEntities($websitesToIndex, $entitiesToIndex, $context);
+    }
+
+    /**
+     * @param string $class
+     * @return array
+     */
+    protected function getMapping($class = null)
+    {
         $mappingConfig = $this->mappingProvider->getMappingConfig();
 
         if (!$mappingConfig) {
@@ -90,10 +102,32 @@ abstract class AbstractIndexer implements IndexerInterface
             $entitiesToIndex = $mappingConfig;
         }
 
-        $websitesToIndex = $this->getWebsitesToIndex($context);
-
-        return $this->reindexEntities($websitesToIndex, $entitiesToIndex, $context);
+        return $entitiesToIndex;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    /*public function save($entity, array $context = [])
+    {
+        $entities = is_array($entity) ? $entity : [$entity];
+        $firstEntity = reset($entity);
+        $entityClass = $this->doctrineHelper->getEntityClass($firstEntity);
+        $entityMapping = $this->getMapping($entityClass);
+        $currentAlias = $this->applyPlaceholders($entityMapping['alias'], $context);
+        $ids = [];
+        foreach ($entities as $entity) {
+
+        }
+        $restrictedEntityIds = $this->restrictIndexEntity($entityIds, $context, $entityClass);
+        if (count($restrictedEntityIds) === 0) {
+            continue;
+        }
+        $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
+        $realItemsCount += $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
+        $entityIds = [];
+        $entityManager->clear($entityClass);
+    }*/
 
     /**
      * @param array $websiteIdsToIndex
@@ -155,7 +189,7 @@ abstract class AbstractIndexer implements IndexerInterface
         $entityManager = $this->doctrineHelper->getEntityManager($entityClass);
 
         $queryBuilder = $entityRepository->createQueryBuilder('entity');
-        $queryBuilder->select('entity.id');
+        $queryBuilder->select('IDENTITY(entity) as id');
 
         $iterator = new BufferedQueryResultIterator($queryBuilder);
         $iterator->setBufferSize(static::BATCH_SIZE);
@@ -168,24 +202,15 @@ abstract class AbstractIndexer implements IndexerInterface
             $entityIds[] = $entity['id'];
             $itemsCount++;
             if (0 === $itemsCount % static::BATCH_SIZE) {
-                $restrictedEntityIds = $this->restrictIndexEntity($entityIds, $context, $entityClass);
-                if (count($restrictedEntityIds) === 0) {
-                    continue;
-                }
-                $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
-                $realItemsCount += $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
+                $realItemsCount += $this->indexEntities($entityClass, $entityIds, $context, $temporaryAlias);
                 $entityIds = [];
                 $entityManager->clear($entityClass);
             }
         }
 
         if ($itemsCount % static::BATCH_SIZE > 0) {
-            $restrictedEntityIds = $this->restrictIndexEntity($entityIds, $context, $entityClass);
-            if (count($restrictedEntityIds) !== 0) {
-                $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
-                $realItemsCount += $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
-                $entityManager->clear($entityClass);
-            }
+            $realItemsCount += $this->indexEntities($entityClass, $entityIds, $context, $temporaryAlias);
+            $entityManager->clear($entityClass);
         }
 
         $this->renameIndex($temporaryAlias, $currentAlias);
@@ -208,17 +233,22 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param string $entityClass
      * @param array $entityIds
      * @param array $context
-     * @return array
+     * @param string $temporaryAlias
+     * @return int
      */
-    protected function indexEntities($entityClass, array $entityIds, array $context)
+    protected function indexEntities($entityClass, array $entityIds, array $context, $temporaryAlias)
     {
-        if (!$entityIds) {
-            return [];
-        }
-        $indexEntityEvent = new IndexEntityEvent($entityClass, $entityIds, $context);
-        $this->eventDispatcher->dispatch(IndexEntityEvent::NAME, $indexEntityEvent);
+        $restrictedEntityIds = $this->restrictIndexEntity($entityIds, $context, $entityClass);
 
-        return $indexEntityEvent->getEntitiesData();
+        if (!$restrictedEntityIds) {
+            return 0;
+        }
+
+        $indexEntityEvent = new IndexEntityEvent($entityClass, $restrictedEntityIds, $context);
+        $this->eventDispatcher->dispatch(IndexEntityEvent::NAME, $indexEntityEvent);
+        $entitiesData =  $indexEntityEvent->getEntitiesData();
+
+        return $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
     }
 
     /**
