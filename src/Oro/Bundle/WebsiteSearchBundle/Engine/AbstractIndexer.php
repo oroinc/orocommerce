@@ -145,11 +145,6 @@ abstract class AbstractIndexer implements IndexerInterface
             $collectContextEvent = new CollectContextEvent($websiteContext);
             $this->eventDispatcher->dispatch(CollectContextEvent::NAME, $collectContextEvent);
             $websiteContext = $collectContextEvent->getContext();
-
-            if (empty($websiteContext[self::CONTEXT_WEBSITE_ID_KEY])) {
-                throw new \RuntimeException('Website id should be in context.');
-            }
-
             foreach ($entitiesToIndex as $entityClass => $entityConfig) {
                 $handledItems += $this->reindexSingleEntity($entityClass, $entityConfig, $websiteContext);
             }

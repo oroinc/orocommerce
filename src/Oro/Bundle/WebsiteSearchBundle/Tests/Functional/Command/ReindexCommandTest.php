@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Command;
 
+use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ReindexCommandTest extends WebTestCase
@@ -9,7 +10,9 @@ class ReindexCommandTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $this->getContainer()->set('oro_website_search.indexer', new OrmIndexerStub());
+        $indexerMock = $this->getMockBuilder(IndexerInterface::class)->getMock();
+        $indexerMock->expects($this->once())->method('reindex')->willReturn(12);
+        $this->getContainer()->set('oro_website_search.indexer', $indexerMock);
     }
 
     public function testCommand()
