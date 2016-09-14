@@ -331,14 +331,14 @@ datagrids:
     frontend-product-search-grid:
         source:
             type: search
-            search_index: website
+#            search_index: website
             query:
                 select:
                     - text.sku as sku
                     - text.name_LOCALIZATION_ID as name
                     - text.all_text_LOCALIZATION_ID as text.all_text
                 from:
-                    - { table: %oro_product.entity.product.class%, alias: product }
+                    - product_WEBSITE_ID
         columns:
             sku:
                 label:         oro.product.sku.label
