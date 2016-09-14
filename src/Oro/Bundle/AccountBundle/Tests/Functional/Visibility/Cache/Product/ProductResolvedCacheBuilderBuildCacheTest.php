@@ -41,7 +41,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         $this->cacheBuilder->setCacheClass(
             $container->getParameter('oro_account.entity.product_visibility_resolved.class')
         );
-        $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
     }
 
     public function testBuildCache()

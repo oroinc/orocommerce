@@ -25,7 +25,7 @@ class ProductVisibilityTest extends WebTestCase
             'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
             'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
         ]);
-        $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
     }
 
     /**

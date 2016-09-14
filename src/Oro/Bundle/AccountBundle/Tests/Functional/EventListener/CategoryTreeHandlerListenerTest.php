@@ -33,7 +33,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
      */
     public function testCheckCalculatedCategories(array $visibleCategories, array $invisibleCategories)
     {
-        $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -74,7 +74,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         /** @var Category $category */
         $category = $this->getReference($categoryToHide);
         $this->createAccountGroupCategoryVisibility($category, AccountGroupCategoryVisibility::HIDDEN);
-        $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -118,7 +118,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         $category = $this->getReference($categoryToShow);
 
         $this->updateAccountGroupCategoryVisibility($category, AccountGroupCategoryVisibility::VISIBLE);
-        $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -161,7 +161,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         /** @var Category $category */
         $category = $this->getReference($categoryToShow);
         $this->updateAccountCategoryVisibility($category, AccountCategoryVisibility::HIDDEN);
-        $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -204,7 +204,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         /** @var Category $category */
         $category = $this->getReference($categoryToShow);
         $this->updateAccountCategoryVisibility($category, AccountCategoryVisibility::VISIBLE);
-        $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 

@@ -20,7 +20,7 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
     public function testPositionChange($categoryReference, $newParentCategoryReference, array $expectedData)
     {
         $container = $this->getContainer();
-        $container->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
+        $container->get('oro_account.visibility.cache.cache_builder')->buildCache();
         /** @var Category $category */
         $category = $this->getReference($categoryReference);
 
@@ -32,7 +32,7 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
         $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroAccountBundle:Visibility\CategoryVisibility')
             ->flush();
-        $container->get('orob2b_account.visibility.cache.product.category.cache_builder')
+        $container->get('oro_account.visibility.cache.product.category.cache_builder')
             ->categoryPositionChanged($category);
 
         $this->assertProductVisibilityResolvedCorrect($expectedData);

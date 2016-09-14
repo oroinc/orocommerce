@@ -52,7 +52,6 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         );
 
         $this->builder->setVisibilityChangeAccountSubtreeCacheBuilder($subtreeBuilder);
-//        $this->getContainer()->get('orob2b_account.visibility.cache.product.category.cache_builder')->buildCache();
 
     }
 

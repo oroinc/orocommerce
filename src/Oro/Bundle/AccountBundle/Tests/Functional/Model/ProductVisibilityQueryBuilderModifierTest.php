@@ -71,7 +71,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             $this->websiteManager,
             $this->getContainer()->get('oro_account.provider.account_user_relations_provider')
         );
-        $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
     }
 
     /**

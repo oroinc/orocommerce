@@ -54,39 +54,6 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
         $this->builder->setVisibilityChangeAccountSubtreeCacheBuilder($subtreeBuilder);
     }
 
-//    public function testAAAAA()
-//    {
-//        $categories = [
-//            'category_1',
-//            'category_1_2',
-//            'category_1_2_3',
-//            'category_1_2_3_4',
-//            'category_1_5',
-//            'category_1_5_6',
-//            'category_1_5_6_7',
-//        ];
-//        $this->getContainer()->get('orob2b_account.visibility.cache.product.category.cache_builder')->buildCache();
-//        $visRepo = $this->getContainer()->get('doctrine')->getRepository(CategoryVisibilityResolved::class);
-//        $accVisRepo = $this->getContainer()->get('doctrine')->getRepository(AccountCategoryVisibilityResolved::class);
-//        $accGRepo = $this->getContainer()->get('doctrine')->getRepository(AccountGroupCategoryVisibilityResolved::class);
-//        /** @var AccountGroup[] $accountGroups */
-//        $accountGroups = $this->getContainer()->get('doctrine')->getRepository(AccountGroup::class)->findAll();
-//        /** @var Account[] $accounts */
-//        $accounts = $this->getContainer()->get('doctrine')->getRepository(Account::class)->findAll();
-//        foreach ($categories as $cat) {
-//            $category = $this->getReference($cat);
-//            $vi = $visRepo->findBy(['category' => $category]);
-//            foreach ($accountGroups as $group) {
-//                $groupName = $group->getName();
-//                $vis =  $accGRepo->findOneBy(['category' => $category, 'accountGroup' => $group]);
-//            }
-//            foreach ($accounts as $account) {
-//                $groupName = $account->getName();
-//                $vis =  $accVisRepo->findOneBy(['category' => $category, 'account' => $account]);
-//            }
-//        }
-//    }
-
     public function testChangeAccountGroupCategoryVisibilityToHidden()
     {
         $visibility = new AccountGroupCategoryVisibility();
