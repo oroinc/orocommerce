@@ -23,6 +23,7 @@ use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadOtherWebsite;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestInterface;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
 
 /**
@@ -30,7 +31,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class OrmIndexerTest extends WebTestCase
+class OrmIndexerTest extends WebTestCase implements SearchTestInterface
 {
     use SearchTestTrait;
 
@@ -91,21 +92,12 @@ class OrmIndexerTest extends WebTestCase
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    private function getRestrictEntityEventName()
+    public function getRestrictEntityEventName()
     {
         $alias = $this->entityAliasResolver->getAlias(TestProduct::class);
         return sprintf('%s.%s', RestrictIndexEntityEvent::NAME, $alias);
-    }
-
-    private function clearRestrictListeners()
-    {
-        $eventName = $this->getRestrictEntityEventName();
-
-        foreach ($this->dispatcher->getListeners($eventName) as $listener) {
-            $this->dispatcher->removeListener($eventName, $listener);
-        }
     }
 
     protected function tearDown()
