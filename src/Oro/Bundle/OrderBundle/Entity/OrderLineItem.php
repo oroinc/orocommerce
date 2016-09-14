@@ -16,7 +16,7 @@ use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
- * @ORM\Table(name="orob2b_order_line_item")
+ * @ORM\Table(name="oro_order_line_item")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @Config(

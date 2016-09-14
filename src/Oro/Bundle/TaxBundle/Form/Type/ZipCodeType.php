@@ -10,7 +10,7 @@ use Oro\Bundle\TaxBundle\Form\DataTransformer\ZipCodeTransformer;
 
 class ZipCodeType extends AbstractType
 {
-    const NAME = 'orob2b_tax_zip_code_type';
+    const NAME = 'oro_tax_zip_code_type';
 
     /**
      * @var string

@@ -16,7 +16,7 @@ use Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 
 class AccountUserType extends AbstractType
 {
-    const NAME = 'orob2b_account_account_user';
+    const NAME = 'oro_account_account_user';
 
     /**
      * @var string
@@ -184,7 +184,7 @@ class AccountUserType extends AbstractType
                 ]
             );
 
-        if ($this->securityFacade->isGranted('orob2b_account_account_user_role_view')) {
+        if ($this->securityFacade->isGranted('oro_account_account_user_role_view')) {
             $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
             $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
         }

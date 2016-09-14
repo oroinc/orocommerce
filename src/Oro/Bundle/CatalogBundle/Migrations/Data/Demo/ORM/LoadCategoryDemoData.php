@@ -10,7 +10,10 @@ class LoadCategoryDemoData extends AbstractCategoryFixture
      * @var array
      */
     protected $categories = [
-        'Lighting Products' => [],
+        'Lighting Products' => [
+            'Architectural floodlighting' => [],
+            'Headlamps' => []
+        ],
         'Medical Apparel' => [],
         'Office Furniture' => [],
         'Retail Supplies' => [],

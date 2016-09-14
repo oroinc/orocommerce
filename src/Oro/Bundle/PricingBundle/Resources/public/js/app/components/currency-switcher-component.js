@@ -13,7 +13,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            currencySwitcherRoute: 'orob2b_pricing_frontend_set_current_currency',
+            currencySwitcherRoute: 'oro_pricing_frontend_set_current_currency',
             currencyElement: '[data-currency]',
             selectedCurrency: null
         },

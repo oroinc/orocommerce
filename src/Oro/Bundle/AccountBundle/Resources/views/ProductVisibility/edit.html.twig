@@ -3,12 +3,12 @@
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
 
-{% set formAction = path('orob2b_product_visibility_edit', { 'id': entity.id })  %}
+{% set formAction = path('oro_product_visibility_edit', { 'id': entity.id })  %}
 
 {% block navButtons %}
-    {{ UI.cancelButton(path('orob2b_product_index')) }}
+    {{ UI.cancelButton(path('oro_product_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_product_update') %}
+    {% if entity.id or resource_granted('oro_product_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -18,10 +18,10 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_product_index'),
+            'indexPath':   path('oro_product_index'),
             'indexLabel': 'oro.product.entity_plural_label'|trans,
             'entityTitle': UI.link({
-                'path': path('orob2b_product_view', {'id': entity.id}),
+                'path': path('oro_product_view', {'id': entity.id}),
                 'label': entity.sku ~ ' - ' ~ entity.defaultName
             })
         } %}
@@ -58,7 +58,7 @@
                         'widgetType': 'block',
                         'label': website.name|trans,
                         'url': path(
-                            'orob2b_product_visibility_website',
+                            'oro_product_visibility_website',
                             { productId: entity.id,  id: website.id}
                         ),
                         'content': content

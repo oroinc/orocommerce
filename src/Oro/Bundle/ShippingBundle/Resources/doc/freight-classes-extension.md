@@ -33,13 +33,13 @@ class FreightClassesExtension implements FreightClassesExtensionInterface
 ```
 
 
-Extension must be registered at "services.yml" with tag "*orob2b_shipping.extension.freight_classes*", that allow main service to collect all extensions
+Extension must be registered at "services.yml" with tag "*oro_shipping.extension.freight_classes*", that allow main service to collect all extensions
 
 ```yml
 services:
-    orob2b_shipping_demo.extension.shipping_freight_classes:
+    oro_shipping_demo.extension.shipping_freight_classes:
         class: 'Oro\Bundle\ShippingDemoBundle\Extension\Shipping\FreightClassesExtension'
         tags:
-            - { name: orob2b_shipping.extension.freight_classes }
+            - { name: oro_shipping.extension.freight_classes }
 
 ```

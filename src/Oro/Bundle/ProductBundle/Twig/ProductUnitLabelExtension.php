@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductUnitLabelExtension extends \Twig_Extension
 {
-    const NAME = 'orob2b_product_unit_label';
+    const NAME = 'oro_product_unit_label';
 
     /**
      * @var ProductUnitLabelFormatter
@@ -28,7 +28,7 @@ class ProductUnitLabelExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter(
-                'orob2b_format_product_unit_label',
+                'oro_format_product_unit_label',
                 [$this, 'format'],
                 ['is_safe' => ['html']]
             ),

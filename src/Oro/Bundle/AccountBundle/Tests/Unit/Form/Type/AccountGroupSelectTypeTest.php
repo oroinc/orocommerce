@@ -38,8 +38,8 @@ class AccountGroupSelectTypeTest extends \PHPUnit_Framework_TestCase
                         $this->assertArrayHasKey('autocomplete_alias', $options);
                         $this->assertArrayHasKey('create_form_route', $options);
                         $this->assertArrayHasKey('configs', $options);
-                        $this->assertEquals('orob2b_account_group', $options['autocomplete_alias']);
-                        $this->assertEquals('orob2b_account_group_create', $options['create_form_route']);
+                        $this->assertEquals('oro_account_group', $options['autocomplete_alias']);
+                        $this->assertEquals('oro_account_group_create', $options['create_form_route']);
                         $this->assertEquals(
                             ['placeholder' => 'oro.account.accountgroup.form.choose'],
                             $options['configs']

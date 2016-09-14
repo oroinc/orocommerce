@@ -42,7 +42,7 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
         );
 
         $this->registry = $this->getContainer()->get('doctrine');
-        $this->compiler = $this->getContainer()->get('orob2b_pricing.compiler.product_assignment_rule_compiler');
+        $this->compiler = $this->getContainer()->get('oro_pricing.compiler.product_assignment_rule_compiler');
     }
 
     public function testCompileTwoProducts()

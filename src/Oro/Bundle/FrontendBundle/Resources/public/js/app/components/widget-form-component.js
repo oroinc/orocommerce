@@ -11,7 +11,7 @@ define(
                     options._wid,
                     function(widget) {
                         if (!options.message) {
-                            options.message = 'orob2b_frontend.widget_form_component.save_flash_success';
+                            options.message = 'oro_frontend.widget_form_component.save_flash_success';
                         }
 
                         messenger.notificationFlashMessage('success', __(options.message));

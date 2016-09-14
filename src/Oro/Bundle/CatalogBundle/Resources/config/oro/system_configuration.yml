@@ -1,0 +1,11 @@
+system_configuration:
+    groups:
+        catalog:
+            title: oro.catalog.system_configuration.groups.catalog.title
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    catalog:
+                        priority: 900

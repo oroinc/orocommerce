@@ -21,8 +21,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(
- *      name="orob2b_invoice",
- *      indexes={@ORM\Index(name="orob2b_invoice_created_at_index", columns={"created_at"})}
+ *      name="oro_invoice",
+ *      indexes={@ORM\Index(name="oro_invoice_created_at_index", columns={"created_at"})}
  * )
  * @ORM\Entity
  * @ORM\AssociationOverrides({
@@ -31,8 +31,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      )
  * })
  * @Config(
- *      routeName="orob2b_invoice_index",
- *      routeUpdate="orob2b_invoice_update",
+ *      routeName="oro_invoice_index",
+ *      routeUpdate="oro_invoice_update",
  *      defaultValues={
  *          "ownership"={
  *              "owner_type"="USER",

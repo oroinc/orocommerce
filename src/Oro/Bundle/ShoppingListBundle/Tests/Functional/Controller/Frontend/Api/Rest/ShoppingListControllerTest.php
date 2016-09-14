@@ -31,7 +31,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_delete_shoppinglist', ['id' => $shoppingList->getId()])
+            $this->getUrl('oro_api_delete_shoppinglist', ['id' => $shoppingList->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
