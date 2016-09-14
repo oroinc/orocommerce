@@ -23,12 +23,13 @@ use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadOtherWebsite;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestInterface;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
 
 /**
  * @dbIsolationPerTest
  */
-class OrmIndexerTest extends WebTestCase
+class OrmIndexerTest extends WebTestCase implements SearchTestInterface
 {
     use SearchTestTrait;
 
@@ -96,20 +97,11 @@ class OrmIndexerTest extends WebTestCase
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    private function getRestrictEntityEventName()
+    public function getRestrictEntityEventName()
     {
         return sprintf('%s.%s', RestrictIndexEntityEvent::NAME, 'product');
-    }
-
-    private function clearRestrictListeners()
-    {
-        $eventName = $this->getRestrictEntityEventName();
-
-        foreach ($this->dispatcher->getListeners($eventName) as $listener) {
-            $this->dispatcher->removeListener($eventName, $listener);
-        }
     }
 
     protected function tearDown()

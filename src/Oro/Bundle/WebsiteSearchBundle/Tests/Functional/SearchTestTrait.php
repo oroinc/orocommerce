@@ -76,4 +76,15 @@ trait SearchTestTrait
 
         $this->assertEquals($count, $actualCount);
     }
+
+    private function clearRestrictListeners()
+    {
+        /** @var SearchTestInterface $this */
+        $eventName = $this->getRestrictEntityEventName();
+        $dispatcher = $this->getContainer()->get('event_dispatcher');
+
+        foreach ($dispatcher->getListeners($eventName) as $listener) {
+            $dispatcher->removeListener($eventName, $listener);
+        }
+    }
 }
