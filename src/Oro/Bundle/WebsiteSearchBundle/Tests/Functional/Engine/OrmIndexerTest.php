@@ -76,14 +76,7 @@ class OrmIndexerTest extends WebTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->entityAliasResolver = $this->getMockBuilder(EntityAliasResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->entityAliasResolver
-            ->expects($this->any())
-            ->method('getAlias')
-            ->willReturn('product');
+        $this->entityAliasResolver = $this->getContainer()->get('oro_entity.entity_alias_resolver');
 
         $this->dispatcher = $this->getContainer()->get('event_dispatcher');
 
@@ -102,7 +95,8 @@ class OrmIndexerTest extends WebTestCase
      */
     private function getRestrictEntityEventName()
     {
-        return sprintf('%s.%s', RestrictIndexEntityEvent::NAME, 'product');
+        $alias = $this->entityAliasResolver->getAlias(TestProduct::class);
+        return sprintf('%s.%s', RestrictIndexEntityEvent::NAME, $alias);
     }
 
     private function clearRestrictListeners()
@@ -119,9 +113,7 @@ class OrmIndexerTest extends WebTestCase
         $this->truncateIndexTextTable();
 
         //Remove listener to not to interract with other tests
-        if (null !== $this->listener) {
-            $this->dispatcher->removeListener(IndexEntityEvent::NAME, $this->listener);
-        }
+        $this->dispatcher->removeListener(IndexEntityEvent::NAME, $this->listener);
 
         unset($this->doctrineHelper, $this->mappingProviderMock, $this->dispatcher, $this->indexer);
     }
