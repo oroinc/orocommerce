@@ -9,7 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class FrontendControllerTest extends WebTestCase
 {
-    const FRONTEND_THEME_CONFIG_KEY = 'oro_b2b_frontend.frontend_theme';
+    const FRONTEND_THEME_CONFIG_KEY = 'oro_frontend.frontend_theme';
     const DEFAULT_THEME = '';
 
     protected function setUp()

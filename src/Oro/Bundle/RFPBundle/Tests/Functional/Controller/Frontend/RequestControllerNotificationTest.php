@@ -95,7 +95,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->em->flush();
 
         $this->configManager->set(
-            'oro_b2b_rfp.notify_assigned_sales_reps_of_the_account',
+            'oro_rfp.notify_assigned_sales_reps_of_the_account',
             'noSaleReps',
             $this->website
         );
@@ -128,7 +128,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->em->flush();
 
         $this->configManager->set(
-            'oro_b2b_rfp.notify_owner_of_account',
+            'oro_rfp.notify_owner_of_account',
             'noSaleReps',
             $this->website
         );
@@ -162,7 +162,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->em->flush();
 
         $this->configManager->set(
-            'oro_b2b_rfp.notify_owner_of_account_user_record',
+            'oro_rfp.notify_owner_of_account_user_record',
             'noSaleReps',
             $this->website
         );
