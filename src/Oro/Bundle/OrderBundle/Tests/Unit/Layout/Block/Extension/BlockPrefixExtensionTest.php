@@ -35,31 +35,31 @@ class BlockPrefixExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($options['block_prefixes'], []);
     }
 
-    public function testFinishView()
+    public function testBuildView()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|BlockInterface $block */
         $block = $this->getMock('Oro\Component\Layout\BlockInterface');
         $view = new BlockView();
 
-        $this->extension->finishView($view, $block, new Options(['block_prefixes' => ['test_prefix']]));
+        $this->extension->buildView($view, $block, new Options(['block_prefixes' => ['test_prefix']]));
 
         $this->assertArrayHasKey('block_prefixes', $view->vars);
-        $this->assertEquals($view->vars['block_prefixes'], new Options(['test_prefix']));
+        $this->assertEquals($view->vars['block_prefixes'], ['test_prefix']);
     }
 
-    public function testFinishViewWithoutOption()
+    public function testBuildViewWithoutOption()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|BlockInterface $block */
         $block = $this->getMock('Oro\Component\Layout\BlockInterface');
         $view = new BlockView();
 
-        $this->extension->finishView($view, $block, new Options());
+        $this->extension->buildView($view, $block, new Options());
 
         $this->assertArrayHasKey('block_prefixes', $view->vars);
-        $this->assertEquals($view->vars['block_prefixes'], new Options());
+        $this->assertEquals($view->vars['block_prefixes'], []);
     }
 
-    public function testFinishViewWithDefinedPrefixes()
+    public function testBuildViewWithDefinedPrefixes()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|BlockInterface $block */
         $block = $this->getMock('Oro\Component\Layout\BlockInterface');
@@ -69,6 +69,6 @@ class BlockPrefixExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->finishView($view, $block, new Options());
 
         $this->assertArrayHasKey('block_prefixes', $view->vars);
-        $this->assertEquals($view->vars['block_prefixes'], new Options(['_prefix']));
+        $this->assertEquals($view->vars['block_prefixes'], ['_prefix']);
     }
 }
