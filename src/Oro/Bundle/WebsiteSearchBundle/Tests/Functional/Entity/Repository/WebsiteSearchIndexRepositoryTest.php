@@ -69,18 +69,18 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
             ->getDefaultWebsite()
             ->getId();
 
-        $alias = 'oro_product_' . $websiteId;
         $query = new Query();
-        $query->from($alias);
-
-        $query->getCriteria()->orderBy(['id' => 'ASC']);
+        $query->from('oro_product_' . $websiteId);
+        $query->getCriteria()->orderBy(['id' => Query::ORDER_ASC]);
 
         $searchReferenceRepository = $this->getSearchReferenceRepository();
 
+        /** @var Item $goodProductReference */
         $goodProductReference = $searchReferenceRepository->getReference(
             LoadItemData::getReferenceName(LoadItemData::REFERENCE_GOOD_PRODUCT, $websiteId)
         );
 
+        /** @var Item $betterProductReference */
         $betterProductReference = $searchReferenceRepository->getReference(
             LoadItemData::getReferenceName(LoadItemData::REFERENCE_BETTER_PRODUCT, $websiteId)
         );
@@ -139,10 +139,11 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
         $query->from('oro_product_' . $websiteId);
         $query->getCriteria()->andWhere(Criteria::expr()->contains('long_description', 'Long description'));
 
+
         $referenceName = LoadItemData::getReferenceName(LoadItemData::REFERENCE_GOOD_PRODUCT, $websiteId);
-        $expectedItem = $this->convertItemToArray(
-            $this->getSearchReferenceRepository()->getReference($referenceName)
-        );
+        /** @var Item $item */
+        $item = $this->getSearchReferenceRepository()->getReference($referenceName);
+        $expectedItem = $this->convertItemToArray($item);
 
         $itemResults = $this->getRepositoryWithDrivers()->search($query);
         $itemResult = reset($itemResults);
@@ -162,9 +163,9 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
             ->getId();
 
         $referenceName = LoadItemData::getReferenceName(LoadItemData::REFERENCE_BETTER_PRODUCT, $websiteId);
-        $expectedItem = $this->convertItemToArray(
-            $this->getSearchReferenceRepository()->getReference($referenceName)
-        );
+        /** @var Item $item */
+        $item = $this->getSearchReferenceRepository()->getReference($referenceName);
+        $expectedItem = $this->convertItemToArray($item);
 
         $query = new Query();
         $query->from('oro_product_' . $websiteId);
