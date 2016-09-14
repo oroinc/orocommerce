@@ -163,21 +163,6 @@
   &__radio {
     margin: 0 0 5px;
 
-    // label {
-    //   font-weight: 400;
-    // }
-    //
-    // i {
-    //   margin-right: 5px;
-    //
-    //   font-size: 18px;
-    // }
-    //
-    // span {
-    //   font-size: 13px;
-    //   vertical-align: middle;
-    // }
-
     .custom-radio {
       &.checked {
         + .checkout__form__payment-container {
