@@ -41,18 +41,16 @@ class RestrictedProductsIndexEventListenerTest extends WebTestCase implements Se
 
     public function testRestrictIndexEntityEventListener()
     {
-        $website = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroWebsiteBundle:Website')
-            ->getDefaultWebsite();
+        $websiteId = $this->getDefaultWebsiteId();
 
         $indexer = $this->getContainer()->get('oro_website_search.indexer');
         $searchEngine = $this->getContainer()->get('oro_website_search.engine');
-        $indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $website->getId()]);
+        $indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $websiteId]);
 
         $query = new Query();
         $query->from('oro_product_product_WEBSITE_ID');
         $query->select('recordTitle');
+        $query->getCriteria()->orderBy(['recordTitle' => Query::ORDER_ASC]);
 
         $result = $searchEngine->search($query);
         $values = $result->getElements();
@@ -74,9 +72,6 @@ class RestrictedProductsIndexEventListenerTest extends WebTestCase implements Se
         return sprintf('%s.%s', RestrictIndexEntityEvent::NAME, 'product');
     }
 
-    /**
-     * @return callable
-     */
     private function setListener()
     {
         $this->dispatcher->addListener(
