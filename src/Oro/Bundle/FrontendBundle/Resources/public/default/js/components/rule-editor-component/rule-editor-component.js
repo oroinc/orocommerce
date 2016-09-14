@@ -26,9 +26,14 @@ define([
 
                 self.$element.toggleClass('error', !self.validate(value, self.options));
             });
+
+/*
             this.$element.on('keyup change paste', function() {
                 self.autocomplete(self.$element, self.options);
             });
+*/
+
+            this.$element.typeahead({source: this.autocomplete(this.$element, this.options)});
         },
 
         validate: function(value, options) {
@@ -85,50 +90,50 @@ define([
         },
 
         autocomplete: function($element, options) {
-            var self = this,
-                refs = options,
-                value = $element.val(),
-                caretPosition = $element[0].selectionStart,
-                separatorsPositions = (function(string) {
-                    var arr = [0];
+            var self = this;
 
-                    _.each(string, function(char, i) {
-                        if (/^\s$/.test(char)) {
-                            arr.push(i + 1);
+            return function(value, callback) {
+                var caretPosition = $element[0].selectionStart,
+                    separatorsPositions = (function(string) {
+                        var arr = [0];
+
+                        _.each(string, function(char, i) {
+                            if (/^\s$/.test(char)) {
+                                arr.push(i + 1);
+                            }
+                        });
+
+                        arr.push(string.length + 1);
+
+                        return arr;
+                    })(value),
+                    nearestSeparator = (function(arr, position) {
+                        var index = 0;
+
+                        if (!arr.length) {
+                            return index;
                         }
-                    });
-
-                    arr.push(string.length + 1);
-
-                    return arr;
-                })(value),
-                nearestSeparator = (function(arr, position) {
-                    var index = 0;
-
-                    if (!arr.length) {
-                        return index;
-                    }
 
 
-                    while (arr[index] < position) {
-                        index++;
-                    }
+                        while (arr[index] < position) {
+                            index++;
+                        }
 
-                    return {
-                        position: arr[index] === position ? null : arr[index - 1],
-                        nextPosition: arr[index] - 1
-                    };
+                        return {
+                            position: arr[index] === position ? null : arr[index - 1],
+                            nextPosition: arr[index] - 1
+                        };
 
-                })(separatorsPositions, caretPosition),
-                wordUnderCaret = this.getStringPart(value, nearestSeparator.position, nearestSeparator.nextPosition),
-                suggested = (function(word, ref) {
-                    return _.filter(self.getPathsArray(ref.data), function(item) {
-                        return item.indexOf(word) === 0;
-                    });
-                })(wordUnderCaret, refs);
+                    })(separatorsPositions, caretPosition),
+                    wordUnderCaret = self.getStringPart(value, nearestSeparator.position, nearestSeparator.nextPosition),
+                    suggested = (function(word, ref) {
+                        return _.filter(self.getPathsArray(ref.data), function(item) {
+                            return item.indexOf(word) === 0;
+                        });
+                    })(wordUnderCaret, options);
 
-
-            console.log(wordUnderCaret, suggested);
+                callback(suggested);
+            };
         },
 
         getPathsArray: function(src, baseName, baseArr) {
@@ -156,18 +161,16 @@ define([
 
         getRegexp: function(opsArr) {
             var escapedOps = (function(ops) {
-                var result = [];
-
                 if (ops && ops.length) {
-                    _.each(ops, function(item) {
-                        result.push('\\' + item.split('').join('\\'));
+                    return ops.map(function(item) {
+                        return '\\' + item.split('').join('\\');
                     });
                 }
 
-                return result;
+                return null;
             })(opsArr);
 
-            return escapedOps && escapedOps.length ? new RegExp('\\s*((' + escapedOps.join(')|(') + '))\\s*', 'g') : null;
+            return escapedOps ? new RegExp('\\s*((' + escapedOps.join(')|(') + '))\\s*', 'g') : null;
         },
 
         getStringParts: function(string, sub) {
