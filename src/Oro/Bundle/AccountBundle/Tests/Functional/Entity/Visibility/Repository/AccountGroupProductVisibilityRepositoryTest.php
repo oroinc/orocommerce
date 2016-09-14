@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
 
-use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\Repository\AccountGroupProductVisibilityRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -36,7 +35,6 @@ class AccountGroupProductVisibilityRepositoryTest extends AbstractProductVisibil
         $this->repository = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroAccountBundle:Visibility\AccountGroupProductVisibility');
-        $this->getContainer()->get('oro_message_queue.test.message_consumer')->consume();
     }
 
     /**

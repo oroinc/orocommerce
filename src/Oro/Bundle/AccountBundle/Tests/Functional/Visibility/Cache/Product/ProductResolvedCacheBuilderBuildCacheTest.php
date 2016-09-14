@@ -3,15 +3,14 @@
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache;
 
 use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use Oro\Bundle\AccountBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -42,6 +41,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         $this->cacheBuilder->setCacheClass(
             $container->getParameter('orob2b_account.entity.product_visibility_resolved.class')
         );
+        $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
     }
 
     public function testBuildCache()

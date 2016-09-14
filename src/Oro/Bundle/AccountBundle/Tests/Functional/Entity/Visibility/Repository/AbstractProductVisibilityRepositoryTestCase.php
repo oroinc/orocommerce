@@ -35,8 +35,7 @@ abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
         /** @var Category $category */
         $category = $this->getReference($categoryName);
         $this->deleteCategory($category);
-        $this->getContainer()->get('orob2b_catalog.model.category_message_handler')->sendScheduledMessages();
-        $this->getContainer()->get('oro_message_queue.test.message_consumer')->consume();
+        $this->repository->setToDefaultWithoutCategory();
         foreach ($deletedCategoryProducts as $deletedCategoryProduct) {
             $this->assertNotContains($deletedCategoryProduct, $this->getProductsByVisibilities());
         }

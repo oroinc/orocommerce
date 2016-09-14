@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
-use Symfony\Component\Yaml\Yaml;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * @dbIsolation
@@ -20,7 +19,8 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
      */
     public function testPositionChange($categoryReference, $newParentCategoryReference, array $expectedData)
     {
-        $this->markTestSkipped('Will be done in scope BB-4124');
+        $container = $this->getContainer();
+        $container->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
         /** @var Category $category */
         $category = $this->getReference($categoryReference);
 
@@ -32,6 +32,8 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
         $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroAccountBundle:Visibility\CategoryVisibility')
             ->flush();
+        $container->get('orob2b_account.visibility.cache.product.category.cache_builder')
+            ->categoryPositionChanged($category);
 
         $this->assertProductVisibilityResolvedCorrect($expectedData);
     }

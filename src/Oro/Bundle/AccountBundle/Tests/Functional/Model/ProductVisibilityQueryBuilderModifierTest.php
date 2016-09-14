@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Model;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData as AccountLoadAccountUserData;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * @dbIsolation
@@ -62,6 +61,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             $this->getContainer()->get('orob2b_website.manager'),
             $this->getContainer()->get('orob2b_account.provider.account_user_relations_provider')
         );
+        $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
     }
 
     /**
@@ -73,8 +73,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      */
     public function testModify($configValue, $user, $expectedData)
     {
-        $this->markTestSkipped('Will be done in scope BB-4124');
-        
         if ($user) {
             $user = $this->getReference($user);
         }

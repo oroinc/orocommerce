@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
-use Symfony\Component\Yaml\Yaml;
-
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Tests\Functional\VisibilityTrait;
+use Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\CategoryResolvedCacheBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * @dbIsolation
@@ -25,16 +26,22 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
      */
     public function testVisibilityChange($categoryReference, array $visibility, array $expectedData)
     {
-        $this->markTestSkipped('Will be done in scope BB-4124');
-        
-        $categoryVisibility = $this->getVisibilityEntity($categoryReference, $visibility);
+        $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
 
+        /** @var Registry $registry */
+        $registry = $this->getContainer()->get('doctrine');
+        /** @var CategoryResolvedCacheBuilder $builder */
+        $builder = $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder');
+
+        $categoryVisibility = $this->getVisibilityEntity($categoryReference, $visibility);
         $originalVisibility = $categoryVisibility->getVisibility();
 
         $categoryVisibility->setVisibility($visibility['visibility']);
-        $this->updateVisibility($this->getContainer()->get('doctrine'), $categoryVisibility);
-        $this->assertProductVisibilityResolvedCorrect($expectedData);
+        $this->updateVisibility($registry, $categoryVisibility);
 
+        $builder->resolveVisibilitySettings($categoryVisibility);
+
+        $this->assertProductVisibilityResolvedCorrect($expectedData);
         $categoryVisibility->setVisibility($originalVisibility);
         $this->updateVisibility($this->getContainer()->get('doctrine'), $categoryVisibility);
     }

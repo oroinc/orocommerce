@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -25,6 +25,7 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
         $this->repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
             ->getRepository('OroAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
+        $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
     }
 
     public function testFindByPrimaryKey()

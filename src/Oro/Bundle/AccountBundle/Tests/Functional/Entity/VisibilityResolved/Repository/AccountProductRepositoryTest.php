@@ -3,7 +3,6 @@
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
@@ -48,16 +47,24 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
 
     public function testDeleteByProduct()
     {
-        $this->markTestSkipped('Will be done in scope BB-4124');
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        $account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
+        $resolvedVisibility = new AccountProductVisibilityResolved($website, $product, $account);
+        $this->entityManager->persist($resolvedVisibility);
+        $this->entityManager->flush($resolvedVisibility);
+
         $repository = $this->getRepository();
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var $product Product */
         $visibilities = $repository->findBy(['product' => $product]);
         $this->assertNotEmpty($visibilities);
+
         $repository->deleteByProduct($product);
         $visibilities = $repository->findBy(['product' => $product]);
         $this->assertEmpty($visibilities, 'Deleting has failed');
     }
+
     public function testInsertByProduct()
     {
         $repository = $this->getRepository();

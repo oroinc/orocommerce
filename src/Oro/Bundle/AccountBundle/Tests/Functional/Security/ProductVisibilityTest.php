@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Security;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -25,7 +25,7 @@ class ProductVisibilityTest extends WebTestCase
             'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
             'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
         ]);
-
+        $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder')->buildCache();
     }
 
     /**
@@ -36,7 +36,6 @@ class ProductVisibilityTest extends WebTestCase
      */
     public function testVisibility($configValue, $expectedData)
     {
-        $this->markTestSkipped('Will be done in scope BB-4124');
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
