@@ -123,7 +123,14 @@ class UPSTransportSettingsType extends AbstractType
             [
                 'label' => 'oro.ups.transport.pickup_type.label',
                 'required' => true,
-                'choices' => UPSTransport::PICKUP_TYPES
+                'choices' => [
+                    UPSTransport::PICKUP_TYPE_REGULAR_DAILY => 'oro.ups.transport.pickup_type.regular_daily.label',
+                    UPSTransport::PICKUP_TYPE_CUSTOMER_COUNTER =>
+                        'oro.ups.transport.pickup_type.customer_counter.label',
+                    UPSTransport::PICKUP_TYPE_ONE_TIME => 'oro.ups.transport.pickup_type.one_time.label',
+                    UPSTransport::PICKUP_TYPE_ON_CALL_AIR => 'oro.ups.transport.pickup_type.on_call_air.label',
+                    UPSTransport::PICKUP_TYPE_LETTER_CENTER => 'oro.ups.transport.pickup_type.letter_center.label',
+                ]
             ]
         );
         $builder->add(

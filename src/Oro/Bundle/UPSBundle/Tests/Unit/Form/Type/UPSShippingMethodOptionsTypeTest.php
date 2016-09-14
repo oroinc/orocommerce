@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;

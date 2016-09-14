@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\FlatRate;
+namespace Oro\Bundle\UPSBundle\Tests\Unit\Method\FlatRate;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;

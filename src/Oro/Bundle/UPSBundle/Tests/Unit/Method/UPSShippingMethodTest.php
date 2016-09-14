@@ -43,7 +43,7 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
     /**
      * @var UPSShippingMethod
      */
-    protected $uPSShippingMethod;
+    protected $upsShippingMethod;
 
     protected function setUp()
     {
@@ -67,27 +67,27 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->registry = $this->getMock(ManagerRegistry::class);
-        $this->uPSShippingMethod = new UPSShippingMethod($this->transportProvider, $this->channel, $this->registry);
+        $this->upsShippingMethod = new UPSShippingMethod($this->transportProvider, $this->channel, $this->registry);
     }
 
     public function testIsGrouped()
     {
-        $this->assertTrue($this->uPSShippingMethod->isGrouped());
+        $this->assertTrue($this->upsShippingMethod->isGrouped());
     }
 
     public function testGetIdentifier()
     {
-        $this->assertEquals('ups_1', $this->uPSShippingMethod->getIdentifier());
+        $this->assertEquals('ups_1', $this->upsShippingMethod->getIdentifier());
     }
 
     public function testGetLabel()
     {
-        $this->assertEquals('ups_channel_1', $this->uPSShippingMethod->getLabel());
+        $this->assertEquals('ups_channel_1', $this->upsShippingMethod->getLabel());
     }
 
     public function testGetTypes()
     {
-        $types = $this->uPSShippingMethod->getTypes();
+        $types = $this->upsShippingMethod->getTypes();
 
         $this->assertCount(1, $types);
         $this->assertEquals('ups_identifier', $types[0]->getIdentifier());
@@ -96,7 +96,7 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
     public function testGetType()
     {
         $identifier = 'ups_identifier';
-        $type = $this->uPSShippingMethod->getType($identifier);
+        $type = $this->upsShippingMethod->getType($identifier);
 
         $this->assertInstanceOf(UPSShippingMethodType::class, $type);
         $this->assertEquals('ups_identifier', $type->getIdentifier());
@@ -104,14 +104,14 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testGetOptionsConfigurationFormType()
     {
-        $type = $this->uPSShippingMethod->getOptionsConfigurationFormType();
+        $type = $this->upsShippingMethod->getOptionsConfigurationFormType();
 
         $this->assertEquals(UPSShippingMethodOptionsType::class, $type);
     }
 
     public function testGetSortOrder()
     {
-        $this->assertEquals('20', $this->uPSShippingMethod->getSortOrder());
+        $this->assertEquals('20', $this->upsShippingMethod->getSortOrder());
     }
 
     public function testCalculatePrices()
@@ -122,19 +122,19 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
         $methodOptions = [];
         $optionsByTypes = [];
 
-        $uPSShippingMethodType = $this->getMockBuilder(UPSShippingMethodType::class)
+        $upsShippingMethodType = $this->getMockBuilder(UPSShippingMethodType::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $uPSShippingMethodType->expects(self::any())->method('getIdentifier')->willReturn('type_1');
-        $uPSShippingMethodType->expects(self::any())->method('calculatePrice')->willReturn(Price::create(20, 'USD'));
+        $upsShippingMethodType->expects(self::any())->method('getIdentifier')->willReturn('type_1');
+        $upsShippingMethodType->expects(self::any())->method('calculatePrice')->willReturn(Price::create(20, 'USD'));
 
-        /** @var UPSShippingMethod|\PHPUnit_Framework_MockObject_MockObject $uPSShippingMethod */
-        $uPSShippingMethod = $this->getMockBuilder(UPSShippingMethod::class)->setMethods(['getTypes'])
+        /** @var UPSShippingMethod|\PHPUnit_Framework_MockObject_MockObject $upsShippingMethod */
+        $upsShippingMethod = $this->getMockBuilder(UPSShippingMethod::class)->setMethods(['getTypes'])
             ->disableOriginalConstructor()
             ->getMock();
-        $uPSShippingMethod->expects(self::any())->method('getTypes')->willReturn([$uPSShippingMethodType]);
+        $upsShippingMethod->expects(self::any())->method('getTypes')->willReturn([$upsShippingMethodType]);
 
-        $prices = $uPSShippingMethod->calculatePrices($context, $methodOptions, $optionsByTypes);
+        $prices = $upsShippingMethod->calculatePrices($context, $methodOptions, $optionsByTypes);
 
         $this->assertCount(1, $prices);
         $this->assertTrue(array_key_exists('type_1', $prices));

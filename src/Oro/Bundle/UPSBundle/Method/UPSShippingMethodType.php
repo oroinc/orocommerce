@@ -20,7 +20,7 @@ use Oro\Bundle\UPSBundle\Model\PriceRequest;
 class UPSShippingMethodType implements ShippingMethodTypeInterface
 {
     const REQUEST_OPTION = 'Rate';
-    const MAX_PACKAG_WEIGHT = 70;
+    const MAX_PACKAGE_WEIGHT = 70;
 
     const OPTION_SURCHARGE = 'surcharge';
 
@@ -41,6 +41,9 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
 
     /** @var ManagerRegistry */
     protected $registry;
+
+    /** @var string */
+    protected $optionsConfigurationFormType;
 
     /**
      * @param UPSTransport $transport
@@ -86,7 +89,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     }
 
     /**
-     * @param mixed $optionsConfigurationFormType
+     * @param string $optionsConfigurationFormType
      * @return $this
      */
     public function setOptionsConfigurationFormType($optionsConfigurationFormType)
@@ -153,7 +156,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
         $packages = $this->createPackages($context->getLineItems());
 
         if (count($packages) > 0) {
-            $priceRequest = $priceRequest->setPackages($packages);
+            $priceRequest->setPackages($packages);
             $packagePrice = $this->transportProvider->getPrices($priceRequest, $this->transport);
             if ($packagePrice !== null) {
                 $price += $packagePrice;
@@ -196,7 +199,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
                     $dimensionLength = 0;
 
                     foreach ($productsParams as $productsParam) {
-                        if (($weight + $productsParam['weight']) >= self::MAX_PACKAG_WEIGHT) {
+                        if (($weight + $productsParam['weight']) >= self::MAX_PACKAGE_WEIGHT) {
                             $packages[] = Package::create(
                                 (string)$dimensionUnit,
                                 (string)$dimensionHeight,

@@ -10,7 +10,13 @@ oro:
             api_key.label: API Key
             shipping_account_name.label: Shipping Account Name
             shipping_account_number.label: Shipping Account Number
-            pickup_type.label: Pickup Type
+            pickup_type:
+                label: Pickup Type
+                regular_daily: Regular Daily Pickup
+                customer_counter: Customer Counter
+                one_time: One Time Pickup
+                on_call_air: On Call Air
+                letter_center: Letter Center
             unit_of_weight:
                 label: Unit Of Weight
                 kgs.label: Kilogram

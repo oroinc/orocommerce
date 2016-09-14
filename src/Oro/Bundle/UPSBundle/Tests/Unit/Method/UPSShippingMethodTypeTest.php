@@ -52,7 +52,7 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
     /**
      * @var UPSShippingMethodType
      */
-    protected $uPSShippingMethodType;
+    protected $upsShippingMethodType;
 
     protected function setUp()
     {
@@ -80,7 +80,7 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getMock(ManagerRegistry::class);
 
-        $this->uPSShippingMethodType = new UPSShippingMethodType(
+        $this->upsShippingMethodType = new UPSShippingMethodType(
             $this->transport,
             $this->transportProvider,
             $this->shippingService,
@@ -91,33 +91,33 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
     public function testSetIdentifier()
     {
         $identifier = 'ups_1';
-        $this->uPSShippingMethodType->setIdentifier($identifier);
+        $this->upsShippingMethodType->setIdentifier($identifier);
 
-        $this->assertEquals($identifier, $this->uPSShippingMethodType->getIdentifier());
+        $this->assertEquals($identifier, $this->upsShippingMethodType->getIdentifier());
     }
 
     public function testSetLabel()
     {
         $label = 'ups 1';
-        $this->uPSShippingMethodType->setLabel($label);
+        $this->upsShippingMethodType->setLabel($label);
 
-        $this->assertEquals($label, $this->uPSShippingMethodType->getLabel());
+        $this->assertEquals($label, $this->upsShippingMethodType->getLabel());
     }
 
     public function testSetOptionsConfigurationFormType()
     {
         $optionsConfigurationFormType = UPSShippingMethodOptionsType::class;
-        $this->uPSShippingMethodType->setOptionsConfigurationFormType($optionsConfigurationFormType);
+        $this->upsShippingMethodType->setOptionsConfigurationFormType($optionsConfigurationFormType);
 
         $this->assertEquals(
             $optionsConfigurationFormType,
-            $this->uPSShippingMethodType->getOptionsConfigurationFormType()
+            $this->upsShippingMethodType->getOptionsConfigurationFormType()
         );
     }
 
     public function testGetSortOrder()
     {
-        $this->assertEquals(0, $this->uPSShippingMethodType->getSortOrder());
+        $this->assertEquals(0, $this->upsShippingMethodType->getSortOrder());
     }
 
     public function testCalculatePrice()
@@ -140,8 +140,8 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
 
         $this->transportProvider->expects(self::once())->method('getPrices')->willReturn(50);
 
-        /** @var UPSShippingMethodType|\PHPUnit_Framework_MockObject_MockObject $uPSShippingMethodType */
-        $uPSShippingMethodType = $this->getMockBuilder(UPSShippingMethodType::class)
+        /** @var UPSShippingMethodType|\PHPUnit_Framework_MockObject_MockObject $upsShippingMethodType */
+        $upsShippingMethodType = $this->getMockBuilder(UPSShippingMethodType::class)
             ->setMethods(['createPackages'])
             ->enableOriginalConstructor()
             ->setConstructorArgs([
@@ -152,9 +152,9 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
             ])
             ->getMock()
         ;
-        $uPSShippingMethodType->expects(self::once())->method('createPackages')->willReturn(['1' => 'package']);
+        $upsShippingMethodType->expects(self::once())->method('createPackages')->willReturn(['1' => 'package']);
 
-        $price = $uPSShippingMethodType->calculatePrice($context, $methodOptions, $typeOptions);
+        $price = $upsShippingMethodType->calculatePrice($context, $methodOptions, $typeOptions);
 
         $this->assertEquals(Price::create(70, 'USD'), $price);
     }
@@ -185,7 +185,7 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
                 ),
                 'dimensions' => Dimensions::create(7, 8, 9, new LengthUnit('inch')),
                 'weight' => Weight::create(2, $this->getEntity(
-                    'Oro\Bundle\ShippingBundle\Entity\WeightUnit',
+                    WeightUnit::class,
                     ['code' => 'kg']
                 ))
             ]
@@ -207,7 +207,7 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
 
         $createPackagesReflection = self::getMethod('createPackages');
         $packages = $createPackagesReflection->invokeArgs(
-            $this->uPSShippingMethodType,
+            $this->upsShippingMethodType,
             [[$lineItem]]
         );
 
@@ -260,7 +260,7 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
 
         $productsParamsByUnitReflection = self::getMethod('getProductsParamsByUnit');
         $productsByUnit = $productsParamsByUnitReflection->invokeArgs(
-            $this->uPSShippingMethodType,
+            $this->upsShippingMethodType,
             [[$lineItem]]
         );
 
