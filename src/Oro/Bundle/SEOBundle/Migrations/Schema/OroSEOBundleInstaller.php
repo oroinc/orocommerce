@@ -33,7 +33,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -90,6 +90,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
             $targetDetailedColumnNames,
             $targetGridColumnNames,
             [
+
                 'extend' => [
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'without_default' => true,
@@ -97,6 +98,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                 ],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false],
+                'importexport' => ['excluded' => true],
             ]
         );
     }
