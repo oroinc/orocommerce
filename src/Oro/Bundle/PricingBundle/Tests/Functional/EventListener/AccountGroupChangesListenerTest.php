@@ -123,13 +123,8 @@ class AccountGroupChangesListenerTest extends WebTestCase
 
 
         $actual = $this->messageProducer->getSentMessages();
-        $this->assertEquals(
-            $expectedMessages,
-            $actual,
-            "Expected messages in queue should equals actual",
-            $delta = 0.0,
-            $maxDepth = 10,
-            $canonicalize = true
-        );
+        foreach ($expectedMessages as $expectedMessage) {
+            $this->assertContains($expectedMessage, $actual);
+        }
     }
 }

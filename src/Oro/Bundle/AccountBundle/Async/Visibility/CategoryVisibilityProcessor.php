@@ -3,7 +3,6 @@
 namespace Oro\Bundle\AccountBundle\Async\Visibility;
 
 use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\AccountBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
@@ -37,7 +36,7 @@ class CategoryVisibilityProcessor extends AbstractVisibilityProcessor
     }
 
     /**
-     * @param object|VisibilityInterface $entity
+     * @param object|CategoryVisibility $entity
      */
     protected function resolveVisibilityByEntity($entity)
     {

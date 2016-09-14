@@ -90,4 +90,3 @@ class ProductMessageHandler
         return $message[ProductMessageFactory::ID];
     }
 }
-

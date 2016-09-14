@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
 class CategoryMessageFactory
 {
     const ID = 'id';
+
     /**
      * @var ManagerRegistry
      */
