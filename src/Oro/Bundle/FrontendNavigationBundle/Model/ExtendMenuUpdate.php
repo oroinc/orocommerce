@@ -9,8 +9,8 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 /**
  * @method File getImage()
  * @method ExtendMenuUpdate setImage(File $image)
- * @method LocalizedFallbackValue getName(Localization $localization = null)
- * @method LocalizedFallbackValue getDefaultName()
+ * @method LocalizedFallbackValue getTitle(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultTitle()
  */
 abstract class ExtendMenuUpdate
 {
