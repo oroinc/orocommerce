@@ -50,14 +50,6 @@ class Package
             'PackagingType' => [
                 'Code' => $this->packagingTypeCode,
             ],
-            'Dimensions'    => [
-                'UnitOfMeasurement' => [
-                    'Code' => $this->dimensionCode,
-                ],
-                'Length'            => $this->dimensionLength,
-                'Width'             => $this->dimensionWidth,
-                'Height'            => $this->dimensionHeight,
-            ],
             'PackageWeight' => [
                 'UnitOfMeasurement' => [
                     'Code' => $this->weightCode,

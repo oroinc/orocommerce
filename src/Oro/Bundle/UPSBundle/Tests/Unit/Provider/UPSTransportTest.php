@@ -80,25 +80,6 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
         $transportEntity = new \Oro\Bundle\UPSBundle\Entity\UPSTransport();
         $integration->setTransport($transportEntity);
 
-        $repository = $this->getMockBuilder('Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository')
-            ->disableOriginalConstructor()->getMock();
-        $repository->expects(static::once())
-            ->method('findOneBy')
-            ->willReturn($integration);
-
-        $entityManager = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entityManager->expects(static::once())
-            ->method('getRepository')
-            ->with('Oro\Bundle\IntegrationBundle\Entity\Channel')
-            ->willReturn($repository);
-
-        $this->registry->expects(static::once())
-            ->method('getManagerForClass')
-            ->with('Oro\Bundle\IntegrationBundle\Entity\Channel')
-            ->willReturn($entityManager);
-
         $this->clientFactory->expects(static::once())
             ->method('createRestClient')
             ->willReturn($this->client);

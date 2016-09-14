@@ -14,25 +14,20 @@ class PriceResponse
     protected $pricesByServices = [];
 
     /**
-     * @param string $string
+     * @param array $data
      * @throws \InvalidArgumentException
      */
-    public function parseJSON($string)
+    public function parseJSON($data)
     {
-        $data = json_decode($string);
-
-        if ($data === null
-            || !property_exists($data, 'RateResponse')
-            || !property_exists($data->RateResponse, 'RatedShipment')
-        ) {
+        if ($data === null || !$data['RateResponse'] || !$data['RateResponse']['RatedShipment']) {
             throw new \InvalidArgumentException('No price data in provided string');
         }
 
         $this->pricesByServices = [];
-        if (is_array($data->RateResponse->RatedShipment)) {
-            $this->addRatedShipments($data->RateResponse->RatedShipment);
+        if ($data['RateResponse']['RatedShipment'][self::TOTAL_CHARGES]) {
+            $this->addRatedShipment($data['RateResponse']['RatedShipment']);
         } else {
-            $this->addRatedShipment($data->RateResponse->RatedShipment);
+            $this->addRatedShipments($data['RateResponse']['RatedShipment']);
         }
     }
 
@@ -47,32 +42,29 @@ class PriceResponse
     }
 
     /**
-     * @param \stdClass $rateShipment
+     * @param array $rateShipment
      */
     private function addRatedShipment($rateShipment)
     {
-        if (property_exists($rateShipment, self::TOTAL_CHARGES)) {
-            $price = $this->createPrice($rateShipment->{self::TOTAL_CHARGES});
-            if ($price
-                && property_exists($rateShipment, 'Service')
-                && property_exists($rateShipment->Service, 'Code')
-            ) {
-                $this->pricesByServices[$rateShipment->Service->Code] = $price;
+        if ($rateShipment[self::TOTAL_CHARGES]) {
+            $price = $this->createPrice($rateShipment[self::TOTAL_CHARGES]);
+            if ($price && $rateShipment['Service'] && $rateShipment['Service']['Code']) {
+                $this->pricesByServices[$rateShipment['Service']['Code']] = $price;
             }
         }
     }
 
     /**
-     * @param \stdClass $priceData
+     * @param array $priceData
      * @return Price
      */
     private function createPrice($priceData)
     {
-        if (!property_exists($priceData, 'MonetaryValue') || !property_exists($priceData, 'CurrencyCode')) {
+        if (!$priceData['MonetaryValue'] || !$priceData['CurrencyCode']) {
             return null;
         }
 
-        return Price::create($priceData->MonetaryValue, $priceData->CurrencyCode);
+        return Price::create($priceData['MonetaryValue'], $priceData['CurrencyCode']);
     }
 
     /**

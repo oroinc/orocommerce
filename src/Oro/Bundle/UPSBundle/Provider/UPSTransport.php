@@ -98,7 +98,7 @@ class UPSTransport extends AbstractRestTransport
 
             $json = $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
             $priceResponse = new PriceResponse();
-            if (!is_string($json)) {
+            if (!array($json)) {
                 return null;
             }
             $priceResponse->parseJSON($json);

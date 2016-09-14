@@ -40,7 +40,6 @@ class UPSShippingMethodOptionsType extends AbstractType
                 'data-scale' => $this->roundingService->getPrecision(),
                 'class' => 'method-options-surcharge'
             ],
-            'constraints' => [new Type(['type' => 'numeric'])],
         ]);
     }
 

@@ -153,13 +153,14 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
             ->setServiceDescription($this->shippingService->getDescription())
         ;
 
-        $packages = $this->createPackages($context->getLineItems());
+        $packages = $this->createPackages($context->getLineItems(), $this->transport->getUnitOfWeight());
 
         if (count($packages) > 0) {
-            $priceRequest->setPackages($packages);
-            $packagePrice = $this->transportProvider->getPrices($priceRequest, $this->transport);
+            $priceRequest = $priceRequest->setPackages($packages);
+            $prices = $this->transportProvider->getPrices($priceRequest, $this->transport);
+            $packagePrice = $prices->getPriceByService($this->shippingService->getCode());
             if ($packagePrice !== null) {
-                $price += $packagePrice;
+                $price += (float)$packagePrice->getValue();
             } else {
                 return null;
             }
@@ -169,16 +170,17 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
             return null;
         }
 
-        $surcharge = $typeOptions[self::OPTION_SURCHARGE];
+        $surcharge = $typeOptions[$this->shippingService->getCode()][self::OPTION_SURCHARGE];
 
         return Price::create($price + (float)$surcharge, $context->getCurrency());
     }
 
     /**
      * @param ShippingLineItemInterface[] $lineItems
+     * @param string $unitOfWeight
      * @return Package[]|array
      */
-    protected function createPackages($lineItems)
+    protected function createPackages($lineItems, $unitOfWeight)
     {
         $packages = [];
 
@@ -192,7 +194,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
             /** @var array $productsParamsByWeightUnit */
             foreach ($productsParamsByUnit as $dimensionUnit => $productsParamsByWeightUnit) {
                 /** @var array $productsParams */
-                foreach ($productsParamsByWeightUnit as $weightUnit => $productsParams) {
+                foreach ($productsParamsByWeightUnit as $productsParams) {
                     $weight = 0;
                     $dimensionHeight = 0;
                     $dimensionWidth = 0;
@@ -205,7 +207,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
                                 (string)$dimensionHeight,
                                 (string)$dimensionWidth,
                                 (string)$dimensionLength,
-                                (string)$weightUnit,
+                                (string)$unitOfWeight,
                                 (string)$weight
                             );
 
@@ -227,7 +229,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
                             (string)$dimensionHeight,
                             (string)$dimensionWidth,
                             (string)$dimensionLength,
-                            (string)$weightUnit,
+                            (string)$unitOfWeight,
                             (string)$weight
                         );
                     }
