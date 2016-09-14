@@ -1,14 +1,3 @@
-label,
-select,
-button,
-input[type="button"],
-input[type="reset"],
-input[type="submit"],
-input[type="radio"],
-input[type="checkbox"] {
-  cursor: pointer;
-}
-
 input[type="text"],
 input[type="number"],
 textarea {
@@ -30,13 +19,6 @@ label.required:after {
 
 }
 
-label {
-  display: block;
-  margin: 0 0 5px;
-
-  font-weight: 400;
-}
-
 .form__col {
   margin: 0 0 15px;
   padding: 0 5px;
@@ -46,13 +28,6 @@ label {
   &.no-padding {
     padding: 0px;
   }
-}
-
-.input,
-input.hasDatepicker {
-  @include input();
-
-  line-height: 19px;
 }
 
 // Reset styles for select2 from platform styles
