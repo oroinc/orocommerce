@@ -9,8 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\NavigationBundle\Entity\AbstractMenuUpdate;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\FrontendNavigationBundle\Model\ExtendMenuUpdate;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\FrontendNavigationBundle\Entity\Repository\MenuUpdateRepository")
@@ -26,7 +26,7 @@ use Oro\Bundle\FrontendNavigationBundle\Model\ExtendMenuUpdate;
  * @method File getImage()
  * @method MenuUpdate setImage(File $image)
  */
-class MenuUpdate extends ExtendMenuUpdate
+class MenuUpdate extends AbstractMenuUpdate
 {
     const OWNERSHIP_ACCOUNT      = 3;
     const OWNERSHIP_ACCOUNT_USER = 4;
@@ -71,8 +71,6 @@ class MenuUpdate extends ExtendMenuUpdate
      */
     public function __construct()
     {
-        parent::__construct();
-
         $this->titles = new ArrayCollection();
     }
 
@@ -81,11 +79,17 @@ class MenuUpdate extends ExtendMenuUpdate
      */
     public function getExtras()
     {
-        return [
+        $extras = [
             'image'     => $this->getImage(),
             'condition' => $this->getCondition(),
             'website'   => $this->getWebsite()
         ];
+
+        if ($this->getPriority() !== null) {
+            $extras['position'] = $this->getPriority();
+        }
+
+        return $extras;
     }
 
     /**
