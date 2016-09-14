@@ -21,12 +21,12 @@ final class ReindexationTriggerEvent extends Event
     /**
      * @var int[]
      */
-    private $ids = [];
+    private $ids;
 
     /**
      * @var boolean
      */
-    private $scheduled;
+    private $scheduled = true;
 
     /**
      * ReindexationTriggerEvent constructor.
@@ -38,8 +38,8 @@ final class ReindexationTriggerEvent extends Event
     public function __construct(
         $className = null,
         $websiteId = null,
-        array $ids = [],
-        $scheduled = null
+        array $ids = null,
+        $scheduled = true
     ) {
         $this->className = $className;
         $this->websiteId = $websiteId;
