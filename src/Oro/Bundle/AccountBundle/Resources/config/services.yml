@@ -684,10 +684,10 @@ services:
         class: 'Oro\Bundle\AccountBundle\Entity\EntityListener\CategoryListener'
         public: false
         arguments:
-            - "@orob2b_catalog.model.category_message_handler"
+            - "@oro_catalog.model.category_message_handler"
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%orob2b_catalog.entity.category.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%orob2b_catalog.entity.category.class%', event: postRemove }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: postRemove }
 
     oro_account.event_listener.category_listener:
         class: 'Oro\Bundle\AccountBundle\EventListener\CategoryListener'
@@ -912,7 +912,7 @@ services:
         calls:
             - [setTopic, ['oro_account.visibility.change_product_category']]
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%orob2b_product.entity.product.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product.class%', event: postPersist }
 
     oro_account.async.visibility.product_visibility_processor:
         class: Oro\Bundle\AccountBundle\Async\Visibility\ProductVisibilityProcessor
@@ -957,7 +957,7 @@ services:
             - '@doctrine'
             - '@oro_entity.orm.insert_from_select_query_executor'
             - '@logger'
-            - '@orob2b_catalog.model.category_message_factory'
+            - '@oro_catalog.model.category_message_factory'
             - '@oro_account.visibility.cache.product.category.cache_builder'
         tags:
             - { name: oro_message_queue.client.message_processor, topicName: 'oro_account.visibility.category_remove' }

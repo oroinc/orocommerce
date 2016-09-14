@@ -100,15 +100,15 @@ services:
         tags:
             - {name: oro_product.default_product_unit_provider, priority: 10}
 
-    orob2b_catalog.model.category_message_factory:
+    oro_catalog.model.category_message_factory:
         class: 'Oro\Bundle\CatalogBundle\Model\CategoryMessageFactory'
         arguments:
             - '@doctrine'
 
-    orob2b_catalog.model.category_message_handler:
+    oro_catalog.model.category_message_handler:
         class: 'Oro\Bundle\CatalogBundle\Model\CategoryMessageHandler'
         arguments:
-            - '@orob2b_catalog.model.category_message_factory'
+            - '@oro_catalog.model.category_message_factory'
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
