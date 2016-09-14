@@ -9,7 +9,7 @@ use Oro\Bundle\EntityBundle\Controller\Api\Rest\EntityDataController as BaseCont
 
 /**
  * @RouteResource("entity_data")
- * @NamePrefix("orob2b_api_frontend_")
+ * @NamePrefix("oro_api_frontend_")
  */
 class EntityDataController extends BaseController
 {

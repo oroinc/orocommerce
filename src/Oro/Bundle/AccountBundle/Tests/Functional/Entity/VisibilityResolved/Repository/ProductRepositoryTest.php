@@ -254,7 +254,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected function getProductRepository()
     {
-        $className = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
+        $className = $this->getContainer()->getParameter('oro_product.entity.product.class');
 
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass($className)
@@ -292,7 +292,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected function getResolvedVisibilityManager()
     {
-        $className = $this->getContainer()->getParameter('orob2b_account.entity.product_visibility_resolved.class');
+        $className = $this->getContainer()->getParameter('oro_account.entity.product_visibility_resolved.class');
 
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass($className);
@@ -303,7 +303,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected function getCategoryRepository()
     {
-        $className = $this->getContainer()->getParameter('orob2b_catalog.entity.category.class');
+        $className = $this->getContainer()->getParameter('oro_catalog.entity.category.class');
 
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass($className)

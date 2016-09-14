@@ -16,10 +16,10 @@ class AjaxCatalogController extends Controller
     /**
      * @Route(
      *      "/category-move",
-     *      name="orob2b_catalog_category_move"
+     *      name="oro_catalog_category_move"
      * )
      * @Method({"PUT"})
-     * @AclAncestor("orob2b_catalog_category_update")
+     * @AclAncestor("oro_catalog_category_update")
      *
      * @param Request $request
      * @return JsonResponse
@@ -31,7 +31,7 @@ class AjaxCatalogController extends Controller
         $position = (int)$request->get('position');
 
         return new JsonResponse(
-            $this->get('orob2b_catalog.category_tree_handler')->moveNode($nodeId, $parentId, $position)
+            $this->get('oro_catalog.category_tree_handler')->moveNode($nodeId, $parentId, $position)
         );
     }
 }

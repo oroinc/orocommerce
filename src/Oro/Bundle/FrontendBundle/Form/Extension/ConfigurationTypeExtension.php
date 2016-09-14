@@ -18,7 +18,7 @@ class ConfigurationTypeExtension extends AbstractTypeExtension
             'web',
             WebType::NAME,
             [
-                'label' => 'orob2b_frontend.form.install_configuration.web.header'
+                'label' => 'oro_frontend.form.install_configuration.web.header'
             ]
         );
     }

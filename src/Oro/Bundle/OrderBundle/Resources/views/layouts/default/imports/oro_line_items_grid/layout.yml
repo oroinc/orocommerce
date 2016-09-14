@@ -1,0 +1,50 @@
+layout:
+    imports:
+        -
+            id: datagrid
+            root: __grid_container_body
+            namespace: grid_container
+
+    actions:
+        - '@addTree':
+            items:
+                __grid_container:
+                    blockType: container
+                __grid_container_head:
+                    blockType: container
+                    options:
+                        block_prefixes: ['order_head_block_container']
+                __grid_container_head_title:
+                    blockType: text
+                    options:
+                        text: 'oro.order.frontend.ordered_items.title'
+                __grid_container_body:
+                    blockType: container
+                    options:
+                        block_prefixes: ['order_body_block_container']
+            tree:
+                __root:
+                    __grid_container:
+                        __grid_container_head:
+                            __grid_container_head_title: ~
+                        __grid_container_body: ~
+
+        - '@move':
+            id: __grid_container
+            siblingId: order_body
+
+        - '@setOption':
+            id: __grid_container_datagrid
+            optionName: grid_name
+            optionValue: order-line-items-grid-frontend
+
+        - '@setOption':
+            id: __grid_container_datagrid
+            optionName: grid_parameters
+            optionValue:
+                order_id: '=data["order"].getId()'
+
+        - '@setOption':
+            id: __datagrid_toolbar
+            optionName: attr.class
+            optionValue: 'grid__toolbar grid__toolbar--simplistic'

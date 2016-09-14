@@ -1,30 +1,3 @@
-@function z($layer) {
-  $layers: (
-          'base': 1,
-          'fixed': 50,
-          'dropdown': 100,
-          'popup': 150,
-          'hidden': -1
-  );
-
-  $z-index: map-get($layers, $layer);
-  @return $z-index;
-}
-
-@mixin after() {
-  content: '';
-
-  position: absolute;
-
-  display: block;
-}
-
-@mixin appearance() {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-
 @mixin focus-state() {
   border-color: $color-focus;
   box-shadow: inset 0 0.1rem 0.1rem rgba(0, 0, 0, 0.075),
@@ -81,5 +54,17 @@
   &--success,
   &.success-state {
     @include success-state;
+  }
+}
+
+@mixin breakpoint($type) {
+  $breakpoints: (
+    'desktop': '(min-width: ' + $breakpoint-desktop + ')',
+    'tablet': '(max-width: ' +  $breakpoint-tablet + ')',
+    'mobile': '(max-width: ' + $breakpoint-mobile + ')'
+  );
+
+  @media #{map-get($breakpoints, $type)} {
+    @content;
   }
 }

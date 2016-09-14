@@ -1,0 +1,86 @@
+navigation:
+    menu_config:
+        items:
+            taxes_tab:
+                label:           'oro.tax.menu.taxes_tab.label'
+                uri:             '#'
+                extras:
+                    icon:        icon-filter
+                    position:    400
+
+            product_tax_code_list:
+                label:           'oro.tax.producttaxcode.entity_plural_label'
+                route:           'oro_tax_product_tax_code_index'
+                extras:
+                    position:    100
+                    routes:      ['oro_tax_product_tax_code_index', 'oro_tax_product_tax_code_view', 'oro_tax_product_tax_code_update', 'oro_tax_product_tax_code_create']
+                    description: 'oro.tax.producttaxcode.description'
+
+            account_tax_code_list:
+                label:           'oro.tax.accounttaxcode.entity_plural_label'
+                route:           'oro_tax_account_tax_code_index'
+                extras:
+                    position:    100
+                    routes:      ['oro_tax_account_tax_code_index', 'oro_tax_account_tax_code_view', 'oro_tax_account_tax_code_update', 'oro_tax_account_tax_code_create']
+                    description: 'oro.tax.accounttaxcode.description'
+
+            tax_list:
+                label:           'oro.tax.entity_plural_label'
+                route:           'oro_tax_index'
+                extras:
+                    position:    100
+                    routes:      ['oro_tax_index', 'oro_tax_view', 'oro_tax_update', 'oro_tax_create']
+                    description: 'oro.tax.tax.description'
+
+            tax_rule_list:
+                label:           'oro.tax.taxrule.entity_plural_label'
+                route:           'oro_tax_rule_index'
+                extras:
+                    position:    100
+                    routes:      ['oro_tax_rule_index', 'oro_tax_rule_view', 'oro_tax_rule_update', 'oro_tax_rule_create']
+                    description: 'oro.tax.taxrule.description'
+
+            tax_jurisdiction:
+                label:           'oro.tax.taxjurisdiction.entity_plural_label'
+                route:           'oro_tax_jurisdiction_index'
+                extras:
+                    position:    100
+                    routes:      ['oro_tax_jurisdiction_index', 'oro_tax_jurisdiction_view', 'oro_tax_jurisdiction_update', 'oro_tax_jurisdiction_create']
+                    description: 'oro.tax.taxjurisdiction.description'
+
+        tree:
+            application_menu:
+                children:
+                    taxes_tab:
+                        children:
+                            product_tax_code_list: ~
+                            account_tax_code_list: ~
+                            tax_list: ~
+                            tax_rule_list: ~
+                            tax_jurisdiction: ~
+
+    titles:
+        oro_tax_product_tax_code_index: ~
+        oro_tax_product_tax_code_view:   '%%taxCode%% - oro.ui.view'
+        oro_tax_product_tax_code_update: '%%taxCode%% - oro.ui.edit'
+        oro_tax_product_tax_code_create: 'oro.ui.create_entity'
+
+        oro_tax_account_tax_code_index: ~
+        oro_tax_account_tax_code_view:   '%%taxCode%% - oro.ui.view'
+        oro_tax_account_tax_code_update: '%%taxCode%% - oro.ui.edit'
+        oro_tax_account_tax_code_create: 'oro.ui.create_entity'
+        
+        oro_tax_index: ~
+        oro_tax_view:   '%%taxCode%% - oro.ui.view'
+        oro_tax_update: '%%taxCode%% - oro.ui.edit'
+        oro_tax_create: 'oro.ui.create_entity'
+
+        oro_tax_rule_index: ~
+        oro_tax_rule_view:   '%%id%% - oro.ui.view'
+        oro_tax_rule_update: '%%id%% - oro.ui.edit'
+        oro_tax_rule_create: 'oro.ui.create_entity'
+
+        oro_tax_jurisdiction_index: ~
+        oro_tax_jurisdiction_view:   '%%taxCode%% - oro.ui.view'
+        oro_tax_jurisdiction_update: '%%taxCode%% - oro.ui.edit'
+        oro_tax_jurisdiction_create: 'oro.ui.create_entity'

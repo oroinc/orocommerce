@@ -2,17 +2,20 @@
 
 namespace Oro\Bundle\RFPBundle\EventListener;
 
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-
-class AccountViewListener
+class AccountViewListener implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     /**
      * @var TranslatorInterface
      */
@@ -48,6 +51,10 @@ class AccountViewListener
      */
     public function onAccountView(BeforeListRenderEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         /** @var Account $account */
         $account = $this->getEntityFromRequestId('OroAccountBundle:Account');
         if ($account) {
@@ -69,6 +76,10 @@ class AccountViewListener
      */
     public function onAccountUserView(BeforeListRenderEvent $event)
     {
+        if (!$this->isFeaturesEnabled()) {
+            return;
+        }
+
         /** @var AccountUser $accountUser */
         $accountUser = $this->getEntityFromRequestId('OroAccountBundle:AccountUser');
         if ($accountUser) {

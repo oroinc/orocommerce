@@ -8,8 +8,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class TaxMapperPass implements CompilerPassInterface
 {
-    const REGISTRY_SERVICE = 'orob2b_tax.factory.tax';
-    const TAG = 'orob2b_tax.tax_mapper';
+    const REGISTRY_SERVICE = 'oro_tax.factory.tax';
+    const TAG = 'oro_tax.tax_mapper';
 
     /**
      * {@inheritdoc}

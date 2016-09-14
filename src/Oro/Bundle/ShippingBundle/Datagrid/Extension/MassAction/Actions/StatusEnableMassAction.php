@@ -16,7 +16,7 @@ class StatusEnableMassAction extends AbstractMassAction
     public function setOptions(ActionConfiguration $options)
     {
         if (empty($options['handler'])) {
-            $options['handler'] = 'orob2b_shipping.mass_action.status_handler';
+            $options['handler'] = 'oro_shipping.mass_action.status_handler';
         }
 
         if (empty($options['frontend_type'])) {
@@ -24,7 +24,7 @@ class StatusEnableMassAction extends AbstractMassAction
         }
 
         if (empty($options['route'])) {
-            $options['route'] = 'orob2b_status_shipping_rule_massaction';
+            $options['route'] = 'oro_status_shipping_rule_massaction';
         }
 
         if (empty($options['route_parameters'])) {

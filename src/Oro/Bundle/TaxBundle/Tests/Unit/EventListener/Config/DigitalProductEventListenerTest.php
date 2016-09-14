@@ -59,7 +59,7 @@ class DigitalProductEventListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
 
         $event->expects($this->once())->method('getSettings')
-            ->willReturn(['orob2b_tax___digital_products_eu' => ['value' => $this->data]]);
+            ->willReturn(['oro_tax___digital_products_eu' => ['value' => $this->data]]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AbstractTaxCodeRepository $repository */
         $repository = $this->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository')
@@ -83,12 +83,12 @@ class DigitalProductEventListenerTest extends \PHPUnit_Framework_TestCase
             $this->callback(
                 function ($settings) use ($taxCodes) {
                     $this->assertInternalType('array', $settings);
-                    $this->assertArrayHasKey('orob2b_tax___digital_products_eu', $settings);
-                    $this->assertInternalType('array', $settings['orob2b_tax___digital_products_eu']);
-                    $this->assertArrayHasKey('value', $settings['orob2b_tax___digital_products_eu']);
-                    $this->assertInternalType('array', $settings['orob2b_tax___digital_products_eu']['value']);
+                    $this->assertArrayHasKey('oro_tax___digital_products_eu', $settings);
+                    $this->assertInternalType('array', $settings['oro_tax___digital_products_eu']);
+                    $this->assertArrayHasKey('value', $settings['oro_tax___digital_products_eu']);
+                    $this->assertInternalType('array', $settings['oro_tax___digital_products_eu']['value']);
 
-                    $this->assertEquals($taxCodes, $settings['orob2b_tax___digital_products_eu']['value']);
+                    $this->assertEquals($taxCodes, $settings['oro_tax___digital_products_eu']['value']);
 
                     return true;
                 }
@@ -118,7 +118,7 @@ class DigitalProductEventListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
 
         $event->expects($this->once())->method('getSettings')
-            ->willReturn(['orob2b_tax.digital_products_eu' => ['value' => $this->data]]);
+            ->willReturn(['oro_tax.digital_products_eu' => ['value' => $this->data]]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AbstractTaxCodeRepository $repository */
         $repository = $this->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository')
@@ -141,12 +141,12 @@ class DigitalProductEventListenerTest extends \PHPUnit_Framework_TestCase
             $this->callback(
                 function ($settings) {
                     $this->assertInternalType('array', $settings);
-                    $this->assertArrayHasKey('orob2b_tax.digital_products_eu', $settings);
-                    $this->assertInternalType('array', $settings['orob2b_tax.digital_products_eu']);
-                    $this->assertArrayHasKey('value', $settings['orob2b_tax.digital_products_eu']);
-                    $this->assertInternalType('array', $settings['orob2b_tax.digital_products_eu']['value']);
+                    $this->assertArrayHasKey('oro_tax.digital_products_eu', $settings);
+                    $this->assertInternalType('array', $settings['oro_tax.digital_products_eu']);
+                    $this->assertArrayHasKey('value', $settings['oro_tax.digital_products_eu']);
+                    $this->assertInternalType('array', $settings['oro_tax.digital_products_eu']['value']);
 
-                    $this->assertEquals(['CODE1', 'CODE2'], $settings['orob2b_tax.digital_products_eu']['value']);
+                    $this->assertEquals(['CODE1', 'CODE2'], $settings['oro_tax.digital_products_eu']['value']);
 
                     return true;
                 }

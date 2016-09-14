@@ -1,0 +1,62 @@
+search:
+    Oro\Bundle\TaxBundle\Entity\Tax:
+        alias:                          oro_tax
+        title_fields:                   [code]
+        route:
+            name:                       oro_tax_view
+            parameters:
+                id:                     id
+        search_template:                OroTaxBundle:Tax:searchResult.html.twig
+        fields:
+            -
+                name:                   code
+                target_type:            text
+                target_fields:          [code]
+            -
+                name:                   description
+                target_type:            text
+                target_fields:          [description]
+
+    Oro\Bundle\TaxBundle\Entity\ProductTaxCode:
+        alias:            oro_product_tax_code
+        search_template:  OroTaxBundle:ProductTaxCode:searchResult.html.twig
+        fields:
+            -
+                name:                   code
+                target_type:            text
+                target_fields:          [code]
+            -
+                name:                   description
+                target_type:            text
+                target_fields:          [description]
+
+    Oro\Bundle\TaxBundle\Entity\AccountTaxCode:
+        alias:            oro_account_tax_code
+        search_template:  OroTaxBundle:AccountTaxCode:searchResult.html.twig
+        fields:
+            -
+                name:                   code
+                target_type:            text
+                target_fields:          [code]
+            -
+                name:                   description
+                target_type:            text
+                target_fields:          [description]
+
+    Oro\Bundle\TaxBundle\Entity\TaxJurisdiction:
+        alias:                          oro_tax_jurisdiction
+        title_fields:                   [code]
+        route:
+            name:                       oro_tax_jurisdiction_view
+            parameters:
+                id:                     id
+        search_template:                OroTaxBundle:TaxJurisdiction:searchResult.html.twig
+        fields:
+            -
+                name:                   code
+                target_type:            text
+                target_fields:          [code]
+            -
+                name:                   description
+                target_type:            text
+                target_fields:          [description]

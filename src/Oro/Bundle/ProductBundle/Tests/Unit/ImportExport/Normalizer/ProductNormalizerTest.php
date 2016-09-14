@@ -75,7 +75,7 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
                 [
                     $this->logicalAnd(
                         $this->isType('string'),
-                        $this->equalTo('orob2b_product.normalizer.normalizer')
+                        $this->equalTo('oro_product.normalizer.normalizer')
                     ),
                     $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
                 ]
@@ -117,7 +117,7 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
                 [
                     $this->logicalAnd(
                         $this->isType('string'),
-                        $this->equalTo('orob2b_product.normalizer.denormalizer')
+                        $this->equalTo('oro_product.normalizer.denormalizer')
                     ),
                     $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
                 ]

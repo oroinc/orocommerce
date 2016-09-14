@@ -27,8 +27,8 @@ class ProductTaxCodeDeleteOperationTest extends ActionTestCase
 
         $this->assertDeleteOperation(
             $productTaxCode->getId(),
-            'orob2b_tax.entity.product_tax_code.class',
-            'orob2b_tax_product_tax_code_index'
+            'oro_tax.entity.product_tax_code.class',
+            'oro_tax_product_tax_code_index'
         );
     }
 }

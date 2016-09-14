@@ -9,7 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class ProductUnitPrecisionCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_product_unit_precision_collection';
+    const NAME = 'oro_product_unit_precision_collection';
 
     /**
      * {@inheritdoc}

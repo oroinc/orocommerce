@@ -11,20 +11,20 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInterface
 {
-    const CMS_LOGIN_PAGE_TABLE = 'orob2b_cms_login_page';
+    const CMS_LOGIN_PAGE_TABLE = 'oro_cms_login_page';
     const MAX_LOGO_IMAGE_SIZE_IN_MB = 10;
     const MAX_BACKGROUND_IMAGE_SIZE_IN_MB = 10;
+
+    /** @var AttachmentExtension */
+    protected $attachmentExtension;
 
     /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
-
-    /** @var AttachmentExtension */
-    protected $attachmentExtension;
 
     /**
      * {@inheritdoc}
@@ -40,25 +40,25 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BCmsPageTable($schema);
-        $this->createOrob2BCmsPageToSlugTable($schema);
+        $this->createOroCmsPageTable($schema);
+        $this->createOroCmsPageToSlugTable($schema);
         $this->createOroCmsLoginPageTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BCmsPageForeignKeys($schema);
-        $this->addOrob2BCmsPageToSlugForeignKeys($schema);
+        $this->addOroCmsPageForeignKeys($schema);
+        $this->addOroCmsPageToSlugForeignKeys($schema);
 
         $this->addImageAssociations($schema);
     }
 
     /**
-     * Create orob2b_cms_page table
+     * Create oro_cms_page table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BCmsPageTable(Schema $schema)
+    protected function createOroCmsPageTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_cms_page');
+        $table = $schema->createTable('oro_cms_page');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('current_slug_id', 'integer', ['notnull' => false]);
@@ -76,13 +76,13 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
     }
 
     /**
-     * Create orob2b_cms_page_to_slug table
+     * Create oro_cms_page_to_slug table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BCmsPageToSlugTable(Schema $schema)
+    protected function createOroCmsPageToSlugTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_cms_page_to_slug');
+        $table = $schema->createTable('oro_cms_page_to_slug');
         $table->addColumn('page_id', 'integer', []);
         $table->addColumn('slug_id', 'integer', []);
         $table->setPrimaryKey(['page_id', 'slug_id']);
@@ -90,13 +90,13 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
     }
 
     /**
-     * Add orob2b_cms_page foreign keys.
+     * Add oro_cms_page foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BCmsPageForeignKeys(Schema $schema)
+    protected function addOroCmsPageForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_cms_page');
+        $table = $schema->getTable('oro_cms_page');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
@@ -104,13 +104,13 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_redirect_slug'),
+            $schema->getTable('oro_redirect_slug'),
             ['current_slug_id'],
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_cms_page'),
+            $schema->getTable('oro_cms_page'),
             ['parent_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -118,21 +118,21 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
     }
 
     /**
-     * Add orob2b_cms_page_to_slug foreign keys.
+     * Add oro_cms_page_to_slug foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BCmsPageToSlugForeignKeys(Schema $schema)
+    protected function addOroCmsPageToSlugForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_cms_page_to_slug');
+        $table = $schema->getTable('oro_cms_page_to_slug');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_cms_page'),
+            $schema->getTable('oro_cms_page'),
             ['page_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_redirect_slug'),
+            $schema->getTable('oro_redirect_slug'),
             ['slug_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -140,7 +140,7 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
     }
 
     /**
-     * Create orob2b_cms_login_page table
+     * Create oro_cms_login_page table
      *
      * @param Schema $schema
      */

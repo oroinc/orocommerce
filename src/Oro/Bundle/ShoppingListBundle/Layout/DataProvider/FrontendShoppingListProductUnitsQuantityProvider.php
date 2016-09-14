@@ -8,6 +8,11 @@ use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 class FrontendShoppingListProductUnitsQuantityProvider
 {
     /**
+     * @var array
+     */
+    protected $data = [];
+
+    /**
      * @var ProductShoppingListsDataProvider
      */
     protected $productShoppingListsDataProvider;
@@ -21,15 +26,55 @@ class FrontendShoppingListProductUnitsQuantityProvider
     }
 
     /**
-     * @param Product $product
-     * @return array
+     * @param Product|null $product
+     * @return mixed|null
      */
-    public function getProductUnitsQuantity(Product $product = null)
+    public function getByProduct(Product $product = null)
     {
-        if (null === $product) {
+        if (!$product) {
             return null;
         }
 
-        return $this->productShoppingListsDataProvider->getProductUnitsQuantity($product);
+        $this->setByProducts([$product]);
+
+        return $this->data[$product->getId()];
+    }
+
+    /**
+     * @param Product[] $products
+     * @return array
+     */
+    public function getByProducts($products)
+    {
+        $this->setByProducts($products);
+
+        $shoppingLists = [];
+        foreach ($products as $product) {
+            $productId = $product->getId();
+            if ($this->data[$productId]) {
+                $shoppingLists[$productId] = $this->data[$productId];
+            }
+        }
+
+        return $shoppingLists;
+    }
+
+    /**
+     * @param Product[] $products
+     */
+    protected function setByProducts($products)
+    {
+        $products = array_filter($products, function (Product $product) {
+            return !array_key_exists($product->getId(), $this->data);
+        });
+        if (!$products) {
+            return;
+        }
+
+        $shoppingLists = $this->productShoppingListsDataProvider->getProductsUnitsQuantity($products);
+        foreach ($products as $product) {
+            $productId = $product->getId();
+            $this->data[$productId] = isset($shoppingLists[$productId]) ? $shoppingLists[$productId] : null;
+        }
     }
 }

@@ -1,0 +1,5 @@
+layout:
+    actions:
+        - '@remove':
+            id: __product_price_hint
+    conditions: 'context["is_mobile"]'

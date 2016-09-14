@@ -17,13 +17,13 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="orob2b_account_user")
+ * @ORM\Table(name="oro_account_user")
  * @ORM\HasLifecycleCallbacks()
  * @ORM\AssociationOverrides({
  *      @ORM\AssociationOverride(
  *          name="organizations",
  *          joinTable=@ORM\JoinTable(
- *              name="orob2b_account_user_org",
+ *              name="oro_account_user_org",
  *              joinColumns={
  *                  @ORM\JoinColumn(
  *                      name="account_user_id",
@@ -42,9 +42,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      )
  * })
  * @Config(
- *      routeName="orob2b_account_account_user_index",
- *      routeView="orob2b_account_account_user_view",
- *      routeUpdate="orob2b_account_account_user_update",
+ *      routeName="oro_account_account_user_index",
+ *      routeView="oro_account_account_user_view",
+ *      routeUpdate="oro_account_account_user_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
@@ -60,7 +60,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *              "organization_column_name"="organization_id"
  *          },
  *          "form"={
- *              "form_type"="orob2b_account_account_user_select",
+ *              "form_type"="oro_account_account_user_select",
  *              "grid_name"="account-account-user-select-grid"
  *          },
  *          "security"={
@@ -86,7 +86,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUserRole", inversedBy="accountUsers")
      * @ORM\JoinTable(
-     *      name="orob2b_acc_user_access_role",
+     *      name="oro_acc_user_access_role",
      *      joinColumns={
      *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -285,7 +285,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\UserBundle\Entity\User")
      * @ORM\JoinTable(
-     *      name="orob2b_account_user_sales_reps",
+     *      name="oro_account_user_sales_reps",
      *      joinColumns={
      *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
      *      },

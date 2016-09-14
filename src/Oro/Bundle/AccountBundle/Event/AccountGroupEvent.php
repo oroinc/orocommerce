@@ -9,8 +9,8 @@ use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 
 class AccountGroupEvent extends AfterFormProcessEvent
 {
-    const PRE_REMOVE = 'orob2b_account.account_group.pre_remove';
-    const BEFORE_FLUSH = 'orob2b_account.account_group.before_flush';
+    const PRE_REMOVE = 'oro_account.account_group.pre_remove';
+    const BEFORE_FLUSH = 'oro_account.account_group.before_flush';
 
     /**
      * @param AccountGroup $accountGroup

@@ -1,7 +1,7 @@
 security:
     providers:
-        b2b_frontend_user:
-            id: orob2b_user.security.provider
+        commerce_account_user:
+            id: oro_account.security.provider
 
     encoders:
         Oro\Bundle\AccountBundle\Entity\AccountUser: sha512
@@ -11,15 +11,15 @@ security:
             # secure everything started with /account/ except basic user operations
             # @todo: secure api BB-1206
             pattern:                        ^/api/(rest|soap).|/account/(?!(user/login|user/reset-request|user/send-email|user/check-email|user/register|user/confirm-email|user/reset)$).*$
-            provider:                       b2b_frontend_user
+            provider:                       commerce_account_user
             context:                        account_identity
             organization-form-login:
                 csrf_provider:              form.csrf_provider
-                check_path:                 orob2b_account_account_user_security_check
-                login_path:                 orob2b_account_account_user_security_login
-                default_target_path:        orob2b_frontend_root
+                check_path:                 oro_account_account_user_security_check
+                login_path:                 oro_account_account_user_security_login
+                default_target_path:        oro_frontend_root
             logout:
-                path:                       orob2b_account_account_user_security_logout
+                path:                       oro_account_account_user_security_logout
                 invalidate_session:         false
             organization-remember-me:
                 key:                        %secret%
@@ -30,7 +30,7 @@ security:
 
         frontend:
             pattern:                        ^/
-            provider:                       b2b_frontend_user
+            provider:                       commerce_account_user
             context:                        account_identity
             anonymous:                      true
 

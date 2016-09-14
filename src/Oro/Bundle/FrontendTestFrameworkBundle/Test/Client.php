@@ -46,7 +46,7 @@ class Client extends BaseClient
 
             $this->request(
                 'GET',
-                $this->getUrl('orob2b_frontend_datagrid_index', $gridParameters)
+                $this->getUrl('oro_frontend_datagrid_index', $gridParameters)
             );
 
             return $this->getResponse();
