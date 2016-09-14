@@ -119,10 +119,10 @@
         {% set label = id|humanize %}
     {%- endif -%}
 
-    <label class="oro-checkbox" for="{{ id }}">
-        <input class="oro-checkbox__input" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %}>
-        <span class="oro-checkbox__icon"></span>
-        <span class="oro-checkbox__text">{{ label|block_text(translation_domain) }} </span>
+    <label class="custom-checkbox" for="{{ id }}">
+        <input class="custom-checkbox__input" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %}>
+        <span class="custom-checkbox__icon"></span>
+        <span class="custom-checkbox__text">{{ label|block_text(translation_domain) }} </span>
     </label>
 
     {{- form_errors(form) -}}
@@ -140,7 +140,7 @@
 {%- endblock -%}
 
 {% block form_widget_simple %}
-    {% set attr = attr|merge({class: "oro-input oro-input--full"}) %}
+    {% set attr = attr|merge({class: "input input--full"}) %}
     {{ parent() }}
 {% endblock %}
 
