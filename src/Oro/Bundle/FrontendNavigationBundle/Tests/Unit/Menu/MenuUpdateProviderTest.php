@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FrontendNavigationBundle\Provider\MenuUpdateProvider;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
@@ -28,11 +27,6 @@ class MenuUpdateProviderTest extends \PHPUnit_Framework_TestCase
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $doctrineHelper;
-
-    /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $localizationHelper;
 
     /**
      * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
@@ -58,15 +52,10 @@ class MenuUpdateProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->localizationHelper = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Helper\LocalizationHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->provider = new MenuUpdateProvider(
             $this->securityFacade,
             $this->doctrineHelper,
-            $this->websiteManager,
-            $this->localizationHelper
+            $this->websiteManager
         );
     }
 
@@ -103,15 +92,6 @@ class MenuUpdateProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($menuUpdateRepository);
 
         $update = $this->getMock('Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate');
-        $update->expects($this->once())
-            ->method('setTitle');
-        $update->expects($this->once())
-            ->method('getTitles')
-            ->willReturn($this->getMock('Doctrine\Common\Collections\Collection'));
-
-        $this->localizationHelper->expects($this->once())
-            ->method('getLocalizedValue')
-            ->willReturn('localized title');
 
         $menuUpdateRepository->expects($this->once())
             ->method('getUpdates')

@@ -8,8 +8,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\FrontendNavigationBundle\Model\ExtendMenuUpdate;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\NavigationBundle\Entity\AbstractMenuUpdate;
+use Oro\Bundle\NavigationBundle\Entity\MenuUpdateInterface;
+use Oro\Bundle\NavigationBundle\Entity\MenuUpdateTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -22,14 +24,14 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *          }
  *      }
  * )
- *
- * @method File getImage()
- * @method MenuUpdate setImage(File $image)
  */
-class MenuUpdate extends AbstractMenuUpdate
+class MenuUpdate extends ExtendMenuUpdate implements
+    MenuUpdateInterface
 {
-    const OWNERSHIP_ACCOUNT      = 3;
-    const OWNERSHIP_ACCOUNT_USER = 4;
+    use MenuUpdateTrait;
+    
+    const OWNERSHIP_ACCOUNT         = 3;
+    const OWNERSHIP_ACCOUNT_USER    = 4;
 
     /**
      * @var Collection|LocalizedFallbackValue[]
@@ -90,40 +92,6 @@ class MenuUpdate extends AbstractMenuUpdate
         }
 
         return $extras;
-    }
-
-    /**
-     * @return Collection|LocalizedFallbackValue[]
-     */
-    public function getTitles()
-    {
-        return $this->titles;
-    }
-
-    /**
-     * @param LocalizedFallbackValue $title
-     * @return MenuUpdate
-     */
-    public function addTitle(LocalizedFallbackValue $title)
-    {
-        if (!$this->titles->contains($title)) {
-            $this->titles->add($title);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param LocalizedFallbackValue $title
-     * @return MenuUpdate
-     */
-    public function removeTitle(LocalizedFallbackValue $title)
-    {
-        if ($this->titles->contains($title)) {
-            $this->titles->removeElement($title);
-        }
-
-        return $this;
     }
 
     /**
