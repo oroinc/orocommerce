@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\EntityBundle\ORM\Registry;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
@@ -35,6 +36,18 @@ trait SearchTestTrait
 
     /** @return ContainerInterface */
     abstract protected function getContainer();
+
+    /**
+     * @return int
+     */
+    public function getDefaultWebsiteId()
+    {
+        return $this
+            ->getDoctrine()
+            ->getRepository(Website::class)
+            ->getDefaultWebsite()
+            ->getId();
+    }
 
     /**
      * @return WebsiteSearchIndexRepository

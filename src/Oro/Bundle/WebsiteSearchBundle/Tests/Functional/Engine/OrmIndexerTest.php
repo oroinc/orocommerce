@@ -312,7 +312,7 @@ class OrmIndexerTest extends WebTestCase
             ->method('getId')
             ->willReturn(123456);
 
-        $this->indexer->delete($productMock, ['website_id' => 1]);
+        $this->indexer->delete($productMock, ['website_id' => $this->getDefaultWebsiteId()]);
 
         $this->assertEntityCount(4, Item::class);
         $this->assertEntityCount(2, IndexInteger::class);
@@ -327,7 +327,7 @@ class OrmIndexerTest extends WebTestCase
             ->expects($this->never())
             ->method('getEntityAlias');
 
-        $this->indexer->delete([], ['website_id' => 1]);
+        $this->indexer->delete([], ['website_id' => $this->getDefaultWebsiteId()]);
 
         $this->assertEntityCount(4, Item::class);
         $this->assertEntityCount(2, IndexInteger::class);
@@ -358,7 +358,7 @@ class OrmIndexerTest extends WebTestCase
                 $product1,
                 $product2,
             ],
-            ['website_id' => 1]
+            ['website_id' => $this->getDefaultWebsiteId()]
         );
 
         $this->assertEntityCount(2, Item::class);
@@ -398,7 +398,7 @@ class OrmIndexerTest extends WebTestCase
                 new \stdClass(),
                 new \stdClass()
             ],
-            ['website_id' => 1]
+            ['website_id' => $this->getDefaultWebsiteId()]
         );
 
         $this->assertEntityCount(2, Item::class);

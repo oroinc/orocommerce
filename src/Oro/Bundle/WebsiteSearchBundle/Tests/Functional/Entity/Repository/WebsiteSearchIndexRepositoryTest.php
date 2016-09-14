@@ -10,7 +10,6 @@ use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
@@ -63,11 +62,7 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
     {
         $this->skipIfEngineIsNotOrm();
 
-        $websiteId = $this
-            ->getDoctrine()
-            ->getRepository(Website::class)
-            ->getDefaultWebsite()
-            ->getId();
+        $websiteId = $this->getDefaultWebsiteId();
 
         $query = new Query();
         $query->from('oro_product_' . $websiteId);
@@ -129,11 +124,7 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
     {
         $this->skipIfEngineIsNotOrm();
 
-        $websiteId = $this
-            ->getDoctrine()
-            ->getRepository(Website::class)
-            ->getDefaultWebsite()
-            ->getId();
+        $websiteId = $this->getDefaultWebsiteId();
 
         $query = new Query();
         $query->from('oro_product_' . $websiteId);
@@ -156,11 +147,7 @@ class WebsiteSearchIndexRepositoryTest extends WebTestCase
     {
         $this->skipIfEngineIsNotOrm();
 
-        $websiteId = $this
-            ->getDoctrine()
-            ->getRepository(Website::class)
-            ->getDefaultWebsite()
-            ->getId();
+        $websiteId = $this->getDefaultWebsiteId();
 
         $referenceName = LoadItemData::getReferenceName(LoadItemData::REFERENCE_BETTER_PRODUCT, $websiteId);
         /** @var Item $item */

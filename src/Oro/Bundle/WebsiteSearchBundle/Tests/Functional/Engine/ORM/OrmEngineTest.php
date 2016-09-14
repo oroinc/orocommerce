@@ -2,20 +2,20 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Tests\Functional\Controller\DataFixtures\LoadSearchItemData;
+use Oro\Bundle\TestFrameworkBundle\Entity\Item as TestEntity;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\FrontendRequestTrait;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchTestTrait;
-use Oro\Bundle\TestFrameworkBundle\Entity\Item as TestEntity;
 
 /**
  * @dbIsolationPerTest
@@ -24,6 +24,9 @@ class OrmEngineTest extends WebTestCase
 {
     use SearchTestTrait;
     use FrontendRequestTrait;
+
+    /** @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $mappingProviderMock;
 
     /**
      * @var callable
@@ -36,50 +39,41 @@ class OrmEngineTest extends WebTestCase
     protected $ormEngine;
 
     /**
-     * @var ObjectManager
-     */
-    protected $manager;
-
-    /**
-     * @var TestEntity[]
-     */
-    protected $expectedSearchItems = [];
-
-    /**
      * @var array
      */
-    protected $expectedEntityConfig = [
-        'alias' => 'oro_test_item_WEBSITE_ID',
-        'fields' => [
-            [
-                'name' => 'stringValue_LOCALIZATION_ID',
-                'type' => 'text',
+    protected $mappingConfig = [
+        TestEntity::class => [
+            'alias' => 'oro_test_item_WEBSITE_ID', 'fields' => [
+                [
+                    'name' => 'stringValue_LOCALIZATION_ID',
+                    'type' => 'text',
+                ],
+                [
+                    'name' => 'integerValue',
+                    'type' => 'integer',
+                ],
+                [
+                    'name' => 'decimalValue',
+                    'type' => 'decimal',
+                ],
+                [
+                    'name' => 'floatValue',
+                    'type' => 'decimal',
+                ],
+                [
+                    'name' => 'datetimeValue',
+                    'type' => 'datetime',
+                ],
+                [
+                    'name' => 'blobValue',
+                    'type' => 'text',
+                ],
+                [
+                    'name' => 'phone',
+                    'type' => 'text',
+                ],
             ],
-            [
-                'name' => 'integerValue',
-                'type' => 'integer',
-            ],
-            [
-                'name' => 'decimalValue',
-                'type' => 'decimal',
-            ],
-            [
-                'name' => 'floatValue',
-                'type' => 'decimal',
-            ],
-            [
-                'name' => 'datetimeValue',
-                'type' => 'datetime',
-            ],
-            [
-                'name' => 'blobValue',
-                'type' => 'text',
-            ],
-            [
-                'name' => 'phone',
-                'type' => 'text',
-            ],
-        ],
+        ]
     ];
 
     protected function setUp()
@@ -90,35 +84,64 @@ class OrmEngineTest extends WebTestCase
             $this->markTestSkipped('Should be tested only with ORM search engine');
         }
 
+        $this->mappingProviderMock = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('getMappingConfig')
+            ->willReturn($this->mappingConfig);
+
+        $this->mappingProviderMock
+            ->expects($this->any())
+            ->method('getEntityConfig')
+            ->with(TestEntity::class)
+            ->willReturn($this->mappingConfig[TestEntity::class]);
+
         $this->substituteRequestStack();
 
         $this->loadFixtures([LoadSearchItemData::class]);
 
         $this->listener = $this->setListener();
 
-        $indexer = $this->getContainer()->get('oro_website_search.indexer');
+        $indexer = new OrmIndexer(
+            $this->getContainer()->get('event_dispatcher'),
+            $this->getContainer()->get('oro_entity.doctrine_helper'),
+            $this->mappingProviderMock,
+            $this->getContainer()->get('oro_entity.entity_alias_resolver')
+        );
+
         $indexer->reindex(TestEntity::class, []);
 
         $this->ormEngine = $this->getContainer()->get('oro_website_search.engine');
-        $this->manager = $this->getContainer()->get('doctrine')->getManager();
-
-        $this->expectedSearchItems = [];
-        $this->expectedSearchItems[] = $this->getReference('searchItem1');
-        $this->expectedSearchItems[] = $this->getReference('searchItem2');
-        $this->expectedSearchItems[] = $this->getReference('searchItem3');
-        $this->expectedSearchItems[] = $this->getReference('searchItem4');
-        $this->expectedSearchItems[] = $this->getReference('searchItem5');
-        $this->expectedSearchItems[] = $this->getReference('searchItem6');
-        $this->expectedSearchItems[] = $this->getReference('searchItem7');
-        $this->expectedSearchItems[] = $this->getReference('searchItem8');
-        $this->expectedSearchItems[] = $this->getReference('searchItem9');
+        $this->ormEngine->setMappingProvider($this->mappingProviderMock);
     }
 
     protected function tearDown()
     {
         $this->truncateIndexTextTable();
 
-        unset($this->listener, $this->ormEngine, $this->manager, $this->expectedSearchItems);
+        unset($this->listener, $this->ormEngine, $this->expectedSearchItems);
+    }
+
+    /**
+     * @return int
+     */
+    private function getDefaultLocalizationId()
+    {
+        $localizationManager = $this->getContainer()->get('oro_locale.manager.localization');
+        return $localizationManager->getDefaultLocalization()->getId();
+    }
+
+    /**
+     * @param Query $query
+     * @return Result\Item[]
+     */
+    private function getSearchItems(Query $query)
+    {
+        $searchResults = $this->ormEngine->search($query);
+        return $searchResults->getElements();
     }
 
     /**
@@ -127,6 +150,8 @@ class OrmEngineTest extends WebTestCase
     private function setListener()
     {
         $listener = function (IndexEntityEvent $event) {
+            $defaultLocalizationId = $this->getDefaultLocalizationId();
+
             $items = $this->getContainer()->get('doctrine')
                 ->getRepository(TestEntity::class)
                 ->findBy(['id' => $event->getEntityIds()]);
@@ -160,13 +185,13 @@ class OrmEngineTest extends WebTestCase
                 $event->addField(
                     $item->getId(),
                     Query::TYPE_TEXT,
-                    'stringValue_1',
+                    'stringValue_' . $defaultLocalizationId,
                     $item->stringValue
                 );
                 $event->addField(
                     $item->getId(),
                     Query::TYPE_TEXT,
-                    'all_text_1',
+                    'all_text_' . $defaultLocalizationId,
                     $item->stringValue
                 );
                 $event->addField(
@@ -195,99 +220,25 @@ class OrmEngineTest extends WebTestCase
 
     public function testSearchAll()
     {
+        $defaultLocalizationId = $this->getDefaultLocalizationId();
+
         $query = new Query();
         $query->from('*');
-        $query->getCriteria()->orderBy(['stringValue_1' => Query::ORDER_ASC]);
+        $query->getCriteria()->orderBy([
+            'stringValue_' . $defaultLocalizationId => Query::ORDER_ASC
+        ]);
 
-        $expectedResult = new Result(
-            $query,
-            [
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[0]->getId(),
-                    'item1@mail.com',
-                    null,
-                    [],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[1]->getId(),
-                    'item2@mail.com',
-                    null,
-                    [],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[2]->getId(),
-                    'item3@mail.com',
-                    null,
-                    [],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[3]->getId(),
-                    'item4@mail.com',
-                    null,
-                    [],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[4]->getId(),
-                    'item5@mail.com',
-                    null,
-                    [],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[5]->getId(),
-                    'item6@mail.com',
-                    null,
-                    [],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[6]->getId(),
-                    'item7@mail.com',
-                    null,
-                    [],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[7]->getId(),
-                    'item8@mail.com',
-                    null,
-                    [],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[8]->getId(),
-                    'item9@mail.com',
-                    null,
-                    [],
-                    $this->expectedEntityConfig
-                ),
-            ],
-            9
-        );
+        $items = $this->getSearchItems($query);
 
-        $this->assertEquals($expectedResult, $this->ormEngine->search($query));
+        $this->assertEquals('item1@mail.com', $items[0]->getRecordTitle());
+        $this->assertEquals('item2@mail.com', $items[1]->getRecordTitle());
+        $this->assertEquals('item3@mail.com', $items[2]->getRecordTitle());
+        $this->assertEquals('item4@mail.com', $items[3]->getRecordTitle());
+        $this->assertEquals('item5@mail.com', $items[4]->getRecordTitle());
+        $this->assertEquals('item6@mail.com', $items[5]->getRecordTitle());
+        $this->assertEquals('item7@mail.com', $items[6]->getRecordTitle());
+        $this->assertEquals('item8@mail.com', $items[7]->getRecordTitle());
+        $this->assertEquals('item9@mail.com', $items[8]->getRecordTitle());
     }
 
     /**
@@ -295,118 +246,26 @@ class OrmEngineTest extends WebTestCase
      */
     public function testSearchByAliasWithSelect()
     {
+        $defaultLocalizationId = $this->getDefaultLocalizationId();
+
         $query = new Query();
         $query->from('oro_test_item_WEBSITE_ID');
-        $query->select('stringValue_1');
-        $query->getCriteria()->orderBy(['stringValue_1' => Query::ORDER_ASC]);
+        $query->select('stringValue_' . $defaultLocalizationId);
+        $query->getCriteria()->orderBy([
+            'stringValue_' . $defaultLocalizationId => Query::ORDER_ASC
+        ]);
 
-        $expectedResult = new Result(
-            $query,
-            [
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[0]->getId(),
-                    'item1@mail.com',
-                    null,
-                    [
-                        'stringValue_1' => 'item1@mail.com',
-                    ],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[1]->getId(),
-                    'item2@mail.com',
-                    null,
-                    [
-                        'stringValue_1' => 'item2@mail.com',
-                    ],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[2]->getId(),
-                    'item3@mail.com',
-                    null,
-                    [
-                        'stringValue_1' => 'item3@mail.com',
-                    ],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[3]->getId(),
-                    'item4@mail.com',
-                    null,
-                    [
-                        'stringValue_1' => 'item4@mail.com',
-                    ],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[4]->getId(),
-                    'item5@mail.com',
-                    null,
-                    [
-                        'stringValue_1' => 'item5@mail.com',
-                    ],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[5]->getId(),
-                    'item6@mail.com',
-                    null,
-                    [
-                        'stringValue_1' => 'item6@mail.com',
-                    ],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[6]->getId(),
-                    'item7@mail.com',
-                    null,
-                    [
-                        'stringValue_1' => 'item7@mail.com',
-                    ],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[7]->getId(),
-                    'item8@mail.com',
-                    null,
-                    [
-                        'stringValue_1' => 'item8@mail.com',
-                    ],
-                    $this->expectedEntityConfig
-                ),
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[8]->getId(),
-                    'item9@mail.com',
-                    null,
-                    [
-                        'stringValue_1' => 'item9@mail.com',
-                    ],
-                    $this->expectedEntityConfig
-                ),
-            ],
-            9
-        );
+        $items = $this->getSearchItems($query);
 
-        $this->assertEquals($expectedResult, $this->ormEngine->search($query));
+        $this->assertEquals('item1@mail.com', $items[0]->getRecordTitle());
+        $this->assertEquals('item2@mail.com', $items[1]->getRecordTitle());
+        $this->assertEquals('item3@mail.com', $items[2]->getRecordTitle());
+        $this->assertEquals('item4@mail.com', $items[3]->getRecordTitle());
+        $this->assertEquals('item5@mail.com', $items[4]->getRecordTitle());
+        $this->assertEquals('item6@mail.com', $items[5]->getRecordTitle());
+        $this->assertEquals('item7@mail.com', $items[6]->getRecordTitle());
+        $this->assertEquals('item8@mail.com', $items[7]->getRecordTitle());
+        $this->assertEquals('item9@mail.com', $items[8]->getRecordTitle());
     }
 
     public function testSearchByAliasWithCriteria()
@@ -419,22 +278,8 @@ class OrmEngineTest extends WebTestCase
         $criteria->where($expr);
         $query->setCriteria($criteria);
 
-        $expectedResult = new Result(
-            $query,
-            [
-                new Item(
-                    $this->manager,
-                    'Oro\Bundle\TestFrameworkBundle\Entity\Item',
-                    $this->expectedSearchItems[4]->getId(),
-                    'item5@mail.com',
-                    null,
-                    [],
-                    $this->expectedEntityConfig
-                ),
-            ],
-            1
-        );
+        $items = $this->getSearchItems($query);
 
-        $this->assertEquals($expectedResult, $this->ormEngine->search($query));
+        $this->assertEquals('item5@mail.com', $items[0]->getRecordTitle());
     }
 }
