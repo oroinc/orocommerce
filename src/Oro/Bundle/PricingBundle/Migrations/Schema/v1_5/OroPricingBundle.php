@@ -6,7 +6,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\ConfigBundle\Migration\RenameConfigSettingsQuery;
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
@@ -16,7 +16,6 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -56,19 +55,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
         $this->renameColumnsAndTables($schema, $queries);
         $this->renameIndexes($schema, $queries);
 
-        $this->renameSystemConfigurationSettings(
-            $queries,
-            [
-                Configuration::DEFAULT_PRICE_LISTS,
-                Configuration::ROUNDING_TYPE,
-                Configuration::ENABLED_CURRENCIES,
-                Configuration::PRECISION,
-                Configuration::COMBINED_PRICE_LIST,
-                Configuration::FULL_COMBINED_PRICE_LIST,
-                Configuration::OFFSET_OF_PROCESSING_CPL_PRICES,
-                Configuration::DEFAULT_CURRENCY,
-            ]
-        );
+        $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_pricing', 'oro_pricing'));
     }
 
     /**
@@ -545,17 +532,6 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
             ['product_id', 'price_list_id'],
             'oro_price_list_to_product_uidx'
         );
-    }
-
-    /**
-     * @param QueryBag $queries
-     * @param array $settings
-     */
-    private function renameSystemConfigurationSettings(QueryBag $queries, array $settings)
-    {
-        foreach ($settings as $name) {
-            $queries->addPostQuery(new RenameConfigSettingsQuery("oro_b2b_pricing.$name", "oro_pricing.$name"));
-        }
     }
 
     /**

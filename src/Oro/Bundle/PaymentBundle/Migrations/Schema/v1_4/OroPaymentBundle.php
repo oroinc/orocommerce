@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\ConfigBundle\Migration\RenameConfigSettingsQuery;
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\FrontendBundle\Migration\UpdateClassNamesQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
@@ -12,7 +12,6 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
-use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration;
 
 class OroPaymentBundle implements Migration, RenameExtensionAwareInterface
 {
@@ -79,30 +78,7 @@ class OroPaymentBundle implements Migration, RenameExtensionAwareInterface
         $queries->addQuery(new UpdateClassNamesQuery('oro_payment_transaction', 'entity_class'));
 
         // system configuration
-        $this->renameSystemConfigurationSettings(
-            $queries,
-            [
-                Configuration::MERCHANT_COUNTRY_KEY,
-                Configuration::PAYMENT_TERM_ENABLED_KEY,
-                Configuration::PAYMENT_TERM_LABEL_KEY,
-                Configuration::PAYMENT_TERM_SHORT_LABEL_KEY,
-                Configuration::PAYMENT_TERM_SORT_ORDER_KEY,
-                Configuration::PAYMENT_TERM_ALLOWED_COUNTRIES_KEY,
-                Configuration::PAYMENT_TERM_SELECTED_COUNTRIES_KEY,
-                Configuration::PAYMENT_TERM_ALLOWED_CURRENCIES,
-            ]
-        );
-    }
-
-    /**
-     * @param QueryBag $queries
-     * @param array $settings
-     */
-    private function renameSystemConfigurationSettings(QueryBag $queries, array $settings)
-    {
-        foreach ($settings as $name) {
-            $queries->addPostQuery(new RenameConfigSettingsQuery("orob2b_payment.$name", "oro_payment.$name"));
-        }
+        $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_payment', 'oro_payment'));
     }
 
     /**

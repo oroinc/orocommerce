@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_3;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\ConfigBundle\Migration\RenameConfigSettingsQuery;
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
@@ -59,12 +59,7 @@ class OroShoppingListBundle implements Migration, RenameExtensionAwareInterface,
             'orob2b_shopping_list_line_item_uidx'
         );
 
-        $queries->addPostQuery(
-            new RenameConfigSettingsQuery(
-                'oro_b2b_shopping_list.backend_product_visibility',
-                'oro_shopping_list.backend_product_visibility'
-            )
-        );
+        $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_shopping_list', 'oro_shopping_list'));
     }
 
     /**

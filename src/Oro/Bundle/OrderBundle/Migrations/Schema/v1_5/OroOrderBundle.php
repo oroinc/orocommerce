@@ -4,7 +4,7 @@ namespace Oro\Bundle\OrderBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\ConfigBundle\Migration\RenameConfigSettingsQuery;
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
@@ -104,18 +104,7 @@ class OroOrderBundle implements Migration, RenameExtensionAwareInterface
         $extension->addIndex($schema, $queries, 'oro_order', ['created_at'], 'oro_order_created_at_index');
 
         // system configuration
-        $queries->addPostQuery(
-            new RenameConfigSettingsQuery(
-                'oro_b2b_order.backend_product_visibility',
-                'oro_order.backend_product_visibility'
-            )
-        );
-        $queries->addPostQuery(
-            new RenameConfigSettingsQuery(
-                'oro_b2b_order.frontend_product_visibility',
-                'oro_order.frontend_product_visibility'
-            )
-        );
+        $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_order', 'oro_order'));
     }
 
     /**

@@ -4,7 +4,7 @@ namespace Oro\Bundle\AccountBundle\Migrations\Schema\v1_7;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\ConfigBundle\Migration\RenameConfigSettingsQuery;
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
@@ -37,18 +37,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         $this->renameEntityTables($schema, $queries);
         $this->renameIndexes($schema, $queries);
 
-        $this->renameSystemConfigurationSettings(
-            $queries,
-            [
-                'default_account_owner',
-                'anonymous_account_group',
-                'registration_allowed',
-                'confirmation_required',
-                'send_password_in_welcome_email',
-                'category_visibility',
-                'product_visibility',
-            ]
-        );
+        $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_account', 'oro_account'));
     }
 
     /**
@@ -478,17 +467,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
-    }
-
-    /**
-     * @param QueryBag $queries
-     * @param array $settings
-     */
-    private function renameSystemConfigurationSettings(QueryBag $queries, array $settings)
-    {
-        foreach ($settings as $name) {
-            $queries->addPostQuery(new RenameConfigSettingsQuery("oro_b2b_account.$name", "oro_account.$name"));
-        }
     }
 
     /**

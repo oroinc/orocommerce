@@ -4,7 +4,7 @@ namespace Oro\Bundle\TaxBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\ConfigBundle\Migration\RenameConfigSettingsQuery;
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\FrontendBundle\Migration\UpdateClassNamesQuery;
 use Oro\Bundle\FrontendBundle\Migration\UpdateSerializedClassNames;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
@@ -54,33 +54,7 @@ class OroTaxBundle implements Migration, RenameExtensionAwareInterface
         $queries->addQuery(new UpdateSerializedClassNames('oro_tax_value', 'result'));
 
         // system configuration
-        $this->renameSystemConfigurationSettings(
-            $queries,
-            [
-                'tax_enable',
-                'tax_provider',
-                'start_calculation_with',
-                'start_calculation_on',
-                'product_prices_include_tax',
-                'use_as_base_by_default',
-                'use_as_base_exclusions',
-                'destination',
-                'digital_products_us',
-                'digital_products_eu',
-                'origin_address'
-            ]
-        );
-    }
-
-    /**
-     * @param QueryBag $queries
-     * @param array $settings
-     */
-    private function renameSystemConfigurationSettings(QueryBag $queries, array $settings)
-    {
-        foreach ($settings as $name) {
-            $queries->addPostQuery(new RenameConfigSettingsQuery("orob2b_tax.$name", "oro_tax.$name"));
-        }
+        $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_tax', 'oro_tax'));
     }
 
     /**

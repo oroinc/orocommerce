@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\ConfigBundle\Migration\RenameConfigSettingsQuery;
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
@@ -100,26 +100,7 @@ class OroProductBundle implements Migration, RenameExtensionAwareInterface
         );
 
         // system configuration
-        $this->renameSystemConfigurationSettings(
-            $queries,
-            [
-                'unit_rounding_type',
-                'default_unit',
-                'default_unit_precision',
-                'general_frontend_product_visibility'
-            ]
-        );
-    }
-
-    /**
-     * @param QueryBag $queries
-     * @param array $settings
-     */
-    private function renameSystemConfigurationSettings(QueryBag $queries, array $settings)
-    {
-        foreach ($settings as $name) {
-            $queries->addPostQuery(new RenameConfigSettingsQuery("orob2b_product.$name", "oro_product.$name"));
-        }
+        $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_product', 'oro_product'));
     }
 
     /**

@@ -4,7 +4,7 @@ namespace Oro\Bundle\RFPBundle\Migrations\Schema\v1_6;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\ConfigBundle\Migration\RenameConfigSettingsQuery;
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
@@ -89,30 +89,7 @@ class OroRFPBundle implements Migration, RenameExtensionAwareInterface
         );
 
         // system configuration
-        $this->renameSystemConfigurationSettings(
-            $queries,
-            [
-                'feature_enabled',
-                'frontend_feature_enabled',
-                'default_request_status',
-                'notify_owner_of_account_user_record',
-                'notify_assigned_sales_reps_of_the_account',
-                'notify_owner_of_account',
-                'backend_product_visibility',
-                'frontend_product_visibility',
-            ]
-        );
-    }
-
-    /**
-     * @param QueryBag $queries
-     * @param array $settings
-     */
-    private function renameSystemConfigurationSettings(QueryBag $queries, array $settings)
-    {
-        foreach ($settings as $name) {
-            $queries->addPostQuery(new RenameConfigSettingsQuery("oro_b2b_rfp.$name", "oro_rfp.$name"));
-        }
+        $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_rfp', 'oro_rfp'));
     }
 
     /**

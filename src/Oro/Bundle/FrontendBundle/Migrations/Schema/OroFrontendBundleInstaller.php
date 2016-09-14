@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\ConfigBundle\Migration\RenameConfigSettingsQuery;
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -41,12 +41,7 @@ class OroFrontendBundleInstaller implements Installation, ContainerAwareInterfac
     {
         // update system configuration for installed instances
         if ($this->container->hasParameter('installed') && $this->container->getParameter('installed')) {
-            $queries->addPostQuery(
-                new RenameConfigSettingsQuery(
-                    'oro_b2b_frontend.frontend_theme',
-                    'oro_frontend.frontend_theme'
-                )
-            );
+            $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_frontend', 'oro_frontend'));
         }
     }
 }
