@@ -13,10 +13,8 @@ class ParentCategoryFallbackProvider extends AbstractEntityFallbackProvider
     /**
      * {@inheritdoc}
      */
-    public function getFallbackHolderEntity(
-        $object,
-        $objectFieldName
-    ) {
+    public function getFallbackHolderEntity($object, $objectFieldName)
+    {
         if (!$object instanceof Category) {
             throw new InvalidFallbackArgumentException(get_class($object), get_class($this));
         }
