@@ -63,14 +63,6 @@ class OrmIndexer extends AbstractIndexer
     /**
      * {@inheritdoc}
      */
-    public function getClassesForReindex($class = null, array $context = [])
-    {
-        // TODO: Implement getClassesForReindex() method.
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function saveIndexData(
         $entityClass,
         array $entitiesData,

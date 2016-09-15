@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -75,18 +76,34 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     public function reindex($class = null, array $context = [])
     {
-        $entitiesToIndex = $this->getMapping($class);
+        $entitiesConfig = $this->getMapping($class);
         $websitesToIndex = $this->getWebsitesToIndex($context);
         $handledItems = 0;
 
+        $entitiesToIndex = array_keys($entitiesConfig);
+        $entitiesToIndex = $this->getClassesForReindex($entitiesToIndex);
+
         foreach ($websitesToIndex as $websiteId) {
             $websiteContext = $this->collectContextForWebsite($websiteId, $context);
-            foreach ($entitiesToIndex as $entityClass => $entityConfig) {
-                $handledItems += $this->reindexSingleEntity($entityClass, $entityConfig, $websiteContext);
+            foreach ($entitiesToIndex as $entityClass) {
+                $entityConfig = $this->getMapping($entityClass);
+                $handledItems += $this->reindexSingleEntity($entityClass, reset($entityConfig), $websiteContext);
             }
         }
 
         return $handledItems;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getClassesForReindex($class = null)
+    {
+        $classes = is_array($class) ? $class : [$class];
+        $collectDependentClassesEvent = new CollectDependentClassesEvent($classes);
+        $this->eventDispatcher->dispatch(CollectDependentClassesEvent::NAME, $collectDependentClassesEvent);
+
+        return $collectDependentClassesEvent->getDependentClasses();
     }
 
     /**

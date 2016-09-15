@@ -6,7 +6,6 @@ use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
-use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Tests\Functional\Controller\DataFixtures\LoadSearchItemData;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item as TestEntity;
 use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
@@ -84,7 +83,7 @@ class OrmEngineTest extends SearchWebTestCase
             ->getMock();
 
         $this->mappingProviderMock
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getMappingConfig')
             ->willReturn($this->mappingConfig);
 

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine;
 
+use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -131,7 +132,9 @@ class OrmIndexerTest extends SearchWebTestCase
     public function testReindexForSpecificWebsite()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
+        $this->mappingProviderMock
+            ->expects($this->exactly(2))
+            ->method('getMappingConfig')
             ->willReturn($this->mappingConfig);
 
         $this->listener = $this->setListener();
@@ -160,7 +163,9 @@ class OrmIndexerTest extends SearchWebTestCase
             $this->entityAliasResolver
         );
 
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
+        $this->mappingProviderMock
+            ->expects($this->exactly(2))
+            ->method('getMappingConfig')
             ->willReturn($this->mappingConfig);
 
         $this->listener = $this->setListener();
@@ -182,7 +187,9 @@ class OrmIndexerTest extends SearchWebTestCase
     public function testReindexWithRestriction()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
+        $this->mappingProviderMock
+            ->expects($this->exactly(2))
+            ->method('getMappingConfig')
             ->willReturn($this->mappingConfig);
 
         $restrictedProduct = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
@@ -216,7 +223,9 @@ class OrmIndexerTest extends SearchWebTestCase
     public function testReindexWithAllRestricted()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
+        $this->mappingProviderMock
+            ->expects($this->exactly(2))
+            ->method('getMappingConfig')
             ->willReturn($this->mappingConfig);
 
         $restrictedProduct1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
@@ -251,8 +260,11 @@ class OrmIndexerTest extends SearchWebTestCase
 
     public function testReindexOfAllWebsites()
     {
-        $this->loadFixtures([LoadItemData::class]);
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
+        $this->loadFixtures([LoadProductsToIndex::class]);
+        $this->loadFixtures([LoadOtherWebsite::class]);
+        $this->mappingProviderMock
+            ->expects($this->exactly(3))
+            ->method('getMappingConfig')
             ->willReturn($this->mappingConfig);
 
         $this->listener = $this->setListener();
@@ -483,5 +495,43 @@ class OrmIndexerTest extends SearchWebTestCase
             ]
         );
         $this->assertEntityCount(2, Item::class);
+    }
+
+    /**
+     * @dataProvider getClassesForReindexProvider
+     * @param $classPassed
+     * @param $expected
+     */
+    public function testGetClassesForReindex($classPassed, $expected)
+    {
+        $listener = function (CollectDependentClassesEvent $event) {
+            $event->setDependentClasses(['Some\Dependent\Class1']);
+        };
+
+        $this->dispatcher->addListener(
+            CollectDependentClassesEvent::NAME,
+            $listener,
+            -255
+        );
+
+        $dependentClasses = $this->indexer->getClassesForReindex($classPassed);
+        $this->assertEquals($expected, $dependentClasses);
+    }
+
+    /**
+     * @return array
+     */
+    public function getClassesForReindexProvider()
+    {
+        return [
+            'string passed' => [
+                TestProduct::class,
+                [TestProduct::class, 'Some\Dependent\Class1']
+            ],
+            'array passed' => [
+                [TestProduct::class, 'Some\Main\Class'],
+                [TestProduct::class, 'Some\Main\Class', 'Some\Dependent\Class1']
+            ]
+        ];
     }
 }
