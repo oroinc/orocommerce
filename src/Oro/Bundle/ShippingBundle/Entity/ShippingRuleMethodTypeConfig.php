@@ -112,7 +112,7 @@ class ShippingRuleMethodTypeConfig extends ExtendShippingRuleMethodTypeConfig
      */
     public function getOptions()
     {
-        return $this->options;
+        return $this->options ?: [];
     }
 
     /**

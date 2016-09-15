@@ -2,17 +2,14 @@
 
 namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 class AjaxCheckoutController extends Controller
 {
@@ -50,21 +47,19 @@ class AjaxCheckoutController extends Controller
     protected function getShippingCost(Checkout $checkout, Request $request)
     {
         $workflowTransitionData = $request->request->get('oro_workflow_transition');
-        if (!is_array($workflowTransitionData) || !array_key_exists('shipping_rule_config', $workflowTransitionData)) {
-            return $checkout->getShippingCost();
-        }
-        $shippingRuleConfigId = $workflowTransitionData['shipping_rule_config'];
-        $shippingRuleConfig = $this->getDoctrine()->getManagerForClass('OroShippingBundle:ShippingRuleConfiguration')
-            ->getRepository('OroShippingBundle:ShippingRuleConfiguration')->find($shippingRuleConfigId);
-        if (!$shippingRuleConfig) {
+        if (!is_array($workflowTransitionData)
+            || !array_key_exists('shipping_method', $workflowTransitionData)
+            || !array_key_exists('shipping_method_type', $workflowTransitionData)
+        ) {
             return $checkout->getShippingCost();
         }
 
-        $shippingContextProviderFactory = new ShippingContextProviderFactory();
+        $shippingContextProviderFactory = $this->get('oro_checkout.factory.shipping_context_provider_factory');
+
         return $this->get('oro_shipping.shipping_price.provider')->getPrice(
             $shippingContextProviderFactory->create($checkout),
-            $checkout->getShippingMethod(),
-            $checkout->getShippingMethodType()
+            $workflowTransitionData['shipping_method'],
+            $workflowTransitionData['shipping_method_type']
         );
     }
 }
