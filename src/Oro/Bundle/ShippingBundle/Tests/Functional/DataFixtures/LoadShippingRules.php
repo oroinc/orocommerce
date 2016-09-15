@@ -4,11 +4,10 @@ namespace Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
@@ -77,6 +76,8 @@ class LoadShippingRules extends AbstractFixture
                             FlatRateShippingMethodType::HANDLING_FEE_OPTION => null,
                             FlatRateShippingMethodType::TYPE_OPTION => $typeConfigData['options']['type'],
                         ]);
+                    $typeConfig->setEnabled(true);
+                    $methodConfig->addTypeConfig($typeConfig);
                 }
 
                 $manager->persist($methodConfig);

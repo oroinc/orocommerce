@@ -5,7 +5,6 @@ namespace Oro\Bundle\ShippingBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ShippingBundle\Model\ExtendShippingRuleMethodConfig;
@@ -146,7 +145,7 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
      */
     public function getOptions()
     {
-        return $this->options;
+        return $this->options ?: [];
     }
 
     /**

@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Condition;
 
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Condition\HasApplicableShippingMethods;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Provider\ShippingContextProvider;
-use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
+use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,8 +23,8 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
     /** @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $shippingMethodRegistry;
 
-    /** @var ShippingRulesProvider|\PHPUnit_Framework_MockObject_MockObject */
-    protected $shippingRulesProvider;
+    /** @var ShippingPriceProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $shippingPriceProvider;
 
     /** @var ShippingContextProviderFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $shippingContextProviderFactory;
@@ -33,8 +33,8 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
     {
         $this->shippingMethodRegistry = $this->getMock('Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry');
 
-        $this->shippingRulesProvider = $this
-            ->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider')
+        $this->shippingPriceProvider = $this
+            ->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -44,11 +44,11 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->shippingContextProviderFactory->expects(static::any())
             ->method('create')
-            ->willReturn(new ShippingContextProvider([]));
+            ->willReturn(new ShippingContext([]));
 
         $this->condition = new HasApplicableShippingMethods(
             $this->shippingMethodRegistry,
-            $this->shippingRulesProvider,
+            $this->shippingPriceProvider,
             $this->shippingContextProviderFactory
         );
     }
@@ -94,7 +94,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
         $this->shippingMethodRegistry->expects($this->any())->method('getShippingMethod')->willReturn($method);
 
 
-        $this->shippingRulesProvider->expects($this->any())
+        $this->shippingPriceProvider->expects($this->any())
             ->method('getApplicableShippingRules')
             ->willReturn($rules);
 
@@ -107,19 +107,18 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
      */
     public function evaluateProvider()
     {
-        $shippingConfig = $this->getEntity(
-            'Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration',
+        $methodConfig = $this->getEntity(
+            'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig',
             [
                 'id'     => 1,
-                'method' => 'flat_rate',
-                'type'   => 'per_order'
+                'method' => 'flat_rate'
             ]
         );
 
         $shippingRule = new ShippingRule();
         $shippingRule->setName('TetsRule')
             ->setPriority(10)
-            ->addConfiguration($shippingConfig);
+            ->addMethodConfig($methodConfig);
         
         return [
             'no_rules' => [

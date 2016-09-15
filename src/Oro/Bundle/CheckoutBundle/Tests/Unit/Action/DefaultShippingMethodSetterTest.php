@@ -3,17 +3,16 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Action;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Provider\ShippingContextProvider;
-use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
-use Oro\Bundle\ShippingBundle\Tests\Unit\Entity\Stub\CustomShippingRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,26 +29,21 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
     protected $contextProviderFactory;
 
     /**
-     * @var ShippingRulesProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $rulesProvider;
-
-    /**
      * @var ShippingPriceProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $priceProvider;
 
     public function setUp()
     {
-        $this->contextProviderFactory = $this->getMock(ShippingContextProviderFactory::class);
-        $this->rulesProvider = $this->getMockBuilder(ShippingRulesProvider::class)
+        $this->contextProviderFactory = $this->getMockBuilder(ShippingContextProviderFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->priceProvider = $this->getMockBuilder(ShippingPriceProvider::class)
             ->disableOriginalConstructor()->getMock();
         $this->setter = new DefaultShippingMethodSetter(
             $this->contextProviderFactory,
-            $this->rulesProvider,
+            $this->priceProvider,
             $this->priceProvider
         );
     }
@@ -61,7 +55,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->contextProviderFactory->expects($this->never())
             ->method('create');
-        $this->rulesProvider->expects($this->never())
+        $this->priceProvider->expects($this->never())
             ->method('getApplicableShippingRules');
         $this->priceProvider->expects($this->never())
             ->method('getPrice');
@@ -71,14 +65,12 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
     public function testSetDefaultShippingMethodEmptyApplicable()
     {
         $checkout = $this->getEntity(Checkout::class);
-        $context = new ShippingContextProvider([
-            'key' => 'value'
-        ]);
+        $context = new ShippingContext();
         $this->contextProviderFactory->expects($this->once())
             ->method('create')
             ->with($checkout)
             ->willReturn($context);
-        $this->rulesProvider->expects($this->once())
+        $this->priceProvider->expects($this->once())
             ->method('getApplicableShippingRules')
             ->with($context)
             ->willReturn([]);
@@ -91,9 +83,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
     {
         /** @var Checkout $checkout */
         $checkout = $this->getEntity(Checkout::class);
-        $context = new ShippingContextProvider([
-            'key' => 'value'
-        ]);
+        $context = new ShippingContext();
         $this->contextProviderFactory->expects($this->once())
             ->method('create')
             ->with($checkout)
@@ -102,22 +92,27 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
         $method = 'custom_method';
         $methodType = 'custom_method_type';
 
-        $config = $this->getEntity(CustomShippingRuleConfiguration::class, [
+        $config = $this->getEntity(ShippingRuleMethodConfig::class, [
             'method' => $method,
-            'type' => $methodType,
+            'typeConfigs' => new ArrayCollection(
+                [
+                    (new ShippingRuleMethodTypeConfig())
+                        ->setType($methodType)
+                ]
+            ),
         ]);
         $rule = $this->getEntity(ShippingRule::class, [
-            'configurations' => new ArrayCollection([$config])
+            'methodConfigs' => new ArrayCollection([$config])
         ]);
 
-        $this->rulesProvider->expects($this->once())
+        $this->priceProvider->expects($this->once())
             ->method('getApplicableShippingRules')
             ->with($context)
             ->willReturn([$rule]);
         $price = Price::create(10, 'USD');
         $this->priceProvider->expects($this->once())
             ->method('getPrice')
-            ->with($context, $checkout->getShippingMethod(), $checkout->getShippingMethodType())
+            ->with($context, $method, $methodType)
             ->willReturn($price);
         $this->setter->setDefaultShippingMethod($checkout);
 

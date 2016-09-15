@@ -54,7 +54,7 @@ class ShippingContextProviderFactory
         $shippingContext->setCurrency($checkout->getCurrency());
         $shippingContext->setPaymentMethod($checkout->getPaymentMethod());
         $shippingContext->setLineItems(
-            $this->checkoutLineItemsManager->getData($checkout)
+            $this->checkoutLineItemsManager->getData($checkout)->toArray()
         );
 
         $total = $this->totalProcessor->getTotal($checkout);

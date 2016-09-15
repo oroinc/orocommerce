@@ -36,7 +36,7 @@ define([
 
             this.button.on('click', _.bind(this.changeHandler, this));
 
-            var elements = this.form.find(".orob2b-shipping-rule-method-configs-collection .row-oro.oro-multiselect-holder");
+            var elements = this.form.find(".oro-shipping-rule-method-configs-collection .row-oro.oro-multiselect-holder");
             this.methodCount = elements.length;
             var self = this;
             elements.each(function(index, element) {
@@ -73,7 +73,7 @@ define([
         },
 
         updateMethodSelector: function(removedElement) {
-            var elements = this.form.find(".orob2b-shipping-rule-method-configs-collection .row-oro.oro-multiselect-holder");
+            var elements = this.form.find(".oro-shipping-rule-method-configs-collection .row-oro.oro-multiselect-holder");
             var methods = [];
             var self = this;
 

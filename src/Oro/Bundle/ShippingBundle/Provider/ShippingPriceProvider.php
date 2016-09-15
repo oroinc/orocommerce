@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Provider;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -9,10 +10,11 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ShippingPriceProvider
@@ -39,24 +41,37 @@ class ShippingPriceProvider
      */
     public function getApplicableMethodsWithTypesData(ShippingContextInterface $context)
     {
-        $prices = [];
+        $result = [];
 
         $rules = $this->getApplicableShippingRules($context);
-        if (count($rules) === 0) {
-            return $prices;
-        }
-
         foreach ($rules as $rule) {
             $methodConfigs = $rule->getMethodConfigs();
-            if (count($methodConfigs) > 0) {
-                foreach ($methodConfigs as $methodConfig) {
-                    $method = $this->registry->getShippingMethod($methodConfig->getMethod());
-                    $prices[] = $this->fillMethodData($context, $method);
+            foreach ($methodConfigs as $methodConfig) {
+                $method = $this->registry->getShippingMethod($methodConfig->getMethod());
+                if (!$method) {
+                    continue;
                 }
+
+                if (!array_key_exists($methodConfig->getMethod(), $result)) {
+                    $result[$methodConfig->getMethod()] = [
+                        'identifier' => $method->getIdentifier(),
+                        'isGrouped' => $method->isGrouped(),
+                        'label' => $method->getLabel(),
+                        'sortOrder' => $method->getSortOrder(),
+                        'types' => []
+                    ];
+                }
+
+                // already existing types should be second argument of array_merge,
+                // because they should not be overridden
+                $result[$methodConfig->getMethod()]['types'] = array_merge(
+                    $this->getMethodTypesConfigs($context, $methodConfig),
+                    $result[$methodConfig->getMethod()]['types']
+                );
             }
         }
 
-        return $prices;
+        return $result;
     }
 
     /**
@@ -67,33 +82,27 @@ class ShippingPriceProvider
      */
     public function getPrice(ShippingContextInterface $context, $methodIdentifier, $typeIdentifier)
     {
-        $rules = $this->getApplicableShippingRules($context);
-        if (count($rules) === 0) {
+        $method = $this->registry->getShippingMethod($methodIdentifier);
+        if (!$method) {
             return null;
         }
 
+        $type = $method->getType($typeIdentifier);
+        if (!$type) {
+            return null;
+        }
+
+        $rules = $this->getApplicableShippingRules($context);
         foreach ($rules as $rule) {
-            $methodConfigs = $rule->getMethodConfigs();
-            if (count($methodConfigs) === 0) {
-                continue;
-            }
+            foreach ($rule->getMethodConfigs() as $methodConfig) {
+                if ($methodConfig->getMethod() !== $methodIdentifier) {
+                    continue;
+                }
 
-            foreach ($methodConfigs as $methodConfig) {
-                $method = $this->registry->getShippingMethod($methodConfig->getMethod());
-                if ($method->getIdentifier() === $methodIdentifier) {
-                    $methodTypePrices = [];
-                    if ($method instanceof PricesAwareShippingMethodInterface) {
-                        $methodTypePrices = $this->
-                            getAwareShippingMethodTypePrices($context, $method, $typeIdentifier)
-                        ;
-                    }
-
-                    $methodType = $method->getType($typeIdentifier);
-                    if ($methodType !== null) {
-                        return array_key_exists($methodType->getIdentifier(), $methodTypePrices) ?
-                            $methodTypePrices[$methodType->getIdentifier()] :
-                            $methodType->calculatePrice($context, $method->getOptions(), $methodType->getOptions())
-                        ;
+                $enabledTypeConfigs = $this->getEnabledTypeConfigs($methodConfig);
+                foreach ($enabledTypeConfigs as $typeConfig) {
+                    if ($typeConfig->getType() === $typeIdentifier) {
+                        return $type->calculatePrice($context, $methodConfig->getOptions(), $typeConfig->getOptions());
                     }
                 }
             }
@@ -106,7 +115,7 @@ class ShippingPriceProvider
      * @param ShippingContextInterface $context
      * @return ShippingRule[]|array
      */
-    protected function getApplicableShippingRules(ShippingContextInterface $context)
+    public function getApplicableShippingRules(ShippingContextInterface $context)
     {
         $applicableRules = [];
         if ($context) {
@@ -137,7 +146,15 @@ class ShippingPriceProvider
         if ($condition) {
             $language = new ExpressionLanguage();
             try {
-                $result = $language->evaluate($condition, $context->getOptions());
+                $result = $language->evaluate($condition, [
+                    'lineItems' => $context->getLineItems(),
+                    'billingAddress' => $context->getBillingAddress(),
+                    'shippingAddress' => $context->getShippingAddress(),
+                    'shippingOrigin' => $context->getShippingOrigin(),
+                    'paymentMethod' => $context->getPaymentMethod(),
+                    'currency' => $context->getCurrency(),
+                    'subtotal' => $context->getSubtotal(),
+                ]);
             } catch (\Exception $e) {
                 $result = false;
             }
@@ -199,8 +216,7 @@ class ShippingPriceProvider
         /** @var ShippingRuleRepository $repository */
         $repository = $this->doctrineHelper
             ->getEntityManagerForClass('OroShippingBundle:ShippingRule')
-            ->getRepository('OroShippingBundle:ShippingRule')
-        ;
+            ->getRepository('OroShippingBundle:ShippingRule');
 
         return $repository->getEnabledOrderedRulesByCurrencyAndCountry(
             $context->getCurrency(),
@@ -210,68 +226,96 @@ class ShippingPriceProvider
 
     /**
      * @param ShippingContextInterface $context
-     * @param ShippingMethodInterface $method
+     * @param ShippingRuleMethodConfig $methodConfig
      * @return array
      */
-    protected function fillMethodData(ShippingContextInterface $context, ShippingMethodInterface $method)
+    protected function getMethodTypesConfigs(ShippingContextInterface $context, ShippingRuleMethodConfig $methodConfig)
     {
-        $methodPrice = [];
-        $methodPrice['identifier'] = $method->getIdentifier();
-        $methodPrice['isGrouped'] = $method->isGrouped();
-        $methodPrice['label'] = $method->getLabel();
-        $methodPrice['sortOrder'] = $method->getSortOrder();
-        $methodPrice['options'] = $method->getOptions();
+        $method = $this->registry->getShippingMethod($methodConfig->getMethod());
 
         $types = [];
-        $methodTypes = $method->getTypes();
-        if (count($methodTypes) > 0) {
-            $methodTypePrices = [];
-            if ($method instanceof PricesAwareShippingMethodInterface) {
-                $methodTypePrices = $this->getAwareShippingMethodTypePrices($context, $method);
+        $typeConfigs = $this->getEnabledTypeConfigs($methodConfig);
+        $methodOptions = $methodConfig->getOptions();
+
+        if ($method instanceof PricesAwareShippingMethodInterface) {
+            $optionsByTypes = $this->getOptionsByTypes($methodConfig, $typeConfigs->toArray());
+            $prices = $method->calculatePrices($context, $methodConfig->getOptions(), $optionsByTypes);
+            foreach ($prices as $typeIdentifier => $price) {
+                if ($price) {
+                    $types[$typeIdentifier] = $this->createTypeData(
+                        $method->getType($typeIdentifier),
+                        $methodOptions,
+                        $optionsByTypes[$typeIdentifier],
+                        $price
+                    );
+                }
             }
-
-            foreach ($methodTypes as $methodType) {
-                $types[] = [
-                    'identifier' => $methodType->getIdentifier(),
-                    'label' => $methodType->getLabel(),
-                    'sortOrder' => $methodType->getSortOrder(),
-                    'options' => $methodType->getOptions(),
-                    'price' => array_key_exists($methodType->getIdentifier(), $methodTypePrices) ?
-                        $methodTypePrices[$methodType->getIdentifier()] :
-                        $methodType->calculatePrice($context, $method->getOptions(), $methodType->getOptions()),
-                ];
-            }
-        }
-        $methodPrice['types'] = $types;
-
-        return $methodPrice;
-    }
-
-    /**
-     * @param ShippingContextInterface $context
-     * @param PricesAwareShippingMethodInterface $method
-     * @param string|int|null $methodTypeIdentifier
-     * @return array
-     */
-    protected function getAwareShippingMethodTypePrices(
-        ShippingContextInterface $context,
-        PricesAwareShippingMethodInterface $method,
-        $methodTypeIdentifier = null
-    ) {
-        $optionsByTypes = [];
-        if ($method instanceof ShippingMethodInterface) {
-            /** @var ShippingMethodInterface $method */
-            if ($methodTypeIdentifier !== null) {
-                $methodType = $method->getType($methodTypeIdentifier);
-                $optionsByTypes[] = [$methodType->getIdentifier() => $methodType->getOptions()];
-            } else {
-                $methodTypes = $method->getTypes();
-                foreach ($methodTypes as $methodType) {
-                    $optionsByTypes[] = [$methodType->getIdentifier() => $methodType->getOptions()];
+        } else {
+            foreach ($typeConfigs as $typeConfig) {
+                $type = $method->getType($typeConfig->getType());
+                if ($type) {
+                    $options = $typeConfig->getOptions();
+                    $price = $type->calculatePrice($context, $methodConfig->getOptions(), $options);
+                    if ($price) {
+                        $types[$type->getIdentifier()] = $this->createTypeData($type, $methodOptions, $options, $price);
+                    }
                 }
             }
         }
+        return $types;
+    }
 
-        return $method->calculatePrices($context, $method->getOptions(), $optionsByTypes);
+    /**
+     * @param ShippingMethodTypeInterface $type
+     * @param array $methodOptions
+     * @param array $typeOptions
+     * @param Price|null $price
+     * @return array
+     */
+    protected function createTypeData(
+        ShippingMethodTypeInterface $type,
+        array $methodOptions,
+        array $typeOptions,
+        Price $price = null
+    ) {
+        return [
+            'identifier' => $type->getIdentifier(),
+            'label' => $type->getLabel(),
+            'sortOrder' => $type->getSortOrder(),
+            'methodOptions' => $methodOptions,
+            'options' => $typeOptions,
+            'price' => $price,
+        ];
+    }
+
+    /**
+     * @param ShippingRuleMethodConfig $methodConfig
+     * @param array|ShippingRuleMethodTypeConfig[] $typeConfigs
+     * @return array
+     */
+    protected function getOptionsByTypes(ShippingRuleMethodConfig $methodConfig, array $typeConfigs)
+    {
+        $optionsTypesArray = [];
+        foreach ($methodConfig->getTypeConfigs() as $typeConfig) {
+            $optionsTypesArray[$typeConfig->getType()] = $typeConfig->getOptions();
+        }
+
+        $typesArray = [];
+        foreach ($typeConfigs as $type) {
+            $typesArray[] = $type->getType();
+        }
+
+        return array_intersect_key($optionsTypesArray, array_flip($typesArray));
+    }
+
+    /**
+     * @param ShippingRuleMethodConfig $methodConfig
+     * @return \Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig[]|Collection
+     */
+    public function getEnabledTypeConfigs($methodConfig)
+    {
+        return $methodConfig->getTypeConfigs()->filter(function (ShippingRuleMethodTypeConfig $typeConfig) {
+            return $typeConfig->isEnabled();
+        });
     }
 }

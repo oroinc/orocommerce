@@ -8,7 +8,7 @@ shipping_rule.1:
             typeConfigs:
                 -
                     options:
-                        type: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER'
+                        type: 'per_order'
                         price: 10
     destinations:
         -
@@ -25,7 +25,7 @@ shipping_rule.2:
             typeConfigs:
                 -
                     options:
-                        type: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
+                        type: 'per_item'
                         price: 10
     destinations:
         -
@@ -43,7 +43,7 @@ shipping_rule.3:
             typeConfigs:
                 -
                     options:
-                        type: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER'
+                        type: 'per_item'
                         price: 10
     destinations:
         -
@@ -61,7 +61,7 @@ shipping_rule.4:
             typeConfigs:
                 -
                     options:
-                        type: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
+                        type: 'per_item'
                         price: 10
     destinations:
         -
@@ -78,7 +78,7 @@ shipping_rule.5:
             typeConfigs:
                 -
                     options:
-                        type: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
+                        type: 'per_item'
                         price: 10
 shipping_rule.6:
     enabled: true
@@ -90,7 +90,7 @@ shipping_rule.6:
             typeConfigs:
                 -
                     options:
-                        type: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
+                        type: 'per_item'
                         price: 10
     destinations:
         -
@@ -105,7 +105,7 @@ shipping_rule.7:
             typeConfigs:
                 -
                     options:
-                        type: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
+                        type: 'per_item'
                         price: 10
     destinations:
         -
@@ -122,5 +122,5 @@ shipping_rule.8:
             typeConfigs:
                 -
                     options:
-                        type: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER'
+                        type: 'per_order'
                         price: 10

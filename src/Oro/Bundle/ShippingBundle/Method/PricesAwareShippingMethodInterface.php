@@ -4,6 +4,10 @@ namespace Oro\Bundle\ShippingBundle\Method;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
+/**
+ * Interface PricesAwareShippingMethodInterface
+ * Combines price calculations by all Shipping Method's Types in optimization purpose.
+ */
 interface PricesAwareShippingMethodInterface
 {
     /**

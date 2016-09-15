@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 

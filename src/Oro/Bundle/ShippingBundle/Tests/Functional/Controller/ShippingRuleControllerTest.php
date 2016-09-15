@@ -443,6 +443,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $form['oro_shipping_rule[conditions]'] = $shippingRule->getConditions().' new data';
         $form['oro_shipping_rule[destinations][0][postalCode]'] = '11111';
         $form['oro_shipping_rule[methodConfigs][0][typeConfigs][0][options][price]'] = 12;
+        $form['oro_shipping_rule[methodConfigs][0][typeConfigs][0][enabled]'] = true;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

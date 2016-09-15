@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ShippingRuleMethodConfigTest extends \PHPUnit_Framework_TestCase
 {

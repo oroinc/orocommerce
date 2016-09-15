@@ -9,11 +9,6 @@ services:
         tags:
             - { name: oro_shipping_method }
 
-    oro_shipping.provider.shipping_rules:
-        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider'
-        arguments:
-            - '@oro_entity.doctrine_helper'
-
     oro_shipping.formatter.shipping_method_label:
         class: 'Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter'
         arguments:
