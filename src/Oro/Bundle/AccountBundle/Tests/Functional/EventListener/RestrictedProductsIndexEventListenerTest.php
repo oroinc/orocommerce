@@ -14,7 +14,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * @dbIsolationPerTest
  */
-class RestrictedProductsIndexEventListenerTest extends SearchWebTestCase
+class RestrictProductsIndexEventListenerTest extends SearchWebTestCase
 {
     /**
      * @var EventDispatcherInterface
