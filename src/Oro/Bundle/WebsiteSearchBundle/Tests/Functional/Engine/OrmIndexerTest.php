@@ -455,6 +455,8 @@ class OrmIndexerTest extends SearchWebTestCase
 
     public function testResetIndexForAllWebsitesAndClasses()
     {
+        $this->loadFixtures([LoadItemData::class]);
+
         $this->indexer->resetIndex();
 
         $this->assertEntityCount(0, Item::class);
@@ -466,6 +468,8 @@ class OrmIndexerTest extends SearchWebTestCase
 
     public function testResetIndexForAllWebsitesAndSpecificClass()
     {
+        $this->loadFixtures([LoadItemData::class]);
+
         $this->indexer->resetIndex(TestProduct::class);
 
         $this->assertEntityCount(4, Item::class);
@@ -477,6 +481,8 @@ class OrmIndexerTest extends SearchWebTestCase
 
     public function testResetIndexForSpecificWebsiteAndSpecificClass()
     {
+        $this->loadFixtures([LoadItemData::class]);
+
         $this
             ->mappingProviderMock
             ->expects($this->once())
@@ -495,6 +501,8 @@ class OrmIndexerTest extends SearchWebTestCase
 
     public function testResetIndexForSpecificWebsiteAndAllClasses()
     {
+        $this->loadFixtures([LoadItemData::class]);
+
         $this
             ->mappingProviderMock
             ->expects($this->once())

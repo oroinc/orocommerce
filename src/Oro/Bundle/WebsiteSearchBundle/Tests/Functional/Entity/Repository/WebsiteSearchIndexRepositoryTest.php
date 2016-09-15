@@ -20,6 +20,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchWebTestCase;
 
 /**
  * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class WebsiteSearchIndexRepositoryTest extends SearchWebTestCase
 {
