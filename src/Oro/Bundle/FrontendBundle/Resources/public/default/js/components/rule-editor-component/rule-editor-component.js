@@ -10,30 +10,37 @@ define([
     RuleEditorComponent = BaseComponent.extend({
         options: null,
         $element: null,
+        opsRegEx: null,
+        dataWordCases: [],
+        logicWordCases: [],
+        operationsCases: [],
 
         /**
+         *
+         *
+         *
          *
          * @param options
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.$element = this.options._sourceElement.find('input[type="text"]').eq(0);
+            this.opsRegEx = this.getRegexp(options.operations);
 
-            var self = this;
+            this.dataWordCases = this.getPathsArray(options.data);
+            this.logicWordCases = this.getPathsArray(options.grouping);
+            this.operationsCases = this.getPathsArray(options.operations);
+
+            var _this = this;
 
             this.$element.on('keyup paste', function() {
-                var value = self.$element.val().trim().replace(/\s+/g, ' ');
+                var value = _this.$element.val().trim().replace(/\s+/g, ' ');
 
-                self.$element.toggleClass('error', !self.validate(value, self.options));
+                _this.$element.toggleClass('error', !_this.validate(value, _this.options));
             });
 
-/*
-            this.$element.on('keyup change paste', function() {
-                self.autocomplete(self.$element, self.options);
-            });
-*/
 
-            this.$element.typeahead({source: this.autocomplete(this.$element, this.options)});
+            this.$element.typeahead(this.autocomplete(this.$element, this.options));
         },
 
         validate: function(value, options) {
@@ -41,104 +48,161 @@ define([
                 return true;
             }
 
-            var self = this;
+            var _this = this;
 
-            var opsRegEx = this.getRegexp(options.operations);
+            var normalized = this.getNormalized(value, this.opsRegEx);
+            var words = this.splitString(normalized.string, ' ').arr;
+            var groups = this.getGroups(words);
 
-            var words = _.isRegExp(opsRegEx) ? this.splitString(value.replace(opsRegEx, '$1'), ' ').arr : [],
-                groups = this.getGroups(words);
-
-            var logicWordIsLast = _.last(groups.logic) === _.last(words),
-                logicWordsAreValid = (function(arr, ref) {
-                    return _.every(arr, function(item) {
-                        return _.contains(ref, item);
-                    });
-                })(groups.logic, options.grouping),
-                logicIsValid = !logicWordIsLast && logicWordsAreValid;
-
-            var dataWordsAreValid = (function(arr, refs) {
-                var isValid = logicIsValid;
-
-                _.each(arr, function(item) {
-                    if (isValid) {
-                        var expressionMatch = item.match(opsRegEx);
-                        var matchSplit = expressionMatch ? self.splitString(item, expressionMatch[0]).arr : [];
-
-                        isValid = !_.isNull(expressionMatch) && matchSplit[1] !== '';
-
-                        if (isValid) {
-                            var path = self.splitString(matchSplit[0] || item, '.').arr;
-                            var currentRef = refs;
-
-                            _.each(path, function(pathItem) {
-                                if (isValid) {
-                                    isValid = _.contains(self.getPathsArray(currentRef), pathItem);
-
-                                    if (isValid && _.last(path) !== pathItem) {
-                                        currentRef = self.getRef(refs, pathItem, currentRef);
-                                    }
-                                }
-                            });
-                        }
-                    }
+            var logicIsValid = _.last(groups.logicWords) !== _.last(words) && _.every(groups.logic, function(item) {
+                    return _.contains(options.grouping, item);
                 });
 
-                return isValid;
-            })(groups.datas, options.data);
+            var dataWordsAreValid = _.every(groups.dataWords, function(item) {
+                var expressionMatch = item.match(_this.opsRegEx);
+                var matchSplit = expressionMatch ? _this.splitString(item, expressionMatch[0]).arr : null;
+
+                return !_.isNull(expressionMatch) && matchSplit[1] !== '' && _.contains(_this.dataWordCases, matchSplit[0]);
+            });
 
             return logicIsValid && dataWordsAreValid;
         },
 
-        autocomplete: function($element, options) {
-            var self = this;
+        autocomplete: function($element) {
+            var wordUnderCaret, caretPosition, normalized, wordPosition;
+            var _this = this;
 
-            return function(value, callback) {
-                var caretPosition = $element[0].selectionStart,
-                    separatorsPositions = (function(string) {
-                        var arr = [0];
+            return {
+                source: function(value, collback) {
+                    caretPosition = $element[0].selectionStart;
 
-                        _.each(string, function(char, i) {
-                            if (/^\s$/.test(char)) {
-                                arr.push(i + 1);
-                            }
-                        });
+                    normalized = _this.getNormalized(value, _this.opsRegEx, caretPosition);
 
-                        arr.push(string.length + 1);
+                    var separatorsPositions = _.compact(value.split('').map(function(char, i) {
+                        return (/^\s$/.test(char)) ? i + 1 : null;
+                    }));
 
-                        return arr;
-                    })(value),
-                    nearestSeparator = (function(arr, position) {
+                    wordPosition = (function(arr, position) {
                         var index = 0;
-
-                        if (!arr.length) {
-                            return index;
-                        }
-
-
-                        while (arr[index] < position) {
-                            index++;
-                        }
-
-                        return {
-                            position: arr[index] === position ? null : arr[index - 1],
-                            nextPosition: arr[index] - 1
+                        var result = {
+                            start: 0,
+                            end: position
                         };
 
-                    })(separatorsPositions, caretPosition),
-                    wordUnderCaret = self.getStringPart(value, nearestSeparator.position, nearestSeparator.nextPosition),
-                    suggested = (function(word, ref) {
-                        return _.filter(self.getPathsArray(ref.data), function(item) {
-                            return item.indexOf(word) === 0;
-                        });
-                    })(wordUnderCaret, options);
+                        if (arr.length) {
+                            while (arr[index] < position) {
+                                index++;
+                            }
 
-                callback(suggested);
+                            var isSpace = arr[index] === position;
+
+                            result = {
+                                start: isSpace ? null : arr[index - 1] || 0,
+                                end: isSpace ? null : arr[index] - 1 || position,
+                                index: index,
+                                spaces: arr
+                            };
+                        }
+
+                        return result;
+                    })(separatorsPositions, caretPosition);
+
+                    wordUnderCaret = _this.getStringPart(normalized.string, wordPosition.start, wordPosition.end);
+
+                    var suggests = _this.getSuggestList(normalized, wordPosition, wordUnderCaret);
+                    console.log(wordUnderCaret, suggests);
+
+                    collback(suggests || []);
+                },
+                matcher: function(item) {
+                    return item.indexOf(wordUnderCaret) !== -1 || _this.hasLastSpace(wordUnderCaret);
+                },
+                updater: function(item) {
+                    console.log(wordPosition);
+
+                    var cutBefore = _.isNull(wordPosition.start) ? wordPosition.spaces[wordPosition.index] : wordPosition.start;
+                    var cutAfter = _.isNull(wordPosition.end) ? wordPosition.spaces[wordPosition.index] : wordPosition.end;
+
+                    var queryPartBefore = _this.getStringPart(this.query, 0, cutBefore);
+                    var queryPartAfter = _this.getStringPart(this.query, cutAfter);
+
+                    setTimeout(function() {
+                        $element[0].selectionStart = $element[0].selectionEnd = cutBefore + item.length;
+                    }, 10);
+
+                    console.log(queryPartBefore, item, queryPartAfter, wordPosition);
+
+
+                    return queryPartBefore + item + queryPartAfter;
+                }
             };
         },
 
+        hasLastSpace: function(string) {
+            return string.substr(string.length - 1, 1) === ' ';
+        },
+
+        getSuggestList: function(normalized, wordPosition, wordUnderCaret) {
+            var expressionMatch = wordUnderCaret.match(this.opsRegEx);
+            var hasExpression = !_.isNull(expressionMatch);
+            var expressionSplit = hasExpression ? wordUnderCaret.split(expressionMatch[0]) : [];
+            var hasDataCase = (hasExpression && _.contains(this.dataWordCases, expressionSplit[0])) || _.contains(this.dataWordCases, wordUnderCaret.trim());
+            var hasDataValue = !!(expressionSplit[1] && expressionSplit[1].length);
+            var hasLastSpace = this.hasLastSpace(wordUnderCaret);
+            var words = this.splitString(normalized.string, ' ').arr;
+            var groups = this.getGroups(words);
+            var logicLast = groups.logicWords.length && _.last(groups.logicWords) === _.last(words);
+
+
+            console.log(logicLast, groups.logicWords.length , _.last(groups.logicWords) , _.last(words));
+
+
+            if (hasDataCase && !logicLast) {
+                if (hasExpression) {
+                    if (hasDataValue && hasLastSpace) {
+                        return this.logicWordCases;
+                    }
+                } else if (hasLastSpace) {
+                    return this.operationsCases;
+                }
+            } else {
+                return this.getFilteredSuggests(wordUnderCaret, this.dataWordCases);
+            }
+        },
+
+        getNormalized: function(value, regex, caretPosition) {
+            var result = {string: this.applyRegexp(this.clearSpaces(value), regex)};
+
+            if (_.isNumber(caretPosition)) {
+                var beforeCaretValue = this.applyRegexp(this.clearSpaces(this.getStringPart(value, 0, caretPosition)), regex);
+
+                return _.extend(result, {caretPosition: beforeCaretValue.length});
+            }
+
+            return result;
+        },
+        clearSpaces: function(string) {
+            return string.replace(/\s+/g, ' ');
+        },
+        applyRegexp: function(string, regex) {
+            return string.replace(regex, '$1');
+        },
+
+        getFilteredSuggests: function(word, ref) {
+            if (!word) {
+                return [];
+            }
+
+            var arr = _.filter(ref, function(item) {
+                return item.indexOf(word) === 0;
+            });
+
+            return arr.length > 1 || arr[0] !== word ? arr : [];
+        },
+
         getPathsArray: function(src, baseName, baseArr) {
-            var self = this,
-                arr = [baseName];
+            var self = this;
+            var arr = [baseName];
 
             _.each(src, function(item, name) {
                 var subName = (baseName ? (baseName + '.') : '') + item;
@@ -156,7 +220,9 @@ define([
         },
 
         getStringPart: function(string, startPos, endPos) {
-            return _.isNull(startPos) ? null : string.substr(startPos, endPos - startPos);
+            var length = _.isNumber(endPos) ? endPos - startPos : undefined;
+
+            return _.isNumber(startPos) ? string.substr(startPos, length) : string;
         },
 
         getRegexp: function(opsArr) {
@@ -170,23 +236,11 @@ define([
                 return null;
             })(opsArr);
 
-            return escapedOps ? new RegExp('\\s*((' + escapedOps.join(')|(') + '))\\s*', 'g') : null;
-        },
-
-        getStringParts: function(string, sub) {
-            var stringLength = string.length,
-                subLength = sub.length,
-                indexOf = string.indexOf(sub);
-
-            return indexOf === -1 || !subLength ? null : {
-                before: indexOf !== 0 ? string.substr(0, subLength) : '',
-                after: string.substr(indexOf + subLength, stringLength - subLength - indexOf),
-                sub: sub
-            };
+            return escapedOps ? new RegExp('\\s*((' + escapedOps.join(')|(') + '))\\s*', 'gi') : null;
         },
 
         splitString: function(string, splitter) {
-            var arr = string.split(splitter);
+            var arr = _.compact(string.split(splitter));
 
             return {
                 arr: arr,
@@ -196,20 +250,16 @@ define([
 
         getGroups: function(words) {
             return {
-                datas: separateGroups(words, true),
-                logic: separateGroups(words)
+                dataWords: this.separateGroups(words, true),
+                logicWords: this.separateGroups(words)
             };
 
-            function separateGroups(groups, isOdd) {
-                return _.filter(groups, function(item, i) {
-                    var modulo = i % 2;
-                    return isOdd ? !modulo : modulo;
-                });
-            }
         },
-
-        getRef: function(refs, pathItem, currentRef) {
-            return _.constant(refs, pathItem) ? refs[pathItem] : currentRef[pathItem];
+        separateGroups: function(groups, isOdd) {
+            return _.filter(groups, function(item, i) {
+                var modulo = i % 2;
+                return isOdd ? !modulo : modulo;
+            });
         }
     });
 
