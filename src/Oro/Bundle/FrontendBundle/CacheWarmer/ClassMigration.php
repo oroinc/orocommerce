@@ -110,8 +110,9 @@ class ClassMigration
     protected function isUpdateRequired(Connection $defaultConnection, $from, $to)
     {
         try {
+            $preparedFrom = str_replace('\\', '\\\\', $from);
             $id = $defaultConnection->fetchColumn(
-                "SELECT id FROM acl_classes WHERE class_type LIKE '%$from%' LIMIT 1"
+                "SELECT id FROM acl_classes WHERE class_type LIKE '%$preparedFrom%' LIMIT 1"
             );
         } catch (\Exception $e) {
             return false;
@@ -197,7 +198,8 @@ class ClassMigration
      */
     protected function migrateTableColumn(Connection $connection, $table, $column, $from, $to)
     {
-        $rows = $connection->fetchAll("SELECT id, $column FROM $table WHERE $column LIKE '%$from%'");
+        $preparedFrom = str_replace('\\', '\\\\', $from);
+        $rows = $connection->fetchAll("SELECT id, $column FROM $table WHERE $column LIKE '%$preparedFrom%'");
         foreach ($rows as $row) {
             $id = $row['id'];
             $originalValue = $row[$column];
