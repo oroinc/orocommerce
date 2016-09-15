@@ -14,17 +14,18 @@ class ExtractAddressOptionsListener
     {
         /** @var AbstractAddress $entity */
         $entity = $event->getEntity();
-        $options = [
-            (string)$entity->getFirstName(),
-            (string)$entity->getLastName(),
-            (string)$entity->getStreet(),
-            (string)$entity->getStreet2(),
-            (string)$entity->getCity(),
-            (string)$entity->getRegionCode(),
-            (string)$entity->getPostalCode(),
-            (string)$entity->getCountryIso2(),
-        ];
+        $addressModel  = $event->getModel();
 
-        $event->setOptions($event->applyKeys($options));
+        $addressModel
+            ->setFirstName((string)$entity->getFirstName())
+            ->setLastName((string)$entity->getLastName())
+            ->setStreet((string)$entity->getStreet())
+            ->setStreet2((string)$entity->getStreet2())
+            ->setCity((string)$entity->getCity())
+            ->setCountryIso2((string)$entity->getCountryIso2())
+            ->setRegionCode((string)$entity->getRegionCode())
+            ->setPostalCode((string)$entity->getPostalCode());
+
+        $event->setModel($addressModel);
     }
 }

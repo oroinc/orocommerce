@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\PayPalBundle\Provider;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Event\ExtractAddressOptionsEvent;
+use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ExtractOptionsProvider
 {
@@ -30,31 +31,29 @@ class ExtractOptionsProvider
     /**
      * @param string $classname
      * @param object $entity
-     * @param array $keys
-     * @return array
+     * @return AddressOptionModel
      */
-    public function getShippingAddressOptions($classname, $entity, array $keys)
+    public function getShippingAddressOptions($classname, $entity)
     {
-        $event = new ExtractAddressOptionsEvent($entity, $keys);
+        $event = new ExtractAddressOptionsEvent($entity);
         $entityAlias = $this->aliasResolver->getAlias($classname);
         $this->dispatcher->dispatch(
             sprintf('%s.%s', ExtractAddressOptionsEvent::NAME, $entityAlias),
             $event
         );
 
-        return $event->getOptions();
+        return $event->getModel();
     }
 
     /**
      * @param LineItemsAwareInterface $entity
-     * @param array $keys
      * @return array
      */
-    public function getLineItemPaymentOptions(LineItemsAwareInterface $entity, array $keys)
+    public function getLineItemPaymentOptions(LineItemsAwareInterface $entity)
     {
-        $event = new ExtractLineItemPaymentOptionsEvent($entity, $keys);
+        $event = new ExtractLineItemPaymentOptionsEvent($entity);
         $this->dispatcher->dispatch(ExtractLineItemPaymentOptionsEvent::NAME, $event);
 
-        return $event->getOptions();
+        return $event->getModels();
     }
 }

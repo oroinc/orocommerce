@@ -2,8 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method;
 
+use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
+use Symfony\Component\Routing\RouterInterface;
+
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
@@ -11,9 +15,6 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PayPalBundle\Provider\ExtractOptionsProvider;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -49,11 +50,8 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->gateway = $this->getMockBuilder(Gateway::class)->disableOriginalConstructor()->getMock();
-
         $this->router = $this->getMockBuilder(RouterInterface::class)->disableOriginalConstructor()->getMock();
-
         $this->paymentConfig = $this->getMock(PayflowExpressCheckoutConfigInterface::class);
-
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)->disableOriginalConstructor()->getMock();
 
         $this->optionsProviderMock = $this->getMockBuilder(ExtractOptionsProvider::class)
@@ -256,41 +254,24 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     protected function configureShippingAddressOptions()
     {
         $entity = $this->getEntity();
-        $addressKeys = [
-            Option\ShippingAddress::SHIPTOFIRSTNAME,
-            Option\ShippingAddress::SHIPTOLASTNAME,
-            Option\ShippingAddress::SHIPTOSTREET,
-            Option\ShippingAddress::SHIPTOSTREET2,
-            Option\ShippingAddress::SHIPTOCITY,
-            Option\ShippingAddress::SHIPTOSTATE,
-            Option\ShippingAddress::SHIPTOZIP,
-            Option\ShippingAddress::SHIPTOCOUNTRY
-        ];
 
         $this->doctrineHelper->expects($this->once())->method('getEntityClass')->with($entity->getShippingAddress())
             ->willReturn(AbstractAddress::class);
 
         $this->optionsProviderMock->expects($this->once())->method('getShippingAddressOptions')
-            ->with(AbstractAddress::class, $entity->getShippingAddress(), $addressKeys)
-            ->willReturn($this->getShippingAddressOptions());
+            ->with(AbstractAddress::class, $entity->getShippingAddress())
+            ->willReturn($this->getAddressOptionModel());
     }
 
     protected function configureLineItemOptions()
     {
         $entity = $this->getEntity();
-        $options = $this->getLineItemOptions();
-        $keys = [
-            Option\LineItems::NAME,
-            Option\LineItems::DESC,
-            Option\LineItems::COST,
-            Option\LineItems::QTY
-        ];
 
-        unset($options['ITEMAMT']);
-
-        $this->optionsProviderMock->expects($this->once())->method('getLineItemPaymentOptions')
-            ->with($entity, $keys)
-            ->willReturn([array_combine($keys, $options)]);
+        $this->optionsProviderMock
+            ->expects($this->once())
+            ->method('getLineItemPaymentOptions')
+            ->with($entity)
+            ->willReturn([$this->getLineItemOptionModel()]);
     }
 
     public function testPurchaseWithoutShippingAddress()
@@ -728,6 +709,35 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             'ITEMAMT' => 831.0,
         ];
     }
+
+    /**
+     * @return LineItemOptionModel
+     */
+    protected function getLineItemOptionModel()
+    {
+        $lineItemModel = new LineItemOptionModel();
+        return $lineItemModel
+            ->setName('Product Name')
+            ->setDescription('Product Description')
+            ->setCost(55.4)
+            ->setQty(15);
+    }
+
+
+    protected function getAddressOptionModel()
+    {
+        $addressOptionModel = new AddressOptionModel();
+        return $addressOptionModel
+            ->setFirstName('First Name')
+            ->setLastName('Last Name')
+            ->setStreet('Street')
+            ->setStreet2('Street2')
+            ->setCity('City')
+            ->setRegionCode('State')
+            ->setPostalCode('Zip Code')
+            ->setCountryIso2('US');
+    }
+
 
     /**
      * @return array

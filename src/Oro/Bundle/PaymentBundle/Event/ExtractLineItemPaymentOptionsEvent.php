@@ -2,23 +2,27 @@
 
 namespace Oro\Bundle\PaymentBundle\Event;
 
+use Symfony\Component\EventDispatcher\Event;
+
+use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 
-class ExtractLineItemPaymentOptionsEvent extends AbstractExtractOptionsEvent
+class ExtractLineItemPaymentOptionsEvent extends Event
 {
     const NAME = 'oro_payment.event.extract_line_item_options';
 
     /** @var LineItemsAwareInterface */
     protected $entity;
 
+    /** @var LineItemOptionModel[] */
+    protected $models = [];
+
     /**
      * @param LineItemsAwareInterface $entity
-     * @param array $keys
      */
-    public function __construct(LineItemsAwareInterface $entity, array $keys)
+    public function __construct(LineItemsAwareInterface $entity)
     {
         $this->entity = $entity;
-        $this->keys = $keys;
     }
 
     /**
@@ -27,5 +31,26 @@ class ExtractLineItemPaymentOptionsEvent extends AbstractExtractOptionsEvent
     public function getEntity()
     {
         return $this->entity;
+    }
+
+    /**
+     * @return LineItemOptionModel[]
+     */
+    public function getModels()
+    {
+        return $this->models;
+    }
+
+    public function addModel(LineItemOptionModel $model)
+    {
+        $this->models[] = $model;
+    }
+
+    /**
+     * @return LineItemOptionModel
+     */
+    public function getModel()
+    {
+        return new LineItemOptionModel();
     }
 }

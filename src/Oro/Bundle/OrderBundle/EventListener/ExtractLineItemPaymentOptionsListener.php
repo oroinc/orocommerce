@@ -14,7 +14,7 @@ class ExtractLineItemPaymentOptionsListener
     {
         $entity = $event->getEntity();
         $lineItems = $entity->getLineItems();
-        $options = [];
+
         foreach ($lineItems as $lineItem) {
             if (!$lineItem instanceof OrderLineItem) {
                 continue;
@@ -26,16 +26,14 @@ class ExtractLineItemPaymentOptionsListener
                 continue;
             }
 
-            $lineItemOptions = [
-                (string)$product->getDefaultName(),
-                (string)$product->getDefaultShortDescription(),
-                $lineItem->getValue(),
-                (int)$lineItem->getQuantity()
-            ];
+            $lineItemModel = $event->getModel();
+            $lineItemModel
+                ->setName((string)$product->getDefaultName())
+                ->setDescription((string)$product->getDefaultShortDescription())
+                ->setCost($lineItem->getValue())
+                ->setQty((int)$lineItem->getQuantity());
 
-            $options[] = $event->applyKeys($lineItemOptions);
+            $event->addModel($lineItemModel);
         }
-
-        $event->setOptions($options);
     }
 }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PayPalBundle\Method;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -365,20 +366,21 @@ class PayflowExpressCheckout implements PaymentMethodInterface
             return [];
         }
 
-        $keys = [
-            Option\ShippingAddress::SHIPTOFIRSTNAME,
-            Option\ShippingAddress::SHIPTOLASTNAME,
-            Option\ShippingAddress::SHIPTOSTREET,
-            Option\ShippingAddress::SHIPTOSTREET2,
-            Option\ShippingAddress::SHIPTOCITY,
-            Option\ShippingAddress::SHIPTOSTATE,
-            Option\ShippingAddress::SHIPTOZIP,
-            Option\ShippingAddress::SHIPTOCOUNTRY
+        $class = $this->doctrineHelper->getEntityClass($shippingAddress);
+        $addressOption = $this->optionsProvider->getShippingAddressOptions($class, $shippingAddress);
+
+        $options = [
+            Option\ShippingAddress::SHIPTOFIRSTNAME => $addressOption->getFirstName(),
+            Option\ShippingAddress::SHIPTOLASTNAME => $addressOption->getLastName(),
+            Option\ShippingAddress::SHIPTOSTREET => $addressOption->getStreet(),
+            Option\ShippingAddress::SHIPTOSTREET2 => $addressOption->getStreet2(),
+            Option\ShippingAddress::SHIPTOCITY => $addressOption->getCity(),
+            Option\ShippingAddress::SHIPTOSTATE => $addressOption->getRegionCode(),
+            Option\ShippingAddress::SHIPTOZIP => $addressOption->getPostalCode(),
+            Option\ShippingAddress::SHIPTOCOUNTRY => $addressOption->getCountryIso2()
         ];
 
-        $class = $this->doctrineHelper->getEntityClass($shippingAddress);
-
-        return $this->optionsProvider->getShippingAddressOptions($class, $shippingAddress, $keys);
+        return $options;
     }
 
     /**
@@ -400,32 +402,20 @@ class PayflowExpressCheckout implements PaymentMethodInterface
             return [];
         }
 
-        $keys = [
-            Option\LineItems::NAME,
-            Option\LineItems::DESC,
-            Option\LineItems::COST,
-            Option\LineItems::QTY
-        ];
-        $options = $this->optionsProvider->getLineItemPaymentOptions($entity, $keys);
-        array_walk_recursive($options, function (&$value, $key) {
-            if ($key == Option\LineItems::NAME) {
-                $value = $this->truncateString($value, 36);
-            } elseif ($key == Option\LineItems::DESC) {
-                $value = $this->truncateString($value, 35);
-            }
-        });
+        $options = [];
+        $lineItemOptions = $this->optionsProvider->getLineItemPaymentOptions($entity);
+
+        /** @var LineItemOptionModel $lineItemOption */
+        foreach ($lineItemOptions as $lineItemOption) {
+            $options[] = [
+                Option\LineItems::NAME => $lineItemOption->getName(),
+                Option\LineItems::DESC => $lineItemOption->getDescription(),
+                Option\LineItems::COST => $lineItemOption->getCost(),
+                Option\LineItems::QTY => $lineItemOption->getQty()
+            ];
+        }
 
         return Option\LineItems::prepareOptions($options);
-    }
-
-    /**
-     * @param string $string
-     * @param int $length
-     * @return string
-     */
-    protected function truncateString($string, $length)
-    {
-        return substr($string, 0, $length);
     }
 
     /**

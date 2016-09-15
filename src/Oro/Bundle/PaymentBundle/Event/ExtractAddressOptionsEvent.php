@@ -2,21 +2,27 @@
 
 namespace Oro\Bundle\PaymentBundle\Event;
 
-class ExtractAddressOptionsEvent extends AbstractExtractOptionsEvent
+use Symfony\Component\EventDispatcher\Event;
+
+use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
+
+class ExtractAddressOptionsEvent extends Event
 {
     const NAME = 'oro_payment.event.extract_address_options';
 
     /** @var object */
     protected $entity;
 
+    /** @var AddressOptionModel */
+    protected $model;
+
     /**
-     * @param object $addressEntity
-     * @param array $keys
+     * @param object $entity
      */
-    public function __construct($addressEntity, array $keys)
+    public function __construct($entity)
     {
-        $this->entity = $addressEntity;
-        $this->keys = $keys;
+        $this->entity = $entity;
+        $this->model = new AddressOptionModel();
     }
 
     /**
@@ -25,5 +31,18 @@ class ExtractAddressOptionsEvent extends AbstractExtractOptionsEvent
     public function getEntity()
     {
         return $this->entity;
+    }
+
+    /**
+     * @return AddressOptionModel
+     */
+    public function getModel()
+    {
+        return $this->model;
+    }
+
+    public function setModel(AddressOptionModel $model)
+    {
+        $this->model = $model;
     }
 }
