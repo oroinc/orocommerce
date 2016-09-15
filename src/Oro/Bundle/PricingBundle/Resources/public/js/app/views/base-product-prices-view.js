@@ -27,14 +27,13 @@ define(function(require) {
 
         modelAttr: {
             prices: {},
-            price: 0,
-            quantityWasChanged: false
+            price: 0
         },
 
         modelEvents: {
             'prices setPrices': ['change', 'setPrices'],
-            'quantity updatePrice': ['change', 'updatePriceWithoutQuantity'],
-            'unit updatePrice': ['change', 'updatePriceWithQuantity'],
+            'quantity setPrice': ['change', 'setPrice'],
+            'unit setPrice': ['change', 'setPrice'],
             'price updateUI': ['change', 'updateUI']
         },
 
@@ -42,8 +41,12 @@ define(function(require) {
 
         foundPrice: null,
 
+        changeQuantity: false,
+
         initialize: function(options) {
             BaseProductPricesView.__super__.initialize.apply(this, arguments);
+
+            $.extend(this, _.pick(options, ['changeQuantity']));
 
             this.initModel(options);
             if (!this.model) {
@@ -119,43 +122,43 @@ define(function(require) {
                 this.prices[unit] = unitPrices;
             }, this);
 
-            this.updatePrice();
+            this.setPrice();
         },
 
-        updatePriceWithoutQuantity: function() {
-            this.updatePrice(false);
-            this.modelAttr.quantityWasChanged = true;
+        setPrice: function(e) {
+            if (e && e.originalEvent) {
+                this.changeQuantity = false;
+            }
+            this.model.set('price', this.findPrice());
         },
 
-        updatePriceWithQuantity: function() {
-            this.updatePrice();
-        },
-
-        updatePrice: function(quantityUpdate) {
-            quantityUpdate = typeof quantityUpdate !== 'undefined' ? quantityUpdate : true;
-            this.model.set('price', this.findPrice(quantityUpdate));
-        },
-
-        findPrice: function(quantityUpdate) {
+        findPrice: function() {
             var quantity = this.model.get('quantity');
             var unit = this.model.get('unit');
-            var foundKey = unit + ' ' + quantity + ' ' + (quantityUpdate ? 1 : 0);
 
-            if (!this.foundPrice[foundKey]) {
-                var smallestPrice = null;
-                this.foundPrice[foundKey] = _.find(this.prices[unit], function(price) {
-                    smallestPrice = price;
-                    return price.quantity <= quantity;
-                }) || null;
+            var foundKey = unit + ' ' + quantity + ' ' + (this.changeQuantity ? 1 : 0);
+            var price = this.foundPrice[foundKey] || null;
 
-                if (!this.modelAttr.quantityWasChanged && quantityUpdate) {
-                    this.model.set('quantity', smallestPrice ? smallestPrice.quantity : this.options.defaultQuantity);
-                    this.modelAttr.quantityWasChanged = false;
-                    this.foundPrice[foundKey]=smallestPrice;
+            if (!price) {
+                if (this.changeQuantity) {
+                    price = _.last(this.prices[unit]) || null;//sorted by quantity, get smallest
+                } else {
+                    price = _.find(this.prices[unit], function(price) {
+                        return price.quantity <= quantity;
+                    }) || null;
+                }
+
+                this.foundPrice[foundKey] = price;
+            }
+
+            if (this.changeQuantity) {
+                var setQuantity = price ? price.quantity : this.options.defaultQuantity;
+                if (quantity.toString() !== setQuantity.toString()) {
+                    this.model.set('quantity', setQuantity);
                 }
             }
 
-            return this.foundPrice[foundKey];
+            return price;
         },
 
         findPriceValue: function() {
