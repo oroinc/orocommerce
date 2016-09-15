@@ -5,13 +5,12 @@ define(function(require) {
 
     var ViewComponent = require('oroui/js/app/components/view-component');
     var mediator = require('oroui/js/mediator');
+    var routing = require('routing');
     var ShoppingListWidgetViewComponent;
 
     ShoppingListWidgetViewComponent = ViewComponent.extend({
 
         shoppingListId: null,
-
-        currentShoppingListId: null,
 
         eventChannelId: null,
 
@@ -22,12 +21,10 @@ define(function(require) {
             this.$el = options._sourceElement;
             this.eventChannelId = options.eventChannelId;
             ShoppingListWidgetViewComponent.__super__.initialize.apply(this, arguments);
-            this.currentShoppingList = this.getCurrentShoppingList();
-            this.setCurrentShoppingListRoute = options.setCurrentShoppingListRoute;
             mediator.on('shopping-list-event:' + this.eventChannelId + ':shopping-list-id', this.getShoppingListId, this);
             mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateTitle, this);
             this.$el.on({
-                change: this._onChangeCurrentShoppingList.bind(this)
+                change: _.bind(this._onCurrentShoppingListChange, this)
             }, 'input[name="shopping-list-dropdown-radio"]');
         },
 
@@ -49,26 +46,22 @@ define(function(require) {
          *
          * @param e
          */
-        _onChangeCurrentShoppingList: function(e) {
-            var shoppingList = $(e.target).data('shoppinglist'),
-                _self = this;
+        _onCurrentShoppingListChange: function(e) {
+            var shoppingListId = $(e.target).val();
 
             $.ajax({
                 method: 'POST',
-                url: this.setCurrentShoppingListRoute,
+                url: routing.generate('orob2b_product_frontend_product_index'),
                 //dataType: 'json',
                 data: {
-                    id: shoppingList.id
+                    id: shoppingListId
                 },
                 success: function(response) {
-                    _self.currentShoppingList = shoppingList;
+                    mediator.trigger('shopping-list:change-current', shoppingListId);
 
-                    mediator.trigger('shopping-list:change-current', _self.currentShoppingList);
-                    mediator.execute(
-                        'showFlashMessage',
-                        'success',
-                        'Shopping list "<a href="' + _self.currentShoppingList.url + '">' + _self.currentShoppingList.label + '</a>" was set as default'
-                    );
+                    if (response && response.message) {
+                        mediator.execute('showFlashMessage', (response.successful ? 'success' : 'error'), response.message);
+                    }
                 },
                 error: function(xhr) {
                     mediator.trigger('shopping-list:updated');
@@ -88,11 +81,6 @@ define(function(require) {
          */
         getShoppingListId: function(id) {
             this.shoppingListId = id;
-        },
-
-        getCurrentShoppingList: function() {
-            var checkedEl = this.$el.find('input[name="shopping-list-dropdown-radio"]:checked');
-            return checkedEl.length ? checkedEl.data('shoppinglist') : null;
         },
 
         dispose: function() {
