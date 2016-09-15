@@ -11,14 +11,6 @@ class OrmIndexer extends AbstractIndexer
     /**
      * {@inheritdoc}
      */
-    public function save($entity, array $context = [])
-    {
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function delete($entities, array $context = [])
     {
         $entities = $this->convertToArray($entities);

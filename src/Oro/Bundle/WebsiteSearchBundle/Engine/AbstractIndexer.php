@@ -77,8 +77,16 @@ abstract class AbstractIndexer implements IndexerInterface
     {
         $entitiesToIndex = $this->getMapping($class);
         $websitesToIndex = $this->getWebsitesToIndex($context);
+        $handledItems = 0;
 
-        return $this->reindexEntities($websitesToIndex, $entitiesToIndex, $context);
+        foreach ($websitesToIndex as $websiteId) {
+            $websiteContext = $this->collectContextForWebsite($websiteId, $context);
+            foreach ($entitiesToIndex as $entityClass => $entityConfig) {
+                $handledItems += $this->reindexSingleEntity($entityClass, $entityConfig, $websiteContext);
+            }
+        }
+
+        return $handledItems;
     }
 
     /**
@@ -108,49 +116,44 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    /*public function save($entity, array $context = [])
+    public function save($entity, array $context = [])
     {
         $entities = is_array($entity) ? $entity : [$entity];
-        $firstEntity = reset($entity);
+        $firstEntity = reset($entities);
         $entityClass = $this->doctrineHelper->getEntityClass($firstEntity);
-        $entityMapping = $this->getMapping($entityClass);
-        $currentAlias = $this->applyPlaceholders($entityMapping['alias'], $context);
+        $entitiesToIndex = $this->getMapping($entityClass);
+
         $ids = [];
         foreach ($entities as $entity) {
-
+            $ids[] = $entity->getId();
         }
-        $restrictedEntityIds = $this->restrictIndexEntity($entityIds, $context, $entityClass);
-        if (count($restrictedEntityIds) === 0) {
-            continue;
-        }
-        $entitiesData = $this->indexEntities($entityClass, $restrictedEntityIds, $context);
-        $realItemsCount += $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
-        $entityIds = [];
-        $entityManager->clear($entityClass);
-    }*/
 
-    /**
-     * @param array $websiteIdsToIndex
-     * @param array $entitiesToIndex
-     * @param array $context
-     * @return int
-     */
-    protected function reindexEntities(array $websiteIdsToIndex, array $entitiesToIndex, array $context)
-    {
-        $handledItems = 0;
-        foreach ($websiteIdsToIndex as $websiteId) {
-            $websiteContext = $context;
+        $this->delete($entities, $context);
+        $websitesToIndex = $this->getWebsitesToIndex($context);
 
-            $websiteContext[self::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
-            $collectContextEvent = new CollectContextEvent($websiteContext);
-            $this->eventDispatcher->dispatch(CollectContextEvent::NAME, $collectContextEvent);
-            $websiteContext = $collectContextEvent->getContext();
+        foreach ($websitesToIndex as $websiteId) {
+            $websiteContext = $this->collectContextForWebsite($websiteId, $context);
             foreach ($entitiesToIndex as $entityClass => $entityConfig) {
-                $handledItems += $this->reindexSingleEntity($entityClass, $entityConfig, $websiteContext);
+                $currentAlias = $this->applyPlaceholders($entityConfig['alias'], $context);
+                $this->indexEntities($entityClass, $ids, $websiteContext, $currentAlias);
             }
         }
 
-        return $handledItems;
+        return true;
+    }
+
+    /**
+     * @param int $websiteId
+     * @param array $context
+     * @return array
+     */
+    protected function collectContextForWebsite($websiteId, array $context)
+    {
+        $context[self::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
+        $collectContextEvent = new CollectContextEvent($context);
+        $this->eventDispatcher->dispatch(CollectContextEvent::NAME, $collectContextEvent);
+
+        return $collectContextEvent->getContext();
     }
 
     /**
@@ -184,7 +187,7 @@ abstract class AbstractIndexer implements IndexerInterface
         $entityManager = $this->doctrineHelper->getEntityManager($entityClass);
 
         $queryBuilder = $entityRepository->createQueryBuilder('entity');
-        $queryBuilder->select('IDENTITY(entity) as id');
+        $queryBuilder->select('entity.id');
 
         $iterator = new BufferedQueryResultIterator($queryBuilder);
         $iterator->setBufferSize(static::BATCH_SIZE);
@@ -228,10 +231,10 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param string $entityClass
      * @param array $entityIds
      * @param array $context
-     * @param string $temporaryAlias
+     * @param string $aliasToSave
      * @return int
      */
-    protected function indexEntities($entityClass, array $entityIds, array $context, $temporaryAlias)
+    protected function indexEntities($entityClass, array $entityIds, array $context, $aliasToSave)
     {
         $restrictedEntityIds = $this->restrictIndexEntity($entityIds, $context, $entityClass);
 
@@ -243,7 +246,7 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->eventDispatcher->dispatch(IndexEntityEvent::NAME, $indexEntityEvent);
         $entitiesData =  $indexEntityEvent->getEntitiesData();
 
-        return $this->saveIndexData($entityClass, $entitiesData, $temporaryAlias);
+        return $this->saveIndexData($entityClass, $entitiesData, $aliasToSave);
     }
 
     /**
