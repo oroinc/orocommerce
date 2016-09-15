@@ -31,8 +31,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->initClient();
 
         $this->configManager = $this->getContainer()->get('oro_config.manager');
-        $this->isConfirmationRequired = $this->configManager->get('oro_b2b_account.confirmation_required');
-        $this->sendPassword = $this->configManager->get('oro_b2b_account.send_password_in_welcome_email');
+        $this->isConfirmationRequired = $this->configManager->get('oro_account.confirmation_required');
+        $this->sendPassword = $this->configManager->get('oro_account.send_password_in_welcome_email');
     }
 
     protected function tearDown()
@@ -40,8 +40,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
         parent::tearDown();
 
         $configManager = $this->getContainer()->get('oro_config.manager');
-        $configManager->set('oro_b2b_account.confirmation_required', $this->isConfirmationRequired);
-        $configManager->set('oro_b2b_account.send_password_in_welcome_email', $this->sendPassword);
+        $configManager->set('oro_account.confirmation_required', $this->isConfirmationRequired);
+        $configManager->set('oro_account.send_password_in_welcome_email', $this->sendPassword);
         $configManager->flush();
     }
 
@@ -73,7 +73,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEmpty($this->getAccountUser(['email' => self::EMAIL]));
-        $this->assertContains('The password fields must match.', $crawler->filter('.notification_error')->html());
+        $this->assertContains('The password fields must match.', $crawler->html());
     }
 
     /**
@@ -84,8 +84,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
      */
     public function testRegisterWithoutConfirmation($email, $withPassword)
     {
-        $this->configManager->set('oro_b2b_account.confirmation_required', false);
-        $this->configManager->set('oro_b2b_account.send_password_in_welcome_email', $withPassword);
+        $this->configManager->set('oro_account.confirmation_required', false);
+        $this->configManager->set('oro_account.send_password_in_welcome_email', $withPassword);
         $this->configManager->flush();
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_register'));
@@ -147,7 +147,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
     public function testRegisterWithConfirmation()
     {
-        $this->configManager->set('oro_b2b_account.confirmation_required', true);
+        $this->configManager->set('oro_account.confirmation_required', true);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_register'));
         $result = $this->client->getResponse();
@@ -188,7 +188,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $crawler = $this->client->followRedirect();
         $this->assertEquals(
             'Sign In',
-            $crawler->filter('form.create-account__form_signin h2.create-account__title')->html()
+            trim($crawler->filter('form.login-form h1')->html())
         );
         $this->assertContains('Please check your email to complete registration', $crawler->html());
 
@@ -258,7 +258,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals(
             'Sign In',
-            $crawler->filter('form.create-account__form_signin h2.create-account__title')->html()
+            trim($crawler->filter('form.login-form h1')->html())
         );
 
         $forgotPasswordLink = $crawler->filter('a:contains("Forgot Your Password?")')->link();
@@ -306,7 +306,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals(
             'Sign In',
-            $crawler->filter('form.create-account__form_signin h2.create-account__title')->html()
+            trim($crawler->filter('form.login-form h1')->html())
         );
         $this->assertContains('Password was created successfully.', $crawler->html());
     }

@@ -3,4 +3,4 @@ layout:
         - '@setBlockTheme':
             themes: 'OroFrontendBundle:layouts:default/layout.html.twig'
         - '@setFormTheme':
-            themes: 'OroFrontendBundle:layouts:default/form_theme.html.twig'
+            themes: 'form_theme.html.twig'
