@@ -19,13 +19,15 @@ class PriceResponse
      */
     public function parse($data)
     {
-        if ($data === null || !$data['RateResponse'] || !$data['RateResponse']['RatedShipment']) {
+        if ($data === null ||
+            !array_key_exists('RateResponse', $data) ||
+            !array_key_exists('RatedShipment', $data['RateResponse'])) {
             throw new \InvalidArgumentException('No price data in provided string');
         }
 
         $this->pricesByServices = [];
 
-        if ($data['RateResponse']['RatedShipment'][self::TOTAL_CHARGES]) {
+        if (array_key_exists(self::TOTAL_CHARGES, $data['RateResponse']['RatedShipment'])) {
             $this->addRatedShipment($data['RateResponse']['RatedShipment']);
         } else {
             $this->addRatedShipments($data['RateResponse']['RatedShipment']);
@@ -45,9 +47,9 @@ class PriceResponse
     /**
      * @param array $rateShipment
      */
-    private function addRatedShipment($rateShipment)
+    private function addRatedShipment(array $rateShipment)
     {
-        if ($rateShipment[self::TOTAL_CHARGES]) {
+        if (array_key_exists(self::TOTAL_CHARGES, $rateShipment)) {
             $price = $this->createPrice($rateShipment[self::TOTAL_CHARGES]);
             if ($price && $rateShipment['Service'] && $rateShipment['Service']['Code']) {
                 $this->pricesByServices[$rateShipment['Service']['Code']] = $price;
@@ -61,7 +63,8 @@ class PriceResponse
      */
     private function createPrice($priceData)
     {
-        if (!$priceData['MonetaryValue'] || !$priceData['CurrencyCode']) {
+        if (!array_key_exists('MonetaryValue', $priceData) ||
+            !array_key_exists('CurrencyCode', $priceData)) {
             return null;
         }
 

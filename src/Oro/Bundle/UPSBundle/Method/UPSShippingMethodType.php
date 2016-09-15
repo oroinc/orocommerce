@@ -3,7 +3,6 @@
 namespace Oro\Bundle\UPSBundle\Method;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
@@ -89,17 +88,6 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     }
 
     /**
-     * @param string $optionsConfigurationFormType
-     * @return $this
-     */
-    public function setOptionsConfigurationFormType($optionsConfigurationFormType)
-    {
-        $this->optionsConfigurationFormType = $optionsConfigurationFormType;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getIdentifier()
@@ -133,6 +121,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
 
     /**
      * {@inheritdoc}
+     * @throws \InvalidArgumentException
      */
     public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
     {

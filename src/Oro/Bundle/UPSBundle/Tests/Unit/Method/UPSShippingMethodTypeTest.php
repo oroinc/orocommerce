@@ -3,9 +3,10 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Method;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
@@ -25,7 +26,6 @@ use Oro\Bundle\UPSBundle\Model\PriceResponse;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodType;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -105,13 +105,10 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($label, $this->upsShippingMethodType->getLabel());
     }
 
-    public function testSetOptionsConfigurationFormType()
+    public function testGetOptionsConfigurationFormType()
     {
-        $optionsConfigurationFormType = UPSShippingMethodOptionsType::class;
-        $this->upsShippingMethodType->setOptionsConfigurationFormType($optionsConfigurationFormType);
-
         $this->assertEquals(
-            $optionsConfigurationFormType,
+            UPSShippingMethodOptionsType::class,
             $this->upsShippingMethodType->getOptionsConfigurationFormType()
         );
     }
