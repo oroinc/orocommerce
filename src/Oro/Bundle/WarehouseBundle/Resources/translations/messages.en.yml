@@ -6,6 +6,7 @@ oro:
         owner.label: Owner
         id.label: Id
         name.label: Name
+        priority.label: Priority
 
         controller:
             warehouse.saved.message: Warehouse has been saved
@@ -69,6 +70,15 @@ oro:
         form:
             order:
                 label: Warehouse
+            choose_warehouse: Choose a Warehouse
+            add_warehouse: Add Warehouse
+
+        system_configuration:
+            groups:
+                warehouse.title: Warehouses
+                warehouse_configuration.title: Warehouse Configuration
+            fields:
+                enabled_warehouses.label: Enabled Warehouses
 
         fallback:
             category: Category Defaults

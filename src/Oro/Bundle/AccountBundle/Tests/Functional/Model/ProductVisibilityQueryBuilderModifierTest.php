@@ -16,8 +16,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 {
-    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_b2b_account.product_visibility';
-    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_b2b_account.category_visibility';
+    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_account.product_visibility';
+    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_account.category_visibility';
 
     /**
      * @var ProductVisibilityQueryBuilderModifier

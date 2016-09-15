@@ -13,7 +13,7 @@ use Oro\Component\DependencyInjection\ExtendedContainerBuilder;
 
 class OroAccountExtension extends Extension implements PrependExtensionInterface
 {
-    const ALIAS = 'oro_b2b_account';
+    const ALIAS = 'oro_account';
 
     /**
      * {@inheritDoc}

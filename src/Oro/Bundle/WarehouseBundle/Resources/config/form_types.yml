@@ -24,6 +24,28 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_importexport_export_template }
 
+    oro_warehouse.form.type.warehouse_select:
+        class: 'Oro\Bundle\WarehouseBundle\Form\Type\WarehouseSelectType'
+        tags:
+            - { name: form.type, alias: oro_warehouse_select }
+
+    oro_warehouse.form.type.warehouse_select_with_priority:
+        class: 'Oro\Bundle\WarehouseBundle\Form\Type\WarehouseSelectWithPriorityType'
+        tags:
+            - { name: form.type, alias: oro_warehouse_select_with_priority }
+
+    oro_warehouse.form.type.warehouse_system_config:
+        class: 'Oro\Bundle\WarehouseBundle\Form\Type\WarehouseSystemConfigType'
+        arguments:
+            - 'Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig'
+        tags:
+            - { name: form.type, alias: oro_warehouse_system_config }
+
+    oro_warehouse.form.warehouse_collection:
+        class: 'Oro\Bundle\WarehouseBundle\Form\Type\WarehouseCollectionType'
+        tags:
+            - { name: form.type, alias: oro_warehouse_collection }
+
     oro_warehouse.form.type.extension.warehouse_product_type_extension:
         class: Oro\Bundle\WarehouseBundle\Form\Extension\WarehouseProductTypeFormExtension
         tags:

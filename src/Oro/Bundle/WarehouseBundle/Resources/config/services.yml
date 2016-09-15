@@ -41,6 +41,35 @@ services:
         tags:
             - { name: oro.api.processor, action: create, group: normalize_input, priority: -45, class: '%oro_warehouse.entity.warehouse_inventory_level.class%' }
 
+    oro_warehouse.form.autocomplete.warehouse.search_handler:
+        public: false
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - '%oro_warehouse.entity.warehouse.class%'
+            - ["name"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_warehouse, acl_resource: oro_warehouse_view }
+
+    oro_warehouse.validator.unique_warehouse:
+        class: 'Oro\Bundle\WarehouseBundle\Validator\Constraints\UniqueWarehouseValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_warehouse_unique_warehouse_validator }
+
+    oro_warehouse.event_listener.system_config:
+        class: 'Oro\Bundle\WarehouseBundle\EventListener\WarehouseSystemConfigSubscriber'
+        arguments:
+            - '@oro_warehouse.system_config_converter'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+
+    oro_warehouse.system_config_converter:
+        class: 'Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfigConverter'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '%oro_warehouse.entity.warehouse.class%'
+
     oro_warehouse.event_listener.product_form_view:
         class: 'Oro\Bundle\WarehouseBundle\EventListener\ProductWarehouseFormViewListener'
         arguments:

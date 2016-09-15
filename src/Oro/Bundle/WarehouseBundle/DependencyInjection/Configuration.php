@@ -9,19 +9,20 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 class Configuration implements ConfigurationInterface
 {
+    const ENABLED_WAREHOUSES = 'enabled_warehouses';
+
     /**
      * {@inheritDoc}
      */
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-
-        $rootNode = $treeBuilder->root('oro_warehouse');
-
+        $rootNode = $treeBuilder->root(OroWarehouseExtension::ALIAS);
         SettingsBuilder::append(
             $rootNode,
             [
-                'manage_inventory' => ['value' => false, 'type' => 'boolean'],
+                self::ENABLED_WAREHOUSES => [ 'type' => 'array', 'value' => []],
+                'manage_inventory' => ['value' => false, 'type' => 'boolean']
             ]
         );
 

@@ -4,6 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\FrontendBundle\Migration\UpdateClassNamesQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
@@ -75,6 +76,9 @@ class OroPaymentBundle implements Migration, RenameExtensionAwareInterface
 
         // fix entity names in DB
         $queries->addQuery(new UpdateClassNamesQuery('oro_payment_transaction', 'entity_class'));
+
+        // system configuration
+        $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_payment', 'oro_payment'));
     }
 
     /**

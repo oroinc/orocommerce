@@ -46,7 +46,7 @@ class LoadAnonymousAccountGroup extends AbstractFixture implements ContainerAwar
 
         /** @var ConfigManager $configManager */
         $configManager = $this->container->get('oro_config.global');
-        $configManager->set('oro_b2b_account.anonymous_account_group', $accountGroup->getId());
+        $configManager->set('oro_account.anonymous_account_group', $accountGroup->getId());
         $configManager->flush();
     }
 }
