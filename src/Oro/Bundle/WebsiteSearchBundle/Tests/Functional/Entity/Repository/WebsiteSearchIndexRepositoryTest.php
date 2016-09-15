@@ -16,29 +16,25 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchWebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 
 /**
  * @dbIsolationPerTest
  */
-class WebsiteSearchIndexRepositoryTest extends SearchWebTestCase
+class WebsiteSearchIndexRepositoryTest extends AbstractSearchWebTestCase
 {
     protected function setUp()
     {
         $this->initClient();
+        if ($this->getContainer()->getParameter('oro_search.engine') !== 'orm') {
+            $this->markTestSkipped('Should be tested only with ORM search engine');
+        }
         $this->loadFixtures([LoadItemData::class]);
     }
 
     protected function tearDown()
     {
         $this->clearIndexTextTable();
-    }
-
-    private function skipIfEngineIsNotOrm()
-    {
-        if ($this->getContainer()->getParameter('oro_search.engine') !== 'orm') {
-            $this->markTestSkipped('Should be tested only with ORM search engine');
-        }
     }
 
     /**
@@ -57,8 +53,6 @@ class WebsiteSearchIndexRepositoryTest extends SearchWebTestCase
 
     public function testSearchDefaultWebsite()
     {
-        $this->skipIfEngineIsNotOrm();
-
         $websiteId = $this->getDefaultWebsiteId();
 
         $query = new Query();
@@ -119,14 +113,11 @@ class WebsiteSearchIndexRepositoryTest extends SearchWebTestCase
 
     public function testSearchDefaultWebsiteWithContains()
     {
-        $this->skipIfEngineIsNotOrm();
-
         $websiteId = $this->getDefaultWebsiteId();
 
         $query = new Query();
         $query->from('oro_product_' . $websiteId);
         $query->getCriteria()->andWhere(Criteria::expr()->contains('long_description', 'Long description'));
-
 
         $referenceName = LoadItemData::getReferenceName(LoadItemData::REFERENCE_GOOD_PRODUCT, $websiteId);
         /** @var Item $item */
@@ -142,8 +133,6 @@ class WebsiteSearchIndexRepositoryTest extends SearchWebTestCase
 
     public function testSearchDefaultWebsiteWithEq()
     {
-        $this->skipIfEngineIsNotOrm();
-
         $websiteId = $this->getDefaultWebsiteId();
 
         $referenceName = LoadItemData::getReferenceName(LoadItemData::REFERENCE_BETTER_PRODUCT, $websiteId);

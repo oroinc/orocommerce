@@ -7,14 +7,14 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchWebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @dbIsolationPerTest
  */
-class RestrictedProductsIndexEventListenerTest extends SearchWebTestCase
+class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
 {
     /**
      * @var EventDispatcherInterface

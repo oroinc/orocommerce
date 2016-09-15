@@ -6,19 +6,18 @@ use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
-use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Tests\Functional\Controller\DataFixtures\LoadSearchItemData;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item as TestEntity;
 use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchWebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 
 /**
  * @dbIsolationPerTest
  */
-class OrmEngineTest extends SearchWebTestCase
+class OrmEngineTest extends AbstractSearchWebTestCase
 {
     /** @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $mappingProviderMock;
@@ -234,9 +233,6 @@ class OrmEngineTest extends SearchWebTestCase
         $this->assertEquals('item9@mail.com', $items[8]->getRecordTitle());
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
     public function testSearchByAliasWithSelect()
     {
         $defaultLocalizationId = $this->getDefaultLocalizationId();
@@ -256,6 +252,7 @@ class OrmEngineTest extends SearchWebTestCase
 
         $items = $this->getSearchItems($query);
 
+        $this->assertCount(9, $items);
         $this->assertEquals('item1@mail.com', $items[0]->getRecordTitle());
         $this->assertEquals('item2@mail.com', $items[1]->getRecordTitle());
         $this->assertEquals('item3@mail.com', $items[2]->getRecordTitle());
@@ -285,6 +282,7 @@ class OrmEngineTest extends SearchWebTestCase
 
         $items = $this->getSearchItems($query);
 
+        $this->assertCount(1, $items);
         $this->assertEquals('item5@mail.com', $items[0]->getRecordTitle());
     }
 }
