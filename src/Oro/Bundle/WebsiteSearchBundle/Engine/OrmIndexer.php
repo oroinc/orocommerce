@@ -17,6 +17,10 @@ class OrmIndexer extends AbstractIndexer
 
         $sortedEntitiesData = [];
         foreach ($entities as $entity) {
+            if (!$this->doctrineHelper->isManageableEntity($entity)) {
+                continue;
+            }
+
             $entityClass = $this->doctrineHelper->getEntityClass($entity);
 
             if ($this->mappingProvider->isClassSupported($entityClass)) {

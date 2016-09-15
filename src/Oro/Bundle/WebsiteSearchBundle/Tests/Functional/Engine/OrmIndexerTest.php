@@ -7,6 +7,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
@@ -131,8 +132,18 @@ class OrmIndexerTest extends SearchWebTestCase
     public function testReindexForSpecificWebsite()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
-            ->willReturn($this->mappingConfig);
+
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('isClassSupported')
+            ->with(TestProduct::class)
+            ->willReturn(true);
+
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('getEntityAlias')
+            ->with(TestProduct::class)
+            ->willReturn($this->mappingConfig[TestProduct::class]['alias']);
 
         $this->listener = $this->setListener();
         $this->indexer->reindex(
@@ -153,15 +164,25 @@ class OrmIndexerTest extends SearchWebTestCase
     public function testReindexForSpecificWebsiteWithCustomBatchSize()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
+
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('getEntityAlias')
+            ->with(TestProduct::class)
+            ->willReturn($this->mappingConfig[TestProduct::class]['alias']);
+
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('isClassSupported')
+            ->with(TestProduct::class)
+            ->willReturn(true);
+
         $this->indexer = new OrmIndexerStub(
             $this->dispatcher,
             $this->doctrineHelper,
             $this->mappingProviderMock,
             $this->entityAliasResolver
         );
-
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
-            ->willReturn($this->mappingConfig);
 
         $this->listener = $this->setListener();
         $this->indexer->reindex(
@@ -182,8 +203,18 @@ class OrmIndexerTest extends SearchWebTestCase
     public function testReindexWithRestriction()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
-            ->willReturn($this->mappingConfig);
+
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('isClassSupported')
+            ->with(TestProduct::class)
+            ->willReturn(true);
+
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('getEntityAlias')
+            ->with(TestProduct::class)
+            ->willReturn($this->mappingConfig[TestProduct::class]['alias']);
 
         $restrictedProduct = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
 
@@ -216,8 +247,12 @@ class OrmIndexerTest extends SearchWebTestCase
     public function testReindexWithAllRestricted()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
-            ->willReturn($this->mappingConfig);
+
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('isClassSupported')
+            ->with(TestProduct::class)
+            ->willReturn(true);
 
         $restrictedProduct1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $restrictedProduct2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
@@ -252,8 +287,16 @@ class OrmIndexerTest extends SearchWebTestCase
     public function testReindexOfAllWebsites()
     {
         $this->loadFixtures([LoadItemData::class]);
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
-            ->willReturn($this->mappingConfig);
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('getEntityClasses')
+            ->willReturn([TestProduct::class]);
+
+        $this->mappingProviderMock
+            ->expects($this->exactly(2))
+            ->method('getEntityAlias')
+            ->with(TestProduct::class)
+            ->willReturn($this->mappingConfig[TestProduct::class]['alias']);
 
         $this->listener = $this->setListener();
         $this->indexer->reindex();
@@ -283,9 +326,12 @@ class OrmIndexerTest extends SearchWebTestCase
      */
     public function testEmptyMappingConfigException()
     {
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('getEntityClasses')
             ->willReturn([]);
-        $indexedNum = $this->indexer->reindex(TestProduct::class, []);
+
+        $indexedNum = $this->indexer->reindex();
         $this->assertEquals(0, $indexedNum);
     }
 
@@ -295,8 +341,12 @@ class OrmIndexerTest extends SearchWebTestCase
      */
     public function testWrongMappingException()
     {
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
-            ->willReturn($this->mappingConfig);
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('isClassSupported')
+            ->with('stdClass')
+            ->willReturn(false);
+
         $this->indexer->reindex(\stdClass::class, []);
     }
 
@@ -306,21 +356,13 @@ class OrmIndexerTest extends SearchWebTestCase
         $this->mappingProviderMock
             ->expects($this->once())
             ->method('isClassSupported')
-            ->willReturn(true);
+            ->with(TestDepartment::class)
+            ->willReturn(false);
 
-        $this->mappingProviderMock
-            ->expects($this->once())
-            ->method('getEntityAlias')
-            ->willReturn('oro_product_WEBSITE_ID');
+        $testEntity = new TestDepartment();
+        $testEntity->setId(123456);
 
-        $productMock = $this->getMockBuilder(TestProduct::class)
-            ->getMock();
-
-        $productMock
-            ->method('getId')
-            ->willReturn(123456);
-
-        $this->indexer->delete($productMock, ['website_id' => $this->getDefaultWebsiteId()]);
+        $this->indexer->delete($testEntity, ['website_id' => $this->getDefaultWebsiteId()]);
 
         $this->assertEntityCount(4, Item::class);
         $this->assertEntityCount(2, IndexInteger::class);
@@ -378,20 +420,15 @@ class OrmIndexerTest extends SearchWebTestCase
         $this->assertEntityCount(1, IndexDecimal::class);
     }
 
-    public function testDeleteForSpecificWebsiteAndEntitiesWithoutMappingConfiguration()
+    public function testDeleteForSpecificWebsiteAndEntitiesWithoutMappingConfigurationOrNotManageable()
     {
         $this->loadFixtures([LoadItemData::class]);
-        $this->mappingProviderMock
-            ->expects($this->exactly(4))
-            ->method('isClassSupported')
-            ->withConsecutive([TestProduct::class], [TestProduct::class], ['stdClass'], ['stdClass'])
-            ->willReturnCallback(function ($class) {
-                if ($class === TestProduct::class) {
-                    return true;
-                }
 
-                return false;
-            });
+        $this->mappingProviderMock
+            ->expects($this->exactly(3))
+            ->method('isClassSupported')
+            ->withConsecutive([TestProduct::class], [TestProduct::class], [TestDepartment::class])
+            ->willReturnOnConsecutiveCalls(true, true, false);
 
         $this->mappingProviderMock
             ->expects($this->once())
@@ -407,7 +444,8 @@ class OrmIndexerTest extends SearchWebTestCase
                 $product1,
                 $product2,
                 new \stdClass(),
-                new \stdClass()
+                new \stdClass(),
+                new TestDepartment()
             ],
             ['website_id' => $this->getDefaultWebsiteId()]
         );
@@ -450,13 +488,24 @@ class OrmIndexerTest extends SearchWebTestCase
         $this->assertEntityCount(0, IndexDecimal::class);
     }
 
-    public function testSaveForSingleEntity()
+    public function testSaveForSingleEntityAndSingleWebsite()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
+
+        $this->mappingProviderMock
+            ->expects($this->exactly(2))
+            ->method('isClassSupported')
+            ->with(TestProduct::class)
+            ->willReturn(true);
+
+        $this->mappingProviderMock
+            ->expects($this->exactly(2))
+            ->method('getEntityAlias')
+            ->with(TestProduct::class)
+            ->willReturn($this->mappingConfig[TestProduct::class]['alias']);
+
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $this->listener = $this->setListener();
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
-            ->willReturn($this->mappingConfig);
 
         $this->indexer->save(
             $product1,
@@ -464,17 +513,47 @@ class OrmIndexerTest extends SearchWebTestCase
                 AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
             ]
         );
+
         $this->assertEntityCount(1, Item::class);
     }
 
-    public function testSaveForSeveralEntities()
+    public function testSaveForSingleEntityAndAllWebsites()
+    {
+        $this->loadFixtures([LoadOtherWebsite::class]);
+        $this->loadFixtures([LoadProductsToIndex::class]);
+
+        $this->mappingProviderMock
+            ->expects($this->exactly(3))
+            ->method('isClassSupported')
+            ->with(TestProduct::class)
+            ->willReturn(true);
+
+        $this->mappingProviderMock
+            ->expects($this->exactly(2))
+            ->method('getEntityAlias')
+            ->with(TestProduct::class)
+            ->willReturn($this->mappingConfig[TestProduct::class]['alias']);
+
+        $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
+        $this->listener = $this->setListener();
+
+        $this->indexer->save($product1);
+
+        $this->assertEntityCount(2, Item::class);
+    }
+
+    public function testSaveForSeveralEntitiesAndSingleWebsite()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
+
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
         $this->listener = $this->setListener();
-        $this->mappingProviderMock->expects($this->once())->method('getMappingConfig')
-            ->willReturn($this->mappingConfig);
+        $this->mappingProviderMock
+            ->expects($this->exactly(3))
+            ->method('isClassSupported')
+            ->with(TestProduct::class)
+            ->willReturn(true);
 
         $this->indexer->save(
             [$product1, $product2],
@@ -483,5 +562,31 @@ class OrmIndexerTest extends SearchWebTestCase
             ]
         );
         $this->assertEntityCount(2, Item::class);
+    }
+
+    public function testSaveForSeveralEntitiesAndAllWebsites()
+    {
+        $this->loadFixtures([LoadOtherWebsite::class]);
+        $this->loadFixtures([LoadProductsToIndex::class]);
+
+        $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
+        $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
+
+        $this->listener = $this->setListener();
+        $this->mappingProviderMock
+            ->expects($this->exactly(4))
+            ->method('isClassSupported')
+            ->with(TestProduct::class)
+            ->willReturn(true);
+
+        $this->mappingProviderMock
+            ->expects($this->exactly(2))
+            ->method('getEntityAlias')
+            ->with(TestProduct::class)
+            ->willReturn($this->mappingConfig[TestProduct::class]['alias']);
+
+        $this->indexer->save([$product1, $product2]);
+
+        $this->assertEntityCount(4, Item::class);
     }
 }

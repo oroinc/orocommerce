@@ -75,14 +75,14 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     public function reindex($class = null, array $context = [])
     {
-        $entitiesToIndex = $this->getMapping($class);
+        $entitiesToIndex = $this->getEntitiesToIndex($class);
         $websitesToIndex = $this->getWebsitesToIndex($context);
         $handledItems = 0;
 
         foreach ($websitesToIndex as $websiteId) {
             $websiteContext = $this->collectContextForWebsite($websiteId, $context);
-            foreach ($entitiesToIndex as $entityClass => $entityConfig) {
-                $handledItems += $this->reindexSingleEntity($entityClass, $entityConfig, $websiteContext);
+            foreach ($entitiesToIndex as $entityClass) {
+                $handledItems += $this->reindexSingleEntity($entityClass, $websiteContext);
             }
         }
 
@@ -91,26 +91,35 @@ abstract class AbstractIndexer implements IndexerInterface
 
     /**
      * @param string $class
-     * @return array
+     * @throws \InvalidArgumentException
      */
-    protected function getMapping($class = null)
+    private function ensureEntityClassIsSupported($class)
     {
-        $mappingConfig = $this->mappingProvider->getMappingConfig();
-
-        if (!$mappingConfig) {
-            throw new \LogicException('Mapping config is empty.');
+        if (!$this->mappingProvider->isClassSupported($class)) {
+            throw new \InvalidArgumentException('There is no such entity in mapping config.');
         }
+    }
 
+    /**
+     * @param string $class
+     * @return array
+     * @throws \InvalidArgumentException|\LogicException
+     */
+    private function getEntitiesToIndex($class = null)
+    {
         if ($class) {
-            if (!isset($mappingConfig[$class])) {
-                throw new \InvalidArgumentException('There is no such entity in mapping config.');
-            }
-            $entitiesToIndex[$class] = $mappingConfig[$class];
+            $this->ensureEntityClassIsSupported($class);
+
+            $entityClasses = [$class];
         } else {
-            $entitiesToIndex = $mappingConfig;
+            $entityClasses = $this->mappingProvider->getEntityClasses();
+
+            if (empty($entityClasses)) {
+                throw new \LogicException('Mapping config is empty.');
+            }
         }
 
-        return $entitiesToIndex;
+        return $entityClasses;
     }
 
     /**
@@ -119,13 +128,11 @@ abstract class AbstractIndexer implements IndexerInterface
     public function save($entity, array $context = [])
     {
         $entities = is_array($entity) ? $entity : [$entity];
-        $firstEntity = reset($entities);
-        $entityClass = $this->doctrineHelper->getEntityClass($firstEntity);
-        $entitiesToIndex = $this->getMapping($entityClass);
 
-        $ids = [];
+        $entitiesByClass = [];
         foreach ($entities as $entity) {
-            $ids[] = $entity->getId();
+            $entityClass = $this->doctrineHelper->getEntityClass($entity);
+            $entitiesByClass[$entityClass][] = $entity;
         }
 
         $this->delete($entities, $context);
@@ -133,8 +140,18 @@ abstract class AbstractIndexer implements IndexerInterface
 
         foreach ($websitesToIndex as $websiteId) {
             $websiteContext = $this->collectContextForWebsite($websiteId, $context);
-            foreach ($entitiesToIndex as $entityClass => $entityConfig) {
-                $currentAlias = $this->applyPlaceholders($entityConfig['alias'], $context);
+
+            foreach ($entitiesByClass as $entityClass => $entities) {
+                $this->ensureEntityClassIsSupported($entityClass);
+
+                $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
+                $currentAlias = $this->applyPlaceholders($entityAlias, $websiteContext);
+
+                $ids = [];
+                foreach ($entities as $entity) {
+                    $ids[] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
+                }
+
                 $this->indexEntities($entityClass, $ids, $websiteContext, $currentAlias);
             }
         }
@@ -174,13 +191,16 @@ abstract class AbstractIndexer implements IndexerInterface
 
     /**
      * @param string $entityClass
-     * @param array $entityConfig
      * @param array $context
      * @return int
      */
-    protected function reindexSingleEntity($entityClass, array $entityConfig, array $context)
+    protected function reindexSingleEntity($entityClass, array $context)
     {
-        $currentAlias = $this->applyPlaceholders($entityConfig['alias'], $context);
+        $currentAlias = $this->applyPlaceholders(
+            $this->mappingProvider->getEntityAlias($entityClass),
+            $context
+        );
+
         $temporaryAlias = $this->generateTemporaryAlias($currentAlias);
 
         $entityRepository = $this->doctrineHelper->getEntityRepositoryForClass($entityClass);
