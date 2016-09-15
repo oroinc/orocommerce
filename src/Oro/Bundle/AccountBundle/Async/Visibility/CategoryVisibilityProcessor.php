@@ -41,15 +41,5 @@ class CategoryVisibilityProcessor extends AbstractVisibilityProcessor
     protected function resolveVisibilityByEntity($entity)
     {
         $this->cacheBuilder->resolveVisibilitySettings($entity);
-        if ($entity instanceof CategoryVisibility) {
-            /** @var $entity CategoryVisibility */
-            foreach ($entity->getCategory()->getProducts() as $product) {
-                $this->productMessageHandler->addProductMessageToSchedule(
-                    'oro_account.visibility.change_product_category',
-                    $product
-                );
-            }
-            $this->productMessageHandler->sendScheduledMessages();
-        }
     }
 }

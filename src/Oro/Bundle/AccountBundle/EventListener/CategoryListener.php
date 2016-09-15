@@ -51,7 +51,6 @@ class CategoryListener
                         'oro_account.visibility.change_product_category',
                         $product
                     );
-
                 }
             }
         }

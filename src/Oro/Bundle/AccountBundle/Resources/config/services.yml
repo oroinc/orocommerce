@@ -945,7 +945,7 @@ services:
             - '@doctrine'
             - '@oro_product.model.product_message_factory'
             - '@logger'
-            - '@oro_account.visibility.cache.product.category.cache_builder'
+            - '@oro_account.visibility.cache.product.cache_builder'
         calls:
             - [setResolvedVisibilityClassName, ['%oro_account.entity.account_product_visibility_resolved.class%']]
         tags:
