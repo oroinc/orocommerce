@@ -8,7 +8,7 @@ define(function(require) {
     var layout = require('oroui/js/layout');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var ProductPricesEditableView = require('orob2bpricing/js/app/views/product-prices-editable-view');
+    var ProductPricesEditableView = require('oropricing/js/app/views/product-prices-editable-view');
 
     ProductPricesComponent = BaseComponent.extend({
         /**

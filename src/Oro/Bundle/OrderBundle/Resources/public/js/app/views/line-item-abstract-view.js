@@ -7,13 +7,14 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
     var BaseView = require('oroui/js/app/views/base/view');
     var ProductUnitComponent = require('oroproduct/js/app/components/product-unit-component');
+    var BaseProductView = require('oroproduct/js/app/views/base-product-view');
 
     /**
      * @export oroorder/js/app/views/line-item-abstract-view
      * @extends oroui.app.views.base.View
      * @class oroorder.app.views.LineItemAbstractView
      */
-    LineItemAbstractView = BaseView.extend({
+    LineItemAbstractView = BaseProductView.extend({
         /**
          * @property {Object}
          */
@@ -43,10 +44,20 @@ define(function(require) {
          */
         fieldsByName: null,
 
+        elements: _.extend({}, BaseProductView.prototype.elements, {
+            id: '[data-name="field__product"]'
+        }),
+
+        modelElements: _.extend({}, BaseProductView.prototype.modelElements, {
+            id: 'id'
+        }),
+
         /**
          * @inheritDoc
          */
         initialize: function(options) {
+            this.elements.unit = '[data-name="field__product-unit"]';
+            LineItemAbstractView.__super__.initialize.apply(this, arguments);
             this.options = $.extend(true, {}, this.options, options || {});
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
             this.delegate('click', '.removeLineItem', this.removeRow);
