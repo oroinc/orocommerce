@@ -1,4 +1,5 @@
 Oro\Bundle\PricingBundle\Entity\PriceList:
+    group_sequence: [PriceList, NotCircularReference]
     constraints:
         - Oro\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrency: ~
         - Oro\Bundle\PricingBundle\Validator\Constraints\CircularReference:
@@ -23,7 +24,9 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
                 allowedFields:
                     Oro\Bundle\PricingBundle\Entity\PriceList:
                         - 'assignedProducts'
-            - Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression: ~
+                groups: [NotCircularReference]
+            - Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression:
+                groups: [NotCircularReference]
 
 Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
     constraints:
@@ -53,6 +56,12 @@ Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
                 deactivateAt: 'Deactivate At'
 
 Oro\Bundle\PricingBundle\Entity\PriceRule:
+    group_sequence: [PriceRule, NotCircularReference]
+    constraints:
+        - Oro\Bundle\PricingBundle\Validator\Constraints\CircularReference:
+            fields:
+                - ruleCondition
+                - rule
     properties:
         currency:
             - NotBlank: ~
@@ -71,12 +80,15 @@ Oro\Bundle\PricingBundle\Entity\PriceRule:
                 allowedFields:
                     Oro\Bundle\PricingBundle\Entity\PriceList:
                         - 'assignedProducts'
-            - Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression: ~
+                groups: [NotCircularReference]
+            - Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpression:
+                groups: [NotCircularReference]
         rule:
             - NotBlank: ~
             - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
                 numericOnly: true
                 withRelations: true
+                groups: [NotCircularReference]
         priority:
             - NotBlank: ~
             - Type:

@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
 use Oro\Bundle\PricingBundle\Expression\NameNode;
 use Oro\Bundle\PricingBundle\Expression\RelationNode;
-use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -18,11 +19,6 @@ class CircularReferenceValidator extends ConstraintValidator
      * @var ExpressionParser
      */
     protected $expressionParser;
-
-    /**
-     * @var ExpressionPreprocessorInterface
-     */
-    protected $preprocessor;
 
     /**
      * @var RegistryInterface
@@ -45,22 +41,26 @@ class CircularReferenceValidator extends ConstraintValidator
     protected $accessor;
 
     /**
-     * @var bool
+     * @var array
      */
-    public $isValid = true;
+    protected static $priceRuleProperties = [
+        'rule', 'ruleCondition', 'currencyExpression', 'quantityExpression', 'productUnitExpression'
+    ];
+
+    /**
+     * @var array
+     */
+    protected static $priceListProperties = ['productAssignmentRule'];
 
     /**
      * @param ExpressionParser $expressionParser
-     * @param ExpressionPreprocessorInterface $preprocessor
      * @param RegistryInterface $doctrine
      */
     public function __construct(
         ExpressionParser $expressionParser,
-        ExpressionPreprocessorInterface $preprocessor,
         RegistryInterface $doctrine
     ) {
         $this->expressionParser = $expressionParser;
-        $this->preprocessor = $preprocessor;
         $this->doctrine = $doctrine;
 
         $this->accessor = PropertyAccess::createPropertyAccessor();
@@ -80,8 +80,16 @@ class CircularReferenceValidator extends ConstraintValidator
 
         try {
             foreach ($constraint->fields as $field) {
-                $expressions = [$this->getFieldExpression($object, $field)];
-                $this->references[$field] = [$object->getId()];
+                $expressions = [$this->getFieldValue($object, $field)];
+
+                if ($object instanceof PriceList) {
+                    $this->references = [$object->getId()];
+                } elseif (($priceListId = $this->getFieldValue($object, 'priceList')->getId()) !== null) {
+                    $this->references = [$priceListId];
+                } else {
+                    break;
+                }
+
                 while (true) {
                     $nodes = $this->parseExpression($expressions);
                     $references = $this->findReferences($nodes);
@@ -91,10 +99,11 @@ class CircularReferenceValidator extends ConstraintValidator
                         break;
                     }
 
-                    $this->references = array_merge_recursive($this->references, $references);
                     if (count($references) === 0) {
                         break;
                     }
+
+                    $this->references = array_merge($this->references, $references);
                     $expressions = $this->findExpressions($references);
                 }
             }
@@ -109,14 +118,7 @@ class CircularReferenceValidator extends ConstraintValidator
      */
     protected function hasCircularReference($references)
     {
-        foreach ($references as $field => $referenceIds) {
-            foreach ($referenceIds as $id) {
-                if (array_key_exists($field, $this->references) && in_array($id, $this->references[$field], true)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return (count(array_intersect($this->references, $references)) > 0);
     }
 
     /**
@@ -125,10 +127,8 @@ class CircularReferenceValidator extends ConstraintValidator
      */
     protected function parseExpression($expressions)
     {
-
         $nodes = [];
         foreach ($expressions as $expression) {
-            $expression = $this->preprocessor->process($expression);
             $rootNode = $this->expressionParser->parse($expression);
             if ($rootNode !== null) {
                 $nodes = array_merge($nodes, $rootNode->getNodes());
@@ -151,42 +151,55 @@ class CircularReferenceValidator extends ConstraintValidator
                 continue;
             }
             $containerId = $node->getContainerId();
-            if (empty($containerId)) {
-                continue;
-            }
-
-            $field = $node->getField();
-
-            if ($this->container === null) {
-                $this->container = $node->getContainer();
-            }
-
-            if (empty($references[$field])) {
-                $references[$field] = [];
-            }
-
-            if (!in_array($containerId, $references[$field], true)) {
-                $references[$field][] = $containerId;
+            if (!empty($containerId)) {
+                $references[] = $containerId;
             }
         }
+        $references = array_unique($references);
         return $references;
     }
 
     /**
-     * @param array $references
+     * @param $references
      * @return array
      */
     protected function findExpressions($references)
     {
         $expressions = [];
 
-        foreach ($references as $field => $referenceIds) {
-            foreach ($referenceIds as $id) {
-                $entity = $this->getEntity($id);
-                $expression = $this->getFieldExpression($entity, $field);
-                if ($expression !== null) {
-                    $expressions[] = $expression;
-                }
+        foreach ($references as $id) {
+            $priceList = $this->getPriceList($id);
+            $expressions = array_merge(
+                $expressions,
+                $this->collectExpressions($priceList, self::$priceListProperties)
+            );
+
+            $priceRules = $this->getPriceRulesByPriceList($id);
+
+            foreach ($priceRules as $priceRule) {
+                $expressions = array_merge(
+                    $expressions,
+                    $this->collectExpressions($priceRule, self::$priceRuleProperties)
+                );
+            }
+        }
+        return $expressions;
+    }
+
+    /**
+     * @param $entity
+     * @param array $properties
+     *
+     * @return array
+     */
+    protected function collectExpressions($entity, $properties)
+    {
+        $expressions = [];
+        foreach ($properties as $property) {
+            if ((($expression = $this->getFieldValue($entity, $property)) !== null) &&
+                (!empty($expression))
+            ) {
+                $expressions[] = $expression;
             }
         }
         return $expressions;
@@ -198,26 +211,37 @@ class CircularReferenceValidator extends ConstraintValidator
      *
      * @return string|null
      */
-    protected function getFieldExpression($entity, $field)
+    protected function getFieldValue($entity, $field)
     {
-        $expression = null;
+        $value = null;
         if ($this->accessor->isReadable($entity, $field)) {
-            $expression = $this->accessor->getValue($entity, $field);
+            $value = $this->accessor->getValue($entity, $field);
         }
-        return $expression;
+        return $value;
     }
 
     /**
      * @param int $id
-     *
-     * @return object
+     * @return PriceList
      */
-    protected function getEntity($id)
+    protected function getPriceList($id)
     {
         return $this->doctrine
-            ->getManagerForClass($this->container)
-            ->getRepository($this->container)
+            ->getManagerForClass(PriceList::class)
+            ->getRepository(PriceList::class)
             ->find($id);
+    }
+
+    /**
+     * @param int $priceListId
+     * @return PriceRule[]
+     */
+    protected function getPriceRulesByPriceList($priceListId)
+    {
+        return $this->doctrine
+            ->getManagerForClass(PriceRule::class)
+            ->getRepository(PriceRule::class)
+            ->findBy(['priceList' => $priceListId]);
     }
 
     /**
