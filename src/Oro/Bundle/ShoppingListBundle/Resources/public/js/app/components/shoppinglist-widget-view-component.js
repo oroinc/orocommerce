@@ -6,6 +6,7 @@ define(function(require) {
     var ViewComponent = require('oroui/js/app/components/view-component');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
+    var Error = require('oroui/js/error');
     var ShoppingListWidgetViewComponent;
 
     ShoppingListWidgetViewComponent = ViewComponent.extend({
@@ -52,7 +53,6 @@ define(function(require) {
             $.ajax({
                 method: 'POST',
                 url: routing.generate('orob2b_product_frontend_product_index'),
-                //dataType: 'json',
                 data: {
                     id: shoppingListId
                 },
@@ -65,11 +65,7 @@ define(function(require) {
                 },
                 error: function(xhr) {
                     mediator.trigger('shopping-list:updated');
-                    mediator.execute(
-                        'showFlashMessage',
-                        'error',
-                        'Shopping list cannot be set as default'
-                    );
+                    Error.handle({}, xhr, {enforce: true});
                 }
             });
         },
