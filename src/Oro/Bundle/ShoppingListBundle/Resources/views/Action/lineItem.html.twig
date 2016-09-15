@@ -15,11 +15,11 @@
                     {{ form_row(form.lineItem.unit, { 'attr': {'class': 'product-unit'} }) }}
                     {{ form_row(form.lineItem.notes) }}
                 {% elseif form.lineItem.shoppingList is defined %}
-                    {{ form_row(form.lineItem.shoppingList, {attr: {class: 'orob2b-shoppinglist'} }) }}
+                    {{ form_row(form.lineItem.shoppingList, {attr: {class: 'oro-shoppinglist'} }) }}
                     {{ form_row(form.lineItem.quantity, { 'attr': {'class': 'product-quantity'} }) }}
                     {{ form_row(form.lineItem.unit, { 'attr': {'class': 'product-unit'} }) }}
                     <div class="{% if not form.lineItem.shoppingListLabel.vars.errors|length and form.lineItem.shoppingList.vars.currentShoppingList %}hidden{% endif %}">
-                        {{ form_row(form.lineItem.shoppingListLabel, {attr: {class: 'orob2b-shoppinglist-label'} }) }}
+                        {{ form_row(form.lineItem.shoppingListLabel, {attr: {class: 'oro-shoppinglist-label'} }) }}
                     </div>
                 {% endif %}
             </fieldset>

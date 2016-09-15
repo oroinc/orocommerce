@@ -10,8 +10,8 @@ Table of Contents
       - [formatShort](#formatShort)
    - [Twig](#twig)
     - [Filters](#filters)
-      - [orob2b_format_product_unit_value](#orob2b_format_product_unit_value)
-      - [orob2b_format_short_product_unit_value](#orob2b_format_short_product_unit_value)
+      - [oro_format_product_unit_value](#oro_format_product_unit_value)
+      - [oro_format_short_product_unit_value](#oro_format_short_product_unit_value)
 
 Formats source
 ==============
