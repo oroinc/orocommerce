@@ -16,7 +16,7 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepositor
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 
-abstract class SearchWebTestCase extends WebTestCase
+abstract class AbstractSearchWebTestCase extends WebTestCase
 {
     /**
      * Workaround to clear MyISAM table as it's not rolled back by transaction.
