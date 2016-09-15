@@ -331,34 +331,35 @@ datagrids:
     frontend-product-search-grid:
         source:
             type: search
-#            search_index: website
+            search_index: website
             query:
                 select:
                     - text.sku as sku
                     - text.name_LOCALIZATION_ID as name
-                    - text.all_text_LOCALIZATION_ID as text.all_text
+                    - text.all_text_LOCALIZATION_ID as all_text
+                    - text.short_desc_LOCALIZATION_ID as shortDescription
                 from:
-                    - product_WEBSITE_ID
+                    - oro_product_product_WEBSITE_ID
         columns:
             sku:
                 label:         oro.product.sku.label
             name:
                 label:         oro.product.names.label
-            inventoryStatus:
-                label:         oro.product.inventory_status.label
-                type:          twig
-                frontend_type: html
-                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
-            status:
-                label:         orobproduct.status.label
-                frontend_type: select
-                choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
-            createdAt:
-                label:         oro.ui.created_at
-                frontend_type: datetime
-            updatedAt:
-                label:         oro.ui.updated_at
-                frontend_type: datetime
+#            inventoryStatus:
+#                label:         oro.product.inventory_status.label
+#                type:          twig
+#                frontend_type: html
+#                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
+#            status:
+#                label:         orobproduct.status.label
+#                frontend_type: select
+#                choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
+#            createdAt:
+#                label:         oro.ui.created_at
+#                frontend_type: datetime
+#            updatedAt:
+#                label:         oro.ui.updated_at
+#                frontend_type: datetime
         filters:
             columns:
                 all_text:
