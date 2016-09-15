@@ -48,7 +48,7 @@ define(function(require) {
          * @param e
          */
         _onCurrentShoppingListChange: function(e) {
-            var shoppingListId = $(e.target).val();
+            var shoppingListId = parseInt($(e.target).val(), 10);
 
             $.ajax({
                 method: 'POST',
