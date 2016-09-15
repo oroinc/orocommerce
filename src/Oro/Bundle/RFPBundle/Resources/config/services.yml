@@ -41,8 +41,8 @@ services:
         parent: oro_product.event_listener.abstract_product_select_db_query
         calls:
             - [setScope, ['rfp']]
-            - [setFrontendSystemConfigurationPath, ['oro_b2b_rfp.frontend_product_visibility']]
-            - [setBackendSystemConfigurationPath, ['oro_b2b_rfp.backend_product_visibility']]
+            - [setFrontendSystemConfigurationPath, ['oro_rfp.frontend_product_visibility']]
+            - [setBackendSystemConfigurationPath, ['oro_rfp.backend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
 

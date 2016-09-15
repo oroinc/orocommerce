@@ -4,6 +4,7 @@ namespace Oro\Bundle\RFPBundle\Migrations\Schema\v1_6;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
@@ -11,7 +12,7 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
-class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
+class OroRFPBundle implements Migration, RenameExtensionAwareInterface
 {
     /**
      * @var RenameExtension
@@ -86,6 +87,9 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
             ['locale', 'object_id', 'field'],
             'oro_rfp_status_trans_idx'
         );
+
+        // system configuration
+        $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_rfp', 'oro_rfp'));
     }
 
     /**

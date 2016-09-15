@@ -23,7 +23,7 @@ class ShoppingListControllerTest extends WebTestCase
 {
     const TEST_LABEL1 = 'Shopping list label 1';
     const TEST_LABEL2 = 'Shopping list label 2';
-    const RFP_PRODUCT_VISIBILITY_KEY = 'oro_b2b_rfp.frontend_product_visibility';
+    const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
 
     /** @var ConfigManager $configManager */
     protected $configManager;

@@ -110,7 +110,7 @@ class PriceListRelationTriggerHandler
             function ($priceList) {
                 return $priceList['priceList'];
             },
-            $this->configManager->get('oro_b2b_pricing.default_price_lists')
+            $this->configManager->get('oro_pricing.default_price_lists')
         );
 
         if (in_array($priceList->getId(), $configPriceListIds)) {

@@ -52,7 +52,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
             );
         }
 
-        $defaultRequestStatusName = $this->get('oro_config.manager')->get('oro_b2b_rfp.default_request_status');
+        $defaultRequestStatusName = $this->get('oro_config.manager')->get('oro_rfp.default_request_status');
 
         if ($defaultRequestStatusName === $requestStatus->getName()) {
             return $this->handleView(
