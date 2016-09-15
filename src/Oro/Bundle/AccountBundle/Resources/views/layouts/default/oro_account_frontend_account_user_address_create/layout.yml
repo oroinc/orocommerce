@@ -2,17 +2,24 @@ layout:
     imports:
         -
             id: oro_account_user_address_form
-            root: content
+            root: oro_account_user_address_form_container
         - oro_account_menu
     actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
         - '@appendOption':
             id: title
             optionName: value
             optionValue:
                 - oro.account.frontend.address.title.create
                 - oro.account.frontend.address.title.subject
-        - '@setOption':
-            id: page_title
-            optionName: text
-            optionValue:
-                label: oro.account.frontend.address.page_title.create
+        - '@add':
+            id: oro_account_user_address_form_title
+            parentId: oro_account_user_address_form_container
+            blockType: text
+            options:
+                text: oro.account.frontend.address.page_title.create
+        - '@add':
+            id: oro_account_user_address_form_container
+            parentId: content
+            blockType: container
