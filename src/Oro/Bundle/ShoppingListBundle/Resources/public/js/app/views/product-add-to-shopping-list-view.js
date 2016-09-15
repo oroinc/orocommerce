@@ -59,7 +59,7 @@ define(function(require) {
 
             mediator.on('shopping-list:updated', this._onShoppingListUpdate, this);
             mediator.on('shopping-list:created', this._onShoppingListCreate, this);
-            mediator.on('shopping-list:change-current', this._onChangeCurrentShoppingList, this);
+            mediator.on('shopping-list:change-current', this._onCurrentShoppingListChange, this);
             if (this.model) {
                 this.model.on('change:shopping_lists', this._onModelChanged, this);
                 this.model.on('change:unit', this._onModelChanged, this);
@@ -197,26 +197,23 @@ define(function(require) {
             }
         },
 
-        _onChangeCurrentShoppingList: function(shoppingList) {
-            var modelCurrentShoppingLists = this.findCurrentShoppingList();
-            var modelNewCurrentShoppingLists = this.findShoppingList(shoppingList.id);
+        _onCurrentShoppingListChange: function(shoppingListId) {
+            var modelCurrentShoppingList = this.findCurrentShoppingList();
+            var modelNewCurrentShoppingList = this.findShoppingList(shoppingListId);
 
-            if (this.dropdownWidget.main && this.dropdownWidget.main.data('shoppinglist')) {
-                this.dropdownWidget.main.data({
-                    shoppinglist: _.pick(shoppingList, 'id', 'label')
-                });
-                this.dropdownWidget.main.data('clone').data({
-                    shoppinglist: _.pick(shoppingList, 'id', 'label')
-                });
-                this.updateMainButton();
-            }
+            var $newCurrentButton = this.findDropdownButtons('[data-id=' + shoppingListId + ']'),
+                shoppingList = $newCurrentButton.data('shoppinglist');
 
-            if (modelCurrentShoppingLists || modelNewCurrentShoppingLists) {
-                if (modelCurrentShoppingLists) {
-                    modelCurrentShoppingLists.is_current = false;
+            $newCurrentButton.remove();
+
+            this._onShoppingListCreate(shoppingList);
+
+            if (modelCurrentShoppingList || modelNewCurrentShoppingList) {
+                if (modelCurrentShoppingList) {
+                    modelCurrentShoppingList.is_current = false;
                 }
-                if (modelNewCurrentShoppingLists) {
-                    modelNewCurrentShoppingLists.is_current = true;
+                if (modelNewCurrentShoppingList) {
+                    modelNewCurrentShoppingList.is_current = true;
                 }
                 this.model.trigger('change:shopping_lists');
             }
@@ -351,7 +348,7 @@ define(function(require) {
 
         findShoppingList: function(id) {
             return _.find(this.model.get('shopping_lists'), function(list) {
-                return list.shopping_list_id == id;
+                return list.shopping_list_id === id;
             }) || null;
         },
 
