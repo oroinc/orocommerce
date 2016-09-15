@@ -13,7 +13,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 class LineItemSubtotalProvider extends AbstractSubtotalProvider implements

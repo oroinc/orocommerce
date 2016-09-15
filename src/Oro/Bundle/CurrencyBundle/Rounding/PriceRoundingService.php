@@ -1,12 +1,12 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Rounding;
+namespace Oro\Bundle\CurrencyBundle\Rounding;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\DBAL\Types\MoneyType;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
-use Oro\Bundle\ProductBundle\Rounding\AbstractRoundingService;
+use Oro\Bundle\CurrencyBundle\Rounding\AbstractRoundingService;
 
 class PriceRoundingService extends AbstractRoundingService
 {

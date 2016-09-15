@@ -8,7 +8,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Model\DiscountAwareInterface;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;

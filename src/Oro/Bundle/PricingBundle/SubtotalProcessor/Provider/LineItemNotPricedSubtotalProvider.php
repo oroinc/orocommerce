@@ -19,7 +19,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 

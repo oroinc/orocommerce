@@ -13,7 +13,7 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 
 class TotalProcessorProvider extends AbstractSubtotalProvider
 {

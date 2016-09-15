@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\DependencyInjection;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration as LocaleConfiguration;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
-use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
+use Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 

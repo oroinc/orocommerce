@@ -480,11 +480,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
 
-    oro_pricing.rounding.price_rounding_service:
-        class: 'Oro\Bundle\PricingBundle\Rounding\PriceRoundingService'
-        public: false
-        parent: oro_product.service.abstract_rounding
-
     oro_pricing.event_listener.system_config:
         class: 'Oro\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber'
         arguments:
@@ -620,7 +615,7 @@ services:
         arguments:
             - '@oro_pricing.subtotal_processor.subtotal_provider_registry'
             - '@translator'
-            - '@oro_pricing.rounding.price_rounding_service'
+            - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.user_currency_manager'
 
     oro_pricing.subtotal_processor.provider.subtotal_line_item:
@@ -628,7 +623,7 @@ services:
         public: false
         arguments:
             - '@translator'
-            - '@oro_pricing.rounding.price_rounding_service'
+            - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.user_currency_manager'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 0 }
@@ -637,7 +632,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider'
         arguments:
             - '@translator'
-            - '@oro_pricing.rounding.price_rounding_service'
+            - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.provider.combined_product_price'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.model.price_list_tree_handler'

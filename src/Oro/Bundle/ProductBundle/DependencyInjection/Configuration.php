@@ -7,7 +7,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 
 class Configuration implements ConfigurationInterface
 {
