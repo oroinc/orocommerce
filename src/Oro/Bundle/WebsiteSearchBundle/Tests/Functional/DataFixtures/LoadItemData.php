@@ -75,7 +75,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
                 [
                     'field' => 'price',
                     'value' => '100',
-               ],
+                ],
             ],
             'integerFields' => [
                 [
