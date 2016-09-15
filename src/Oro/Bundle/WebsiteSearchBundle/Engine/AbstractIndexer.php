@@ -244,7 +244,7 @@ abstract class AbstractIndexer implements IndexerInterface
 
         $indexEntityEvent = new IndexEntityEvent($entityClass, $restrictedEntityIds, $context);
         $this->eventDispatcher->dispatch(IndexEntityEvent::NAME, $indexEntityEvent);
-        $entitiesData =  $indexEntityEvent->getEntitiesData();
+        $entitiesData = $indexEntityEvent->getEntitiesData();
 
         return $this->saveIndexData($entityClass, $entitiesData, $aliasToSave);
     }
