@@ -64,18 +64,6 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
         /** @var PriceRequest|\PHPUnit_Framework_MockObject_MockObject $rateRequest * */
         $rateRequest = $this->getMock(PriceRequest::class);
 
-        $rateRequest->expects(static::once())
-            ->method('setSecurity')
-            ->willReturn($rateRequest);
-
-        $rateRequest->expects(static::once())
-            ->method('setShipperName')
-            ->willReturn($rateRequest);
-
-        $rateRequest->expects(static::once())
-            ->method('setShipperNumber')
-            ->willReturn($rateRequest);
-
         $integration = new Channel();
         $transportEntity = new \Oro\Bundle\UPSBundle\Entity\UPSTransport();
         $integration->setTransport($transportEntity);

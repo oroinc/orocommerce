@@ -102,11 +102,11 @@ class PackageTest extends \PHPUnit_Framework_TestCase
             self::WEIGHT
         );
 
-        $this->assertEquals(self::DIMENSION_CODE, $package->getDimensionCode());
-        $this->assertEquals(self::DIMENSION_HEIGHT, $package->getDimensionHeight());
-        $this->assertEquals(self::DIMENSION_WIDTH, $package->getDimensionWidth());
-        $this->assertEquals(self::DIMENSION_LENGTH, $package->getDimensionLength());
-        $this->assertEquals(self::WEIGHT_CODE, $package->getWeightCode());
-        $this->assertEquals(self::WEIGHT, $package->getWeight());
+        static::assertEquals(self::DIMENSION_CODE, $package->getDimensionCode());
+        static::assertEquals(self::DIMENSION_HEIGHT, $package->getDimensionHeight());
+        static::assertEquals(self::DIMENSION_WIDTH, $package->getDimensionWidth());
+        static::assertEquals(self::DIMENSION_LENGTH, $package->getDimensionLength());
+        static::assertEquals(self::WEIGHT_CODE, $package->getWeightCode());
+        static::assertEquals(self::WEIGHT, $package->getWeight());
     }
 }

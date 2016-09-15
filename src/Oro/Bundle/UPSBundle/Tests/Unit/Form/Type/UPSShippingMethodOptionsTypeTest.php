@@ -14,12 +14,13 @@ class UPSShippingMethodOptionsTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         parent::setUp();
-
+        
+        /** @var RoundingServiceInterface | \PHPUnit_Framework_MockObject_MockObject $roundingService */
         $roundingService = $this->getMock(RoundingServiceInterface::class);
-        $roundingService->expects($this->any())
+        $roundingService->expects(static::any())
             ->method('getPrecision')
             ->willReturn(4);
-        $roundingService->expects($this->any())
+        $roundingService->expects(static::any())
             ->method('getRoundType')
             ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
 
@@ -28,7 +29,7 @@ class UPSShippingMethodOptionsTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(UPSShippingMethodOptionsType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
+        static::assertEquals(UPSShippingMethodOptionsType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
     }
 
     /**
@@ -42,11 +43,11 @@ class UPSShippingMethodOptionsTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create($this->formType, $defaultData);
 
-        $this->assertEquals($defaultData, $form->getData());
+        static::assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
-        $this->assertEquals($expectedData, $form->getData());
+        static::assertTrue($form->isValid());
+        static::assertEquals($expectedData, $form->getData());
     }
 
     /**

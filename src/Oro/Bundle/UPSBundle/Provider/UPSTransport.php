@@ -85,17 +85,6 @@ class UPSTransport extends AbstractRestTransport
     {
         if ($transportEntity) {
             $this->client = $this->createRestClient($transportEntity);
-
-            $parameterBag = $transportEntity->getSettingsBag();
-            $priceRequest->setSecurity(
-                $parameterBag->get('api_user'),
-                $parameterBag->get('api_password'),
-                $parameterBag->get('api_key')
-            );
-            $priceRequest
-                ->setShipperName($parameterBag->get('shipping_account_name'))
-                ->setShipperNumber($parameterBag->get('shipping_account_number'));
-
             $data = $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
             $priceResponse = new PriceResponse();
             if (!is_array($data)) {

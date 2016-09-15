@@ -72,25 +72,25 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testIsGrouped()
     {
-        $this->assertTrue($this->upsShippingMethod->isGrouped());
+        static::assertTrue($this->upsShippingMethod->isGrouped());
     }
 
     public function testGetIdentifier()
     {
-        $this->assertEquals('ups_1', $this->upsShippingMethod->getIdentifier());
+        static::assertEquals('ups_1', $this->upsShippingMethod->getIdentifier());
     }
 
     public function testGetLabel()
     {
-        $this->assertEquals('ups_channel_1', $this->upsShippingMethod->getLabel());
+        static::assertEquals('ups_channel_1', $this->upsShippingMethod->getLabel());
     }
 
     public function testGetTypes()
     {
         $types = $this->upsShippingMethod->getTypes();
 
-        $this->assertCount(1, $types);
-        $this->assertEquals('ups_identifier', $types[0]->getIdentifier());
+        static::assertCount(1, $types);
+        static::assertEquals('ups_identifier', $types[0]->getIdentifier());
     }
 
     public function testGetType()
@@ -98,20 +98,20 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
         $identifier = 'ups_identifier';
         $type = $this->upsShippingMethod->getType($identifier);
 
-        $this->assertInstanceOf(UPSShippingMethodType::class, $type);
-        $this->assertEquals('ups_identifier', $type->getIdentifier());
+        static::assertInstanceOf(UPSShippingMethodType::class, $type);
+        static::assertEquals('ups_identifier', $type->getIdentifier());
     }
 
     public function testGetOptionsConfigurationFormType()
     {
         $type = $this->upsShippingMethod->getOptionsConfigurationFormType();
 
-        $this->assertEquals(UPSShippingMethodOptionsType::class, $type);
+        static::assertEquals(UPSShippingMethodOptionsType::class, $type);
     }
 
     public function testGetSortOrder()
     {
-        $this->assertEquals('20', $this->upsShippingMethod->getSortOrder());
+        static::assertEquals('20', $this->upsShippingMethod->getSortOrder());
     }
 
     public function testCalculatePrices()
@@ -136,8 +136,8 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
 
         $prices = $upsShippingMethod->calculatePrices($context, $methodOptions, $optionsByTypes);
 
-        $this->assertCount(1, $prices);
-        $this->assertTrue(array_key_exists('type_1', $prices));
-        $this->assertEquals(Price::create(20, 'USD'), $prices['type_1']);
+        static::assertCount(1, $prices);
+        static::assertTrue(array_key_exists('type_1', $prices));
+        static::assertEquals(Price::create(20, 'USD'), $prices['type_1']);
     }
 }

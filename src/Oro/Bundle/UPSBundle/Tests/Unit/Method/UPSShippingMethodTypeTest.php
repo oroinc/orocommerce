@@ -94,7 +94,7 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
         $identifier = 'ups_1';
         $this->upsShippingMethodType->setIdentifier($identifier);
 
-        $this->assertEquals($identifier, $this->upsShippingMethodType->getIdentifier());
+        static::assertEquals($identifier, $this->upsShippingMethodType->getIdentifier());
     }
 
     public function testSetLabel()
@@ -102,12 +102,12 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
         $label = 'ups 1';
         $this->upsShippingMethodType->setLabel($label);
 
-        $this->assertEquals($label, $this->upsShippingMethodType->getLabel());
+        static::assertEquals($label, $this->upsShippingMethodType->getLabel());
     }
 
     public function testGetOptionsConfigurationFormType()
     {
-        $this->assertEquals(
+        static::assertEquals(
             UPSShippingMethodOptionsType::class,
             $this->upsShippingMethodType->getOptionsConfigurationFormType()
         );
@@ -115,11 +115,12 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSortOrder()
     {
-        $this->assertEquals(0, $this->upsShippingMethodType->getSortOrder());
+        static::assertEquals(0, $this->upsShippingMethodType->getSortOrder());
     }
 
     public function testCalculatePrice()
     {
+        /** @var ShippingContext $context */
         $context = $this->getEntity(
             ShippingContext::class,
             [
@@ -158,7 +159,7 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
 
         $price = $upsShippingMethodType->calculatePrice($context, $methodOptions, $typeOptions);
 
-        $this->assertEquals(Price::create(70, 'USD'), $price);
+        static::assertEquals(Price::create(70, 'USD'), $price);
     }
 
     /**
@@ -210,21 +211,21 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
         $createPackagesReflection = self::getMethod('createPackages');
         $packages = $createPackagesReflection->invokeArgs(
             $this->upsShippingMethodType,
-            [[$lineItem], 'KG']
+            [[$lineItem], 'KGS', UPSShippingMethodType::MAX_PACKAGE_WEIGHT_KGS]
         );
 
-        $this->assertCount(1, $packages);
+        static::assertCount(1, $packages);
 
         /** @var Package $package */
         $package = reset($packages);
 
-        $this->assertInstanceOf(Package::class, $package);
-        $this->assertEquals('00', $package->getPackagingTypeCode());
-        $this->assertEquals(7, $package->getDimensionLength());
-        $this->assertEquals(8, $package->getDimensionWidth());
-        $this->assertEquals(9, $package->getDimensionHeight());
-        $this->assertEquals('KG', $package->getWeightCode());
-        $this->assertEquals(2, $package->getWeight());
+        static::assertInstanceOf(Package::class, $package);
+        static::assertEquals('00', $package->getPackagingTypeCode());
+        static::assertEquals(7, $package->getDimensionLength());
+        static::assertEquals(8, $package->getDimensionWidth());
+        static::assertEquals(9, $package->getDimensionHeight());
+        static::assertEquals('KGS', $package->getWeightCode());
+        static::assertEquals(2, $package->getWeight());
     }
 
     public function testGetProductsParamsByUnit()
@@ -267,18 +268,18 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
         );
 
 
-        $this->assertCount(1, $productsByUnit);
-        $this->assertArrayHasKey('IN', $productsByUnit);
-        $this->assertArrayHasKey('KG', $productsByUnit['IN']);
-        $this->assertCount(1, $productsByUnit['IN']['KG']);
+        static::assertCount(1, $productsByUnit);
+        static::assertArrayHasKey('IN', $productsByUnit);
+        static::assertArrayHasKey('KG', $productsByUnit['IN']);
+        static::assertCount(1, $productsByUnit['IN']['KG']);
 
         $productByUnit = reset($productsByUnit['IN']['KG']);
 
-        $this->assertEquals('inch', $productByUnit['dimensionUnit']);
-        $this->assertEquals(9, $productByUnit['dimensionHeight']);
-        $this->assertEquals(8, $productByUnit['dimensionWidth']);
-        $this->assertEquals(7, $productByUnit['dimensionLength']);
-        $this->assertEquals('kg', $productByUnit['weightUnit']);
-        $this->assertEquals(2, $productByUnit['weight']);
+        static::assertEquals('inch', $productByUnit['dimensionUnit']);
+        static::assertEquals(9, $productByUnit['dimensionHeight']);
+        static::assertEquals(8, $productByUnit['dimensionWidth']);
+        static::assertEquals(7, $productByUnit['dimensionLength']);
+        static::assertEquals('kg', $productByUnit['weightUnit']);
+        static::assertEquals(2, $productByUnit['weight']);
     }
 }

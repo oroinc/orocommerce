@@ -3,6 +3,7 @@
 namespace Oro\Bundle\UPSBundle\Method;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
@@ -19,7 +20,8 @@ use Oro\Bundle\UPSBundle\Model\PriceRequest;
 class UPSShippingMethodType implements ShippingMethodTypeInterface
 {
     const REQUEST_OPTION = 'Rate';
-    const MAX_PACKAGE_WEIGHT = 70;
+    const MAX_PACKAGE_WEIGHT_KGS = 70;
+    const MAX_PACKAGE_WEIGHT_LBS = 150;
 
     const OPTION_SURCHARGE = 'surcharge';
 
@@ -141,8 +143,15 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
             ->setServiceCode($this->shippingService->getCode())
             ->setServiceDescription($this->shippingService->getDescription())
         ;
+        
+        $unitOfWeight = $this->transport->getUnitOfWeight();
+        if ($unitOfWeight === 'KGS') {
+            $weightLimit = self::MAX_PACKAGE_WEIGHT_KGS;
+        } else {
+            $weightLimit = self::MAX_PACKAGE_WEIGHT_LBS;
+        }
 
-        $packages = $this->createPackages($context->getLineItems(), $this->transport->getUnitOfWeight());
+        $packages = $this->createPackages($context->getLineItems(), $unitOfWeight, $weightLimit);
 
         if (count($packages) > 0) {
             $priceRequest = $priceRequest->setPackages($packages);
@@ -170,9 +179,10 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     /**
      * @param ShippingLineItemInterface[] $lineItems
      * @param string $unitOfWeight
+     * @param int $weightLimit
      * @return Package[]|array
      */
-    protected function createPackages($lineItems, $unitOfWeight)
+    protected function createPackages($lineItems, $unitOfWeight, $weightLimit)
     {
         $packages = [];
 
@@ -193,7 +203,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
                     $dimensionLength = 0;
 
                     foreach ($productsParams as $productsParam) {
-                        if (($weight + $productsParam['weight']) >= self::MAX_PACKAGE_WEIGHT) {
+                        if (($weight + $productsParam['weight']) >= $weightLimit) {
                             $packages[] = Package::create(
                                 (string)$dimensionUnit,
                                 (string)$dimensionHeight,

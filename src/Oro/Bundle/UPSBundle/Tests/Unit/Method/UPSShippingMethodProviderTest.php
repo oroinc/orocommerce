@@ -23,8 +23,10 @@ class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        /** @var UPSTransport | \PHPUnit_Framework_MockObject_MockObject $transportProvider */
         $transportProvider = $this->getMockBuilder(UPSTransport::class)
             ->disableOriginalConstructor()->getMock();
+        /** @var ManagerRegistry | \PHPUnit_Framework_MockObject_MockObject $doctrine */
         $doctrine = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()->getMock();
 
@@ -34,12 +36,12 @@ class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
         $manager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()->getMock();
 
-        $manager->expects($this->once())
+        $manager->expects(static::once())
             ->method('getRepository')
             ->with('OroIntegrationBundle:Channel')
             ->willReturn($repository);
 
-        $doctrine->expects($this->once())
+        $doctrine->expects(static::once())
             ->method('getManagerForClass')
             ->with('OroIntegrationBundle:Channel')
             ->willReturn($manager);
@@ -49,7 +51,7 @@ class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
             'enabled' => true,
         ]);
 
-        $repository->expects($this->once())
+        $repository->expects(static::once())
             ->method('findBy')
             ->with([
                 'type' => ChannelType::TYPE,
@@ -62,25 +64,25 @@ class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetShippingMethods()
     {
         $methods = $this->provider->getShippingMethods();
-        $this->assertCount(1, $methods);
+        static::assertCount(1, $methods);
         $method = reset($methods);
-        $this->assertInstanceOf(UPSShippingMethod::class, $method);
-        $this->assertEquals(['ups_10'], array_keys($methods));
+        static::assertInstanceOf(UPSShippingMethod::class, $method);
+        static::assertEquals(['ups_10'], array_keys($methods));
     }
 
     public function testGetShippingMethod()
     {
         $method = $this->provider->getShippingMethod('ups_10');
-        $this->assertInstanceOf(UPSShippingMethod::class, $method);
+        static::assertInstanceOf(UPSShippingMethod::class, $method);
     }
 
     public function testHasShippingMethod()
     {
-        $this->assertTrue($this->provider->hasShippingMethod('ups_10'));
+        static::assertTrue($this->provider->hasShippingMethod('ups_10'));
     }
 
     public function testHasShippingMethodFalse()
     {
-        $this->assertFalse($this->provider->hasShippingMethod('wrong'));
+        static::assertFalse($this->provider->hasShippingMethod('wrong'));
     }
 }
