@@ -1,0 +1,21 @@
+oro_cms_page:
+    resource:     "@OroCMSBundle/Controller/PageController.php"
+    type:         annotation
+    prefix:       /cms/page
+
+oro_cms_frontend_page:
+    resource:     "@OroCMSBundle/Controller/Frontend/PageController.php"
+    type:         annotation
+    prefix:       /cms/page
+    options:
+        frontend: true
+
+oro_cms_ajax:
+    resource:     "@OroCMSBundle/Controller/AjaxPageController.php"
+    type:         annotation
+    prefix:       /cms/ajax
+
+oro_cms_login_page:
+    resource:     "@OroCMSBundle/Controller/LoginPageController.php"
+    type:         annotation
+    prefix:       /cms/login-page

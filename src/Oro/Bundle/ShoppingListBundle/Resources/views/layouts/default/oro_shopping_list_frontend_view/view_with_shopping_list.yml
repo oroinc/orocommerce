@@ -1,0 +1,9 @@
+layout:
+    actions:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue: '=context["title"]'
+
+    conditions: 'context["title"]!=null'
+

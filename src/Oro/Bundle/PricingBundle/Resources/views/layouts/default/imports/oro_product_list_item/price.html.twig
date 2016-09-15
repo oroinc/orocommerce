@@ -1,0 +1,131 @@
+{% block __oro_product_list_item__product_price_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'oropricing/js/app/views/base-product-prices-view',
+            changeQuantity: true,
+            modelAttr: {
+                prices: productPrices
+            }
+        },
+        '~class': ' product-item__price-wrap product-item__price-wrap_{{ class_prefix }}'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <div data-name="prices-hint"
+             data-placement="bottom"
+             data-close="false"
+             data-trigger="hover"
+             data-container="body"
+             data-class="prices-hint-content">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block __oro_product_list_item__product_price_widget %}
+    {% set buttonsId = id|replace({'_price': ''}) ~ '_line_item_form_buttons' %}
+    {% if blocks[buttonsId] is defined and blocks[buttonsId].children is not empty %}
+    {% if productPrices %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item__price product-item__price_{{ class_prefix }}'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+    {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block __oro_product_list_item__product_price_value_widget %}
+    <div {{ block('block_attributes') }}
+            data-name="price">
+        {{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}
+        {% set firstPrice = productPrices|first %}
+        <div class="product-item__price_block">
+            <span class="fs16 blue" data-name="price-value">{{ firstPrice ? firstPrice.formatted_price }}</span>
+            / <span data-name="unit">{{ firstPrice ? firstPrice.formatted_unit }}</span>
+        </div>
+    </div>
+{% endblock %}
+
+{% block __oro_product_list_item__product_price_not_found_widget %}
+    <div data-name="price-not-found">
+        {% if productPrices %}
+            {{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}
+        {% else %}
+            {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block __oro_product_list_item__product_price_hint_widget %}
+    <div data-name="prices-hint-content" class="hidden">
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="text-uppercase">qty</th>
+                <th >Unit Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set shownUnit = '' %}
+            {% for price in productPrices %}
+                {% if shownUnit != price.unit %}
+                    {% set shownUnit = price.unit %}
+                    <tr>
+                        <td colspan="2" class="text-center">
+                            {% if loop.index > 1 %}<br/>{% endif %}
+                            <strong>{{ shownUnit|oro_format_product_unit_label|capitalize }}</strong>
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td>
+                        {{ price.quantity }}
+                    </td>
+                    <td>
+                        {{ price.formatted_price }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block __oro_product_list_item__product_listed_price_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-item__listed-price product-item__listed-price_{{ class_prefix }}'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {% if productPrices %}
+            {{ 'oro.pricing.frontend.pricelist.index.listed_price'|trans }}
+            <div class="product-item__price_block">
+                {% set pricesPerUnits = [] %}
+                {% for price in productPrices %}
+                    {% set unit = price.unit %}
+                    {% if pricesPerUnits[unit] is not defined or price.quantity < pricesPerUnits[unit].quantity %}
+                        {% set pricesPerUnits = pricesPerUnits|merge({
+                            (unit): price
+                        }) %}
+                    {% endif %}
+                {% endfor %}
+                {% for price in pricesPerUnits %}
+                    <div title="{{ 'oro.pricing.productprice.applicable_from'|trans({'%amount%': price.quantity})|raw }}">
+                        <span>{{ price.formatted_price }}</span> /
+                        {{ price.formatted_unit}}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block __oro_product_list_item__product_msrp_widget %}
+    {% set attr = layout_attr_defaults({
+        '~class': ' product-item__mspr product-item__mspr_{{ class_prefix }}'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ 'oro.pricing.frontend.pricelist.index.msrp'|trans }} <span>$24.99</span>
+    </div>
+{% endblock %}

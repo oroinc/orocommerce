@@ -1,0 +1,166 @@
+.quick-access {
+  &__list {
+    @include list-normalize();
+
+    padding-top: 18px;
+
+    text-align: right;
+
+    @include clearfix();
+  }
+
+  &__item {
+    position: relative;
+
+    display: inline-block;
+    margin-left: 10px;
+
+    font-size: 13px;
+
+    @media (max-width: $screen-md) {
+      margin-left: 5px;
+    }
+  }
+
+  &__link {
+    display: inline-block;
+    vertical-align: middle;
+
+    font-weight: 400;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: $base-font-color-light;
+
+    overflow: hidden;
+
+    &:hover, &:visited, &:focus {
+      text-decoration: none;
+
+      color: $base-font-color-light;
+    }
+
+    &:hover {
+      .quick-access__text {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__text {
+    vertical-align: middle;
+  }
+
+  &__badge {
+    width: $badge-sm-xs;
+    height: $badge-sm-xs;
+
+    margin-right: 5px;
+
+    font-size: 12px;
+    line-height: $badge-sm-xs;
+
+    i {
+      font-size: 11px;
+    }
+  }
+}
+
+// *** Sticked navigation has not implemented yet!!!
+.navigation-widget__list_sticked {
+  padding: 13px 5px 0 0;
+
+  font-size: 0;
+
+  @include clearfix();
+
+  > li {
+    display: inline-block;
+
+    .navigation-widget__badge {
+      margin-right: 20px;
+    }
+  }
+}
+
+
+
+// *** Static links list has not implemented yet!!!
+.static-links__list {
+  > li {
+    &:not(.hidden-when-collapsed) {
+      display: none;
+    }
+  }
+}
+
+// *** Dropdown has not implemented yet!!!
+.navigation-widget__list__dropdown {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+
+  display: block;
+  min-width: 345px;
+  border: 1px solid $base-border-color;
+  box-shadow: 0 2px 5px 0 rgba(0,0,0,.3);
+
+  background: $base-footer-background-color;
+
+  &__title {
+    padding: 20px 0;
+
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  &__controls {
+    margin: 10px 0 5px;
+
+    &.tb-gap {
+      margin: 20px 0 5px;
+    }
+
+    &.flex-container {
+      display: flex;
+
+      .btn {
+        width: 50%;
+
+        &:first-child {
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+
+  .btn_close {
+    color: $base-link-color;
+
+    opacity: 1;
+  }
+}
+
+// *** Nested list has not implemented yet!!!
+.navigation-widget__list_nested {
+  @include list-normalize();
+
+  padding: 20px 0 0 35px;
+
+  > li {
+    margin: 0 0 20px;
+
+    > a {
+      color: $base-font-color-light;
+      font-weight: 400;
+      text-transform: uppercase;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

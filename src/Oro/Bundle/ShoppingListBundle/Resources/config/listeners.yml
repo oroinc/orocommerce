@@ -1,0 +1,18 @@
+services:
+    oro_shopping_list.event_listener.shopping_list_listener:
+        class: 'Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListListener'
+        public: false
+        tags:
+            - { name: doctrine.event_listener, event: postRemove }
+
+    oro_shopping_list.event_listener.shopping_list_total_listener:
+        class: 'Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListTotalListener'
+        public: true
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.combined_price_list.update, method: onPriceListUpdate }
+            - { name: kernel.event_listener, event: oro_pricing.account.combined_price_list.update, method: onAccountPriceListUpdate }
+            - { name: kernel.event_listener, event: oro_pricing.account_group.combined_price_list.update, method: onAccountGroupPriceListUpdate }
+            - { name: kernel.event_listener, event: oro_pricing.website.combined_price_list.update, method: onWebsitePriceListUpdate }
+            - { name: kernel.event_listener, event: oro_pricing.config.combined_price_list.update, method: onConfigPriceListUpdate }

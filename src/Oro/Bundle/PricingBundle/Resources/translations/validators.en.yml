@@ -1,0 +1,26 @@
+oro:
+    pricing:
+          validators:
+              logical_expression:
+                  message: 'Invalid logical expression'
+              price_attrirute_price_list:
+                  fieldName.message: 'Field Name cannot contains special chars or spaces'
+              price_list:
+                  product_price_currency.message: 'Cannot remove "%invalidCurrency%" currency. Please delete all prices points in "%invalidCurrency%" first.'
+                  unique_price_list.message: 'Price list is duplicated.'
+                  not_empty_price_lists.message: 'At least one price list must be defined.'
+                  schedules_intersection.message: 'Price list schedule segments should not intersect'
+                  dates_chain.message: 'Price list schedule "Deactivate At" date should follow after "Active At"'
+              product_price:
+                  unique_entity.message: 'Product has duplication of product prices. Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.'
+                  currency.message: 'Currency "%invalidCurrency%" is not valid for current price list.'
+                  not_allowed_unit.message: 'Unit "%unit%" is not allowed for product "%product%".'
+                  not_existing_product.message: 'Product does not exist.'
+                  not_existing_unit.message: 'Product unit does not exist.'
+                  quantity.blank: 'Quantity should not be blank.'
+                  expression_is_invalid.message: 'Ivalid rule'
+              default_currency.message: 'Currency "%invalidCurrency%" is not valid default currency. Selected currency must be in enabled list'
+              using_as_available: "{1} Currency %curr%  is used in COMMERCE > Catalog > Pricing > Display Currencies > Available Currencies|]1,Inf[Currencies %curr% are used in COMMERCE > Catalog > Pricing > Display Currencies > Available Currencies"
+              is_not_enabled: "Currency %currency% is not enabled"
+              price_for_product_unit_exists.message: "Units: '%units%', are used in price attribute prices and can't be removed"
+              field_are_not_allowed.message: 'Field "%fieldName%" is not allowed'

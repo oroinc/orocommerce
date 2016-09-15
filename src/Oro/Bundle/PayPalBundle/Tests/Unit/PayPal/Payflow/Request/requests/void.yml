@@ -1,0 +1,5 @@
+TRXTYPE:
+    class: 'Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\VoidRequest'
+    request: |
+        TRXTYPE=V&TENDER=C&PARTNER=PayPal&VENDOR=SuperMerchant&USER=SuperMerchant
+        &PWD=x1y2z3&ORIGID=VPNE12564395&VERBOSITY=HIGH

@@ -1,7 +1,0 @@
-orob2b_frontend:
-    form:
-        inlineEditing:
-            action.save: Save
-            action.cancel: Cancel
-    unexpected_error: "Unexpected error occurred. Please contact system administrator."
-    item_deleted: "Item has been deleted."

@@ -1,0 +1,84 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+
+{% oro_title_set({params : {"%identifier%": entity.invoiceNumber }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('oro_invoice_index'),
+        'indexLabel': 'oro.invoice.entity_plural_label'|trans,
+        'entityTitle': 'oro.invoice.navigation.view'|trans({
+            '%identifier%': entity.invoiceNumber|default('N/A'|trans)
+        })
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set invoiceInformationWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'title': 'oro.invoice.widgets.invoice_information'|trans,
+            'url': path('oro_invoice_info', {id: entity.id})
+        }) }}
+    {% endset %}
+
+    {% set generalSectionBlocks = [{'data' : [invoiceInformationWidget]}] %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.invoice.navigation.sections.general'|trans,
+            'class': 'active',
+            'subblocks': generalSectionBlocks
+        }
+    ] %}
+
+    {% if entity.lineItems|length %}
+        {% set lineItems %}
+            <div class="grid-container">
+                <table class="grid table-hover table table-bordered table-condensed">
+                    <thead>
+                    <tr>
+                        <th><span>#</span></th>
+                        <th><span>{{ 'oro.product.sku.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.product.entity_label'|trans }}</span></th>
+                        <th><span>{{ 'oro.invoice.invoicelineitem.quantity.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.invoice.invoicelineitem.price.label'|trans }}</span></th>
+                        <th><span>{{ 'oro.invoice.invoicelineitem.price_total.label'|trans }}</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for lineItem in entity.lineItems %}
+                        {% set isFreeFormProduct = lineItem.product is empty and lineItem.freeFormProduct is not empty %}
+
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ lineItem.productSku }}</td>
+                            <td>
+                                {% if isFreeFormProduct %}
+                                    {{ lineItem.freeFormProduct }}
+                                {% else %}
+                                    {{ lineItem.product }}
+                                {% endif %}
+                            </td>
+                            <td>{{ lineItem.quantity|oro_format_product_unit_value(lineItem.productUnit) }}</td>
+                            <td>{{ lineItem.price|oro_format_price }}</td>
+                            <td>{{ lineItem.totalPrice|oro_format_price }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endset %}
+
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'oro.invoice.navigation.sections.invoice_line_items'|trans,
+            'subblocks': [{'data' : [lineItems]}]
+        }]) %}
+    {% endif %}
+
+    {% set id = 'invoice-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

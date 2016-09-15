@@ -1,0 +1,11 @@
+services:
+    oro_website.form.type.websiite_entity_visibility_type:
+        class: 'Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType'
+        arguments:
+            - "@doctrine"
+            - "@oro_website.website.provider"
+        tags:
+            - { name: form.type, alias: oro_website_scoped_data_type }
+        calls:
+            - [setWebsiteClass,['%oro_website.entity.website.class%']]
+

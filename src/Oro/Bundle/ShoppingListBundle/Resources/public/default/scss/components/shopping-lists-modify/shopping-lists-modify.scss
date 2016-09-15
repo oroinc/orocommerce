@@ -1,0 +1,57 @@
+.shopping-lists-modify {
+    margin: 0 -16px 0 -10px;
+    padding: 0;
+
+    white-space: nowrap;
+
+    background: $base-white-color;
+
+    &__text,
+    &__select,
+    &__badges {
+        display: inline-block;
+
+        vertical-align: middle;
+    }
+
+    &__badges {
+        position: absolute;
+        top: 50%;
+
+        transform: translateY(-50%);
+    }
+
+    &__text {
+        margin-right: 4px;
+    }
+
+    &__input {
+        width: 50px;
+    }
+
+    &__select {
+        margin-right: 45px;
+        min-width: 66px;
+    }
+
+    &__edit,
+    &__remove {
+        margin-left: 4px;
+    }
+
+    &__button {
+        display: inline-block;
+        padding: 0;
+
+        border: 0;
+        background: transparent;
+
+        &[disabled] {
+            opacity: .5;
+        }
+    }
+
+    &--hidden {
+        display: none;
+    }
+}

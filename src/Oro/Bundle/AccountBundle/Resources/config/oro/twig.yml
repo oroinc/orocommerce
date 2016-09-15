@@ -1,0 +1,2 @@
+bundles:
+    - OroAccountBundle:Form:fields.html.twig

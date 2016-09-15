@@ -1,0 +1,36 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%taxCode%": entity.code } }) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('oro_tax_index'),
+        'indexLabel': 'oro.tax.entity_plural_label'|trans,
+        'entityTitle': entity.code|default('N/A'|trans)
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set taxInfo %}
+        {{ UI.renderProperty('oro.tax.code.label'|trans, entity.code) }}
+        {{ UI.renderProperty('oro.tax.description.label'|trans, entity.description) }}
+        {{ UI.renderProperty('oro.tax.rate.label'|trans, entity.rate|oro_format_percent) }}
+    {% endset %}
+
+    {% set dataBlocks = [{
+        'title': 'oro.tax.sections.general'|trans,
+        'class': 'active',
+        'subblocks': [
+            {'data' : [taxInfo]},
+        ]
+    }] %}
+
+    {% set id = 'tax-tax-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

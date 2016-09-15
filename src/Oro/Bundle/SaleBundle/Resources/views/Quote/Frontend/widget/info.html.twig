@@ -1,0 +1,21 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroAddressBundle::macros.html.twig' as address %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('oro.frontend.sale.quote.qid.label'|trans, entity.qid) }}
+            {{ UI.renderProperty('oro.frontend.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}
+            {{ UI.renderProperty('oro.frontend.sale.quote.po_number.label'|trans, entity.poNumber|default('N/A'|trans)) }}
+            {{ UI.renderProperty('oro.frontend.sale.quote.ship_until.label'|trans, entity.shipUntil|oro_format_date|default('N/A'|trans)) }}
+            {% if entity.assignedAccountUsers | length %}
+                {{ UI.renderHtmlProperty('oro.frontend.sale.quote.assigned_account_users.label'|trans, UI.entityViewLinks(entity.assignedAccountUsers, 'fullName', 'oro_account_frontend_account_user_view')) }}
+            {% endif %}
+        </div>
+        <div class="responsive-block">
+            {{ entityConfig.renderDynamicFields(entity) }}
+            {{ UI.renderHtmlProperty('oro.sale.quote.sections.shipping_address'|trans, address.renderAddress(entity.shippingAddress)) }}
+        </div>
+    </div>
+</div>

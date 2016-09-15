@@ -1,0 +1,5 @@
+inventory_status_only:
+    fileName: A2.csv
+
+inventory_status_minimal:
+    fileName: D2.csv

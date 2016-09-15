@@ -1,0 +1,17 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set gridName = 'account-groups-grid' %}
+{% set pageTitle = 'oro.account.accountgroup.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('oro_account_group_create') %}
+        <div class="btn-group">
+            {{ UI.addButton({
+                'path': path('oro_account_group_create'),
+                'entity_label': 'oro.account.accountgroup.entity_label'|trans
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}

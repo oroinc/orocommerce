@@ -1,0 +1,88 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+
+{% oro_title_set({params : {"%title%": entity.label } }) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('oro_rfp_request_status_index'),
+        'indexLabel': 'oro.rfp.requeststatus.entity_plural_label'|trans,
+        'entityTitle': entity.label|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set requestInfo %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'url': path('oro_rfp_request_status_info', {id: entity.id}),
+            'alias': 'request-status-info-widget'
+        }) }}
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.rfp.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{'data' : [requestInfo]}]
+        }
+    ] %}
+
+    {% set id = 'request-status-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}
+
+{% block navButtons %}
+    {% if resource_granted('DELETE', entity) %}
+        {% if entity.deleted %}
+            {% set idButton = 'btn-restore-request-status' %}
+
+            {{ UI.button({
+                'aCss':  'no-hash',
+                'iCss':  'icon-ok',
+                'id':    idButton,
+                'label': 'oro.rfp.btn.restore'|trans,
+                'path':  path('oro_api_rfp_restore_request_status', {'id': entity.id}),
+                'title': 'oro.rfp.btn.restore'|trans,
+            }) }}
+
+            {% set requestStatusDeleteRestoreComponentOptions  = {
+                id: idButton,
+                url: path('oro_api_rfp_restore_request_status', {'id': entity.id}),
+                action: 'restore'
+            } %}
+
+            <span data-page-component-module="ororfp/js/app/components/request-status-delete-restore-component"
+                  data-page-component-options="{{ requestStatusDeleteRestoreComponentOptions|json_encode }}"></span>
+        {% elseif oro_config_value('oro_b2b_rfp.default_request_status') != entity.name %}
+            {% set idButton = 'btn-delete-request-status' %}
+
+            {{ UI.button({
+                'aCss':  'no-hash',
+                'iCss':  'icon-remove',
+                'id':    idButton,
+                'label': 'oro.rfp.btn.delete'|trans,
+                'path':  path('oro_api_rfp_delete_request_status', {'id': entity.id}),
+                'title': 'oro.rfp.btn.delete'|trans,
+            }) }}
+
+            {% set requestStatusDeleteRestoreComponentOptions  = {
+                id: idButton,
+                url: path('oro_api_rfp_delete_request_status', {'id': entity.id}),
+                action: 'delete'
+            } %}
+
+            <span data-page-component-module="ororfp/js/app/components/request-status-delete-restore-component"
+                  data-page-component-options="{{ requestStatusDeleteRestoreComponentOptions|json_encode }}"></span>
+        {% endif %}
+    {% endif %}
+
+    {{ parent() }}
+{% endblock %}
+
+{% block stats %}
+    {# Must be empty, because parent view uses this block to render dates, which are not implemented in this entity #}
+{% endblock stats %}

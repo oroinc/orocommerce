@@ -1,0 +1,12 @@
+operations:
+    oro_menu_item_delete:
+        extends: DELETE
+        substitute_operation: DELETE
+        for_all_entities: false
+        for_all_datagrids: false
+        routes:
+            - oro_menu_item_update
+        actions:
+            - '@redirect':
+                route: 'oro_menu_item_view'
+                route_parameters: {id: $root}

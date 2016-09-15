@@ -1,0 +1,49 @@
+Oro\Bundle\InvoiceBundle\Entity\Invoice:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: invoiceNumber
+        - Oro\Bundle\InvoiceBundle\Validator\Constraints\InvoicePaymentDueDate: ~
+    properties:
+        owner:
+            - NotBlank: ~
+        account:
+            - NotBlank: ~
+        poNumber:
+            - Length:
+                max: 255
+        invoiceDate:
+            - Date: ~
+            - NotBlank: ~
+        paymentDueDate:
+            - Date: ~
+            - NotBlank: ~
+        currency:
+            - Currency: ~
+        lineItems:
+            - Count:
+                min: 1
+                minMessage: 'oro.invoice.invoicelineitem.count'
+
+Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem:
+    properties:
+        invoice:
+            - NotBlank: ~
+        productSku:
+            - NotBlank:
+            - Length:
+                max: 255
+        quantity:
+            - NotBlank: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        priceType:
+            - NotBlank: ~
+        productUnit:
+            - NotBlank:
+                message: 'oro.product.productunit.invalid'
+        productUnitCode:
+            - NotBlank:
+        sortOrder:
+            - NotBlank: ~
+        price:
+            - NotBlank: ~
+            - Valid: ~

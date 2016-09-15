@@ -1,0 +1,46 @@
+services:
+    #EventListeners
+    oro_seo.event_listener.product_form_view:
+        class: 'Oro\Bundle\SEOBundle\EventListener\ProductFormViewListener'
+        arguments:
+            - '@request_stack'
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+
+    oro_seo.event_listener.category_form_view:
+        class: 'Oro\Bundle\SEOBundle\EventListener\CategoryFormViewListener'
+        arguments:
+            - '@request_stack'
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
+
+    oro_seo.event_listener.page_form_view:
+        class: 'Oro\Bundle\SEOBundle\EventListener\PageFormViewListener'
+        arguments:
+            - '@request_stack'
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.page-view, method: onPageView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.page-edit, method: onPageEdit }
+
+    #Forms
+    oro_seo.form.extension.page_type:
+        class: 'Oro\Bundle\SEOBundle\Form\Extension\PageFormExtension'
+        tags:
+            - { name: form.type_extension, alias: oro_cms_page }
+
+    oro_seo.form.extension.product_type:
+        class: 'Oro\Bundle\SEOBundle\Form\Extension\ProductFormExtension'
+        tags:
+            - { name: form.type_extension, alias: oro_product }
+
+    oro_seo.form.extension.category_type:
+        class: 'Oro\Bundle\SEOBundle\Form\Extension\CategoryFormExtension'
+        tags:
+            - { name: form.type_extension, alias: oro_catalog_category }

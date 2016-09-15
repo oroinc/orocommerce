@@ -1,0 +1,27 @@
+services:
+    oro_pricing.layout.data_provider.frontend_product_prices:
+        class: 'Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_pricing.model.price_list_request_handler'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.formatter.product_price_formatter'
+        tags:
+            - { name: layout.data_provider, alias: frontend_product_prices }
+
+    oro_pricing.layout.data_provider.product_units_without_prices:
+        class: 'Oro\Bundle\PricingBundle\Layout\DataProvider\ProductUnitsWithoutPricesProvider'
+        arguments:
+            - '@oro_pricing.layout.data_provider.frontend_product_prices'
+        tags:
+            - { name: layout.data_provider, alias: product_units_without_prices }
+
+    oro_pricing.layout.data_provider.currency:
+        class: 'Oro\Bundle\PricingBundle\Layout\DataProvider\CurrencyProvider'
+        public: true
+        arguments:
+            - '@oro_pricing.user_currency_manager'
+        tags:
+            - { name: layout.data_provider, alias: oro_pricing_currency }
+
+

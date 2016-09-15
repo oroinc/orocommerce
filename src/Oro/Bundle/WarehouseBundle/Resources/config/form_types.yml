@@ -1,0 +1,25 @@
+services:
+    oro_warehouse.form.type.warehouse:
+        class: 'Oro\Bundle\WarehouseBundle\Form\Type\WarehouseType'
+        calls:
+            - [setDataClass, ['%oro_warehouse.entity.warehouse.class%']]
+        tags:
+            - { name: form.type, alias: oro_warehouse }
+
+    oro_warehouse.form.type.warehouse_inventoty_level_grid:
+        class: 'Oro\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType'
+        arguments:
+            - '@form.factory'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: form.type, alias: oro_warehouse_inventory_level_grid }
+
+    oro_warehouse.form.type.extension.warehouse_inventory_status_export:
+        class: Oro\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTypeExtension
+        tags:
+            - { name: form.type_extension, alias: oro_importexport_export }
+
+    oro_warehouse.form.type.extension.warehouse_inventory_level_export_template:
+        class: Oro\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension
+        tags:
+            - { name: form.type_extension, alias: oro_importexport_export_template }
