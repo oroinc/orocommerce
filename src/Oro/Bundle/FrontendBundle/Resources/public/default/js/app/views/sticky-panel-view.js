@@ -115,7 +115,9 @@ define(function(require) {
                 var options = _.defaults($element.data('sticky') || {}, {
                     $elementPlaceholder: $elementPlaceholder,
                     placeholderId: '',
-                    toggleClass: ''
+                    toggleClass: '',
+                    autoWidth: false,
+                    isSticky: true
                 });
                 options.$placeholder = options.placeholderId ? $('#' + options.placeholderId) : $placeholder;
                 options.toggleClass += ' ' + this.options.elementClass;
@@ -169,14 +171,16 @@ define(function(require) {
             var options = $element.data('sticky');
             var isEmpty = $element.is(':empty');
 
-            if (options.currentState) {
-                if (isEmpty) {
-                    return false;
-                } else if (!options.alwaysInSticky && this.inViewPort(options.$elementPlaceholder, $element)) {
-                    return false;
+            if (options.isSticky) {
+                if (options.currentState) {
+                    if (isEmpty) {
+                        return false;
+                    } else if (!options.alwaysInSticky && this.inViewPort(options.$elementPlaceholder, $element)) {
+                        return false;
+                    }
+                } else if (!isEmpty && (options.alwaysInSticky || !this.inViewPort($element))) {
+                    return true;
                 }
-            } else if (!isEmpty && (options.alwaysInSticky || !this.inViewPort($element))) {
-                return true;
             }
 
             return null;
@@ -236,7 +240,7 @@ define(function(require) {
         updateElementPlaceholder: function($element) {
             $element.data('sticky').$elementPlaceholder.css({
                 display: $element.css('display'),
-                width: $element.outerWidth(),
+                width: $element.data('sticky').autoWidth ? 'auto' : $element.outerWidth(),
                 height: $element.outerHeight(),
                 margin: $element.css('margin') || 0
             });

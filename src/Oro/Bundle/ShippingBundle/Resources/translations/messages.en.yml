@@ -63,7 +63,7 @@ oro:
             destinations.label: Destinations
             address.label: Address
             configurations.label: Configurations
-            currency.label: Сurrency
+            currency.label: Currency
             stop_processing.label: Stop Further Rule Processing
         shippingruleconfiguration:
             entity_label: Shipping Rule Configuration
@@ -97,7 +97,7 @@ oro:
             section:
                 shipping_options: Shipping Options
         form:
-            orob2b_shipping_flat_rate_rule_config:
+            oro_shipping_flat_rate_rule_config:
                 label: Flat Rate
             placeholder:
                 length_unit.label: Select unit of length

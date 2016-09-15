@@ -28,7 +28,7 @@ class DatabaseBuilderTest extends WebTestCase
 
         $this->builder = new DatabaseBuilder(
             $container->get('doctrine'),
-            $container->get('orob2b_menu.menu.factory')
+            $container->get('oro_menu.menu.factory')
         );
     }
 

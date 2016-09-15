@@ -26,7 +26,7 @@ define(function(require) {
                 quantity: 'quantity',
                 price: 'price'
             },
-            matchOfferRoute: 'orob2b_sale_quote_frontend_quote_product_match_offer',
+            matchOfferRoute: 'oro_sale_quote_frontend_quote_product_match_offer',
             quoteProductId: null,
             calculatingMessage: 'Calculating...',
             notAvailableMessage: 'N/A'

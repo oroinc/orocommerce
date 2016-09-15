@@ -13,7 +13,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class ProductPriceCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_product_price_collection';
+    const NAME = 'oro_pricing_product_price_collection';
 
     /**
      * @var ManagerRegistry

@@ -185,6 +185,6 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
     /** {@inheritdoc} */
     public function getExtendedType()
     {
-        return 'orob2b_order_line_item';
+        return 'oro_order_line_item';
     }
 }

@@ -28,11 +28,11 @@ class AjaxLineItemController extends Controller
      *
      * @Route(
      *      "/add-product-from-view/{productId}",
-     *      name="orob2b_shopping_list_frontend_add_product",
+     *      name="oro_shopping_list_frontend_add_product",
      *      requirements={"productId"="\d+"}
      * )
      * @Acl(
-     *      id="orob2b_shopping_list_line_item_frontend_add",
+     *      id="oro_shopping_list_line_item_frontend_add",
      *      type="entity",
      *      class="OroShoppingListBundle:LineItem",
      *      permission="CREATE",
@@ -47,7 +47,7 @@ class AjaxLineItemController extends Controller
      */
     public function addProductFromViewAction(Request $request, Product $product)
     {
-        $shoppingListManager = $this->get('orob2b_shopping_list.shopping_list.manager');
+        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
         $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
         $lineItem = (new LineItem())
@@ -80,11 +80,11 @@ class AjaxLineItemController extends Controller
      *
      * @Route(
      *      "/remove-product-from-view/{productId}",
-     *      name="orob2b_shopping_list_frontend_remove_product",
+     *      name="oro_shopping_list_frontend_remove_product",
      *      requirements={"productId"="\d+"}
      * )
      * @Acl(
-     *      id="orob2b_shopping_list_line_item_frontend_remove",
+     *      id="oro_shopping_list_line_item_frontend_remove",
      *      type="entity",
      *      class="OroShoppingListBundle:LineItem",
      *      permission="DELETE",
@@ -100,7 +100,7 @@ class AjaxLineItemController extends Controller
      */
     public function removeProductFromViewAction(Request $request, Product $product)
     {
-        $shoppingListManager = $this->get('orob2b_shopping_list.shopping_list.manager');
+        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
 
         $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
@@ -126,8 +126,8 @@ class AjaxLineItemController extends Controller
     }
 
     /**
-     * @Route("/{gridName}/massAction/{actionName}", name="orob2b_shopping_list_add_products_massaction")
-     * @AclAncestor("orob2b_shopping_list_line_item_frontend_add")
+     * @Route("/{gridName}/massAction/{actionName}", name="oro_shopping_list_add_products_massaction")
+     * @AclAncestor("oro_shopping_list_line_item_frontend_add")
      *
      * @param Request $request
      * @param string $gridName
@@ -151,9 +151,9 @@ class AjaxLineItemController extends Controller
     }
 
     /**
-     * @Route("/{gridName}/massAction/{actionName}/create", name="orob2b_shopping_list_add_products_to_new_massaction")
+     * @Route("/{gridName}/massAction/{actionName}/create", name="oro_shopping_list_add_products_to_new_massaction")
      * @Template("OroShoppingListBundle:ShoppingList/Frontend:update.html.twig")
-     * @AclAncestor("orob2b_shopping_list_line_item_frontend_add")
+     * @AclAncestor("oro_shopping_list_line_item_frontend_add")
      *
      * @param Request $request
      * @param string $gridName
@@ -164,7 +164,7 @@ class AjaxLineItemController extends Controller
     public function addProductsToNewMassAction(Request $request, $gridName, $actionName)
     {
         $form = $this->createForm(ShoppingListType::NAME);
-        $manager = $this->get('orob2b_shopping_list.shopping_list.manager');
+        $manager = $this->get('oro_shopping_list.shopping_list.manager');
         $response = $this->get('oro_form.model.update_handler')->handleUpdate($manager->create(), $form, [], [], null);
 
         if ($form->isValid()) {
@@ -186,7 +186,7 @@ class AjaxLineItemController extends Controller
      */
     protected function getSuccessMessage(ShoppingList $shoppingList, $translationKey)
     {
-        $link = $this->get('router')->generate('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
+        $link = $this->get('router')->generate('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
 
         $translator = $this->get('translator');
 
@@ -204,7 +204,7 @@ class AjaxLineItemController extends Controller
      */
     protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, $message)
     {
-        $productShoppingLists = $this->get('orob2b_shopping_list.data_provider.product_shopping_lists')
+        $productShoppingLists = $this->get('oro_shopping_list.data_provider.product_shopping_lists')
             ->getProductUnitsQuantity($product);
 
         return [

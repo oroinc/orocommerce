@@ -35,7 +35,7 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $expected = [
             new \Twig_SimpleFilter(
-                'orob2b_order_format_source_document',
+                'oro_order_format_source_document',
                 [$this->sourceDocumentFormatter, 'format'],
                 ['is_safe' => ['html']]
             ),

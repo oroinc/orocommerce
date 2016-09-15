@@ -6,7 +6,7 @@ use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 
 class WebsitePathExtension extends \Twig_Extension
 {
-    const NAME = 'orob2b_website_path';
+    const NAME = 'oro_website_path';
     
     /**
      * @var WebsiteUrlResolver

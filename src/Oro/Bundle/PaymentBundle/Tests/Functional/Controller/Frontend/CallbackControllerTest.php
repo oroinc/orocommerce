@@ -23,7 +23,7 @@ class CallbackControllerTest extends WebTestCase
     public function testWithoutTransactionNoErrors()
     {
         foreach (['POST', 'GET'] as $method) {
-            foreach (['orob2b_payment_callback_return', 'orob2b_payment_callback_error'] as $route) {
+            foreach (['oro_payment_callback_return', 'oro_payment_callback_error'] as $route) {
                 $this->client->request(
                     $method,
                     $this->getUrl($route, ['accessIdentifier' => 'some_key', 'accessToken' => 'some_val']),
@@ -41,7 +41,7 @@ class CallbackControllerTest extends WebTestCase
         $paymentTransaction = $this->getReference(LoadPaymentTransactionData::AUTHORIZE_TRANSACTION);
 
         foreach (['POST', 'GET'] as $method) {
-            foreach (['orob2b_payment_callback_return', 'orob2b_payment_callback_error'] as $route) {
+            foreach (['oro_payment_callback_return', 'oro_payment_callback_error'] as $route) {
                 $this->assertCallback($paymentTransaction, $method, $route);
             }
         }
@@ -100,7 +100,7 @@ class CallbackControllerTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_payment_callback_notify',
+                'oro_payment_callback_notify',
                 [
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => $paymentTransaction->getAccessToken(),
@@ -124,7 +124,7 @@ class CallbackControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             $this->getUrl(
-                'orob2b_payment_callback_notify',
+                'oro_payment_callback_notify',
                 [
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => '123',

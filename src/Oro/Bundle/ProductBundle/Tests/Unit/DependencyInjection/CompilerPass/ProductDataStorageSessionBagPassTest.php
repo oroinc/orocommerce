@@ -47,7 +47,7 @@ class ProductDataStorageSessionBagPassTest extends \PHPUnit_Framework_TestCase
             ->willReturnMap(
                 [
                     ['session', true],
-                    ['orob2b_product.storage.product_data_bag', false],
+                    ['oro_product.storage.product_data_bag', false],
                 ]
             );
 
@@ -64,7 +64,7 @@ class ProductDataStorageSessionBagPassTest extends \PHPUnit_Framework_TestCase
             ->willReturnMap(
                 [
                     ['session', true],
-                    ['orob2b_product.storage.product_data_bag', true],
+                    ['oro_product.storage.product_data_bag', true],
                 ]
             );
 
@@ -86,7 +86,7 @@ class ProductDataStorageSessionBagPassTest extends \PHPUnit_Framework_TestCase
                         /** @var Reference $reference */
                         $reference = $value[0];
                         $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $reference);
-                        $this->assertEquals('orob2b_product.storage.product_data_bag', (string)$reference);
+                        $this->assertEquals('oro_product.storage.product_data_bag', (string)$reference);
 
                         return true;
                     }

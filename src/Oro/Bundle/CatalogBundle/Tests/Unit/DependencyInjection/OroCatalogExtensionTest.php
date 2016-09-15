@@ -12,12 +12,12 @@ class OroCatalogExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroCatalogExtension());
 
         $expectedParameters = [
-            'orob2b_catalog.entity.category.class',
+            'oro_catalog.entity.category.class',
         ];
         $expectedServices = [
-            'orob2b_catalog.form.extension.product_type',
-            'orob2b_catalog.form.extension.product_step_one_type',
-            'orob2b_catalog.provider.default_product_unit_provider.category'
+            'oro_catalog.form.extension.product_type',
+            'oro_catalog.form.extension.product_step_one_type',
+            'oro_catalog.provider.default_product_unit_provider.category'
         ];
         $this->assertParametersLoaded($expectedParameters);
         $this->assertDefinitionsLoaded($expectedServices);

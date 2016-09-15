@@ -20,7 +20,7 @@ use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 
 /**
- * @NamePrefix("orob2b_api_shopping_list_frontend_")
+ * @NamePrefix("oro_api_shopping_list_frontend_")
  */
 class LineItemController extends RestController implements ClassResourceInterface
 {
@@ -30,7 +30,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_shopping_list_line_item_frontend_delete",
+     *      id="oro_shopping_list_line_item_frontend_delete",
      *      type="entity",
      *      class="OroShoppingListBundle:LineItem",
      *      permission="DELETE",
@@ -52,7 +52,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
 
         $view = $this->view(null, Codes::HTTP_NO_CONTENT);
         if ($lineItem) {
-            $this->get('orob2b_shopping_list.shopping_list.manager')->removeLineItem($lineItem);
+            $this->get('oro_shopping_list.shopping_list.manager')->removeLineItem($lineItem);
             $success = true;
         }
 
@@ -64,7 +64,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
      *      description="Update Line Item",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_shopping_list_frontend_update")
+     * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param int $id
      *
@@ -83,7 +83,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
                 $form,
                 $request,
                 $this->getDoctrine(),
-                $this->get('orob2b_shopping_list.shopping_list.manager')
+                $this->get('oro_shopping_list.shopping_list.manager')
             );
             $isFormHandled = $handler->process($entity);
             if ($isFormHandled) {
@@ -106,7 +106,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
      */
     public function getManager()
     {
-        return $this->get('orob2b_shopping_list.line_item.manager.api');
+        return $this->get('oro_shopping_list.line_item.manager.api');
     }
 
     /**

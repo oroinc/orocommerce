@@ -4,7 +4,7 @@ Upgrade from beta.3
 General
 -------
 - All code was moved from `OroB2B` namespace to `Oro` namespace
-- Name prefix for all OroCommerce tables was changed from `orob2b_` to `oro_` 
+- Name prefix for all OroCommerce tables, routes and ACL identities was changed from `orob2b_` to `oro_` 
 
 FrontendBundle:
 ---------------
@@ -20,6 +20,7 @@ CheckoutBundle:
 - Interface `Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface` no longer implements `Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface`.
 - Added new property `string $workflowName` to `Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent` and added related `setter` and `getter`.
 - Added argument `CheckoutInterface $checkout` to method `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener::getWorkflowName`.
+- `oro_checkout.repository.checkout` inherits `oro_entity.abstract_repository`
 
 AlternativeCheckoutBundle:
 --------------------------
@@ -77,3 +78,22 @@ PricingBundle:
 SaleBundle:
 -----------
 - Modified `Oro\Bundle\SaleBundle\Entity\Quote` with property `paymentTerm` as many-to-one relation to `Oro\Bundle\PaymentBundle\Entity\PaymentTerm`.
+
+CatalogBundle
+-------------
+- `oro_catalog.repository.category` inherits `oro_entity.abstract_repository`
+
+ProductBundle
+-------------
+- `oro_product.repository.product` inherits `oro_entity.abstract_repository`
+
+ShippingBundle
+--------------
+- `oro_shipping.repository.product_shipping_options` inherits `oro_entity.abstract_repository`
+- `oro_shipping.repository.length_unit` inherits `oro_entity.abstract_repository`
+- `oro_shipping.repository.weight_unit` inherits `oro_entity.abstract_repository`
+- `oro_shipping.repository.freight_class` inherits `oro_entity.abstract_repository`
+
+ShoppingListBundle
+------------------
+- `oro_shopping_list.repository.line_item` inherits `oro_entity.abstract_repository`

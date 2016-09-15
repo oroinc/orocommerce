@@ -69,8 +69,8 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
         $this->dispatcher->expects($this->exactly(2))
             ->method('dispatch')
             ->withConsecutive(
-                ['orob2b_payment.require_payment_redirect', $event],
-                ['orob2b_payment.require_payment_redirect.payment_term', $event]
+                ['oro_payment.require_payment_redirect', $event],
+                ['oro_payment.require_payment_redirect.payment_term', $event]
             );
 
         $this->condition->initialize([self::PAYMENT_METHOD_KEY => 'payment_term']);

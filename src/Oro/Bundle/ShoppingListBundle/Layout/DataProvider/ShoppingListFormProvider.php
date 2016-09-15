@@ -10,8 +10,8 @@ use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
 class ShoppingListFormProvider extends AbstractFormProvider
 {
-    const SHOPPING_LIST_CREATE_ROUTE_NAME   = 'orob2b_shopping_list_frontend_create';
-    const SHOPPING_LIST_VIEW_ROUTE_NAME     = 'orob2b_shopping_list_frontend_view';
+    const SHOPPING_LIST_CREATE_ROUTE_NAME   = 'oro_shopping_list_frontend_create';
+    const SHOPPING_LIST_VIEW_ROUTE_NAME     = 'oro_shopping_list_frontend_view';
 
     /**
      * @param ShoppingList $shoppingList

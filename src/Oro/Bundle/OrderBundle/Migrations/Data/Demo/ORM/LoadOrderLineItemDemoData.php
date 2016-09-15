@@ -43,7 +43,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
-        $this->productPriceProvider = $container->get('orob2b_pricing.provider.combined_product_price');
+        $this->productPriceProvider = $container->get('oro_pricing.provider.combined_product_price');
     }
 
     /**
@@ -92,7 +92,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
 
             $price = Price::create(mt_rand(10, 1000), $order->getCurrency());
             if ($product) {
-                $priceList = $this->container->get('orob2b_pricing.model.price_list_tree_handler')
+                $priceList = $this->container->get('oro_pricing.model.price_list_tree_handler')
                     ->getPriceList($order->getAccount(), $order->getWebsite());
                 if ($priceList) {
                     $price = $this->getPrice(
@@ -128,8 +128,8 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
 
         fclose($handler);
 
-        $subtotalProvider = $this->container->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item');
-        $totalProvider = $this->container->get('orob2b_pricing.subtotal_processor.total_processor_provider');
+        $subtotalProvider = $this->container->get('oro_pricing.subtotal_processor.provider.subtotal_line_item');
+        $totalProvider = $this->container->get('oro_pricing.subtotal_processor.total_processor_provider');
         foreach ($this->orders as $order) {
             /** @var Subtotal $subtotal */
             $subtotal = $subtotalProvider->getSubtotal($order);

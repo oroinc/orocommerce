@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class AccountUserRoleType extends AbstractAccountUserRoleType
 {
-    const NAME = 'orob2b_account_account_user_role';
+    const NAME = 'oro_account_account_user_role';
 
     /**
      * {@inheritdoc}

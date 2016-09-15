@@ -3,7 +3,7 @@
     {% if isFreeFormProduct %}
         {{ record.getValue('freeFormProduct') }}
     {% else %}
-        <a href="{{ path('orob2b_product_frontend_product_view', {'id': record.getValue('product.id')}) }}">{{ record.getValue('productName') }}</a>
+        <a href="{{ path('oro_product_frontend_product_view', {'id': record.getValue('product.id')}) }}">{{ record.getValue('productName') }}</a>
     {% endif %}
 </h3>
 {% if not isFreeFormProduct %}

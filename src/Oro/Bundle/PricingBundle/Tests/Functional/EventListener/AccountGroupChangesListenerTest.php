@@ -30,7 +30,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
             true
         );
         $this->messageProducer = $this->getContainer()->get('oro_message_queue.message_producer');
-        $this->getContainer()->get('orob2b_pricing.price_list_trigger_handler')->sendScheduledTriggers();
+        $this->getContainer()->get('oro_pricing.price_list_trigger_handler')->sendScheduledTriggers();
         $this->messageProducer->clear();
         $this->messageProducer->enable();
     }
@@ -47,7 +47,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_account_delete_account_group', ['id' => $group->getId()])
+            $this->getUrl('oro_api_account_delete_account_group', ['id' => $group->getId()])
         );
         $result = $this->client->getResponse();
 

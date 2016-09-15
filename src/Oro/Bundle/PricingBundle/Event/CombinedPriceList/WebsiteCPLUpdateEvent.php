@@ -6,7 +6,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 class WebsiteCPLUpdateEvent extends Event
 {
-    const NAME = 'orob2b_pricing.website.combined_price_list.update';
+    const NAME = 'oro_pricing.website.combined_price_list.update';
 
     /**
      * @var array
