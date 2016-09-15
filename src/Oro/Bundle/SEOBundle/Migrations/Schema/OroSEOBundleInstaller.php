@@ -90,7 +90,6 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
             $targetDetailedColumnNames,
             $targetGridColumnNames,
             [
-
                 'extend' => [
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'without_default' => true,
