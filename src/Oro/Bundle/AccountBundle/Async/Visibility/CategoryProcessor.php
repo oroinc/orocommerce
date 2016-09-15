@@ -6,8 +6,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
-use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
 use Oro\Bundle\CatalogBundle\Model\CategoryMessageFactory;
 use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
@@ -72,7 +72,7 @@ class CategoryProcessor implements MessageProcessorInterface
     public function process(MessageInterface $message, SessionInterface $session)
     {
         /** @var EntityManagerInterface $em */
-        $em = $this->registry->getManagerForClass(CategoryVisibility::class);
+        $em = $this->registry->getManagerForClass(CategoryVisibilityResolved::class);
         $em->beginTransaction();
         try {
             $messageData = JSON::decode($message->getBody());

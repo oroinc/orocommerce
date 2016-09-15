@@ -3,7 +3,6 @@
 namespace Oro\Bundle\AccountBundle\Async\Visibility;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
@@ -24,7 +23,7 @@ class ProductProcessor implements MessageProcessorInterface
     protected $registry;
 
     /**
-     * @var VisibilityMessageFactory
+     * @var ProductMessageFactory
      */
     protected $messageFactory;
 

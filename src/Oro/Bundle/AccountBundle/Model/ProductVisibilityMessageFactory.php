@@ -107,8 +107,11 @@ class ProductVisibilityMessageFactory implements MessageFactoryInterface
         $website = $this->registry->getManagerForClass(Website::class)
             ->getRepository(Website::class)
             ->find($data[self::WEBSITE_ID]);
-        if (!$product || !$website) {
-            throw new InvalidArgumentException('Required objects was not found.');
+        if (!$product) {
+            throw new InvalidArgumentException('Product object was not found.');
+        }
+        if (!$website) {
+            throw new InvalidArgumentException('Website object was not found.');
         }
         $visibility = new ProductVisibility();
         $visibility->setProduct($product);
@@ -133,8 +136,14 @@ class ProductVisibilityMessageFactory implements MessageFactoryInterface
         $account = $this->registry->getManagerForClass(Account::class)
             ->getRepository(Account::class)
             ->find($data[self::ACCOUNT_ID]);
-        if (!$product || !$website || !$account) {
-            throw new InvalidArgumentException('Required objects was not found.');
+        if (!$product) {
+            throw new InvalidArgumentException('Product object was not found.');
+        }
+        if (!$website) {
+            throw new InvalidArgumentException('Website object was not found.');
+        }
+        if (!$account) {
+            throw new InvalidArgumentException('Account object was not found.');
         }
         $visibility = new AccountProductVisibility();
         $visibility->setProduct($product);
@@ -160,8 +169,14 @@ class ProductVisibilityMessageFactory implements MessageFactoryInterface
         $accountGroup = $this->registry->getManagerForClass(AccountGroup::class)
             ->getRepository(AccountGroup::class)
             ->find($data[self::ACCOUNT_GROUP_ID]);
-        if (!$product || !$website || !$accountGroup) {
-            throw new InvalidArgumentException('Required objects was not found.');
+        if (!$product) {
+            throw new InvalidArgumentException('Product object was not found.');
+        }
+        if (!$website) {
+            throw new InvalidArgumentException('Website object was not found.');
+        }
+        if (!$accountGroup) {
+            throw new InvalidArgumentException('AccountGroup object was not found.');
         }
         $visibility = new AccountGroupProductVisibility();
         $visibility->setProduct($product);

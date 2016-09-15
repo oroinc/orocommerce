@@ -51,7 +51,7 @@ class CategoryVisibilityMessageFactory implements MessageFactoryInterface
                 $message = $this->accountGroupCategoryVisibilityToArray($visibility);
                 break;
             default:
-                throw new InvalidArgumentException('Unsupported entity class');
+                throw new InvalidArgumentException('Unsupported entity class.');
         }
 
         return $message;
@@ -102,7 +102,7 @@ class CategoryVisibilityMessageFactory implements MessageFactoryInterface
             ->getRepository(Category::class)
             ->find($data[self::CATEGORY_ID]);
         if (!$category) {
-            throw new InvalidArgumentException('Required objects was not found.');
+            throw new InvalidArgumentException('Category object was not found.');
         }
         $visibility = new CategoryVisibility();
         $visibility->setCategory($category);
@@ -123,8 +123,11 @@ class CategoryVisibilityMessageFactory implements MessageFactoryInterface
         $account = $this->registry->getManagerForClass(Account::class)
             ->getRepository(Account::class)
             ->find($data[self::ACCOUNT_ID]);
-        if (!$category || !$account) {
-            throw new InvalidArgumentException('Required objects was not found.');
+        if (!$category) {
+            throw new InvalidArgumentException('Category object was not found.');
+        }
+        if (!$account) {
+            throw new InvalidArgumentException('Account object was not found.');
         }
         $visibility = new AccountCategoryVisibility();
         $visibility->setCategory($category);
@@ -146,8 +149,11 @@ class CategoryVisibilityMessageFactory implements MessageFactoryInterface
         $accountGroup = $this->registry->getManagerForClass(AccountGroup::class)
             ->getRepository(AccountGroup::class)
             ->find($data[self::ACCOUNT_GROUP_ID]);
-        if (!$category || !$accountGroup) {
-            throw new InvalidArgumentException('Required objects was not found.');
+        if (!$category) {
+            throw new InvalidArgumentException('Category object was not found.');
+        }
+        if (!$accountGroup) {
+            throw new InvalidArgumentException('AccountGroup object was not found.');
         }
         $visibility = new AccountGroupCategoryVisibility();
         $visibility->setCategory($category);
