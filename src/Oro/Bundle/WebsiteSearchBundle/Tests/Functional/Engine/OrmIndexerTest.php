@@ -7,6 +7,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
@@ -56,6 +57,15 @@ class OrmIndexerTest extends SearchWebTestCase
             'fields' => [
                 [
                     'name' => 'title_LOCALIZATION_ID',
+                    'type' => 'text'
+                ]
+            ]
+        ],
+        TestEmployee::class => [
+            'alias' => 'oro_employee_WEBSITE_ID',
+            'fields' => [
+                [
+                    'name' => 'name',
                     'type' => 'text'
                 ]
             ]
@@ -319,9 +329,9 @@ class OrmIndexerTest extends SearchWebTestCase
 
         $this->indexer->delete($productMock, ['website_id' => $this->getDefaultWebsiteId()]);
 
-        $this->assertEntityCount(4, Item::class);
+        $this->assertEntityCount(8, Item::class);
         $this->assertEntityCount(2, IndexInteger::class);
-        $this->assertEntityCount(2, IndexText::class);
+        $this->assertEntityCount(6, IndexText::class);
         $this->assertEntityCount(2, IndexDatetime::class);
         $this->assertEntityCount(2, IndexDecimal::class);
     }
@@ -334,9 +344,9 @@ class OrmIndexerTest extends SearchWebTestCase
 
         $this->indexer->delete([], ['website_id' => $this->getDefaultWebsiteId()]);
 
-        $this->assertEntityCount(4, Item::class);
+        $this->assertEntityCount(8, Item::class);
         $this->assertEntityCount(2, IndexInteger::class);
-        $this->assertEntityCount(2, IndexText::class);
+        $this->assertEntityCount(6, IndexText::class);
         $this->assertEntityCount(2, IndexDatetime::class);
         $this->assertEntityCount(2, IndexDecimal::class);
     }
@@ -366,9 +376,9 @@ class OrmIndexerTest extends SearchWebTestCase
             ['website_id' => $this->getDefaultWebsiteId()]
         );
 
-        $this->assertEntityCount(2, Item::class);
+        $this->assertEntityCount(6, Item::class);
         $this->assertEntityCount(1, IndexInteger::class);
-        $this->assertEntityCount(1, IndexText::class);
+        $this->assertEntityCount(5, IndexText::class);
         $this->assertEntityCount(1, IndexDatetime::class);
         $this->assertEntityCount(1, IndexDecimal::class);
     }
@@ -406,9 +416,9 @@ class OrmIndexerTest extends SearchWebTestCase
             ['website_id' => $this->getDefaultWebsiteId()]
         );
 
-        $this->assertEntityCount(2, Item::class);
+        $this->assertEntityCount(6, Item::class);
         $this->assertEntityCount(1, IndexInteger::class);
-        $this->assertEntityCount(1, IndexText::class);
+        $this->assertEntityCount(5, IndexText::class);
         $this->assertEntityCount(1, IndexDatetime::class);
         $this->assertEntityCount(1, IndexDecimal::class);
     }
@@ -436,10 +446,74 @@ class OrmIndexerTest extends SearchWebTestCase
             []
         );
 
+        $this->assertEntityCount(4, Item::class);
+        $this->assertEntityCount(0, IndexInteger::class);
+        $this->assertEntityCount(4, IndexText::class);
+        $this->assertEntityCount(0, IndexDatetime::class);
+        $this->assertEntityCount(0, IndexDecimal::class);
+    }
+
+    public function testResetIndexForAllWebsitesAndClasses()
+    {
+        $this->indexer->resetIndex();
+
         $this->assertEntityCount(0, Item::class);
         $this->assertEntityCount(0, IndexInteger::class);
         $this->assertEntityCount(0, IndexText::class);
         $this->assertEntityCount(0, IndexDatetime::class);
         $this->assertEntityCount(0, IndexDecimal::class);
+    }
+
+    public function testResetIndexForAllWebsitesAndSpecificClass()
+    {
+        $this->indexer->resetIndex(TestProduct::class);
+
+        $this->assertEntityCount(4, Item::class);
+        $this->assertEntityCount(0, IndexInteger::class);
+        $this->assertEntityCount(4, IndexText::class);
+        $this->assertEntityCount(0, IndexDatetime::class);
+        $this->assertEntityCount(0, IndexDecimal::class);
+    }
+
+    public function testResetIndexForSpecificWebsiteAndSpecificClass()
+    {
+        $this
+            ->mappingProviderMock
+            ->expects($this->once())
+            ->method('getEntityAlias')
+            ->with(TestProduct::class)
+            ->willReturn($this->mappingConfig[TestProduct::class]['alias']);
+
+        $this->indexer->resetIndex(TestProduct::class, ['website_id' => $this->getDefaultWebsiteId()]);
+
+        $this->assertEntityCount(6, Item::class);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(5, IndexText::class);
+        $this->assertEntityCount(1, IndexDatetime::class);
+        $this->assertEntityCount(1, IndexDecimal::class);
+    }
+
+    public function testResetIndexForSpecificWebsiteAndAllClasses()
+    {
+        $this
+            ->mappingProviderMock
+            ->expects($this->once())
+            ->method('getEntityClasses')
+            ->willReturn(array_keys($this->mappingConfig));
+
+        $this
+            ->mappingProviderMock
+            ->expects($this->exactly(2))
+            ->method('getEntityAlias')
+            ->withConsecutive([TestProduct::class], [TestEmployee::class])
+            ->will($this->onConsecutiveCalls('oro_product_WEBSITE_ID', 'oro_employee_WEBSITE_ID'));
+
+        $this->indexer->resetIndex(null, ['website_id' => $this->getDefaultWebsiteId()]);
+
+        $this->assertEntityCount(4, Item::class);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(3, IndexText::class);
+        $this->assertEntityCount(1, IndexDatetime::class);
+        $this->assertEntityCount(1, IndexDecimal::class);
     }
 }
