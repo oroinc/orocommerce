@@ -92,8 +92,7 @@ class OrmIndexerTest extends SearchWebTestCase
      */
     public function getRestrictEntityEventName()
     {
-        $alias = $this->entityAliasResolver->getAlias(TestProduct::class);
-        return sprintf('%s.%s', RestrictIndexEntityEvent::NAME, $alias);
+        return sprintf('%s.%s', RestrictIndexEntityEvent::NAME, 'testproduct');
     }
 
     protected function tearDown()
@@ -379,13 +378,7 @@ class OrmIndexerTest extends SearchWebTestCase
             ->expects($this->exactly(4))
             ->method('isClassSupported')
             ->withConsecutive([TestProduct::class], [TestProduct::class], ['stdClass'], ['stdClass'])
-            ->willReturnCallback(function ($class) {
-                if ($class === TestProduct::class) {
-                    return true;
-                }
-
-                return false;
-            });
+            ->willReturnOnConsecutiveCalls(true, true, false, false);
 
         $this->mappingProviderMock
             ->expects($this->once())
