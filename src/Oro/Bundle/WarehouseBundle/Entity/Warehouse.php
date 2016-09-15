@@ -42,6 +42,10 @@ use Oro\Bundle\WarehouseBundle\Model\ExtendWarehouse;
  *          "dataaudit"={
  *              "auditable"=true
  *          },
+ *          "form"={
+ *              "form_type"="oro_warehouse_select",
+ *              "grid_name"="base-warehouse-grid",
+ *          },
  *      }
  * )
  */
@@ -107,7 +111,7 @@ class Warehouse extends ExtendWarehouse implements OrganizationAwareInterface
      */
     public function __toString()
     {
-        return $this->name;
+        return (string)$this->name;
     }
 
     /**
@@ -133,6 +137,7 @@ class Warehouse extends ExtendWarehouse implements OrganizationAwareInterface
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
