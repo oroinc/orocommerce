@@ -4,7 +4,7 @@ namespace Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type;
 
 use Oro\DBAL\Types\MoneyType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 
 class PriceTypeGenerator
 {

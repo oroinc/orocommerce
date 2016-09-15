@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CurrencyBundle\Rounding;
 
+use Oro\Bundle\CurrencyBundle\Exception\InvalidRoundingTypeException;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\ProductBundle\Exception\InvalidRoundingTypeException;
 
 abstract class AbstractRoundingService implements RoundingServiceInterface
 {

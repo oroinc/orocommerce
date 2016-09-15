@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Exception;
+namespace Oro\Bundle\CurrencyBundle\Exception;
 
 class InvalidRoundingTypeException extends \Exception
 {

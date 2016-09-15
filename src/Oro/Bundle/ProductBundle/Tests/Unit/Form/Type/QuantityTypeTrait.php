@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 
 /**
  * @method \PHPUnit_Framework_MockObject_MockBuilder getMock($className)
@@ -27,7 +27,7 @@ trait QuantityTypeTrait
     public function getRoundingService()
     {
         if (!$this->roundingService) {
-            $this->roundingService = $this->getMock('Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
+            $this->roundingService = $this->getMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
         }
 
         return $this->roundingService;
