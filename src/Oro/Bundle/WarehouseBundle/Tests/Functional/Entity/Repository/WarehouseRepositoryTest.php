@@ -3,8 +3,8 @@
 namespace Oro\Bundle\WarehouseBundle\Tests\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseProBundle\Entity\Repository\WarehouseRepository;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
 
 /**

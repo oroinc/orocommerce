@@ -12,7 +12,7 @@ use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSu
 use Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 
 class ShippingOriginWarehouseTypeTest extends AddressFormExtensionTestCase
 {

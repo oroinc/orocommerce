@@ -4,8 +4,8 @@ namespace Oro\Bundle\WarehouseBundle\Tests\Unit\SystemConfig;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
-use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
-use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfigConverter;
+use Oro\Bundle\WarehouseProBundle\SystemConfig\WarehouseConfig;
+use Oro\Bundle\WarehouseProBundle\SystemConfig\WarehouseConfigConverter;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class WarehouseConfigConverterTest extends \PHPUnit_Framework_TestCase

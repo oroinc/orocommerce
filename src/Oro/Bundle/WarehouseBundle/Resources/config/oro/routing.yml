@@ -1,5 +1,5 @@
 oro_warehouse:
-    resource:     "@OroWarehouseBundle/Controller/WarehouseController.php"
+    resource:     "@OroWarehouseProBundle/Controller/WarehouseController.php"
     type:         annotation
     prefix:       /warehouse
 

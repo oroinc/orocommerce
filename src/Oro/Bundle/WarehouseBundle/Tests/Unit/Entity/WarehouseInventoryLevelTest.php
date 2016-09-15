@@ -5,7 +5,7 @@ namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Entity;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class WarehouseInventoryLevelTest extends \PHPUnit_Framework_TestCase

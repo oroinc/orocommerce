@@ -73,8 +73,8 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit_Framework_
      */
     public function reverseTransformDataProvider()
     {
-        $firstWarehouse = $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 1]);
-        $secondWarehouse = $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 2]);
+        $firstWarehouse = $this->getEntity('Oro\Bundle\WarehouseProBundle\Entity\Warehouse', ['id' => 1]);
+        $secondWarehouse = $this->getEntity('Oro\Bundle\WarehouseProBundle\Entity\Warehouse', ['id' => 2]);
 
         $warehouseClass = 'OroWarehouseBundle:Warehouse';
         $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')

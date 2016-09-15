@@ -7,7 +7,7 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 
 /**
  * @dbIsolation

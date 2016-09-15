@@ -83,7 +83,7 @@ services:
             - "@translator"
 
     oro_warehouse.importexport.strategy_helper.product_unit:
-        class: 'Oro\Bundle\WarehouseBundle\ImportExport\Strategy\ProductUnitStrategyHelper'
+        class: 'Oro\Bundle\WarehouseProBundle\ImportExport\Strategy\ProductUnitStrategyHelper'
         public: false
         arguments:
             - "@oro_importexport.field.database_helper"
@@ -93,7 +93,7 @@ services:
              - [setSuccessor, ["@oro_warehouse.importexport.strategy_helper.warehouse_inventory_level"]]
 
     oro_warehouse.importexport.strategy_helper.warehouse:
-        class: 'Oro\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseStrategyHelper'
+        class: 'Oro\Bundle\WarehouseProBundle\ImportExport\Strategy\WarehouseStrategyHelper'
         public: false
         arguments:
             - "@oro_importexport.field.database_helper"

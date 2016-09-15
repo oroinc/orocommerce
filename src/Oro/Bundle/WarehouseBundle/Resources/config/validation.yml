@@ -1,4 +1,4 @@
-Oro\Bundle\WarehouseBundle\Entity\Warehouse:
+Oro\Bundle\WarehouseProBundle\Entity\Warehouse:
     properties:
         owner:
             - NotBlank: ~

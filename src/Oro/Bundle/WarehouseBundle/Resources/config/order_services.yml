@@ -1,34 +1,34 @@
 services:
     # Event listener
     oro_warehouse.event_listener.order_warehouse_grid_listener:
-        class: 'Oro\Bundle\WarehouseBundle\EventListener\OrderWarehouseGridListener'
+        class: 'Oro\Bundle\WarehouseProBundle\EventListener\OrderWarehouseGridListener'
         arguments:
             - "@oro_warehouse.entity.helper.warehouse_counter"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orders-grid, method: onBuildBefore }
 
     oro_warehouse.event_listener.order_line_item_warehouse_grid_listener:
-        class: 'Oro\Bundle\WarehouseBundle\EventListener\OrderLineItemWarehouseGridListener'
+        class: 'Oro\Bundle\WarehouseProBundle\EventListener\OrderLineItemWarehouseGridListener'
         arguments:
             - "@oro_warehouse.entity.helper.warehouse_counter"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
 
     oro_warehouse.event_listener.order_form_view:
-        class: 'Oro\Bundle\WarehouseBundle\EventListener\OrderFormViewListener'
+        class: 'Oro\Bundle\WarehouseProBundle\EventListener\OrderFormViewListener'
         arguments: ["@oro_warehouse.entity.helper.warehouse_counter"]
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.order-edit, method: onOrderEdit }
 
     oro_warehouse.event_listener.order_warehouse_before_render:
-        class: 'Oro\Bundle\WarehouseBundle\EventListener\OrderWarehouseBeforeRenderListener'
+        class: 'Oro\Bundle\WarehouseProBundle\EventListener\OrderWarehouseBeforeRenderListener'
         arguments: ["@oro_warehouse.entity.helper.warehouse_counter"]
         tags:
             - { name: kernel.event_listener, event: oro.entity_extend_event.before_value_render, method: onWarehouseOrderDisplay, priority: -255 }
 
     # Form extension
     oro_warehouse.form.extension.order:
-        class: 'Oro\Bundle\WarehouseBundle\Form\Extension\OrderFormExtension'
+        class: 'Oro\Bundle\WarehouseProBundle\Form\Extension\OrderFormExtension'
         arguments:
             - "@oro_warehouse.entity.helper.warehouse_counter"
         tags:

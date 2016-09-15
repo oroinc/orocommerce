@@ -5,7 +5,7 @@ namespace Oro\Bundle\WarehouseBundle\ImportExport\Strategy;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class WarehouseInventoryLevelStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHelper

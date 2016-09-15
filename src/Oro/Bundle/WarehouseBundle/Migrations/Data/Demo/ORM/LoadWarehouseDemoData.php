@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class LoadWarehouseDemoData extends AbstractEntityReferenceFixture implements DependentFixtureInterface

@@ -40,7 +40,7 @@ class ShippingOriginWarehouseTest extends \PHPUnit_Framework_TestCase
             'street2' => ['street2', 'street2'],
             'created' => ['created', $now],
             'updated' => ['updated', $now],
-            'warehouse' => ['warehouse', $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse')]
+            'warehouse' => ['warehouse', $this->getEntity('Oro\Bundle\WarehouseProBundle\Entity\Warehouse')]
         ];
 
         $this->assertPropertyAccessors($this->shippingOriginWarehouse, $properties);

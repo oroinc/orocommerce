@@ -1,5 +1,5 @@
 search:
-    Oro\Bundle\WarehouseBundle\Entity\Warehouse:
+    Oro\Bundle\WarehouseProBundle\Entity\Warehouse:
         alias:                          oro_warehouse
         title_fields:                   [name]
         route:

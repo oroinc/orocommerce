@@ -10,7 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 
 class WarehouseInventoryLevelGridDataTransformer implements DataTransformerInterface
 {

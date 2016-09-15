@@ -17,8 +17,8 @@ use Oro\Bundle\ShippingBundle\Form\Extension\WarehouseShippingOriginExtension;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
-use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseType;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseType;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -101,7 +101,7 @@ class WarehouseShippingOriginExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPostSetData()
     {
-        $warehouse = $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse');
+        $warehouse = $this->getEntity('Oro\Bundle\WarehouseProBundle\Entity\Warehouse');
         $shippingOrigin = new ShippingOrigin();
 
         $this->shippingOriginProvider->expects($this->once())
@@ -131,7 +131,7 @@ class WarehouseShippingOriginExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPostSubmitInvalidForm()
     {
-        $event = $this->createEvent($this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse'));
+        $event = $this->createEvent($this->getEntity('Oro\Bundle\WarehouseProBundle\Entity\Warehouse'));
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $event->getForm();
@@ -253,10 +253,10 @@ class WarehouseShippingOriginExtensionTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'warehouse' => $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse')
+                'warehouse' => $this->getEntity('Oro\Bundle\WarehouseProBundle\Entity\Warehouse')
             ],
             [
-                'warehouse' => $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 42]),
+                'warehouse' => $this->getEntity('Oro\Bundle\WarehouseProBundle\Entity\Warehouse', ['id' => 42]),
                 'shippingOriginWarehouse' => new ShippingOriginWarehouse()
             ]
         ];

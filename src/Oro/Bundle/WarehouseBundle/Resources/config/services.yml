@@ -1,5 +1,5 @@
 parameters:
-    oro_warehouse.entity.warehouse.class: Oro\Bundle\WarehouseBundle\Entity\Warehouse
+    oro_warehouse.entity.warehouse.class: Oro\Bundle\WarehouseProBundle\Entity\Warehouse
     oro_warehouse.entity.warehouse_inventory_level.class: Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel
 
 services:
@@ -11,7 +11,7 @@ services:
             - "@doctrine.orm.entity_manager"
 
     oro_warehouse.entity.helper.warehouse_counter:
-        class: 'Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter'
+        class: 'Oro\Bundle\WarehouseProBundle\Entity\Helper\WarehouseCounter'
         arguments: ["@oro_entity.doctrine_helper"]
 
     oro_warehouse.api.processor.product_id.normalize_input:
@@ -51,12 +51,12 @@ services:
             - { name: oro_form.autocomplete.search_handler, alias: oro_warehouse, acl_resource: oro_warehouse_view }
 
     oro_warehouse.validator.unique_warehouse:
-        class: 'Oro\Bundle\WarehouseBundle\Validator\Constraints\UniqueWarehouseValidator'
+        class: 'Oro\Bundle\WarehouseProBundle\Validator\Constraints\UniqueWarehouseValidator'
         tags:
             - { name: validator.constraint_validator, alias: oro_warehouse_unique_warehouse_validator }
 
     oro_warehouse.event_listener.system_config:
-        class: 'Oro\Bundle\WarehouseBundle\EventListener\WarehouseSystemConfigSubscriber'
+        class: 'Oro\Bundle\WarehouseProBundle\EventListener\WarehouseSystemConfigSubscriber'
         arguments:
             - '@oro_warehouse.system_config_converter'
         tags:
@@ -64,7 +64,7 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
 
     oro_warehouse.system_config_converter:
-        class: 'Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfigConverter'
+        class: 'Oro\Bundle\WarehouseProBundle\SystemConfig\WarehouseConfigConverter'
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'

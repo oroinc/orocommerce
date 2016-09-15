@@ -1,6 +1,6 @@
 api:
     entities:
-        Oro\Bundle\WarehouseBundle\Entity\Warehouse: ~
+        Oro\Bundle\WarehouseProBundle\Entity\Warehouse: ~
         Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel:
             filters:
                 fields:

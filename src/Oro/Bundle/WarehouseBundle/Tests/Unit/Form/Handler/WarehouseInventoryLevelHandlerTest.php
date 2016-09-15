@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\WarehouseBundle\Form\Handler\WarehouseInventoryLevelHandler;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -136,7 +136,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager->expects($this->any())
             ->method('persist')
-            ->with($this->isInstanceOf('Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel'))
+            ->with($this->isInstanceOf('Oro\Bundle\WarehouseProBundle\Entity\WarehouseInventoryLevel'))
             ->willReturnCallback(
                 function ($entity) use (&$persistedEntities) {
                     $persistedEntities[] = $entity;
@@ -144,7 +144,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
             );
         $this->manager->expects($this->any())
             ->method('remove')
-            ->with($this->isInstanceOf('Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel'))
+            ->with($this->isInstanceOf('Oro\Bundle\WarehouseProBundle\Entity\WarehouseInventoryLevel'))
             ->willReturnCallback(
                 function ($entity) use (&$removedEntities) {
                     $removedEntities[] = $entity;
@@ -270,7 +270,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function createWarehouse($id)
     {
-        return $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => $id]);
+        return $this->getEntity('Oro\Bundle\WarehouseProBundle\Entity\Warehouse', ['id' => $id]);
     }
 
     /**

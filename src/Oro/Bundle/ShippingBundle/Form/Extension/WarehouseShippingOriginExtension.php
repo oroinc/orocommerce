@@ -15,8 +15,8 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
-use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseType;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseType;
 
 class WarehouseShippingOriginExtension extends AbstractTypeExtension
 {

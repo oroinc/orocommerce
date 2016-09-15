@@ -11,8 +11,8 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\WarehouseBundle\Api\Processor\NormalizeInventoryLevelRequestData;
-use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
-use Oro\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository;
+use Oro\Bundle\WarehouseProBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\WarehouseProBundle\Entity\Repository\WarehouseRepository;
 use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase

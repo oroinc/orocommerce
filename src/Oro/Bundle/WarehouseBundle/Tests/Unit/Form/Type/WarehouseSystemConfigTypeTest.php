@@ -8,12 +8,12 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
-use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseCollectionType;
-use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseSelectType;
-use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseSelectWithPriorityType;
-use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseSystemConfigType;
-use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseCollectionType;
+use Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseSelectType;
+use Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseSelectWithPriorityType;
+use Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseSystemConfigType;
+use Oro\Bundle\WarehouseProBundle\SystemConfig\WarehouseConfig;
 use Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Type\Stub\WarehouseSelectTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;

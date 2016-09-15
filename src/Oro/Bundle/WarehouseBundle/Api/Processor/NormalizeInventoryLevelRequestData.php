@@ -10,9 +10,9 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
-use Oro\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseProBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\WarehouseProBundle\Entity\Repository\WarehouseRepository;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 
 class NormalizeInventoryLevelRequestData implements ProcessorInterface
 {

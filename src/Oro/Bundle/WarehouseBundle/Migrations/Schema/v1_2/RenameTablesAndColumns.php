@@ -41,7 +41,7 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
         );
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\WarehouseBundle\Entity\Warehouse',
+            'Oro\Bundle\WarehouseProBundle\Entity\Warehouse',
             'warehouse_6eca7547',
             'warehouse_c913b87',
             RelationType::MANY_TO_ONE

@@ -11,7 +11,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\FormBundle\Form\DataTransformer\DataChangesetTransformer;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 use Oro\Bundle\WarehouseBundle\Form\DataTransformer\WarehouseInventoryLevelGridDataTransformer as LevelTransformer;
 

@@ -10,7 +10,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
 use Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 
 class ShippingOriginProvider
 {

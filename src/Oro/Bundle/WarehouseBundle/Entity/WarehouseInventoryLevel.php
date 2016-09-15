@@ -8,6 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\WarehouseBundle\Model\ExtendWarehouseInventoryLevel;
+use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 
 /**
  * @ORM\Table(
@@ -50,7 +51,7 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
     /**
      * @var Warehouse $warehouse
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WarehouseBundle\Entity\Warehouse")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WarehouseProBundle\Entity\Warehouse")
      * @ORM\JoinColumn(name="warehouse_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $warehouse;
