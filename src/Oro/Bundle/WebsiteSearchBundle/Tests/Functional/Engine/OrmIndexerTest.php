@@ -522,7 +522,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->loadFixtures([LoadProductsToIndex::class]);
 
         $this->mappingProviderMock
-            ->expects($this->exactly(3))
+            ->expects($this->exactly(2))
             ->method('isClassSupported')
             ->with(TestProduct::class)
             ->willReturn(true);
@@ -573,7 +573,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
         $this->listener = $this->setListener();
         $this->mappingProviderMock
-            ->expects($this->exactly(4))
+            ->expects($this->exactly(3))
             ->method('isClassSupported')
             ->with(TestProduct::class)
             ->willReturn(true);
@@ -587,5 +587,27 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->indexer->save([$product1, $product2]);
 
         $this->assertEntityCount(4, Item::class);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage There is no such entity in mapping config.
+     */
+    public function testSaveForNotSupportedEntity()
+    {
+        $this->loadFixtures([LoadOtherWebsite::class]);
+        $this->loadFixtures([LoadProductsToIndex::class]);
+
+        $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
+        $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
+
+        $this->listener = $this->setListener();
+        $this->mappingProviderMock
+            ->expects($this->exactly(1))
+            ->method('isClassSupported')
+            ->with(TestProduct::class)
+            ->willReturn(false);
+
+        $this->indexer->save([$product1, $product2]);
     }
 }

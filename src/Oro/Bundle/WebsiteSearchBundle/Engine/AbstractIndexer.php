@@ -125,14 +125,18 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function save($entity, array $context = [])
+    public function save($entityOrEntities, array $context = [])
     {
-        $entities = is_array($entity) ? $entity : [$entity];
+        $entities = is_array($entityOrEntities) ? $entityOrEntities: [$entityOrEntities];
 
         $entitiesByClass = [];
         foreach ($entities as $entity) {
             $entityClass = $this->doctrineHelper->getEntityClass($entity);
             $entitiesByClass[$entityClass][] = $entity;
+        }
+
+        foreach (array_keys($entitiesByClass) as $entityClass) {
+            $this->ensureEntityClassIsSupported($entityClass);
         }
 
         $this->delete($entities, $context);
@@ -142,8 +146,6 @@ abstract class AbstractIndexer implements IndexerInterface
             $websiteContext = $this->collectContextForWebsite($websiteId, $context);
 
             foreach ($entitiesByClass as $entityClass => $entities) {
-                $this->ensureEntityClassIsSupported($entityClass);
-
                 $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
                 $currentAlias = $this->applyPlaceholders($entityAlias, $websiteContext);
 
