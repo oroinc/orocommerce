@@ -58,12 +58,7 @@ define([
                     return _.contains(options.grouping, item);
                 });
 
-            var dataWordsAreValid = _.every(groups.dataWords, function(item) {
-                var expressionMatch = item.match(_this.opsRegEx);
-                var matchSplit = expressionMatch ? _this.splitString(item, expressionMatch[0]).arr : null;
-
-                return !_.isNull(expressionMatch) && matchSplit[1] !== '' && _.contains(_this.dataWordCases, matchSplit[0]);
-            });
+            var dataWordsAreValid = _.every(groups.dataWords, this.validateDataExpr.bind(_this));
 
             return logicIsValid && dataWordsAreValid;
         },
@@ -73,55 +68,51 @@ define([
             var _this = this;
 
             return {
-                source: function(value, collback) {
+                source: function(value) {
                     caretPosition = $element[0].selectionStart;
 
                     normalized = _this.getNormalized(value, _this.opsRegEx, caretPosition);
 
-                    var separatorsPositions = _.compact(value.split('').map(function(char, i) {
-                        return (/^\s$/.test(char)) ? i + 1 : null;
-                    }));
-
-                    wordPosition = (function(arr, position) {
+                    wordPosition = (function(value, position) {
                         var index = 0;
                         var result = {
                             start: 0,
                             end: position
                         };
+                        var separatorsPositions = _.compact(value.split('').map(function(char, i) {
+                            return (/^\s$/.test(char)) ? i + 1 : null;
+                        }));
 
-                        if (arr.length) {
-                            while (arr[index] < position) {
+
+                        if (separatorsPositions.length) {
+                            while (separatorsPositions[index] < position) {
                                 index++;
                             }
 
-                            var isSpace = arr[index] === position;
+                            var isSpace = separatorsPositions[index] === position;
 
                             result = {
-                                start: isSpace ? null : arr[index - 1] || 0,
-                                end: isSpace ? null : arr[index] - 1 || position,
+                                start: isSpace ? null : separatorsPositions[index - 1] || 0,
+                                end: isSpace ? null : separatorsPositions[index] - 1 || position,
                                 index: index,
-                                spaces: arr
+                                spaces: separatorsPositions
                             };
                         }
 
                         return result;
-                    })(separatorsPositions, caretPosition);
+                    })(value, caretPosition);
 
-                    wordUnderCaret = _this.getStringPart(normalized.string, wordPosition.start, wordPosition.end);
+                    wordUnderCaret = _this.getStringPart(value, wordPosition.start, wordPosition.end);
 
-                    var suggests = _this.getSuggestList(normalized, wordPosition, wordUnderCaret);
-                    console.log(wordUnderCaret, suggests);
-
-                    collback(suggests || []);
+                    return _this.getSuggestList(normalized, wordUnderCaret);
                 },
-                matcher: function(item) {
-                    return item.indexOf(wordUnderCaret) !== -1 || _this.hasLastSpace(wordUnderCaret);
+                matcher: function() {
+                    return true;
                 },
                 updater: function(item) {
-                    console.log(wordPosition);
-
-                    var cutBefore = _.isNull(wordPosition.start) ? wordPosition.spaces[wordPosition.index] : wordPosition.start;
-                    var cutAfter = _.isNull(wordPosition.end) ? wordPosition.spaces[wordPosition.index] : wordPosition.end;
+                    var spacePosition = wordPosition.spaces[wordPosition.index];
+                    var cutBefore = _.isNull(wordPosition.start) ? spacePosition : wordPosition.start;
+                    var cutAfter = _.isNull(wordPosition.end) ? spacePosition : wordPosition.end;
 
                     var queryPartBefore = _this.getStringPart(this.query, 0, cutBefore);
                     var queryPartAfter = _this.getStringPart(this.query, cutAfter);
@@ -130,56 +121,66 @@ define([
                         $element[0].selectionStart = $element[0].selectionEnd = cutBefore + item.length;
                     }, 10);
 
-                    console.log(queryPartBefore, item, queryPartAfter, wordPosition);
-
-
                     return queryPartBefore + item + queryPartAfter;
                 }
             };
         },
 
-        hasLastSpace: function(string) {
-            return string.substr(string.length - 1, 1) === ' ';
+        validateDataExpr: function(item) {
+            var expressionMatch = item.match(this.opsRegEx);
+
+            if (_.isNull(expressionMatch)) {
+                return false;
+            }
+
+            var matchSplit = expressionMatch ? this.splitString(item, expressionMatch[0]).arr : null;
+
+            return !_.isEmpty(matchSplit[1]) && this.validateWord(matchSplit[0], this.dataWordCases);
+        },
+        validateWord: function(word, ref) {
+            return _.contains(ref, word);
         },
 
-        getSuggestList: function(normalized, wordPosition, wordUnderCaret) {
-            var expressionMatch = wordUnderCaret.match(this.opsRegEx);
-            var hasExpression = !_.isNull(expressionMatch);
-            var expressionSplit = hasExpression ? wordUnderCaret.split(expressionMatch[0]) : [];
-            var hasDataCase = (hasExpression && _.contains(this.dataWordCases, expressionSplit[0])) || _.contains(this.dataWordCases, wordUnderCaret.trim());
-            var hasDataValue = !!(expressionSplit[1] && expressionSplit[1].length);
-            var hasLastSpace = this.hasLastSpace(wordUnderCaret);
+        getSuggestList: function(normalized,wordUnderCaret) {
+            var _this = this;
+
             var words = this.splitString(normalized.string, ' ').arr;
+            var wordsLength = words.length;
             var groups = this.getGroups(words);
-            var logicLast = groups.logicWords.length && _.last(groups.logicWords) === _.last(words);
 
+            var previousWord = words[words.length - 2];
+            var lastWord = _.last(words);
+            var isLast = isWord(lastWord);
+            var lastIsValid = isLast.isLogic || isLast.isDataWord || isLast.isValidDataExpr;
 
-            console.log(logicLast, groups.logicWords.length , _.last(groups.logicWords) , _.last(words));
+            var isCheckedWord = lastIsValid || wordsLength === 1 ? isLast : isWord(previousWord);
 
-
-            if (hasDataCase && !logicLast) {
-                if (hasExpression) {
-                    if (hasDataValue && hasLastSpace) {
-                        return this.logicWordCases;
-                    }
-                } else if (hasLastSpace) {
-                    return this.operationsCases;
-                }
+            if (isCheckedWord.isValidDataExpr) {
+                return this.getFilteredSuggests(wordUnderCaret, this.logicWordCases, true);
+            } else if (isCheckedWord.isDataWord) {
+                return this.getFilteredSuggests(wordUnderCaret, this.operationsCases, true);
             } else {
                 return this.getFilteredSuggests(wordUnderCaret, this.dataWordCases);
+            }
+
+            function isWord(word) {
+                return {
+                    isLogic: !_.isEmpty(groups.logicWords) && _.contains(_this.logicWordCases, word),
+                    isDataWord: !_.isEmpty(groups.dataWords) && _this.validateWord(word, _this.dataWordCases),
+                    isValidDataExpr: !_.isEmpty(groups.dataWords) && _this.validateDataExpr(word)
+                };
             }
         },
 
         getNormalized: function(value, regex, caretPosition) {
-            var result = {string: this.applyRegexp(this.clearSpaces(value), regex)};
+            var string = caretPosition ? this.getStringPart(value, 0, caretPosition) : value;
+            var normalizedSpaces = this.clearSpaces(string);
+            var normalizedString = this.applyRegexp(normalizedSpaces, regex);
 
-            if (_.isNumber(caretPosition)) {
-                var beforeCaretValue = this.applyRegexp(this.clearSpaces(this.getStringPart(value, 0, caretPosition)), regex);
-
-                return _.extend(result, {caretPosition: beforeCaretValue.length});
-            }
-
-            return result;
+            return {
+                string: normalizedString,
+                position: normalizedString.length
+            };
         },
         clearSpaces: function(string) {
             return string.replace(/\s+/g, ' ');
@@ -188,9 +189,11 @@ define([
             return string.replace(regex, '$1');
         },
 
-        getFilteredSuggests: function(word, ref) {
-            if (!word) {
-                return [];
+        getFilteredSuggests: function(word, ref, fullOnEmpty) {
+            console.log('getFilteredSuggests', word, _.isEmpty(word), ref, fullOnEmpty);
+
+            if (_.isEmpty(word)) {
+                return fullOnEmpty ? ref : [];
             }
 
             var arr = _.filter(ref, function(item) {
@@ -202,7 +205,7 @@ define([
 
         getPathsArray: function(src, baseName, baseArr) {
             var self = this;
-            var arr = [baseName];
+            var arr = [];
 
             _.each(src, function(item, name) {
                 var subName = (baseName ? (baseName + '.') : '') + item;
@@ -220,23 +223,25 @@ define([
         },
 
         getStringPart: function(string, startPos, endPos) {
+            if (_.isNull(startPos) && _.isNull(endPos)) {
+                return null;
+            }
+
             var length = _.isNumber(endPos) ? endPos - startPos : undefined;
 
             return _.isNumber(startPos) ? string.substr(startPos, length) : string;
         },
 
         getRegexp: function(opsArr) {
-            var escapedOps = (function(ops) {
-                if (ops && ops.length) {
-                    return ops.map(function(item) {
-                        return '\\' + item.split('').join('\\');
-                    });
-                }
-
+            if (_.isEmpty(opsArr)) {
                 return null;
-            })(opsArr);
+            }
 
-            return escapedOps ? new RegExp('\\s*((' + escapedOps.join(')|(') + '))\\s*', 'gi') : null;
+            var escapedOps = opsArr.map(function(item) {
+                return '\\' + item.split('').join('\\');
+            });
+
+            return new RegExp('\\s*((' + escapedOps.join(')|(') + '))\\s*', 'gi');
         },
 
         splitString: function(string, splitter) {
