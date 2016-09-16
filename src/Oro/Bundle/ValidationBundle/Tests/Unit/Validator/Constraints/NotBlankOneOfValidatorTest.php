@@ -4,8 +4,6 @@ namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ValidationBundle\Validator\Constraints\NotBlankOneOf;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\NotBlankOneOfValidator;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
@@ -32,7 +30,7 @@ class NotBlankOneOfValidatorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->context = $this->getMock(ExecutionContextInterface::class);
-        $this->validator = new NotBlankOneOfValidator(new PropertyAccessor());
+        $this->validator = new NotBlankOneOfValidator();
         $this->constraint = new NotBlankOneOf();
 
         $this->validator->initialize($this->context);
@@ -72,18 +70,6 @@ class NotBlankOneOfValidatorTest extends \PHPUnit_Framework_TestCase
             'field2' => 'Field 2',
         ];
         $this->constraint->fields = [$fieldGroup];
-
-        /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
-        $translator = $this->getMock(TranslatorInterface::class);
-        $this->validator->setTranslator($translator);
-        $translator->expects($this->at(0))
-            ->method('trans')
-            ->with('Field 1')
-            ->willReturn('Field 1');
-        $translator->expects($this->at(1))
-            ->method('trans')
-            ->with('Field 2')
-            ->willReturn('Field 2');
 
         $violationBuilder = $this->getMock(ConstraintViolationBuilderInterface::class);
 

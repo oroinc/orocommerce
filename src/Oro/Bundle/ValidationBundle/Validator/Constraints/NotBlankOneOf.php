@@ -23,12 +23,4 @@ class NotBlankOneOf extends Constraint
     {
         return self::CLASS_CONSTRAINT;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validatedBy()
-    {
-        return NotBlankOneOfValidator::ALIAS;
-    }
 }
