@@ -566,6 +566,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->setClassSupportedExpectation(1, TestProduct::class, false);
         $this->indexer->save([$product1, $product2]);
     }
+
     public function testResetIndexForAllWebsitesAndSpecificClass()
     {
         $this->loadFixtures([LoadItemData::class]);
@@ -582,14 +583,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     public function testResetIndexForSpecificWebsiteAndSpecificClass()
     {
         $this->loadFixtures([LoadItemData::class]);
-
-        $this
-            ->mappingProviderMock
-            ->expects($this->once())
-            ->method('getEntityAlias')
-            ->with(TestProduct::class)
-            ->willReturn($this->mappingConfig[TestProduct::class]['alias']);
-
+        $this->setEntityAliasExpectation(1, TestProduct::class, $this->mappingConfig[TestProduct::class]['alias']);
         $this->indexer->resetIndex(TestProduct::class, ['website_id' => $this->getDefaultWebsiteId()]);
 
         $this->assertEntityCount(6, Item::class);
