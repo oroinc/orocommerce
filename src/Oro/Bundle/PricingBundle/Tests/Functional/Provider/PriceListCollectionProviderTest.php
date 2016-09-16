@@ -355,7 +355,7 @@ class PriceListCollectionProviderTest extends WebTestCase
 
         $configManager = $this->getContainer()->get('oro_config.global');
         $configManager->set(
-            'oro_b2b_pricing.default_price_lists',
+            'oro_pricing.default_price_lists',
             [new PriceListConfig($priceList, 100, true)]
         );
         $configManager->flush();

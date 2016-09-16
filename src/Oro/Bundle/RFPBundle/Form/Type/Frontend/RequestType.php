@@ -140,7 +140,7 @@ class RequestType extends AbstractType
             ->getManagerForClass($this->requestStatusClass)
             ->getRepository($this->requestStatusClass)
             ->findOneBy([
-                'name' => $this->configManager->get('oro_b2b_rfp.default_request_status')
+                'name' => $this->configManager->get('oro_rfp.default_request_status')
             ]);
     }
 

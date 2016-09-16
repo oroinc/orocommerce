@@ -53,10 +53,6 @@ datagrids:
                 updatedAt:
                     type:      datetime
                     data_name: warehouse.updatedAt
-        properties:
-            view_link:
-                type:  url
-                params: [ id ]
 
     warehouse-grid:
         acl_resource: oro_warehouse_view
@@ -64,6 +60,8 @@ datagrids:
         properties:
             view_link:
                 route: oro_warehouse_view
+                type:  url
+                params: [ id ]
         actions:
             view:
                 type:          navigate

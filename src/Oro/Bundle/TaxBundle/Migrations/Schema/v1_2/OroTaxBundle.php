@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\FrontendBundle\Migration\UpdateClassNamesQuery;
 use Oro\Bundle\FrontendBundle\Migration\UpdateSerializedClassNames;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
@@ -11,7 +12,7 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class RenameTables implements Migration, RenameExtensionAwareInterface
+class OroTaxBundle implements Migration, RenameExtensionAwareInterface
 {
     /**
      * @var RenameExtension
@@ -51,6 +52,9 @@ class RenameTables implements Migration, RenameExtensionAwareInterface
         // fix class names stored in DB
         $queries->addQuery(new UpdateClassNamesQuery('oro_tax_value', 'entity_class'));
         $queries->addQuery(new UpdateSerializedClassNames('oro_tax_value', 'result'));
+
+        // system configuration
+        $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_tax', 'oro_tax'));
     }
 
     /**

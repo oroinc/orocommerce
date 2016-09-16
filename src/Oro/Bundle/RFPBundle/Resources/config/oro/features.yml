@@ -2,7 +2,7 @@ features:
     rfp:
         label: oro.rfp.feature.label
         description: oro.rfp.feature.description
-        toggle: oro_b2b_rfp.feature_enabled
+        toggle: oro_rfp.feature_enabled
         routes:
             - 'oro_rfp_request_view'
             - 'oro_rfp_request_info'
@@ -27,14 +27,14 @@ features:
             - 'Oro\Bundle\RFPBundle\Entity\RequestProductItem'
         configuration:
             - 'rfp_notifications'
-            - 'oro_b2b_rfp.default_request_status'
-            - 'oro_b2b_rfp.frontend_product_visibility'
-            - 'oro_b2b_rfp.backend_product_visibility'
+            - 'oro_rfp.default_request_status'
+            - 'oro_rfp.frontend_product_visibility'
+            - 'oro_rfp.backend_product_visibility'
 
     rfp_frontend:
         label: oro.rfp.frontend.feature.label
         description: oro.rfp.forntend.feature.description
-        toggle: oro_b2b_rfp.frontend_feature_enabled
+        toggle: oro_rfp.frontend_feature_enabled
         dependencies:
             - 'rfp'
         operations:
