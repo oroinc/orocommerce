@@ -67,7 +67,7 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
                             $this->configManager
                         ],
                         [
-                            'orob2b_account.mailer.processor',
+                            'oro_account.mailer.processor',
                             ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
                             $this->emailProcessor
                         ]
@@ -114,7 +114,7 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->configManager->expects($this->once())
             ->method('get')
-            ->with('oro_b2b_account.send_password_in_welcome_email')
+            ->with('oro_account.send_password_in_welcome_email')
             ->willReturn($sendPassword);
 
         $this->userManager->sendWelcomeEmail($user);
@@ -149,7 +149,7 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->configManager->expects($this->once())
             ->method('get')
-            ->with('oro_b2b_account.confirmation_required')
+            ->with('oro_account.confirmation_required')
             ->will($this->returnValue(true));
 
         $this->emailProcessor->expects($this->once())
@@ -174,8 +174,8 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    ['oro_b2b_account.confirmation_required', false, false, null, false],
-                    ['oro_b2b_account.send_password_in_welcome_email', false, false, null, true]
+                    ['oro_account.confirmation_required', false, false, null, false],
+                    ['oro_account.send_password_in_welcome_email', false, false, null, true]
                 ]
             );
 
@@ -205,7 +205,7 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
     {
         $this->configManager->expects($this->once())
             ->method('get')
-            ->with('oro_b2b_account.confirmation_required')
+            ->with('oro_account.confirmation_required')
             ->will($this->returnValue($required));
 
         $this->assertEquals($required, $this->userManager->isConfirmationRequired());

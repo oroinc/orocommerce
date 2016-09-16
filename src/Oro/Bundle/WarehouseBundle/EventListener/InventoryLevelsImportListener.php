@@ -12,7 +12,7 @@ use Oro\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStra
 
 class InventoryLevelsImportListener
 {
-    const INVENTORY_IMPORT_PROCESSOR_ALIAS = 'orob2b_warehouse.warehouse_inventory_level';
+    const INVENTORY_IMPORT_PROCESSOR_ALIAS = 'oro_warehouse.warehouse_inventory_level';
 
     /** @var  WarehouseInventoryLevelStrategy $inventoryLevelStrategy */
     protected $inventoryLevelStrategy;

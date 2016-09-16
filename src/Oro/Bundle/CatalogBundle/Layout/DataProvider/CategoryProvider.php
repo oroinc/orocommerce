@@ -59,8 +59,10 @@ class CategoryProvider
         if (!array_key_exists($userId, $this->tree)) {
             $rootCategory = $this->loadCategory();
 
-            $this->tree[$userId] =
-                $rootCategory ? $this->categoryTreeProvider->getCategories($user, $rootCategory, false) : [];
+            $categories = $rootCategory ? $this->categoryTreeProvider->getCategories($user, $rootCategory, false) : [];
+            $this->tree[$userId] = array_filter($categories, function (Category $category) use ($rootCategory) {
+                return $category->getParentCategory() === $rootCategory;
+            });
         }
 
         return $this->tree[$userId];

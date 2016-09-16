@@ -8,7 +8,7 @@ use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\CategoryRepository")
- * @ORM\Table(name="orob2b_ctgr_vsb_resolv")
+ * @ORM\Table(name="oro_ctgr_vsb_resolv")
  */
 class CategoryVisibilityResolved extends BaseCategoryVisibilityResolved
 {

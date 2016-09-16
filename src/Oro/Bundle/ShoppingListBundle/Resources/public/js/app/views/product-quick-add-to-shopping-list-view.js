@@ -14,7 +14,7 @@ define(function(require) {
         _addProductToShoppingList: function(url, urlOptions, formData) {
             mediator.trigger(
                 this.options.quickAddComponentPrefix + ':submit',
-                'orob2b_shopping_list_quick_add_processor',
+                'oro_shopping_list_quick_add_processor',
                 urlOptions.shoppingListId
             );
         }

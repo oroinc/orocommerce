@@ -16,8 +16,8 @@ class QuickAddControllerTest extends BaseControllerTest
     {
         return [
             'rfp create' => [
-                'processorName' => 'orob2b_rfp_quick_add_processor',
-                'routerName' => 'orob2b_rfp_frontend_request_create',
+                'processorName' => 'oro_rfp_quick_add_processor',
+                'routerName' => 'oro_rfp_frontend_request_create',
                 'routerParams' => ['storage' => 1],
                 'expectedMessage' => null
             ]

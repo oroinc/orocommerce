@@ -27,7 +27,7 @@ class SlugManagerTest extends WebTestCase
     {
         $this->initClient();
         $this->registry    = $this->getContainer()->get('doctrine');
-        $this->slugManager = $this->getContainer()->get('orob2b_redirect.slug.manager');
+        $this->slugManager = $this->getContainer()->get('oro_redirect.slug.manager');
     }
 
     public function testMakeUrlUnique()
@@ -36,19 +36,19 @@ class SlugManagerTest extends WebTestCase
 
         $slug = new Slug();
         $slug->setUrl('domain.com/hvac-equipment/detection-kits');
-        $slug->setRouteName('orob2b_cms_page_view');
+        $slug->setRouteName('oro_cms_page_view');
         $slug->setRouteParameters(['id' => 1]);
         $manager->persist($slug);
 
         $slug1 = new Slug();
         $slug1->setUrl('domain.com/hvac-equipment/detection-kits1-1');
-        $slug1->setRouteName('orob2b_cms_page_view');
+        $slug1->setRouteName('oro_cms_page_view');
         $slug1->setRouteParameters(['id' => 1]);
         $manager->persist($slug1);
 
         $slug2 = new Slug();
         $slug2->setUrl('domain.com/hvac-equipment/detection-kits1-2');
-        $slug2->setRouteName('orob2b_cms_page_view');
+        $slug2->setRouteName('oro_cms_page_view');
         $slug2->setRouteParameters(['id' => 1]);
         $manager->persist($slug2);
 
@@ -56,7 +56,7 @@ class SlugManagerTest extends WebTestCase
 
         $testSlug = new Slug();
         $testSlug->setUrl('domain.com/hvac-equipment/detection-kits');
-        $testSlug->setRouteName('orob2b_cms_page_view');
+        $testSlug->setRouteName('oro_cms_page_view');
         $testSlug->setRouteParameters(['id' => 2]);
 
         $this->slugManager->makeUrlUnique($testSlug);
@@ -67,7 +67,7 @@ class SlugManagerTest extends WebTestCase
 
         $testSlug1 = new Slug();
         $testSlug1->setUrl('domain.com/hvac-equipment/detection-kits');
-        $testSlug1->setRouteName('orob2b_cms_page_view');
+        $testSlug1->setRouteName('oro_cms_page_view');
         $testSlug1->setRouteParameters(['id' => 21]);
 
         $this->slugManager->makeUrlUnique($testSlug1);
@@ -78,7 +78,7 @@ class SlugManagerTest extends WebTestCase
 
         $testSlug2 = new Slug();
         $testSlug2->setUrl('domain.com/hvac-equipment/detection-kits1-1');
-        $testSlug2->setRouteName('orob2b_cms_page_view');
+        $testSlug2->setRouteName('oro_cms_page_view');
         $testSlug2->setRouteParameters(['id' => 21]);
 
         $this->slugManager->makeUrlUnique($testSlug2);

@@ -8,7 +8,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 class TransactionCompleteEvent extends Event
 {
-    const NAME = 'orob2b_payment.event.transaction_complete';
+    const NAME = 'oro_payment.event.transaction_complete';
 
     /** @var PaymentTransaction */
     protected $transaction;

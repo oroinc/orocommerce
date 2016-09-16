@@ -14,7 +14,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
 
 class ShippingRuleConfigurationType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_rule_configuration';
+    const NAME = 'oro_shipping_rule_configuration';
     const ENABLED_VALIDATION_GROUP = 'Enabled';
 
     /**

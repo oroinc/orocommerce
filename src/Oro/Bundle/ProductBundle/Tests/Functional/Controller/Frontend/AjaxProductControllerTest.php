@@ -34,7 +34,7 @@ class AjaxProductControllerTest extends WebTestCase
     {
         $this->client->request(
             'POST',
-            $this->getUrl('orob2b_product_frontend_ajax_names_by_skus'),
+            $this->getUrl('oro_product_frontend_ajax_names_by_skus'),
             ['skus'=> $skus]
         );
         $result = $this->client->getResponse();

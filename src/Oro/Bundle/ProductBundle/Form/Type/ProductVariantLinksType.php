@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransfo
 
 class ProductVariantLinksType extends AbstractType
 {
-    const NAME = 'orob2b_product_variant_links';
+    const NAME = 'oro_product_variant_links';
 
     /** @var ProductVariantLinksDataTransformer */
     protected $transformer;

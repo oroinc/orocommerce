@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Provider\ProductStatusProvider;
 
 class ProductStatusType extends AbstractType
 {
-    const NAME = 'orob2b_product_status';
+    const NAME = 'oro_product_status';
 
     /**
      * @var  ProductStatusProvider $productStatuses

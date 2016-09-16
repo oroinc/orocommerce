@@ -8,7 +8,7 @@ use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 /**
- * @ORM\Table("orob2b_shipping_orig_warehouse")
+ * @ORM\Table("oro_shipping_orig_warehouse")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  */

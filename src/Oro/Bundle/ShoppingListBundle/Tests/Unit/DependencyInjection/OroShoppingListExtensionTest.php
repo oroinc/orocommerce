@@ -18,26 +18,26 @@ class OroShoppingListExtensionTest extends ExtensionTestCase
 
         $expectedParameters = [
             // Entity
-            'orob2b_shopping_list.entity.shopping_list.class',
-            'orob2b_shopping_list.entity.line_item.class',
+            'oro_shopping_list.entity.shopping_list.class',
+            'oro_shopping_list.entity.line_item.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
             // Services
-            'orob2b_shopping_list.validator.line_item',
-            'orob2b_shopping_list.line_item.manager.api',
-            'orob2b_shopping_list.shopping_list.manager.api',
-            'orob2b_shopping_list.shopping_list.manager',
-            'orob2b_shopping_list.placeholder.filter',
+            'oro_shopping_list.validator.line_item',
+            'oro_shopping_list.line_item.manager.api',
+            'oro_shopping_list.shopping_list.manager.api',
+            'oro_shopping_list.shopping_list.manager',
+            'oro_shopping_list.placeholder.filter',
 
             // Listeners
-            'orob2b_shopping_list.event_listener.shopping_list_listener',
+            'oro_shopping_list.event_listener.shopping_list_listener',
 
             // Forms
-            'orob2b_shopping_list.form.type.shopping_list',
-            'orob2b_shopping_list.form.type.line_item',
-            'orob2b_shopping_list.form.type.frontend_line_item_widget',
+            'oro_shopping_list.form.type.shopping_list',
+            'oro_shopping_list.form.type.line_item',
+            'oro_shopping_list.form.type.frontend_line_item_widget',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

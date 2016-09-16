@@ -15,7 +15,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 /**
  * @RouteResource("slug")
- * @NamePrefix("orob2b_api_")
+ * @NamePrefix("oro_api_")
  */
 class RedirectController extends FOSRestController
 {
@@ -32,7 +32,7 @@ class RedirectController extends FOSRestController
      * )
      *
      * @Acl(
-     *      id="orob2b_redirect_view",
+     *      id="oro_redirect_view",
      *      type="entity",
      *      class="OroRedirectBundle:Slug",
      *      permission="VIEW"
@@ -43,7 +43,7 @@ class RedirectController extends FOSRestController
      */
     public function slugifyAction($string)
     {
-        $slug = ['slug' => $this->get('orob2b_redirect.slug.generator')->slugify($string)];
+        $slug = ['slug' => $this->get('oro_redirect.slug.generator')->slugify($string)];
         return new Response(json_encode($slug), Response::HTTP_OK);
     }
 }

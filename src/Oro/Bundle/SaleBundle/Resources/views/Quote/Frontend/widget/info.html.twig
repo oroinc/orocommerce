@@ -10,7 +10,7 @@
             {{ UI.renderProperty('oro.frontend.sale.quote.po_number.label'|trans, entity.poNumber|default('N/A'|trans)) }}
             {{ UI.renderProperty('oro.frontend.sale.quote.ship_until.label'|trans, entity.shipUntil|oro_format_date|default('N/A'|trans)) }}
             {% if entity.assignedAccountUsers | length %}
-                {{ UI.renderHtmlProperty('oro.frontend.sale.quote.assigned_account_users.label'|trans, UI.entityViewLinks(entity.assignedAccountUsers, 'fullName', 'orob2b_account_frontend_account_user_view')) }}
+                {{ UI.renderHtmlProperty('oro.frontend.sale.quote.assigned_account_users.label'|trans, UI.entityViewLinks(entity.assignedAccountUsers, 'fullName', 'oro_account_frontend_account_user_view')) }}
             {% endif %}
         </div>
         <div class="responsive-block">

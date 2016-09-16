@@ -2,21 +2,22 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Model;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData as AccountLoadAccountUserData;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * @dbIsolation
  */
 class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 {
-    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_b2b_account.product_visibility';
-    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_b2b_account.category_visibility';
+    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_account.product_visibility';
+    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_account.category_visibility';
 
     /**
      * @var ProductVisibilityQueryBuilderModifier
@@ -32,6 +33,11 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $tokenStorage;
+
+    /**
+     * @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $websiteManager;
 
     /**
      * {@inheritdoc}
@@ -55,12 +61,15 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
         $this->tokenStorage = $this
             ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+        $this->websiteManager = $this->getMockBuilder(WebsiteManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->modifier = new ProductVisibilityQueryBuilderModifier(
             $this->configManager,
             $this->tokenStorage,
-            $this->getContainer()->get('orob2b_website.manager'),
-            $this->getContainer()->get('orob2b_account.provider.account_user_relations_provider')
+            $this->websiteManager,
+            $this->getContainer()->get('oro_account.provider.account_user_relations_provider')
         );
     }
 
@@ -73,6 +82,10 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      */
     public function testModify($configValue, $user, $expectedData)
     {
+        $this->websiteManager->expects($this->any())
+            ->method('getCurrentWebsite')
+            ->willReturn($this->getDefaultWebsite());
+
         if ($user) {
             $user = $this->getReference($user);
         }
@@ -218,7 +231,13 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      */
     protected function getProductRepository()
     {
-        return $this->getContainer()->get('doctrine')->getManagerForClass('OroProductBundle:Product')
-            ->getRepository('OroProductBundle:Product');
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass(Product::class)
+            ->getRepository(Product::class);
+    }
+
+    protected function getDefaultWebsite()
+    {
+        return $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
     }
 }

@@ -65,14 +65,14 @@ class ProductDataConverterTest extends \PHPUnit_Framework_TestCase
                 [
                     $this->logicalAnd(
                         $this->isType('string'),
-                        $this->equalTo('orob2b_product.data_converter.backend_header')
+                        $this->equalTo('oro_product.data_converter.backend_header')
                     ),
                     $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent'),
                 ],
                 [
                     $this->logicalAnd(
                         $this->isType('string'),
-                        $this->equalTo('orob2b_product.data_converter.convert_to_export')
+                        $this->equalTo('oro_product.data_converter.convert_to_export')
                     ),
                     $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent'),
                 ]
@@ -106,7 +106,7 @@ class ProductDataConverterTest extends \PHPUnit_Framework_TestCase
                 [
                     $this->logicalAnd(
                         $this->isType('string'),
-                        $this->equalTo('orob2b_product.data_converter.convert_to_import')
+                        $this->equalTo('oro_product.data_converter.convert_to_import')
                     ),
                     $this->isInstanceOf('Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent'),
                 ]

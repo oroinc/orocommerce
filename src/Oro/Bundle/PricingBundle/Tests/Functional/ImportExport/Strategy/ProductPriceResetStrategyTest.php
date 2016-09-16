@@ -61,7 +61,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
         $this->context = new StepExecutionProxyContext($this->stepExecution);
         $this->strategy->setImportExportContext($this->context);
         $this->strategy->setEntityName(
-            $container->getParameter('orob2b_pricing.entity.product_price.class')
+            $container->getParameter('oro_pricing.entity.product_price.class')
         );
     }
 

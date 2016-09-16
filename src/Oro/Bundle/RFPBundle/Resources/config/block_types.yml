@@ -1,5 +1,5 @@
 services:
-    orob2b_rfp.layout.type.rfp_request_information:
+    oro_rfp.layout.type.rfp_request_information:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
             - [setOptionsConfig, [{request: {required: true}}]]
@@ -7,7 +7,7 @@ services:
         tags:
              - { name: layout.block_type, alias: rfp_request_information }
 
-    orob2b_rfp.layout.type.rfp_request_line_items:
+    oro_rfp.layout.type.rfp_request_line_items:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             - [setOptionsConfig, [{requestProducts: {required: true}}]]

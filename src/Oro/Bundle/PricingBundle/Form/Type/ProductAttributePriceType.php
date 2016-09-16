@@ -15,7 +15,7 @@ use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class ProductAttributePriceType extends AbstractType implements DataMapperInterface
 {
-    const NAME = 'orob2b_pricing_product_attribute_price';
+    const NAME = 'oro_pricing_product_attribute_price';
     const PRICE = 'price';
 
     /**

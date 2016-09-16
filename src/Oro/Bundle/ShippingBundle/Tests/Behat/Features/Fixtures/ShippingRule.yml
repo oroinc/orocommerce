@@ -1,0 +1,163 @@
+Oro\Bundle\ShippingBundle\Entity\ShippingRule:
+   shipping_rule1:
+       name: 'Shipping Rule 1'
+       enabled: true
+       priority: '5'
+       conditions: 'true'
+       currency: 'EUR'
+       stopProcessing: 'false'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
+   germany_destination:
+      postalCode: '10115'
+      country: '@germany'
+      region: '@berlin'
+      regionText: 'Berlin'
+      rule: '@shipping_rule1'
+
+Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
+   flatrate_configuration:
+      processingType: 'per_order'
+      method: 'flat_rate'
+      type: 'flat_rate'
+      enabled: true
+      value: '1.5'
+      handlingFeeValue: '1.5'
+      rule: '@shipping_rule1'
+
+Oro\Bundle\CurrencyBundle\Entity\Price(local):
+   price1:
+       value: '1'
+       currency: 'EUR'
+
+Oro\Bundle\AccountBundle\Entity\Account:
+   account1:
+       name: 'Company A'
+       organization: '@organization'
+       owner: '@admin'
+
+Oro\Bundle\AccountBundle\Entity\AccountUser:
+   amanda:
+       email: 'AmandaRCole@example.org'
+       username: 'AmandaRCole@example.org'
+       password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+       salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+       firstName: 'Amanda'
+       lastName: 'Cole'
+       enabled: '1'
+       confirmed: '1'
+       account: '@account1'
+       organization: ['@organization']
+       role: ['@buyer']
+       owner: '@admin'
+       website: '@website1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+   precision1:
+       unit: '@item'
+       precision: '1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1: ~
+
+Oro\Bundle\ProductBundle\Entity\Product:
+   product1:
+       sku: 'AA1'
+       primaryUnitPrecision: '@precision1'
+       addName: ['@locvalue1']
+       inventoryStatus: '@enumInventoryStatuses'
+       status: 'enabled'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+   shoppinglist1:
+       label: 'Shopping List 1'
+       accountUser: '@amanda'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+   lineitem1:
+       product: '@product1'
+       quantity: '5'
+       unit: '@item'
+       accountUser: '@amanda'
+       shoppingList: '@shoppinglist1'
+       organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+   shoppinglisttotal:
+       __construct: ['@shoppinglist1','EUR']
+       shoppingList: '@shoppinglist1'
+       currency: 'EUR'
+       subtotalValue: '10.1'
+       valid: 'true'
+
+Oro\Bundle\AccountBundle\Entity\AccountUserAddress:
+    address1:
+        country: '@germany'
+        region: '@berlin'
+        label: 'label'
+        street: 'Fifth avenue'
+        city: 'Berlin'
+        postalCode: '10115'
+        organization: '@organization'
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        frontendOwner: '@amanda'
+        owner: '@admin'
+        setDefaults: ['@shippingType', '@billingType']
+        organization: '@organization'
+        systemOrganization: '@organization'
+        primary: true
+
+Oro\Bundle\PricingBundle\Entity\PriceListToAccount:
+    priceListToAccount1:
+        account: '@account1'
+        pricelist: '@pricelist1'
+        website: '@website1'
+        priority: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice1:
+        pricelist: '@pricelist1'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'EUR'
+
+Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
+   combinedProductPrice1:
+        pricelist: '@combinedPriceList'
+        product: '@product1'
+        productSku: 'AA1'
+        quantity: 5
+        unit: '@item'
+        value: 2
+        currency: 'EUR'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount:
+    combinedPriceListToAccount1:
+        pricelist: '@combinedPriceList'
+        account: '@account1'
+        website: '@website1'
+
+Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
+    combinedPriceListToWebsite1:
+        pricelist: '@combinedPriceList'
+        website: '@website1'
+
+Oro\Bundle\AccountBundle\Entity\AccountUserSettings:
+    accountUserSetting1:
+        accountUser: '@amanda'
+        __construct: ['@website1']
+        currency: 'EUR'
+
+Oro\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType:
+    billing:
+         address: '@address1'
+         type: '@billingType'
+         default: true
+    shipping:
+         address: '@address1'
+         type: '@shippingType'
+         default: true

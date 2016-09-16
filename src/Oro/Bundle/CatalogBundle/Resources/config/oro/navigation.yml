@@ -1,0 +1,31 @@
+navigation:
+    menu_config:
+        items:
+            master_catalog:
+                label:           'oro.catalog.menu.master_catalog.label'
+                route:           'oro_catalog_category_index'
+                extras:
+                    position:    10
+                    routes:      ['/^oro_catalog_category/']
+                    description: 'oro.catalog.menu.master_catalog.description'
+
+            shortcut_master_catalog:
+                label:           'oro.catalog.menu.master_catalog.label'
+                route:           'oro_catalog_category_index'
+                extras:
+                    description: 'oro.catalog.menu.shortcut_master_catalog.description'
+
+        tree:
+            application_menu:
+                children:
+                    products_tab:
+                        children:
+                            master_catalog: ~
+            shortcuts:
+                children:
+                    shortcut_master_catalog: ~
+
+    titles:
+        oro_catalog_category_index:  ~
+        oro_catalog_category_update: '%%title%% - Edit'
+        oro_catalog_category_create: 'Create Category'

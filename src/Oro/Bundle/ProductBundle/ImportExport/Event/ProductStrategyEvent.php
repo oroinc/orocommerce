@@ -8,8 +8,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductStrategyEvent extends Event
 {
-    const PROCESS_BEFORE = 'orob2b_product.strategy.process_before';
-    const PROCESS_AFTER = 'orob2b_product.strategy.process_after';
+    const PROCESS_BEFORE = 'oro_product.strategy.process_before';
+    const PROCESS_AFTER = 'oro_product.strategy.process_after';
 
     /**
      * @var Product

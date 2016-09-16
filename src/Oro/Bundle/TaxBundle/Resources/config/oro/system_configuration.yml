@@ -1,0 +1,166 @@
+system_configuration:
+    groups:
+        taxation:
+            title: oro.tax.system_configuration.groups.taxation.title
+        tax_calculation:
+            title: oro.tax.system_configuration.groups.tax_calculation.title
+            icon: icon-money
+        tax_enable:
+            title: oro.tax.system_configuration.groups.tax_enable.title
+        tax_provider:
+            title: oro.tax.system_configuration.groups.tax_provider.title
+        tax_calculator:
+            title: oro.tax.system_configuration.groups.tax_calculator.title
+        tax_matcher:
+            title: oro.tax.system_configuration.groups.tax_matcher.title
+        origin_address:
+            title: oro.tax.system_configuration.groups.origin_address.title
+        tax_digital_products:
+            title: oro.tax.system_configuration.groups.tax_digital_products.title
+        us_sales_tax:
+            title: oro.tax.system_configuration.groups.us_sales_tax.title
+        eu_vat_tax:
+            title: oro.tax.system_configuration.groups.eu_vat_tax.title
+
+    fields:
+        oro_tax.tax_enable:
+            data_type: boolean
+            type: oro_config_checkbox
+            options:
+                label: oro.tax.system_configuration.fields.tax_enable.label
+                required: false
+
+        oro_tax.tax_provider:
+            data_type: string
+            type: oro_tax_provider_type
+            options:
+                label: oro.tax.system_configuration.fields.tax_provider.label
+
+        oro_tax.start_calculation_with:
+            data_type: string
+            type: choice
+            options:
+                label: oro.tax.system_configuration.fields.start_calculation_with.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choices:
+                    unit_price: oro.tax.system_configuration.fields.start_calculation_with.unit_price.label
+                    row_total: oro.tax.system_configuration.fields.start_calculation_with.row_total.label
+
+        oro_tax.start_calculation_on:
+            data_type: string
+            type: choice
+            options:
+                label: oro.tax.system_configuration.fields.start_calculation_on.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choices:
+                    total: oro.tax.system_configuration.fields.start_calculation_on.total.label
+                    item: oro.tax.system_configuration.fields.start_calculation_on.item.label
+
+        oro_tax.product_prices_include_tax:
+            data_type: boolean
+            type: oro_config_checkbox
+            options:
+                label: oro.tax.system_configuration.fields.product_prices_include_tax.label
+                required: false
+
+        oro_tax.use_as_base_by_default:
+            data_type: string
+            type: choice
+            options:
+                label: oro.tax.system_configuration.fields.use_as_base.default.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    shipping_origin: oro.tax.system_configuration.fields.use_as_base.shipping_origin.label
+                    destination: oro.tax.system_configuration.fields.use_as_base.destination.label
+
+        oro_tax.use_as_base_exclusions:
+            data_type: array
+            type: oro_tax_base_exclusion_collection
+            options:
+                label: oro.tax.system_configuration.fields.use_as_base.exclusions.label
+                data_transformer: oro_tax.form.data_transformer.tax_base_exclusion_transformer
+
+        oro_tax.destination:
+            data_type: string
+            type: choice
+            options:
+                label: oro.tax.system_configuration.fields.destination.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    billing_address: oro.tax.system_configuration.fields.destination.billing_address.label
+                    shipping_address: oro.tax.system_configuration.fields.destination.shipping_addressl.label
+
+        oro_tax.digital_products_us:
+            data_type: array
+            type: oro_tax_product_tax_code_multiselect
+            options:
+                label: oro.tax.system_configuration.fields.digital_products_us.label
+
+        oro_tax.digital_products_eu:
+            data_type: array
+            type: oro_tax_product_tax_code_multiselect
+            options:
+                label: oro.tax.system_configuration.fields.digital_products_eu.label
+
+        oro_tax.origin_address:
+            data_type: array
+            type: oro_tax_origin_address
+            options:
+                label: oro.tax.system_configuration.fields.origin_address.label
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    taxation:
+                        priority: 500
+                        children:
+                            tax_calculation:
+                                priority: 100
+                                children:
+                                    tax_enable:
+                                        priority: 100
+                                        children:
+                                            - oro_tax.tax_enable
+                                    tax_provider:
+                                        priority: 90
+                                        children:
+                                            - oro_tax.tax_provider
+                                    tax_calculator:
+                                        priority: 80
+                                        children:
+                                            - oro_tax.start_calculation_with
+                                            - oro_tax.start_calculation_on
+                                            - oro_tax.product_prices_include_tax
+                                    tax_matcher:
+                                        priority: 70
+                                        children:
+                                            - oro_tax.use_as_base_by_default
+                                            - oro_tax.use_as_base_exclusions
+                                            - oro_tax.destination
+                                    origin_address:
+                                        priority: 60
+                                        children:
+                                            - oro_tax.origin_address
+                            us_sales_tax:
+                                priority: 90
+                                children:
+                                    tax_digital_products:
+                                        children:
+                                            - oro_tax.digital_products_us
+                            eu_vat_tax:
+                                priority: 90
+                                children:
+                                    tax_digital_products:
+                                        children:
+                                            - oro_tax.digital_products_eu

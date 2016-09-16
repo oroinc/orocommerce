@@ -17,7 +17,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  *
- * @ORM\Table(name="orob2b_quote_demand")
+ * @ORM\Table(name="oro_quote_demand")
  * @ORM\Entity
  * @Config(
  *      defaultValues={

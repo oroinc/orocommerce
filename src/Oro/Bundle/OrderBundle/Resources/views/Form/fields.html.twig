@@ -1,4 +1,4 @@
-{% block orob2b_order_address_type_widget %}
+{% block oro_order_address_type_widget %}
     {% if form.parent is not empty %}
         <div {{ block('widget_container_attributes') }}>
             {% if form.accountAddress is defined %}
@@ -14,7 +14,7 @@
     {% endif %}
 {% endblock %}
 
-{% macro orob2b_order_line_items_collection_item_prototype(widget) %}
+{% macro oro_order_line_items_collection_item_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -52,10 +52,10 @@
     </tr>
 {% endmacro %}
 
-{% block orob2b_order_line_items_collection_widget %}
+{% block oro_order_line_items_collection_widget %}
     {% spaceless %}
         {% if prototype is defined %}
-            {% set prototype_html = _self.orob2b_order_line_items_collection_item_prototype(form) %}
+            {% set prototype_html = _self.oro_order_line_items_collection_item_prototype(form) %}
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
         {% set id = id ~ '_collection' %}
@@ -84,7 +84,7 @@
                     <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.orob2b_order_line_items_collection_item_prototype(child) }}
+                            {{ _self.oro_order_line_items_collection_item_prototype(child) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -100,7 +100,7 @@
     {% endspaceless %}
 {% endblock %}
 
-{% block orob2b_order_line_item_widget %}
+{% block oro_order_line_item_widget %}
     <td class="order-line-item-sku">
         <div class="order-line-item-type-product">
             {% if form.vars.value is not empty %}
@@ -163,7 +163,7 @@
     {% endif %}
 {% endmacro %}
 
-{% block orob2b_order_line_item_frontend_widget %}
+{% block oro_order_line_item_frontend_widget %}
     {% set isFreeFormProduct = form.vars.value is not empty and form.vars.value.product is empty and form.vars.value.freeFormProduct is not empty %}
 
     <td class="order-line-item-sku">
@@ -199,7 +199,7 @@
     {{ _self.render_form_sections(form.vars.sections, form, { price: priceSection }) }}
 {% endblock %}
 
-{% macro orob2b_order_discount_items_collection_item_prototype(widget) %}
+{% macro oro_order_discount_items_collection_item_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -237,10 +237,10 @@
     </tr>
 {% endmacro %}
 
-{% block orob2b_order_discount_items_collection_widget %}
+{% block oro_order_discount_items_collection_widget %}
     {% spaceless %}
         {% if prototype is defined %}
-            {% set prototype_html = _self.orob2b_order_discount_items_collection_item_prototype(form) %}
+            {% set prototype_html = _self.oro_order_discount_items_collection_item_prototype(form) %}
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-discount-collection grid-container' }) %}
         {% set id = id ~ '_collection' %}
@@ -262,7 +262,7 @@
                     <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.orob2b_order_discount_items_collection_item_prototype(child) }}
+                            {{ _self.oro_order_discount_items_collection_item_prototype(child) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -278,7 +278,7 @@
     {% endspaceless %}
 {% endblock %}
 
-{% block orob2b_order_discount_item_widget %}
+{% block oro_order_discount_item_widget %}
     <td>
         {{ form_widget(form.value) }}
         <span data-validation-ignore="">{{ form_widget(form.percent) }}</span>

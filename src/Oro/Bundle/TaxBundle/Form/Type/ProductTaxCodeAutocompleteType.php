@@ -9,8 +9,8 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 
 class ProductTaxCodeAutocompleteType extends AbstractType
 {
-    const NAME = 'orob2b_product_tax_code_autocomplete';
-    const AUTOCOMPLETE_ALIAS = 'orob2b_product_tax_code';
+    const NAME = 'oro_product_tax_code_autocomplete';
+    const AUTOCOMPLETE_ALIAS = 'oro_product_tax_code';
 
     /**
      * {@inheritdoc}
@@ -45,7 +45,7 @@ class ProductTaxCodeAutocompleteType extends AbstractType
             [
                 'autocomplete_alias' => self::AUTOCOMPLETE_ALIAS,
                 'grid_name' => 'products-tax-code-select-grid',
-                'create_form_route' => 'orob2b_tax_product_tax_code_create',
+                'create_form_route' => 'oro_tax_product_tax_code_create',
             ]
         );
     }

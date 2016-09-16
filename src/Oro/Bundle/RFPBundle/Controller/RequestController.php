@@ -18,10 +18,10 @@ use Oro\Bundle\RFPBundle\Form\Type\RequestType;
 class RequestController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_rfp_request_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_rfp_request_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_rfp_request_view",
+     *      id="oro_rfp_request_view",
      *      type="entity",
      *      class="OroRFPBundle:Request",
      *      permission="VIEW"
@@ -38,9 +38,9 @@ class RequestController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_rfp_request_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_rfp_request_info", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_rfp_request_view")
+     * @AclAncestor("oro_rfp_request_view")
      *
      * @param RFPRequest $rfpRequest
      * @return array
@@ -53,24 +53,24 @@ class RequestController extends Controller
     }
 
     /**
-     * @Route("/", name="orob2b_rfp_request_index")
+     * @Route("/", name="oro_rfp_request_index")
      * @Template
-     * @AclAncestor("orob2b_rfp_request_view")
+     * @AclAncestor("oro_rfp_request_view")
      *
      * @return array
      */
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_rfp.entity.request.class'),
+            'entity_class' => $this->container->getParameter('oro_rfp.entity.request.class'),
         ];
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_rfp_request_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_rfp_request_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *     id="orob2b_rfp_request_update",
+     *     id="oro_rfp_request_update",
      *     type="entity",
      *     permission="EDIT",
      *     class="OroRFPBundle:Request"
@@ -99,13 +99,13 @@ class RequestController extends Controller
             $this->createForm(RequestType::NAME, $rfpRequest),
             function (RFPRequest $request) {
                 return [
-                    'route' => 'orob2b_rfp_request_update',
+                    'route' => 'oro_rfp_request_update',
                     'parameters' => ['id' => $request->getId()],
                 ];
             },
             function (RFPRequest $request) {
                 return [
-                    'route' => 'orob2b_rfp_request_view',
+                    'route' => 'oro_rfp_request_view',
                     'parameters' => ['id' => $request->getId()],
                 ];
             },

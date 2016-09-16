@@ -12,7 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class PriceListType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_price_list';
+    const NAME = 'oro_pricing_price_list';
     const SCHEDULES_FIELD = 'schedules';
 
     /**

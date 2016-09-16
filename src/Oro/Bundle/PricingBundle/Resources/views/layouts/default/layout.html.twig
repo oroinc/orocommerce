@@ -4,7 +4,7 @@
          data-page-component-module="oropricing/js/app/components/currency-switcher-component"
          data-page-component-options="{{ {
              'selectedCurrency': selected_currency,
-             'currencySwitcherRoute': 'orob2b_pricing_frontend_set_current_currency'
+             'currencySwitcherRoute': 'oro_pricing_frontend_set_current_currency'
          }|json_encode }}">
         <div class="oro-toolbar__content" data-toggle="dropdown">
             {{ oro_currency_symbol(selected_currency) }}
@@ -41,7 +41,7 @@
         skipMaskView: skipMaskView,
         data: totals
     }%}
-    {% placeholder orob2b_pricing_totals_before %}
+    {% placeholder oro_pricing_totals_before %}
 
     {% set pageComponent = pageComponent|default('oropricing/js/app/components/totals-component') %}
     <div data-page-component-module="{{ pageComponent }}" data-page-component-options="{{ options|default({})|json_encode }}">
@@ -56,8 +56,8 @@
                 </div>
             {% endblock data_totals_container %}
         </div>
-        {% placeholder orob2b_pricing_totals %}
+        {% placeholder oro_pricing_totals %}
     </div>
 
-    {% placeholder orob2b_pricing_totals_after %}
+    {% placeholder oro_pricing_totals_after %}
 {% endblock %}

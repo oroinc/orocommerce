@@ -37,21 +37,21 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     protected $roles = [
         self::ROLE1 => [
             [
-                'class' => 'orob2b_shopping_list.entity.shopping_list.class',
+                'class' => 'oro_shopping_list.entity.shopping_list.class',
                 'acls'  => ['VIEW_BASIC'],
             ],
             [
-                'class' => 'orob2b_account.entity.account_user.class',
+                'class' => 'oro_account.entity.account_user.class',
                 'acls'  => [],
             ],
         ],
         self::ROLE2 => [
             [
-                'class' => 'orob2b_shopping_list.entity.shopping_list.class',
+                'class' => 'oro_shopping_list.entity.shopping_list.class',
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'orob2b_rfp.entity.request.class',
+                'class' => 'oro_rfp.entity.request.class',
                 'acls'  => ['VIEW_BASIC', 'CREATE_BASIC'],
             ],
         ],
@@ -163,7 +163,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     protected function loadAccountUsers(ObjectManager $manager)
     {
         /* @var $userManager AccountUserManager */
-        $userManager = $this->container->get('orob2b_account_user.manager');
+        $userManager = $this->container->get('oro_account_user.manager');
 
         $defaultUser    = $this->getUser($manager);
         $organization   = $defaultUser->getOrganization();

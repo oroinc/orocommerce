@@ -14,7 +14,7 @@ class AclPermissionController extends Controller
     /**
      * @Route(
      *      "/acl-access-levels/{oid}",
-     *      name="orob2b_account_acl_access_levels",
+     *      name="oro_account_acl_access_levels",
      *      requirements={"oid"="\w+:[\w\(\)]+"},
      *      defaults={"_format"="json"}
      * )
@@ -38,7 +38,7 @@ class AclPermissionController extends Controller
 
         $chainMetadataProvider->stopProviderEmulation();
 
-        $prefixResolver = $this->get('orob2b_account.acl.resolver.role_translation_prefix');
+        $prefixResolver = $this->get('oro_account.acl.resolver.role_translation_prefix');
 
         return [
             'levels' => $levels,

@@ -1,0 +1,21 @@
+navigation:
+    #oro_menu_config:
+    #    items:
+    #        invoices_list:
+    #            label:           'oro.invoice.entity_plural_label'
+    #            route:           'oro_invoice_index'
+    #            extras:
+    #                position:    750
+    #                routes: ['/^oro_invoice_/']
+    #
+    #    tree:
+    #        application_menu:
+    #            children:
+    #                sales_tab:
+    #                    children:
+    #                        invoices_list: ~
+
+    titles:
+        oro_invoice_index: ~
+        oro_invoice_view:   'Invoice #%%identifier%%'
+        oro_invoice_update:   'Invoice #%%identifier%%'
