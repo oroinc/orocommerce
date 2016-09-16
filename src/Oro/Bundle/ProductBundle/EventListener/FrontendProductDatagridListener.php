@@ -181,7 +181,7 @@ class FrontendProductDatagridListener
     {
         $gridName = $event->getDatagrid()->getName();
         $theme = $this->themeHelper->getTheme($gridName);
-        switch($theme) {
+        switch ($theme) {
             case DataGridThemeHelper::VIEW_GRID:
                 $imageFilter = self::PRODUCT_IMAGE_FILTER_LARGE;
                 break;
