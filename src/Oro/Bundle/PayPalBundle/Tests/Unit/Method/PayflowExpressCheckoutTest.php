@@ -716,6 +716,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     protected function getLineItemOptionModel()
     {
         $lineItemModel = new LineItemOptionModel();
+        
         return $lineItemModel
             ->setName('Product Name')
             ->setDescription('Product Description')
@@ -723,10 +724,13 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             ->setQty(15);
     }
 
-
+    /**
+     * @return AddressOptionModel
+     */
     protected function getAddressOptionModel()
     {
         $addressOptionModel = new AddressOptionModel();
+
         return $addressOptionModel
             ->setFirstName('First Name')
             ->setLastName('Last Name')
@@ -757,6 +761,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     {
         /** @var AbstractAddress|\PHPUnit_Framework_MockObject_MockObject $abstractAddressMock */
         $abstractAddressMock = $this->getMockBuilder(AbstractAddress::class)->getMock();
+
         return new EntityStub($abstractAddressMock);
     }
 

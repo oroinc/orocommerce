@@ -22,7 +22,6 @@ class ExtractAddressOptionsEvent extends Event
     public function __construct($entity)
     {
         $this->entity = $entity;
-        $this->model = new AddressOptionModel();
     }
 
     /**
@@ -38,9 +37,12 @@ class ExtractAddressOptionsEvent extends Event
      */
     public function getModel()
     {
-        return $this->model;
+        return ($this->model ?: new AddressOptionModel());
     }
 
+    /**
+     * @param AddressOptionModel $model
+     */
     public function setModel(AddressOptionModel $model)
     {
         $this->model = $model;

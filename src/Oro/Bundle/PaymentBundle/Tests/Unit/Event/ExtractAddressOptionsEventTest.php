@@ -28,8 +28,11 @@ class ExtractAddressOptionsEventTest extends \PHPUnit_Framework_TestCase
     {
         $addressModel = new AddressOptionModel();
         $this->event->setModel($addressModel);
+        $this->assertSame($addressModel, $this->event->getModel());
+    }
 
+    public function testGetDefaultModel()
+    {
         $this->assertInstanceOf(AddressOptionModel::class, $this->event->getModel());
-        $this->assertEquals($addressModel, $this->event->getModel());
     }
 }

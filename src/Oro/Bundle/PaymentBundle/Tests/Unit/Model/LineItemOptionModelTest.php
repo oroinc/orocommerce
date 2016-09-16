@@ -3,22 +3,22 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Model;
 
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class LineItemOptionModelTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testProperties()
     {
-        $optionModel = new LineItemOptionModel();
-        $optionModel
-            ->setName('Name')
-            ->setDescription('Description')
-            ->setCost(5.23)
-            ->setQty(2);
+        $properties = [
+            ['name', 'Name'],
+            ['description', 'Description'],
+            ['cost', 5.23],
+            ['qty', 2]
+        ];
 
-        $this->assertEquals('Name', $optionModel->getName());
-        $this->assertEquals('Description', $optionModel->getDescription());
-        $this->assertEquals(5.23, $optionModel->getCost());
-        $this->assertEquals(2, $optionModel->getQty());
+        $this->assertPropertyAccessors(new LineItemOptionModel(), $properties);
     }
 
     public function testTruncate()

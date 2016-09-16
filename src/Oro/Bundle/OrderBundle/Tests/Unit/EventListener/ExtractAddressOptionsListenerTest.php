@@ -74,6 +74,5 @@ class ExtractAddressOptionsListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('', $addressOptionModel->getPostalCode());
         $this->assertEquals('', $addressOptionModel->getRegionCode());
         $this->assertEquals('', $addressOptionModel->getCountryIso2());
-
     }
 }

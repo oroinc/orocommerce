@@ -2,5 +2,5 @@
 # when developing on the local machine
 # For more info see bundle documentation, section "Testing the PayPal response"
 
-framework:
-    trusted_proxies: [ '127.0.0.1', '::1' ]
+#framework:
+#    trusted_proxies: [ '127.0.0.1', '::1' ]
