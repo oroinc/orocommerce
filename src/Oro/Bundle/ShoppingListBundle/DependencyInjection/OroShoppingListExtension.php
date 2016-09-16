@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Loader;
 
 class OroShoppingListExtension extends Extension
 {
-    const ALIAS = 'oro_b2b_shopping_list';
+    const ALIAS = 'oro_shopping_list';
 
     /**
      * {@inheritDoc}
