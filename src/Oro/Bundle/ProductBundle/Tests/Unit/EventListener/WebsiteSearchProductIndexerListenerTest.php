@@ -45,7 +45,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             ->getMock();
 
         $doctrineHelper
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getEntityRepositoryForClass')
             ->with(Product::class)
             ->willReturn($this->productRepository);

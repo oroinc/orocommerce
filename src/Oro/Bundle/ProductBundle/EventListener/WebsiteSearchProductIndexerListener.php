@@ -12,9 +12,9 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 class WebsiteSearchProductIndexerListener
 {
     /**
-     * @var ProductRepository
+     * @var DoctrineHelper
      */
-    private $productRepository;
+    private $doctrineHelper;
 
     /**
      * @var LocalizationHelper
@@ -22,13 +22,30 @@ class WebsiteSearchProductIndexerListener
     private $localizationHelper;
 
     /**
+     * @var ProductRepository
+     */
+    private $productRepository;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param LocalizationHelper $localizationHelper
      */
     public function __construct(DoctrineHelper $doctrineHelper, LocalizationHelper $localizationHelper)
     {
-        $this->productRepository = $doctrineHelper->getEntityRepositoryForClass(Product::class);
+        $this->doctrineHelper = $doctrineHelper;
         $this->localizationHelper = $localizationHelper;
+    }
+
+    /**
+     * @return ProductRepository
+     */
+    protected function getProductRepository()
+    {
+        if (!$this->productRepository) {
+            $this->productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
+        }
+
+        return $this->productRepository;
     }
 
     /**
@@ -42,7 +59,7 @@ class WebsiteSearchProductIndexerListener
             return;
         }
 
-        $products = $this->productRepository->getProductsByIds($event->getEntityIds());
+        $products = $this->getProductRepository()->getProductsByIds($event->getEntityIds());
 
         $localizations = $this->localizationHelper->getLocalizations();
 
