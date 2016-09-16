@@ -20,6 +20,7 @@ CheckoutBundle:
 - Interface `Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface` no longer implements `Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface`.
 - Added new property `string $workflowName` to `Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent` and added related `setter` and `getter`.
 - Added argument `CheckoutInterface $checkout` to method `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener::getWorkflowName`.
+- `oro_checkout.repository.checkout` inherits `oro_entity.abstract_repository`
 
 AlternativeCheckoutBundle:
 --------------------------
@@ -60,7 +61,7 @@ PaymentBundle
 OrderBundle:
 ------------
 - Moved `get_payment_status_label` twig function to `PaymentBundle` to `Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension`.
-- Removed `PaymentStatusProvider` constructor argument from `OroB2B/Bundle/OrderBundle/Twig/OrderExtension`.
+- Removed `PaymentStatusProvider` constructor argument from `Oro/Bundle/OrderBundle/Twig/OrderExtension`.
 - Removed `Oro\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentMethodProvider`.
 - Removed method `Oro\Bundle\OrderBundle\Twig\OrderExtension::formatSourceDocument`
 - Removed `Oro\Bundle\OrderBundle\Twig\OrderExtension` constructor first argument `Doctrine\Common\Persistence\ManagerRegistry`
@@ -77,3 +78,22 @@ PricingBundle:
 SaleBundle:
 -----------
 - Modified `Oro\Bundle\SaleBundle\Entity\Quote` with property `paymentTerm` as many-to-one relation to `Oro\Bundle\PaymentBundle\Entity\PaymentTerm`.
+
+CatalogBundle
+-------------
+- `oro_catalog.repository.category` inherits `oro_entity.abstract_repository`
+
+ProductBundle
+-------------
+- `oro_product.repository.product` inherits `oro_entity.abstract_repository`
+
+ShippingBundle
+--------------
+- `oro_shipping.repository.product_shipping_options` inherits `oro_entity.abstract_repository`
+- `oro_shipping.repository.length_unit` inherits `oro_entity.abstract_repository`
+- `oro_shipping.repository.weight_unit` inherits `oro_entity.abstract_repository`
+- `oro_shipping.repository.freight_class` inherits `oro_entity.abstract_repository`
+
+ShoppingListBundle
+------------------
+- `oro_shopping_list.repository.line_item` inherits `oro_entity.abstract_repository`

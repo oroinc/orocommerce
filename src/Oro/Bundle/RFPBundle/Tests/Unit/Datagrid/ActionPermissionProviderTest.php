@@ -47,7 +47,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->configManager->expects($this->any())
             ->method('get')
-            ->with('oro_b2b_rfp.default_request_status')
+            ->with('oro_rfp.default_request_status')
             ->will($this->returnValue(self::CONFIG_DEFAULT_STATUS));
 
         $this->actionPermissionProvider = new ActionPermissionProvider($this->configManager);

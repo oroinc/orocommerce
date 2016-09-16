@@ -19,7 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Translation\Translator;
  */
 class ProductControllerTest extends WebTestCase
 {
-    const RFP_PRODUCT_VISIBILITY_KEY = 'oro_b2b_rfp.frontend_product_visibility';
+    const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
 
     /**
      * @var Client

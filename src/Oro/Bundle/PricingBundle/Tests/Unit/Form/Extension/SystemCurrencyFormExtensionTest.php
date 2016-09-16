@@ -83,7 +83,7 @@ class SystemCurrencyFormExtensionTest extends FormIntegrationTestCase
         if ($options['restrict']) {
             $this->configManager->expects($this->once())
                 ->method('get')
-                ->with('oro_b2b_pricing.enabled_currencies')
+                ->with('oro_pricing.enabled_currencies')
                 ->willReturn($enabledCurrencies);
         }
 

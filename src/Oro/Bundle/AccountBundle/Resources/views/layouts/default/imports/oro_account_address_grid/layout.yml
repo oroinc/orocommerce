@@ -114,4 +114,5 @@ layout:
             optionName: attr.class
             optionValue: 'grid__toolbar grid__toolbar--extended grid-toolbar'
 
-    conditions: 'context["account_address_count"]>=8'
+#    TODO: return condition in BB-4263
+#    conditions: 'context["account_address_count"]>=8'

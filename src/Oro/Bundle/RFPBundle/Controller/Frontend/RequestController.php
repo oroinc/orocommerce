@@ -218,7 +218,7 @@ class RequestController extends Controller
     protected function getDefaultRequestStatus()
     {
         $requestStatusClass = $this->container->getParameter('oro_rfp.entity.request.status.class');
-        $defaultRequestStatusName = $this->get('oro_config.manager')->get('oro_b2b_rfp.default_request_status');
+        $defaultRequestStatusName = $this->get('oro_config.manager')->get('oro_rfp.default_request_status');
 
         return $this
             ->getDoctrine()
