@@ -36,9 +36,7 @@ class CollectDependentClassesEvent extends Event
         $this->classesForReindex[$class] = $class;
 
         if (isset($this->dependencies[$class])) {
-
             foreach ($this->dependencies[$class] as $dependentClass) {
-
                 if (!isset($this->classesForReindex[$dependentClass])) {
                     $this->collectDependentClassesForClass($dependentClass);
                 }
