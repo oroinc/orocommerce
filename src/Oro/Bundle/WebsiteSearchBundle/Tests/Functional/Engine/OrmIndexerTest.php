@@ -21,6 +21,7 @@ use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadEmployeesToIndex;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadOtherWebsite;
@@ -183,6 +184,52 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
         /** @var Item[] $items */
         $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_' . $this->getDefaultWebsiteId()]);
+
+        $this->assertCount(2, $items);
+        $this->assertContains('Reindexed product', $items[0]->getTitle());
+        $this->assertContains('Reindexed product', $items[1]->getTitle());
+    }
+
+    public function testReindexForSpecificWebsiteWithDependentEntities()
+    {
+        $this->loadFixtures([LoadEmployeesToIndex::class]);
+        $this->loadFixtures([LoadProductsToIndex::class]);
+
+        $collectDependentClassesListener = function (CollectDependentClassesEvent $event) {
+            $event->addClassDependencies(TestEmployee::class, [TestProduct::class]);
+        };
+
+        $this->dispatcher->addListener(CollectDependentClassesEvent::NAME, $collectDependentClassesListener, -255);
+
+        $this->setClassSupportedExpectation(1, TestProduct::class, true);
+
+        $this->mappingProviderMock
+            ->expects($this->exactly(2))
+            ->method('getEntityAlias')
+            ->withConsecutive([TestProduct::class], [TestEmployee::class])
+            ->willReturnOnConsecutiveCalls(
+                $this->mappingConfig[TestProduct::class]['alias'],
+                $this->mappingConfig[TestEmployee::class]['alias']
+            );
+
+        $this->listener = $this->setListener();
+
+        $this->indexer->reindex(
+            TestProduct::class,
+            [
+                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
+            ]
+        );
+
+        /** @var Item[] $items */
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_product_' . $this->getDefaultWebsiteId()]);
+
+        $this->assertCount(2, $items);
+        $this->assertContains('Reindexed product', $items[0]->getTitle());
+        $this->assertContains('Reindexed product', $items[1]->getTitle());
+
+        /** @var Item[] $items */
+        $items = $this->getItemRepository()->findBy(['alias' => 'oro_employee_' . $this->getDefaultWebsiteId()]);
 
         $this->assertCount(2, $items);
         $this->assertContains('Reindexed product', $items[0]->getTitle());
