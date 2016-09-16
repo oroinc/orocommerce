@@ -209,7 +209,8 @@ abstract class AbstractIndexer implements IndexerInterface
         $entityManager = $this->doctrineHelper->getEntityManager($entityClass);
 
         $queryBuilder = $entityRepository->createQueryBuilder('entity');
-        $queryBuilder->select('entity.id');
+        $identifierName = $this->doctrineHelper->getSingleEntityIdentifierFieldName($entityClass);
+        $queryBuilder->select("entity.$identifierName as id");
 
         $iterator = new BufferedQueryResultIterator($queryBuilder);
         $iterator->setBufferSize(static::BATCH_SIZE);
@@ -301,9 +302,11 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->eventDispatcher->dispatch(RestrictIndexEntityEvent::NAME, $restrictEntitiesEvent);
         $queryBuilder = $restrictEntitiesEvent->getQueryBuilder();
 
+        $identifierName = $this->doctrineHelper->getSingleEntityIdentifierFieldName($entityClass);
+
         $queryBuilder
-            ->select('entity.id')
-            ->andWhere($queryBuilder->expr()->in('entity.id', ':entityIds'));
+            ->select("entity.$identifierName as id")
+            ->andWhere($queryBuilder->expr()->in("entity.$identifierName", ':entityIds'));
 
         $queryBuilder->setParameter('entityIds', $entityIds);
 
