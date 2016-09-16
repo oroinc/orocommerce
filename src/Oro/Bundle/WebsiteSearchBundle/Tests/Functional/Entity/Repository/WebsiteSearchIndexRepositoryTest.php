@@ -16,29 +16,26 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchWebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 
 /**
  * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class WebsiteSearchIndexRepositoryTest extends SearchWebTestCase
+class WebsiteSearchIndexRepositoryTest extends AbstractSearchWebTestCase
 {
     protected function setUp()
     {
         $this->initClient();
+        if ($this->getContainer()->getParameter('oro_search.engine') !== 'orm') {
+            $this->markTestSkipped('Should be tested only with ORM search engine');
+        }
         $this->loadFixtures([LoadItemData::class]);
     }
 
     protected function tearDown()
     {
         $this->clearIndexTextTable();
-    }
-
-    private function skipIfEngineIsNotOrm()
-    {
-        if ($this->getContainer()->getParameter('oro_search.engine') !== 'orm') {
-            $this->markTestSkipped('Should be tested only with ORM search engine');
-        }
     }
 
     /**
@@ -57,8 +54,6 @@ class WebsiteSearchIndexRepositoryTest extends SearchWebTestCase
 
     public function testSearchDefaultWebsite()
     {
-        $this->skipIfEngineIsNotOrm();
-
         $websiteId = $this->getDefaultWebsiteId();
 
         $query = new Query();
@@ -119,14 +114,11 @@ class WebsiteSearchIndexRepositoryTest extends SearchWebTestCase
 
     public function testSearchDefaultWebsiteWithContains()
     {
-        $this->skipIfEngineIsNotOrm();
-
         $websiteId = $this->getDefaultWebsiteId();
 
         $query = new Query();
         $query->from('oro_product_' . $websiteId);
         $query->getCriteria()->andWhere(Criteria::expr()->contains('long_description', 'Long description'));
-
 
         $referenceName = LoadItemData::getReferenceName(LoadItemData::REFERENCE_GOOD_PRODUCT, $websiteId);
         /** @var Item $item */
@@ -142,8 +134,6 @@ class WebsiteSearchIndexRepositoryTest extends SearchWebTestCase
 
     public function testSearchDefaultWebsiteWithEq()
     {
-        $this->skipIfEngineIsNotOrm();
-
         $websiteId = $this->getDefaultWebsiteId();
 
         $referenceName = LoadItemData::getReferenceName(LoadItemData::REFERENCE_BETTER_PRODUCT, $websiteId);
@@ -180,9 +170,9 @@ class WebsiteSearchIndexRepositoryTest extends SearchWebTestCase
     {
         $this->getItemRepository()->removeEntities([], TestProduct::class);
 
-        $this->assertEntityCount(4, Item::class);
+        $this->assertEntityCount(8, Item::class);
         $this->assertEntityCount(2, IndexInteger::class);
-        $this->assertEntityCount(2, IndexText::class);
+        $this->assertEntityCount(6, IndexText::class);
         $this->assertEntityCount(2, IndexDatetime::class);
         $this->assertEntityCount(2, IndexDecimal::class);
     }
@@ -201,8 +191,8 @@ class WebsiteSearchIndexRepositoryTest extends SearchWebTestCase
             'oro_product_1'
         );
 
-        $this->assertEntityCount(2, Item::class);
-        $this->assertEntityCount(1, IndexText::class);
+        $this->assertEntityCount(6, Item::class);
+        $this->assertEntityCount(5, IndexText::class);
         $this->assertEntityCount(1, IndexDecimal::class);
         $this->assertEntityCount(1, IndexDatetime::class);
         $this->assertEntityCount(1, IndexDecimal::class);
@@ -221,9 +211,9 @@ class WebsiteSearchIndexRepositoryTest extends SearchWebTestCase
             TestProduct::class
         );
 
-        $this->assertEntityCount(0, Item::class);
+        $this->assertEntityCount(4, Item::class);
         $this->assertEntityCount(0, IndexInteger::class);
-        $this->assertEntityCount(0, IndexText::class);
+        $this->assertEntityCount(4, IndexText::class);
         $this->assertEntityCount(0, IndexDecimal::class);
         $this->assertEntityCount(0, IndexDatetime::class);
     }
@@ -232,10 +222,32 @@ class WebsiteSearchIndexRepositoryTest extends SearchWebTestCase
     {
         $this->getItemRepository()->removeEntities([91, 92], 'SomeClass');
 
-        $this->assertEntityCount(4, Item::class);
+        $this->assertEntityCount(8, Item::class);
         $this->assertEntityCount(2, IndexInteger::class);
-        $this->assertEntityCount(2, IndexText::class);
+        $this->assertEntityCount(6, IndexText::class);
         $this->assertEntityCount(2, IndexDatetime::class);
         $this->assertEntityCount(2, IndexDecimal::class);
+    }
+
+    public function testRemoveIndexByClassForAllClasses()
+    {
+        $this->getItemRepository()->removeIndexByClass();
+
+        $this->assertEntityCount(0, Item::class);
+        $this->assertEntityCount(0, IndexInteger::class);
+        $this->assertEntityCount(0, IndexText::class);
+        $this->assertEntityCount(0, IndexDatetime::class);
+        $this->assertEntityCount(0, IndexDecimal::class);
+    }
+
+    public function testClearIndexDataForSpecificClass()
+    {
+        $this->getItemRepository()->removeIndexByClass(TestProduct::class);
+
+        $this->assertEntityCount(4, Item::class);
+        $this->assertEntityCount(0, IndexInteger::class);
+        $this->assertEntityCount(4, IndexText::class);
+        $this->assertEntityCount(0, IndexDatetime::class);
+        $this->assertEntityCount(0, IndexDecimal::class);
     }
 }

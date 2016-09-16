@@ -12,12 +12,12 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\SearchWebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 
 /**
  * @dbIsolationPerTest
  */
-class OrmEngineTest extends SearchWebTestCase
+class OrmEngineTest extends AbstractSearchWebTestCase
 {
     /** @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $mappingProviderMock;
@@ -37,7 +37,8 @@ class OrmEngineTest extends SearchWebTestCase
      */
     protected $mappingConfig = [
         TestEntity::class => [
-            'alias' => 'oro_test_item_WEBSITE_ID', 'fields' => [
+            'alias' => 'oro_test_item_WEBSITE_ID',
+            'fields' => [
                 [
                     'name' => 'stringValue_LOCALIZATION_ID',
                     'type' => 'text',
@@ -83,15 +84,15 @@ class OrmEngineTest extends SearchWebTestCase
             ->getMock();
 
         $this->mappingProviderMock
-            ->expects($this->exactly(2))
-            ->method('getMappingConfig')
-            ->willReturn($this->mappingConfig);
+            ->expects($this->once())
+            ->method('isClassSupported')
+            ->willReturn(true);
 
         $this->mappingProviderMock
-            ->expects($this->any())
-            ->method('getEntityConfig')
+            ->expects($this->once())
+            ->method('getEntityAlias')
             ->with(TestEntity::class)
-            ->willReturn($this->mappingConfig[TestEntity::class]);
+            ->willReturn($this->mappingConfig[TestEntity::class]['alias']);
 
         $this->addFrontendRequest();
 
@@ -207,6 +208,12 @@ class OrmEngineTest extends SearchWebTestCase
     {
         $defaultLocalizationId = $this->getDefaultLocalizationId();
 
+        $this->mappingProviderMock
+            ->expects($this->exactly(9))
+            ->method('getEntityConfig')
+            ->with(TestEntity::class)
+            ->willReturn($this->mappingConfig[TestEntity::class]);
+
         $query = new Query();
         $query->from('*');
         $query->getCriteria()->orderBy([
@@ -226,12 +233,15 @@ class OrmEngineTest extends SearchWebTestCase
         $this->assertEquals('item9@mail.com', $items[8]->getRecordTitle());
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
     public function testSearchByAliasWithSelect()
     {
         $defaultLocalizationId = $this->getDefaultLocalizationId();
+
+        $this->mappingProviderMock
+            ->expects($this->exactly(9))
+            ->method('getEntityConfig')
+            ->with(TestEntity::class)
+            ->willReturn($this->mappingConfig[TestEntity::class]);
 
         $query = new Query();
         $query->from('oro_test_item_WEBSITE_ID');
@@ -242,6 +252,7 @@ class OrmEngineTest extends SearchWebTestCase
 
         $items = $this->getSearchItems($query);
 
+        $this->assertCount(9, $items);
         $this->assertEquals('item1@mail.com', $items[0]->getRecordTitle());
         $this->assertEquals('item2@mail.com', $items[1]->getRecordTitle());
         $this->assertEquals('item3@mail.com', $items[2]->getRecordTitle());
@@ -258,6 +269,12 @@ class OrmEngineTest extends SearchWebTestCase
         $query = new Query();
         $query->from('oro_test_item_WEBSITE_ID');
 
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('getEntityConfig')
+            ->with(TestEntity::class)
+            ->willReturn($this->mappingConfig[TestEntity::class]);
+
         $expr = new Comparison("integer.integerValue", "=", 5000);
         $criteria = new Criteria();
         $criteria->where($expr);
@@ -265,6 +282,7 @@ class OrmEngineTest extends SearchWebTestCase
 
         $items = $this->getSearchItems($query);
 
+        $this->assertCount(1, $items);
         $this->assertEquals('item5@mail.com', $items[0]->getRecordTitle());
     }
 }
