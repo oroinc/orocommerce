@@ -6,7 +6,7 @@ search:
             name:                       oro_warehouse_view
             parameters:
                 id:                     id
-        search_template:                OroWarehouseBundle:Warehouse:searchResult.html.twig
+        search_template:                OroWarehouseProBundle:Warehouse:searchResult.html.twig
         fields:
             -
                 name:                   name

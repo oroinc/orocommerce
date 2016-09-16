@@ -83,7 +83,7 @@ class WarehouseInventoryLevelGridDataTransformer implements DataTransformerInter
      */
     protected function getWarehouse($id)
     {
-        return $this->doctrineHelper->getEntityReference('OroWarehouseBundle:Warehouse', $id);
+        return $this->doctrineHelper->getEntityReference('OroWarehouseProBundle:Warehouse', $id);
     }
 
     /**

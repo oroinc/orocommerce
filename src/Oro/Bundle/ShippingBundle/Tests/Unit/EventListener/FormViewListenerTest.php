@@ -83,7 +83,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroWarehouseBundle:Warehouse', 42)
+            ->with('OroWarehouseProBundle:Warehouse', 42)
             ->willReturn(null);
 
         $event = $this->getBeforeListRenderEventMock();
@@ -101,7 +101,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroWarehouseBundle:Warehouse', 42)
+            ->with('OroWarehouseProBundle:Warehouse', 42)
             ->willReturn($warehouse);
 
         $shippingOrigin = new ShippingOrigin();
@@ -126,7 +126,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroWarehouseBundle:Warehouse', 42)
+            ->with('OroWarehouseProBundle:Warehouse', 42)
             ->willReturn($warehouse);
 
         $shippingOrigin = new ShippingOrigin(['region' => 'data']);

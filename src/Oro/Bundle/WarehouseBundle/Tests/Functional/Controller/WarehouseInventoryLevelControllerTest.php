@@ -134,7 +134,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
     protected function assertLevelsGridData(Product $product, array $data)
     {
         /** @var Warehouse[] $warehouses */
-        $warehouses = $this->getRepository('OroWarehouseBundle:Warehouse')->findAll();
+        $warehouses = $this->getRepository('OroWarehouseProBundle:Warehouse')->findAll();
 
         $expectedCombinedIds = [];
         foreach ($warehouses as $warehouse) {

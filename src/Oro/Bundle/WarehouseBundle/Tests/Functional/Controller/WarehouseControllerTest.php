@@ -158,8 +158,8 @@ class WarehouseControllerTest extends WebTestCase
     {
         /** @var Warehouse $warehouse */
         $warehouse = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroWarehouseBundle:Warehouse')
-            ->getRepository('OroWarehouseBundle:Warehouse')
+            ->getManagerForClass('OroWarehouseProBundle:Warehouse')
+            ->getRepository('OroWarehouseProBundle:Warehouse')
             ->findOneBy(['name' => $name]);
         $this->assertNotEmpty($warehouse);
 

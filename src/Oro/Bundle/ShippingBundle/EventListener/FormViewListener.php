@@ -60,7 +60,7 @@ class FormViewListener
         }
 
         /** @var Warehouse $warehouse */
-        $warehouse = $this->doctrineHelper->getEntityReference('OroWarehouseBundle:Warehouse', $warehouseId);
+        $warehouse = $this->doctrineHelper->getEntityReference('OroWarehouseProBundle:Warehouse', $warehouseId);
         if (!$warehouse) {
             return;
         }
