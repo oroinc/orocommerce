@@ -13,7 +13,6 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 
-
 class ProductAttributePriceType extends AbstractType implements DataMapperInterface
 {
     const NAME = 'oro_pricing_product_attribute_price';

@@ -8,6 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+
 class PriceAttributePriceListType extends AbstractType
 {
     const NAME = 'oro_pricing_price_attribute_price_list';

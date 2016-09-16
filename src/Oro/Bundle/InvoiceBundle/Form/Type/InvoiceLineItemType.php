@@ -21,7 +21,6 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
 
-
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
