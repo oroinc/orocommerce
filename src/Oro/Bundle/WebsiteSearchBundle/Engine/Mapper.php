@@ -15,7 +15,7 @@ class Mapper
     public function mapSelectedData(Query $query, array $item)
     {
         $selects = $query->getSelect();
-        $aliases = $query->getSelectAliases();
+        $selectAliases = $query->getSelectAliases();
 
         if (empty($selects)) {
             return null;
@@ -26,17 +26,22 @@ class Mapper
         foreach ($selects as $select) {
             list ($type, $name) = Criteria::explodeFieldTypeName($select);
 
-            $alias = isset($aliases[$select]) ? $aliases[$select] : $name;
+            if (isset($selectAliases[$name])) {
+                $resultName = $selectAliases[$name];
+            } elseif (isset($selectAliases[$select])) {
+                $resultName = $selectAliases[$select];
+            } else {
+                $resultName = $name;
+            }
+            $result[$resultName] = '';
 
-            $result[$alias] = '';
-
-            if (isset($item[$alias])) {
-                $value = $item[$alias];
+            if (isset($item[$resultName])) {
+                $value = $item[$resultName];
                 if (is_array($value)) {
                     $value = array_shift($value);
                 }
 
-                $result[$alias] = $value;
+                $result[$resultName] = $value;
             }
         }
 
