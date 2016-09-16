@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 class CategoryWarehouseFormViewListener
@@ -41,6 +41,9 @@ class CategoryWarehouseFormViewListener
         $this->translator = $translator;
     }
 
+    /**
+     * @param BeforeListRenderEvent $event
+     */
     public function onCategoryEdit(BeforeListRenderEvent $event)
     {
         $request = $this->requestStack->getCurrentRequest();
@@ -54,8 +57,8 @@ class CategoryWarehouseFormViewListener
             return;
         }
 
-        /** @var Product $category */
-        $category = $this->doctrineHelper->getEntityReference('OroCatalogBundle:Category', $categoryId);
+        /** @var Category $category */
+        $category = $this->doctrineHelper->getEntityReference(Category::class, $categoryId);
         if (!$category) {
             return;
         }
@@ -67,12 +70,13 @@ class CategoryWarehouseFormViewListener
 
         $scrollData = $event->getScrollData();
         $data = $scrollData->getData();
+        $expectedLabel = $this->translator->trans('oro.catalog.sections.default_options');
         foreach ($data['dataBlocks'] as $blockId => $blockData) {
-            if ($blockData['title'] == $this->translator->trans('oro.catalog.sections.default_options')) {
-                break;
+            if ($blockData['title'] == $expectedLabel) {
+                $scrollData->addSubBlockData($blockId, 0, $template);
+
+                return;
             }
         }
-
-        $scrollData->addSubBlockData($blockId, 0, $template);
     }
 }

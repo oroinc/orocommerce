@@ -5,8 +5,8 @@ namespace Oro\Bundle\WarehouseBundle\EventListener;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductWarehouseFormViewListener
 {
@@ -49,7 +49,7 @@ class ProductWarehouseFormViewListener
         }
 
         /** @var Product $product */
-        $product = $this->doctrineHelper->getEntityReference('OroProductBundle:Product', $productId);
+        $product = $this->doctrineHelper->getEntityReference(Product::class, $productId);
         if (!$product) {
             return;
         }

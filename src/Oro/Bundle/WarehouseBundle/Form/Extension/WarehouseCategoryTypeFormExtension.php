@@ -5,8 +5,8 @@ namespace Oro\Bundle\WarehouseBundle\Form\Extension;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
-use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 
 class WarehouseCategoryTypeFormExtension extends AbstractTypeExtension
 {

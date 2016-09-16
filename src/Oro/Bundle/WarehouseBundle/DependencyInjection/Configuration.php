@@ -21,8 +21,8 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                self::ENABLED_WAREHOUSES => [ 'type' => 'array', 'value' => []],
-                'manage_inventory' => ['value' => false, 'type' => 'boolean']
+                self::ENABLED_WAREHOUSES => ['type' => 'array', 'value' => []],
+                'manage_inventory' => ['type' => 'boolean', 'value' => false],
             ]
         );
 

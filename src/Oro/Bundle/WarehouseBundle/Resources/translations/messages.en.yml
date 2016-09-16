@@ -77,8 +77,11 @@ oro:
             groups:
                 warehouse.title: Warehouses
                 warehouse_configuration.title: Warehouse Configuration
+                product_options.title: Product Options
+                product_inventory_options.title: Product Inventory Options
             fields:
                 enabled_warehouses.label: Enabled Warehouses
+                manage_inventory.label: Managed Inventory
 
         fallback:
             category: Category Defaults
@@ -90,13 +93,6 @@ oro:
             choice:
                 'true': Yes
                 'false': No
-
-        system_configuration:
-            groups:
-                product_options.title: 'Product Options'
-                product_inventory_options.title: 'Product Inventory Options'
-            fields:
-                manage_inventory.label: 'Managed Inventory'
 
     order:
         orderlineitem:

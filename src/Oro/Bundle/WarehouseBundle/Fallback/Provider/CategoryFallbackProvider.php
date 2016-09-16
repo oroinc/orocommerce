@@ -3,10 +3,11 @@
 namespace Oro\Bundle\WarehouseBundle\Fallback\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\Fallback\Provider\AbstractEntityFallbackProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackArgumentException;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class CategoryFallbackProvider extends AbstractEntityFallbackProvider
 {
@@ -16,8 +17,6 @@ class CategoryFallbackProvider extends AbstractEntityFallbackProvider
     protected $doctrineHelper;
 
     /**
-     * ProductCategoryFallbackProvider constructor.
-     *
      * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(DoctrineHelper $doctrineHelper)
@@ -28,14 +27,14 @@ class CategoryFallbackProvider extends AbstractEntityFallbackProvider
     /**
      * {@inheritdoc}
      */
-    public function getFallbackHolderEntity(
-        $object,
-        $objectFieldName
-    ) {
+    public function getFallbackHolderEntity($object, $objectFieldName)
+    {
         if (!$object instanceof Product) {
             throw new InvalidFallbackArgumentException(get_class($object), get_class($this));
         }
+        /** @var CategoryRepository $categoryRepo */
+        $categoryRepo = $this->doctrineHelper->getEntityRepository(Category::class);
 
-        return $this->doctrineHelper->getEntityRepository(Category::class)->findOneByProduct($object);
+        return $categoryRepo->findOneByProduct($object);
     }
 }

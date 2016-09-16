@@ -824,7 +824,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
     public function getImagesByType($type)
     {
         return $this->getImages()->filter(function (ProductImage $image) use ($type) {
-                return $image->hasType($type);
+            return $image->hasType($type);
         });
     }
 
