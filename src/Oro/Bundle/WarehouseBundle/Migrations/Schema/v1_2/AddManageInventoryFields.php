@@ -100,5 +100,4 @@ class AddManageInventoryFields implements Migration, ExtendExtensionAwareInterfa
             ]
         );
     }
-
 }

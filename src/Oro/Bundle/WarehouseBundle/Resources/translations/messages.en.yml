@@ -104,3 +104,10 @@ oro:
                 label: Warehouse
         warehouse:
             label: Warehouse
+
+    catalog:
+        category:
+            manage_inventory.label: 'Managed Inventory'
+
+    product:
+        manage_inventory.label: 'Managed Inventory'
