@@ -413,8 +413,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
 
-    oro.product.provider.custom_image_filter:
-        class: 'Oro\Bundle\ProductBundle\Provider\CustomImageFilterProvider'
+    oro.product.provider.watermark_image_filter:
+        class: 'Oro\Bundle\ProductBundle\Provider\WatermarkImageFilterProvider'
         arguments:
             - '@oro_config.global'
             - '@oro_entity.doctrine_helper'

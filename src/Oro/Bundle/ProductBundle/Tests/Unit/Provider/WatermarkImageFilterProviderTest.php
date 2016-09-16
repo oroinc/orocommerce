@@ -8,9 +8,9 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
-use Oro\Bundle\ProductBundle\Provider\CustomImageFilterProvider;
+use Oro\Bundle\ProductBundle\Provider\WatermarkImageFilterProvider;
 
-class CustomImageFilterProviderTest extends \PHPUnit_Framework_TestCase
+class WatermarkImageFilterProviderTest extends \PHPUnit_Framework_TestCase
 {
     const IMAGE_ID = 1;
     const SIZE = 50;
@@ -19,7 +19,7 @@ class CustomImageFilterProviderTest extends \PHPUnit_Framework_TestCase
     const ATTACHMENT_DIR = 'attachment';
 
     /**
-     * @var CustomImageFilterProvider
+     * @var WatermarkImageFilterProvider
      */
     protected $provider;
 
@@ -38,7 +38,7 @@ class CustomImageFilterProviderTest extends \PHPUnit_Framework_TestCase
         $this->configManager = $this->prophesize(ConfigManager::class);
         $this->doctrineHelper = $this->prophesize(DoctrineHelper::class);
 
-        $this->provider = new CustomImageFilterProvider(
+        $this->provider = new WatermarkImageFilterProvider(
             $this->configManager->reveal(),
             $this->doctrineHelper->reveal(),
             self::ATTACHMENT_DIR

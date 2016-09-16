@@ -8,7 +8,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Provider\CustomImageFilterProviderInterface;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 
-class CustomImageFilterProvider implements CustomImageFilterProviderInterface
+class WatermarkImageFilterProvider implements CustomImageFilterProviderInterface
 {
     /**
      * @var ConfigManager
