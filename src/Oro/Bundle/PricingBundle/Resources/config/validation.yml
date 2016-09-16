@@ -2,7 +2,7 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
     group_sequence: [PriceList, NotCircularReference]
     constraints:
         - Oro\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrency: ~
-        - Oro\Bundle\PricingBundle\Validator\Constraints\CircularReference:
+        - Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReference:
             fields:
                 - productAssignmentRule
     properties:
@@ -58,7 +58,7 @@ Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
 Oro\Bundle\PricingBundle\Entity\PriceRule:
     group_sequence: [PriceRule, NotCircularReference]
     constraints:
-        - Oro\Bundle\PricingBundle\Validator\Constraints\CircularReference:
+        - Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReference:
             fields:
                 - ruleCondition
                 - rule

@@ -5,22 +5,22 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Validator;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
-use Oro\Bundle\PricingBundle\Validator\Constraints\CircularReference;
-use Oro\Bundle\PricingBundle\Validator\Constraints\CircularReferenceValidator;
+use Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReference;
+use Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReferenceValidator;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
  */
-class CircularReferenceValidatorTest extends WebTestCase
+class LexemeCircularReferenceValidatorTest extends WebTestCase
 {
     /**
-     * @var CircularReferenceValidator
+     * @var LexemeCircularReferenceValidator
      */
     protected $validator;
 
     /**
-     * @var CircularReference
+     * @var LexemeCircularReference
      */
     protected $constraint;
 
@@ -35,7 +35,7 @@ class CircularReferenceValidatorTest extends WebTestCase
         );
 
         $this->validator = $this->getContainer()->get('validator');
-        $this->constraint = new CircularReference(['fields' => ['productAssignmentRule']]);
+        $this->constraint = new LexemeCircularReference(['fields' => ['productAssignmentRule']]);
     }
 
     public function testValidateNotCircularWithoutPriceRulesReference()
@@ -195,7 +195,7 @@ class CircularReferenceValidatorTest extends WebTestCase
             $priceList3->getId()
         ));
 
-        $constraint = new CircularReference(['fields' => ['rule']]);
+        $constraint = new LexemeCircularReference(['fields' => ['rule']]);
 
         $errors = $this->validator->validate($priceRule5, $constraint);
         $this->assertEquals(0, $errors->count());
@@ -226,7 +226,7 @@ class CircularReferenceValidatorTest extends WebTestCase
             $priceList3->getId()
         ));
 
-        $constraint = new CircularReference(['fields' => ['rule']]);
+        $constraint = new LexemeCircularReference(['fields' => ['rule']]);
 
         $errors = $this->validator->validate($priceRule5, $constraint);
         $this->assertEquals(1, $errors->count());

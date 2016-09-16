@@ -6,14 +6,16 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
 use Oro\Bundle\PricingBundle\Expression\NameNode;
+use Oro\Bundle\PricingBundle\Expression\NodeInterface;
 use Oro\Bundle\PricingBundle\Expression\RelationNode;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class CircularReferenceValidator extends ConstraintValidator
+class LexemeCircularReferenceValidator extends ConstraintValidator
 {
     /**
      * @var ExpressionParser
@@ -26,17 +28,12 @@ class CircularReferenceValidator extends ConstraintValidator
     protected $doctrine;
 
     /**
-     * @var array
+     * @var string
      */
-    protected $references;
+    protected $container;
 
     /**
-     * @var string|null
-     */
-    protected $container = null;
-
-    /**
-     * @var PropertyAccess
+     * @var PropertyAccessor
      */
     protected $accessor;
 
@@ -67,34 +64,39 @@ class CircularReferenceValidator extends ConstraintValidator
     }
 
     /**
-     * @param $value
-     * @param CircularReference $constraint
+     * @param mixed $object
+     * @param Constraint $constraint
      *
-     * {@inheritdoc}
+     * @throws \InvalidArgumentException
      */
     public function validate($object, Constraint $constraint)
     {
-        if (empty($object->getId())) {
-            return;
+        if (!is_object($object)) {
+            throw new \InvalidArgumentException('Validated data must be an object');
         }
 
         try {
             foreach ($constraint->fields as $field) {
-                $expressions = [$this->getFieldValue($object, $field)];
-
+                $primaryId = null;
                 if ($object instanceof PriceList) {
-                    $this->references = [$object->getId()];
-                } elseif (($priceListId = $this->getFieldValue($object, 'priceList')->getId()) !== null) {
-                    $this->references = [$priceListId];
+                    $primaryId = $this->getFieldValue($object, 'id');
+                } elseif (($priceList = $this->getFieldValue($object, 'priceList')) !== null) {
+                    $primaryId = $this->getFieldValue($priceList, 'id');
                 } else {
                     break;
                 }
+
+                if ($primaryId === null) {
+                    break;
+                }
+
+                $expressions = [$this->getFieldValue($object, $field)];
 
                 while (true) {
                     $nodes = $this->parseExpression($expressions);
                     $references = $this->findReferences($nodes);
 
-                    if ($this->hasCircularReference($references)) {
+                    if (in_array($primaryId, $references, true)) {
                         $this->context->buildViolation($constraint->message)->atPath($field)->addViolation();
                         break;
                     }
@@ -103,22 +105,12 @@ class CircularReferenceValidator extends ConstraintValidator
                         break;
                     }
 
-                    $this->references = array_merge($this->references, $references);
                     $expressions = $this->findExpressions($references);
                 }
             }
         } catch (\Exception $ex) {
             $this->context->buildViolation($constraint->invalidNodeMessage)->atPath($field)->addViolation();
         }
-    }
-
-    /**
-     * @param array $references
-     * @return bool
-     */
-    protected function hasCircularReference($references)
-    {
-        return (count(array_intersect($this->references, $references)) > 0);
     }
 
     /**
@@ -147,9 +139,18 @@ class CircularReferenceValidator extends ConstraintValidator
         $references = [];
 
         foreach ($nodes as $node) {
+            /**
+             * @var NameNode|RelationNode $node
+             */
             if (!$this->isSupportedNode($node)) {
                 continue;
             }
+            $container = $node->getContainer();
+
+            if ($container !== PriceList::class) {
+                continue;
+            }
+
             $containerId = $node->getContainerId();
             if (!empty($containerId)) {
                 $references[] = $containerId;
@@ -160,7 +161,7 @@ class CircularReferenceValidator extends ConstraintValidator
     }
 
     /**
-     * @param $references
+     * @param array $references
      * @return array
      */
     protected function findExpressions($references)
@@ -206,10 +207,10 @@ class CircularReferenceValidator extends ConstraintValidator
     }
 
     /**
-     * @param $entity
+     * @param object $entity
      * @param string $field
      *
-     * @return string|null
+     * @return mixed|null
      */
     protected function getFieldValue($entity, $field)
     {
@@ -246,11 +247,11 @@ class CircularReferenceValidator extends ConstraintValidator
 
     /**
      * Check if node must be supported by validator
-     * @param $node
+     * @param NodeInterface $node
      *
      * @return bool
      */
-    protected function isSupportedNode($node)
+    protected function isSupportedNode(NodeInterface $node)
     {
         return (($node instanceof NameNode) || ($node instanceof RelationNode));
     }

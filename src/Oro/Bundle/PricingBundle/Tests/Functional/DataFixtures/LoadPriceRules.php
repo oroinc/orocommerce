@@ -39,8 +39,8 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
             'currency' => 'USD',
             'priceList' => 'price_list_1',
             'productUnit' => 'product_unit.milliliter',
-            'ruleCondition' => null,
-            'rule' => '',
+            'ruleCondition' => 'product.category.id == 1',
+            'rule' => 'product.msrp.value + 10',
             'priority' => 2,
         ],
         [
@@ -49,8 +49,8 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
             'currency' => 'USD',
             'priceList' => 'price_list_1',
             'productUnit' => 'product_unit.milliliter',
-            'ruleCondition' => null,
-            'rule' => '',
+            'ruleCondition' => 'product.category.id == 1',
+            'rule' => 'product.msrp.value + 10',
             'priority' => 3,
         ],
         [
@@ -59,8 +59,8 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
             'currency' => 'USD',
             'priceList' => 'price_list_2',
             'productUnit' => 'product_unit.milliliter',
-            'ruleCondition' => null,
-            'rule' => '',
+            'ruleCondition' => 'product.category.id == 1',
+            'rule' => 'product.msrp.value + 10',
             'priority' => 4,
         ],
         [
@@ -69,8 +69,8 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
             'currency' => 'USD',
             'priceList' => 'price_list_4',
             'productUnit' => 'product_unit.milliliter',
-            'ruleCondition' => null,
-            'rule' => '',
+            'ruleCondition' => 'product.category.id == 1',
+            'rule' => 'product.msrp.value + 10',
             'priority' => 5,
         ]
     ];

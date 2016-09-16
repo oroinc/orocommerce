@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class CircularReference extends Constraint
+class LexemeCircularReference extends Constraint
 {
     /**
      * @var string
@@ -26,7 +26,7 @@ class CircularReference extends Constraint
      */
     public function validatedBy()
     {
-        return 'oro_pricing.validator_constraints.circular_reference_validator';
+        return 'oro_pricing.validator_constraints.lexeme_circular_reference_validator';
     }
 
     public function getTargets()
