@@ -245,7 +245,7 @@ class ShippingPriceProvider
                     $types[$typeIdentifier] = $this->createTypeData(
                         $method->getType($typeIdentifier),
                         $methodOptions,
-                        $optionsByTypes[$typeIdentifier],
+                        array_key_exists($typeIdentifier, $optionsByTypes) ? $optionsByTypes[$typeIdentifier] : [],
                         $price
                     );
                 }

@@ -56,12 +56,14 @@ class PackageTest extends \PHPUnit_Framework_TestCase
     public function testToArray()
     {
         $this->initPackage();
+
         static::assertEquals($this->resultArray, $this->model->toArray());
     }
 
     public function testToJson()
     {
         $this->initPackage();
+
         static::assertEquals(json_encode($this->resultArray), $this->model->toJson());
     }
 
@@ -78,22 +80,33 @@ class PackageTest extends \PHPUnit_Framework_TestCase
 
         $this->resultArray = [
             'PackagingType' => [
-                    'Code' => self::PACKAGING_TYPE_CODE,
-                ],
-            'Dimensions'    => [
-                    'UnitOfMeasurement' => [
-                            'Code' => self::DIMENSION_CODE,
-                        ],
-                    'Length'            => self::DIMENSION_LENGTH,
-                    'Width'             => self::DIMENSION_WIDTH,
-                    'Height'            => self::DIMENSION_HEIGHT,
-                ],
+                'Code' => self::PACKAGING_TYPE_CODE,
+            ],
             'PackageWeight' => [
-                    'UnitOfMeasurement' => [
-                            'Code' => self::WEIGHT_CODE,
-                        ],
-                    'Weight'            => self::WEIGHT,
+                'UnitOfMeasurement' => [
+                    'Code' => self::WEIGHT_CODE,
                 ],
+                'Weight' => self::WEIGHT,
+            ],
         ];
+    }
+
+    public function testCreate()
+    {
+        $package = Package::create(
+            self::DIMENSION_CODE,
+            self::DIMENSION_HEIGHT,
+            self::DIMENSION_WIDTH,
+            self::DIMENSION_LENGTH,
+            self::WEIGHT_CODE,
+            self::WEIGHT
+        );
+
+        static::assertEquals(self::DIMENSION_CODE, $package->getDimensionCode());
+        static::assertEquals(self::DIMENSION_HEIGHT, $package->getDimensionHeight());
+        static::assertEquals(self::DIMENSION_WIDTH, $package->getDimensionWidth());
+        static::assertEquals(self::DIMENSION_LENGTH, $package->getDimensionLength());
+        static::assertEquals(self::WEIGHT_CODE, $package->getWeightCode());
+        static::assertEquals(self::WEIGHT, $package->getWeight());
     }
 }

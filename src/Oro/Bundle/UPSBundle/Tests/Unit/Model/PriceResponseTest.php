@@ -17,22 +17,22 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
         $this->priceResponse = new PriceResponse();
     }
 
-    public function testParseResponsePriceAsObject()
+    public function testParseResponseSinglePrice()
     {
-        $this->priceResponse->parseJSON(
-            '{
-               "RateResponse":{
-                  "RatedShipment":{
-                     "Service": {
-                        "Code":"02"
-                     },
-                     "TotalCharges":{
-                        "CurrencyCode":"USD",
-                        "MonetaryValue":"8.60"
-                     }
-                  }
-               }
-            }'
+        $this->priceResponse->parse(
+            [
+                'RateResponse' => [
+                    'RatedShipment' => [
+                        'Service' => [
+                            'Code' => '02'
+                        ],
+                        'TotalCharges' => [
+                            'CurrencyCode' => 'USD',
+                            'MonetaryValue' => '8.60'
+                        ]
+                    ]
+                ]
+            ]
         );
         $expected = [
             '02' => Price::create('8.60', 'USD'),
@@ -40,50 +40,43 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
         static::assertEquals($expected, $this->priceResponse->getPricesByServices());
     }
 
-    public function testParseResponsePriceAsArray()
+    public function testParseResponseMultiplePrices()
     {
-        $this->priceResponse->parseJSON(
-            '{
-               "RateResponse":{
-                  "RatedShipment":[
-                     {
-                         "Service": {
-                            "Code":"01"
-                         },
-                         "TotalCharges":{
-                            "CurrencyCode":"USD",
-                            "MonetaryValue":"8.60"
-                         }
-                     },
-                     {
-                         "Service": {
-                            "Code":"02"
-                         },
-                         "TotalCharges":{
-                            "CurrencyCode":"EUR",
-                            "MonetaryValue":"3.40"
-                         }
-                     },
-                     {
-                         "Service": {
-                            "Code":"03"
-                         },
-                         "TotalCharges":{
-                            "CurrencyCode":"EUR",
-                            "WrongMonetaryValue":"3.40"
-                         }
-                     }
-                  ]
-               }
-            }'
+        $this->priceResponse->parse(
+            [
+                'RateResponse' => [
+                    'RatedShipment' => [
+                        [
+                            'Service' => [
+                                'Code' => '02'
+                            ],
+                            'TotalCharges' => [
+                                'CurrencyCode' => 'USD',
+                                'MonetaryValue' => '8.60'
+                            ]
+                        ],
+                        [
+                            'Service' => [
+                                'Code' => '12'
+                            ],
+                            'TotalCharges' => [
+                                'CurrencyCode' => 'USD',
+                                'MonetaryValue' => '18.60'
+                            ]
+                        ],
+                    ]
+                ]
+            ]
         );
 
         $pricesExpected = [
-            '01' => Price::create('8.60', 'USD'),
-            '02' => Price::create('3.40', 'EUR'),
+            '02' => Price::create('8.60', 'USD'),
+            '12' => Price::create('18.60', 'USD'),
         ];
+
         static::assertEquals($pricesExpected, $this->priceResponse->getPricesByServices());
-        static::assertEquals($pricesExpected['01'], $this->priceResponse->getPriceByService('01'));
+        static::assertEquals($pricesExpected['02'], $this->priceResponse->getPriceByService('02'));
+        static::assertEquals($pricesExpected['12'], $this->priceResponse->getPriceByService('12'));
     }
 
     /**
@@ -92,7 +85,7 @@ class PriceResponseTest extends \PHPUnit_Framework_TestCase
      */
     public function testParseEmptyResponse()
     {
-        $this->priceResponse->parseJSON('');
+        $this->priceResponse->parse([]);
     }
 
     /**

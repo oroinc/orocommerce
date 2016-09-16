@@ -4,7 +4,7 @@ namespace Oro\Bundle\UPSBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\IntegrationBundle\Entity\Channel as Integration;
+use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Exception\InvalidConfigurationException;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Transport\AbstractRestTransport;
@@ -75,38 +75,24 @@ class UPSTransport extends AbstractRestTransport
 
     /**
      * @param PriceRequest $priceRequest
+     * @param Transport $transportEntity
      * @throws RestException
      * @throws InvalidConfigurationException
      * @throws \InvalidArgumentException
      * @return PriceResponse|null
      */
-    public function getPrices(PriceRequest $priceRequest)
+    public function getPrices(PriceRequest $priceRequest, Transport $transportEntity)
     {
-        $repo = $this->registry
-            ->getManagerForClass('Oro\Bundle\IntegrationBundle\Entity\Channel')
-            ->getRepository('Oro\Bundle\IntegrationBundle\Entity\Channel');
-        /** @var Integration $integration */
-        $integration = $repo->findOneBy(['type' => ChannelType::TYPE]);
-        if ($integration && $integration->isEnabled()) {
-            $transportEntity = $integration->getTransport();
-            if ($transportEntity) {
-                $this->client = $this->createRestClient($transportEntity);
-
-                $parameterBag = $transportEntity->getSettingsBag();
-                $priceRequest->setSecurity(
-                    $parameterBag->get('api_user'),
-                    $parameterBag->get('api_password'),
-                    $parameterBag->get('api_key')
-                );
-                $priceRequest
-                    ->setShipperName($parameterBag->get('shipping_account_name'))
-                    ->setShipperNumber($parameterBag->get('shipping_account_number'));
-
-                $json = $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
-                $priceResponse = new PriceResponse();
-                $priceResponse->parseJSON($json);
-                return $priceResponse;
+        if ($transportEntity) {
+            $this->client = $this->createRestClient($transportEntity);
+            $data = $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
+            $priceResponse = new PriceResponse();
+            if (!is_array($data)) {
+                return null;
             }
+            $priceResponse->parse($data);
+
+            return $priceResponse;
         }
 
         return null;

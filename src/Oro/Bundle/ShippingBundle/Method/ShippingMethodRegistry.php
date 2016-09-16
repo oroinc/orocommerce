@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\ShippingBundle\Method;
 
-class ShippingMethodRegistry
+class ShippingMethodRegistry implements ShippingMethodProviderInterface
 {
     /**
-     * @var ShippingMethodInterface[]
+     * @var ShippingMethodProviderInterface[]
      */
-    protected $shippingMethods = [];
+    private $providers = [];
 
     /**
-     * @param ShippingMethodInterface $shippingMethod
+     * @param ShippingMethodProviderInterface $provider
      */
-    public function addShippingMethod(ShippingMethodInterface $shippingMethod)
+    public function addProvider(ShippingMethodProviderInterface $provider)
     {
-        $this->shippingMethods[$shippingMethod->getIdentifier()] = $shippingMethod;
+        $this->providers[] = $provider;
     }
 
     /**
@@ -23,12 +23,11 @@ class ShippingMethodRegistry
      */
     public function getShippingMethod($name)
     {
-        $name = (string)$name;
-
-        if (array_key_exists($name, $this->shippingMethods)) {
-            return $this->shippingMethods[$name];
+        foreach ($this->providers as $provider) {
+            if ($provider->hasShippingMethod($name)) {
+                return $provider->getShippingMethod($name);
+            }
         }
-
         return null;
     }
 
@@ -37,6 +36,24 @@ class ShippingMethodRegistry
      */
     public function getShippingMethods()
     {
-        return $this->shippingMethods;
+        $result = [];
+        foreach ($this->providers as $provider) {
+            $result = array_merge($result, $provider->getShippingMethods());
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function hasShippingMethod($name)
+    {
+        foreach ($this->providers as $provider) {
+            if ($provider->hasShippingMethod($name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

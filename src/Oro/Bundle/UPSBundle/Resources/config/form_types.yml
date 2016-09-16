@@ -6,7 +6,7 @@ services:
             - '@oro_shipping.shipping_origin.provider'
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: form.type }
+            - { name: form.type, alias: oro_ups_transport_settings_type }
 
     oro_ups.form.type.shipping_method_config_options:
         class: Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType

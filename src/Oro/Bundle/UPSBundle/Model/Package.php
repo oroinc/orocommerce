@@ -4,6 +4,8 @@ namespace Oro\Bundle\UPSBundle\Model;
 
 class Package
 {
+    const PACKAGING_TYPE_CODE = '00';
+
     /**
      * @var string
      */
@@ -46,23 +48,43 @@ class Package
     {
         return [
             'PackagingType' => [
-                    'Code' => $this->packagingTypeCode,
-                ],
-            'Dimensions'    => [
-                    'UnitOfMeasurement' => [
-                            'Code' => $this->dimensionCode,
-                        ],
-                    'Length'            => $this->dimensionLength,
-                    'Width'             => $this->dimensionWidth,
-                    'Height'            => $this->dimensionHeight,
-                ],
+                'Code' => $this->packagingTypeCode,
+            ],
             'PackageWeight' => [
-                    'UnitOfMeasurement' => [
-                            'Code' => $this->weightCode,
-                        ],
-                    'Weight'            => $this->weight,
+                'UnitOfMeasurement' => [
+                    'Code' => $this->weightCode,
                 ],
+                'Weight'            => $this->weight,
+            ],
         ];
+    }
+
+    /**
+     * @param string $dimensionCode
+     * @param float $dimensionHeight
+     * @param float $dimensionWidth
+     * @param float $dimensionLength
+     * @param string $unitOfWeight
+     * @param float|int $weight
+     * @return $this
+     */
+    public static function create(
+        $dimensionCode,
+        $dimensionHeight,
+        $dimensionWidth,
+        $dimensionLength,
+        $unitOfWeight,
+        $weight
+    ) {
+        return (new Package())
+            ->setPackagingTypeCode(self::PACKAGING_TYPE_CODE)
+            ->setDimensionCode($dimensionCode)
+            ->setDimensionHeight($dimensionHeight)
+            ->setDimensionWidth($dimensionWidth)
+            ->setDimensionLength($dimensionLength)
+            ->setWeightCode($unitOfWeight)
+            ->setWeight($weight)
+        ;
     }
 
     /**

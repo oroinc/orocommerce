@@ -81,6 +81,7 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
 
     /**
      * {@inheritdoc}
+     * @throws \InvalidArgumentException
      */
     public function load(ObjectManager $manager)
     {
@@ -92,6 +93,7 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
 
     /**
      * @param ObjectManager $manager
+     * @throws \InvalidArgumentException
      */
     public function loadSpecifiedCountryServices(ObjectManager $manager)
     {
@@ -126,6 +128,7 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
 
     /**
      * @param ObjectManager $manager
+     * @throws \InvalidArgumentException
      */
     public function loadEUCountriesServices(ObjectManager $manager)
     {
@@ -166,6 +169,7 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
 
     /**
      * @param ObjectManager $manager
+     * @throws \InvalidArgumentException
      */
     public function loadUnspecifiedCountryServices(ObjectManager $manager)
     {
@@ -185,8 +189,8 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
 
             /** @var Country $country */
             foreach ($countries as $country) {
-                if (($row['type'] === 'UC' && !in_array($country->getIso2Code(), $this->loadedCountries, false)) ||
-                    $row['type'] === 'AC') {
+                if ($row['type'] === 'AC' ||
+                    ($row['type'] === 'UC' && !in_array($country->getIso2Code(), $this->loadedCountries, false))) {
                     $shippingService = new ShippingService();
                     $shippingService
                         ->setCode($row['code'])

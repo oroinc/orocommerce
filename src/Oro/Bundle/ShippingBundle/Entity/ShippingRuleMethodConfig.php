@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Model\ExtendShippingRuleMethodConfig;
 
 /**
@@ -200,5 +201,39 @@ class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig
     public function getTypeConfigs()
     {
         return $this->typeConfigs;
+    }
+
+    /**
+     * @param ShippingMethodTypeInterface $type
+     * @return array
+     */
+    public function getOptionsByType($type)
+    {
+        foreach ($this->typeConfigs as $methodTypeConfig) {
+            if ($methodTypeConfig->getType() === $type->getIdentifier()) {
+                return $methodTypeConfig->getOptions();
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * @param ShippingMethodTypeInterface[] $types
+     * @return array
+     */
+    public function getOptionsByTypes($types)
+    {
+        $optionsTypesArray = [];
+        foreach ($this->typeConfigs as $methodTypeConfig) {
+            $optionsTypesArray[$methodTypeConfig->getType()] = $methodTypeConfig->getOptions();
+        }
+
+        $typesArray = [];
+        foreach ($types as $type) {
+            $typesArray[] = $type->getIdentifier();
+        }
+
+        return array_intersect_key($optionsTypesArray, array_flip($typesArray));
     }
 }

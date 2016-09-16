@@ -64,40 +64,9 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
         /** @var PriceRequest|\PHPUnit_Framework_MockObject_MockObject $rateRequest * */
         $rateRequest = $this->getMock(PriceRequest::class);
 
-        $rateRequest->expects(static::once())
-            ->method('setSecurity')
-            ->willReturn($rateRequest);
-
-        $rateRequest->expects(static::once())
-            ->method('setShipperName')
-            ->willReturn($rateRequest);
-
-        $rateRequest->expects(static::once())
-            ->method('setShipperNumber')
-            ->willReturn($rateRequest);
-
         $integration = new Channel();
         $transportEntity = new \Oro\Bundle\UPSBundle\Entity\UPSTransport();
         $integration->setTransport($transportEntity);
-
-        $repository = $this->getMockBuilder('Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository')
-            ->disableOriginalConstructor()->getMock();
-        $repository->expects(static::once())
-            ->method('findOneBy')
-            ->willReturn($integration);
-
-        $entityManager = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entityManager->expects(static::once())
-            ->method('getRepository')
-            ->with('Oro\Bundle\IntegrationBundle\Entity\Channel')
-            ->willReturn($repository);
-
-        $this->registry->expects(static::once())
-            ->method('getManagerForClass')
-            ->with('Oro\Bundle\IntegrationBundle\Entity\Channel')
-            ->willReturn($entityManager);
 
         $this->clientFactory->expects(static::once())
             ->method('createRestClient')
@@ -128,6 +97,6 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             ->willReturn($restResponse);
 
         //TODO: add test assertions
-        $this->transport->getPrices($rateRequest);
+        $this->transport->getPrices($rateRequest, $transportEntity);
     }
 }

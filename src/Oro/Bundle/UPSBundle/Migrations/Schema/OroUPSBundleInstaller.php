@@ -18,6 +18,7 @@ class OroUPSBundleInstaller implements Installation
 
     /**
      * {@inheritdoc}
+     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -30,6 +31,7 @@ class OroUPSBundleInstaller implements Installation
 
     /**
      * @param Schema $schema
+     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     public function updateOroIntegrationTransportTable(Schema $schema)
     {
@@ -72,6 +74,7 @@ class OroUPSBundleInstaller implements Installation
 
     /**
      * @param Schema $schema
+     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addOroIntegrationTransportForeignKeys(Schema $schema)
     {
@@ -86,6 +89,7 @@ class OroUPSBundleInstaller implements Installation
 
     /**
      * @param Schema $schema
+     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addOroUPSShippingServiceForeignKeys(Schema $schema)
     {
