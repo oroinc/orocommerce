@@ -56,7 +56,7 @@ class ResizeAllProductImagesCommandTest extends \PHPUnit_Framework_TestCase
         $container = $this->prophesize(ContainerInterface::class);
         $container->get('oro_entity.doctrine_helper')->willReturn($this->doctrineHelper);
         $container->get('event_dispatcher')->willReturn($this->eventDispatcher);
-        $container->getParameter('orob2b_product.entity.product_image.class')->willReturn(self::PRODUCT_IMAGE_CLASS);
+        $container->getParameter('oro_product.entity.product_image.class')->willReturn(self::PRODUCT_IMAGE_CLASS);
 
         $this->command = new ResizeAllProductImagesCommand();
         $this->command->setContainer($container->reveal());

@@ -27,7 +27,7 @@ class ProductImageRepositoryTest extends WebTestCase
         ]);
 
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_product.entity.product_image.class')
+            $this->getContainer()->getParameter('oro_product.entity.product_image.class')
         );
     }
 
@@ -50,7 +50,7 @@ class ProductImageRepositoryTest extends WebTestCase
     {
         return $this->getContainer()
             ->get('doctrine')->getRepository(
-                $this->getContainer()->getParameter('orob2b_product.entity.product.class')
+                $this->getContainer()->getParameter('oro_product.entity.product.class')
             )
             ->findOneBySku($sku);
     }

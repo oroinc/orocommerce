@@ -33,7 +33,7 @@ class ImageResizeMessageProcessorTest extends WebTestCase
         $this->initClient();
         $this->loadFixtures([LoadProductImageData::class]);
 
-        $this->processor = self::getContainer()->get('orob2b.product.message_processor.image_resize');
+        $this->processor = self::getContainer()->get('oro.product.message_processor.image_resize');
     }
 
     public function testResizeProductImage()

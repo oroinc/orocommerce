@@ -9,7 +9,7 @@ use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
 class ProductImagesConfigurationListener
 {
-    const PRODUCT_IMAGE_WATERMARK_SECTION_PREFIX = 'orob2b_product.product_image_watermark';
+    const PRODUCT_IMAGE_WATERMARK_SECTION_PREFIX = 'oro_product.product_image_watermark';
 
     /**
      * @var TranslatorInterface
