@@ -43,9 +43,6 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     /** @var ManagerRegistry */
     protected $registry;
 
-    /** @var string */
-    protected $optionsConfigurationFormType;
-
     /**
      * @param UPSTransport $transport
      * @param UPSTransportProvider $transportProvider
@@ -123,7 +120,6 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
 
     /**
      * {@inheritdoc}
-     * @throws \InvalidArgumentException
      */
     public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
     {
@@ -145,7 +141,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
         ;
         
         $unitOfWeight = $this->transport->getUnitOfWeight();
-        if ($unitOfWeight === 'KGS') {
+        if ($unitOfWeight === UPSTransport::UNIT_OF_WEIGHT_KGS) {
             $weightLimit = self::MAX_PACKAGE_WEIGHT_KGS;
         } else {
             $weightLimit = self::MAX_PACKAGE_WEIGHT_LBS;
