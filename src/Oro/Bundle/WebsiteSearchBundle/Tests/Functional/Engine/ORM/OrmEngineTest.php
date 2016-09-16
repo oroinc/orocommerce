@@ -104,7 +104,8 @@ class OrmEngineTest extends AbstractSearchWebTestCase
             $this->getContainer()->get('event_dispatcher'),
             $this->getContainer()->get('oro_entity.doctrine_helper'),
             $this->mappingProviderMock,
-            $this->getContainer()->get('oro_entity.entity_alias_resolver')
+            $this->getContainer()->get('oro_entity.entity_alias_resolver'),
+            $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver')
         );
 
         $indexer->reindex(TestEntity::class, []);

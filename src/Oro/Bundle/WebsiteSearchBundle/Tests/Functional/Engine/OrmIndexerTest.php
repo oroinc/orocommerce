@@ -10,6 +10,7 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
+use Oro\Bundle\WebsiteSearchBundle\Engine\EntityDependenciesResolver;
 use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
@@ -91,7 +92,8 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             $this->dispatcher,
             $this->doctrineHelper,
             $this->mappingProviderMock,
-            $this->entityAliasResolver
+            $this->entityAliasResolver,
+            $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver')
         );
 
         $this->clearRestrictListeners($this->getRestrictEntityEventName());
@@ -246,7 +248,8 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             $this->dispatcher,
             $this->doctrineHelper,
             $this->mappingProviderMock,
-            $this->entityAliasResolver
+            $this->entityAliasResolver,
+            $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver')
         );
 
         $this->listener = $this->setListener();
@@ -669,14 +672,24 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
     public function testGetClassesForReindexWhenAllClassesReturned()
     {
+        $allClasses = ['Product', 'Category', 'User'];
+
         $this->mappingProviderMock
             ->expects($this->once())
             ->method('getEntityClasses')
-            ->willReturn(['Product', 'Category']);
+            ->willReturn($allClasses);
 
-        $allClasses = $this->indexer->getClassesForReindex();
+        $entityDependenciesResolver = new EntityDependenciesResolver($this->dispatcher, $this->mappingProviderMock);
 
-        $this->assertEquals(['Product', 'Category'], $allClasses);
+        $this->indexer = new OrmIndexer(
+            $this->dispatcher,
+            $this->doctrineHelper,
+            $this->mappingProviderMock,
+            $this->entityAliasResolver,
+            $entityDependenciesResolver
+        );
+
+        $this->assertEquals($allClasses, $this->indexer->getClassesForReindex());
     }
 
     public function testGetClassesForReindex()

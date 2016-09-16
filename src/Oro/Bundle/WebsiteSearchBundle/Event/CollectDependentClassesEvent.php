@@ -9,40 +9,7 @@ class CollectDependentClassesEvent extends Event
     const NAME = 'oro_website_search.event.collect_dependent_classes';
 
     /** @var array */
-    private $dependencies;
-
-    /** @var array */
-    private $classesForReindex;
-
-    /**
-     * @param array $classes
-     * @return array
-     */
-    public function getClassesForReindex(array $classes)
-    {
-        $this->classesForReindex = [];
-        foreach ($classes as $class) {
-            $this->collectDependentClassesForClass($class);
-        }
-
-        return array_values($this->classesForReindex);
-    }
-
-    /**
-     * @param string $class
-     */
-    private function collectDependentClassesForClass($class)
-    {
-        $this->classesForReindex[$class] = $class;
-
-        if (isset($this->dependencies[$class])) {
-            foreach ($this->dependencies[$class] as $dependentClass) {
-                if (!isset($this->classesForReindex[$dependentClass])) {
-                    $this->collectDependentClassesForClass($dependentClass);
-                }
-            }
-        }
-    }
+    private $dependencies = [];
 
     /**
      * Adds dependencies for $dependentEntityClass which means that $dependentEntityClass depends on
@@ -56,5 +23,13 @@ class CollectDependentClassesEvent extends Event
         foreach ($entityClasses as $entityClass) {
             $this->dependencies[$entityClass][] = $dependentEntityClass;
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getDependencies()
+    {
+        return $this->dependencies;
     }
 }

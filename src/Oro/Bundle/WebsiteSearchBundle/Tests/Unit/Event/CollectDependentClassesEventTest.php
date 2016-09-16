@@ -6,20 +6,11 @@ use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
 
 class CollectDependentClassesEventTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetClassesForReindexWhenNoDependenciesAdded()
-    {
-        $event = new CollectDependentClassesEvent();
-
-        $classes = ['Product', 'Category'];
-
-        $this->assertEquals($classes, $event->getClassesForReindex($classes));
-    }
-
     public function testGetClassesForReindexWithEmptyArray()
     {
         $event = new CollectDependentClassesEvent();
 
-        $this->assertEquals([], $event->getClassesForReindex([]));
+        $this->assertEquals([], $event->getDependencies());
     }
 
     public function testGetClassesForReindexWithSimpleDependencies()
@@ -28,9 +19,12 @@ class CollectDependentClassesEventTest extends \PHPUnit_Framework_TestCase
 
         $event->addClassDependencies('Product', ['Category', 'User']);
 
-        $this->assertEquals(['Category', 'Product'], $event->getClassesForReindex(['Category']));
-        $this->assertEquals(['User', 'Product'], $event->getClassesForReindex(['User']));
-        $this->assertEquals(['Product'], $event->getClassesForReindex(['Product']));
+        $expectedDependencies = [
+            'Category' => ['Product'],
+            'User' => ['Product'],
+        ];
+
+        $this->assertEquals($expectedDependencies, $event->getDependencies());
     }
 
     public function testGetClassesForReindexWithCircularDependencies()
@@ -41,8 +35,12 @@ class CollectDependentClassesEventTest extends \PHPUnit_Framework_TestCase
         $event->addClassDependencies('Category', ['SomeEntity']);
         $event->addClassDependencies('SomeEntity', ['Product']);
 
-        $this->assertEquals(['Category', 'Product', 'SomeEntity'], $event->getClassesForReindex(['Category']));
-        $this->assertEquals(['Product', 'SomeEntity', 'Category'], $event->getClassesForReindex(['Product']));
-        $this->assertEquals(['SomeEntity', 'Category', 'Product'], $event->getClassesForReindex(['SomeEntity']));
+        $expectedDependencies = [
+            'Category' => ['Product'],
+            'SomeEntity' => ['Category'],
+            'Product' => ['SomeEntity'],
+        ];
+
+        $this->assertEquals($expectedDependencies, $event->getDependencies());
     }
 }

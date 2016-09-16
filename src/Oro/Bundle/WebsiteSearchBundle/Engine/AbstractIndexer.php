@@ -9,7 +9,6 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectContextEvent;
-use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
@@ -33,22 +32,28 @@ abstract class AbstractIndexer implements IndexerInterface
     /** @var EntityAliasResolver */
     protected $entityAliasResolver;
 
+    /** @var EntityDependenciesResolver */
+    protected $entityDependenciesResolver;
+
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param DoctrineHelper $doctrineHelper
      * @param WebsiteSearchMappingProvider $mappingProvider
      * @param EntityAliasResolver $entityAliasResolver
+     * @param EntityDependenciesResolver $entityDependenciesResolver
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         DoctrineHelper $doctrineHelper,
         WebsiteSearchMappingProvider $mappingProvider,
-        EntityAliasResolver $entityAliasResolver
+        EntityAliasResolver $entityAliasResolver,
+        EntityDependenciesResolver $entityDependenciesResolver
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->doctrineHelper = $doctrineHelper;
         $this->mappingProvider = $mappingProvider;
         $this->entityAliasResolver = $entityAliasResolver;
+        $this->entityDependenciesResolver = $entityDependenciesResolver;
     }
 
     /**
@@ -108,15 +113,7 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     public function getClassesForReindex($class = null)
     {
-        if (null === $class) {
-            return $this->mappingProvider->getEntityClasses();
-        }
-
-        $classes = is_array($class) ? $class : [$class];
-        $collectDependentClassesEvent = new CollectDependentClassesEvent();
-        $this->eventDispatcher->dispatch(CollectDependentClassesEvent::NAME, $collectDependentClassesEvent);
-
-        return $collectDependentClassesEvent->getClassesForReindex($classes);
+        return $this->entityDependenciesResolver->getClassesForReindex($class);
     }
 
     /**
