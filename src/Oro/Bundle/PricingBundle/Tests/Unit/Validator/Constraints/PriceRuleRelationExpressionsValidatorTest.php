@@ -148,6 +148,16 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
             ->with($currencyExpression)
             ->willReturn($parsedCurrencyExpression);
 
+        $this->parser->expects($this->at(1))
+            ->method('parse')
+            ->with(null)
+            ->willReturn(null);
+
+        $this->parser->expects($this->at(2))
+            ->method('parse')
+            ->with(null)
+            ->willReturn(null);
+
         $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('currencyExpression')->willReturn($builder);
         $builder->expects($this->at(1))->method('addViolation');
@@ -229,7 +239,21 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
             ->method('parse')
             ->with($currencyExpression)
             ->willReturn($parsedCurrencyExpression);
-        $this->parser->expects($this->at(1))->method('parse')->with($ruleExpression)->willReturn($parsedRuleExpression);
+
+        $this->parser->expects($this->at(1))
+            ->method('parse')
+            ->with($ruleExpression)
+            ->willReturn($parsedRuleExpression);
+
+        $this->parser->expects($this->at(2))
+            ->method('parse')
+            ->with(null)
+            ->willReturn(null);
+
+        $this->parser->expects($this->at(3))
+            ->method('parse')
+            ->with(null)
+            ->willReturn(null);
 
         $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('currencyExpression')->willReturn($builder);
@@ -300,9 +324,20 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         $rule = new PriceRule();
         $rule->setQuantityExpression($quantityExpression);
 
-        $this->parser->expects($this->at(0))->method('parse')->with($quantityExpression)->willReturn(
-            $parsedQuantityExpression
-        );
+        $this->parser->expects($this->at(0))
+            ->method('parse')
+            ->with(null)
+            ->willReturn(null);
+
+        $this->parser->expects($this->at(1))
+            ->method('parse')
+            ->with(null)
+            ->willReturn(null);
+
+        $this->parser->expects($this->at(2))
+            ->method('parse')
+            ->with($quantityExpression)
+            ->willReturn($parsedQuantityExpression);
 
         $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('quantityExpression')->willReturn($builder);
@@ -368,9 +403,23 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
 
         $this->parser->expects($this->at(0))
             ->method('parse')
+            ->with(null)
+            ->willReturn(null);
+
+        $this->parser->expects($this->at(1))
+            ->method('parse')
+            ->with(null)
+            ->willReturn(null);
+
+        $this->parser->expects($this->at(2))
+            ->method('parse')
             ->with($quantityExpression)
             ->willReturn($parsedQuantityExpression);
-        $this->parser->expects($this->at(1))->method('parse')->with($ruleExpression)->willReturn($parsedRuleExpression);
+
+        $this->parser->expects($this->at(3))
+            ->method('parse')
+            ->with($ruleExpression)
+            ->willReturn($parsedRuleExpression);
 
         $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('quantityExpression')->willReturn($builder);
@@ -444,8 +493,18 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
 
         $this->parser->expects($this->at(0))
             ->method('parse')
+            ->with(null)
+            ->willReturn(null);
+
+        $this->parser->expects($this->at(1))
+            ->method('parse')
             ->with($productUnitExpression)
             ->willReturn($parsedUnitExpression);
+
+        $this->parser->expects($this->at(2))
+            ->method('parse')
+            ->with(null)
+            ->willReturn(null);
 
         $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('productUnitExpression')->willReturn($builder);
@@ -522,12 +581,25 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         $rule->setProductUnitExpression($productUnitExpression)
             ->setRule($ruleExpression);
 
-        $this->parser->expects($this->at(0))->method('parse')
+        $this->parser->expects($this->at(0))
+            ->method('parse')
+            ->with(null)
+            ->willReturn(null);
+
+        $this->parser->expects($this->at(1))
+            ->method('parse')
             ->with($productUnitExpression)
             ->willReturn($parsedUnitExpression);
-        $this->parser->expects($this->at(1))->method('parse')
+
+        $this->parser->expects($this->at(2))
+            ->method('parse')
             ->with($ruleExpression)
             ->willReturn($parsedRuleExpression);
+
+        $this->parser->expects($this->at(3))
+            ->method('parse')
+            ->with(null)
+            ->willReturn(null);
 
         $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('productUnitExpression')->willReturn($builder);

@@ -67,12 +67,8 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
     {
         $expression = $rule->getCurrencyExpression();
         $path = PriceRuleType::CURRENCY_EXPRESSION;
-        if (!$expression ||
-            null === ($nodes = $this->getNodes($expression, $path)) ||
-            !$this->validateNodesCount($nodes, $path) ||
-            !$this->validateIsRelationNode($nodes[0], $path) ||
-            !$this->validateIsRelationInRule($rule, $nodes[0], $path)
-        ) {
+        $nodes = $this->getNodes($expression, $path) ?: [];
+        if (!$this->checkNodes($rule, $nodes, $path)) {
             return;
         }
 
@@ -89,12 +85,8 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
     {
         $expression = $rule->getProductUnitExpression();
         $path = PriceRuleType::PRODUCT_UNIT_EXPRESSION;
-        if (!$expression ||
-            null === ($nodes = $this->getNodes($expression, $path)) ||
-            !$this->validateNodesCount($nodes, $path) ||
-            !$this->validateIsRelationNode($nodes[0], $path) ||
-            !$this->validateIsRelationInRule($rule, $nodes[0], $path)
-        ) {
+        $nodes = $this->getNodes($expression, $path) ?: [];
+        if (!$this->checkNodes($rule, $nodes, $path)) {
             return;
         }
 
@@ -116,9 +108,9 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
      */
     protected function validateQuantity(PriceRule $rule)
     {
-        $expression = $rule->getQuantityExpression();
         $path = PriceRuleType::QUANTITY_EXPRESSION;
-        if (!$expression || null === ($nodes = $this->getNodes($expression, $path))) {
+        $nodes = $this->getNodes($rule->getQuantityExpression(), $path);
+        if (null === $nodes) {
             return;
         }
 
@@ -188,7 +180,7 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
     /**
      * @param string $expression
      * @param string $path
-     * @return array|NodeInterface[]
+     * @return array|NodeInterface[]|null
      */
     protected function getNodes($expression, $path)
     {
@@ -247,5 +239,20 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
         $context->buildViolation($message, $params)
             ->atPath($path)
             ->addViolation();
+    }
+
+    /**
+     * @param PriceRule $rule
+     * @param array|null $nodes
+     * @param string $path
+     *
+     * @return bool
+     */
+    protected function checkNodes(PriceRule $rule, array $nodes, $path)
+    {
+        return 0 !== count($nodes) &&
+        $this->validateNodesCount($nodes, $path) &&
+        $this->validateIsRelationNode($nodes[0], $path) &&
+        $this->validateIsRelationInRule($rule, $nodes[0], $path);
     }
 }
