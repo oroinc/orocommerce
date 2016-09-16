@@ -2,7 +2,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRule:
    shipping_rule1:
        name: 'Shipping Rule 1'
        enabled: true
-       priority: '1'
+       priority: '5'
        conditions: 'true'
        currency: 'EUR'
        stopProcessing: 'false'
@@ -76,7 +76,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
    lineitem1:
        product: '@product1'
-       quantity: '1'
+       quantity: '5'
        unit: '@item'
        accountUser: '@amanda'
        shoppingList: '@shoppinglist1'
@@ -120,9 +120,9 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
         pricelist: '@pricelist1'
         product: '@product1'
         productSku: 'AA1'
-        quantity: 1
+        quantity: 5
         unit: '@item'
-        value: 10
+        value: 2
         currency: 'EUR'
 
 Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
@@ -130,9 +130,9 @@ Oro\Bundle\PricingBundle\Entity\CombinedProductPrice:
         pricelist: '@combinedPriceList'
         product: '@product1'
         productSku: 'AA1'
-        quantity: 1
+        quantity: 5
         unit: '@item'
-        value: 10
+        value: 2
         currency: 'EUR'
 
 Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount:
