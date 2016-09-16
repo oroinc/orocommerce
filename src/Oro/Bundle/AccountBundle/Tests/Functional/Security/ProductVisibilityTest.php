@@ -12,7 +12,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ProductVisibilityTest extends WebTestCase
 {
-    const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_b2b_account.product_visibility';
+    const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_account.product_visibility';
 
     /**
      * {@inheritdoc}

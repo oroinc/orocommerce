@@ -12,7 +12,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 class QuoteExtension extends \Twig_Extension
 {
     const NAME = 'oro_sale_quote';
-    const FRONTEND_SYSTEM_CONFIG_PATH = 'oro_b2b_rfp.frontend_product_visibility';
+    const FRONTEND_SYSTEM_CONFIG_PATH = 'oro_rfp.frontend_product_visibility';
     
     /**
      * @var QuoteProductFormatter

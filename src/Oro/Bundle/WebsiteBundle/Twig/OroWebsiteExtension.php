@@ -6,7 +6,7 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class OroWebsiteExtension extends \Twig_Extension
 {
-    const NAME = 'oro_b2b_website_extension';
+    const NAME = 'oro_website_extension';
 
     /** @var WebsiteManager */
     protected $websiteManager;

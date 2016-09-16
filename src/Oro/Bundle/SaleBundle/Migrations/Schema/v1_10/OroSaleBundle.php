@@ -4,6 +4,7 @@ namespace Oro\Bundle\SaleBundle\Migrations\Schema\v1_10;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
@@ -108,6 +109,9 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface
         $extension->renameTable($schema, $queries, 'orob2b_sale_quote_product', 'oro_sale_quote_product');
         $extension->renameTable($schema, $queries, 'orob2b_quote_demand', 'oro_quote_demand');
         $extension->renameTable($schema, $queries, 'orob2b_quote_product_demand', 'oro_quote_product_demand');
+
+        // system configuration
+        $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_sale', 'oro_sale'));
     }
 
     /**
