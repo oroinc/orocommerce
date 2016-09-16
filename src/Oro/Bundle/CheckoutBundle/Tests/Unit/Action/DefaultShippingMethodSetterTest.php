@@ -12,7 +12,6 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
-use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
@@ -30,11 +29,6 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
     protected $contextProviderFactory;
 
     /**
-     * @var ShippingRulesProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $rulesProvider;
-
-    /**
      * @var ShippingPriceProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $priceProvider;
@@ -45,14 +39,11 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->rulesProvider = $this->getMockBuilder(ShippingRulesProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->priceProvider = $this->getMockBuilder(ShippingPriceProvider::class)
             ->disableOriginalConstructor()->getMock();
         $this->setter = new DefaultShippingMethodSetter(
             $this->contextProviderFactory,
-            $this->rulesProvider,
+            $this->priceProvider,
             $this->priceProvider
         );
     }
@@ -64,7 +55,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->contextProviderFactory->expects($this->never())
             ->method('create');
-        $this->rulesProvider->expects($this->never())
+        $this->priceProvider->expects($this->never())
             ->method('getApplicableShippingRules');
         $this->priceProvider->expects($this->never())
             ->method('getPrice');
@@ -79,7 +70,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
             ->method('create')
             ->with($checkout)
             ->willReturn($context);
-        $this->rulesProvider->expects($this->once())
+        $this->priceProvider->expects($this->once())
             ->method('getApplicableShippingRules')
             ->with($context)
             ->willReturn([]);
@@ -114,7 +105,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
             'methodConfigs' => new ArrayCollection([$config])
         ]);
 
-        $this->rulesProvider->expects($this->once())
+        $this->priceProvider->expects($this->once())
             ->method('getApplicableShippingRules')
             ->with($context)
             ->willReturn([$rule]);

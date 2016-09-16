@@ -25,13 +25,9 @@ class OrderShippingMethodProvider
      */
     public function getData(Order $order)
     {
-        $methodLabel = $this->shippingMethodLabelFormatter->formatShippingMethodLabel($order->getShippingMethod());
-
-        $methodTypeLabel = $this->shippingMethodLabelFormatter->formatShippingMethodTypeLabel(
+        return $this->shippingMethodLabelFormatter->formatShippingMethodWithType(
             $order->getShippingMethod(),
             $order->getShippingMethodType()
         );
-
-        return implode(', ', array_filter([$methodLabel, $methodTypeLabel]));
     }
 }

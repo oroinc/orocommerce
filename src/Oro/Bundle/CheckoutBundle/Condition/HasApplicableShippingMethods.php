@@ -6,7 +6,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
+use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
@@ -27,8 +27,8 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
     /** @var ShippingMethodRegistry */
     protected $shippingMethodRegistry;
 
-    /** ShippingRulesProvider */
-    protected $shippingRulesProvider;
+    /** ShippingPriceProvider */
+    protected $shippingPriceProvider;
 
     /** ShippingContextProviderFactory */
     protected $shippingContextProviderFactory;
@@ -38,16 +38,16 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
 
     /**
      * @param ShippingMethodRegistry $shippingMethodRegistry
-     * @param ShippingRulesProvider $shippingRulesProvider
+     * @param ShippingPriceProvider $shippingPriceProvider
      * @param ShippingContextProviderFactory $shippingContextProviderFactory
      */
     public function __construct(
         ShippingMethodRegistry $shippingMethodRegistry,
-        ShippingRulesProvider $shippingRulesProvider,
+        ShippingPriceProvider $shippingPriceProvider,
         ShippingContextProviderFactory $shippingContextProviderFactory
     ) {
         $this->shippingMethodRegistry = $shippingMethodRegistry;
-        $this->shippingRulesProvider = $shippingRulesProvider;
+        $this->shippingPriceProvider = $shippingPriceProvider;
         $this->shippingContextProviderFactory = $shippingContextProviderFactory;
     }
 
@@ -89,7 +89,7 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
         $rules = [];
         if (null !==$entity) {
             $shippingContext = $this->shippingContextProviderFactory->create($entity);
-            $rules = $this->shippingRulesProvider->getApplicableShippingRules($shippingContext);
+            $rules = $this->shippingPriceProvider->getApplicableShippingRules($shippingContext);
         }
         if (0 !== count($rules)) {
             $result = true;

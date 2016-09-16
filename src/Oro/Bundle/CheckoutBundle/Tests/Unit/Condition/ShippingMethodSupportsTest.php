@@ -127,9 +127,9 @@ class ShippingMethodSupportsTest extends \PHPUnit_Framework_TestCase
     public function evaluateProvider()
     {
         return [
-            'no_rules'                        => [
+            'wrong_method'                        => [
                 'methodPrice' => [
-                    [
+                    'wrong_method' => [
                         'types' => [
                             'flat_rate' => [
                                 'identifier' => 'per_order',
@@ -141,9 +141,9 @@ class ShippingMethodSupportsTest extends \PHPUnit_Framework_TestCase
                 'type'        => 'per_order',
                 'expected'    => false,
             ],
-            'not_correct_method'              => [
+            'not_types'              => [
                 'methodPrice' => [
-                    [
+                    'flat_rate' => [
                         'identifier' => 'flat_rate'
                     ]
                 ],
@@ -153,7 +153,7 @@ class ShippingMethodSupportsTest extends \PHPUnit_Framework_TestCase
             ],
             'correct_method_not_correct_type' => [
                 'methodPrice' => [
-                    [
+                    'flat_rate' => [
                         'identifier' => 'flat_rate',
                         'types' => [
                             'flat_rate' => [
@@ -168,7 +168,7 @@ class ShippingMethodSupportsTest extends \PHPUnit_Framework_TestCase
             ],
             'correct_method_correct_type'     => [
                 'methodPrice' => [
-                    [
+                    'flat_rate' => [
                         'identifier' => 'flat_rate',
                         'types' => [
                             'flat_rate' => [

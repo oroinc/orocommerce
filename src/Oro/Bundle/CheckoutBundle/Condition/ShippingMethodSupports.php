@@ -84,18 +84,13 @@ class ShippingMethodSupports extends AbstractCondition implements ContextAccesso
         $shippingContext = $this->shippingContextProviderFactory->create($entity);
         $allMethodsData = $this->shippingPriceProvider->getApplicableMethodsWithTypesData($shippingContext);
 
-        foreach ($allMethodsData as $method) {
-            if (!array_key_exists('identifier', $method) || !array_key_exists('types', $method)) {
-                continue;
-            }
-            if ($method['identifier'] === $entity->getShippingMethod()) {
-                foreach ($method['types'] as $type) {
-                    if (array_key_exists('identifier', $type)
-                        && $type['identifier'] === $entity->getShippingMethodType()) {
-                        return true;
-                    }
+        if (array_key_exists($entity->getShippingMethod(), $allMethodsData)) {
+            $method = $allMethodsData[$entity->getShippingMethod()];
+            foreach ($method['types'] as $type) {
+                if (array_key_exists('identifier', $type)
+                    && $type['identifier'] === $entity->getShippingMethodType()) {
+                    return true;
                 }
-                break;
             }
         }
 

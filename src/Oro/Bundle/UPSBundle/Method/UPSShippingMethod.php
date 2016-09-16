@@ -97,7 +97,7 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
         $methodTypes = $this->getTypes();
         if ($methodTypes !== null) {
             foreach ($methodTypes as $methodType) {
-                if ($methodType->getIdentifier() === $identifier) {
+                if ($methodType->getIdentifier() === (string)$identifier) {
                     return $methodType;
                 }
             }

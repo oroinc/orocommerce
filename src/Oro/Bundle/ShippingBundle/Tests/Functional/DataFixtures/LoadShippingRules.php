@@ -76,6 +76,7 @@ class LoadShippingRules extends AbstractFixture
                             FlatRateShippingMethodType::HANDLING_FEE_OPTION => null,
                             FlatRateShippingMethodType::TYPE_OPTION => $typeConfigData['options']['type'],
                         ]);
+                    $typeConfig->setEnabled(true);
                     $methodConfig->addTypeConfig($typeConfig);
                 }
 
