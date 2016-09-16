@@ -2,17 +2,18 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures;
 
-use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\SearchBundle\Entity\ItemFieldInterface;
-use Oro\Bundle\TestFrameworkBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
@@ -34,12 +35,22 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
     const REFERENCE_BETTER_PRODUCT = 'betterProduct';
 
     /**
+     * @var string
+     */
+    const REFERENCE_EMPLOYEE1 = 'employee1';
+
+    /**
+     * @var string
+     */
+    const REFERENCE_EMPLOYEE2 = 'employee2';
+
+    /**
      * @var array
      */
     private static $itemsData = [
         self::REFERENCE_GOOD_PRODUCT => [
             'entity' => TestProduct::class,
-            'alias' => 'oro_product_website_',
+            'alias' => 'oro_product_',
             'recordId' => LoadProductsToIndex::REFERENCE_PRODUCT1,
             'title' => 'Good product',
             'datetimeFields' => [
@@ -57,7 +68,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
         ],
         self::REFERENCE_BETTER_PRODUCT => [
             'entity' => TestProduct::class,
-            'alias' => 'oro_product_website_',
+            'alias' => 'oro_product_',
             'recordId' => LoadProductsToIndex::REFERENCE_PRODUCT2,
             'title' => 'Better product',
             'decimalFields' => [
@@ -73,7 +84,36 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
                 ],
             ],
         ],
+        self::REFERENCE_EMPLOYEE1 => [
+            'entity' => TestEmployee::class,
+            'alias' => 'oro_employee_',
+            'recordId' => LoadEmployeesToIndex::REFERENCE_PERSON1,
+            'title' => 'Employee1',
+            'textFields' => [
+                [
+                    'field' => 'name',
+                    'value' => 'Steve Gates',
+                ],
+            ],
+        ],
+        self::REFERENCE_EMPLOYEE2 => [
+            'entity' => TestEmployee::class,
+            'alias' => 'oro_employee_',
+            'recordId' => LoadEmployeesToIndex::REFERENCE_PERSON2,
+            'title' => 'Employee2',
+            'textFields' => [
+                [
+                    'field' => 'name',
+                    'value' => 'Bill Wozniak',
+                ],
+            ],
+        ]
     ];
+
+    /**
+     * @var ReferenceRepository
+     */
+    private static $searchReferenceRepository;
 
     /**
      * {@inheritdoc}
@@ -82,6 +122,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
     {
         return [
             LoadProductsToIndex::class,
+            LoadEmployeesToIndex::class,
             LoadOtherWebsite::class,
         ];
     }
@@ -94,17 +135,18 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
         $websiteIds = $manager->getRepository('OroWebsiteBundle:Website')->getWebsiteIdentifiers();
 
         $manager = $this->container->get('oro_entity.doctrine_helper')->getEntityManager(Item::class);
+        self::$searchReferenceRepository = new ReferenceRepository($manager);
 
         foreach ($websiteIds as $websiteId) {
             foreach (self::$itemsData as $reference => $itemData) {
-                $product = $this->getReference($itemData['recordId']);
+                $entity = $this->getReference($itemData['recordId']);
 
                 $item = new Item;
                 $item
                     ->setTitle($itemData['title'])
                     ->setAlias($itemData['alias'] . $websiteId)
                     ->setEntity($itemData['entity'])
-                    ->setRecordId($product->getId());
+                    ->setRecordId($entity->getId());
 
                 $manager->persist($item);
 
@@ -134,10 +176,25 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
                 if (isset($itemData['textFields'])) {
                     $this->populateFields($item, $item->getTextFields(), new IndexText, $itemData['textFields']);
                 }
+
+                self::getSearchReferenceRepository()->addReference(
+                    self::getReferenceName($reference, $websiteId),
+                    $item
+                );
             }
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @param string $referenceName
+     * @param int $websiteId
+     * @return string
+     */
+    public static function getReferenceName($referenceName, $websiteId)
+    {
+        return $referenceName . '_website_' . $websiteId;
     }
 
     /**
@@ -168,5 +225,18 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
 
             $collection->add($field);
         }
+    }
+
+    /**
+     * @return ReferenceRepository
+     * @throw \LogicException
+     */
+    public static function getSearchReferenceRepository()
+    {
+        if (null === self::$searchReferenceRepository) {
+            throw new \LogicException('The reference repository is not set. Have you loaded fixtures?');
+        }
+
+        return self::$searchReferenceRepository;
     }
 }
