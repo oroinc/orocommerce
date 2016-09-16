@@ -26,7 +26,7 @@ class PriceTypeGenerator
     {
         $generator = new \PHPUnit_Framework_MockObject_Generator();
         $roundingService = $generator
-            ->getMock('Oro\Bundle\PricingBundle\Rounding\PriceRoundingService', [], [], '', false);
+            ->getMock('Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService', [], [], '', false);
 
         $roundingService->expects(new \PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount())
             ->method('getRoundType')
