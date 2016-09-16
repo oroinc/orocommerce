@@ -3,11 +3,13 @@
 define(function(require) {
     'use strict';
 
+    var ShoppingListWidgetViewComponent;
     var ViewComponent = require('oroui/js/app/components/view-component');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var Error = require('oroui/js/error');
-    var ShoppingListWidgetViewComponent;
+    var $ = require('jquery');
+    var _ = require('underscore');
 
     ShoppingListWidgetViewComponent = ViewComponent.extend({
 
