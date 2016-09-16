@@ -15,29 +15,54 @@ use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressionsV
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var PriceRuleRelationExpressionsValidator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $validator;
+
+    /**
+     * @var ExpressionParser|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $parser;
+
+    /**
+     * @var PriceRuleFieldsProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $fieldProvider;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     */
+    protected $context;
+
+    protected function setUp()
+    {
+        $this->context = $this->getMock(ExecutionContextInterface::class);
+
+        $this->parser = $this->getMockBuilder(ExpressionParser::class)->disableOriginalConstructor()->getMock();
+        $this->fieldProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->validator = new PriceRuleRelationExpressionsValidator($this->parser, $this->fieldProvider);
+        $this->validator->initialize($this->context);
+    }
+
     public function testValidateSuccess()
     {
-        $constraint = new PriceRuleRelationExpressions();
-        $context = $this->getContextMock();
-
-        $parser = $this->getMockBuilder(ExpressionParser::class)->disableOriginalConstructor()->getMock();
-        $provider = $this->getMockBuilder(PriceRuleFieldsProvider::class)->disableOriginalConstructor()->getMock();
-        $validator = new PriceRuleRelationExpressionsValidator($parser, $provider);
-
         $rule = new PriceRule();
-        $ruleExpression = 'product.msrp.value';
-        $currencyExpression = 'product.msrp.currency';
-        $productUnitExpression = 'product.msrp.unit';
-        $quantityExpression = 'product.msrp.quantity';
         $rule
-            ->setRule($ruleExpression)
-            ->setCurrencyExpression($currencyExpression)
-            ->setProductUnitExpression($productUnitExpression)
-            ->setQuantityExpression($quantityExpression);
+            ->setRule('product.msrp.value')
+            ->setCurrencyExpression('product.msrp.currency')
+            ->setProductUnitExpression('product.msrp.unit')
+            ->setQuantityExpression('product.msrp.quantity');
 
-        $provider->method('getRealClassName')
+        $this->fieldProvider->method('getRealClassName')
             ->will(
                 $this->returnValueMap(
                     [
@@ -54,60 +79,49 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     ]
                 )
             );
-        $parser->method('parse')
+        $this->parser->method('parse')
             ->will(
                 $this->returnValueMap(
                     [
                         [
-                            $currencyExpression,
+                            $rule->getCurrencyExpression(),
                             new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'currency'),
                         ],
                         [
-                            $productUnitExpression,
+                            $rule->getProductUnitExpression(),
                             new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'unit'),
                         ],
                         [
-                            $quantityExpression,
+                            $rule->getQuantityExpression(),
                             new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
                         ],
                         [
-                            $ruleExpression,
+                            $rule->getRule(),
                             new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'value'),
                         ],
                     ]
                 )
             );
 
-        $context->expects($this->never())->method('buildViolation');
-
-        $validator->initialize($context);
-        $validator->validate($rule, $constraint);
+        $this->context->expects($this->never())->method('buildViolation');
+        $this->validator->validate($rule, new PriceRuleRelationExpressions());
     }
 
     /**
      * @dataProvider validateCurrencyFailDataProvider
      *
      * @param string $currencyExpression
-     * @param string $ruleExpression
      * @param NodeInterface $parsedCurrencyExpression
-     * @param NodeInterface $ruleNode
      * @param string $message
      * @param array $messageParams
      */
     public function testValidateCurrencyFail(
         $currencyExpression,
-        $ruleExpression,
         $message,
         array $messageParams,
-        NodeInterface $parsedCurrencyExpression,
-        NodeInterface $ruleNode = null
+        NodeInterface $parsedCurrencyExpression
     ) {
-        $constraint = new PriceRuleRelationExpressions();
-        $context = $this->getContextMock();
-
-        $parser = $this->getMockBuilder(ExpressionParser::class)->disableOriginalConstructor()->getMock();
-        $provider = $this->getMockBuilder(PriceRuleFieldsProvider::class)->disableOriginalConstructor()->getMock();
-        $provider->method('getRealClassName')
+        $this->fieldProvider->method('getRealClassName')
             ->will(
                 $this->returnValueMap(
                     [
@@ -125,30 +139,24 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                 )
             );
 
-        $validator = new PriceRuleRelationExpressionsValidator($parser, $provider);
 
         $rule = new PriceRule();
-        $rule->setCurrencyExpression($currencyExpression)
-            ->setRule($ruleExpression);
+        $rule->setCurrencyExpression($currencyExpression);
 
-        $parser->expects($this->at(0))
+        $this->parser->expects($this->at(0))
             ->method('parse')
             ->with($currencyExpression)
             ->willReturn($parsedCurrencyExpression);
-        if ($ruleNode) {
-            $parser->expects($this->at(1))->method('parse')->with($ruleExpression)->willReturn($ruleNode);
-        }
 
         $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('currencyExpression')->willReturn($builder);
         $builder->expects($this->at(1))->method('addViolation');
-        $context->expects($this->once())
+        $this->context->expects($this->once())
             ->method('buildViolation')
             ->with($message, $messageParams)
             ->willReturn($builder);
 
-        $validator->initialize($context);
-        $validator->validate($rule, $constraint);
+        $this->validator->validate($rule, new PriceRuleRelationExpressions());
     }
 
     /**
@@ -157,173 +165,44 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
     public function validateCurrencyFailDataProvider()
     {
         return [
-            'test_relation_field_is_not_currency' =>
-                [
-                    'currencyExpression' => 'product.msrp.quantity',
-                    'ruleExpression' => 'product.msrp.value',
-                    'message' => PriceRuleRelationExpressionsValidator::FIELD_ARE_NOT_ALLOWED_MESSAGE,
-                    'messageParams' => ['%fieldName%' => 'quantity'],
-                    'parsedCurrencyExpression' => new RelationNode(
-                        'Oro\Bundle\ProductBundle\Entity\Product',
-                        'msrp',
-                        'quantity'
-                    ),
-                    'ruleNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'value'),
-                ],
-            'test_to_many_nodes' =>
-                [
-                    'currencyExpression' => 'product.msrp.currency + 10',
-                    'ruleExpression' => 'product.msrp.value',
-                    'message' => PriceRuleRelationExpressionsValidator::ONE_EXPRESSION_ALLOWED_MESSAGE,
-                    'messageParams' => [],
-                    'parsedCurrencyExpression' => new BinaryNode(
-                        new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
-                        new ValueNode(10),
-                        '+'
-                    ),
-                ],
-            'test_is_relation_node' =>
-                [
-                    'currencyExpression' => 'product.id',
-                    'ruleExpression' => 'product.msrp.value',
-                    'message' => PriceRuleRelationExpressionsValidator::ONLY_PRICE_RELATION_MESSAGE,
-                    'messageParams' => [],
-                    'parsedCurrencyExpression' => new NameNode('Oro\Bundle\ProductBundle\Entity\Product', 'id'),
-                ],
-            'test_relation_exists_in_rule_condition' =>
-                [
-                    'currencyExpression' => 'product.msrp.currency',
-                    'ruleExpression' => 'product.map.value',
-                    'message' => PriceRuleRelationExpressionsValidator::RELATION_NOT_IN_RULE_MESSAGE,
-                    'messageParams' => ['%relationName%' => 'msrp'],
-                    'parsedCurrencyExpression' => new RelationNode(
-                        'Oro\Bundle\ProductBundle\Entity\Product',
-                        'msrp',
-                        'currency'
-                    ),
-                    'ruleNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'map', 'value'),
-                ],
+            'test_to_many_nodes' => [
+                'currencyExpression' => 'product.msrp.currency + 10',
+                'message' => PriceRuleRelationExpressionsValidator::ONE_EXPRESSION_ALLOWED_MESSAGE,
+                'messageParams' => [],
+                'parsedCurrencyExpression' => new BinaryNode(
+                    new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
+                    new ValueNode(10),
+                    '+'
+                ),
+            ],
+            'test_is_relation_node' => [
+                'currencyExpression' => 'product.id',
+                'message' => PriceRuleRelationExpressionsValidator::ONLY_PRICE_RELATION_MESSAGE,
+                'messageParams' => [],
+                'parsedCurrencyExpression' => new NameNode('Oro\Bundle\ProductBundle\Entity\Product', 'id'),
+            ],
         ];
     }
 
     /**
-     * @dataProvider validateQuantityFailDataProvider
+     * @dataProvider validateCurrencyWithRuleExpressionFailDataProvider
      *
-     * @param string $quantityExpression
+     * @param string $currencyExpression
      * @param string $ruleExpression
-     * @param NodeInterface $parsedQuantityExpression
-     * @param NodeInterface $ruleNode
+     * @param NodeInterface $parsedCurrencyExpression
+     * @param NodeInterface $parsedRuleExpression
      * @param string $message
      * @param array $messageParams
      */
-    public function testValidateQuantityFail(
-        $quantityExpression,
+    public function testValidateCurrencyWithRuleExpressionFail(
+        $currencyExpression,
         $ruleExpression,
         $message,
         array $messageParams,
-        NodeInterface $parsedQuantityExpression,
-        NodeInterface $ruleNode = null
+        NodeInterface $parsedCurrencyExpression,
+        NodeInterface $parsedRuleExpression = null
     ) {
-        $constraint = new PriceRuleRelationExpressions();
-        $context = $this->getContextMock();
-
-        $parser = $this->getMockBuilder(ExpressionParser::class)->disableOriginalConstructor()->getMock();
-        $provider = $this->getMockBuilder(PriceRuleFieldsProvider::class)->disableOriginalConstructor()->getMock();
-        $validator = new PriceRuleRelationExpressionsValidator($parser, $provider);
-
-        $rule = new PriceRule();
-        $rule->setQuantityExpression($quantityExpression)
-            ->setRule($ruleExpression);
-
-        $parser->expects($this->at(0))->method('parse')->with($quantityExpression)->willReturn(
-            $parsedQuantityExpression
-        );
-        if ($ruleNode) {
-            $parser->expects($this->at(1))->method('parse')->with($ruleExpression)->willReturn($ruleNode);
-        }
-
-        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
-        $builder->expects($this->at(0))->method('atPath')->with('quantityExpression')->willReturn($builder);
-        $builder->expects($this->at(1))->method('addViolation');
-        $context->expects($this->once())
-            ->method('buildViolation')
-            ->with($message, $messageParams)
-            ->willReturn($builder);
-
-        $validator->initialize($context);
-        $validator->validate($rule, $constraint);
-    }
-
-    /**
-     * @return array
-     */
-    public function validateQuantityFailDataProvider()
-    {
-        return [
-            'test_more_then_one_relation_node' =>
-                [
-                    'quantityExpression' => 'product.msrp.quantity + product.map.quantity',
-                    'ruleExpression' => 'product.msrp.value',
-                    'message' => PriceRuleRelationExpressionsValidator::TOO_MANY_RELATIONS_MESSAGE,
-                    'messageParams' => [],
-                    'parsedQuantityExpression' => new BinaryNode(
-                        new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
-                        new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'map', 'quantity'),
-                        '+'
-                    ),
-                ],
-            'test_name_node' =>
-                [
-                    'quantityExpression' => 'product.id + 10',
-                    'ruleExpression' => 'product.msrp.value',
-                    'message' => PriceRuleRelationExpressionsValidator::TOO_MANY_RELATIONS_MESSAGE,
-                    'messageParams' => [],
-                    'parsedQuantityExpression' => new BinaryNode(
-                        new NameNode('Oro\Bundle\ProductBundle\Entity\Product', 'id'),
-                        new ValueNode(10),
-                        '+'
-                    ),
-                ],
-            'test_relation_exists_in_rule_condition' =>
-                [
-                    'quantityExpression' => 'product.msrp.quantity',
-                    'ruleExpression' => 'product.map.value',
-                    'message' => PriceRuleRelationExpressionsValidator::RELATION_NOT_IN_RULE_MESSAGE,
-                    'messageParams' => ['%relationName%' => 'msrp'],
-                    'parsedQuantityExpression' => new RelationNode(
-                        'Oro\Bundle\ProductBundle\Entity\Product',
-                        'msrp',
-                        'quantity'
-                    ),
-                    'ruleNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'map', 'value'),
-                ],
-        ];
-    }
-
-    /**
-     * @dataProvider validateProductUnitFailDataProvider
-     *
-     * @param string $productUnitExpression
-     * @param string $ruleExpression
-     * @param NodeInterface $parsedUnitExpression
-     * @param NodeInterface $ruleNode
-     * @param string $message
-     * @param array $messageParams
-     */
-    public function testValidateProductUnitFail(
-        $productUnitExpression,
-        $ruleExpression,
-        $message,
-        array $messageParams,
-        NodeInterface $parsedUnitExpression,
-        NodeInterface $ruleNode = null
-    ) {
-        $constraint = new PriceRuleRelationExpressions();
-        $context = $this->getContextMock();
-
-        $parser = $this->getMockBuilder(ExpressionParser::class)->disableOriginalConstructor()->getMock();
-        $provider = $this->getMockBuilder(PriceRuleFieldsProvider::class)->disableOriginalConstructor()->getMock();
-        $provider->method('getRealClassName')
+        $this->fieldProvider->method('getRealClassName')
             ->will(
                 $this->returnValueMap(
                     [
@@ -340,29 +219,243 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     ]
                 )
             );
-        $validator = new PriceRuleRelationExpressionsValidator($parser, $provider);
+
 
         $rule = new PriceRule();
-        $rule->setProductUnitExpression($productUnitExpression)
+        $rule->setCurrencyExpression($currencyExpression)
             ->setRule($ruleExpression);
 
-        $parser->expects($this->at(0))->method('parse')->with($productUnitExpression)->willReturn(
-            $parsedUnitExpression
-        );
-        if ($ruleNode) {
-            $parser->expects($this->at(1))->method('parse')->with($ruleExpression)->willReturn($ruleNode);
-        }
+        $this->parser->expects($this->at(0))
+            ->method('parse')
+            ->with($currencyExpression)
+            ->willReturn($parsedCurrencyExpression);
+        $this->parser->expects($this->at(1))->method('parse')->with($ruleExpression)->willReturn($parsedRuleExpression);
 
         $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
-        $builder->expects($this->at(0))->method('atPath')->with('productUnitExpression')->willReturn($builder);
+        $builder->expects($this->at(0))->method('atPath')->with('currencyExpression')->willReturn($builder);
         $builder->expects($this->at(1))->method('addViolation');
-        $context->expects($this->once())
+        $this->context->expects($this->once())
             ->method('buildViolation')
             ->with($message, $messageParams)
             ->willReturn($builder);
 
-        $validator->initialize($context);
-        $validator->validate($rule, $constraint);
+        $this->validator->validate($rule, new PriceRuleRelationExpressions());
+    }
+
+    /**
+     * @return array
+     */
+    public function validateCurrencyWithRuleExpressionFailDataProvider()
+    {
+        return [
+            'test_relation_field_is_not_currency' => [
+                'currencyExpression' => 'product.msrp.quantity',
+                'ruleExpression' => 'product.msrp.value',
+                'message' => PriceRuleRelationExpressionsValidator::FIELD_ARE_NOT_ALLOWED_MESSAGE,
+                'messageParams' => ['%fieldName%' => 'quantity'],
+                'parsedCurrencyExpression' => new RelationNode(
+                    'Oro\Bundle\ProductBundle\Entity\Product',
+                    'msrp',
+                    'quantity'
+                ),
+                'parsedRuleExpression' => new RelationNode(
+                    'Oro\Bundle\ProductBundle\Entity\Product',
+                    'msrp',
+                    'value'
+                ),
+            ],
+            'test_relation_exists_in_rule_condition' => [
+                'currencyExpression' => 'product.msrp.currency',
+                'ruleExpression' => 'product.map.value',
+                'message' => PriceRuleRelationExpressionsValidator::RELATION_NOT_IN_RULE_MESSAGE,
+                'messageParams' => ['%relationName%' => 'msrp'],
+                'parsedCurrencyExpression' => new RelationNode(
+                    'Oro\Bundle\ProductBundle\Entity\Product',
+                    'msrp',
+                    'currency'
+                ),
+                'parsedRuleExpression' => new RelationNode(
+                    'Oro\Bundle\ProductBundle\Entity\Product',
+                    'map',
+                    'value'
+                ),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider validateQuantityFailDataProvider
+     *
+     * @param string $quantityExpression
+     * @param NodeInterface $parsedQuantityExpression
+     * @param string $message
+     * @param array $messageParams
+     */
+    public function testValidateQuantityFail(
+        $quantityExpression,
+        $message,
+        array $messageParams,
+        NodeInterface $parsedQuantityExpression
+    ) {
+        $rule = new PriceRule();
+        $rule->setQuantityExpression($quantityExpression);
+
+        $this->parser->expects($this->at(0))->method('parse')->with($quantityExpression)->willReturn(
+            $parsedQuantityExpression
+        );
+
+        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $builder->expects($this->at(0))->method('atPath')->with('quantityExpression')->willReturn($builder);
+        $builder->expects($this->at(1))->method('addViolation');
+        $this->context->expects($this->once())
+            ->method('buildViolation')
+            ->with($message, $messageParams)
+            ->willReturn($builder);
+
+        $this->validator->validate($rule, new PriceRuleRelationExpressions());
+    }
+
+    /**
+     * @return array
+     */
+    public function validateQuantityFailDataProvider()
+    {
+        return [
+            'test_more_then_one_relation_node' => [
+                'quantityExpression' => 'product.msrp.quantity + product.map.quantity',
+                'message' => PriceRuleRelationExpressionsValidator::TOO_MANY_RELATIONS_MESSAGE,
+                'messageParams' => [],
+                'parsedQuantityExpression' => new BinaryNode(
+                    new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
+                    new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'map', 'quantity'),
+                    '+'
+                ),
+            ],
+            'test_name_node' => [
+                'quantityExpression' => 'product.id + 10',
+                'message' => PriceRuleRelationExpressionsValidator::TOO_MANY_RELATIONS_MESSAGE,
+                'messageParams' => [],
+                'parsedQuantityExpression' => new BinaryNode(
+                    new NameNode('Oro\Bundle\ProductBundle\Entity\Product', 'id'),
+                    new ValueNode(10),
+                    '+'
+                ),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider validateQuantityWithRuleExpressionFailDataProvider
+     *
+     * @param string $quantityExpression
+     * @param string $ruleExpression
+     * @param NodeInterface $parsedQuantityExpression
+     * @param NodeInterface $parsedRuleExpression
+     * @param string $message
+     * @param array $messageParams
+     */
+    public function testValidateQuantityWithRuleExpressionFail(
+        $quantityExpression,
+        $ruleExpression,
+        $message,
+        array $messageParams,
+        NodeInterface $parsedQuantityExpression,
+        NodeInterface $parsedRuleExpression = null
+    ) {
+        $rule = new PriceRule();
+        $rule->setQuantityExpression($quantityExpression)
+            ->setRule($ruleExpression);
+
+        $this->parser->expects($this->at(0))
+            ->method('parse')
+            ->with($quantityExpression)
+            ->willReturn($parsedQuantityExpression);
+        $this->parser->expects($this->at(1))->method('parse')->with($ruleExpression)->willReturn($parsedRuleExpression);
+
+        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $builder->expects($this->at(0))->method('atPath')->with('quantityExpression')->willReturn($builder);
+        $builder->expects($this->at(1))->method('addViolation');
+        $this->context->expects($this->once())
+            ->method('buildViolation')
+            ->with($message, $messageParams)
+            ->willReturn($builder);
+
+        $this->validator->validate($rule, new PriceRuleRelationExpressions());
+    }
+
+    /**
+     * @return array
+     */
+    public function validateQuantityWithRuleExpressionFailDataProvider()
+    {
+        return [
+            'test_relation_exists_in_rule_condition' => [
+                'quantityExpression' => 'product.msrp.quantity',
+                'ruleExpression' => 'product.map.value',
+                'message' => PriceRuleRelationExpressionsValidator::RELATION_NOT_IN_RULE_MESSAGE,
+                'messageParams' => ['%relationName%' => 'msrp'],
+                'parsedQuantityExpression' => new RelationNode(
+                    'Oro\Bundle\ProductBundle\Entity\Product',
+                    'msrp',
+                    'quantity'
+                ),
+                'parsedRuleExpression' => new RelationNode(
+                    'Oro\Bundle\ProductBundle\Entity\Product',
+                    'map',
+                    'value'
+                ),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider validateProductUnitFailDataProvider
+     *
+     * @param string $productUnitExpression
+     * @param NodeInterface $parsedUnitExpression
+     * @param string $message
+     * @param array $messageParams
+     */
+    public function testValidateProductUnitFail(
+        $productUnitExpression,
+        $message,
+        array $messageParams,
+        NodeInterface $parsedUnitExpression
+    ) {
+        $this->fieldProvider->method('getRealClassName')
+            ->will(
+                $this->returnValueMap(
+                    [
+                        [
+                            'Oro\Bundle\ProductBundle\Entity\Product',
+                            'msrp',
+                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                        ],
+                        [
+                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                            'currency',
+                            null,
+                        ],
+                    ]
+                )
+            );
+        $rule = new PriceRule();
+        $rule->setProductUnitExpression($productUnitExpression);
+
+        $this->parser->expects($this->at(0))
+            ->method('parse')
+            ->with($productUnitExpression)
+            ->willReturn($parsedUnitExpression);
+
+        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $builder->expects($this->at(0))->method('atPath')->with('productUnitExpression')->willReturn($builder);
+        $builder->expects($this->at(1))->method('addViolation');
+        $this->context->expects($this->once())
+            ->method('buildViolation')
+            ->with($message, $messageParams)
+            ->willReturn($builder);
+
+        $this->validator->validate($rule, new PriceRuleRelationExpressions());
     }
 
     /**
@@ -371,58 +464,120 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
     public function validateProductUnitFailDataProvider()
     {
         return [
-            'test_relation_not_product_unit_holder' =>
-                [
-                    'productUnitExpression' => 'product.msrp.quantity',
-                    'ruleExpression' => 'product.msrp.value',
-                    'message' => PriceRuleRelationExpressionsValidator::FIELD_ARE_NOT_ALLOWED_MESSAGE,
-                    'messageParams' => ['%fieldName%' => 'quantity'],
-                    'parsedUnitExpression' => new RelationNode(
-                        'Oro\Bundle\ProductBundle\Entity\Product',
-                        'msrp',
-                        'quantity'
-                    ),
-                    'ruleNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'value'),
-                ],
-            'test_to_many_nodes' =>
-                [
-                    'productUnitExpression' => 'product.msrp.unit + 10',
-                    'ruleExpression' => 'product.msrp.value',
-                    'message' => PriceRuleRelationExpressionsValidator::ONE_EXPRESSION_ALLOWED_MESSAGE,
-                    'messageParams' => [],
-                    'parsedUnitExpression' => new BinaryNode(
-                        new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'unit'),
-                        new ValueNode(10),
-                        '+'
-                    ),
-                ],
-            'test_is_relation_node' =>
-                [
-                    'productUnitExpression' => 'product.msrp.id',
-                    'ruleExpression' => 'product.msrp.value',
-                    'message' => PriceRuleRelationExpressionsValidator::ONLY_PRICE_RELATION_MESSAGE,
-                    'messageParams' => [],
-                    'parsedUnitExpression' => new NameNode('Oro\Bundle\ProductBundle\Entity\Product', 'id'),
-                ],
-            'test_relation_exists_in_rule_condition' =>
-                [
-                    'productUnitExpression' => 'product.msrp.unit',
-                    'ruleExpression' => 'product.map.value',
-                    'message' => PriceRuleRelationExpressionsValidator::RELATION_NOT_IN_RULE_MESSAGE,
-                    'messageParams' => ['%relationName%' => 'msrp'],
-                    'parsedUnitExpression' => new RelationNode(
-                        'Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'unit'
-                    ),
-                    'ruleNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'map', 'value'),
-                ],
+            'test_to_many_nodes' => [
+                'productUnitExpression' => 'product.msrp.unit + 10',
+                'message' => PriceRuleRelationExpressionsValidator::ONE_EXPRESSION_ALLOWED_MESSAGE,
+                'messageParams' => [],
+                'parsedUnitExpression' => new BinaryNode(
+                    new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'unit'),
+                    new ValueNode(10),
+                    '+'
+                ),
+            ],
+            'test_is_relation_node' => [
+                'productUnitExpression' => 'product.msrp.id',
+                'message' => PriceRuleRelationExpressionsValidator::ONLY_PRICE_RELATION_MESSAGE,
+                'messageParams' => [],
+                'parsedUnitExpression' => new NameNode('Oro\Bundle\ProductBundle\Entity\Product', 'id'),
+            ],
         ];
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface $context
+     * @dataProvider validateProductUnitWithRuleExpressionFailDataProvider
+     *
+     * @param string $productUnitExpression
+     * @param string $ruleExpression
+     * @param NodeInterface $parsedUnitExpression
+     * @param NodeInterface $parsedRuleExpression
+     * @param string $message
+     * @param array $messageParams
      */
-    protected function getContextMock()
+    public function testValidateProductUnitFailWithRuleExpression(
+        $productUnitExpression,
+        $ruleExpression,
+        $message,
+        array $messageParams,
+        NodeInterface $parsedUnitExpression,
+        NodeInterface $parsedRuleExpression = null
+    ) {
+        $this->fieldProvider->method('getRealClassName')
+            ->will(
+                $this->returnValueMap(
+                    [
+                        [
+                            'Oro\Bundle\ProductBundle\Entity\Product',
+                            'msrp',
+                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                        ],
+                        [
+                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                            'currency',
+                            null,
+                        ],
+                    ]
+                )
+            );
+        $rule = new PriceRule();
+        $rule->setProductUnitExpression($productUnitExpression)
+            ->setRule($ruleExpression);
+
+        $this->parser->expects($this->at(0))->method('parse')
+            ->with($productUnitExpression)
+            ->willReturn($parsedUnitExpression);
+        $this->parser->expects($this->at(1))->method('parse')
+            ->with($ruleExpression)
+            ->willReturn($parsedRuleExpression);
+
+        $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
+        $builder->expects($this->at(0))->method('atPath')->with('productUnitExpression')->willReturn($builder);
+        $builder->expects($this->at(1))->method('addViolation');
+        $this->context->expects($this->once())
+            ->method('buildViolation')
+            ->with($message, $messageParams)
+            ->willReturn($builder);
+
+        $this->validator->validate($rule, new PriceRuleRelationExpressions());
+    }
+
+    /**
+     * @return array
+     */
+    public function validateProductUnitWithRuleExpressionFailDataProvider()
     {
-        return $this->getMock(ExecutionContextInterface::class);
+        return [
+            'test_relation_not_product_unit_holder' => [
+                'productUnitExpression' => 'product.msrp.quantity',
+                'ruleExpression' => 'product.msrp.value',
+                'message' => PriceRuleRelationExpressionsValidator::FIELD_ARE_NOT_ALLOWED_MESSAGE,
+                'messageParams' => ['%fieldName%' => 'quantity'],
+                'parsedUnitExpression' => new RelationNode(
+                    'Oro\Bundle\ProductBundle\Entity\Product',
+                    'msrp',
+                    'quantity'
+                ),
+                'parsedRuleExpression' => new RelationNode(
+                    'Oro\Bundle\ProductBundle\Entity\Product',
+                    'msrp',
+                    'value'
+                ),
+            ],
+            'test_relation_exists_in_rule_condition' => [
+                'productUnitExpression' => 'product.msrp.unit',
+                'ruleExpression' => 'product.map.value',
+                'message' => PriceRuleRelationExpressionsValidator::RELATION_NOT_IN_RULE_MESSAGE,
+                'messageParams' => ['%relationName%' => 'msrp'],
+                'parsedUnitExpression' => new RelationNode(
+                    'Oro\Bundle\ProductBundle\Entity\Product',
+                    'msrp',
+                    'unit'
+                ),
+                'parsedRuleExpression' => new RelationNode(
+                    'Oro\Bundle\ProductBundle\Entity\Product',
+                    'map',
+                    'value'
+                ),
+            ],
+        ];
     }
 }

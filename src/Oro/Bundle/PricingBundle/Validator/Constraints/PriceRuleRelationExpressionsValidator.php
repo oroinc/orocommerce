@@ -67,8 +67,7 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
     {
         $expression = $rule->getCurrencyExpression();
         $path = PriceRuleType::CURRENCY_EXPRESSION;
-        if (
-            !$expression ||
+        if (!$expression ||
             null === ($nodes = $this->getNodes($expression, $path)) ||
             !$this->validateNodesCount($nodes, $path) ||
             !$this->validateIsRelationNode($nodes[0], $path) ||
@@ -90,8 +89,7 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
     {
         $expression = $rule->getProductUnitExpression();
         $path = PriceRuleType::PRODUCT_UNIT_EXPRESSION;
-        if (
-            !$expression ||
+        if (!$expression ||
             null === ($nodes = $this->getNodes($expression, $path)) ||
             !$this->validateNodesCount($nodes, $path) ||
             !$this->validateIsRelationNode($nodes[0], $path) ||
