@@ -12,11 +12,16 @@ oro:
             shipping_account_number.label: Shipping Account Number
             pickup_type:
                 label: Pickup Type
-                regular_daily: Regular Daily Pickup
-                customer_counter: Customer Counter
-                one_time: One Time Pickup
-                on_call_air: On Call Air
-                letter_center: Letter Center
+                regular_daily:
+                    label: Regular Daily Pickup
+                customer_counter:
+                    label: Customer Counter
+                one_time:
+                    label: One Time Pickup
+                on_call_air:
+                    label: On Call Air
+                letter_center:
+                    label: Letter Center
             unit_of_weight:
                 label: Unit Of Weight
                 kgs.label: Kilogram
