@@ -15,7 +15,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 
-class RestrictedProductsIndexEventListener
+class RestrictProductsIndexEventListener
 {
     /** @var ConfigManager  */
     private $configManager;

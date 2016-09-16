@@ -881,7 +881,7 @@ services:
              - { name: layout.data_provider, alias: account_user_address_provider }
 
     oro_account.event_listener.restricted_products_index:
-        class: 'Oro\Bundle\AccountBundle\EventListener\RestrictedProductsIndexEventListener'
+        class: 'Oro\Bundle\AccountBundle\EventListener\RestrictProductsIndexEventListener'
         arguments:
             - '@oro_config.global'
             - 'oro_b2b_account.product_visibility'
