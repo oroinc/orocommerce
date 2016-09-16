@@ -4,8 +4,8 @@ namespace Oro\Bundle\OrderBundle\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;

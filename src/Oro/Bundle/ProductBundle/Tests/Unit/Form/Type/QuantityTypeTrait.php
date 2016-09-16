@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 
 /**
  * @method \PHPUnit_Framework_MockObject_MockBuilder getMock($className)
