@@ -15,25 +15,12 @@ navigation:
                     position: 50
                     routes:   ['/^oro_warehouse_inventory_level/']
 
-            warehouse_list:
-                label:  'oro.warehouse.entity_plural_label'
-                route:  'oro_warehouse_index'
-                extras:
-                    position:    100
-                    routes:      ['/^oro_warehouse/']
-
         tree:
             application_menu:
                 children:
                     warehouse_tab:
                         children:
                             warehouse_inventory_level_list: ~
-                            warehouse_list: ~
 
     titles:
-        oro_warehouse_index: ~
-        oro_warehouse_view:   '%%name%%'
-        oro_warehouse_update: '%%name%% - Edit'
-        oro_warehouse_create: 'Create Warehouse'
-
         oro_warehouse_inventory_level_index: ~

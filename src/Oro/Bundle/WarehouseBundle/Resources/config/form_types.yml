@@ -1,11 +1,4 @@
 services:
-    oro_warehouse.form.type.warehouse:
-        class: 'Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseType'
-        calls:
-            - [setDataClass, ['%oro_warehouse.entity.warehouse.class%']]
-        tags:
-            - { name: form.type, alias: oro_warehouse }
-
     oro_warehouse.form.type.warehouse_inventoty_level_grid:
         class: 'Oro\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType'
         arguments:
@@ -23,25 +16,3 @@ services:
         class: Oro\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension
         tags:
             - { name: form.type_extension, alias: oro_importexport_export_template }
-
-    oro_warehouse.form.type.warehouse_select:
-        class: 'Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseSelectType'
-        tags:
-            - { name: form.type, alias: oro_warehouse_select }
-
-    oro_warehouse.form.type.warehouse_select_with_priority:
-        class: 'Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseSelectWithPriorityType'
-        tags:
-            - { name: form.type, alias: oro_warehouse_select_with_priority }
-
-    oro_warehouse.form.type.warehouse_system_config:
-        class: 'Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseSystemConfigType'
-        arguments:
-            - 'Oro\Bundle\WarehouseProBundle\SystemConfig\WarehouseConfig'
-        tags:
-            - { name: form.type, alias: oro_warehouse_system_config }
-
-    oro_warehouse.form.warehouse_collection:
-        class: 'Oro\Bundle\WarehouseBundle\Form\Type\WarehouseCollectionType'
-        tags:
-            - { name: form.type, alias: oro_warehouse_collection }

@@ -1,14 +1,3 @@
-Oro\Bundle\WarehouseProBundle\Entity\Warehouse:
-    properties:
-        owner:
-            - NotBlank: ~
-        organization:
-            - NotBlank: ~
-        name:
-            - NotBlank: ~
-            - Length:
-                max: 255
-
 Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
