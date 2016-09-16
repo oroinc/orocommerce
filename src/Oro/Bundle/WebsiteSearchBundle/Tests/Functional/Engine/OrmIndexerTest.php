@@ -165,6 +165,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ->with($class)
             ->willReturn($return);
     }
+    
     public function testReindexForSpecificWebsite()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
