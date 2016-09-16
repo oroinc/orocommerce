@@ -30,7 +30,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         $ruleExpression = 'product.msrp.value';
         $currencyExpression = 'product.msrp.currency';
         $productUnitExpression = 'product.msrp.unit';
-        $quantityExpression = 'product.msrp.unit';
+        $quantityExpression = 'product.msrp.quantity';
         $rule
             ->setRule($ruleExpression)
             ->setCurrencyExpression($currencyExpression)
@@ -89,7 +89,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
      *
      * @param string $currencyExpression
      * @param string $ruleExpression
-     * @param NodeInterface $parsedNode
+     * @param NodeInterface $parsedCurrencyExpression
      * @param NodeInterface $ruleNode
      * @param string $message
      * @param array $messageParams
@@ -99,7 +99,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         $ruleExpression,
         $message,
         array $messageParams,
-        NodeInterface $parsedNode,
+        NodeInterface $parsedCurrencyExpression,
         NodeInterface $ruleNode = null
     ) {
         $constraint = new PriceRuleRelationExpressions();
@@ -131,7 +131,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         $rule->setCurrencyExpression($currencyExpression)
             ->setRule($ruleExpression);
 
-        $parser->expects($this->at(0))->method('parse')->with($currencyExpression)->willReturn($parsedNode);
+        $parser->expects($this->at(0))->method('parse')->with($currencyExpression)->willReturn($parsedCurrencyExpression);
         if ($ruleNode) {
             $parser->expects($this->at(1))->method('parse')->with($ruleExpression)->willReturn($ruleNode);
         }
@@ -160,7 +160,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     'ruleExpression' => 'product.msrp.value',
                     'message' => PriceRuleRelationExpressionsValidator::FIELD_ARE_NOT_ALLOWED_MESSAGE,
                     'messageParams' => ['%fieldName%' => 'quantity'],
-                    'parsedNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
+                    'parsedCurrencyExpression' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
                     'ruleNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'value'),
                 ],
             'test_to_many_nodes' =>
@@ -169,7 +169,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     'ruleExpression' => 'product.msrp.value',
                     'message' => PriceRuleRelationExpressionsValidator::ONE_EXPRESSION_ALLOWED_MESSAGE,
                     'messageParams' => [],
-                    'parsedNode' => new BinaryNode(
+                    'parsedCurrencyExpression' => new BinaryNode(
                         new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
                         new ValueNode(10),
                         '+'
@@ -177,11 +177,11 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                 ],
             'test_is_relation_node' =>
                 [
-                    'currencyExpression' => 'product.msrp.currency + 10',
+                    'currencyExpression' => 'product.id',
                     'ruleExpression' => 'product.msrp.value',
                     'message' => PriceRuleRelationExpressionsValidator::ONLY_PRICE_RELATION_MESSAGE,
                     'messageParams' => [],
-                    'parsedNode' => new NameNode('Oro\Bundle\ProductBundle\Entity\Product', 'id'),
+                    'parsedCurrencyExpression' => new NameNode('Oro\Bundle\ProductBundle\Entity\Product', 'id'),
                 ],
             'test_relation_exists_in_rule_condition' =>
                 [
@@ -189,7 +189,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     'ruleExpression' => 'product.map.value',
                     'message' => PriceRuleRelationExpressionsValidator::RELATION_NOT_IN_RULE_MESSAGE,
                     'messageParams' => ['%relationName%' => 'msrp'],
-                    'parsedNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
+                    'parsedCurrencyExpression' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'currency'),
                     'ruleNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'map', 'value'),
                 ],
         ];
@@ -199,7 +199,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
      *
      * @param string $quantityExpression
      * @param string $ruleExpression
-     * @param NodeInterface $parsedNode
+     * @param NodeInterface $parsedQuantityExpression
      * @param NodeInterface $ruleNode
      * @param string $message
      * @param array $messageParams
@@ -209,7 +209,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         $ruleExpression,
         $message,
         array $messageParams,
-        NodeInterface $parsedNode,
+        NodeInterface $parsedQuantityExpression,
         NodeInterface $ruleNode = null
     ) {
         $constraint = new PriceRuleRelationExpressions();
@@ -223,7 +223,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         $rule->setQuantityExpression($quantityExpression)
             ->setRule($ruleExpression);
 
-        $parser->expects($this->at(0))->method('parse')->with($quantityExpression)->willReturn($parsedNode);
+        $parser->expects($this->at(0))->method('parse')->with($quantityExpression)->willReturn($parsedQuantityExpression);
         if ($ruleNode) {
             $parser->expects($this->at(1))->method('parse')->with($ruleExpression)->willReturn($ruleNode);
         }
@@ -248,11 +248,11 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         return [
             'test_more_then_one_relation_node' =>
                 [
-                    'quantityExpression' => 'product.msrp.quantity + 10',
+                    'quantityExpression' => 'product.msrp.quantity + product.map.quantity',
                     'ruleExpression' => 'product.msrp.value',
                     'message' => PriceRuleRelationExpressionsValidator::TOO_MANY_RELATIONS_MESSAGE,
                     'messageParams' => [],
-                    'parsedNode' => new BinaryNode(
+                    'parsedQuantityExpression' => new BinaryNode(
                         new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
                         new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'map', 'quantity'),
                         '+'
@@ -260,13 +260,13 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                 ],
             'test_name_node' =>
                 [
-                    'quantityExpression' => 'product.msrp.quantity + 10',
+                    'quantityExpression' => 'product.id + 10',
                     'ruleExpression' => 'product.msrp.value',
                     'message' => PriceRuleRelationExpressionsValidator::TOO_MANY_RELATIONS_MESSAGE,
                     'messageParams' => [],
-                    'parsedNode' => new BinaryNode(
+                    'parsedQuantityExpression' => new BinaryNode(
                         new NameNode('Oro\Bundle\ProductBundle\Entity\Product', 'id'),
-                        new ValueNode(1),
+                        new ValueNode(10),
                         '+'
                     ),
                 ],
@@ -276,7 +276,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     'ruleExpression' => 'product.map.value',
                     'message' => PriceRuleRelationExpressionsValidator::RELATION_NOT_IN_RULE_MESSAGE,
                     'messageParams' => ['%relationName%' => 'msrp'],
-                    'parsedNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
+                    'parsedQuantityExpression' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
                     'ruleNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'map', 'value'),
                 ],
         ];
@@ -287,7 +287,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
      *
      * @param string $productUnitExpression
      * @param string $ruleExpression
-     * @param NodeInterface $parsedNode
+     * @param NodeInterface $parsedUnitExpression
      * @param NodeInterface $ruleNode
      * @param string $message
      * @param array $messageParams
@@ -297,7 +297,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         $ruleExpression,
         $message,
         array $messageParams,
-        NodeInterface $parsedNode,
+        NodeInterface $parsedUnitExpression,
         NodeInterface $ruleNode = null
     ) {
         $constraint = new PriceRuleRelationExpressions();
@@ -328,7 +328,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         $rule->setProductUnitExpression($productUnitExpression)
             ->setRule($ruleExpression);
 
-        $parser->expects($this->at(0))->method('parse')->with($productUnitExpression)->willReturn($parsedNode);
+        $parser->expects($this->at(0))->method('parse')->with($productUnitExpression)->willReturn($parsedUnitExpression);
         if ($ruleNode) {
             $parser->expects($this->at(1))->method('parse')->with($ruleExpression)->willReturn($ruleNode);
         }
@@ -353,11 +353,11 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         return [
             'test_relation_not_product_unit_holder' =>
                 [
-                    'productUnitExpression' => 'product.msrp.productUnit',
+                    'productUnitExpression' => 'product.msrp.quantity',
                     'ruleExpression' => 'product.msrp.value',
                     'message' => PriceRuleRelationExpressionsValidator::FIELD_ARE_NOT_ALLOWED_MESSAGE,
                     'messageParams' => ['%fieldName%' => 'quantity'],
-                    'parsedNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
+                    'parsedUnitExpression' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
                     'ruleNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'value'),
                 ],
             'test_to_many_nodes' =>
@@ -366,19 +366,19 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     'ruleExpression' => 'product.msrp.value',
                     'message' => PriceRuleRelationExpressionsValidator::ONE_EXPRESSION_ALLOWED_MESSAGE,
                     'messageParams' => [],
-                    'parsedNode' => new BinaryNode(
-                        new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'quantity'),
+                    'parsedUnitExpression' => new BinaryNode(
+                        new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'unit'),
                         new ValueNode(10),
                         '+'
                     ),
                 ],
             'test_is_relation_node' =>
                 [
-                    'productUnitExpression' => 'product.msrp.unit + 10',
+                    'productUnitExpression' => 'product.msrp.id',
                     'ruleExpression' => 'product.msrp.value',
                     'message' => PriceRuleRelationExpressionsValidator::ONLY_PRICE_RELATION_MESSAGE,
                     'messageParams' => [],
-                    'parsedNode' => new NameNode('Oro\Bundle\ProductBundle\Entity\Product', 'id'),
+                    'parsedUnitExpression' => new NameNode('Oro\Bundle\ProductBundle\Entity\Product', 'id'),
                 ],
             'test_relation_exists_in_rule_condition' =>
                 [
@@ -386,7 +386,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     'ruleExpression' => 'product.map.value',
                     'message' => PriceRuleRelationExpressionsValidator::RELATION_NOT_IN_RULE_MESSAGE,
                     'messageParams' => ['%relationName%' => 'msrp'],
-                    'parsedNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'unit'),
+                    'parsedUnitExpression' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'msrp', 'unit'),
                     'ruleNode' => new RelationNode('Oro\Bundle\ProductBundle\Entity\Product', 'map', 'value'),
                 ],
         ];
