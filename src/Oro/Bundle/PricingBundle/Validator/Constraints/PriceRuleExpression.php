@@ -22,6 +22,11 @@ class PriceRuleExpression extends Constraint
     public $numericOnly = false;
 
     /**
+     * @var array
+     */
+    public $allowedFields = [];
+
+    /**
      * {@inheritdoc}
      */
     public function validatedBy()
