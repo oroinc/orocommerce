@@ -76,7 +76,7 @@ class LoadQuoteDataForPerformance extends AbstractFixture
      */
     protected function getUpdateQuotesBaseSql()
     {
-        $sql = "INSERT INTO orob2b_sale_quote (";
+        $sql = "INSERT INTO oro_sale_quote (";
         foreach (self::$quoteUpdateFields as $field) {
             $sql .= $field . ", ";
         }

@@ -7,13 +7,16 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
+use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -64,7 +67,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
             ->from('OroAccountBundle:Account', 'account');
 
         $qb->innerJoin(
-            'OroPricingBundle:PriceListToAccount',
+            PriceListToAccount::class,
             'plToAccount',
             Join::WITH,
             $qb->expr()->andX(
@@ -74,7 +77,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
         );
 
         $qb->leftJoin(
-            'OroPricingBundle:PriceListAccountFallback',
+            PriceListAccountFallback::class,
             'priceListFallBack',
             Join::WITH,
             $qb->expr()->andX(
@@ -82,7 +85,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
                 $qb->expr()->eq('priceListFallBack.account', 'account')
             )
         )
-        ->setParameter('website', $website);
+            ->setParameter('website', $website);
 
         $qb->andWhere($qb->expr()->eq('account.group', ':accountGroup'))
             ->setParameter('accountGroup', $accountGroup);
@@ -94,7 +97,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
                     $qb->expr()->isNull('priceListFallBack.fallback')
                 )
             )
-            ->setParameter('fallbackToGroup', $fallback);
+                ->setParameter('fallbackToGroup', $fallback);
         }
 
         return new BufferedQueryResultIterator($qb->getQuery());
@@ -102,46 +105,53 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
 
     /**
      * @param AccountGroup $accountGroup
-     * @param integer[] $websiteIds
-     * @return AccountWebsiteDTO[]|ArrayCollection
+     * @return BufferedQueryResultIterator
      */
-    public function getAccountWebsitePairsByAccountGroup(AccountGroup $accountGroup, $websiteIds)
-    {
-        $pairs = $this->getAccountWebsitePairsByAccountGroupQueryBuilder($accountGroup, $websiteIds)
-            ->getQuery()
-            ->getResult();
-        $em = $this->getEntityManager();
-        $entityPair = new ArrayCollection();
-        foreach ($pairs as $pair) {
-            /** @var Account $account */
-            $account = $em->getReference('OroAccountBundle:Account', $pair['account_id']);
-            /** @var Website $website */
-            $website = $em->getReference('OroWebsiteBundle:Website', $pair['website_id']);
-            $entityPair->add(new AccountWebsiteDTO($account, $website));
-        }
-
-        return $entityPair;
-    }
-
-    /**
-     * @param AccountGroup $accountGroup
-     * @param integer[] $websiteIds
-     * @return QueryBuilder
-     */
-    public function getAccountWebsitePairsByAccountGroupQueryBuilder(AccountGroup $accountGroup, $websiteIds)
+    public function getAccountWebsitePairsByAccountGroupIterator(AccountGroup $accountGroup)
     {
         $qb = $this->createQueryBuilder('PriceListToAccount');
 
-        return $qb->select(
-            'IDENTITY(PriceListToAccount.account) as account_id',
-            'IDENTITY(PriceListToAccount.website) as website_id'
+        $qb->select(
+            sprintf('IDENTITY(PriceListToAccount.account) as %s', PriceListRelationTrigger::ACCOUNT),
+            sprintf('IDENTITY(PriceListToAccount.website) as %s', PriceListRelationTrigger::WEBSITE)
         )
-            ->innerJoin('PriceListToAccount.account', 'account')
-            ->andWhere($qb->expr()->eq('account.group', ':accountGroup'))
-            ->andWhere($qb->expr()->in('PriceListToAccount.website', ':websiteIds'))
+            ->innerJoin('PriceListToAccount.account', 'acc')
+            ->innerJoin(
+                PriceListToAccountGroup::class,
+                'PriceListToAccountGroup',
+                Join::WITH,
+                $qb->expr()->andX(
+                    'PriceListToAccountGroup.accountGroup = acc.group',
+                    'PriceListToAccountGroup.website = PriceListToAccount.website'
+                )
+            )
+            ->where($qb->expr()->eq('acc.group', ':accountGroup'))
             ->groupBy('PriceListToAccount.account', 'PriceListToAccount.website')
-            ->setParameter('accountGroup', $accountGroup)
-            ->setParameter('websiteIds', $websiteIds);
+            ->setParameter('accountGroup', $accountGroup);
+
+        return new BufferedQueryResultIterator($qb);
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return BufferedQueryResultIterator
+     */
+    public function getIteratorByPriceList(PriceList $priceList)
+    {
+        $qb = $this->createQueryBuilder('priceListToAccount');
+
+        $qb->select(
+            sprintf('IDENTITY(priceListToAccount.account) as %s', PriceListRelationTrigger::ACCOUNT),
+            sprintf('IDENTITY(acc.group) as %s', PriceListRelationTrigger::ACCOUNT_GROUP),
+            sprintf('IDENTITY(priceListToAccount.website) as %s', PriceListRelationTrigger::WEBSITE)
+        )
+            ->leftJoin('priceListToAccount.account', 'acc')
+            ->where('priceListToAccount.priceList = :priceList')
+            ->groupBy('priceListToAccount.account', 'acc.group', 'priceListToAccount.website')
+            ->setParameter('priceList', $priceList);
+
+
+        return new BufferedQueryResultIterator($qb);
     }
 
     /**
@@ -228,7 +238,7 @@ class PriceListToAccountRepository extends EntityRepository implements PriceList
         $subQueryBuilder->where(
             $subQueryBuilder->expr()->andX(
                 $subQueryBuilder->expr()->eq('relation.account', $parentAlias),
-                $subQueryBuilder->expr()->eq('relation.priceList', ':' . $parameterName)
+                $subQueryBuilder->expr()->eq('relation.priceList', ':'.$parameterName)
             )
         );
 

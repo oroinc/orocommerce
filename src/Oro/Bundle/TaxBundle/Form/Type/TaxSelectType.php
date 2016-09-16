@@ -9,7 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 
 class TaxSelectType extends AbstractType
 {
-    const NAME = 'orob2b_tax_select';
+    const NAME = 'oro_tax_select';
 
     /**
      * {@inheritdoc}
@@ -18,8 +18,8 @@ class TaxSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'orob2b_tax_autocomplete',
-                'create_form_route' => 'orob2b_tax_create',
+                'autocomplete_alias' => 'oro_tax_autocomplete',
+                'create_form_route' => 'oro_tax_create',
                 'grid_name' => 'tax-taxes-select-grid',
                 'configs' => [
                     'placeholder' => 'oro.tax.form.choose',

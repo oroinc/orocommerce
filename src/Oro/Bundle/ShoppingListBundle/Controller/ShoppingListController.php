@@ -15,10 +15,10 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 class ShoppingListController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_shopping_list_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_shopping_list_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_shopping_list_view",
+     *      id="oro_shopping_list_view",
      *      type="entity",
      *      class="OroShoppingListBundle:ShoppingList",
      *      permission="VIEW"
@@ -37,9 +37,9 @@ class ShoppingListController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_shopping_list_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_shopping_list_info", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_shopping_list_view")
+     * @AclAncestor("oro_shopping_list_view")
      *
      * @param ShoppingList $shoppingList
      *
@@ -53,16 +53,16 @@ class ShoppingListController extends Controller
     }
 
     /**
-     * @Route("/", name="orob2b_shopping_list_index")
+     * @Route("/", name="oro_shopping_list_index")
      * @Template
-     * @AclAncestor("orob2b_shopping_list_view")
+     * @AclAncestor("oro_shopping_list_view")
      *
      * @return array
      */
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_shopping_list.entity.shopping_list.class')
+            'entity_class' => $this->container->getParameter('oro_shopping_list.entity.shopping_list.class')
         ];
     }
 
@@ -71,6 +71,6 @@ class ShoppingListController extends Controller
      */
     protected function getTotalProcessor()
     {
-        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
+        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
     }
 }

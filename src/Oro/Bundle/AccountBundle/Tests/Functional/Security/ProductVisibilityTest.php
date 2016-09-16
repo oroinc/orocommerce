@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
  */
 class ProductVisibilityTest extends WebTestCase
 {
-    const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_b2b_account.product_visibility';
+    const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_account.product_visibility';
 
     /**
      * {@inheritdoc}
@@ -48,7 +48,7 @@ class ProductVisibilityTest extends WebTestCase
             $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $product);
             $this->client->request(
                 'GET',
-                $this->getUrl('orob2b_product_frontend_product_view', ['id' => $product->getId()])
+                $this->getUrl('oro_product_frontend_product_view', ['id' => $product->getId()])
             );
             $result = $this->client->getResponse();
             $this->assertHtmlResponseStatusCodeEquals($result, $resultCode);

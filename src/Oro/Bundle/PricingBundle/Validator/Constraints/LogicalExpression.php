@@ -16,6 +16,6 @@ class LogicalExpression extends Constraint
      */
     public function validatedBy()
     {
-        return 'orob2b_pricing.validator_constraints.logical_expression_validator';
+        return 'oro_pricing.validator_constraints.logical_expression_validator';
     }
 }

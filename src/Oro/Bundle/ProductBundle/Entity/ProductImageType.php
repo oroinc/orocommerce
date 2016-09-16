@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="orob2b_product_image_type")
+ * @ORM\Table(name="oro_product_image_type")
  */
 class ProductImageType
 {

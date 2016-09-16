@@ -12,7 +12,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
 
 class FrontendAccountUserRoleType extends AbstractAccountUserRoleType
 {
-    const NAME = 'orob2b_account_frontend_account_user_role';
+    const NAME = 'oro_account_frontend_account_user_role';
 
     /**
      * {@inheritdoc}
@@ -82,7 +82,7 @@ class FrontendAccountUserRoleType extends AbstractAccountUserRoleType
 
         $resolver->setDefaults(
             [
-                'access_level_route' => 'orob2b_account_frontend_acl_access_levels',
+                'access_level_route' => 'oro_account_frontend_acl_access_levels',
                 'predefined_role' => null,
             ]
         );

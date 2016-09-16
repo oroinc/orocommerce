@@ -16,7 +16,7 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class PageType extends AbstractType
 {
-    const NAME = 'orob2b_cms_page';
+    const NAME = 'oro_cms_page';
 
     /**
      * @var string

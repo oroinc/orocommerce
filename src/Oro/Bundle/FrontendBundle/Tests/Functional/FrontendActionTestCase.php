@@ -11,7 +11,7 @@ abstract class FrontendActionTestCase extends ActionTestCase
      */
     protected function getOperationExecutionRoute()
     {
-        return 'orob2b_frontend_action_operation_execute';
+        return 'oro_frontend_action_operation_execute';
     }
 
     /**
@@ -19,6 +19,6 @@ abstract class FrontendActionTestCase extends ActionTestCase
      */
     protected function getOperationDialogRoute()
     {
-        return 'orob2b_frontend_action_widget_form';
+        return 'oro_frontend_action_widget_form';
     }
 }

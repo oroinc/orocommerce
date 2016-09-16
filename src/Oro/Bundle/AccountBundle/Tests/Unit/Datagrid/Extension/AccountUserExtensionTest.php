@@ -54,7 +54,7 @@ class AccountUserExtensionTest extends \PHPUnit_Framework_TestCase
     public function testIsApplicable($user, $class, $expected)
     {
         $this->container->expects($this->once())->method('getParameter')
-            ->with('orob2b_account.entity.account_user.class')->willReturn($class);
+            ->with('oro_account.entity.account_user.class')->willReturn($class);
 
         $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()->getMock();

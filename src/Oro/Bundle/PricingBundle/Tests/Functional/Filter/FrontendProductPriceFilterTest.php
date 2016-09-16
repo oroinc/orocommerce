@@ -43,7 +43,7 @@ class FrontendProductPriceFilterTest extends WebTestCase
         $this->filter = new FrontendProductPriceFilter(
             $this->getContainer()->get('form.factory'),
             $this->getContainer()->get('oro_filter.filter_utility'),
-            $this->getContainer()->get('orob2b_product.formatter.product_unit_label'),
+            $this->getContainer()->get('oro_product.formatter.product_unit_label'),
             $handler
         );
         $this->filter->init(

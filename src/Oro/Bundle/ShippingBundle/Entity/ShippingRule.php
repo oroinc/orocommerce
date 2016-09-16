@@ -13,17 +13,17 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingRule;
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository")
  * @ORM\Table(
- *     name="orob2b_shipping_rule",
+ *     name="oro_shipping_rule",
  *     indexes={
- *         @ORM\Index(name="orob2b_shipping_rl_en_cur_idx", columns={"enabled", "currency"}),
+ *         @ORM\Index(name="oro_shipping_rl_en_cur_idx", columns={"enabled", "currency"}),
  *     }
  * )
  * @ORM\HasLifecycleCallbacks()
  * @Config(
- *      routeName="orob2b_shipping_rule_index",
- *      routeView="orob2b_shipping_rule_view",
- *      routeCreate="orob2b_shipping_rule_create",
- *      routeUpdate="orob2b_shipping_rule_update",
+ *      routeName="oro_shipping_rule_index",
+ *      routeView="oro_shipping_rule_view",
+ *      routeCreate="oro_shipping_rule_create",
+ *      routeUpdate="oro_shipping_rule_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"

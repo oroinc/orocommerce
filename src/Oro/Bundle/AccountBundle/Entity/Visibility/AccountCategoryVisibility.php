@@ -12,10 +12,10 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 /**
  * @ORM\Entity()
  * @ORM\Table(
- *      name="orob2b_acc_category_visibility",
+ *      name="oro_acc_category_visibility",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="orob2b_acc_ctgr_vis_uidx",
+ *              name="oro_acc_ctgr_vis_uidx",
  *              columns={"category_id", "account_id"}
  *          )
  *      }

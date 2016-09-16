@@ -31,7 +31,7 @@ class AccountUserDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onBuildBefore($event);
 
-        $this->assertEquals($expectedConfig, $event->getConfig());
+        $this->assertEquals($expectedConfig->toArray(), $event->getConfig()->toArray());
     }
 
     /**

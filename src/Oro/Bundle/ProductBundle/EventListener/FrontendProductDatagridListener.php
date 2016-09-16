@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
@@ -47,28 +48,21 @@ class FrontendProductDatagridListener
     protected $imagineCacheManager;
 
     /**
-     * @var ProductUnitLabelFormatter
-     */
-    protected $unitFormatter;
-
-    /**
      * @param DataGridThemeHelper $themeHelper
      * @param RegistryInterface $registry
      * @param AttachmentManager $attachmentManager
-     * @param ProductUnitLabelFormatter $unitFormatter
+     * @param CacheManager $imagineCacheManager
      */
     public function __construct(
         DataGridThemeHelper $themeHelper,
         RegistryInterface $registry,
         AttachmentManager $attachmentManager,
-        CacheManager $imagineCacheManager,
-        ProductUnitLabelFormatter $unitFormatter
+        CacheManager $imagineCacheManager
     ) {
         $this->themeHelper = $themeHelper;
         $this->registry = $registry;
         $this->attachmentManager = $attachmentManager;
         $this->imagineCacheManager = $imagineCacheManager;
-        $this->unitFormatter = $unitFormatter;
     }
 
     /**
@@ -197,6 +191,7 @@ class FrontendProductDatagridListener
             default:
                 return;
         }
+
         $productImages = $this->getProductRepository()->getListingImagesFilesByProductIds($productIds);
 
         $defaultImageUrl = $this->imagineCacheManager->getBrowserPath(self::DEFAULT_IMAGE, $imageFilter);
@@ -208,7 +203,7 @@ class FrontendProductDatagridListener
                     $productImages[$productId],
                     $imageFilter
                 );
-            }else {
+            } else {
                 $imageUrl = $defaultImageUrl;
             }
             $record->addData(['image' => $imageUrl]);
@@ -228,7 +223,7 @@ class FrontendProductDatagridListener
             $productId = $record->getValue('id');
             if (array_key_exists($productId, $productUnits)) {
                 foreach ($productUnits[$productId] as $unitCode) {
-                    $units[$unitCode] = $this->unitFormatter->format($unitCode);
+                    $units[] = $unitCode;
                 }
             }
             $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);

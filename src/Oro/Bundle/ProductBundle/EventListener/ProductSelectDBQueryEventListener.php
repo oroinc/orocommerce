@@ -56,7 +56,6 @@ class ProductSelectDBQueryEventListener
 
     /**
      * @param string|null $frontendSystemConfigurationPath
-     * @return $this
      */
     public function setFrontendSystemConfigurationPath($frontendSystemConfigurationPath = null)
     {
@@ -65,7 +64,6 @@ class ProductSelectDBQueryEventListener
 
     /**
      * @param string|null $backendSystemConfigurationPath
-     * @return $this
      */
     public function setBackendSystemConfigurationPath($backendSystemConfigurationPath = null)
     {

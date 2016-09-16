@@ -16,6 +16,6 @@ class UniqueProductUnitShippingOptions extends Constraint
      */
     public function validatedBy()
     {
-        return 'orob2b_shipping_unique_product_unit_shipping_options_validator';
+        return 'oro_shipping_unique_product_unit_shipping_options_validator';
     }
 }

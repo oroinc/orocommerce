@@ -44,7 +44,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
                 $this->searchAutocompletePath,
                 [
                     ProductSelectType::DATA_PARAMETERS => $this->dataParameters,
-                    'name' => 'orob2b_product_visibility_limited',
+                    'name' => 'oro_product_visibility_limited',
                     'page' => 1,
                     'per_page' => 10,
                     'query' => 'product',
@@ -114,7 +114,6 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
      * @param Response $result
      * @param string $dataFieldName
      * @param string[] $expectedProducts
-     * @return array
      */
     protected function assertResponseContainsProducts(Response $result, $dataFieldName, array $expectedProducts)
     {

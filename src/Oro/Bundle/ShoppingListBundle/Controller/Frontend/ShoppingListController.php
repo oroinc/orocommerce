@@ -21,10 +21,10 @@ use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 class ShoppingListController extends Controller
 {
     /**
-     * @Route("/{id}", name="orob2b_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
+     * @Route("/{id}", name="oro_shopping_list_frontend_view", defaults={"id" = null}, requirements={"id"="\d+"})
      * @Layout(vars={"title"})
      * @Acl(
-     *      id="orob2b_shopping_list_frontend_view",
+     *      id="oro_shopping_list_frontend_view",
      *      type="entity",
      *      class="OroShoppingListBundle:ShoppingList",
      *      permission="ACCOUNT_VIEW",
@@ -62,7 +62,7 @@ class ShoppingListController extends Controller
                 if (!empty($this->container)) {
                     $shoppingList->setIsAllowedRFP(
                         $this->container
-                            ->get('orob2b_rfp.form.type.extension.frontend_request_data_storage')
+                            ->get('oro_rfp.form.type.extension.frontend_request_data_storage')
                             ->isAllowedRFP($products)
                     );
                 }
@@ -87,10 +87,10 @@ class ShoppingListController extends Controller
     /**
      * Create shopping list form
      *
-     * @Route("/create", name="orob2b_shopping_list_frontend_create")
+     * @Route("/create", name="oro_shopping_list_frontend_create")
      * @Layout
      * @Acl(
-     *      id="orob2b_shopping_list_frontend_create",
+     *      id="oro_shopping_list_frontend_create",
      *      type="entity",
      *      class="OroShoppingListBundle:ShoppingList",
      *      permission="CREATE",
@@ -102,7 +102,7 @@ class ShoppingListController extends Controller
      */
     public function createAction(Request $request)
     {
-        $shoppingListManager = $this->get('orob2b_shopping_list.shopping_list.manager');
+        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
         $shoppingList = $shoppingListManager->create();
 
         $response = $this->create($request, $shoppingList);
@@ -132,7 +132,7 @@ class ShoppingListController extends Controller
         $handler = new ShoppingListHandler(
             $form,
             $request,
-            $this->get('orob2b_shopping_list.shopping_list.manager'),
+            $this->get('oro_shopping_list.shopping_list.manager'),
             $this->getDoctrine()
         );
 
@@ -141,13 +141,13 @@ class ShoppingListController extends Controller
             $this->createForm(ShoppingListType::NAME, $shoppingList),
             function (ShoppingList $shoppingList) {
                 return [
-                    'route' => 'orob2b_shopping_list_frontend_view',
+                    'route' => 'oro_shopping_list_frontend_view',
                     'parameters' => ['id' => $shoppingList->getId()]
                 ];
             },
             function (ShoppingList $shoppingList) {
                 return [
-                    'route' => 'orob2b_shopping_list_frontend_view',
+                    'route' => 'oro_shopping_list_frontend_view',
                     'parameters' => ['id' => $shoppingList->getId()]
                 ];
             },
@@ -161,6 +161,6 @@ class ShoppingListController extends Controller
      */
     protected function getTotalProcessor()
     {
-        return $this->get('orob2b_pricing.subtotal_processor.total_processor_provider');
+        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
     }
 }

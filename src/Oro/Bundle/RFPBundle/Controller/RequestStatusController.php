@@ -16,10 +16,10 @@ use Oro\Bundle\RFPBundle\Form\Type\RequestStatusType;
 class RequestStatusController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_rfp_request_status_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_rfp_request_status_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_rfp_request_status_view",
+     *      id="oro_rfp_request_status_view",
      *      type="entity",
      *      class="OroRFPBundle:RequestStatus",
      *      permission="VIEW"
@@ -36,9 +36,9 @@ class RequestStatusController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_rfp_request_status_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_rfp_request_status_info", requirements={"id"="\d+"})
      * @Template("OroRFPBundle:RequestStatus/widget:info.html.twig")
-     * @AclAncestor("orob2b_rfp_request_status_view")
+     * @AclAncestor("oro_rfp_request_status_view")
      *
      * @param RequestStatus $requestStatus
      * @return array
@@ -51,24 +51,24 @@ class RequestStatusController extends Controller
     }
 
     /**
-     * @Route("/", name="orob2b_rfp_request_status_index")
+     * @Route("/", name="oro_rfp_request_status_index")
      * @Template
-     * @AclAncestor("orob2b_rfp_request_status_view")
+     * @AclAncestor("oro_rfp_request_status_view")
      *
      * @return array
      */
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_rfp.entity.request.status.class')
+            'entity_class' => $this->container->getParameter('oro_rfp.entity.request.status.class')
         ];
     }
 
     /**
-     * @Route("/create", name="orob2b_rfp_request_status_create")
+     * @Route("/create", name="oro_rfp_request_status_create")
      * @Template("OroRFPBundle:RequestStatus:update.html.twig")
      * @Acl(
-     *     id="orob2b_rfp_request_status_create",
+     *     id="oro_rfp_request_status_create",
      *     type="entity",
      *     permission="CREATE",
      *     class="OroRFPBundle:RequestStatus"
@@ -81,10 +81,10 @@ class RequestStatusController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_rfp_request_status_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_rfp_request_status_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *     id="orob2b_rfp_request_status_update",
+     *     id="oro_rfp_request_status_update",
      *     type="entity",
      *     permission="EDIT",
      *     class="OroRFPBundle:RequestStatus"
@@ -111,7 +111,7 @@ class RequestStatusController extends Controller
             $form,
             $this->getRequest(),
             $this->getDoctrine()->getManagerForClass(
-                $this->container->getParameter('orob2b_rfp.entity.request.status.class')
+                $this->container->getParameter('oro_rfp.entity.request.status.class')
             )
         );
         $handler->setDefaultLocale($this->container->getParameter('stof_doctrine_extensions.default_locale'));
@@ -122,7 +122,7 @@ class RequestStatusController extends Controller
                 $form,
                 function (RequestStatus $requestStatus) {
                     return [
-                        'route' => 'orob2b_rfp_request_status_update',
+                        'route' => 'oro_rfp_request_status_update',
                         'parameters' => [
                             'id' => $requestStatus->getId()
                         ]
@@ -130,7 +130,7 @@ class RequestStatusController extends Controller
                 },
                 function (RequestStatus $requestStatus) {
                     return [
-                        'route' => 'orob2b_rfp_request_status_view',
+                        'route' => 'oro_rfp_request_status_view',
                         'parameters' => [
                             'id' => $requestStatus->getId()
                         ]

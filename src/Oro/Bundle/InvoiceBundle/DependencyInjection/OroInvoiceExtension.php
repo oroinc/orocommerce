@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Loader;
 
 class OroInvoiceExtension extends Extension
 {
-    const ALIAS = 'oro_b2b_invoice';
+    const ALIAS = 'oro_invoice';
 
     /**
      * {@inheritDoc}

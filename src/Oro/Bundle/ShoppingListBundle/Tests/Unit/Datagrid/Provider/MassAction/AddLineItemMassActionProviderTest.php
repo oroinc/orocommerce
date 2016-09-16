@@ -77,8 +77,8 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                         'icon' => 'plus',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
-                        'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
-                        'route' => 'orob2b_shopping_list_add_products_to_new_massaction',
+                        'handler' => 'oro_shopping_list.mass_action.add_products_handler',
+                        'route' => 'oro_shopping_list_add_products_to_new_massaction',
                         'frontend_options' => [
                             'title' => 'oro.shoppinglist.product.add_to_shopping_list.label',
                             'regionEnabled' => false,
@@ -107,7 +107,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                         'icon' => 'shopping-cart',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
-                        'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
+                        'handler' => 'oro_shopping_list.mass_action.add_products_handler',
                         'route_parameters' => [
                             'shoppingList' => 1
                         ]
@@ -118,7 +118,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                         'icon' => 'shopping-cart',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
-                        'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
+                        'handler' => 'oro_shopping_list.mass_action.add_products_handler',
                         'route_parameters' => [
                             'shoppingList' => 2
                         ]
@@ -129,8 +129,8 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                         'icon' => 'plus',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
-                        'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
-                        'route' => 'orob2b_shopping_list_add_products_to_new_massaction',
+                        'handler' => 'oro_shopping_list.mass_action.add_products_handler',
+                        'route' => 'oro_shopping_list_add_products_to_new_massaction',
                         'frontend_options' => [
                             'title' => 'oro.shoppinglist.product.add_to_shopping_list.label',
                             'regionEnabled' => false,
@@ -159,7 +159,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                         'icon' => 'shopping-cart',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
-                        'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
+                        'handler' => 'oro_shopping_list.mass_action.add_products_handler',
                         'route_parameters' => [
                             'shoppingList' => 42
                         ]
@@ -170,7 +170,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                         'icon' => 'shopping-cart',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
-                        'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
+                        'handler' => 'oro_shopping_list.mass_action.add_products_handler',
                         'route_parameters' => [
                             'shoppingList' => 3
                         ]
@@ -181,8 +181,8 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                         'icon' => 'plus',
                         'data_identifier' => 'product.id',
                         'frontend_type' => 'add-products-mass',
-                        'handler' => 'orob2b_shopping_list.mass_action.add_products_handler',
-                        'route' => 'orob2b_shopping_list_add_products_to_new_massaction',
+                        'handler' => 'oro_shopping_list.mass_action.add_products_handler',
+                        'route' => 'oro_shopping_list_add_products_to_new_massaction',
                         'frontend_options' => [
                             'title' => 'oro.shoppinglist.product.add_to_shopping_list.label',
                             'regionEnabled' => false,

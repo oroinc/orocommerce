@@ -18,10 +18,10 @@ class AjaxCheckoutController extends Controller
     /**
      * @Route(
      *      "/get-totals-for-checkout/{entityId}",
-     *      name="orob2b_checkout_frontend_totals",
+     *      name="oro_checkout_frontend_totals",
      *      requirements={"entityId"="\d+"}
      * )
-     * @AclAncestor("orob2b_checkout_frontend_checkout")
+     * @AclAncestor("oro_checkout_frontend_checkout")
      *
      * @param Request $request
      * @param integer $entityId
@@ -38,7 +38,7 @@ class AjaxCheckoutController extends Controller
         }
 
         $checkout->setShippingCost($this->getShippingCost($checkout, $request));
-        return new JsonResponse($this->get('orob2b_checkout.provider.checkout_totals')->getTotalsArray($checkout));
+        return new JsonResponse($this->get('oro_checkout.provider.checkout_totals')->getTotalsArray($checkout));
     }
 
     /**
@@ -58,6 +58,6 @@ class AjaxCheckoutController extends Controller
         if (!$shippingRuleConfig) {
             return $checkout->getShippingCost();
         }
-        return $this->get('orob2b_checkout.shipping_cost.calculator')->calculatePrice($checkout, $shippingRuleConfig);
+        return $this->get('oro_checkout.shipping_cost.calculator')->calculatePrice($checkout, $shippingRuleConfig);
     }
 }

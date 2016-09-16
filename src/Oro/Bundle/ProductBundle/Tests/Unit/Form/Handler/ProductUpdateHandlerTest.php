@@ -203,7 +203,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->actionGroupRegistry->expects($this->once())
             ->method('findByName')
-            ->with('orob2b_product_duplicate')
+            ->with('oro_product_duplicate')
             ->willReturn($actionGroup);
 
         $result = $this->handler->handleUpdate(

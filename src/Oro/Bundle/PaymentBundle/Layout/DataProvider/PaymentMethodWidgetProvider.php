@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 
 class PaymentMethodWidgetProvider
 {
-    const NAME = 'orob2b_payment_method_widget_provider';
+    const NAME = 'oro_payment_method_widget_provider';
 
     /**
      * @param object $entity

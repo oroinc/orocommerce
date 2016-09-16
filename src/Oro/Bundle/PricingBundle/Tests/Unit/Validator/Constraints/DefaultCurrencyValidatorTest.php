@@ -63,7 +63,7 @@ class DefaultCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->configManager->expects($this->once())
             ->method('get')
-            ->with('oro_b2b_pricing.enabled_currencies')
+            ->with('oro_pricing.enabled_currencies')
             ->willReturn($availableCurrencies);
 
         $this->context->expects($this->never())->method('addViolation');
@@ -93,7 +93,7 @@ class DefaultCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->configManager->expects($this->once())
             ->method('get')
-            ->with('oro_b2b_pricing.enabled_currencies')
+            ->with('oro_pricing.enabled_currencies')
             ->willReturn($availableCurrencies);
 
         $this->context->expects($this->once())->method('addViolation');

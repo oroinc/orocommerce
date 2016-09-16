@@ -124,12 +124,12 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
             ->willReturnMap(
                 [
                     [
-                        'orob2b_account.owner.frontend_ownership_tree_provider.cache',
+                        'oro_account.owner.frontend_ownership_tree_provider.cache',
                         ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
                         $this->cache,
                     ],
                     [
-                        'orob2b_account.owner.frontend_ownership_metadata_provider',
+                        'oro_account.owner.frontend_ownership_metadata_provider',
                         ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
                         $this->ownershipMetadataProvider,
                     ],

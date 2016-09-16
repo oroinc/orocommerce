@@ -5,6 +5,8 @@ namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_3;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
@@ -14,8 +16,13 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroPricingBundle implements Migration, OrderedMigrationInterface
+class OroPricingBundle implements Migration, OrderedMigrationInterface, RenameExtensionAwareInterface
 {
+    /**
+     * @var RenameExtension
+     */
+    protected $renameExtension;
+
     /**
      * {@inheritdoc}
      */
@@ -35,15 +42,15 @@ class OroPricingBundle implements Migration, OrderedMigrationInterface
 
         $this->addOrob2BPriceListScheduleForeignKeys($schema);
         $this->addOrob2BCplActivationRuleForeignKeys($schema);
-        $this->addOrob2BPriceProductMinimalForeignKeys($schema);
+        $this->addOrob2BPriceProductMinimalForeignKeys($schema, $queries);
 
         $this->createOroCmbPriceListToAccTable($schema);
         $this->createOroCmbPriceListToAccGrTable($schema);
         $this->createOroCmbPriceListToWsTable($schema);
 
-        $this->addOrob2BCmbPriceListToAccGrForeignKeys($schema);
-        $this->addOrob2BCmbPriceListToWsForeignKeys($schema);
-        $this->addOrob2BCmbPriceListToAccForeignKeys($schema);
+        $this->addOrob2BCmbPriceListToAccGrForeignKeys($schema, $queries);
+        $this->addOrob2BCmbPriceListToWsForeignKeys($schema, $queries);
+        $this->addOrob2BCmbPriceListToAccForeignKeys($schema, $queries);
 
         $this->alterOroPriceListTable($schema, $queries);
         $this->alterOroPriceListCombinedTable($schema, $queries);
@@ -54,7 +61,7 @@ class OroPricingBundle implements Migration, OrderedMigrationInterface
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_plist_to_acc_gr'));
         $queries->addPostQuery(new UpdateCPLRelationsQuery('orob2b_cmb_price_list_to_ws'));
         $queries->addPostQuery(new UpdateCPLNameQuery());
-        $queries->addPostQuery(new AddJobQuery('oro:cron:price-lists:recalculate', ['--force']));
+        $queries->addPostQuery(new AddJobQuery('oro:price-lists:recalculate', ['--all']));
         $queries->addPostQuery(new FillMinimalPrices());
     }
 
@@ -194,33 +201,41 @@ class OroPricingBundle implements Migration, OrderedMigrationInterface
      * Add orob2b_cmb_plist_to_acc_gr foreign keys.
      *
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function addOrob2BCmbPriceListToAccGrForeignKeys(Schema $schema)
+    protected function addOrob2BCmbPriceListToAccGrForeignKeys(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_cmb_plist_to_acc_gr');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
-            ['website_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list_combined'),
             ['combined_price_list_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_group'),
-            ['account_group_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
+
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list_combined'),
             ['full_combined_price_list_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_cmb_plist_to_acc_gr',
+            'oro_website',
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_cmb_plist_to_acc_gr',
+            'oro_account_group',
+            ['account_group_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 
@@ -228,8 +243,9 @@ class OroPricingBundle implements Migration, OrderedMigrationInterface
      * Add orob2b_cmb_price_list_to_ws foreign keys.
      *
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function addOrob2BCmbPriceListToWsForeignKeys(Schema $schema)
+    protected function addOrob2BCmbPriceListToWsForeignKeys(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_cmb_price_list_to_ws');
         $table->addForeignKeyConstraint(
@@ -238,15 +254,19 @@ class OroPricingBundle implements Migration, OrderedMigrationInterface
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
-            ['website_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
+
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list_combined'),
             ['combined_price_list_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_cmb_price_list_to_ws',
+            'oro_website',
+            ['website_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
@@ -256,8 +276,9 @@ class OroPricingBundle implements Migration, OrderedMigrationInterface
      * Add orob2b_cmb_price_list_to_acc foreign keys.
      *
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function addOrob2BCmbPriceListToAccForeignKeys(Schema $schema)
+    protected function addOrob2BCmbPriceListToAccForeignKeys(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_cmb_price_list_to_acc');
         $table->addForeignKeyConstraint(
@@ -267,19 +288,25 @@ class OroPricingBundle implements Migration, OrderedMigrationInterface
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
-            ['website_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list_combined'),
             ['combined_price_list_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account'),
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_cmb_price_list_to_acc',
+            'oro_website',
+            ['website_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_cmb_price_list_to_acc',
+            'oro_account',
             ['account_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -359,27 +386,42 @@ class OroPricingBundle implements Migration, OrderedMigrationInterface
      * Add orob2b_price_product_minimal foreign keys.
      *
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function addOrob2BPriceProductMinimalForeignKeys(Schema $schema)
+    protected function addOrob2BPriceProductMinimalForeignKeys(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_price_product_minimal');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product_unit'),
-            ['unit_code'],
-            ['code'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
-            ['product_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list_combined'),
             ['combined_price_list_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_price_product_minimal',
+            'oro_product_unit',
+            ['unit_code'],
+            ['code'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_price_product_minimal',
+            'oro_product',
+            ['product_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRenameExtension(RenameExtension $renameExtension)
+    {
+        $this->renameExtension = $renameExtension;
     }
 }

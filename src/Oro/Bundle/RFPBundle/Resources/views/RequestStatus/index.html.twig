@@ -5,10 +5,10 @@
 {% set pageTitle = 'oro.rfp.requeststatus.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% if resource_granted('orob2b_rfp_request_status_create') %}
+    {% if resource_granted('oro_rfp_request_status_create') %}
         <div class="btn-group">
             {{ UI.addButton({
-                'path': path('orob2b_rfp_request_status_create'),
+                'path': path('oro_rfp_request_status_create'),
                 'entity_label': 'oro.rfp.requeststatus.entity_label'|trans
             }) }}
         </div>

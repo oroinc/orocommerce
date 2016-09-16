@@ -1,0 +1,20 @@
+layout:
+    imports:
+        -
+            id: oro_product_list_item
+            root: __products
+    actions:
+        - '@setBlockTheme':
+            themes: 'oro_product_list.html.twig'
+        - '@add':
+            id: __products
+            parentId: __root
+            blockType: embedded_list
+            options:
+                item_key: product
+                use_slider: true
+                slider_options: {slidesToShow: 4}
+        - '@setOption':
+            id: __product
+            optionName: class_prefix
+            optionValue: gallery-view

@@ -23,9 +23,9 @@ class AjaxProductShippingOptionsController extends Controller
     /**
      * Get available FreightClasses codes
      *
-     * @Route("/freight-classes", name="orob2b_shipping_freight_classes")
+     * @Route("/freight-classes", name="oro_shipping_freight_classes")
      * @Method({"POST"})
-     * @AclAncestor("orob2b_product_update")
+     * @AclAncestor("oro_product_update")
      *
      * @param Request $request
      * @return JsonResponse
@@ -47,10 +47,10 @@ class AjaxProductShippingOptionsController extends Controller
         $activeShippingOptions->setProduct($product);
 
         /* @var $provider FreightClassesProvider */
-        $provider = $this->get('orob2b_shipping.provider.measure_units.freight');
+        $provider = $this->get('oro_shipping.provider.measure_units.freight');
 
         /* @var $formatter UnitLabelFormatter */
-        $formatter = $this->get('orob2b_shipping.formatter.freight_class_label');
+        $formatter = $this->get('oro_shipping.formatter.freight_class_label');
 
         $units = $provider->getFreightClasses($activeShippingOptions);
 

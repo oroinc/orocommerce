@@ -8,9 +8,9 @@ use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 
 /**
  * @ORM\Table(
- *      name="orob2b_cmb_plist_to_acc_gr",
+ *      name="oro_cmb_plist_to_acc_gr",
  *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="orob2b_cpl_to_acc_gr_ws_unq", columns={
+ *          @ORM\UniqueConstraint(name="oro_cpl_to_acc_gr_ws_unq", columns={
  *              "account_group_id",
  *              "website_id"
  *          })
