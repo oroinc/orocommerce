@@ -199,10 +199,10 @@ define(function(require) {
 
         _onCurrentShoppingListChange: function(shoppingListId) {
             var modelCurrentShoppingList = this.findCurrentShoppingList();
-            var modelNewCurrentShoppingList = this.findShoppingList(shoppingListId);
+            var modelNewCurrentShoppingList = this.findShoppingListById(shoppingListId);
 
-            var $newCurrentButton = this.findDropdownButtons('[data-id=' + shoppingListId + ']'),
-                shoppingList = $newCurrentButton.data('shoppinglist');
+            var $newCurrentButton = this.findDropdownButtons('[data-id=' + shoppingListId + ']');
+            var shoppingList = $newCurrentButton.data('shoppinglist');
 
             $newCurrentButton.remove();
 
@@ -346,7 +346,7 @@ define(function(require) {
             }) || null;
         },
 
-        findShoppingList: function(id) {
+        findShoppingListById: function(id) {
             return _.find(this.model.get('shopping_lists'), function(list) {
                 return list.shopping_list_id === id;
             }) || null;
