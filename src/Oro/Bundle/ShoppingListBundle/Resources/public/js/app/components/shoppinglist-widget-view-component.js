@@ -17,18 +17,23 @@ define(function(require) {
 
         eventChannelId: null,
 
+        elements: {
+            radio: '[name="shopping-list-dropdown-radio"]'
+        },
+
         /**
          * @param {Object} options
          */
         initialize: function(options) {
             this.$el = options._sourceElement;
             this.eventChannelId = options.eventChannelId;
+
             ShoppingListWidgetViewComponent.__super__.initialize.apply(this, arguments);
+
             mediator.on('shopping-list-event:' + this.eventChannelId + ':shopping-list-id', this.getShoppingListId, this);
             mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateTitle, this);
-            this.$el.on({
-                change: _.bind(this._onCurrentShoppingListChange, this)
-            }, 'input[name="shopping-list-dropdown-radio"]');
+
+            this.$el.on('change', this.elements.radio, _.bind(this._onCurrentShoppingListChange, this));
         },
 
         /**
