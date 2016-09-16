@@ -139,7 +139,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
             ->setServiceCode($this->shippingService->getCode())
             ->setServiceDescription($this->shippingService->getDescription())
         ;
-        
+
         $unitOfWeight = $this->transport->getUnitOfWeight();
         if ($unitOfWeight === UPSTransport::UNIT_OF_WEIGHT_KGS) {
             $weightLimit = self::MAX_PACKAGE_WEIGHT_KGS;
@@ -167,8 +167,8 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
             return null;
         }
 
-        $surcharge = array_key_exists($this->shippingService->getCode(), $typeOptions) ?
-            $typeOptions[$this->shippingService->getCode()][self::OPTION_SURCHARGE] :
+        $surcharge = array_key_exists(self::OPTION_SURCHARGE, $typeOptions) ?
+            $typeOptions[self::OPTION_SURCHARGE] :
             0
         ;
 
