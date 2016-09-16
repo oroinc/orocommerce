@@ -3,24 +3,37 @@
 define(function(require) {
     'use strict';
 
+    var ShoppingListWidgetViewComponent;
     var ViewComponent = require('oroui/js/app/components/view-component');
     var mediator = require('oroui/js/mediator');
-    var ShoppingListWidgetViewComponent;
+    var routing = require('routing');
+    var Error = require('oroui/js/error');
+    var $ = require('jquery');
+    var _ = require('underscore');
 
     ShoppingListWidgetViewComponent = ViewComponent.extend({
 
         shoppingListId: null,
 
         eventChannelId: null,
+
+        elements: {
+            radio: '[name="shopping-list-dropdown-radio"]'
+        },
+
         /**
          * @param {Object} options
          */
         initialize: function(options) {
             this.$el = options._sourceElement;
             this.eventChannelId = options.eventChannelId;
+
             ShoppingListWidgetViewComponent.__super__.initialize.apply(this, arguments);
+
             mediator.on('shopping-list-event:' + this.eventChannelId + ':shopping-list-id', this.getShoppingListId, this);
             mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateTitle, this);
+
+            this.$el.on('change', this.elements.radio, _.bind(this._onCurrentShoppingListChange, this));
         },
 
         /**
@@ -34,6 +47,34 @@ define(function(require) {
             }
             this.$el.find('.shopping-list-dropdown__name-inner--' + this.shoppingListId)
                 .text(updateData.label);
+        },
+        
+        /**
+         * Change current shopping list event handler
+         *
+         * @param e
+         */
+        _onCurrentShoppingListChange: function(e) {
+            var shoppingListId = parseInt($(e.target).val(), 10);
+
+            $.ajax({
+                method: 'POST',
+                url: routing.generate('orob2b_product_frontend_product_index'),
+                data: {
+                    id: shoppingListId
+                },
+                success: function(response) {
+                    mediator.trigger('shopping-list:change-current', shoppingListId);
+
+                    if (response && response.message) {
+                        mediator.execute('showFlashMessage', (response.successful ? 'success' : 'error'), response.message);
+                    }
+                },
+                error: function(xhr) {
+                    mediator.trigger('shopping-list:updated');
+                    Error.handle({}, xhr, {enforce: true});
+                }
+            });
         },
 
         /**
