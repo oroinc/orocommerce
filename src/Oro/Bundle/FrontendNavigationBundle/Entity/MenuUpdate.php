@@ -3,13 +3,10 @@
 namespace Oro\Bundle\FrontendNavigationBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\FrontendNavigationBundle\Model\ExtendMenuUpdate;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\NavigationBundle\Entity\MenuUpdateInterface;
 use Oro\Bundle\NavigationBundle\Entity\MenuUpdateTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -17,6 +14,29 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\FrontendNavigationBundle\Entity\Repository\MenuUpdateRepository")
  * @ORM\Table(name="oro_front_nav_menu_upd")
+ * @ORM\AssociationOverrides({
+ *      @ORM\AssociationOverride(
+ *          name="titles",
+ *          joinTable=@ORM\JoinTable(
+ *              name="oro_front_nav_menu_upd_title",
+ *              joinColumns={
+ *                  @ORM\JoinColumn(
+ *                      name="menu_update_id",
+ *                      referencedColumnName="id",
+ *                      onDelete="CASCADE"
+ *                  )
+ *              },
+ *              inverseJoinColumns={
+ *                  @ORM\JoinColumn(
+ *                      name="localized_value_id",
+ *                      referencedColumnName="id",
+ *                      onDelete="CASCADE",
+ *                      unique=true
+ *                  )
+ *              }
+ *          )
+ *      )
+ * })
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -34,26 +54,6 @@ class MenuUpdate extends ExtendMenuUpdate implements
     const OWNERSHIP_ACCOUNT_USER    = 4;
 
     /**
-     * @var Collection|LocalizedFallbackValue[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_front_nav_menu_upd_title",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="menu_update_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     */
-    protected $titles;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="`condition`", type="string", length=512, nullable=true)
@@ -69,10 +69,12 @@ class MenuUpdate extends ExtendMenuUpdate implements
     protected $website;
 
     /**
-     * Constructor
+     * {@inheritdoc}
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->titles = new ArrayCollection();
     }
 

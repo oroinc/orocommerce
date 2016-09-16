@@ -15,7 +15,7 @@ class MenuUpdateProvider extends AbstractMenuUpdateProvider
     /**
      * @var WebsiteManager
      */
-    protected $websiteManager;
+    private $websiteManager;
 
     /**
      * @param SecurityFacade $securityFacade

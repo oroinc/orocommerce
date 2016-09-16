@@ -10,7 +10,8 @@ use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
-class LoadMenuUpdateData extends AbstractFixture implements DependentFixtureInterface
+class LoadMenuUpdateData extends AbstractFixture implements
+    DependentFixtureInterface
 {
     const MENU = 'user_menu';
     const ORGANIZATION = 'default_organization';

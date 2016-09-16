@@ -93,7 +93,7 @@ class OroFrontendNavigationBundle implements
     {
         $table = $schema->getTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
+            $schema->getTable('oro_website'),
             ['website_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']

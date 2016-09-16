@@ -7,7 +7,7 @@ oro:
             key.label: Key
             parent_key.label: Parent Key
             menu.label: Menu
-            titles.label: Titles
+            titles.label: Title
             uri.label: Uri
             active.label: Active
             priority.label: Priority
