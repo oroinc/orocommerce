@@ -99,11 +99,15 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     public function getClassesForReindex($class = null)
     {
+        if (null === $class) {
+            return $this->mappingProvider->getEntityClasses();
+        }
+
         $classes = is_array($class) ? $class : [$class];
-        $collectDependentClassesEvent = new CollectDependentClassesEvent($classes);
+        $collectDependentClassesEvent = new CollectDependentClassesEvent();
         $this->eventDispatcher->dispatch(CollectDependentClassesEvent::NAME, $collectDependentClassesEvent);
 
-        return $collectDependentClassesEvent->getDependentClasses();
+        return $collectDependentClassesEvent->getClassesForReindex($classes);
     }
 
     /**

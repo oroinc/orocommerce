@@ -9,43 +9,54 @@ class CollectDependentClassesEvent extends Event
     const NAME = 'oro_website_search.event.collect_dependent_classes';
 
     /** @var array */
-    private $dependentClasses = [];
+    private $dependencies;
 
     /** @var array */
-    private $classesToResolve = [];
+    private $classesForReindex;
 
     /**
      * @param array $classes
-     */
-    public function __construct(array $classes)
-    {
-        $this->classesToResolve = $classes;
-    }
-
-    /**
      * @return array
      */
-    public function getClassesToResolve()
+    public function getClassesForReindex(array $classes)
     {
-        return $this->classesToResolve;
+        $this->classesForReindex = [];
+        foreach ($classes as $class) {
+            $this->collectDependentClassesForClass($class);
+        }
+
+        return array_values($this->classesForReindex);
     }
 
     /**
-     * @param array $dependentClasses
-     * @return $this
+     * @param string $class
      */
-    public function setDependentClasses(array $dependentClasses)
+    private function collectDependentClassesForClass($class)
     {
-        $this->dependentClasses = $dependentClasses;
+        $this->classesForReindex[$class] = $class;
 
-        return $this;
+        if (isset($this->dependencies[$class])) {
+
+            foreach ($this->dependencies[$class] as $dependentClass) {
+
+                if (!isset($this->classesForReindex[$dependentClass])) {
+                    $this->collectDependentClassesForClass($dependentClass);
+                }
+            }
+        }
     }
 
     /**
-     * @return array
+     * Adds dependencies for $dependentEntityClass which means that $dependentEntityClass depends on
+     * $entityClasses.
+     *
+     * @param string $dependentEntityClass
+     * @param array $entityClasses
      */
-    public function getDependentClasses()
+    public function addClassDependencies($dependentEntityClass, array $entityClasses)
     {
-        return array_unique(array_merge($this->classesToResolve, $this->dependentClasses));
+        foreach ($entityClasses as $entityClass) {
+            $this->dependencies[$entityClass][] = $dependentEntityClass;
+        }
     }
 }

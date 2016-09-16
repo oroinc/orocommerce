@@ -497,15 +497,22 @@ class OrmIndexerTest extends SearchWebTestCase
         $this->assertEntityCount(2, Item::class);
     }
 
-    /**
-     * @dataProvider getClassesForReindexProvider
-     * @param $classPassed
-     * @param $expected
-     */
-    public function testGetClassesForReindex($classPassed, $expected)
+    public function testGetClassesForReindexWhenAllClassesReturned()
+    {
+        $this->mappingProviderMock
+            ->expects($this->once())
+            ->method('getEntityClasses')
+            ->willReturn(['Product', 'Category']);
+
+        $allClasses = $this->indexer->getClassesForReindex();
+
+        $this->assertEquals(['Product', 'Category'], $allClasses);
+    }
+
+    public function testGetClassesForReindex()
     {
         $listener = function (CollectDependentClassesEvent $event) {
-            $event->setDependentClasses(['Some\Dependent\Class1']);
+            $event->addClassDependencies('Product', ['Category', 'User']);
         };
 
         $this->dispatcher->addListener(
@@ -514,24 +521,8 @@ class OrmIndexerTest extends SearchWebTestCase
             -255
         );
 
-        $dependentClasses = $this->indexer->getClassesForReindex($classPassed);
-        $this->assertEquals($expected, $dependentClasses);
-    }
-
-    /**
-     * @return array
-     */
-    public function getClassesForReindexProvider()
-    {
-        return [
-            'string passed' => [
-                TestProduct::class,
-                [TestProduct::class, 'Some\Dependent\Class1']
-            ],
-            'array passed' => [
-                [TestProduct::class, 'Some\Main\Class'],
-                [TestProduct::class, 'Some\Main\Class', 'Some\Dependent\Class1']
-            ]
-        ];
+        $this->assertEquals(['Category', 'Product'], $this->indexer->getClassesForReindex('Category'));
+        $this->assertEquals(['User', 'Product'], $this->indexer->getClassesForReindex('User'));
+        $this->assertEquals(['Product'], $this->indexer->getClassesForReindex('Product'));
     }
 }
