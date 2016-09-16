@@ -345,21 +345,21 @@ datagrids:
                 label:         oro.product.sku.label
             name:
                 label:         oro.product.names.label
-#            inventoryStatus:
-#                label:         oro.product.inventory_status.label
-#                type:          twig
-#                frontend_type: html
-#                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
-#            status:
-#                label:         orobproduct.status.label
-#                frontend_type: select
-#                choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
-#            createdAt:
-#                label:         oro.ui.created_at
-#                frontend_type: datetime
-#            updatedAt:
-#                label:         oro.ui.updated_at
-#                frontend_type: datetime
+            inventoryStatus:
+                label:         oro.product.inventory_status.label
+                type:          twig
+                frontend_type: html
+                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
+            status:
+                label:         orobproduct.status.label
+                frontend_type: select
+                choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
         filters:
             columns:
                 all_text:

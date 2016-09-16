@@ -47,4 +47,20 @@ class WebsiteSearchQuery extends AbstractSearchQuery
 
         return $this->engine->search($this->query);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setWhere($expression, $type = self::WHERE_AND)
+    {
+        if (self::WHERE_OR === $type) {
+            $this->query->getCriteria()->orWhere($expression);
+
+            return $this;
+        }
+
+        $this->query->getCriteria()->andWhere($expression);
+
+        return $this;
+    }
 }

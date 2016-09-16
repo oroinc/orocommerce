@@ -11,7 +11,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\SearchBundle\Datasource\SearchDatasource;
-use Oro\Bundle\SearchBundle\Extension\SearchQueryInterface;
+use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 
 class SearchCategoryFilteringEventListener
