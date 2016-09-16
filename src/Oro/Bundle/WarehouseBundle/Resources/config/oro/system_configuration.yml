@@ -1,0 +1,28 @@
+system_configuration:
+    groups:
+        warehouse:
+            title: oro.warehouse.system_configuration.groups.warehouse.title
+            icon: icon-building
+        warehouse_configuration:
+            title: oro.warehouse.system_configuration.groups.warehouse_configuration.title
+
+    fields:
+        oro_warehouse.enabled_warehouses:
+            data_type: array
+            type: oro_warehouse_system_config
+            options:
+                label: oro.warehouse.system_configuration.fields.enabled_warehouses.label
+                resettable: false
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    product_inventory:
+                        children:
+                            warehouse:
+                                priority: 100
+                                children:
+                                    warehouse_configuration:
+                                        children:
+                                            - oro_warehouse.enabled_warehouses

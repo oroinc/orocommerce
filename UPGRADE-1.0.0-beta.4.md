@@ -61,7 +61,7 @@ PaymentBundle
 OrderBundle:
 ------------
 - Moved `get_payment_status_label` twig function to `PaymentBundle` to `Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension`.
-- Removed `PaymentStatusProvider` constructor argument from `OroB2B/Bundle/OrderBundle/Twig/OrderExtension`.
+- Removed `PaymentStatusProvider` constructor argument from `Oro/Bundle/OrderBundle/Twig/OrderExtension`.
 - Removed `Oro\Bundle\OrderBundle\Layout\DataProvider\OrderPaymentMethodProvider`.
 - Removed method `Oro\Bundle\OrderBundle\Twig\OrderExtension::formatSourceDocument`
 - Removed `Oro\Bundle\OrderBundle\Twig\OrderExtension` constructor first argument `Doctrine\Common\Persistence\ManagerRegistry`

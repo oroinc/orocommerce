@@ -567,8 +567,8 @@ services:
             - "@oro_website.manager"
             - "@oro_account.provider.account_user_relations_provider"
         calls:
-            - [setProductVisibilitySystemConfigurationPath, ['oro_b2b_account.product_visibility']]
-            - [setCategoryVisibilitySystemConfigurationPath, ['oro_b2b_account.category_visibility']]
+            - [setProductVisibilitySystemConfigurationPath, ['oro_account.product_visibility']]
+            - [setCategoryVisibilitySystemConfigurationPath, ['oro_account.category_visibility']]
 
     oro_account.visibility.cache.product.cache_builder.abstract:
         class: 'Oro\Bundle\AccountBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder'
