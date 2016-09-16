@@ -5,10 +5,10 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
-
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+
+use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 
 class LoadEmployeesToIndex extends AbstractFixture implements ContainerAwareInterface
 {
