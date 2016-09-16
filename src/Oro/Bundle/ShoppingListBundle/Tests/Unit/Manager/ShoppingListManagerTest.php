@@ -15,17 +15,17 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CurrencyBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -363,7 +363,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     protected function getRoundingService()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|QuantityRoundingService $roundingService */
-        $roundingService = $this->getMockBuilder('Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService')
+        $roundingService = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Rounding\QuantityRoundingService')
             ->disableOriginalConstructor()
             ->getMock();
 
