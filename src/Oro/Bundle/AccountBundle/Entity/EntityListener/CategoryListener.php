@@ -18,10 +18,8 @@ class CategoryListener
     /**
      * @param CategoryMessageHandler $categoryMessageHandler
      */
-    public function __construct(
-        CategoryMessageHandler $categoryMessageHandler
-
-    ) {
+    public function __construct(CategoryMessageHandler $categoryMessageHandler)
+    {
         $this->categoryMessageHandler = $categoryMessageHandler;
     }
 
