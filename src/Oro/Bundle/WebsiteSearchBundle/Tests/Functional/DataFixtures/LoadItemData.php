@@ -12,6 +12,7 @@ use Doctrine\Common\DataFixtures\ReferenceRepository;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\SearchBundle\Entity\ItemFieldInterface;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
@@ -32,6 +33,16 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
      * @var string
      */
     const REFERENCE_BETTER_PRODUCT = 'betterProduct';
+
+    /**
+     * @var string
+     */
+    const REFERENCE_EMPLOYEE1 = 'employee1';
+
+    /**
+     * @var string
+     */
+    const REFERENCE_EMPLOYEE2 = 'employee2';
 
     /**
      * @var array
@@ -73,6 +84,30 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
                 ],
             ],
         ],
+        self::REFERENCE_EMPLOYEE1 => [
+            'entity' => TestEmployee::class,
+            'alias' => 'oro_employee_',
+            'recordId' => LoadEmployeesToIndex::REFERENCE_PERSON1,
+            'title' => 'Employee1',
+            'textFields' => [
+                [
+                    'field' => 'name',
+                    'value' => 'Steve Gates',
+                ],
+            ],
+        ],
+        self::REFERENCE_EMPLOYEE2 => [
+            'entity' => TestEmployee::class,
+            'alias' => 'oro_employee_',
+            'recordId' => LoadEmployeesToIndex::REFERENCE_PERSON2,
+            'title' => 'Employee2',
+            'textFields' => [
+                [
+                    'field' => 'name',
+                    'value' => 'Bill Wozniak',
+                ],
+            ],
+        ]
     ];
 
     /**
@@ -87,6 +122,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
     {
         return [
             LoadProductsToIndex::class,
+            LoadEmployeesToIndex::class,
             LoadOtherWebsite::class,
         ];
     }
@@ -103,14 +139,14 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
 
         foreach ($websiteIds as $websiteId) {
             foreach (self::$itemsData as $reference => $itemData) {
-                $product = $this->getReference($itemData['recordId']);
+                $entity = $this->getReference($itemData['recordId']);
 
                 $item = new Item;
                 $item
                     ->setTitle($itemData['title'])
                     ->setAlias($itemData['alias'] . $websiteId)
                     ->setEntity($itemData['entity'])
-                    ->setRecordId($product->getId());
+                    ->setRecordId($entity->getId());
 
                 $manager->persist($item);
 

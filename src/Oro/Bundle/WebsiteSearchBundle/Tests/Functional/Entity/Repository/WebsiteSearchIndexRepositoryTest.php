@@ -20,6 +20,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 
 /**
  * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class WebsiteSearchIndexRepositoryTest extends AbstractSearchWebTestCase
 {
@@ -169,9 +170,9 @@ class WebsiteSearchIndexRepositoryTest extends AbstractSearchWebTestCase
     {
         $this->getItemRepository()->removeEntities([], TestProduct::class);
 
-        $this->assertEntityCount(4, Item::class);
+        $this->assertEntityCount(8, Item::class);
         $this->assertEntityCount(2, IndexInteger::class);
-        $this->assertEntityCount(2, IndexText::class);
+        $this->assertEntityCount(6, IndexText::class);
         $this->assertEntityCount(2, IndexDatetime::class);
         $this->assertEntityCount(2, IndexDecimal::class);
     }
@@ -190,8 +191,8 @@ class WebsiteSearchIndexRepositoryTest extends AbstractSearchWebTestCase
             'oro_product_1'
         );
 
-        $this->assertEntityCount(2, Item::class);
-        $this->assertEntityCount(1, IndexText::class);
+        $this->assertEntityCount(6, Item::class);
+        $this->assertEntityCount(5, IndexText::class);
         $this->assertEntityCount(1, IndexDecimal::class);
         $this->assertEntityCount(1, IndexDatetime::class);
         $this->assertEntityCount(1, IndexDecimal::class);
@@ -210,9 +211,9 @@ class WebsiteSearchIndexRepositoryTest extends AbstractSearchWebTestCase
             TestProduct::class
         );
 
-        $this->assertEntityCount(0, Item::class);
+        $this->assertEntityCount(4, Item::class);
         $this->assertEntityCount(0, IndexInteger::class);
-        $this->assertEntityCount(0, IndexText::class);
+        $this->assertEntityCount(4, IndexText::class);
         $this->assertEntityCount(0, IndexDecimal::class);
         $this->assertEntityCount(0, IndexDatetime::class);
     }
@@ -221,10 +222,32 @@ class WebsiteSearchIndexRepositoryTest extends AbstractSearchWebTestCase
     {
         $this->getItemRepository()->removeEntities([91, 92], 'SomeClass');
 
-        $this->assertEntityCount(4, Item::class);
+        $this->assertEntityCount(8, Item::class);
         $this->assertEntityCount(2, IndexInteger::class);
-        $this->assertEntityCount(2, IndexText::class);
+        $this->assertEntityCount(6, IndexText::class);
         $this->assertEntityCount(2, IndexDatetime::class);
         $this->assertEntityCount(2, IndexDecimal::class);
+    }
+
+    public function testRemoveIndexByClassForAllClasses()
+    {
+        $this->getItemRepository()->removeIndexByClass();
+
+        $this->assertEntityCount(0, Item::class);
+        $this->assertEntityCount(0, IndexInteger::class);
+        $this->assertEntityCount(0, IndexText::class);
+        $this->assertEntityCount(0, IndexDatetime::class);
+        $this->assertEntityCount(0, IndexDecimal::class);
+    }
+
+    public function testClearIndexDataForSpecificClass()
+    {
+        $this->getItemRepository()->removeIndexByClass(TestProduct::class);
+
+        $this->assertEntityCount(4, Item::class);
+        $this->assertEntityCount(0, IndexInteger::class);
+        $this->assertEntityCount(4, IndexText::class);
+        $this->assertEntityCount(0, IndexDatetime::class);
+        $this->assertEntityCount(0, IndexDecimal::class);
     }
 }

@@ -94,4 +94,24 @@ class WebsiteSearchIndexRepository extends SearchIndexRepository
                 ->execute();
         }
     }
+
+    /**
+     * Removes index data for given $entityClass or all classes.
+     *
+     * @param string $entityClass
+     */
+    public function removeIndexByClass($entityClass = null)
+    {
+        $queryBuilder = $this->createQueryBuilder('item');
+
+        if (null !== $entityClass) {
+            $queryBuilder
+                ->andWhere($queryBuilder->expr()->eq('item.entity', ':entityClass'))
+                ->setParameter('entityClass', $entityClass);
+        }
+
+        $this->deleteFromIndexTextTable(clone $queryBuilder);
+
+        $queryBuilder->delete()->getQuery()->execute();
+    }
 }
