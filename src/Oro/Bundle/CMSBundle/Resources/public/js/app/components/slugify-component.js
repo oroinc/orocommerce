@@ -60,7 +60,7 @@ define(function (require) {
                         if (targetInputValue) {
                             $.ajax({
                                 type: 'GET',
-                                url: routing.generate('orob2b_api_slugify_slug', {'string': targetInputValue}),
+                                url: routing.generate('oro_api_slugify_slug', {'string': targetInputValue}),
                                 success: function (result) {
                                     if (result.slug) {
                                         self.$recipientInput.val(result.slug);

@@ -37,7 +37,7 @@ class ProductUnitLabelExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $filters);
 
         $this->assertInstanceOf('Twig_SimpleFilter', $filters[0]);
-        $this->assertEquals('orob2b_format_product_unit_label', $filters[0]->getName());
+        $this->assertEquals('oro_format_product_unit_label', $filters[0]->getName());
     }
 
     /**

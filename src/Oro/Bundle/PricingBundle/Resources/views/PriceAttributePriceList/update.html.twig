@@ -4,14 +4,14 @@
 
 {% oro_title_set({params : {"%name%": entity.name|default('N/A'|trans), '%entityName%': 'oro.pricing.priceattributepricelist.entity_label'|trans} }) %}
 
-{% set formAction = entity.id ? path('orob2b_pricing_price_attribute_price_list_update', { 'id': entity.id }) : path('orob2b_pricing_price_attribute_price_list_create')  %}
+{% set formAction = entity.id ? path('oro_pricing_price_attribute_price_list_update', { 'id': entity.id }) : path('oro_pricing_price_attribute_price_list_create')  %}
 
 {% block navButtons %}
     {{ parent() }}
 
-    {{ UI.cancelButton(path('orob2b_pricing_price_attribute_price_list_index')) }}
+    {{ UI.cancelButton(path('oro_pricing_price_attribute_price_list_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_pricing_price_attribute_price_list_update') %}
+    {% if entity.id or resource_granted('oro_pricing_price_attribute_price_list_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -21,7 +21,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_pricing_price_attribute_price_list_index'),
+            'indexPath':   path('oro_pricing_price_attribute_price_list_index'),
             'indexLabel': 'oro.pricing.priceattributepricelist.entity_plural_label'|trans,
             'entityTitle': entity.name|default('N/A'|trans)
         } %}

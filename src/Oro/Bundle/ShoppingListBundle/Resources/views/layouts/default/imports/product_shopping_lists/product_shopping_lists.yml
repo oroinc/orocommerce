@@ -7,7 +7,7 @@ layout:
                 __shopping_lists:
                     blockType: product_shopping_lists
                     options:
-                        shoppingLists: []
+                        productShoppingLists: []
                 __shopping_lists_template:
                     blockType: container
                 __shopping_lists_template_preview:

@@ -18,7 +18,7 @@ define(function(require) {
             priceListSelector: 'input[name$="[priceList]"]',
             currencySelector: 'select[name$="[price][currency]"]',
             container: '.oro-item-collection',
-            currenciesRoute: 'orob2b_pricing_price_list_currency_list'
+            currenciesRoute: 'oro_pricing_price_list_currency_list'
         },
 
         /**

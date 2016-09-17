@@ -1,0 +1,11 @@
+layout:
+    imports:
+        -
+            id: shopping_list_buttons
+            root: __product_line_item_form_buttons
+            namespace: product
+    actions:
+        - '@move':
+            id: __product_line_item_form_buttons_shopping_list
+            parentId: __product_line_item_form_buttons
+

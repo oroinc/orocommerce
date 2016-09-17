@@ -8,7 +8,7 @@ use Oro\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository;
 
 class RequestStatusWithDeletedSelectType extends RequestStatusSelectType
 {
-    const NAME = 'orob2b_rfp_request_status_with_deleted_select';
+    const NAME = 'oro_rfp_request_status_with_deleted_select';
 
     /**
      * {@inheritdoc}

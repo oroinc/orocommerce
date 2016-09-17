@@ -1,0 +1,58 @@
+{% macro address_form(address_form, save_address_checkbox, hasCustomAddress) %}
+    <div id="checkout-address-fields-container" class="{% if not hasCustomAddress %}hidden{% endif %}">
+        <fieldset class="checkout__form__row">
+            {{ form_row(address_form.label, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.label'|trans}, 'parentClass': 'form__col_x12'}) }}
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            {{ form_row(address_form.namePrefix, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.prefix'|trans}, 'parentClass': 'form__col_x8'}) }}
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            {{ form_row(address_form.firstName, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.first_name'|trans}}) }}
+            {{ form_row(address_form.middleName, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.middle_name'|trans}}) }}
+        </fieldset>
+        <fieldset class="checkout__form__row">
+            {{ form_row(address_form.lastName, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.last_name'|trans}}) }}
+            {{ form_row(address_form.nameSuffix, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.sufix'|trans}}) }}
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            {{ form_row(address_form.organization, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.organization'|trans}, 'parentClass': 'form__col_x12'}) }}
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            {{ form_row(address_form.phone, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.phone'|trans}, 'parentClass': 'form__col_x6'}) }}
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            {{ form_row(address_form.street, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.street'|trans}}) }}
+            {{ form_row(address_form.street2, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.street2'|trans}}) }}
+        </fieldset>
+        <fieldset class="checkout__form__row">
+            {{ form_row(address_form.city, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.city'|trans}, 'parentClass': 'form__col_x12'}) }}
+        </fieldset>
+        <fieldset class="checkout__form__row">
+            {{ form_row(address_form.country, {'parentClass': 'col-country'}) }}
+            {{ form_row(address_form.region, {'parentClass': 'col-region'}) }}
+        </fieldset>
+
+        <fieldset class="checkout__form__row">
+            <div class="checkout__form__col col-zip">
+                {{- form_label(address_form.postalCode) -}}
+                {{- form_widget(address_form.postalCode, {'attr' : {'class': 'checkout__form__input', 'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) -}}
+            </div>
+            <div class="checkout__form__col form__col_x8 col-zip-error">
+                {{- form_errors(address_form.postalCode) -}}
+            </div>
+        </fieldset>
+        <fieldset class="checkout__form__row">
+            {{ form_row(save_address_checkbox) }}
+        </fieldset>
+
+        <fieldset class="hidden">
+            {{ form_widget(address_form.id) }}
+            {{ form_widget(address_form.region_text) }}
+        </fieldset>
+    </div>
+{% endmacro %}

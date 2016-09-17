@@ -5,8 +5,8 @@ services:
             - '@session'
             - '@security.token_storage'
             - '@oro_config.manager'
-            - '@orob2b_website.manager'
-            - '@orob2b_account_user.manager'
+            - '@oro_website.manager'
+            - '@oro_account_user.manager'
             - '@oro_locale.manager.localization'
 
     oro_frontend_localization.extension.current_localization:

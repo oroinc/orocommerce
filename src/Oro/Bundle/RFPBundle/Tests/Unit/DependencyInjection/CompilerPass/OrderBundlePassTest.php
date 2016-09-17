@@ -58,7 +58,7 @@ class OrderBundlePassTest extends \PHPUnit_Framework_TestCase
         $this->compilerPass->process($this->containerBuilder);
 
         $this->assertEquals(
-            [['setSectionProvider', [new Reference('orob2b_order.form.section.provider')]]],
+            [['setSectionProvider', [new Reference('oro_order.form.section.provider')]]],
             $definition->getMethodCalls()
         );
     }

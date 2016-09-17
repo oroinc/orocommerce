@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class PriceRuleType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_price_rule';
+    const NAME = 'oro_pricing_price_rule';
 
     const RULE = 'rule';
     const RULE_CONDITION = 'ruleCondition';

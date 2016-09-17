@@ -12,9 +12,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * @ORM\Table(name="oro_tax")
  * @ORM\HasLifecycleCallbacks
  * @Config(
- *      routeName="orob2b_tax_index",
- *      routeView="orob2b_tax_view",
- *      routeUpdate="orob2b_tax_update"
+ *      routeName="oro_tax_index",
+ *      routeView="oro_tax_view",
+ *      routeUpdate="oro_tax_update"
  * )
  */
 class Tax

@@ -11,7 +11,7 @@ use Oro\Bundle\AccountBundle\Form\EventListener\FixAccountAddressesDefaultSubscr
 
 class AccountTypedAddressType extends AbstractType
 {
-    const NAME = 'orob2b_account_typed_address';
+    const NAME = 'oro_account_typed_address';
 
     /** @var string */
     protected $dataClass;

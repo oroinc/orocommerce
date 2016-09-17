@@ -153,7 +153,7 @@ class AccountTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals('orob2b_account_typed_address_with_default', $this->formType->getName());
+        $this->assertEquals('oro_account_typed_address_with_default', $this->formType->getName());
     }
 
     /**

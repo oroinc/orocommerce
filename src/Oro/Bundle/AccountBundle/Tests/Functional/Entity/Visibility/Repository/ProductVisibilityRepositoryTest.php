@@ -3,6 +3,7 @@
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
 
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\Repository\ProductVisibilityRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
@@ -12,6 +13,11 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositoryTestCase
 {
     /**
+     * @var ProductVisibilityRepository
+     */
+    protected $repository;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -20,7 +26,7 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
 
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroAccountBundle:Visibility\ProductVisibility');
+            ->getRepository(ProductVisibility::class);
 
         $this->loadFixtures(
             [
@@ -39,9 +45,9 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
     {
         /** @var Category $category */
         $category = $this->getReference($categoryName);
-        // setToDefaultWithoutCategory called in CategoryListener when removed category
         $this->deleteCategory($category);
-
+        $queryHelper = $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
+        $this->repository->setToDefaultWithoutCategory($queryHelper);
         $actual = $this->getProductsByVisibilities();
 
         $this->assertSameSize($expected, $actual);

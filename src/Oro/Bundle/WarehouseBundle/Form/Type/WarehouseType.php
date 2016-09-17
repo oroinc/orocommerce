@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class WarehouseType extends AbstractType
 {
-    const NAME = 'orob2b_warehouse';
+    const NAME = 'oro_warehouse';
 
     /** @var  string */
     protected $dataClass;

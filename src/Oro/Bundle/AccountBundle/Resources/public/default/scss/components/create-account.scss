@@ -71,14 +71,6 @@
       }
     }
 
-    &.create-account__form_signin {
-      padding: 40px 20%;
-
-      @media (max-width: $screen-md) {
-        padding: 10px;
-      }
-    }
-
     @media (max-width: $screen-md) {
       padding: 10px;
     }
@@ -176,32 +168,6 @@
       margin: 0 0 5px;
 
       font-weight: 400;
-    }
-
-    &__input {
-      @include input();
-
-      &::-webkit-input-placeholder {
-        color: $base-font-color-lightest;
-      }
-
-      &::-moz-placeholder {
-        color: $base-font-color-lightest;
-      }
-
-      &:-moz-placeholder {
-        color: $base-font-color-lightest;
-      }
-
-      &:-ms-input-placeholder {
-        color: $base-font-color-lightest;
-      }
-
-      &:focus {
-        border-color: $base-link-color;
-        box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
-        outline: 0;
-      }
     }
 
     &__req-text {

@@ -1,0 +1,61 @@
+navigation:
+    menu_config:
+        items:
+            products_tab:
+                label:           'oro.product.menu.products_tab.label'
+                uri:             '#'
+                extras:
+                    icon:        icon-briefcase
+                    position:    300
+
+            product_list:
+                label:           'oro.product.entity_plural_label'
+                route:           'oro_product_index'
+                extras:
+                    position:    200
+                    routes:      ['/^oro_product/']
+                    description: 'oro.product.menu.product_list.description'
+
+            shortcut_product_list:
+                label:           'oro.product.entity_plural_label'
+                route:           'oro_product_index'
+                extras:
+                    description: 'oro.product.menu.shortcut_product_list.description'
+
+            shortcut_new_product:
+                label:           'oro.product.menu.shortcut_new_product.label'
+                route:           'oro_product_create'
+                extras:
+                    description:    'oro.product.menu.shortcut_new_product.description'
+                    isCustomAction: true
+
+            frontend_product_list:
+                label:           'oro.product.entity_plural_label'
+                route:           'oro_product_frontend_product_index'
+                extras:
+                    position:    100
+                    routes:      ['/^oro_product_frontend_product/']
+
+        tree:
+            application_menu:
+                children:
+                    products_tab:
+                        children:
+                            product_list: ~
+            shortcuts:
+                children:
+                    shortcut_product_list: ~
+                    shortcut_new_product:   ~
+            frontend_menu:
+                children:
+                    frontend_product_list: ~
+
+    titles:
+        oro_product_index: ~
+        oro_product_view:   '%%sku%% - %%name%%'
+        oro_product_update: '%%sku%% - %%name%% - Edit'
+        oro_product_create: 'Create Product'
+
+        oro_product_frontend_product_index: ~
+        oro_product_frontend_product_view: '%%name%%'
+        oro_product_frontend_quick_add: 'oro.product.frontend.quick_add.title'

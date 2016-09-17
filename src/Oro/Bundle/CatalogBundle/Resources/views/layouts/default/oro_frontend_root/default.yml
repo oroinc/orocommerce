@@ -1,0 +1,46 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'default.html.twig'
+        - '@addTree':
+            items:
+                hero_promo_container:
+                    blockType: container
+                    prepend: true
+                hero_promo:
+                    blockType: embedded_list
+                    options:
+                        items: [1, 2, 3]
+                        use_slider: true
+                        slider_options: {slidesToShow: 1}
+                hero_promo_item:
+                    blockType: container
+                featured_categories:
+                    blockType: embedded_list
+                    siblingId: hero_promo_container
+                    options:
+                        item_key: 'category'
+                        items: '=data["featured_categories"].getAll()'
+                        items_data:
+                            categoryProductsCount: '=data["categories_products"].getCountByCategories(items)'
+                featured_category:
+                    blockType: container
+                featured_category_image:
+                    blockType: block
+                featured_category_desc:
+                    blockType: container
+                featured_category_label:
+                    blockType: block
+                featured_category_products:
+                    blockType: block
+            tree:
+                content:
+                    hero_promo_container:
+                        hero_promo:
+                            hero_promo_item: ~
+                    featured_categories:
+                        featured_category:
+                            featured_category_image: ~
+                            featured_category_desc:
+                                featured_category_label: ~
+                                featured_category_products: ~

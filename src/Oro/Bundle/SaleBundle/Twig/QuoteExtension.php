@@ -11,8 +11,8 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
 class QuoteExtension extends \Twig_Extension
 {
-    const NAME = 'orob2b_sale_quote';
-    const FRONTEND_SYSTEM_CONFIG_PATH = 'oro_b2b_rfp.frontend_product_visibility';
+    const NAME = 'oro_sale_quote';
+    const FRONTEND_SYSTEM_CONFIG_PATH = 'oro_rfp.frontend_product_visibility';
     
     /**
      * @var QuoteProductFormatter
@@ -41,17 +41,17 @@ class QuoteExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter(
-                'orob2b_format_sale_quote_product_offer',
+                'oro_format_sale_quote_product_offer',
                 [$this, 'formatProductOffer'],
                 ['is_safe' => ['html']]
             ),
             new \Twig_SimpleFilter(
-                'orob2b_format_sale_quote_product_type',
+                'oro_format_sale_quote_product_type',
                 [$this, 'formatProductType'],
                 ['is_safe' => ['html']]
             ),
             new \Twig_SimpleFilter(
-                'orob2b_format_sale_quote_product_request',
+                'oro_format_sale_quote_product_request',
                 [$this, 'formatProductRequest'],
                 ['is_safe' => ['html']]
             ),

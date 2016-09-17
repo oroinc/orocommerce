@@ -33,8 +33,8 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *      )
  * })
  * @Config(
- *      routeName="orob2b_shopping_list_index",
- *      routeView="orob2b_shopping_list_view",
+ *      routeName="oro_shopping_list_index",
+ *      routeView="oro_shopping_list_view",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-shopping-cart",

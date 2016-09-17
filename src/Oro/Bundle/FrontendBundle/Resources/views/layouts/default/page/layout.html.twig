@@ -14,6 +14,10 @@
 {% endblock %}
 
 {% block _header_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' header'
+    }) %}
+
     <header{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </header>
@@ -29,6 +33,11 @@
                 'oro/datagrid/cell/action-cell': {showCloseButton: false},
                 'orodatagrid/js/app/plugins/grid/column-manager-plugin': {icon: 'gear'},
                 'orodatagrid/js/datagrid/action-launcher': {iconHideText: false},
+                'orodatagrid/js/datagrid/sorting/dropdown': {
+                    hasSortingOrderButton: false,
+                    className: 'b2b-sorting-select-control',
+                    dropdownClassName: 'oro-select2__dropdown'
+                },
                 'oro/filter/abstract-filter': {
                     placeholder: null,
                     labelPrefix: '{{ 'oro.ui.filter.by'|trans  }} '
@@ -179,6 +188,13 @@
 {% block _sticky_element_notification_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'id': 'sticky-element-notification'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _sticky_header_row_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    'id': 'sticky-header-row'
     }) %}
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}

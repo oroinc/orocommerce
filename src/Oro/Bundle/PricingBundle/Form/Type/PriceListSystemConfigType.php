@@ -7,7 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PriceListSystemConfigType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_price_list_system_config';
+    const NAME = 'oro_pricing_price_list_system_config';
 
     /** @var string */
     protected $priceListConfigClassName;
