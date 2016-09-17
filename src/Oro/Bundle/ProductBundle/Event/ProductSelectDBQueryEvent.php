@@ -9,7 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class ProductSelectDBQueryEvent extends Event
 {
-    const NAME = 'orob2b_product.product_select.db.query';
+    const NAME = 'oro_product.product_select.db.query';
 
     /** @var QueryBuilder */
     protected $queryBuilder;

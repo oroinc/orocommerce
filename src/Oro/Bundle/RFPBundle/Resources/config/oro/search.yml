@@ -1,0 +1,46 @@
+search:
+    Oro\Bundle\RFPBundle\Entity\Request:
+        alias:                          oro_rfp_request
+        title_fields:                   [firstName, lastName, email]
+        route:
+            name:                       oro_rfp_request_view
+            parameters:
+                id:                     id
+        search_template:                OroRFPBundle:Request:searchResult.html.twig
+        fields:
+            -
+                name:                   firstName
+                target_type:            text
+                target_fields:          [firstName]
+            -
+                name:                   lastName
+                target_type:            text
+                target_fields:          [lastName]
+            -
+                name:                   email
+                target_type:            text
+                target_fields:          [email]
+            -
+                name:                   phone
+                target_type:            text
+                target_fields:          [phone]
+            -
+                name:                   company
+                target_type:            text
+                target_fields:          [company]
+            -
+                name:                   role
+                target_type:            text
+                target_fields:          [role]
+            -
+                name:                   note
+                target_type:            text
+                target_fields:          [note]
+            -
+                name:                   status
+                relation_type:          many-to-one
+                relation_fields:
+                    -
+                        name:           label
+                        target_type:    text
+                        target_fields:  [status]

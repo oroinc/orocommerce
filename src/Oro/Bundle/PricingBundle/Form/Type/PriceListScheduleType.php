@@ -10,7 +10,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 
 class PriceListScheduleType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_price_list_schedule';
+    const NAME = 'oro_pricing_price_list_schedule';
     const ACTIVE_AT_FIELD = 'activeAt';
     const DEACTIVATE_AT_FIELD = 'deactivateAt';
 

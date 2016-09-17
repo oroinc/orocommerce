@@ -27,7 +27,7 @@ define(function (require) {
             conversionRateInput: 'input[name$="[conversionRate]"]',
             hiddenUnitClass: 'hidden-unit',
             parentTableSelector: '',
-            pricesUnitsSelector: "select[name^='orob2b_product[prices]'][name$='[unit]']",
+            pricesUnitsSelector: "select[name^='oro_product[prices]'][name$='[unit]']",
             precisions: {}
         },
 

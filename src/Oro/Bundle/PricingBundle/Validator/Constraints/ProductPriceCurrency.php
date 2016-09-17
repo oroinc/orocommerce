@@ -16,7 +16,7 @@ class ProductPriceCurrency extends Constraint
      */
     public function validatedBy()
     {
-        return 'orob2b_pricing_product_price_currency_validator';
+        return 'oro_pricing_product_price_currency_validator';
     }
 
     /**

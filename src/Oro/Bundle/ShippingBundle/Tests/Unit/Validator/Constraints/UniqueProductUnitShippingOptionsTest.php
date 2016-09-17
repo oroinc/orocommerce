@@ -39,7 +39,7 @@ class UniqueProductUnitShippingOptionsTest extends \PHPUnit_Framework_TestCase
     public function testConfiguration()
     {
         $this->assertEquals(
-            'orob2b_shipping_unique_product_unit_shipping_options_validator',
+            'oro_shipping_unique_product_unit_shipping_options_validator',
             $this->constraint->validatedBy()
         );
         $this->assertEquals(Constraint::PROPERTY_CONSTRAINT, $this->constraint->getTargets());

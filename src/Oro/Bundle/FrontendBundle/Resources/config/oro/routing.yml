@@ -1,15 +1,15 @@
-orob2b_frontend:
+oro_frontend:
     resource:     "@OroFrontendBundle/Controller/FrontendController.php"
     type:         annotation
     options:
         frontend: true
 
-orob2b_installer:
+oro_installer:
     resource: "@OroInstallerBundle/Resources/config/oro/routing.yml"
     options:
         frontend: true
 
-orob2b_frontend_datagrid_index:
+oro_frontend_datagrid_index:
     path: /datagrid/{gridName}
     defaults: { _controller: OroDataGridBundle:Grid:get }
     requirements:
@@ -17,7 +17,7 @@ orob2b_frontend_datagrid_index:
     options:
         frontend: true
 
-orob2b_frontend_datagrid_widget:
+oro_frontend_datagrid_widget:
     path: /datagrid/widget/{gridName}
     defaults: { _controller: OroDataGridBundle:Grid:widget }
     requirements:
@@ -25,7 +25,7 @@ orob2b_frontend_datagrid_widget:
     options:
         frontend: true
 
-orob2b_frontend_action:
+oro_frontend_action:
     resource: "@OroFrontendBundle/Resources/config/oro/routing_action.yml"
 
 oro_filtered_attachment:

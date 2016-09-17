@@ -11,7 +11,7 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 class PageController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_cms_frontend_page_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_cms_frontend_page_view", requirements={"id"="\d+"})
      * @Layout()
      *
      * @param Page $page

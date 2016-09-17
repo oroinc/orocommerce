@@ -5,7 +5,7 @@
         {% if paymentTermData.paymentTerm %}
             {% if is_granted('VIEW', paymentTermData.paymentTerm) %}
                 {% set link %}
-                    <a href="{{ path('orob2b_payment_term_view', {id: paymentTermData.paymentTerm.id}) }}">
+                    <a href="{{ path('oro_payment_term_view', {id: paymentTermData.paymentTerm.id}) }}">
                         {{ paymentTermData.paymentTerm.label }}
                     </a>
                 {% endset %}

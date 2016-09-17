@@ -17,7 +17,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            relatedDataRoute: 'orob2b_quote_related_data',
+            relatedDataRoute: 'oro_quote_related_data',
             formName: ''
         },
 

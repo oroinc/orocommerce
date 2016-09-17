@@ -22,7 +22,7 @@ use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
 class QuoteType extends AbstractType
 {
-    const NAME = 'orob2b_sale_quote';
+    const NAME = 'oro_sale_quote';
 
     /** @var SecurityFacade */
     protected $securityFacade;
@@ -198,7 +198,7 @@ class QuoteType extends AbstractType
      */
     protected function isOverridePaymentTermGranted()
     {
-        return $this->securityFacade->isGranted('orob2b_quote_payment_term_account_can_override');
+        return $this->securityFacade->isGranted('oro_quote_payment_term_account_can_override');
     }
 
     /**

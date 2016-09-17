@@ -12,7 +12,7 @@ use Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscribe
 
 class OriginAddressType extends AbstractType
 {
-    const NAME = 'orob2b_tax_origin_address';
+    const NAME = 'oro_tax_origin_address';
 
     /**
      * @var string

@@ -52,7 +52,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
         $configManager = $this->getConfigManager();
         $settings = [
-            'oro_b2b_pricing___default_price_lists' => [
+            'oro_pricing___default_price_lists' => [
                 'value' => [[1, 100], [2, 200]],
             ],
         ];
@@ -62,13 +62,13 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->converterMock->expects($this->once())
             ->method('convertFromSaved')
-            ->with($settings['oro_b2b_pricing___default_price_lists']['value'])
+            ->with($settings['oro_pricing___default_price_lists']['value'])
             ->willReturn($convertedConfigs);
 
         $this->subscriber->formPreSet($event);
 
         $expected = [
-            'oro_b2b_pricing___default_price_lists' => [
+            'oro_pricing___default_price_lists' => [
                 'value' => $convertedConfigs,
             ],
         ];
@@ -79,7 +79,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $values = $this->createConfigs(2);
         $settings = [
-            'oro_b2b_pricing.default_price_lists' => [
+            'oro_pricing.default_price_lists' => [
                 'value' => $values,
             ],
         ];
@@ -88,7 +88,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
             ['priceList' => 2, 'priority' => 200],
         ];
         $expected = [
-            'oro_b2b_pricing.default_price_lists' => [
+            'oro_pricing.default_price_lists' => [
                 'value' => $converted,
             ],
         ];
@@ -156,12 +156,12 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
             'changedAndApplicable' => [
                 'changeSet' => ['some', 'changes'],
                 'dispatch' => true,
-                'key' => 'oro_b2b_pricing.default_price_lists',
+                'key' => 'oro_pricing.default_price_lists',
             ],
             'notChangedAndApplicable' => [
                 'changeSet' => [],
                 'dispatch' => false,
-                'key' => 'oro_b2b_pricing.default_price_lists',
+                'key' => 'oro_pricing.default_price_lists',
             ],
             'changedAndNotApplicable' => [
                 'changeSet' => ['some', 'changes'],

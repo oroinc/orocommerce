@@ -6,7 +6,7 @@ use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter;
 
 class DimensionsUnitValueExtension extends \Twig_Extension
 {
-    const NAME = 'orob2b_dimensions_unit_value';
+    const NAME = 'oro_dimensions_unit_value';
 
     /** @var UnitValueFormatter */
     protected $formatter;
@@ -26,17 +26,17 @@ class DimensionsUnitValueExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter(
-                'orob2b_dimensions_unit_format_value',
+                'oro_dimensions_unit_format_value',
                 [$this->formatter, 'format'],
                 ['is_safe' => ['html']]
             ),
             new \Twig_SimpleFilter(
-                'orob2b_dimensions_unit_format_value_short',
+                'oro_dimensions_unit_format_value_short',
                 [$this->formatter, 'formatShort'],
                 ['is_safe' => ['html']]
             ),
             new \Twig_SimpleFilter(
-                'orob2b_dimensions_unit_format_code',
+                'oro_dimensions_unit_format_code',
                 [$this->formatter, 'formatCode'],
                 ['is_safe' => ['html']]
             ),

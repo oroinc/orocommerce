@@ -9,6 +9,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
@@ -162,9 +163,9 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
-            'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData',
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+            LoadUserData::class,
+            LoadRequestStatusData::class,
+            LoadProductUnitPrecisions::class,
         ];
     }
 

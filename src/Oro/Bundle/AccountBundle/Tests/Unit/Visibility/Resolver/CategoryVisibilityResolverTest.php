@@ -53,7 +53,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->configManager->expects($this->any())
             ->method('get')
-            ->with('oro_b2b_account.category_visibility')
+            ->with('oro_account.category_visibility')
             ->willReturn(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE);
 
         $this->resolver = new CategoryVisibilityResolver($this->registry, $this->configManager);

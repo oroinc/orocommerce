@@ -14,7 +14,7 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class ProductRowCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_product_row_collection';
+    const NAME = 'oro_product_row_collection';
 
     const ROW_COUNT_INITIAL = 5;
 

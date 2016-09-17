@@ -1,0 +1,22 @@
+navigation:
+    menu_config:
+        items:
+            payment_terms:
+                label: 'oro.payment.menu.payment_terms.label'
+                route: 'oro_payment_term_index'
+                extras:
+                    position: 700
+                    routes:      ['oro_payment_term*']
+                    description: 'oro.payment.menu.payment_terms.description'
+
+        tree:
+            application_menu:
+                children:
+                    sales_tab:
+                        children:
+                            payment_terms: ~
+
+    titles:
+        oro_payment_term_index: 'oro.payment.paymentterm.entity_plural_label'
+        oro_payment_term_view: '%%entityLabel%%'
+        oro_payment_term_update: '%%entityLabel%%'
