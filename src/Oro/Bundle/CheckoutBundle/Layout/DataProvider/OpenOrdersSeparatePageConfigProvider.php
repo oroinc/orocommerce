@@ -31,6 +31,6 @@ class OpenOrdersSeparatePageConfigProvider
     {
         return $this
             ->configManager
-            ->get('oro_b2b_checkout.frontend_open_orders_separate_page');
+            ->get('oro_checkout.frontend_open_orders_separate_page');
     }
 }
