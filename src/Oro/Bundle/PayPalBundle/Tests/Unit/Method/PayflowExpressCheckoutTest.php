@@ -2,22 +2,19 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method;
 
+use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
 use Symfony\Component\Routing\RouterInterface;
 
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
-use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderAddress;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\PayPalBundle\Provider\ExtractOptionsProvider;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -28,7 +25,6 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     const CONFIG_PREFIX = 'payflow_express_checkout_';
     const PRODUCTION_REDIRECT_URL = 'https://www.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
     const PILOT_REDIRECT_URL = 'https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
-
     const TOKEN = 'token';
     const ENTITY_CLASS = 'EntityClass';
     const ENTITY_ID = 15689;
@@ -48,20 +44,17 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     /** @var PayflowExpressCheckoutConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentConfig;
 
+    /** @var ExtractOptionsProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $optionsProviderMock;
+
     protected function setUp()
     {
-        $this->gateway = $this->getMockBuilder('Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->gateway = $this->getMockBuilder(Gateway::class)->disableOriginalConstructor()->getMock();
+        $this->router = $this->getMockBuilder(RouterInterface::class)->disableOriginalConstructor()->getMock();
+        $this->paymentConfig = $this->getMock(PayflowExpressCheckoutConfigInterface::class);
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)->disableOriginalConstructor()->getMock();
 
-        $this->router = $this->getMockBuilder('Symfony\Component\Routing\RouterInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->paymentConfig =
-            $this->getMock('Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface');
-
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+        $this->optionsProviderMock = $this->getMockBuilder(ExtractOptionsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -69,7 +62,8 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             $this->gateway,
             $this->paymentConfig,
             $this->router,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->optionsProviderMock
         );
     }
 
@@ -128,7 +122,6 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     /**
      * @param bool $expected
      * @param string $actionName
-     *
      * @dataProvider supportsDataProvider
      */
     public function testSupports($expected, $actionName)
@@ -248,12 +241,37 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper->expects($this->exactly(2))
             ->method('getEntityReference')
             ->with(self::ENTITY_CLASS, self::ENTITY_ID)
-            ->willReturn($this->createOrderWithShippingAddress());
+            ->willReturn($this->getEntity());
+
+        $this->configureLineItemOptions();
+        $this->configureShippingAddressOptions();
 
         $result = $this->expressCheckout->execute($transaction->getAction(), $transaction);
-
         $this->assertSame(PaymentMethodInterface::AUTHORIZE, $transaction->getAction());
         $this->assertArrayHasKey('purchaseRedirectUrl', $result);
+    }
+
+    protected function configureShippingAddressOptions()
+    {
+        $entity = $this->getEntity();
+
+        $this->doctrineHelper->expects($this->once())->method('getEntityClass')->with($entity->getShippingAddress())
+            ->willReturn(AbstractAddress::class);
+
+        $this->optionsProviderMock->expects($this->once())->method('getShippingAddressOptions')
+            ->with(AbstractAddress::class, $entity->getShippingAddress())
+            ->willReturn($this->getAddressOptionModel());
+    }
+
+    protected function configureLineItemOptions()
+    {
+        $entity = $this->getEntity();
+
+        $this->optionsProviderMock
+            ->expects($this->once())
+            ->method('getLineItemPaymentOptions')
+            ->with($entity)
+            ->willReturn([$this->getLineItemOptionModel()]);
     }
 
     public function testPurchaseWithoutShippingAddress()
@@ -299,8 +317,9 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper->expects($this->exactly(2))
             ->method('getEntityReference')
             ->with(self::ENTITY_CLASS, self::ENTITY_ID)
-            ->willReturnOnConsecutiveCalls($this->createOrderWithShippingAddress(), new \stdClass());
+            ->willReturnOnConsecutiveCalls($this->getEntity(), new \stdClass());
 
+        $this->configureLineItemOptions();
         $this->expressCheckout->execute($transaction->getAction(), $transaction);
     }
 
@@ -359,8 +378,9 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getLineItemOptionsProvider
      * @param object $entity
      * @param array $requestData
+     * @param int $calls
      */
-    public function testGetLineItemOptions($entity, array $requestData)
+    public function testGetLineItemOptions($entity, array $requestData, $calls)
     {
         $this->configCredentials();
 
@@ -396,10 +416,18 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturnOnConsecutiveCalls('callbackReturnUrl', 'callbackErrorUrl');
 
-        $this->doctrineHelper->expects($this->exactly(2))
+        $entityStub = $this->getEntity();
+        $this->doctrineHelper
+            ->expects($this->exactly(2))
             ->method('getEntityReference')
-            ->willReturnOnConsecutiveCalls($entity, $this->createOrderWithShippingAddress());
+            ->willReturnOnConsecutiveCalls($entity, $entityStub);
 
+        $this->optionsProviderMock
+            ->expects($this->exactly($calls))
+            ->method('getLineItemPaymentOptions')
+            ->willReturn([]);
+
+        $this->configureShippingAddressOptions();
         $this->expressCheckout->execute($transaction->getAction(), $transaction);
     }
 
@@ -408,9 +436,6 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
      */
     public function getLineItemOptionsProvider()
     {
-        $entityWithoutProduct = new Order();
-        $entityWithoutProduct->addLineItem(new OrderLineItem());
-
         return [
             'non LineItemsAwareInterface' => [
                 'entity' => new \stdClass(),
@@ -419,15 +444,18 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
                     $this->getExpressCheckoutOptions(),
                     $this->getShippingAddressOptions()
                 ),
+                'getLineItemPaymentOptions calls' => 0
+
             ],
             'lineItem without product' => [
-                'entity' => $entityWithoutProduct,
+                'entity' => $this->getEntity(),
                 'requestData' => array_merge(
                     $this->getCredentials(),
                     $this->getExpressCheckoutOptions(),
                     $this->getShippingAddressOptions(),
                     ['ITEMAMT' => 0]
                 ),
+                'getLineItemPaymentOptions calls' => 1
             ],
         ];
     }
@@ -604,24 +632,6 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $configs
-     */
-    protected function configureConfig(array $configs = [])
-    {
-        $map = [];
-        array_walk(
-            $configs,
-            function ($val, $key) use (&$map) {
-                $map[] = [$this->getConfigKey($key), false, false, $val];
-            }
-        );
-
-        $this->paymentConfig->expects($this->exactly(3))
-            ->method('get')
-            ->will($this->returnValueMap($map));
-    }
-
-    /**
      * @return array
      */
     protected function getCredentials()
@@ -660,7 +670,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'PAYMENTTYPE' => 'instantonly',
-            'ADDROVERRIDE' => true,
+            'ADDROVERRIDE' => 1,
             'AMT' => '10',
             'CURRENCY' => 'USD',
             'RETURNURL' => 'callbackReturnUrl',
@@ -696,9 +706,42 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             'L_DESC1' => 'Product Description',
             'L_COST1' => 55.4,
             'L_QTY1' => 15,
-            'ITEMAMT' => 831,
+            'ITEMAMT' => 831.0,
         ];
     }
+
+    /**
+     * @return LineItemOptionModel
+     */
+    protected function getLineItemOptionModel()
+    {
+        $lineItemModel = new LineItemOptionModel();
+        
+        return $lineItemModel
+            ->setName('Product Name')
+            ->setDescription('Product Description')
+            ->setCost(55.4)
+            ->setQty(15);
+    }
+
+    /**
+     * @return AddressOptionModel
+     */
+    protected function getAddressOptionModel()
+    {
+        $addressOptionModel = new AddressOptionModel();
+
+        return $addressOptionModel
+            ->setFirstName('First Name')
+            ->setLastName('Last Name')
+            ->setStreet('Street')
+            ->setStreet2('Street2')
+            ->setCity('City')
+            ->setRegionCode('State')
+            ->setPostalCode('Zip Code')
+            ->setCountryIso2('US');
+    }
+
 
     /**
      * @return array
@@ -712,59 +755,14 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Order
+     * @return EntityStub
      */
-    protected function createOrderWithShippingAddress()
+    protected function getEntity()
     {
-        $order = new Order();
+        /** @var AbstractAddress|\PHPUnit_Framework_MockObject_MockObject $abstractAddressMock */
+        $abstractAddressMock = $this->getMockBuilder(AbstractAddress::class)->getMock();
 
-        $order->setShippingAddress($this->createOrderAddress());
-        $order->addLineItem($this->createOrderLineItem());
-
-        return $order;
-    }
-
-    /**
-     * @return OrderAddress
-     */
-    protected function createOrderAddress()
-    {
-        $region = new Region('US-NY');
-        $region->setCode('State');
-
-        $country = new Country('US');
-        $address = new OrderAddress();
-
-        $address->setFirstName('First Name')
-            ->setLastName('Last Name')
-            ->setStreet('Street')
-            ->setStreet2('Street2')
-            ->setCity('City')
-            ->setRegion($region)
-            ->setPostalCode('Zip Code')
-            ->setCountry($country);
-
-        return $address;
-
-    }
-
-    /**
-     * @return OrderLineItem
-     */
-    protected function createOrderLineItem()
-    {
-        $lineItem = new OrderLineItem();
-        $product = new Product();
-        $product
-            ->addName((new LocalizedFallbackValue())->setString('Product Name'))
-            ->addShortDescription((new LocalizedFallbackValue())->setText('Product Description'));
-
-        $lineItem
-            ->setProduct($product)
-            ->setValue(55.4)
-            ->setQuantity(15);
-
-        return $lineItem;
+        return new EntityStub($abstractAddressMock);
     }
 
     protected function configCredentials()

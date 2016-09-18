@@ -48,22 +48,16 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
         parent::tearDown();
     }
 
-    /**
-     * @dataProvider clearTableDataProvider
-     * @param integer $expectedRows
-     */
-    public function testClearTable($expectedRows)
+    public function testClearTable()
     {
         $countQuery = $this->getRepository()
             ->createQueryBuilder('entity')
             ->select('COUNT(entity.visibility)')
             ->getQuery();
 
-        $this->assertEquals($expectedRows, $countQuery->getSingleScalarResult());
-        $deletedCount = $this->getRepository()->clearTable();
+        $this->getRepository()->clearTable();
 
         $this->assertEquals(0, $countQuery->getSingleScalarResult());
-        $this->assertEquals($expectedRows, $deletedCount);
     }
 
     /**
@@ -98,6 +92,7 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
 
     /**
      * @dataProvider insertStaticDataProvider
+     * @param int $expectedRows
      */
     public function testInsertStatic($expectedRows)
     {
@@ -172,11 +167,6 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
      * @return array
      */
     abstract public function insertStaticDataProvider();
-
-    /**
-     * @return array
-     */
-    abstract public function clearTableDataProvider();
 
     /**
      * @return AbstractVisibilityRepository

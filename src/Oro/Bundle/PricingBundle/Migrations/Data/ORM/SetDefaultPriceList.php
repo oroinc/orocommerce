@@ -50,7 +50,7 @@ class SetDefaultPriceList extends AbstractFixture implements ContainerAwareInter
 
         $configManager = $this->container->get('oro_config.global');
         $configManager->set(
-            'oro_b2b_pricing.default_price_lists',
+            'oro_pricing.default_price_lists',
             [new PriceListConfig($defaultPriceList, 100, true)]
         );
         $configManager->flush();

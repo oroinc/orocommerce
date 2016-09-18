@@ -13,7 +13,7 @@ use Oro\Bundle\LocaleBundle\DependencyInjection\OroLocaleExtension;
 
 class OroFrontendExtension extends Extension implements PrependExtensionInterface
 {
-    const ALIAS = 'oro_b2b_frontend';
+    const ALIAS = 'oro_frontend';
     
     /**
      * {@inheritdoc}
