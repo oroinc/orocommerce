@@ -65,17 +65,15 @@ define([
                 _this.$element.toggleClass('error', !_this.validate(value, _this.options));
             });
 
-
-            this.$element.typeahead(this.autocomplete(this.$element, this.options));
+            this.initAutocomplete(options.autocomplete_type);
         },
 
         /**
          *
          * @param value
-         * @param options
          * @returns {Boolean}
          */
-        validate: function(value, options) {
+        validate: function(value) {
             if (value === '') {
                 return true;
             }
@@ -87,7 +85,7 @@ define([
             var groups = this.getGroups(words);
 
             var logicIsValid = _.last(groups.logicWords) !== _.last(words) && _.every(groups.logic, function(item) {
-                    return _.contains(options.grouping, item);
+                    return _.contains(this.options.grouping, item);
                 });
 
             var dataWordsAreValid = _.every(groups.dataWords, this.isDataExpression.bind(_this));
@@ -97,70 +95,118 @@ define([
 
         /**
          *
-         * @param $element
-         * @returns {{source: function, matcher: function, updater: function}}
+         * @returns {{source: source, matcher: matcher, updater: updater}}
          */
-        autocomplete: function($element) {
-            var wordPosition;
+        initAutocomplete: function(type) {
+            var _position;
             var _this = this;
 
-            return {
-                source: function(value) {
-                    var caretPosition = $element[0].selectionStart;
+            switch (type) {
+                case 'typeahead':
+                    this.$element.typeahead({
+                        minLength: 0,
+                        source: function(value) {
+                            var sourceData = _this.getAutocompleteSource(value || '');
 
-                    var normalized = _this.getNormalized(value, _this.opsRegEx, caretPosition);
+                            _position = sourceData.position;
 
-                    wordPosition = (function(value, position) {
-                        var index = 0;
-                        var result = {
-                            start: 0,
-                            end: position
-                        };
-                        var separatorsPositions = _.compact(value.split('').map(function(char, i) {
-                            return (/^\s$/.test(char)) ? i + 1 : null;
-                        }));
+                            return sourceData.array;
+                        },
+                        matcher: function() {
+                            return true;
+                        },
+                        updater: function(item) {
+                            return _this.getUpdateValue(this.query, item, _position);
+                        },
+                        focus: function(e) {
+                            this.focused = true;
+                            this.keyup.apply(this, arguments);
+                        },
+                        lookup: function() {
+                            this.query = _this.$element.val() || '';
 
+                            var items = $.isFunction(this.source) ? this.source(this.query, $.proxy(this.process, this)) : this.source;
 
-                        if (separatorsPositions.length) {
-                            while (separatorsPositions[index] < position) {
-                                index++;
-                            }
-
-                            var isSpace = separatorsPositions[index] === position;
-
-                            result = {
-                                start: isSpace ? null : separatorsPositions[index - 1] || 0,
-                                end: isSpace ? null : separatorsPositions[index] - 1 || position,
-                                index: index,
-                                spaces: separatorsPositions
-                            };
+                            return items ? this.process(items) : this;
                         }
+                    });
+                    break;
+            }
+        },
 
-                        return result;
-                    })(value, caretPosition);
+        /**
+         *
+         * @param query
+         * @param item
+         * @param position
+         * @returns {*}
+         */
+        getUpdateValue: function(query, item, position) {
+            var _this = this;
 
-                    var wordUnderCaret = _this.getStringPart(value, wordPosition.start, wordPosition.end);
+            var cutBefore = _.isNull(position.start) ? position.spaces[position.index] : position.start;
+            var cutAfter = _.isNull(position.end) ? position.spaces[position.index] : position.end;
 
-                    return _this.getSuggestList(normalized, wordUnderCaret);
-                },
-                matcher: function() {
-                    return true;
-                },
+            var queryPartBefore = this.getStringPart(query, 0, cutBefore);
+            var queryPartAfter = this.getStringPart(query, cutAfter);
 
-                updater: function(item) {
-                    var cutBefore = _.isNull(wordPosition.start) ? wordPosition.spaces[wordPosition.index] : wordPosition.start;
-                    var cutAfter = _.isNull(wordPosition.end) ? wordPosition.spaces[wordPosition.index] : wordPosition.end;
+            setTimeout(function() {
+                _this.$element[0].selectionStart = _this.$element[0].selectionEnd = cutBefore + item.length;
+            }, 10);
 
-                    var queryPartBefore = _this.getStringPart(this.query, 0, cutBefore);
-                    var queryPartAfter = _this.getStringPart(this.query, cutAfter);
+            return queryPartBefore + item + queryPartAfter;
+        },
 
-                    setTimeout(function() {
-                        $element[0].selectionStart = $element[0].selectionEnd = cutBefore + item.length;
-                    }, 10);
+        /**
+         *
+         * @param value
+         * @returns {{array: (*|Array), position: (*|{start: *, end: *, index: number, spaces: array})}}
+         */
+        getAutocompleteSource: function(value) {
+            var caretPosition = this.$element[0].selectionStart;
+            var normalized = this.getNormalized(value, this.opsRegEx, caretPosition);
+            var wordPosition = this.getWordPosition(value, caretPosition);
+            var wordUnderCaret = this.getStringPart(value, wordPosition.start, wordPosition.end);
 
-                    return queryPartBefore + item + queryPartAfter;
-                }
+            return {
+                array: this.getSuggestList(normalized, wordUnderCaret),
+                position: wordPosition
             };
+        },
+
+        /**
+         *
+         * @param value {String}
+         * @param position {Number}
+         * @returns {{start: *, end: *, index: number, spaces: array}}
+         */
+        getWordPosition: function(value, position) {
+            var index = 0;
+            var result = {
+                start: 0,
+                end: position
+            };
+            var separatorsPositions = _.compact(value.split('').map(function(char, i) {
+                return (/^\s$/.test(char)) ? i + 1 : null;
+            }));
+
+
+            if (separatorsPositions.length) {
+                while (separatorsPositions[index] < position) {
+                    index++;
+                }
+
+                var isSpace = separatorsPositions[index] === position;
+
+                result = {
+                    start: isSpace ? null : separatorsPositions[index - 1] || 0,
+                    end: isSpace ? null : separatorsPositions[index] - 1 || position,
+                    index: index,
+                    spaces: separatorsPositions
+                };
+            }
+
+            return result;
         },
 
         /**
@@ -190,20 +236,23 @@ define([
             var _this = this;
 
             var words = this.splitString(normalized.string, ' ').arr;
-            var wordsLength = words.length;
             var groups = this.getGroups(words);
+
+            if (_.isEmpty(words)){
+                return this.getFilteredSuggests(wordUnderCaret, this.dataWordCases);
+            }
 
             var previousWord = words[words.length - 2];
             var lastWord = _.last(words);
             var isLast = wordIs(lastWord);
             var lastIsValid = isLast.logic || isLast.dataWord || isLast.dataExpression;
 
-            var isCheckedWord = lastIsValid || wordsLength === 1 ? isLast : wordIs(previousWord);
+            var isCheckedWord = lastIsValid || words.length === 1 ? isLast : wordIs(previousWord);
 
             if (isCheckedWord.dataExpression) {
-                return this.getFilteredSuggests(wordUnderCaret, this.logicWordCases, true);
+                return this.getFilteredSuggests(wordUnderCaret, this.logicWordCases);
             } else if (isCheckedWord.dataWord) {
-                return this.getFilteredSuggests(wordUnderCaret, this.operationsCases, true);
+                return this.getFilteredSuggests(wordUnderCaret, this.operationsCases);
             } else {
                 return this.getFilteredSuggests(wordUnderCaret, this.dataWordCases);
             }
@@ -239,12 +288,11 @@ define([
          *
          * @param word
          * @param ref
-         * @param fullOnEmpty
-         * @returns {Array}
+         * @returns {*}
          */
-        getFilteredSuggests: function(word, ref, fullOnEmpty) {
+        getFilteredSuggests: function(word, ref) {
             if (_.isEmpty(word)) {
-                return fullOnEmpty ? ref : [];
+                return ref;
             }
 
             var arr = _.filter(ref, function(item) {
@@ -266,13 +314,13 @@ define([
             var arr = [];
 
             _.each(src, function(item, name) {
-                var subName = (baseName ? (baseName + '.') : '') + item;
+                var subName = baseName ? baseName + '.' + item : item;
 
                 if (_.isArray(item)) {
                     arr = _.union(arr, self.getStrings(item, name, baseArr || src));
-                } else if (baseArr && _.isString(item) && _.isArray(baseArr[item])) {
+                } else if (baseArr && _.isArray(baseArr[item])) {
                     arr = _.union(arr, self.getStrings(baseArr[item], subName, baseArr || src));
-                } else {
+                } else if (_.isString(item)) {
                     arr.push(subName);
                 }
             });
