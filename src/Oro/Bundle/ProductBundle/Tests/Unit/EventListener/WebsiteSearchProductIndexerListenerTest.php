@@ -19,6 +19,11 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
     private $listener;
 
     /**
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $doctrineHelper;
+
+    /**
      * @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     private $productRepository;
@@ -35,8 +40,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
 
     protected function setUp()
     {
-        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
-        $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -44,17 +48,11 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             ->disableOriginalConstructor()
             ->getMock();
 
-        $doctrineHelper
-            ->expects($this->any())
-            ->method('getEntityRepositoryForClass')
-            ->with(Product::class)
-            ->willReturn($this->productRepository);
-
         $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new WebsiteSearchProductIndexerListener($doctrineHelper, $this->localizationHelper);
+        $this->listener = new WebsiteSearchProductIndexerListener($this->doctrineHelper, $this->localizationHelper);
 
         $this->event = $this->getMockBuilder(IndexEntityEvent::class)
             ->disableOriginalConstructor()
@@ -135,6 +133,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
     {
         $this->initializeOnWebsiteSearchIndexTest(Product::class);
 
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityRepositoryForClass')
+            ->with(Product::class)
+            ->willReturn($this->productRepository);
+
         $this->event
             ->expects($this->exactly(11))
             ->method('addField')
@@ -158,6 +162,10 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
     public function testOnWebsiteSearchIndexNotSupportedClass()
     {
         $this->event->expects($this->once())->method('getEntityClass')->willReturn('stdClass');
+
+        $this->doctrineHelper
+            ->expects($this->never())
+            ->method('getEntityRepositoryForClass');
 
         $this->event->expects($this->never())->method('addField');
 
