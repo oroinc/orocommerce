@@ -22,6 +22,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_website_search.provider.search_mapping'
             - '@oro_entity.entity_alias_resolver'
+            - '@oro_website_search.engine.entity_dependencies_resolver'
 
     oro_website_search.placeholder.registry:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry'
@@ -117,3 +118,9 @@ services:
             - '%oro_search.drivers%'
             - '%oro_website_search.index_text_table_name%'
             - '%oro_website_search.index_text_table_name%_v_idx'
+
+    oro_website_search.engine.entity_dependencies_resolver:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\EntityDependenciesResolver'
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_website_search.provider.search_mapping'

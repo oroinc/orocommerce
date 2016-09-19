@@ -16,7 +16,7 @@ use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 class SystemCurrencyFormExtension extends AbstractTypeExtension
 {
     const ALLOWED_CURRENCIES = 'oro_currency.allowed_currencies';
-    const ENABLED_CURRENCIES = 'oro_b2b_pricing.enabled_currencies';
+    const ENABLED_CURRENCIES = 'oro_pricing.enabled_currencies';
 
     /**
      * @var ConfigManager
@@ -71,7 +71,7 @@ class SystemCurrencyFormExtension extends AbstractTypeExtension
     {
         $form = $event->getForm();
         $restrict = $form->getConfig()->getOption('restrict');
-        $enabledCurrencies = $this->configManager->get('oro_b2b_pricing.enabled_currencies');
+        $enabledCurrencies = $this->configManager->get('oro_pricing.enabled_currencies');
 
         if ($restrict && $enabledCurrencies) {
             $allowedCurrencies = (array) $form->getData();

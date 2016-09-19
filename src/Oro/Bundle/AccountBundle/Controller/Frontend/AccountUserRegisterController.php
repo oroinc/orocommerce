@@ -41,7 +41,7 @@ class AccountUserRegisterController extends Controller
      */
     protected function isRegistrationAllowed()
     {
-        return (bool) $this->get('oro_config.manager')->get('oro_b2b_account.registration_allowed');
+        return (bool) $this->get('oro_config.manager')->get('oro_account.registration_allowed');
     }
 
     /**

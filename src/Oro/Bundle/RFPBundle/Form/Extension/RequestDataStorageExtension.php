@@ -168,7 +168,7 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
     protected function isAllowedProduct(Product $product)
     {
         if (!$this->supportedStatuses) {
-            $this->supportedStatuses = (array)$this->configManager->get('oro_b2b_rfp.frontend_product_visibility');
+            $this->supportedStatuses = (array)$this->configManager->get('oro_rfp.frontend_product_visibility');
         }
         $inventoryStatus = $product->getInventoryStatus();
         if (is_object($inventoryStatus)) {

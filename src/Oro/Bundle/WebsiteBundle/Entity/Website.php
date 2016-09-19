@@ -22,9 +22,9 @@ use Oro\Bundle\WebsiteBundle\Model\ExtendWebsite;
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository")
  * @Config(
- *      routeName="oro_websitepro_index",
- *      routeView="oro_websitepro_view",
- *      routeUpdate="oro_websitepro_update",
+ *      routeName="oro_multiwebsite_index",
+ *      routeView="oro_multiwebsite_view",
+ *      routeUpdate="oro_multiwebsite_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
