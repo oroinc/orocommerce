@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Query;
 
+use Doctrine\Common\Collections\Expr\Expression;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\WebsiteSearchBundle\Event\SelectDataFromSearchIndexEvent;
@@ -51,15 +53,13 @@ class WebsiteSearchQuery extends AbstractSearchQuery
     /**
      * {@inheritdoc}
      */
-    public function setWhere($expression, $type = self::WHERE_AND)
+    public function addWhere(Expression $expression, $type = self::WHERE_AND)
     {
-        if (self::WHERE_OR === $type) {
+        if (self::WHERE_AND === $type) {
+            $this->query->getCriteria()->andWhere($expression);
+        } elseif (self::WHERE_OR === $type) {
             $this->query->getCriteria()->orWhere($expression);
-
-            return $this;
         }
-
-        $this->query->getCriteria()->andWhere($expression);
 
         return $this;
     }

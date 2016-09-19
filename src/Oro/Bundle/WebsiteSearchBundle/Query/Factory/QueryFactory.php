@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Query\Factory;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
-use Oro\Bundle\SearchBundle\Datasource\YamlToSearchQueryConverter;
+use Oro\Bundle\SearchBundle\Datagrid\Datasource\YamlToSearchQueryConverter;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
