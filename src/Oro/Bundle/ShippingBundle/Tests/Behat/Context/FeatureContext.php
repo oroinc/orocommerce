@@ -45,7 +45,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $currencies = (array) $configManager->get('oro_currency.allowed_currencies', []);
         $currencies = array_unique(array_merge($currencies, ['EUR']));
         $configManager->set('oro_currency.allowed_currencies', $currencies);
-        $configManager->set('oro_b2b_pricing.enabled_currencies', ['EUR', 'USD']);
+        $configManager->set('oro_pricing.enabled_currencies', ['EUR', 'USD']);
         $configManager->flush();
     }
 
@@ -85,6 +85,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
      */
     public function theOrderTotalIsRecalculatedTo($total)
     {
+        $this->waitForAjax();
         self::assertEquals($total, $this->createElement('CheckoutTotalSum')->getText());
     }
 
@@ -118,6 +119,9 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
 
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
+        if (array_search('Country2', $table->getColumn(0))) {
+            $form->clickLink('Add');
+        }
         $form->fill($table);
         $form->saveAndClose();
         $this->waitForAjax();
@@ -127,7 +131,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     }
 
     /**
-     * @Given Admin User Created :shoppingRuleName with next data
+     * @Given Admin User created :shoppingRuleName with next data:
      */
     public function adminUserCreatedWithNextData($shoppingRuleName, TableNode $table)
     {
@@ -148,8 +152,12 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
         $form->fillField('Name', $shoppingRuleName);
-        $form->fillField('Sort Order', '2');
-        $form ->clickLink('Add');
+
+        if (array_search('Country2', $table->getColumn(0))) {
+            $form->fillField('Sort Order', '1');
+            $form->clickLink('Add');
+        }
+
         $form->fill($table);
         $form->saveAndClose();
 
@@ -182,5 +190,31 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $this->waitForAjax();
         $this->getSession()->getPage()->clickLink('Create Order');
         $this->waitForAjax();
+    }
+
+    /**
+     * @When Buyer created order with next shipping address:
+     */
+    public function buyerCreatedOrderWithNextShippingAddress(TableNode $table)
+    {
+        /** @var checkoutStep $checkoutStep */
+        $checkoutStep = $this->createElement('CheckoutStep');
+        $checkoutStep->assertTitle('Shipping Method');
+
+        $this->getSession()->getPage()->clickLink('Back');
+        $this->waitForAjax();
+        $checkoutStep->assertTitle('Shipping Information');
+
+        /** @var Form $form */
+        $form = $this->createElement('Address');
+        $form->fillField('SELECT SHIPPING ADDRESS', 'Enter other address');
+        $this->waitForAjax();
+        /** @var int $row */
+        if ($row = array_search('Country', $table->getColumn(0))) {
+            $form->fillField('Country', $table->getRow($row)[1]);
+            $this->waitForAjax();
+        }
+        $form->fill($table);
+        $this->getSession()->getPage()->pressButton('Continue');
     }
 }

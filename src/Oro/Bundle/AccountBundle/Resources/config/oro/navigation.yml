@@ -58,7 +58,9 @@ navigation:
                     icon:        icon-user
                     position:    200
 
-            account_list:
+            # This is temporary solution to remove navigation key duplication
+            # @todo: renaming of navigation keys will be finished in BB-2679
+            customer_list:
                 label:           'oro.account.entity_plural_label'
                 route:           'oro_account_index'
                 extras:
@@ -176,7 +178,7 @@ navigation:
                 children:
                     customers_tab:
                         children:
-                            account_list: ~
+                            customer_list: ~
                             account_group_list: ~
                             account_users: ~
                             account_user_roles: ~

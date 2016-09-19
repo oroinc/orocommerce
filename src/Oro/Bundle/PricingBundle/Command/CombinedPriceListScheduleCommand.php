@@ -37,7 +37,7 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
     {
         $container = $this->getContainer();
         $offsetHours = $this->getContainer()->get('oro_config.manager')
-            ->get('oro_b2b_pricing.offset_of_processing_cpl_prices');
+            ->get('oro_pricing.offset_of_processing_cpl_prices');
 
         $combinedPriceLists = $container->get('doctrine')
             ->getManagerForClass(CombinedPriceList::class)

@@ -24,7 +24,7 @@ class OroAccountExtensionTest extends ExtensionTestCase
 
         $this->assertParametersLoaded($expectedParameters);
 
-        $this->assertEquals('oro_b2b_account', $extension->getAlias());
+        $this->assertEquals('oro_account', $extension->getAlias());
     }
 
     public function testPrepend()
