@@ -77,6 +77,8 @@ services:
             - "@oro_entity.doctrine_helper"
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
 
     oro_warehouse.event_listener.category_form_view:
         class: 'Oro\Bundle\WarehouseBundle\EventListener\CategoryWarehouseFormViewListener'

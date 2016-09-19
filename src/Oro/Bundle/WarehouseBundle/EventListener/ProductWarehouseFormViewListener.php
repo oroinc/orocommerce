@@ -37,19 +37,7 @@ class ProductWarehouseFormViewListener
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        $request = $this->requestStack->getCurrentRequest();
-
-        if (!$request) {
-            return;
-        }
-
-        $productId = (int)$request->get('id');
-        if (!$productId) {
-            return;
-        }
-
-        /** @var Product $product */
-        $product = $this->doctrineHelper->getEntityReference(Product::class, $productId);
+        $product = $this->getProductFromRequest();
         if (!$product) {
             return;
         }
@@ -60,5 +48,36 @@ class ProductWarehouseFormViewListener
         );
 
         $event->getScrollData()->addSubBlockData(0, 0, $template);
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     */
+    public function onProductEdit(BeforeListRenderEvent $event)
+    {
+        $template = $event->getEnvironment()->render(
+            'OroWarehouseBundle:Product:manageInventoryFormWidget.html.twig',
+            ['form' => $event->getFormView()]
+        );
+        $event->getScrollData()->addSubBlockData(0, 0, $template);
+    }
+
+    /**
+     * @return null|Product
+     */
+    protected function getProductFromRequest()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        if (!$request) {
+            return null;
+        }
+
+        $productId = (int)$request->get('id');
+        if (!$productId) {
+            return null;
+        }
+
+        return $this->doctrineHelper->getEntityReference(Product::class, $productId);
     }
 }

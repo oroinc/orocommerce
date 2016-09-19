@@ -4,11 +4,14 @@ namespace Oro\Bundle\WarehouseBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\WarehouseBundle\Fallback\Provider\CategoryFallbackProvider;
+use Oro\Bundle\WarehouseBundle\Fallback\Provider\ParentCategoryFallbackProvider;
 
 class AddManageInventoryFields implements Migration, ExtendExtensionAwareInterface
 {
@@ -59,8 +62,8 @@ class AddManageInventoryFields implements Migration, ExtendExtensionAwareInterfa
                 ],
                 'fallback' => [
                     'fallbackList' => [
-                        'systemConfig' => ['configName' => 'oro_warehouse.manage_inventory'],
-                        'parentCategory' => ['fieldName' => 'manageInventory'],
+                        SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_warehouse.manage_inventory'],
+                        ParentCategoryFallbackProvider::ID => ['fieldName' => 'manageInventory'],
                     ],
                 ],
             ]
@@ -93,8 +96,8 @@ class AddManageInventoryFields implements Migration, ExtendExtensionAwareInterfa
                 ],
                 'fallback' => [
                     'fallbackList' => [
-                        'systemConfig' => ['configName' => 'oro_warehouse.manage_inventory'],
-                        'category' => ['fieldName' => 'manageInventory'],
+                        SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_warehouse.manage_inventory'],
+                        CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageInventory'],
                     ],
                 ],
             ]
