@@ -4,6 +4,8 @@ namespace Oro\Bundle\PayPalBundle\Provider;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Event\ExtractAddressOptionsEvent;
@@ -30,7 +32,7 @@ class ExtractOptionsProvider
 
     /**
      * @param string $classname
-     * @param object $entity
+     * @param AbstractAddress $entity
      * @return AddressOptionModel
      */
     public function getShippingAddressOptions($classname, $entity)
@@ -47,7 +49,7 @@ class ExtractOptionsProvider
 
     /**
      * @param LineItemsAwareInterface $entity
-     * @return array
+     * @return LineItemOptionModel[]
      */
     public function getLineItemPaymentOptions(LineItemsAwareInterface $entity)
     {
