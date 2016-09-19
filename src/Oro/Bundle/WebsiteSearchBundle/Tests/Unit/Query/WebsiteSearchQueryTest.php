@@ -62,7 +62,7 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
             ->method('from')
             ->with($alias);
 
-        $this->websiteSearchQuery->from($alias);
+        $this->websiteSearchQuery->setFrom($alias);
     }
 
     public function testWebsiteQueryExecutionAndEventDispatch()
