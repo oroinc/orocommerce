@@ -19,7 +19,7 @@ final class ReindexationTriggerEvent extends Event
     private $websiteId;
 
     /**
-     * @var int[]
+     * @var int[]|null
      */
     private $ids;
 
@@ -32,7 +32,7 @@ final class ReindexationTriggerEvent extends Event
      * ReindexationTriggerEvent constructor.
      * @param string $className
      * @param int $websiteId
-     * @param \int[] $ids
+     * @param \int[]|null $ids
      * @param \boolean $scheduled
      */
     public function __construct(
@@ -64,7 +64,7 @@ final class ReindexationTriggerEvent extends Event
     }
 
     /**
-     * @return \int[]
+     * @return \int[]|null
      */
     public function getIds()
     {
