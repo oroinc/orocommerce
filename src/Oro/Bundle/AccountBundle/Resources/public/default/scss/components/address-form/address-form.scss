@@ -3,7 +3,29 @@
 
     background: #f5f5f5;
 
+    & .input {
+        margin-top: 6px;
+    }
+
     & .checkbox label {
         padding-left: 0;
+    }
+
+    & .select2-container {
+        display: inline-block;
+
+        padding: 4px 0;
+
+        font-size: 13px;
+        line-height: 1;
+
+        border: 1px solid #ebebeb;
+        border-radius: 5px;
+        background: #fff;
+    }
+
+    & .select2-container-active {
+        border: 1px solid #ebebeb;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, .15);
     }
 }

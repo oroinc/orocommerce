@@ -81,6 +81,11 @@
                 {{ form_widget(form.region_text) }}
             </div>
         </div>
+
+        <div class="pixels">
+            
+        </div>
+
     {% endspaceless %}
 {% endblock %}
 
@@ -134,7 +139,7 @@
 {%- endblock -%}
 
 {% block form_widget_simple %}
-    {% set attr = attr|merge({class: "input input--full"}) %}
+    {% set attr = attr|merge({class: "input input--full input--size-m"}) %}
     {{ parent() }}
 {% endblock %}
 
