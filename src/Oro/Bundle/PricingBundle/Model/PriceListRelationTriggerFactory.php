@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
+use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListRelationTriggerFactory
@@ -43,16 +44,25 @@ class PriceListRelationTriggerFactory
         if ($data[PriceListRelationTrigger::ACCOUNT]) {
             $account = $this->registry->getRepository(Account::class)
                 ->find($data[PriceListRelationTrigger::ACCOUNT]);
+            if (!$account) {
+                throw new InvalidArgumentException('Account was not found');
+            }
             $priceListChangeTrigger->setAccount($account);
         }
         if ($data[PriceListRelationTrigger::ACCOUNT_GROUP]) {
             $accountGroup = $this->registry->getRepository(AccountGroup::class)
                 ->find($data[PriceListRelationTrigger::ACCOUNT_GROUP]);
+            if (!$accountGroup) {
+                throw new InvalidArgumentException('Account was not found');
+            }
             $priceListChangeTrigger->setAccountGroup($accountGroup);
         }
         if ($data[PriceListRelationTrigger::WEBSITE]) {
             $website = $this->registry->getRepository(Website::class)
                 ->find($data[PriceListRelationTrigger::WEBSITE]);
+            if (!$website) {
+                throw new InvalidArgumentException('Website was not found');
+            }
             $priceListChangeTrigger->setWebsite($website);
         }
 

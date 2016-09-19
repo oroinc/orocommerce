@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use Doctrine\ORM\Event\PreFlushEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -38,10 +38,9 @@ class CategoryEntityListener extends AbstractRuleEntityListener
     }
 
     /**
-     * @param Category $category
-     * @param PreFlushEventArgs $event
+     * @param OnFlushEventArgs $event
      */
-    public function preFlush(Category $category, PreFlushEventArgs $event)
+    public function onFlush(OnFlushEventArgs $event)
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
         $collections = $unitOfWork->getScheduledCollectionUpdates();

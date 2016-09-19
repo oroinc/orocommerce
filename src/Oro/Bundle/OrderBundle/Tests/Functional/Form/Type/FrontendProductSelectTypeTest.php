@@ -12,7 +12,7 @@ class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectT
     public function setUp()
     {
         $this->setDataParameters(['scope' => 'order']);
-        $this->setConfigPath('oro_b2b_order.frontend_product_visibility');
+        $this->setConfigPath('oro_order.frontend_product_visibility');
 
         parent::setUp();
     }

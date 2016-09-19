@@ -50,18 +50,26 @@ Oro\Bundle\PricingBundle\Entity\PriceListSchedule:
                 deactivateAt: 'Deactivate At'
 
 Oro\Bundle\PricingBundle\Entity\PriceRule:
+    constraints:
+        - Oro\Bundle\ValidationBundle\Validator\Constraints\NotBlankOneOf:
+            fields:
+                - { quantity: 'oro.pricing.pricerule.quantity.label', quantityExpression: 'oro.pricing.pricerule.quantity_expression.label' }
+                - { currency: 'oro.pricing.pricerule.currency.label', currencyExpression: 'oro.pricing.pricerule.currency_expression.label' }
+                - { productUnit: 'oro.pricing.pricerule.product_unit.label', productUnitExpression: 'oro.pricing.pricerule.product_unit_expression.label' }
+        - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressions: ~
     properties:
         currency:
-            - NotBlank: ~
             - Currency: ~
+        currencyExpression:
+            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+                withRelations: true
         quantity:
-            - NotBlank:
-                message: 'oro.pricing.validators.product_price.quantity.blank'
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
-        productUnit:
-            - NotBlank:
-                message: 'oro.product.productunit.invalid'
+        quantityExpression:
+            - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+                numericOnly: true
+                withRelations: true
         ruleCondition:
             - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
                 withRelations: true

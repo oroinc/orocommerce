@@ -130,7 +130,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
         $this->configManager->expects($this->once())
             ->method('get')
-            ->with('oro_b2b_rfp.frontend_product_visibility')
+            ->with('oro_rfp.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
         $this->assertMetadataCalled();
@@ -179,7 +179,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
 
         $this->configManager->expects($this->once())
             ->method('get')
-            ->with('oro_b2b_rfp.frontend_product_visibility')
+            ->with('oro_rfp.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
         $this->assertMetadataCalled();

@@ -2,51 +2,27 @@
 
 namespace Oro\Bundle\AccountBundle\EventListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\PersistentCollection;
-
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-use Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
-use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Model\CategoryMessageHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
 
 class CategoryListener
 {
-    /**
-     * @var Registry
-     */
-    protected $registry;
+    const FIELD_PRODUCTS = 'products';
 
     /**
-     * @var InsertFromSelectQueryExecutor
+     * @var CategoryMessageHandler
      */
-    protected $insertFromSelectQueryExecutor;
+    protected $categoryMessageHandler;
 
     /**
-     * @var ProductCaseCacheBuilderInterface
+     * @param ProductMessageHandler $productMessageHandler
      */
-    protected $cacheBuilder;
-
-    /**
-     * @var array
-     */
-    protected $productIdsToUpdate = [];
-
-    /**
-     * @param Registry $registry
-     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
-     * @param ProductCaseCacheBuilderInterface $cacheBuilder
-     */
-    public function __construct(
-        Registry $registry,
-        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
-        ProductCaseCacheBuilderInterface $cacheBuilder
-    ) {
-        $this->registry = $registry;
-        $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
-        $this->cacheBuilder = $cacheBuilder;
+    public function __construct(ProductMessageHandler $productMessageHandler)
+    {
+        $this->productMessageHandler = $productMessageHandler;
     }
 
     /**
@@ -54,69 +30,29 @@ class CategoryListener
      */
     public function onFlush(OnFlushEventArgs $event)
     {
+        $this->handleProductsChange($event);
+    }
+
+    /**
+     * @param OnFlushEventArgs $event
+     */
+    protected function handleProductsChange(OnFlushEventArgs $event)
+    {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
         $collections = $unitOfWork->getScheduledCollectionUpdates();
         foreach ($collections as $collection) {
-            if ($collection instanceof PersistentCollection && $collection->getOwner() instanceof Category
-                && $collection->getMapping()['fieldName'] === 'products'
+            if ($collection instanceof PersistentCollection
+                && $collection->getMapping()['fieldName'] === self::FIELD_PRODUCTS
                 && $collection->isDirty() && $collection->isInitialized()
             ) {
                 /** @var Product $product */
                 foreach (array_merge($collection->getInsertDiff(), $collection->getDeleteDiff()) as $product) {
-                    $productId = $product->getId();
-                    if (!in_array($productId, $this->productIdsToUpdate)) {
-                        $this->productIdsToUpdate[] = $productId;
-                    }
+                    $this->productMessageHandler->addProductMessageToSchedule(
+                        'oro_account.visibility.change_product_category',
+                        $product
+                    );
                 }
             }
         }
-    }
-
-    public function postFlush()
-    {
-        $repository = $this->registry->getManagerForClass('OroProductBundle:Product')
-            ->getRepository('OroProductBundle:Product');
-
-        while ($productId = array_shift($this->productIdsToUpdate)) {
-            $product = $repository->find($productId);
-            if ($product) {
-                $this->cacheBuilder->productCategoryChanged($product);
-            }
-        }
-    }
-
-    /**
-     * @param LifecycleEventArgs $args
-     */
-    public function postRemove(LifecycleEventArgs $args)
-    {
-        /** @var Category $category */
-        $category = $args->getEntity();
-        if ($category instanceof Category) {
-            $this->setToDefaultProductVisibilityWithoutCategory();
-            $this->setToDefaultAccountGroupProductVisibilityWithoutCategory();
-            $this->setToDefaultAccountProductVisibilityWithoutCategory();
-        }
-    }
-
-    protected function setToDefaultProductVisibilityWithoutCategory()
-    {
-        $this->registry->getManagerForClass('OroAccountBundle:Visibility\ProductVisibility')
-            ->getRepository('OroAccountBundle:Visibility\ProductVisibility')
-            ->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor);
-    }
-
-    protected function setToDefaultAccountGroupProductVisibilityWithoutCategory()
-    {
-        $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountGroupProductVisibility')
-            ->getRepository('OroAccountBundle:Visibility\AccountGroupProductVisibility')
-            ->setToDefaultWithoutCategory();
-    }
-
-    protected function setToDefaultAccountProductVisibilityWithoutCategory()
-    {
-        $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountProductVisibility')
-            ->getRepository('OroAccountBundle:Visibility\AccountProductVisibility')
-            ->setToDefaultWithoutCategory();
     }
 }
