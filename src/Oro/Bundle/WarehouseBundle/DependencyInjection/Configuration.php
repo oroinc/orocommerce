@@ -10,6 +10,7 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 class Configuration implements ConfigurationInterface
 {
     const ENABLED_WAREHOUSES = 'enabled_warehouses';
+    const MANAGE_INVENTORY = 'manage_inventory';
 
     /**
      * {@inheritDoc}
@@ -22,7 +23,7 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 self::ENABLED_WAREHOUSES => ['type' => 'array', 'value' => []],
-                'manage_inventory' => ['type' => 'boolean', 'value' => false],
+                self::MANAGE_INVENTORY => ['type' => 'boolean', 'value' => false],
             ]
         );
 

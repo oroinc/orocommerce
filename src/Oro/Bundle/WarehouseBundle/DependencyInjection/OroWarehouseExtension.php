@@ -31,8 +31,6 @@ class OroWarehouseExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('importexport.yml');
         $loader->load('fallbacks.yml');
-
-        $container->prependExtensionConfig($this->getAlias(), $config);
     }
 
     /**
