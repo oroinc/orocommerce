@@ -29,7 +29,6 @@ final class ReindexationTriggerEvent extends Event
     private $scheduled = true;
 
     /**
-     * ReindexationTriggerEvent constructor.
      * @param string $className
      * @param int $websiteId
      * @param \int[]|null $ids
