@@ -6,7 +6,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 final class ReindexationTriggerEvent extends Event
 {
-    const EVENT_NAME = 'oro_website_search.reindexation_triger';
+    const EVENT_NAME = 'oro_website_search.reindexation_trigger';
 
     /**
      * @var string
