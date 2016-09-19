@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
@@ -139,9 +140,9 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param OrmResultAfter $event
+     * @param OrmResultAfter|SearchResultAfter $event
      */
-    public function onResultAfter(OrmResultAfter $event)
+    public function onResultAfter($event)
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
@@ -158,11 +159,11 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param OrmResultAfter $event
+     * @param OrmResultAfter|SearchResultAfter $event
      * @param array $productIds
      * @param ResultRecord[] $records
      */
-    protected function addProductImages(OrmResultAfter $event, array $productIds, array $records)
+    protected function addProductImages($event, array $productIds, array $records)
     {
         $gridName = $event->getDatagrid()->getName();
         $supportedViews = [DataGridThemeHelper::VIEW_GRID, DataGridThemeHelper::VIEW_TILES];
