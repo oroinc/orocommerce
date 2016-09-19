@@ -21,3 +21,10 @@ services:
         class: %oro_website_search.select_data.listener.class%
         tags:
             - { name: kernel.event_listener, event: oro_website_search.select_index_data, method: process }
+
+    oro_website_search.event_listener.default_category_visibility_listener:
+        class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\DefaultCategoryVisibilityListener'
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
