@@ -1,23 +1,126 @@
 parameters:
-    oro_website_search.mock.class:                  Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
-    oro_website_search.query_factory.class:         Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
-    oro_website_search.select_data.listener.class:  Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
+    oro_website_search.entity.item.class: Oro\Bundle\WebsiteSearchBundle\Entity\Item
+    oro_website_search.index_text_table_name: oro_website_search_text
 
 services:
+    oro_website_search.resolver.query_placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver'
+        public: false
+        arguments:
+            - '@oro_website_search.placeholder.registry'
+
+    oro_website_search.search.engine:
+        abstract: true
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_website_search.resolver.query_placeholder'
+
+    oro_website_search.search.indexer:
+        abstract: true
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_website_search.provider.search_mapping'
+            - '@oro_entity.entity_alias_resolver'
+            - '@oro_website_search.engine.entity_dependencies_resolver'
+
+    oro_website_search.placeholder.registry:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry'
+        calls:
+            - [addPlaceholder, ['@oro_website_search.website_id.placeholder']]
+            - [addPlaceholder, ['@oro_website_search.localization_id.placeholder']]
+
+    oro_website_search.website_id.placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder'
+        arguments:
+            - '@oro_website.manager'
+
+    oro_website_search.localization_id.placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder'
+        arguments:
+            - '@oro_frontend_localization.manager.user_localization'
+
+    oro_website_search.loader.mapping_configuration_loader:
+        public: false
+        class: Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader
+
+    oro_website_search.mapping_configuration.cache:
+        public: false
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'oro_website_search_mapping_configuration' ] ]
+
+    oro_website_search.loader.mapping_configuration_cache_loader:
+        public: false
+        class: Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationCacheLoader
+        arguments:
+            - '@oro_website_search.mapping_configuration.cache'
+            - '@oro_website_search.loader.mapping_configuration_loader'
+            - '%kernel.debug%'
+
+    oro_website_search.cache.configuration_cache:
+        public: false
+        class: Oro\Bundle\WebsiteSearchBundle\Cache\ConfigurationCache
+        arguments:
+            - '@oro_website_search.loader.mapping_configuration_cache_loader'
+        tags:
+            - { name: kernel.cache_clearer }
+            - { name: kernel.cache_warmer }
+
+    oro_website_search.event_listener.orm.fulltext_index_listener:
+        class: 'Oro\Bundle\SearchBundle\EventListener\ORM\FulltextIndexListener'
+        arguments:
+            - '%database_driver%'
+            - 'oro_website_search_text'
+            - '%oro_website_search.index_text_table_name%'
+        tags:
+            - { name: doctrine.event_listener, event: loadClassMetadata, connection: search }
+
+    oro_website_search.engine.mapper:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\Mapper'
+
+    oro_website_search.provider.search_mapping:
+        class: Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider
+        arguments:
+            - '@oro_website_search.loader.mapping_configuration_cache_loader'
+
     oro_website_search.mock.engine:
-        class: %oro_website_search.mock.class%
+        class: Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
         arguments:
             - '@doctrine.orm.entity_manager'
 
     oro_website_search.query_factory:
         decorates: oro_search.query_factory
-        class: %oro_website_search.query_factory.class%
+        class: Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
         arguments:
             - '@oro_website_search.query_factory.inner'
             - '@event_dispatcher'
             - '@oro_website_search.mock.engine'
 
     oro_website_search.select_data.listener:
-        class: %oro_website_search.select_data.listener.class%
+        class: Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
         tags:
             - { name: kernel.event_listener, event: oro_website_search.select_index_data, method: process }
+
+    oro_website_search.entity.repository.search_index:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository'
+        factory: ["@doctrine", getRepository]
+        arguments:
+            - '%oro_website_search.entity.item.class%'
+            - 'search'
+        calls:
+            - [setRegistry,  ['@doctrine']]
+
+    oro_website_search.fulltext_index_manager:
+        class: 'Oro\Bundle\SearchBundle\Engine\FulltextIndexManager'
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            - '%oro_search.drivers%'
+            - '%oro_website_search.index_text_table_name%'
+            - '%oro_website_search.index_text_table_name%_v_idx'
+
+    oro_website_search.engine.entity_dependencies_resolver:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\EntityDependenciesResolver'
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_website_search.provider.search_mapping'

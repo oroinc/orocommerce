@@ -9,12 +9,27 @@ use Symfony\Component\DependencyInjection\Loader;
 
 class OroWebsiteSearchExtension extends Extension
 {
+    const ALIAS = 'oro_website_search';
+
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $config = $this->processConfiguration(new Configuration(), $configs);
+
+        $container->setParameter('oro_website_search.engine', $config['engine']);
+        $container->setParameter('oro_website_search.engine_parameters', $config['engine_parameters']);
+
+        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAlias()
+    {
+        return self::ALIAS;
     }
 }

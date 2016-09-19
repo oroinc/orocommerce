@@ -44,7 +44,7 @@ class ExampleMockEngine implements EngineV2Interface
      * @param array $context
      * @return Result
      */
-    public function search(Query $query, $context = [])
+    public function search(Query $query, array $context = [])
     {
         $selectedColumns = $query->getSelect();
         $queryBuilder = $this->prepareQueryBuilder($selectedColumns);
