@@ -76,20 +76,11 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
         }
 
         try {
+            $primaryId = $this->getPrimaryId($object);
+            if ($primaryId === null) {
+                return;
+            }
             foreach ($constraint->fields as $field) {
-                $primaryId = null;
-                if ($object instanceof PriceList) {
-                    $primaryId = $this->getFieldValue($object, 'id');
-                } elseif (($priceList = $this->getFieldValue($object, 'priceList')) !== null) {
-                    $primaryId = $this->getFieldValue($priceList, 'id');
-                } else {
-                    break;
-                }
-
-                if ($primaryId === null) {
-                    break;
-                }
-
                 $expressions = [$this->getFieldValue($object, $field)];
 
                 while (true) {
@@ -113,6 +104,21 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
         }
     }
 
+    /**
+     * @param mixed $object
+     *
+     * @return int|null
+     */
+    protected function getPrimaryId($object)
+    {
+        $primaryId = null;
+        if ($object instanceof PriceList) {
+            $primaryId = $this->getFieldValue($object, 'id');
+        } elseif (($priceList = $this->getFieldValue($object, 'priceList')) !== null) {
+            $primaryId = $this->getFieldValue($priceList, 'id');
+        }
+        return $primaryId;
+    }
     /**
      * @param array $expressions
      * @return array
