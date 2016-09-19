@@ -379,3 +379,16 @@ services:
             - "@oro_product.product.manager"
         tags:
             - { name: layout.data_provider, alias: featured_products }
+
+    oro_product.model.product_message_factory:
+        class: 'Oro\Bundle\ProductBundle\Model\ProductMessageFactory'
+        arguments:
+            - '@doctrine'
+
+    oro_product.model.product_message_handler:
+        class: 'Oro\Bundle\ProductBundle\Model\ProductMessageHandler'
+        arguments:
+            - '@oro_product.model.product_message_factory'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }

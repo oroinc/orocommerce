@@ -8,6 +8,8 @@ use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Types\Type;
+
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
@@ -37,6 +39,8 @@ class OroWebsiteBundle implements Migration, DatabasePlatformAwareInterface, Ren
         $this->changeLocalizationRelations($queries);
         $this->updateWebsiteTable($schema, $queries);
         $this->renameTables($schema, $queries);
+
+        $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_website', 'oro_website'));
     }
 
     /**

@@ -16,6 +16,7 @@ use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
+use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -152,7 +153,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->getMock(SessionInterface::class);
 
-        $this->triggerFactory->method('createFromArray')->willThrowException(new \Exception());
+        $this->triggerFactory->method('createFromArray')->willThrowException(new InvalidArgumentException());
 
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
     }

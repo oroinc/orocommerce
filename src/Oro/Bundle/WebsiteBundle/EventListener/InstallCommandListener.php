@@ -30,8 +30,8 @@ class InstallCommandListener
         if ($command instanceof InstallCommand) {
             try {
                 $url = $this->configManager->get('oro_ui.application_url');
-                $this->configManager->set('oro_b2b_website.url', $url);
-                $this->configManager->set('oro_b2b_website.secure_url', $url);
+                $this->configManager->set('oro_website.url', $url);
+                $this->configManager->set('oro_website.secure_url', $url);
                 $this->configManager->flush();
             } catch (\Exception $e) {
                 //do nothing in case when application not installed and table not exists

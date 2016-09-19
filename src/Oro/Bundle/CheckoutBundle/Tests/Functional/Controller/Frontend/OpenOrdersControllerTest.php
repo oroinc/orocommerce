@@ -34,7 +34,7 @@ class OpenOrdersControllerTest extends WebTestCase
             ->getContainer()
             ->get('oro_config.manager');
 
-        $configManager->set('oro_b2b_checkout.frontend_open_orders_separate_page', true);
+        $configManager->set('oro_checkout.frontend_open_orders_separate_page', true);
         $configManager->flush();
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
@@ -56,7 +56,7 @@ class OpenOrdersControllerTest extends WebTestCase
             ->getContainer()
             ->get('oro_config.manager');
 
-        $configManager->set('oro_b2b_checkout.frontend_open_orders_separate_page', false);
+        $configManager->set('oro_checkout.frontend_open_orders_separate_page', false);
         $configManager->flush();
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
