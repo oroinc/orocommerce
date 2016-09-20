@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\EventListener;
 
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
+use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 
 class ExtractLineItemPaymentOptionsListener
 {
@@ -26,7 +27,7 @@ class ExtractLineItemPaymentOptionsListener
                 continue;
             }
 
-            $lineItemModel = $event->getModel();
+            $lineItemModel = new LineItemOptionModel();
             $lineItemModel
                 ->setName((string)$product->getDefaultName())
                 ->setDescription((string)$product->getDefaultShortDescription())
