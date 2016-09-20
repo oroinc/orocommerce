@@ -35,7 +35,7 @@ class ExtractOptionsProvider
      * @param AbstractAddress $entity
      * @return AddressOptionModel
      */
-    public function getShippingAddressOptions($classname, $entity)
+    public function getShippingAddressOptions($classname, AbstractAddress $entity)
     {
         $event = new ExtractAddressOptionsEvent($entity);
         $entityAlias = $this->aliasResolver->getAlias($classname);
