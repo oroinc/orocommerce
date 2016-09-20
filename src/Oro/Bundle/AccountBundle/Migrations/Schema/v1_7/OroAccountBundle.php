@@ -4,20 +4,17 @@ namespace Oro\Bundle\AccountBundle\Migrations\Schema\v1_7;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\AccountBundle\Migrations\Schema\OroAccountBundleInstaller;
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
-use Oro\Bundle\ScopeBundle\Migrations\Schema\OroScopeBundleInstaller;
 
-class OroAccountBundle implements Migration, RenameExtensionAwareInterface, ExtendExtensionAwareInterface
+class OroAccountBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
     use MigrationConstraintTrait;
 
@@ -27,17 +24,18 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Exte
     private $renameExtension;
 
     /**
-     * @var ExtendExtension
+     * {@inheritdoc}
      */
-    private $extendExtension;
+    public function getOrder()
+    {
+        return 1;
+    }
 
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->addRelationsToScope($schema);
-
         $this->alterAccountUserSettingsTable($schema);
         $this->addAccountUserWebsiteField($schema, $queries);
 
@@ -49,44 +47,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Exte
         $this->renameIndexes($schema, $queries);
 
         $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_account', 'oro_account'));
-    }
-
-    /**
-     * Sets the ExtendExtension
-     *
-     * @param ExtendExtension $extendExtension
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    private function addRelationsToScope(Schema $schema)
-    {
-        $this->extendExtension->addManyToOneRelation(
-            $schema,
-            OroScopeBundleInstaller::ORO_SCOPE,
-            'account',
-            OroAccountBundleInstaller::ORO_ACCOUNT_TABLE_NAME,
-            'id',
-            [],
-            RelationType::MANY_TO_ONE,
-            ['onDelete' => 'CASCADE']
-        );
-
-        $this->extendExtension->addManyToOneRelation(
-            $schema,
-            OroScopeBundleInstaller::ORO_SCOPE,
-            'accountGroup',
-            OroAccountBundleInstaller::ORO_ACCOUNT_GROUP_TABLE_NAME,
-            'id',
-            [],
-            RelationType::MANY_TO_ONE,
-            ['onDelete' => 'CASCADE']
-        );
     }
 
     /**
