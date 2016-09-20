@@ -14,7 +14,7 @@ services:
             - { name: form.type }
 
     oro_shipping.form.type.shipping_origin_warehouse:
-        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType
+        class: Oro\Bundle\WarehouseProBundle\Form\Type\ShippingOriginWarehouseType
         tags:
             - { name: form.type }
 

@@ -11,10 +11,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType;
+use Oro\Bundle\WarehouseProBundle\Entity\ShippingOriginWarehouse;
+use Oro\Bundle\WarehouseProBundle\Form\Type\ShippingOriginWarehouseType;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\WarehouseProBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseType;
 

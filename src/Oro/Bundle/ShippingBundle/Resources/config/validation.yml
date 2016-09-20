@@ -1,4 +1,4 @@
-Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse:
+Oro\Bundle\WarehouseProBundle\Entity\ShippingOriginWarehouse:
     properties:
         country:
             - NotBlank: ~
