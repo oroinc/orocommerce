@@ -25,7 +25,7 @@ class PriceListEntityListenerTest extends WebTestCase
         $this->loadFixtures([
             LoadProductPrices::class
         ]);
-        $this->topic = Topics::CALCULATE_RULE;
+        $this->topic = Topics::RESOLVE_PRICE_RULES;
     }
 
     public function testPreRemove()
@@ -41,7 +41,7 @@ class PriceListEntityListenerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                     'message' => [
                         PriceListRelationTrigger::WEBSITE => null,
                         PriceListRelationTrigger::ACCOUNT => null,

@@ -4,28 +4,26 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Event;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class AssignmentBuilderBuildEventTest extends \PHPUnit_Framework_TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var AssignmentBuilderBuildEvent
-     */
-    protected $assignmentBuilderBuildEvent;
-
-    protected function setUp()
+    public function testEvent()
     {
-        $this->assignmentBuilderBuildEvent = new AssignmentBuilderBuildEvent();
+        $priceList = new PriceList();
+
+        $event = new AssignmentBuilderBuildEvent($priceList);
+        $this->assertSame($priceList, $event->getPriceList());
+        $this->assertNull($event->getProduct());
     }
 
-    public function testSetPriceList()
+    public function testEventWithProduct()
     {
-        /** @var PriceList $priceList */
-        $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
+        $priceList = new PriceList();
+        $product = new Product();
 
-        $this->assignmentBuilderBuildEvent->setPriceList($priceList);
-        $this->assertEquals($priceList, $this->assignmentBuilderBuildEvent->getPriceList());
+        $event = new AssignmentBuilderBuildEvent($priceList, $product);
+        $this->assertSame($priceList, $event->getPriceList());
+        $this->assertSame($product, $event->getProduct());
     }
 }

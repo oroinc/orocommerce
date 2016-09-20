@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Async\PriceListProcessor;
 use Oro\Bundle\PricingBundle\Async\PriceRuleProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
-use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -29,11 +28,6 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
      * @var PriceListTriggerFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $triggerFactory;
-
-    /**
-     * @var PriceListProductAssignmentBuilder|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $assignmentBuilder;
 
     /**
      * @var ProductPriceBuilder|\PHPUnit_Framework_MockObject_MockObject
@@ -60,9 +54,6 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
         $this->triggerFactory = $this->getMockBuilder(PriceListTriggerFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->assignmentBuilder = $this->getMockBuilder(PriceListProductAssignmentBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->priceBuilder = $this->getMockBuilder(ProductPriceBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -71,7 +62,6 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->priceRuleProcessor = new PriceRuleProcessor(
             $this->triggerFactory,
-            $this->assignmentBuilder,
             $this->priceBuilder,
             $this->logger,
             $this->registry
@@ -115,8 +105,9 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 1];
         $body = json_encode($data);
 
+        $updateDate = new \DateTime();
         /** @var PriceList $priceList */
-        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
+        $priceList = $this->getEntity(PriceList::class, ['id' => 1, 'updatedAt' => $updateDate]);
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 2]);
         $trigger = new PriceListTrigger($priceList, $product);
@@ -134,10 +125,6 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('createFromArray')
             ->with($data)
             ->willReturn($trigger);
-
-        $this->assignmentBuilder->expects($this->once())
-            ->method('buildByPriceList')
-            ->with($priceList);
 
         $this->priceBuilder->expects($this->once())
             ->method('buildByPriceList')
@@ -157,6 +144,6 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSubscribedTopics()
     {
-        $this->assertEquals([Topics::CALCULATE_RULE], $this->priceRuleProcessor->getSubscribedTopics());
+        $this->assertEquals([Topics::RESOLVE_PRICE_RULES], $this->priceRuleProcessor->getSubscribedTopics());
     }
 }

@@ -284,6 +284,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledTriggers }
 
+    oro_pricing.price_rule_lexeme_trigger_handler:
+        class: Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler
+        arguments:
+            - '@oro_pricing.price_list_trigger_handler'
+            - '@doctrine'
+
     oro_pricing.event_listener.product_price_datagrid:
         class: 'Oro\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener'
         arguments:
@@ -538,14 +544,6 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.product_price.class%', event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.product_price.class%', event: prePersist }
 
-    oro_pricing.handler.affected_price_lists_handler:
-        class: 'Oro\Bundle\PricingBundle\Handler\AffectedPriceListsHandler'
-        public: false
-        arguments:
-            - '@doctrine'
-            - '@oro_pricing.price_list_trigger_handler'
-            - '@oro_pricing.cache.rule_cache'
-
     oro_pricing.entity_listener.price_list:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListEntityListener'
         public: false
@@ -553,7 +551,7 @@ services:
             - '@oro_pricing.price_list_relation_trigger_handler'
             - '@oro_pricing.cache.rule_cache'
             - '@oro_pricing.price_list_trigger_handler'
-            - '@oro_pricing.handler.affected_price_lists_handler'
+            - '@oro_pricing.price_rule_lexeme_trigger_handler'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: preRemove }
@@ -565,7 +563,6 @@ services:
         arguments:
             - '@oro_pricing.cache.rule_cache'
             - '@oro_pricing.price_list_trigger_handler'
-            - '@oro_pricing.handler.affected_price_lists_handler'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_rule.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_rule.class%', event: preRemove }
@@ -575,7 +572,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\AbstractRuleEntityListener'
         abstract: true
         arguments:
-            - '@oro_pricing.price_list_trigger_handler'
+            - '@oro_pricing.price_rule_lexeme_trigger_handler'
             - '@oro_pricing.provider.price_rule_fields_provider'
             - '@doctrine'
 
@@ -589,11 +586,8 @@ services:
 
     oro_pricing.event_listener.category:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\CategoryEntityListener'
+        parent: oro_pricing.entity_listener.abstract_rule_listener
         public: false
-        arguments:
-            - '@oro_pricing.price_list_trigger_handler'
-            - '@oro_pricing.provider.price_rule_fields_provider'
-            - '@doctrine'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
@@ -623,29 +617,16 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.product_price.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.product_price.class%', event: preRemove }
 
-    oro_pricing.entity_listener.price_list_product:
-        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListProductEntityListener'
-        parent: oro_pricing.entity_listener.abstract_rule_listener
-        public: false
+    oro_pricing.entity_listener.price_list_to_product:
+        class: Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListToProductEntityListener
+        arguments:
+            - '@oro_pricing.price_list_trigger_handler'
+            - '@oro_pricing.price_rule_lexeme_trigger_handler'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_to_product.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_to_product.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_to_product.class%', event: preRemove }
-
-    oro_pricing.entity_listener.price_list_product_prices:
-        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListProductPricesEntityListener'
-        public: false
-        arguments:
-            - '@doctrine'
-        tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_to_product.class%', event: postRemove }
-
-    oro_prising.event_listener.assignment_rule_listener:
-        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\AssignmentRuleListener'
-        arguments:
-             - '@oro_pricing.handler.affected_price_lists_handler'
-        tags:
-            - {name: kernel.event_listener, event: oro_pricing.assignment_rule_builder.build, method: onAssignmentRuleBuilderBuild}
+            - { name: kernel.event_listener, event: oro_pricing.assignment_rule_builder.build, method: onAssignmentRuleBuilderBuild}
 
     oro_pricing.provider.matching_price:
         class: 'Oro\Bundle\PricingBundle\Provider\MatchingPriceProvider'
@@ -921,10 +902,18 @@ services:
         class: 'Oro\Bundle\PricingBundle\Async\PriceRuleProcessor'
         arguments:
             - '@oro_pricing.price_list_trigger_factory'
-            - '@oro_pricing.builder.price_list_product_assignment_builder'
             - '@oro_pricing.builder.product_price_builder'
             - '@logger'
             - '@doctrine'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_pricing.async.price_list_assigned_products_processor:
+        class: Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor
+        arguments:
+            - '@oro_pricing.price_list_trigger_factory'
+            - '@oro_pricing.builder.price_list_product_assignment_builder'
+            - '@logger'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 

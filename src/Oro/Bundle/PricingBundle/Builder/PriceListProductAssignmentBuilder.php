@@ -3,13 +3,14 @@
 namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PriceListProductAssignmentBuilder
@@ -54,33 +55,35 @@ class PriceListProductAssignmentBuilder
 
     /**
      * @param PriceList $priceList
+     * @param Product|null $product
      */
-    public function buildByPriceList(PriceList $priceList)
+    public function buildByPriceList(PriceList $priceList, Product $product = null)
     {
-        $this->clearGenerated($priceList);
+        $this->clearGenerated($priceList, $product);
         if ($priceList->getProductAssignmentRule()) {
             $this->insertFromSelectQueryExecutor->execute(
                 PriceListToProduct::class,
                 $this->ruleCompiler->getOrderedFields(),
-                $this->ruleCompiler->compile($priceList)
+                $this->ruleCompiler->compile($priceList, $product)
             );
         }
         $this->registry->getManagerForClass(ProductPrice::class)
             ->getRepository(ProductPrice::class)
             ->deleteInvalidPrices($priceList);
 
-        $event = new AssignmentBuilderBuildEvent();
-        $event->setPriceList($priceList);
+        $event = new AssignmentBuilderBuildEvent($priceList, $product);
         $this->eventDispatcher->dispatch(AssignmentBuilderBuildEvent::NAME, $event);
     }
 
     /**
      * @param PriceList $priceList
+     * @param Product $product
      */
-    protected function clearGenerated(PriceList $priceList)
+    protected function clearGenerated(PriceList $priceList, Product $product = null)
     {
-        $this->registry->getManagerForClass(PriceListToProduct::class)
-            ->getRepository(PriceListToProduct::class)
-            ->deleteGeneratedRelations($priceList);
+        /** @var PriceListToProductRepository $repo */
+        $repo = $this->registry->getManagerForClass(PriceListToProduct::class)
+            ->getRepository(PriceListToProduct::class);
+        $repo->deleteGeneratedRelations($priceList, $product);
     }
 }

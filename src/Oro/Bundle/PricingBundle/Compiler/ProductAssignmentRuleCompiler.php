@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
 {
@@ -25,9 +26,10 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
 
     /**
      * @param PriceList $priceList
+     * @param Product|null $product
      * @return QueryBuilder|null
      */
-    public function compile(PriceList $priceList)
+    public function compile(PriceList $priceList, Product $product = null)
     {
         if (!$priceList->getProductAssignmentRule()) {
             return null;
@@ -43,6 +45,7 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
             $this->modifySelectPart($qb, $priceList, $rootAlias);
             $this->applyRuleConditions($qb, $priceList);
             $this->restrictByManualPrices($qb, $priceList, $rootAlias);
+            $this->restrictByGivenProduct($qb, $rootAlias, $product);
             $qb->addGroupBy($rootAlias . '.id');
 
             $this->cache->save($cacheKey, $qb);
@@ -139,6 +142,19 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
                     )
                 )
             );
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param string $rootAlias
+     * @param Product $product
+     */
+    protected function restrictByGivenProduct(QueryBuilder $qb, $rootAlias, Product $product = null)
+    {
+        if ($product) {
+            $qb->andWhere($qb->expr()->eq($rootAlias, ':product'))
+                ->setParameter('product', $product->getId());
+        }
     }
 
     /**

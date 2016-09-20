@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
-use Doctrine\ORM\UnitOfWork;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
@@ -13,6 +11,7 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCategoryPriceRule
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -33,7 +32,7 @@ class CategoryEntityListenerTest extends WebTestCase
             LoadProductData::class,
             LoadCategoryProductData::class
         ]);
-        $this->topic = Topics::CALCULATE_RULE;
+        $this->topic = Topics::RESOLVE_PRICE_RULES;
         $this->cleanQueueMessageTraces();
     }
 

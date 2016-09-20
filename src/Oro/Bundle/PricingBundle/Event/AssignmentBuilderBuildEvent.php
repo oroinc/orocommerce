@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Event;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\EventDispatcher\Event;
 
 class AssignmentBuilderBuildEvent extends Event
@@ -15,14 +16,18 @@ class AssignmentBuilderBuildEvent extends Event
     protected $priceList;
 
     /**
-     * @param PriceList $priceList
-     * @return $this
+     * @var Product
      */
-    public function setPriceList(PriceList $priceList)
+    private $product;
+
+    /**
+     * @param PriceList $priceList
+     * @param Product $product
+     */
+    public function __construct(PriceList $priceList, Product $product = null)
     {
         $this->priceList = $priceList;
-        
-        return $this;
+        $this->product = $product;
     }
 
     /**
@@ -31,5 +36,13 @@ class AssignmentBuilderBuildEvent extends Event
     public function getPriceList()
     {
         return $this->priceList;
+    }
+
+    /**
+     * @return Product
+     */
+    public function getProduct()
+    {
+        return $this->product;
     }
 }

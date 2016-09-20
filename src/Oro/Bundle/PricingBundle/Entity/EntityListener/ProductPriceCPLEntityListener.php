@@ -86,7 +86,7 @@ class ProductPriceCPLEntityListener
         if (!$priceList || !$product || !$priceList->getId() || !$product->getId()) {
             return;
         }
-        $this->priceListTriggerHandler->addTriggersForPriceList(Topics::PRICE_LIST_CHANGE, $priceList, $product);
+        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_COMBINED_PRICES, $priceList, $product);
     }
 
     /**

@@ -24,7 +24,7 @@ class PriceRuleEntityListenerTest extends WebTestCase
         $this->loadFixtures([
             LoadPriceRules::class
         ]);
-        $this->topic = Topics::CALCULATE_RULE;
+        $this->topic = Topics::RESOLVE_PRICE_RULES;
         $this->cleanQueueMessageTraces();
     }
 
