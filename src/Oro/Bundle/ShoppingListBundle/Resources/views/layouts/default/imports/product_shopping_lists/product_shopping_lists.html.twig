@@ -190,8 +190,9 @@
                                 <ul class="shopping-lists-modify hidden"
                                     data-role="line-item-edit">
                                     <li class="shopping-lists-modify__text">
-                                        <input class="shopping-lists-modify__input input input_xs"
+                                        <input class="shopping-lists-modify__input input"
                                                type="number"
+                                               min="1"
                                                value="<%= lineItem.quantity %>"
                                                name="quantity"
                                                data-role="field__quantity"
@@ -249,9 +250,10 @@
                             <ul class="shopping-lists-modify"
                                 data-role="line-item-edit">
                                 <li class="shopping-lists-modify__text">
-                                    <input class="shopping-lists-modify__input input input_xs"
+                                    <input class="shopping-lists-modify__input input"
                                            type="number"
-                                           value="qty"
+                                           min="1" 
+                                           value="1"
                                            name="quantity">
                                 </li>
                                 <li class="shopping-lists-modify__select">

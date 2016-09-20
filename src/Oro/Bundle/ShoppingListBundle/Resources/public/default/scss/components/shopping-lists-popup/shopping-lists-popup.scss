@@ -21,6 +21,7 @@ $shopping-lists-popup-offset: 15px;
     &__list,
     &__quantity {
         display: inline-block;
+        vertical-align: top;
     }
 
     &__list {
