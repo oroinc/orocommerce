@@ -338,7 +338,7 @@ datagrids:
                     - text.name_LOCALIZATION_ID as name
                     - text.all_text_LOCALIZATION_ID as text.all_text
                 from:
-                    - { table: %oro_product.entity.product.class%, alias: product }
+                    - %oro_product.entity.product.class%
         columns:
             sku:
                 label:         oro.product.sku.label

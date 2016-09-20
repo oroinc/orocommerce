@@ -1,0 +1,87 @@
+<?php
+
+namespace Oro\Bundle\WebsiteSearchBundle\Engine;
+
+use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
+use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+class EntityDependenciesResolver
+{
+    /** @var WebsiteSearchMappingProvider */
+    private $mappingProvider;
+
+    /** @var EventDispatcherInterface */
+    private $eventDispatcher;
+
+    /** @var array */
+    private $classesForReindex;
+
+    /** @var array */
+    private $classesDependencies = null;
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param WebsiteSearchMappingProvider $mappingProvider
+     */
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        WebsiteSearchMappingProvider $mappingProvider
+    ) {
+        $this->eventDispatcher = $eventDispatcher;
+        $this->mappingProvider = $mappingProvider;
+    }
+
+    /**
+     * @param null|string|string[] $class
+     * @return array
+     */
+    public function getClassesForReindex($class = null)
+    {
+        if (null === $class) {
+            return $this->mappingProvider->getEntityClasses();
+        }
+
+        $classes = is_array($class) ? $class : [$class];
+
+        $this->fillClassDependencies();
+
+        $this->classesForReindex = [];
+        foreach ($classes as $class) {
+            $this->collectDependentClassesForClass($class);
+        }
+
+        return array_values($this->classesForReindex);
+    }
+
+    private function fillClassDependencies()
+    {
+        if (null !== $this->classesDependencies) {
+            return;
+        }
+
+        $collectDependentClassesEvent = new CollectDependentClassesEvent();
+        $this->eventDispatcher->dispatch(CollectDependentClassesEvent::NAME, $collectDependentClassesEvent);
+
+        $this->classesDependencies = $collectDependentClassesEvent->getDependencies();
+    }
+
+    /**
+     * @param string $class
+     */
+    private function collectDependentClassesForClass($class)
+    {
+        $this->classesForReindex[$class] = $class;
+
+        if (!array_key_exists($class, $this->classesDependencies)) {
+            return;
+        }
+
+        foreach ($this->classesDependencies[$class] as $dependentClass) {
+            if (!array_key_exists($dependentClass, $this->classesForReindex)) {
+                $this->collectDependentClassesForClass($dependentClass);
+            }
+        }
+    }
+}
