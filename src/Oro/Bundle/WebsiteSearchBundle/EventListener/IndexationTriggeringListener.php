@@ -29,7 +29,7 @@ class IndexationTriggeringListener implements OptionalListenerInterface
     /**
      * @var array
      */
-    protected $updatedClassesWithIds = [];
+    protected $changedEntities = [];
 
     /**
      * @var SearchMappingProvider
@@ -108,7 +108,7 @@ class IndexationTriggeringListener implements OptionalListenerInterface
             return;
         }
 
-        if (!empty($this->updatedClassesWithIds)) {
+        if (!empty($this->changedEntities)) {
             $this->triggerReindexationEvent();
         }
     }
@@ -155,11 +155,11 @@ class IndexationTriggeringListener implements OptionalListenerInterface
     {
         $className = ClassUtils::getClass($entity);
 
-        if (!isset($this->updatedClassesWithIds[$className])) {
-            $this->updatedClassesWithIds[$className] = [];
+        if (!isset($this->changedEntities[$className])) {
+            $this->changedEntities[$className] = [];
         }
 
-        $this->updatedClassesWithIds[$className][] = $entity;
+        $this->changedEntities[$className][] = $entity;
     }
 
     /**
@@ -167,7 +167,7 @@ class IndexationTriggeringListener implements OptionalListenerInterface
      */
     protected function triggerReindexationEvent()
     {
-        foreach ($this->updatedClassesWithIds as $class => $entities) {
+        foreach ($this->changedEntities as $class => $entities) {
             $ids = [];
 
             foreach ($entities as $entity) {
@@ -184,6 +184,6 @@ class IndexationTriggeringListener implements OptionalListenerInterface
             $this->dispatcher->dispatch(ReindexationTriggerEvent::EVENT_NAME, $reindexationTriggerEvent);
         }
 
-        $this->updatedClassesWithIds = [];
+        $this->changedEntities = [];
     }
 }
