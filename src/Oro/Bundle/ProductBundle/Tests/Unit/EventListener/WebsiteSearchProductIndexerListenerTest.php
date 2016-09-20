@@ -5,10 +5,11 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
+use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 
 class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCase
@@ -29,9 +30,9 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
     private $productRepository;
 
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var AbstractWebsiteLocalizationProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $localizationHelper;
+    private $websiteLocalizationProvider;
 
     /**
      * @var IndexEntityEvent|\PHPUnit_Framework_MockObject_MockObject
@@ -48,11 +49,14 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
+        $this->websiteLocalizationProvider = $this->getMockBuilder(AbstractWebsiteLocalizationProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new WebsiteSearchProductIndexerListener($this->doctrineHelper, $this->localizationHelper);
+        $this->listener = new WebsiteSearchProductIndexerListener(
+            $this->doctrineHelper,
+            $this->websiteLocalizationProvider
+        );
 
         $this->event = $this->getMockBuilder(IndexEntityEvent::class)
             ->disableOriginalConstructor()
@@ -61,7 +65,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
 
     protected function tearDown()
     {
-        unset($this->productRepository, $this->localizationHelper, $this->listener, $this->event);
+        unset($this->productRepository, $this->websiteLocalizationProvider, $this->listener, $this->event);
     }
 
     /**
@@ -72,6 +76,10 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
         $this->event->expects($this->once())->method('getEntityClass')->willReturn($entityClassName);
 
         $this->event->expects($this->once())->method('getEntityIds')->willReturn([1]);
+
+        $this->event->expects($this->once())->method('getContext')->willReturn([
+            AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => 1,
+        ]);
 
         $product = $this->getMockBuilder(Product::class)
             ->setMethods([
@@ -120,9 +128,9 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
         $localization2 = $this->getMock(Localization::class);
         $localization2->expects($this->any())->method('getId')->willReturn(2);
 
-        $this->localizationHelper
+        $this->websiteLocalizationProvider
             ->expects($this->once())
-            ->method('getLocalizations')
+            ->method('getLocalizationsByWebsiteId')
             ->willReturn([
                 $localization1,
                 $localization2
