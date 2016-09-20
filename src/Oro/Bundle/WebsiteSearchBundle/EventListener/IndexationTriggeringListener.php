@@ -147,7 +147,7 @@ class IndexationTriggeringListener implements OptionalListenerInterface
     }
 
     /**
-     * Add an entity to a helper array before sending them with and ReindexationTriggerEvent
+     * Add an entity to a helper array before sending them with an ReindexationTriggerEvent
      *
      * @param $entity
      */

@@ -34,14 +34,15 @@ class IndexationTriggeringListenerTest extends WebTestCase
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function ($event) use (& $trigerredEvent) {
-            $trigerredEvent = $event;
+        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+            $triggeredEvent = $event;
         });
 
         $product = $this->createProduct();
 
-        $this->assertNotNull($trigerredEvent, 'Event was not triggered.');
-        $this->assertContains($product->getId(), $trigerredEvent->getIds());
+        $this->assertNotNull($triggeredEvent, 'Event was not triggered.');
+        $this->assertEquals(Product::class, $triggeredEvent->getClassName());
+        $this->assertContains($product->getId(), $triggeredEvent->getIds());
     }
 
     public function testTriggersReindexationAfterProductUpdate()
@@ -58,8 +59,8 @@ class IndexationTriggeringListenerTest extends WebTestCase
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function ($event) use (& $trigerredEvent) {
-            $trigerredEvent = $event;
+        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+            $triggeredEvent = $event;
         });
 
         /**
@@ -71,8 +72,39 @@ class IndexationTriggeringListenerTest extends WebTestCase
         $em->persist($product);
         $em->flush();
 
-        $this->assertNotNull($trigerredEvent, 'Event was not triggered.');
-        $this->assertContains($product->getId(), $trigerredEvent->getIds());
+        $this->assertNotNull($triggeredEvent, 'Event was not triggered.');
+        $this->assertEquals(Product::class, $triggeredEvent->getClassName());
+        $this->assertContains($product->getId(), $triggeredEvent->getIds());
+    }
+
+    public function testDoesntTriggerReindexationAfterProductUpdatedWithNonIndexableField()
+    {
+        /**
+         * @var EventDispatcher $eventDispatcher
+         */
+        $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
+
+        $product = $this->createProduct();
+
+        /**
+         * @var ReindexationTriggerEvent $triggeredEvent
+         */
+        $triggeredEvent = null;
+
+        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+            $triggeredEvent = $event;
+        });
+
+        /**
+         * @var EntityManager $em
+         */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $product->setHasVariants(true);
+        $em->persist($product);
+        $em->flush();
+
+        $this->assertNull($triggeredEvent);
     }
 
     public function testTriggersReindexationAfterProductDelete()
@@ -89,8 +121,8 @@ class IndexationTriggeringListenerTest extends WebTestCase
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function ($event) use (& $trigerredEvent) {
-            $trigerredEvent = $event;
+        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+            $triggeredEvent = $event;
         });
 
         /**
@@ -101,8 +133,9 @@ class IndexationTriggeringListenerTest extends WebTestCase
         $em->remove($product);
         $em->flush();
 
-        $this->assertNotNull($trigerredEvent, 'Event was not triggered.');
-        $this->assertContains($product->getId(), $trigerredEvent->getIds());
+        $this->assertNotNull($triggeredEvent, 'Event was not triggered.');
+        $this->assertEquals(Product::class, $triggeredEvent->getClassName());
+        $this->assertContains($product->getId(), $triggeredEvent->getIds());
     }
 
     /**
