@@ -3,7 +3,6 @@
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\AbstractQuery;
-
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
@@ -53,6 +52,7 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         );
 
         $this->builder->setVisibilityChangeAccountSubtreeCacheBuilder($subtreeBuilder);
+
     }
 
     public function testChangeAccountCategoryVisibilityToHidden()
@@ -65,7 +65,7 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         $em = $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountCategoryVisibility');
         $em->persist($visibility);
         $em->flush();
-
+        $this->builder->buildCache();
         $visibilityResolved = $this->getVisibilityResolved();
         $this->assertStatic($visibilityResolved, $visibility, BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN);
     }
@@ -80,7 +80,7 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
 
         $em = $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountCategoryVisibility');
         $em->flush();
-
+        $this->builder->buildCache();
         $visibilityResolved = $this->getVisibilityResolved();
         $this->assertStatic($visibilityResolved, $visibility, BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE);
     }
@@ -93,12 +93,17 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         $visibility = $this->getVisibility();
         $visibility->setVisibility(AccountCategoryVisibility::CATEGORY);
 
-        $em = $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountCategoryVisibility');
+
+        $accountCategoryVisibility = $this->getVisibility();
+        $accountCategoryVisibility->setVisibility(AccountCategoryVisibility::CATEGORY);
+        $em = $this->registry->getManagerForClass(AccountCategoryVisibility::class);
         $em->flush();
+
+        $this->builder->buildCache();
 
         $visibilityResolved = $this->getVisibilityResolved();
         $this->assertEquals(
-            $visibility->getVisibility(),
+            $accountCategoryVisibility->getVisibility(),
             $visibilityResolved['sourceCategoryVisibility']['visibility']
         );
         $this->assertEquals(BaseCategoryVisibilityResolved::SOURCE_STATIC, $visibilityResolved['source']);
@@ -119,7 +124,7 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
 
         $em = $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountCategoryVisibility');
         $em->flush();
-
+        $this->builder->buildCache();
         $visibilityResolved = $this->getVisibilityResolved();
         $this->assertEquals(
             $visibility->getVisibility(),

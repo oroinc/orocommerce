@@ -41,7 +41,7 @@ class QueryFactoryTest extends \PHPUnit_Framework_TestCase
                     'text.sku'
                 ],
                 'from' => [
-                    [ 'table' => 'product', 'alias' => 'p' ]
+                    'product'
                 ]
             ]
         ];

@@ -132,7 +132,7 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
      */
     public function isConfirmationRequired()
     {
-        return (bool)$this->getConfigValue('oro_b2b_account.confirmation_required');
+        return (bool)$this->getConfigValue('oro_account.confirmation_required');
     }
 
     /**
@@ -140,6 +140,6 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
      */
     protected function isSendPasswordInWelcomeEmail()
     {
-        return (bool)$this->getConfigValue('oro_b2b_account.send_password_in_welcome_email');
+        return (bool)$this->getConfigValue('oro_account.send_password_in_welcome_email');
     }
 }

@@ -6,6 +6,7 @@ use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
@@ -65,6 +66,8 @@ class OroCheckoutBundle implements Migration, DatabasePlatformAwareInterface, Re
 
         $extension->renameTable($schema, $queries, 'orob2b_checkout', 'oro_checkout');
         $extension->renameTable($schema, $queries, 'orob2b_checkout_source', 'oro_checkout_source');
+
+        $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_checkout', 'oro_checkout'));
     }
 
     /**

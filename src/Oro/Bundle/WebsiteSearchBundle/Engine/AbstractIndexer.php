@@ -5,8 +5,8 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectContextEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
@@ -32,22 +32,28 @@ abstract class AbstractIndexer implements IndexerInterface
     /** @var EntityAliasResolver */
     protected $entityAliasResolver;
 
+    /** @var EntityDependenciesResolver */
+    protected $entityDependenciesResolver;
+
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param DoctrineHelper $doctrineHelper
      * @param WebsiteSearchMappingProvider $mappingProvider
      * @param EntityAliasResolver $entityAliasResolver
+     * @param EntityDependenciesResolver $entityDependenciesResolver
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         DoctrineHelper $doctrineHelper,
         WebsiteSearchMappingProvider $mappingProvider,
-        EntityAliasResolver $entityAliasResolver
+        EntityAliasResolver $entityAliasResolver,
+        EntityDependenciesResolver $entityDependenciesResolver
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->doctrineHelper = $doctrineHelper;
         $this->mappingProvider = $mappingProvider;
         $this->entityAliasResolver = $entityAliasResolver;
+        $this->entityDependenciesResolver = $entityDependenciesResolver;
     }
 
     /**
@@ -79,6 +85,8 @@ abstract class AbstractIndexer implements IndexerInterface
         $websitesToIndex = $this->getWebsitesToIndex($context);
         $handledItems = 0;
 
+        $entitiesToIndex = $this->getClassesForReindex($entitiesToIndex);
+
         foreach ($websitesToIndex as $websiteId) {
             $websiteContext = $this->collectContextForWebsite($websiteId, $context);
             foreach ($entitiesToIndex as $entityClass) {
@@ -98,6 +106,14 @@ abstract class AbstractIndexer implements IndexerInterface
         if (!$this->mappingProvider->isClassSupported($class)) {
             throw new \InvalidArgumentException('There is no such entity in mapping config.');
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getClassesForReindex($class = null)
+    {
+        return $this->entityDependenciesResolver->getClassesForReindex($class);
     }
 
     /**
