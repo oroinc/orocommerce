@@ -8,6 +8,7 @@ use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
+use Psr\Log\LoggerInterface;
 
 class UPSTransportTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,6 +32,11 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
      */
     protected $transport;
 
+    /**
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $logger;
+
     protected function setUp()
     {
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
@@ -40,7 +46,9 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             'Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface'
         );
 
-        $this->transport = new UPSTransport($this->registry);
+        $this->logger = $this->getMock(LoggerInterface::class);
+
+        $this->transport = new UPSTransport($this->registry, $this->logger);
         $this->transport->setRestClientFactory($this->clientFactory);
     }
 
@@ -96,7 +104,62 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             ->method('post')
             ->willReturn($restResponse);
 
-        //TODO: add test assertions
+        $this->transport->getPrices($rateRequest, $transportEntity);
+    }
+
+    public function testGetPricesException()
+    {
+        /** @var PriceRequest|\PHPUnit_Framework_MockObject_MockObject $rateRequest * */
+        $rateRequest = $this->getMock(PriceRequest::class);
+
+        $integration = new Channel();
+        $transportEntity = new \Oro\Bundle\UPSBundle\Entity\UPSTransport();
+        $integration->setTransport($transportEntity);
+
+        $this->clientFactory->expects(static::once())
+            ->method('createRestClient')
+            ->willReturn($this->client);
+
+        $restResponse = $this->getMock('Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface');
+
+        $json = '{
+            "Fault":{
+                "faultcode":"Client", 
+                "faultstring":"An exception has been raised as a result of client data.", 
+                "detail":{
+                    "Errors":{
+                        "ErrorDetail":{
+                            "Severity":"Hard", 
+                            "PrimaryErrorCode":{
+                                "Code":"111100", 
+                                "Description":"The requested service is invalid from the selected origin."
+                            }
+                        }
+                    }
+                }
+            }
+        }';
+
+        $restResponse->expects(static::once())
+            ->method('json')
+            ->willReturn(json_decode($json, true))
+        ;
+
+        $this->client->expects(static::once())
+            ->method('post')
+            ->willReturn($restResponse)
+        ;
+
+        $this->logger->expects(static::once())
+            ->method('error')
+            ->with(
+                sprintf(
+                    'Price request failed. %s',
+                    'No price data in provided string.'
+                )
+            )
+        ;
+
         $this->transport->getPrices($rateRequest, $transportEntity);
     }
 }

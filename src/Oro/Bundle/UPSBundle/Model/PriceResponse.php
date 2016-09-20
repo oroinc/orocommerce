@@ -22,7 +22,7 @@ class PriceResponse
         if ($data === null ||
             !array_key_exists('RateResponse', $data) ||
             !array_key_exists('RatedShipment', $data['RateResponse'])) {
-            throw new \InvalidArgumentException('No price data in provided string');
+            throw new \InvalidArgumentException('No price data in provided string.');
         }
 
         $this->pricesByServices = [];

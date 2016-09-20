@@ -9,6 +9,7 @@ services:
         class: 'Oro\Bundle\UPSBundle\Provider\UPSTransport'
         arguments:
             - '@doctrine'
+            - '@logger'
         calls:
             - [setRestClientFactory, ['@oro_integration.transport.rest.client_factory']]
         tags:

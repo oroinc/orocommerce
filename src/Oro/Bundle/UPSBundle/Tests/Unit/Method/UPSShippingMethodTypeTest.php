@@ -159,7 +159,7 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
 
         $price = $upsShippingMethodType->calculatePrice($context, $methodOptions, $typeOptions);
 
-        static::assertEquals(Price::create(70, 'USD'), $price);
+        static::assertEquals(Price::create(50.0, 'USD'), $price);
     }
 
     /**

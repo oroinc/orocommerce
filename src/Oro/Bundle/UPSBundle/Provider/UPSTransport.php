@@ -12,6 +12,8 @@ use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Model\PriceResponse;
 
+use Psr\Log\LoggerInterface;
+
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UPSTransport extends AbstractRestTransport
@@ -24,11 +26,18 @@ class UPSTransport extends AbstractRestTransport
     protected $registry;
 
     /**
-     * @param ManagerRegistry $registry
+     * @var LoggerInterface
      */
-    public function __construct(ManagerRegistry $registry)
+    protected $logger;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param LoggerInterface $logger
+     */
+    public function __construct(ManagerRegistry $registry, LoggerInterface $logger)
     {
         $this->registry = $registry;
+        $this->logger = $logger;
     }
 
     /**
@@ -90,7 +99,14 @@ class UPSTransport extends AbstractRestTransport
             if (!is_array($data)) {
                 return null;
             }
-            $priceResponse->parse($data);
+
+            try {
+                $priceResponse->parse($data);
+            } catch (\InvalidArgumentException $e) {
+                $this->logger->error(sprintf('Price request failed. %s', $e->getMessage()));
+
+                return null;
+            }
 
             return $priceResponse;
         }
