@@ -96,15 +96,24 @@
         <tr class="borderless t_paddingless">
             {% set notes = form.comment %}
             <td colspan="5" class="comment">
-                <div class="checkbox_custom-wrapper" >
-                    <label for="{{ 'lineItem-'~prototype_name }}" class="checkbox_custom checkbox_custom_blue
-                                    {% if notes is not empty %} checked {% endif %}" data-checkbox>
-                        <input type="checkbox" name="{{ 'lineItem'~id }}" id="{{ 'lineItem-'~prototype_name }}"
-                               data-role="start-editing" {% if notes is not empty %} checked = "checked" {% endif %}">
-                        <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
-                        <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
-                        <span class="checkbox_custom__text fs13">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
-                    </label>
+                <div class="editable">
+                    <div class="editable__trigger">
+                        <label for="{{ 'lineItem-'~prototype_name }}"
+                               data-checkbox
+                               class="custom-checkbox
+                           {% if notes is not empty %} checked {% endif %}"
+                        >
+                            <input name="{{ 'lineItem'~id }}"
+                                   id="{{ 'lineItem-'~prototype_name }}"
+                                   type="checkbox"
+                                    {% if notes is not empty %} checked = "checked" {% endif %}
+                                   data-role="start-editing"
+                                   class="custom-checkbox__input"
+                            >
+                            <span class="custom-checkbox__icon"></span>
+                            <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
+                        </label>
+                    </div>
 
                     <div class="form-input form-input_textarea" data-role="editor">
                         {{ form_widget(form.comment) }}

@@ -2,14 +2,15 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Provider;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Event\ExtractAddressOptionsEvent;
 use Oro\Bundle\PayPalBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PayPalBundle\Tests\Unit\Method\EntityStub;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ExtractOptionsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,19 +34,19 @@ class ExtractOptionsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetShippingAddressOptions()
     {
-        $entity = new \stdClass();
-        $classname = \stdClass::class;
+        $entity = new Address();
+        $classname = Address::class;
         $keys = [];
-        $entityAlias = 'stdclass';
+        $entityAlias = 'address';
         $event = new ExtractAddressOptionsEvent($entity, $keys);
 
         $this->aliasProviderMock->expects($this->once())->method('getAlias')->with($classname)
             ->willReturn($entityAlias);
 
         $this->dispatcherMock->expects($this->once())->method('dispatch')
-            ->with(ExtractAddressOptionsEvent::NAME . '.stdclass', $event);
+            ->with(ExtractAddressOptionsEvent::NAME . '.address', $event);
 
-        $this->provider->getShippingAddressOptions($classname, $entity, $keys);
+        $this->provider->getShippingAddressOptions($classname, $entity);
     }
 
     public function testGetLineItemPaymentOptions()
@@ -58,6 +59,6 @@ class ExtractOptionsProviderTest extends \PHPUnit_Framework_TestCase
         $this->dispatcherMock->expects($this->once())->method('dispatch')
             ->with(ExtractLineItemPaymentOptionsEvent::NAME, $event);
 
-        $this->provider->getLineItemPaymentOptions($entity, []);
+        $this->provider->getLineItemPaymentOptions($entity);
     }
 }

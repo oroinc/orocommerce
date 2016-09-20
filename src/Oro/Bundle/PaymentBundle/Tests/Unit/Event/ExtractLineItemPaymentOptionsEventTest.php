@@ -16,7 +16,7 @@ class ExtractLineItemPaymentOptionsEventTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->entityMock = $this->getMockBuilder(LineItemsAwareInterface::class)->getMock();
+        $this->entityMock = $this->getMock(LineItemsAwareInterface::class);
         $this->event = new ExtractLineItemPaymentOptionsEvent($this->entityMock);
     }
 
@@ -33,14 +33,21 @@ class ExtractLineItemPaymentOptionsEventTest extends \PHPUnit_Framework_TestCase
         $this->assertContainsOnlyInstancesOf(LineItemOptionModel::class, $this->event->getModels());
     }
 
+    public function testGetModelsWithCount()
+    {
+        $model = new LineItemOptionModel();
+        $this->event->addModel($model);
+
+        $this->assertInternalType('array', $this->event->getModels());
+        $this->assertCount(1, $this->event->getModels());
+
+        $this->event->addModel($model);
+        $this->assertCount(1, $this->event->getModels());
+    }
+
     public function testGetModelsEmpty()
     {
         $this->assertInternalType('array', $this->event->getModels());
         $this->assertEmpty($this->event->getModels());
-    }
-
-    public function testGetModel()
-    {
-        $this->assertInstanceOf(LineItemOptionModel::class, $this->event->getModel());
     }
 }
