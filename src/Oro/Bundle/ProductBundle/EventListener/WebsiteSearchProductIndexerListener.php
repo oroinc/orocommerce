@@ -3,10 +3,12 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 
 class WebsiteSearchProductIndexerListener
@@ -17,9 +19,9 @@ class WebsiteSearchProductIndexerListener
     private $doctrineHelper;
 
     /**
-     * @var LocalizationHelper
+     * @var WebsiteLocalizationProvider
      */
-    private $localizationHelper;
+    private $websiteLocalizationProvider;
 
     /**
      * @var ProductRepository
@@ -28,12 +30,14 @@ class WebsiteSearchProductIndexerListener
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param LocalizationHelper $localizationHelper
+     * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
      */
-    public function __construct(DoctrineHelper $doctrineHelper, LocalizationHelper $localizationHelper)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
+    ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->localizationHelper = $localizationHelper;
+        $this->websiteLocalizationProvider = $websiteLocalizationProvider;
     }
 
     /**
@@ -61,7 +65,13 @@ class WebsiteSearchProductIndexerListener
 
         $products = $this->getProductRepository()->getProductsByIds($event->getEntityIds());
 
-        $localizations = $this->localizationHelper->getLocalizations();
+        $context = $event->getContext();
+
+        $websiteId = (array_key_exists(AbstractIndexer::CONTEXT_WEBSITE_ID_KEY, $context))
+            ? $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY]
+            : null;
+
+        $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 
         foreach ($products as $product) {
             // Non localized fields
