@@ -13,7 +13,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
- * @NamePrefix("orob2b_api_frontend_")
+ * @NamePrefix("oro_api_frontend_")
  */
 class OrderController extends RestController implements ClassResourceInterface
 {
@@ -23,7 +23,7 @@ class OrderController extends RestController implements ClassResourceInterface
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_order_frontend_delete",
+     *      id="oro_order_frontend_delete",
      *      type="entity",
      *      class="OroOrderBundle:Order",
      *      permission="DELETE",

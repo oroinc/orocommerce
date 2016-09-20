@@ -9,7 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class TaxBaseExclusionCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_tax_base_exclusion_collection';
+    const NAME = 'oro_tax_base_exclusion_collection';
 
     /**
      * {@inheritdoc}

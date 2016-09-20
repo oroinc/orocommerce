@@ -1,4 +1,4 @@
 acls:
-    orob2b_payment_transaction:
+    oro_payment_transaction:
         label: oro.payment.security.transaction
         type: action

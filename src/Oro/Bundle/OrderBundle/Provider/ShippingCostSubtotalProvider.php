@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'shipping_cost';
-    const NAME = 'orob2b_order.subtotal_shipping_cost';
+    const NAME = 'oro_order.subtotal_shipping_cost';
 
     /**
      * @var TranslatorInterface

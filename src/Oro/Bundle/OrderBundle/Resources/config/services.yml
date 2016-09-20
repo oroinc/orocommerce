@@ -34,7 +34,7 @@ services:
             - '@oro_pricing.rounding.price_rounding_service'
             - '@oro_pricing.user_currency_manager'
         tags:
-            - { name: orob2b_pricing.subtotal_provider, priority: 20 }
+            - { name: oro_pricing.subtotal_provider, priority: 20 }
 
     oro_order.provider.discount_subtotal:
         class: 'Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider'
@@ -46,7 +46,7 @@ services:
             - '@oro_security.security_facade'
             - '@oro_pricing.user_currency_manager'
         tags:
-            - { name: orob2b_pricing.subtotal_provider, priority: 10 }
+            - { name: oro_pricing.subtotal_provider, priority: 10 }
 
     oro_order.order.provider.order_address:
         class: 'Oro\Bundle\OrderBundle\Provider\OrderAddressProvider'
@@ -119,17 +119,17 @@ services:
         parent: oro_product.event_listener.abstract_product_select_db_query
         calls:
             - [setScope, ['order']]
-            - [setFrontendSystemConfigurationPath, ['oro_b2b_order.frontend_product_visibility']]
-            - [setBackendSystemConfigurationPath, ['oro_b2b_order.backend_product_visibility']]
+            - [setFrontendSystemConfigurationPath, ['oro_order.frontend_product_visibility']]
+            - [setBackendSystemConfigurationPath, ['oro_order.backend_product_visibility']]
         tags:
-            - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
 
     oro_order.event_listener.order.total:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderTotalEventListener'
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
         tags:
-            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent, priority: -255 }
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent, priority: -255 }
 
     oro_order.event_listener.order.address:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderAddressEventListener'
@@ -137,21 +137,21 @@ services:
             - '@templating'
             - '@form.factory'
         tags:
-            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 
     oro_order.event_listener.order.payment_term:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener'
         arguments:
             - '@oro_payment.provider.payment_term'
         tags:
-            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 
     oro_order.event_listener.order.matching_price:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener'
         arguments:
             - '@oro_order.pricing.price_matcher'
         tags:
-            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 
     oro_order.event_listener.order.tier_prices:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener'
@@ -159,7 +159,7 @@ services:
             - '@oro_pricing.provider.combined_product_price'
             - '@oro_pricing.model.price_list_tree_handler'
         tags:
-            - { name: kernel.event_listener, event: orob2b_order.order, method: onOrderEvent }
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 
     oro_order.twig.order:
         class: 'Oro\Bundle\OrderBundle\Twig\OrderExtension'
@@ -186,14 +186,14 @@ services:
             - '@form.factory'
             - '@oro_action.helper.applications'
         tags:
-            - { name: kernel.event_listener, event: orob2b_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
+            - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }
 
     oro_order.validator.checkout_address:
         class: 'Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddressValidator'
         arguments:
             - '@validator'
         tags:
-            - { name: validator.constraint_validator, alias: orob2b_order_address_validator }
+            - { name: validator.constraint_validator, alias: oro_order_address_validator }
 
     oro_order.pricing.price_matcher:
         class: 'Oro\Bundle\OrderBundle\Pricing\PriceMatcher'
@@ -215,7 +215,7 @@ services:
         arguments:
             - '@oro_payment.provider.payment_status'
         tags:
-            - { name: layout.data_provider, alias: orob2b_order_frontend_payment_status_provider }
+            - { name: layout.data_provider, alias: oro_order_frontend_payment_status_provider }
 
     oro_order.event_listener.order_datagrid:
         class: 'Oro\Bundle\OrderBundle\EventListener\OrderDatagridListener'
@@ -238,9 +238,24 @@ services:
         arguments:
             - '@oro_shipping.formatter.shipping_method_label'
         tags:
-            - { name: layout.data_provider, alias: orob2b_order_frontend_shipping_method_provider }
+            - { name: layout.data_provider, alias: oro_order_frontend_shipping_method_provider }
 
     oro_order.provider.privilege_category_provider:
         class: 'Oro\Bundle\OrderBundle\Provider\PrivilegeCategoryProvider'
         tags:
             - { name: oro_user.privilege_category}
+
+    oro_order.layout.provider.top_selling_items:
+        parent: oro_product.layout.data_provider.featured_products
+        tags:
+            - { name: layout.data_provider, alias: top_selling_items }
+
+    oro_order.event_listener.extract_line_item_options:
+        class: 'Oro\Bundle\OrderBundle\EventListener\ExtractLineItemPaymentOptionsListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, method: onExtractLineItemPaymentOptions }
+
+    oro_order.event_listener.extract_address_options.orderaddress:
+        class: 'Oro\Bundle\OrderBundle\EventListener\ExtractAddressOptionsListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.event.extract_address_options.orderaddress, method: onExtractShippingAddressOptions }

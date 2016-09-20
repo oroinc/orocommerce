@@ -3,14 +3,14 @@ system_configuration:
         orders:
             title: oro.order.system_configuration.groups.orders.title
     fields:
-        oro_b2b_order.backend_product_visibility:
+        oro_order.backend_product_visibility:
             data_type: array
-            type: orob2b_product_inventory_status_select
+            type: oro_product_inventory_status_select
             options:
                 label: oro.order.system_configuration.fields.backend_product_visibility.title
-        oro_b2b_order.frontend_product_visibility:
+        oro_order.frontend_product_visibility:
             data_type: array
-            type: orob2b_product_inventory_status_select
+            type: oro_product_inventory_status_select
             options:
                 label: oro.order.system_configuration.fields.frontend_product_visibility.title
     tree:
@@ -23,7 +23,7 @@ system_configuration:
                                 children:
                                     frontend_inventory_statuses_visibility:
                                         children:
-                                            - oro_b2b_order.frontend_product_visibility
+                                            - oro_order.frontend_product_visibility
                                     backend_inventory_statuses_visibility:
                                         children:
-                                            - oro_b2b_order.backend_product_visibility
+                                            - oro_order.backend_product_visibility

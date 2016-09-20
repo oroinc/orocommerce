@@ -5,6 +5,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.model.price_list_request_handler'
             - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.formatter.product_price_formatter'
         tags:
             - { name: layout.data_provider, alias: frontend_product_prices }
 
@@ -21,6 +22,6 @@ services:
         arguments:
             - '@oro_pricing.user_currency_manager'
         tags:
-            - { name: layout.data_provider, alias: orob2b_pricing_currency }
+            - { name: layout.data_provider, alias: oro_pricing_currency }
 
 

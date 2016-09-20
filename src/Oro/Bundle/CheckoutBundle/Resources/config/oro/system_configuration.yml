@@ -7,7 +7,7 @@ system_configuration:
             title: oro.checkout.system_configuration.groups.open_orders.title
 
     fields:
-        oro_b2b_checkout.frontend_open_orders_separate_page:
+        oro_checkout.frontend_open_orders_separate_page:
             data_type: boolean
             type: choice
             priority: 10
@@ -27,4 +27,4 @@ system_configuration:
                                 children:
                                     orders_history_open_orders:
                                         children:
-                                            - oro_b2b_checkout.frontend_open_orders_separate_page
+                                            - oro_checkout.frontend_open_orders_separate_page

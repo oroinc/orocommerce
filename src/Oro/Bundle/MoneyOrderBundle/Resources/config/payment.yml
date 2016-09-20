@@ -11,7 +11,7 @@ services:
         arguments:
             - '@oro_money_order.payment_method.money_order.config'
         tags:
-            - { name: orob2b_payment.payment_method }
+            - { name: oro_payment.payment_method }
 
     oro_money_order.payment_method.view.money_order:
         class: 'Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView'
@@ -19,4 +19,4 @@ services:
         arguments:
             - '@oro_money_order.payment_method.money_order.config'
         tags:
-            - { name: orob2b_payment.payment_method_view }
+            - { name: oro_payment.payment_method_view }

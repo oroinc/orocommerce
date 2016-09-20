@@ -39,7 +39,7 @@ class AccountControllersTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_view', ['id' => $this->accountUser->getAccount()->getId()])
+            $this->getUrl('oro_account_view', ['id' => $this->accountUser->getAccount()->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -59,7 +59,7 @@ class AccountControllersTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_view', ['id' => $this->accountUser->getId()])
+            $this->getUrl('oro_account_account_user_view', ['id' => $this->accountUser->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);

@@ -12,7 +12,7 @@ services:
              - [setDataConverter, ["@oro_warehouse.importexport.inventory_level_converter"]]
              - [setSerializer, ['@oro_warehouse.importexport.serializer.warehouse_inventory_level']]
         tags:
-            - { name: oro_importexport.processor, type: export, entity: %oro_warehouse.entity.warehouse_inventory_level.class%, alias: orob2b_warehouse.detailed_inventory_levels }
+            - { name: oro_importexport.processor, type: export, entity: %oro_warehouse.entity.warehouse_inventory_level.class%, alias: oro_warehouse.detailed_inventory_levels }
 
     # Strategy
     oro_warehouse.importexport.strategy.warehouse_inventory_level:
@@ -48,8 +48,8 @@ services:
             - [setStrategy, ['@oro_warehouse.importexport.strategy.warehouse_inventory_level']]
             - [setSerializer, ['@oro_warehouse.importexport.serializer.warehouse_inventory_level']]
         tags:
-            - { name: oro_importexport.processor, type: import, entity: '%oro_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.warehouse_inventory_level }
-            - { name: oro_importexport.processor, type: import_validation, entity: '%oro_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.warehouse_inventory_level }
+            - { name: oro_importexport.processor, type: import, entity: '%oro_warehouse.entity.warehouse_inventory_level.class%', alias: oro_warehouse.warehouse_inventory_level }
+            - { name: oro_importexport.processor, type: import_validation, entity: '%oro_warehouse.entity.warehouse_inventory_level.class%', alias: oro_warehouse.warehouse_inventory_level }
 
     # Export template
     oro_warehouse.importexport.processor.export_template.inventory_level:
@@ -59,7 +59,7 @@ services:
             - [setDataConverter, ['@oro_warehouse.importexport.inventory_level_converter']]
             - [setSerializer, ['@oro_warehouse.importexport.serializer.warehouse_inventory_level']]
         tags:
-            - { name: oro_importexport.processor, type: export_template, entity: '%oro_warehouse.entity.warehouse_inventory_level.class%', alias: orob2b_warehouse.detailed_inventory_levels_template }
+            - { name: oro_importexport.processor, type: export_template, entity: '%oro_warehouse.entity.warehouse_inventory_level.class%', alias: oro_warehouse.detailed_inventory_levels_template }
 
     # Template Fixture
     oro_warehouse.importexport.template_fixture.warehouse_inventory_level:

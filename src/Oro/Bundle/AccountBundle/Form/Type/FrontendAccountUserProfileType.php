@@ -10,7 +10,7 @@ use Oro\Bundle\UserBundle\Form\Type\ChangePasswordType;
 
 class FrontendAccountUserProfileType extends AbstractType
 {
-    const NAME = 'orob2b_account_frontend_account_user_profile';
+    const NAME = 'oro_account_frontend_account_user_profile';
 
     /**
      * @var string

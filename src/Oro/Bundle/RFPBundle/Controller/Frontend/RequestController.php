@@ -22,10 +22,10 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 class RequestController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_rfp_frontend_request_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_rfp_frontend_request_view", requirements={"id"="\d+"})
      * @Layout
      * @Acl(
-     *      id="orob2b_rfp_frontend_request_view",
+     *      id="oro_rfp_frontend_request_view",
      *      type="entity",
      *      class="OroRFPBundle:Request",
      *      permission="ACCOUNT_VIEW",
@@ -45,8 +45,8 @@ class RequestController extends Controller
     }
 
     /**
-     * @AclAncestor("orob2b_rfp_frontend_request_view")
-     * @Route("/", name="orob2b_rfp_frontend_request_index")
+     * @AclAncestor("oro_rfp_frontend_request_view")
+     * @Route("/", name="oro_rfp_frontend_request_index")
      * @Layout(vars={"entity_class"})
      * @return array
      */
@@ -56,7 +56,7 @@ class RequestController extends Controller
         $viewPermission = 'VIEW;entity:' . $entityClass;
         if (!$this->getSecurityFacade()->isGranted($viewPermission)) {
             return $this->redirect(
-                $this->generateUrl('orob2b_rfp_frontend_request_create')
+                $this->generateUrl('oro_rfp_frontend_request_create')
             );
         }
 
@@ -67,13 +67,13 @@ class RequestController extends Controller
 
     /**
      * @Acl(
-     *      id="orob2b_rfp_frontend_request_create",
+     *      id="oro_rfp_frontend_request_create",
      *      type="entity",
      *      class="OroRFPBundle:Request",
      *      permission="CREATE",
      *      group_name="commerce"
      * )
-     * @Route("/create", name="orob2b_rfp_frontend_request_create")
+     * @Route("/create", name="oro_rfp_frontend_request_create")
      * @Layout
      *
      * @param Request $request
@@ -94,10 +94,10 @@ class RequestController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_rfp_frontend_request_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_rfp_frontend_request_update", requirements={"id"="\d+"})
      * @Layout
      * @Acl(
-     *      id="orob2b_rfp_frontend_request_update",
+     *      id="oro_rfp_frontend_request_update",
      *      type="entity",
      *      class="OroRFPBundle:Request",
      *      permission="ACCOUNT_EDIT",
@@ -140,8 +140,8 @@ class RequestController extends Controller
             function (RFPRequest $rfpRequest) use ($securityFacade) {
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
                     $route = $securityFacade->isGranted('ACCOUNT_EDIT', $rfpRequest)
-                        ? 'orob2b_rfp_frontend_request_update'
-                        : 'orob2b_rfp_frontend_request_view';
+                        ? 'oro_rfp_frontend_request_update'
+                        : 'oro_rfp_frontend_request_view';
 
                     return [
                         'route' => $route,
@@ -150,20 +150,20 @@ class RequestController extends Controller
                 }
 
                 return [
-                    'route' => 'orob2b_rfp_frontend_request_create',
+                    'route' => 'oro_rfp_frontend_request_create',
                     'parameters' => [],
                 ];
             },
             function (RFPRequest $rfpRequest) use ($securityFacade) {
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
                     return [
-                        'route' => 'orob2b_rfp_frontend_request_view',
+                        'route' => 'oro_rfp_frontend_request_view',
                         'parameters' => ['id' => $rfpRequest->getId()],
                     ];
                 }
 
                 return [
-                    'route' => 'orob2b_rfp_frontend_request_create',
+                    'route' => 'oro_rfp_frontend_request_create',
                     'parameters' => [],
                 ];
             },
@@ -218,7 +218,7 @@ class RequestController extends Controller
     protected function getDefaultRequestStatus()
     {
         $requestStatusClass = $this->container->getParameter('oro_rfp.entity.request.status.class');
-        $defaultRequestStatusName = $this->get('oro_config.manager')->get('oro_b2b_rfp.default_request_status');
+        $defaultRequestStatusName = $this->get('oro_config.manager')->get('oro_rfp.default_request_status');
 
         return $this
             ->getDoctrine()

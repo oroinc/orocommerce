@@ -66,8 +66,8 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
     public function manualEditDataProvider()
     {
         return [
-            ['shipping', 'orob2b_quote_address_shipping_allow_manual_backend', true],
-            ['shipping', 'orob2b_quote_address_shipping_allow_manual_backend', false],
+            ['shipping', 'oro_quote_address_shipping_allow_manual_backend', true],
+            ['shipping', 'oro_quote_address_shipping_allow_manual_backend', false],
         ];
     }
 

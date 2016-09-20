@@ -53,17 +53,15 @@ datagrids:
                 updatedAt:
                     type:      datetime
                     data_name: warehouse.updatedAt
-        properties:
-            view_link:
-                type:  url
-                params: [ id ]
 
     warehouse-grid:
-        acl_resource: orob2b_warehouse_view
+        acl_resource: oro_warehouse_view
         extends: base-warehouse-grid
         properties:
             view_link:
-                route: orob2b_warehouse_view
+                route: oro_warehouse_view
+                type:  url
+                params: [ id ]
         actions:
             view:
                 type:          navigate
@@ -71,10 +69,10 @@ datagrids:
                 link:          view_link
                 icon:          eye-open
                 rowAction:     true
-                acl_resource:  orob2b_warehouse_view
+                acl_resource:  oro_warehouse_view
 
     warehouse-inventory-level-grid:
-        acl_resource: orob2b_product_warehouse_inventory_update
+        acl_resource: oro_product_warehouse_inventory_update
         source:
             type:         orm
             query:
@@ -134,7 +132,7 @@ datagrids:
 
     warehouse-inventory-grid:
         extended_entity_name: %oro_warehouse.entity.warehouse_inventory_level.class%
-        acl_resource: orob2b_product_warehouse_inventory_view
+        acl_resource: oro_product_warehouse_inventory_view
         source:
             type: orm
             query:
@@ -167,7 +165,7 @@ datagrids:
                 data_name: product.names
             delete_link:
                 type: url
-                route: orob2b_api_warehouse_delete_warehouse_inventory_level
+                route: oro_api_warehouse_delete_warehouse_inventory_level
                 params: [ id ]
         inline_editing:
             enable: true
@@ -266,7 +264,7 @@ datagrids:
                 label:         oro.grid.action.delete
                 link:          delete_link
                 icon:          trash
-                acl_resource:  orob2b_warehouse_inventory_level_delete
+                acl_resource:  oro_warehouse_inventory_level_delete
                 mass_action:   true
         options:
             requireJSModules:

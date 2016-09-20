@@ -1,6 +1,6 @@
 datagrids:
     pricing-price-list-select-grid:
-        acl_resource:      orob2b_pricing_price_list_view
+        acl_resource:      oro_pricing_price_list_view
         options:
             entityHint:        priceList
         source:
@@ -86,11 +86,11 @@ datagrids:
         properties:
             default_link:
                 type: url
-                route: orob2b_pricing_price_list_default
+                route: oro_pricing_price_list_default
                 params: [ id ]
             view_link:
                 type:  url
-                route: orob2b_pricing_price_list_view
+                route: oro_pricing_price_list_view
                 params:
                     - id
         actions:
@@ -99,18 +99,18 @@ datagrids:
                 label:         oro.pricing.pricelist.set_default.label
                 link:          default_link
                 icon:          check
-                acl_resource:  orob2b_pricing_price_list_update
+                acl_resource:  oro_pricing_price_list_update
             view:
                 type:          navigate
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_pricing_price_list_view
+                acl_resource:  oro_pricing_price_list_view
                 rowAction:     true
         action_configuration: ['@oro_pricing.datagrid.price_list_permissions_provider', "getPermissions"]
 
     base-price-list-relations-grid:
-        acl_resource:      orob2b_pricing_price_list_view
+        acl_resource:      oro_pricing_price_list_view
         options:
             entity_pagination: true
             skip_count_walker: true
@@ -174,7 +174,7 @@ datagrids:
                 label: oro.account.parent.label
         properties:
             view_link:
-                route:  orob2b_account_view
+                route:  oro_account_view
         sorters:
             columns:
                 groupName:
@@ -196,7 +196,7 @@ datagrids:
                     data_name: parent.name
         actions:
             view:
-                acl_resource: orob2b_account_view
+                acl_resource: oro_account_view
 
     price-list-account-groups-grid:
         extends:                base-price-list-relations-grid
@@ -213,13 +213,13 @@ datagrids:
                 label: oro.account.accountgroup.name.label
         properties:
             view_link:
-                route:  orob2b_account_group_view
+                route:  oro_account_group_view
         actions:
             view:
-                acl_resource: orob2b_account_group_view
+                acl_resource: oro_account_group_view
 
     base-price-list-select-relations-grid:
-        acl_resource:       orob2b_pricing_price_list_update
+        acl_resource:       oro_pricing_price_list_update
         source:
             type:               orm
             query:
@@ -362,7 +362,7 @@ datagrids:
                     excluded:   '#priceListRemoveWebsites'
 
     price-list-product-prices-grid:
-        acl_resource:      orob2b_pricing_product_price_view
+        acl_resource:      oro_pricing_product_price_view
         options:
             entityHint:        productPrice
         source:
@@ -439,7 +439,7 @@ datagrids:
                     type:      choice
                     data_name: unitCode
                     options:
-                        field_type: orob2b_product_unit_selection
+                        field_type: oro_product_unit_selection
                 value:
                     type:      number
                     data_name: productPrice.value
@@ -467,12 +467,12 @@ datagrids:
                 data_name: product.names
             view_product_link:
                 type:  url
-                route: orob2b_product_view
+                route: oro_product_view
                 params:
                     id: productId
             update_link:
                 type: url
-                route: orob2b_product_price_update_widget
+                route: oro_product_price_update_widget
                 params: [ id ]
         actions:
             view_product:
@@ -480,14 +480,14 @@ datagrids:
                 label:         oro.pricing.grid.action.view.product
                 link:          view_product_link
                 icon:          eye-open
-                acl_resource:  orob2b_product_view
+                acl_resource:  oro_product_view
                 rowAction:     true
             update:
                 type:          dialog
                 label:         oro.grid.action.update
                 link:          update_link
                 icon:          edit
-                acl_resource:  orob2b_pricing_product_price_update
+                acl_resource:  oro_pricing_product_price_update
                 widgetOptions:
                     reload-grid-name: price-list-product-prices-grid
                     options:
@@ -495,7 +495,7 @@ datagrids:
                             width: 650
 
     product-prices-grid:
-        acl_resource:      orob2b_pricing_product_price_view
+        acl_resource:      oro_pricing_product_price_view
         options:
             entityHint:        price
         source:
@@ -561,7 +561,7 @@ datagrids:
                     type:      choice
                     data_name: unitCode
                     options:
-                        field_type: orob2b_product_unit_selection
+                        field_type: oro_product_unit_selection
                 value:
                     type:      number
                     data_name: productPrice.value
@@ -575,7 +575,7 @@ datagrids:
             priceListId: ~
             view_price_list_link:
                 type:  url
-                route: orob2b_pricing_price_list_view
+                route: oro_pricing_price_list_view
                 params:
                     id: priceListId
         actions:
@@ -584,11 +584,11 @@ datagrids:
                 label:         oro.pricing.grid.action.view.price_list
                 link:          view_price_list_link
                 icon:          eye-open
-                acl_resource:  orob2b_pricing_price_list_view
+                acl_resource:  oro_pricing_price_list_view
                 rowAction:     true
 
     pricing-price-attribute-price-list-grid:
-        acl_resource:      orob2b_pricing_price_attribute_price_list_view
+        acl_resource:      oro_pricing_price_attribute_price_list_view
         options:
             entityHint:        priceAttributepriceList
         source:
@@ -618,12 +618,12 @@ datagrids:
         properties:
             view_link:
                 type:  url
-                route: orob2b_pricing_price_attribute_price_list_view
+                route: oro_pricing_price_attribute_price_list_view
                 params:
                     - id
             update_link:
                 type:  url
-                route: orob2b_pricing_price_attribute_price_list_update
+                route: oro_pricing_price_attribute_price_list_update
                 params:
                     - id
         sorters:
@@ -658,11 +658,11 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_pricing_price_attribute_price_list_view
+                acl_resource:  oro_pricing_price_attribute_price_list_view
                 rowAction:     true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
                 icon:          edit
-                acl_resource:  orob2b_pricing_price_attribute_price_list_update
+                acl_resource:  oro_pricing_price_attribute_price_list_update

@@ -1,23 +1,23 @@
 system_configuration:
     groups:
         design:
-            title: orob2b_frontend.system_configuration.groups.design.title
+            title: oro_frontend.system_configuration.groups.design.title
         theme:
-            title: orob2b_frontend.system_configuration.groups.theme.title
+            title: oro_frontend.system_configuration.groups.theme.title
             icon: 'icon-picture'
         theme_settings:
-            title: orob2b_frontend.system_configuration.groups.theme_settings.title
+            title: oro_frontend.system_configuration.groups.theme_settings.title
         commerce:
-            title: orob2b_frontend.system_configuration.groups.commerce.title
+            title: oro_frontend.system_configuration.groups.commerce.title
             icon:  icon-shopping-cart
 
     fields:
-        oro_b2b_frontend.frontend_theme:
+        oro_frontend.frontend_theme:
             data_type: string
-            type: orob2b_frontend_theme_select
+            type: oro_frontend_theme_select
             priority: 100
             options:
-                label: orob2b_frontend.system_configuration.fields.frontend_theme.label
+                label: oro_frontend.system_configuration.fields.frontend_theme.label
 
     tree:
         system_configuration:
@@ -30,4 +30,4 @@ system_configuration:
                                 children:
                                     theme_settings:
                                         children:
-                                            - oro_b2b_frontend.frontend_theme
+                                            - oro_frontend.frontend_theme

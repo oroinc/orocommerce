@@ -2,7 +2,7 @@ services:
     oro_pricing.layout.type.product_prices:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
-            - [setOptionsConfig, [{prices: {required: true}}]]
+            - [setOptionsConfig, [{productPrices: {required: true}}]]
             - [setName, ['product_prices']]
         tags:
              - { name: layout.block_type, alias: product_prices }
@@ -27,7 +27,7 @@ services:
                 - setOptionsConfig
                 -
                     -
-                        route: {default: 'orob2b_pricing_frontend_entity_totals'}
+                        route: {default: 'oro_pricing_frontend_entity_totals'}
                         pageComponent: ~
                         events: ~
                         selectors: ~

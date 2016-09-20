@@ -27,7 +27,7 @@ class OroRFPExtensionTest extends ExtensionTestCase
         ];
         $this->assertParametersLoaded($expectedParameters);
 
-        $this->assertEquals('oro_b2b_rfp', $extension->getAlias());
+        $this->assertEquals('oro_rfp', $extension->getAlias());
 
         $this->assertExtensionConfigsLoaded([OroRFPExtension::ALIAS]);
     }

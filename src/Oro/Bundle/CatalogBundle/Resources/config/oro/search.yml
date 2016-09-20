@@ -1,9 +1,9 @@
 search:
     Oro\Bundle\CatalogBundle\Entity\Category:
-        alias:                          orob2b_category
+        alias:                          oro_category
         title_fields:                   [defaultTitle]
         route:
-            name:                       orob2b_catalog_category_update
+            name:                       oro_catalog_category_update
             parameters:
                 id:                     id
         search_template:                OroCatalogBundle:Category:searchResult.html.twig

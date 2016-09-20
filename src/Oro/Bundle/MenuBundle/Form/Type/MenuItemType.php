@@ -14,7 +14,7 @@ use Oro\Bundle\MenuBundle\Entity\MenuItem;
 
 class MenuItemType extends AbstractType
 {
-    const NAME = 'orob2b_menu_item';
+    const NAME = 'oro_menu_item';
 
     /**
      * @var string

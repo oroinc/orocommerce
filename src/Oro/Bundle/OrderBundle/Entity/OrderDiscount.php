@@ -21,8 +21,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  */
 class OrderDiscount
 {
-    const TYPE_AMOUNT = 'orob2b_order_discount_item_type_amount';
-    const TYPE_PERCENT = 'orob2b_order_discount_item_type_percent';
+    const TYPE_AMOUNT = 'oro_order_discount_item_type_amount';
+    const TYPE_PERCENT = 'oro_order_discount_item_type_percent';
 
     /**
      * @var integer

@@ -97,7 +97,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     {
         $this->configManager->expects($this->any())
             ->method('get')
-            ->with('oro_b2b_order.frontend_product_visibility')
+            ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
         $entity = new \stdClass();
@@ -125,7 +125,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit_Framework_TestCase
     {
         $this->configManager->expects($this->any())
             ->method('get')
-            ->with('oro_b2b_order.frontend_product_visibility')
+            ->with('oro_order.frontend_product_visibility')
             ->willReturn(['in_stock']);
 
         $entity = new \stdClass();

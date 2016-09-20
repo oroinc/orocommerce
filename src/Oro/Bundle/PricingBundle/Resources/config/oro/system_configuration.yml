@@ -12,13 +12,13 @@ system_configuration:
             title: oro.pricing.system_configuration.groups.pricing.title
             icon: 'icon-credit-card'
     fields:
-        oro_b2b_pricing.default_price_lists:
+        oro_pricing.default_price_lists:
             data_type: array
-            type: orob2b_pricing_price_list_system_config
+            type: oro_pricing_price_list_system_config
             options:
                 label: oro.pricing.system_configuration.fields.price_lists.title
                 resettable: false
-        oro_b2b_pricing.rounding_type:
+        oro_pricing.rounding_type:
             data_type: string
             type: choice
             priority: 10
@@ -35,7 +35,7 @@ system_configuration:
                     5: oro.pricing.system_configuration.fields.rounding_type.choices.half_down.label
                     6: oro.pricing.system_configuration.fields.rounding_type.choices.half_up.label
                     4: oro.pricing.system_configuration.fields.rounding_type.choices.half_even.label
-        oro_b2b_pricing.precision:
+        oro_pricing.precision:
             data_type: integer
             type: integer
             priority: 20
@@ -48,7 +48,7 @@ system_configuration:
                         min: 0
                     - Type:
                         type: integer
-        oro_b2b_pricing.offset_of_processing_cpl_prices:
+        oro_pricing.offset_of_processing_cpl_prices:
             data_type: float
             type: number
             options:
@@ -59,7 +59,7 @@ system_configuration:
                     - 'Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero': ~
                     - Type:
                         type: float
-        oro_b2b_pricing.enabled_currencies:
+        oro_pricing.enabled_currencies:
             data_type: array
             type: oro_currency_selection
             priority: 200
@@ -69,9 +69,9 @@ system_configuration:
                 multiple: true
                 constraints:
                     - NotBlank: ~
-        oro_b2b_pricing.default_currency:
+        oro_pricing.default_currency:
             data_type: string
-            type: orob2b_pricing_default_currency_selection
+            type: oro_pricing_default_currency_selection
             priority: 100
             options:
                 label: oro.pricing.system_configuration.fields.default_currency.label
@@ -92,18 +92,18 @@ system_configuration:
                                     price_rounding:
                                         priority: 200
                                         children:
-                                            - oro_b2b_pricing.rounding_type
-                                            - oro_b2b_pricing.precision
+                                            - oro_pricing.rounding_type
+                                            - oro_pricing.precision
                                     default_price_lists:
                                         priority: 100
                                         children:
-                                            - oro_b2b_pricing.default_price_lists
+                                            - oro_pricing.default_price_lists
                                     price_lists_update:
                                         priority: 50
                                         children:
-                                            - oro_b2b_pricing.offset_of_processing_cpl_prices
+                                            - oro_pricing.offset_of_processing_cpl_prices
                                     display_currencies:
                                         priority: 20
                                         children:
-                                            - oro_b2b_pricing.enabled_currencies
-                                            - oro_b2b_pricing.default_currency
+                                            - oro_pricing.enabled_currencies
+                                            - oro_pricing.default_currency

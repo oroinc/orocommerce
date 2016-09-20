@@ -45,6 +45,7 @@ oro:
         discounts.label: Discounts
         discountitem.add_label: Add Discount
         order_history.label: Order History
+        top_selling_items.label: Top Selling Items
 
         orderdiscount:
             entity_label: Order Discount
@@ -114,8 +115,6 @@ oro:
 
             column:
                 product: 'Product'
-
-            frontend.order.view.label: Item#
 
         orderdiscountitem:
             columns:

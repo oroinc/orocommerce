@@ -8,13 +8,13 @@
     {% oro_title_set({params : {"%title%": entity.defaultTitle.string} }) %}
 {% endif %}
 
-{% set formAction = entityId ? path('orob2b_catalog_category_update', { 'id': entityId }) : path('orob2b_catalog_category_create', { 'id': parentCategoryId })  %}
+{% set formAction = entityId ? path('oro_catalog_category_update', { 'id': entityId }) : path('oro_catalog_category_create', { 'id': parentCategoryId })  %}
 
 {% block navButtons %}
     {% if entityId %}
-        {% if resource_granted('orob2b_catalog_category_create') %}
+        {% if resource_granted('oro_catalog_category_create') %}
             {{ UI.button({
-                'path' : path('orob2b_catalog_category_create', { 'id': entityId }),
+                'path' : path('oro_catalog_category_create', { 'id': entityId }),
                 'iCss': 'icon-folder-close',
                 'aCss': 'btn-primary',
                 'label': 'oro.ui.create_entity'|trans({'%entityName%': 'oro.catalog.subcategory.entity_label'|trans}),
@@ -24,20 +24,20 @@
         {% set canBeDeleted = resource_granted('DELETE', entity) and entityId != rootCategory.id %}
         {% if canBeDeleted %}
             {{ UI.deleteButton({
-                'dataUrl': path('orob2b_api_delete_category', {'id': entityId}),
-                'dataRedirect': path('orob2b_catalog_category_index'),
+                'dataUrl': path('oro_api_delete_category', {'id': entityId}),
+                'dataRedirect': path('oro_catalog_category_index'),
                 'aCss': 'no-hash remove-button',
                 'dataId': entityId,
                 'id': 'btn-remove-account',
                 'entity_label': 'oro.catalog.category.entity_label'|trans,
             }) }}
         {% endif %}
-        {% if resource_granted('orob2b_catalog_category_create') or canBeDeleted %}
+        {% if resource_granted('oro_catalog_category_create') or canBeDeleted %}
             {{ UI.buttonSeparator() }}
         {% endif %}
     {% endif %}
 
-    {{ UI.cancelButton(path('orob2b_catalog_category_index')) }}
+    {{ UI.cancelButton(path('oro_catalog_category_index')) }}
     {% set html = UI.saveAndStayButton() %}
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
@@ -46,7 +46,7 @@
     {% if entityId %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_catalog_category_index'),
+            'indexPath':   path('oro_catalog_category_index'),
             'indexLabel': 'oro.catalog.category.entity_plural_label'|trans,
             'entityTitle': entity.defaultTitle.string|default('N/A'|trans)
         } %}
@@ -95,7 +95,7 @@
         }] ) %}
     {% endif %}
 
-    {% if resource_granted('orob2b_product_update') %}
+    {% if resource_granted('oro_product_update') %}
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'oro.product.entity_plural_label'|trans,
             'subblocks':
@@ -126,12 +126,12 @@
     <div class="category-container tree-component-container">
         <div class="category category-tree tree-component">
             {% set treeOptions = {
-                'key' : 'b2b-category',
-                'data' : orob2b_category_list(),
+                'key' : 'commerce-category',
+                'data' : oro_category_list(),
                 'nodeId' : entityId ? entityId : parentCategoryId,
-                'updateAllowed' : resource_granted('orob2b_catalog_category_update'),
-                'onSelectRoute' : 'orob2b_catalog_category_update',
-                'onMoveRoute' : 'orob2b_catalog_category_move'
+                'updateAllowed' : resource_granted('oro_catalog_category_update'),
+                'onSelectRoute' : 'oro_catalog_category_update',
+                'onMoveRoute' : 'oro_catalog_category_move'
             } %}
             <div
                 data-page-component-module="orocatalog/js/app/components/tree-manage-component"

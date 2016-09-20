@@ -47,7 +47,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_account_delete_account_group', ['id' => $group->getId()])
+            $this->getUrl('oro_api_account_delete_account_group', ['id' => $group->getId()])
         );
         $result = $this->client->getResponse();
 
@@ -123,13 +123,8 @@ class AccountGroupChangesListenerTest extends WebTestCase
 
 
         $actual = $this->messageProducer->getSentMessages();
-        $this->assertEquals(
-            $expectedMessages,
-            $actual,
-            "Expected messages in queue should equals actual",
-            $delta = 0.0,
-            $maxDepth = 10,
-            $canonicalize = true
-        );
+        foreach ($expectedMessages as $expectedMessage) {
+            $this->assertContains($expectedMessage, $actual);
+        }
     }
 }

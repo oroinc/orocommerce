@@ -5,7 +5,7 @@ placeholders:
                 rfp_view_buttons:
                     order: 200
 
-        orob2b_product_quick_add_buttons:
+        oro_product_quick_add_buttons:
             items:
                 rfp_quick_add: ~
 

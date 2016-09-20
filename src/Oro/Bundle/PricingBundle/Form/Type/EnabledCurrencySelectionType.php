@@ -6,8 +6,8 @@ use Oro\Bundle\CurrencyBundle\Form\Type\AbstractCurrencySelectionType;
 
 class EnabledCurrencySelectionType extends AbstractCurrencySelectionType
 {
-    const NAME = 'orob2b_pricing_enabled_currency_selection';
-    const CURRENCY_SELECTOR_CONFIG_KEY = 'oro_b2b_pricing.enabled_currencies';
+    const NAME = 'oro_pricing_enabled_currency_selection';
+    const CURRENCY_SELECTOR_CONFIG_KEY = 'oro_pricing.enabled_currencies';
 
       /**
      * {@inheritDoc}

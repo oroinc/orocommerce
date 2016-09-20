@@ -15,7 +15,7 @@ class Role extends AbstractPageEntity
      */
     public function setLabel($label)
     {
-        $this->test->byXpath("//*[@data-ftid='orob2b_account_account_user_role_label']")->value($label);
+        $this->test->byXpath("//*[@data-ftid='oro_account_account_user_role_label']")->value($label);
         return $this;
     }
 
@@ -24,7 +24,7 @@ class Role extends AbstractPageEntity
      */
     public function getLabel()
     {
-        return $this->test->byXpath("//*[@data-ftid='orob2b_account_account_user_role_label']")->value();
+        return $this->test->byXpath("//*[@data-ftid='oro_account_account_user_role_label']")->value();
     }
 
     /**

@@ -1,0 +1,6 @@
+layout:
+    actions:
+        - '@setOption':
+            id: __products
+            optionName: items_data.productPrices
+            optionValue: '=data["frontend_product_prices"].getByProducts(items)'

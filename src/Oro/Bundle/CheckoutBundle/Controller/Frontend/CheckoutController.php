@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -33,12 +34,12 @@ class CheckoutController extends Controller
      *
      * @Route(
      *     "/{id}",
-     *     name="orob2b_checkout_frontend_checkout",
+     *     name="oro_checkout_frontend_checkout",
      *     requirements={"id"="\d+"}
      * )
      * @Layout(vars={"workflowStepName", "workflowName"})
      * @Acl(
-     *      id="orob2b_checkout_frontend_checkout",
+     *      id="oro_checkout_frontend_checkout",
      *      type="entity",
      *      class="OroCheckoutBundle:Checkout",
      *      permission="ACCOUNT_EDIT",
@@ -169,6 +170,8 @@ class CheckoutController extends Controller
                     $transitionForm->submit($request);
                     if ($transitionForm->isValid()) {
                         $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
+                    } else {
+                        $this->handleFormErrors($transitionForm->getErrors());
                     }
                 } else {
                     $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
@@ -232,5 +235,13 @@ class CheckoutController extends Controller
         }
 
         return reset($items);
+    }
+
+    /**
+     * @param FormErrorIterator $errors
+     */
+    protected function handleFormErrors(FormErrorIterator $errors)
+    {
+        $this->get('oro_checkout.workflow_state.handler.checkout_error')->addFlashWorkflowStateWarning($errors);
     }
 }

@@ -2,19 +2,19 @@ services:
     oro_pricing.form.type.price_list:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListType'
         tags:
-            - { name: form.type, alias: orob2b_pricing_price_list }
+            - { name: form.type, alias: oro_pricing_price_list }
 
     oro_pricing.form.type.price_attribute_price_list:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceAttributePriceListType'
         calls:
             - [setDataClass, ['%oro_pricing.entity.price_attribute_price_list.class%']]
         tags:
-            - { name: form.type, alias: orob2b_pricing_price_attribute_price_list }
+            - { name: form.type, alias: oro_pricing_price_attribute_price_list }
 
     oro_pricing.form.type.price_list_select:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType'
         tags:
-            - { name: form.type, alias: orob2b_pricing_price_list_select }
+            - { name: form.type, alias: oro_pricing_price_list_select }
 
     oro_pricing.form.type.product_price_collection:
         class: 'Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType'
@@ -24,31 +24,31 @@ services:
             - [setDataClass, ['%oro_pricing.entity.product_price.class%']]
             - [setPriceListClass, ['%oro_pricing.entity.price_list.class%']]
         tags:
-            - { name: form.type, alias: orob2b_pricing_product_price_collection }
+            - { name: form.type, alias: oro_pricing_product_price_collection }
 
     oro_pricing.form.type.product_price:
         class: 'Oro\Bundle\PricingBundle\Form\Type\ProductPriceType'
         tags:
-            - { name: form.type, alias: orob2b_pricing_product_price }
+            - { name: form.type, alias: oro_pricing_product_price }
         calls:
             - [setDataClass, ['%oro_pricing.entity.product_price.class%']]
 
     oro_pricing.form.type.price_type_selector:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType'
         tags:
-            - { name: form.type, alias: "orob2b_pricing_price_type" }
+            - { name: form.type, alias: "oro_pricing_price_type" }
 
     oro_pricing.form.type.price_list_product_price:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListProductPriceType'
         tags:
-            - { name: form.type, alias: orob2b_pricing_price_list_product_price }
+            - { name: form.type, alias: oro_pricing_price_list_product_price }
         calls:
             - [setDataClass, ['%oro_pricing.entity.product_price.class%']]
 
     oro_pricing.form.price_list_collection:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType'
         tags:
-            - { name: form.type, alias: orob2b_pricing_price_list_collection }
+            - { name: form.type, alias: oro_pricing_price_list_collection }
 
     oro_pricing.form.price_lists_settings:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType'
@@ -56,7 +56,7 @@ services:
             - "@doctrine"
             - "@property_accessor"
         tags:
-            - { name: form.type, alias: orob2b_pricing_price_lists_settings }
+            - { name: form.type, alias: oro_pricing_price_lists_settings }
 
     oro_pricing.form.type.product_price_filter:
         class: 'Oro\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType'
@@ -65,35 +65,35 @@ services:
             - "@doctrine"
             - "@oro_product.formatter.product_unit_label"
         tags:
-            - { name: form.type, alias: orob2b_pricing_product_price_filter }
+            - { name: form.type, alias: oro_pricing_product_price_filter }
 
     oro_pricing.form.extension.account_type:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\AccountFormExtension'
         arguments:
             - "@oro_pricing.entity_listener.account"
         tags:
-            - { name: form.type_extension, alias: orob2b_account_type }
+            - { name: form.type_extension, alias: oro_account_type }
 
     oro_pricing.form.extension.account_group_type:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension'
         arguments:
             - "@oro_pricing.entity_listener.account_group"
         tags:
-            - { name: form.type_extension, alias: orob2b_account_group_type }
+            - { name: form.type_extension, alias: oro_account_group_type }
 
     oro_pricing.form.extension.product_type:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\ProductFormExtension'
         arguments:
             - "@doctrine"
         tags:
-            - { name: form.type_extension, alias: orob2b_product }
+            - { name: form.type_extension, alias: oro_product }
 
     oro_pricing.form.extension.product_type.price_attributes:
         class: Oro\Bundle\PricingBundle\Form\Extension\PriceAttributesProductFormExtension
         arguments:
             - '@doctrine'
         tags:
-            - { name: form.type_extension, alias: orob2b_product }
+            - { name: form.type_extension, alias: oro_product }
 
     oro_pricing.form.extension.currency_type:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\SystemCurrencyFormExtension'
@@ -108,25 +108,25 @@ services:
     oro_pricing.form.type.price_list_schedule:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType'
         tags:
-            - { name: form.type, alias: orob2b_pricing_price_list_schedule }
+            - { name: form.type, alias: oro_pricing_price_list_schedule }
 
     oro_pricing.form.type.price_list_select_with_priority:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType'
         tags:
-            - { name: form.type, alias: orob2b_pricing_price_list_select_with_priority }
+            - { name: form.type, alias: oro_pricing_price_list_select_with_priority }
 
     oro_pricing.form.type.price_list_system_config:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType'
         arguments:
             - 'Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig'
         tags:
-            - { name: form.type, alias: orob2b_pricing_price_list_system_config }
+            - { name: form.type, alias: oro_pricing_price_list_system_config }
 
     oro_pricing.form.type.product_price_unit_selector:
         parent: oro_product.form.type.product_unit_selection
         class: 'Oro\Bundle\PricingBundle\Form\Type\ProductPriceUnitSelectorType'
         tags:
-            - { name: form.type, alias: orob2b_pricing_product_price_unit_selector }
+            - { name: form.type, alias: oro_pricing_product_price_unit_selector }
 
     oro_pricing.form.type.enabled_currency_selection:
        class: Oro\Bundle\PricingBundle\Form\Type\EnabledCurrencySelectionType
@@ -135,7 +135,7 @@ services:
            - '@oro_config.manager'
            - '@oro_locale.settings'
        tags:
-           - { name: form.type, alias: orob2b_pricing_enabled_currency_selection }
+           - { name: form.type, alias: oro_pricing_enabled_currency_selection }
 
     oro_pricing.form.type.default_currency_selection:
        class: Oro\Bundle\PricingBundle\Form\Type\DefaultCurrencySelectionType
@@ -146,13 +146,13 @@ services:
            - "@translator"
            - "@request_stack"
        tags:
-           - { name: form.type, alias: orob2b_pricing_default_currency_selection }
+           - { name: form.type, alias: oro_pricing_default_currency_selection }
 
     oro_pricing.form.type.product_attribute_price_collection:
        class: Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType
        public: true
        tags:
-           - { name: form.type, alias: orob2b_pricing_product_attribute_price_collection }
+           - { name: form.type, alias: oro_pricing_product_attribute_price_collection }
 
     oro_pricing.form.type.product_attribute_price:
        class: Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceType
@@ -160,10 +160,10 @@ services:
        arguments:
            - "@oro_pricing.rounding.price_rounding_service"
        tags:
-           - { name: form.type, alias: orob2b_pricing_product_attribute_price }
+           - { name: form.type, alias: oro_pricing_product_attribute_price }
 
-    oro_pricing.form.type.orob2b_pricing_price_rule:
+    oro_pricing.form.type.oro_pricing_price_rule:
        class: Oro\Bundle\PricingBundle\Form\Type\PriceRuleType
        public: true
        tags:
-           - { name: form.type, alias: orob2b_pricing_price_rule }
+           - { name: form.type, alias: oro_pricing_price_rule }

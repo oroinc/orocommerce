@@ -5,7 +5,7 @@ system_configuration:
         money_order_display:
             title: oro.money_order.system_configuration.groups.display_options.title
     fields:
-        orob2b_money_order.money_order_enabled:
+        oro_money_order.money_order_enabled:
             data_type: boolean
             type: oro_config_checkbox
             priority: 100
@@ -13,7 +13,7 @@ system_configuration:
                 label: oro.money_order.system_configuration.fields.enabled.label
                 required: false
 
-        orob2b_money_order.money_order_label:
+        oro_money_order.money_order_label:
             data_type: string
             type: text
             priority: 90
@@ -23,7 +23,7 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
 
-        orob2b_money_order.money_order_short_label:
+        oro_money_order.money_order_short_label:
             data_type: string
             type: text
             priority: 90
@@ -33,7 +33,7 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
 
-        orob2b_money_order.money_order_sort_order:
+        oro_money_order.money_order_sort_order:
             data_type: string
             type: text
             priority: 80
@@ -42,7 +42,7 @@ system_configuration:
                 constraints:
                     - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
 
-        orob2b_money_order.money_order_allowed_countries:
+        oro_money_order.money_order_allowed_countries:
             data_type: string
             type: choice
             priority: 70
@@ -59,7 +59,7 @@ system_configuration:
                     'data-page-component-module': 'oropayment/js/app/components/config-hide-fields-component'
                     'data-dependency-id': 'money_order_allowed_countries'
 
-        orob2b_money_order.money_order_selected_countries:
+        oro_money_order.money_order_selected_countries:
             data_type: string
             type: oro_locale_country
             priority: 60
@@ -70,7 +70,7 @@ system_configuration:
                     'data-depends-on-field': 'money_order_allowed_countries'
                     'data-depends-on-field-value': 'selected'
 
-        orob2b_money_order.money_order_allowed_currencies:
+        oro_money_order.money_order_allowed_currencies:
             data_type: array
             type: oro_currency_selection
             priority: 60
@@ -81,7 +81,7 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
 
-        orob2b_money_order.money_order_pay_to:
+        oro_money_order.money_order_pay_to:
             data_type: string
             type: text
             priority: 50
@@ -92,7 +92,7 @@ system_configuration:
                 constraints:
                     - NotBlank: ~
 
-        orob2b_money_order.money_order_send_to:
+        oro_money_order.money_order_send_to:
             data_type: string
             type: textarea
             priority: 40
@@ -116,12 +116,12 @@ system_configuration:
                                     money_order_display:
                                         priority: 100
                                         children:
-                                            - orob2b_money_order.money_order_enabled
-                                            - orob2b_money_order.money_order_label
-                                            - orob2b_money_order.money_order_short_label
-                                            - orob2b_money_order.money_order_sort_order
-                                            - orob2b_money_order.money_order_allowed_countries
-                                            - orob2b_money_order.money_order_selected_countries
-                                            - orob2b_money_order.money_order_allowed_currencies
-                                            - orob2b_money_order.money_order_pay_to
-                                            - orob2b_money_order.money_order_send_to
+                                            - oro_money_order.money_order_enabled
+                                            - oro_money_order.money_order_label
+                                            - oro_money_order.money_order_short_label
+                                            - oro_money_order.money_order_sort_order
+                                            - oro_money_order.money_order_allowed_countries
+                                            - oro_money_order.money_order_selected_countries
+                                            - oro_money_order.money_order_allowed_currencies
+                                            - oro_money_order.money_order_pay_to
+                                            - oro_money_order.money_order_send_to

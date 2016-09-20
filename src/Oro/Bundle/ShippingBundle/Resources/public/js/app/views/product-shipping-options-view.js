@@ -13,7 +13,7 @@ define(function(require) {
          */
         options: {
             unitsAttribute: 'units',
-            selectSelector: 'select[name^="orob2b_product[product_shipping_options]"][name$="[productUnit]"]',
+            selectSelector: 'select[name^="oro_product[product_shipping_options]"][name$="[productUnit]"]',
             selectors: {
                 itemsContainer: 'table.list-items',
                 itemContainer: 'table tr.list-item',
