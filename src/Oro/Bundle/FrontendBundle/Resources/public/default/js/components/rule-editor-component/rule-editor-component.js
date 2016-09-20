@@ -95,20 +95,39 @@ define([
 
         /**
          *
-         * @returns {{source: source, matcher: matcher, updater: updater}}
+         * @param pluginName {String}
          */
-        initAutocomplete: function(type) {
+        initAutocomplete: function(pluginName) {
+            var clickHandler;
+            var _context;
             var _position;
             var _this = this;
 
-            switch (type) {
+            switch (pluginName) {
                 case 'typeahead':
-                    this.$element.typeahead({
+
+                    clickHandler = function() {
+                        var _this = this;
+                        var _arguments = arguments;
+
+                        // console.log('clickHandler', this, arguments);
+
+                        setTimeout(function() {
+                            _this.keyup.apply(_this, _arguments);
+                        }, 10);
+                    };
+
+                    _context = this.$element.typeahead({
                         minLength: 0,
                         source: function(value) {
                             var sourceData = _this.getAutocompleteSource(value || '');
 
+                            clickHandler = clickHandler.bind(this);
+
                             _position = sourceData.position;
+
+
+                            console.log('sourceData', JSON.stringify(sourceData));
 
                             return sourceData.array;
                         },
@@ -120,7 +139,7 @@ define([
                         },
                         focus: function(e) {
                             this.focused = true;
-                            this.keyup.apply(this, arguments);
+                            clickHandler.apply(this, arguments);
                         },
                         lookup: function() {
                             this.query = _this.$element.val() || '';
@@ -132,6 +151,10 @@ define([
                     });
                     break;
             }
+
+            this.$element.on('click', function() {
+                clickHandler.apply(_context, arguments);
+            });
         },
 
         /**
@@ -168,6 +191,8 @@ define([
             var wordPosition = this.getWordPosition(value, caretPosition);
             var wordUnderCaret = this.getStringPart(value, wordPosition.start, wordPosition.end);
 
+            console.log('getAutocompleteSource', wordUnderCaret, wordPosition);
+
             return {
                 array: this.getSuggestList(normalized, wordUnderCaret),
                 position: wordPosition
@@ -200,7 +225,7 @@ define([
 
                 result = {
                     start: isSpace ? null : separatorsPositions[index - 1] || 0,
-                    end: isSpace ? null : separatorsPositions[index] - 1 || position,
+                    end: isSpace ? null : position,
                     index: index,
                     spaces: separatorsPositions
                 };
@@ -233,14 +258,16 @@ define([
          * @returns {Array}
          */
         getSuggestList: function(normalized, wordUnderCaret) {
+            console.log(normalized, wordUnderCaret);
+
+            if (!normalized.string.trim()) { // initial suggestion for empty value
+                return this.getFilteredSuggests(wordUnderCaret, this.dataWordCases);
+            }
+
             var _this = this;
 
             var words = this.splitString(normalized.string, ' ').arr;
             var groups = this.getGroups(words);
-
-            if (_.isEmpty(words)){
-                return this.getFilteredSuggests(wordUnderCaret, this.dataWordCases);
-            }
 
             var previousWord = words[words.length - 2];
             var lastWord = _.last(words);
@@ -249,11 +276,11 @@ define([
 
             var isCheckedWord = lastIsValid || words.length === 1 ? isLast : wordIs(previousWord);
 
-            if (isCheckedWord.dataExpression) {
+            if (isCheckedWord.dataExpression) { // previous word is a full valid expression of data
                 return this.getFilteredSuggests(wordUnderCaret, this.logicWordCases);
-            } else if (isCheckedWord.dataWord) {
+            } else if (isCheckedWord.dataWord) { // previous word is a valid word of data but no full expression
                 return this.getFilteredSuggests(wordUnderCaret, this.operationsCases);
-            } else {
+            } else if (isCheckedWord.logic) { // previous word is a logic (AND, OR, etc.)
                 return this.getFilteredSuggests(wordUnderCaret, this.dataWordCases);
             }
 
@@ -274,7 +301,7 @@ define([
          * @returns {{string: string, position: number}}
          */
         getNormalized: function(value, regex, caretPosition) {
-            var string = caretPosition ? this.getStringPart(value, 0, caretPosition) : value;
+            var string = caretPosition ? this.getStringPart(value, 0, caretPosition) : '';
             var normalizedSpaces = string.replace(/\s+/g, ' ');
             var normalizedString = normalizedSpaces.replace(regex, '$1');
 
