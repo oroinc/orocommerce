@@ -16,6 +16,8 @@ layout:
         - '@add':
             id: oro_account_user_address_form_title
             parentId: oro_account_user_address_form_container
+            siblingId: account_user_address_edit_container
+            prepend: true
             blockType: text
             options:
                 text: oro.account.frontend.address.page_title.create
