@@ -8,6 +8,8 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroScopeBundleInstaller implements Installation
 {
+    const ORO_SCOPE = 'oro_scope';
+
     /**
      * {@inheritdoc}
      */
@@ -29,7 +31,7 @@ class OroScopeBundleInstaller implements Installation
      */
     protected function createScopeTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_scope');
+        $table = $schema->createTable(self::ORO_SCOPE);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
     }
 }

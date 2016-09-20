@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ScopeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\ScopeBundle\Model\ExtendScope;
 
 /**
  * Class Scope
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table("oro_scope")
  * @ORM\Entity
  */
-class Scope
+class Scope extends ExtendScope
 {
     /**
      * @var integer
