@@ -1,0 +1,138 @@
+<?php
+
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional;
+
+use Doctrine\ORM\EntityManager;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+
+/**
+ * @dbIsolation
+ */
+class IndexationTriggeringListenerTest extends WebTestCase
+{
+    use UserUtilityTrait;
+
+    protected function setUp()
+    {
+        $this->initClient([], $this->generateBasicAuthHeader());
+    }
+
+    public function testTriggersReindexationAfterProductCreation()
+    {
+        /**
+         * @var EventDispatcher $eventDispatcher
+         */
+        $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
+
+        /**
+         * @var ReindexationTriggerEvent $triggeredEvent
+         */
+        $triggeredEvent = null;
+
+        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function ($event) use (& $trigerredEvent) {
+            $trigerredEvent = $event;
+        });
+
+        $product = $this->createProduct();
+
+        $this->assertNotNull($trigerredEvent, 'Event was not triggered.');
+        $this->assertContains($product->getId(), $trigerredEvent->getIds());
+    }
+
+    public function testTriggersReindexationAfterProductUpdate()
+    {
+        /**
+         * @var EventDispatcher $eventDispatcher
+         */
+        $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
+
+        $product = $this->createProduct();
+
+        /**
+         * @var ReindexationTriggerEvent $triggeredEvent
+         */
+        $triggeredEvent = null;
+
+        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function ($event) use (& $trigerredEvent) {
+            $trigerredEvent = $event;
+        });
+
+        /**
+         * @var EntityManager $em
+         */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $product->setSku('4050505');
+        $em->persist($product);
+        $em->flush();
+
+        $this->assertNotNull($trigerredEvent, 'Event was not triggered.');
+        $this->assertContains($product->getId(), $trigerredEvent->getIds());
+    }
+
+    public function testTriggersReindexationAfterProductDelete()
+    {
+        /**
+         * @var EventDispatcher $eventDispatcher
+         */
+        $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
+
+        $product = $this->createProduct();
+
+        /**
+         * @var ReindexationTriggerEvent $triggeredEvent
+         */
+        $triggeredEvent = null;
+
+        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function ($event) use (& $trigerredEvent) {
+            $trigerredEvent = $event;
+        });
+
+        /**
+         * @var EntityManager $em
+         */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $em->remove($product);
+        $em->flush();
+
+        $this->assertNotNull($trigerredEvent, 'Event was not triggered.');
+        $this->assertContains($product->getId(), $trigerredEvent->getIds());
+    }
+
+    /**
+     * Helper method for createing a product which will be used for testing
+     *
+     * @return Product
+     */
+    private function createProduct()
+    {
+        static $sku = 0;
+
+        /**
+         * @var EntityManager $em
+         */
+        $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $user = $this->getFirstUser($em);
+        $businessUnit = $user->getOwner();
+        $organization = $user->getOrganization();
+
+        $product = new Product();
+        $product
+            ->setSku(++$sku)
+            ->setOwner($businessUnit)
+            ->setOrganization($organization)
+            ->setStatus('test');
+
+        $em->persist($product);
+        $em->flush();
+
+        return $product;
+    }
+}
