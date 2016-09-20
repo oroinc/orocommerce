@@ -83,6 +83,8 @@ oro.pricing:
         rule.label: Rule
         priority.label: Priority
         calculate_as.label: Calculate As
+        show_expression_fields.label: To expression
+        show_regular_fields.label: To scalar
 
     quantity.label: Quantity
     fallback:

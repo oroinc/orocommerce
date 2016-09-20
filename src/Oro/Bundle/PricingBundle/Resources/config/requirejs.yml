@@ -19,6 +19,7 @@ config:
 
         'oropricing/js/app/views/base-product-prices-view': 'bundles/oropricing/js/app/views/base-product-prices-view.js'
         'oropricing/js/app/views/price-list-schedule-view': 'bundles/oropricing/js/app/views/price-list-schedule-view.js'
+        'oropricing/js/app/views/price-rule-view': 'bundles/oropricing/js/app/views/price-rule-view.js'
 
         'oro/filter/product-price-filter': 'bundles/oropricing/js/filter/product-price-filter.js'
         'oro/filter/frontend-product-price-filter': 'bundles/oropricing/js/filter/frontend-product-price-filter.js'
