@@ -6,7 +6,7 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
-class InventoryStatusesStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHelper
+class InventoryStatusesStrategyHelper extends AbstractInventoryLevelStrategyHelper
 {
     /** @var array $inventoryStatusCache */
     protected $inventoryStatusCache = [];

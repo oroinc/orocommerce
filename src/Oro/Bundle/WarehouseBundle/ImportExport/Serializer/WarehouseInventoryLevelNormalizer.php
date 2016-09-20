@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\WarehouseBundle\ImportExport\Serializer;
 
-use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\DenormalizerInterface;
-use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\NormalizerInterface;
+use Oro\Bundle\ImportExportBundle\Event\Events;
+use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
+use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ConfigurableEntityNormalizer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
-class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, NormalizerInterface
+class WarehouseInventoryLevelNormalizer extends ConfigurableEntityNormalizer
 {
     /**
      * @var ProductUnitLabelFormatter
@@ -30,8 +30,10 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
      * @param ProductUnitLabelFormatter $formatter
      * @param QuantityRoundingService $roundingService
      */
-    public function __construct(ProductUnitLabelFormatter $formatter, QuantityRoundingService $roundingService)
+    public function __construct(FieldHelper $fieldHelper, ProductUnitLabelFormatter $formatter, QuantityRoundingService $roundingService)
     {
+        parent::__construct($fieldHelper);
+
         $this->formatter = $formatter;
         $this->roundingService = $roundingService;
     }
@@ -49,6 +51,8 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
      */
     public function normalize($object, $format = null, array $context = array())
     {
+        $result = $this->dispatchNormalize($object, [], $context, Events::BEFORE_NORMALIZE_ENTITY);
+
         // Set quantity to null if not exporting real object
         if (!$object->getId() && 0 == $object->getQuantity()) {
             $object->setQuantity(null);
@@ -56,9 +60,7 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
 
         $product = $object->getProduct();
 
-        $result = [
-            'quantity' => $this->getQuantity($object)
-        ];
+        $result['quantity'] = $this->getQuantity($object);
 
         if ($product) {
             $result['product'] = [
@@ -68,15 +70,9 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
             ];
         }
 
-        if ($object->getWarehouse()) {
-            $result['warehouse'] = [
-                'name' => $object->getWarehouse()->getName()
-            ];
-        }
-
         $result = array_merge($result, $this->getUnitPrecision($object));
 
-        return $result;
+        return $this->dispatchNormalize($object, $result, $context, Events::AFTER_NORMALIZE_ENTITY);
     }
 
     /**
@@ -128,12 +124,17 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
             return null;
         }
 
+        $inventoryLevel = $this->dispatchDenormalizeEvent(
+            $data,
+            $this->createObject($class),
+            Events::BEFORE_DENORMALIZE_ENTITY
+        );
+
         $productData = $data['product'];
 
         $productEntity = new Product();
         $productEntity->setSku($productData['sku']);
 
-        $inventoryLevel = new WarehouseInventoryLevel();
         $productUnitPrecision = new ProductUnitPrecision();
 
         $productUnitPrecision->setProduct($productEntity);
@@ -143,12 +144,6 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
         }
 
         $this->determineQuantity($inventoryLevel, $data);
-
-        if (isset($data['warehouse'])) {
-            $warehouse = new Warehouse();
-            $warehouse->setName($data['warehouse']['name']);
-            $inventoryLevel->setWarehouse($warehouse);
-        }
 
         if (array_key_exists('productUnitPrecision', $data)) {
             $productUnitPrecisionData = $data['productUnitPrecision'];
@@ -162,7 +157,7 @@ class WarehouseInventoryLevelNormalizer implements DenormalizerInterface, Normal
 
         $inventoryLevel->setProductUnitPrecision($productUnitPrecision);
 
-        return $inventoryLevel;
+        return $this->dispatchDenormalizeEvent($data, $inventoryLevel, Events::AFTER_DENORMALIZE_ENTITY);
     }
 
     /**

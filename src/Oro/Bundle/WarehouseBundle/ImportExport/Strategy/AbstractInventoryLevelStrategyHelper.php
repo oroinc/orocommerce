@@ -6,7 +6,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
 
-abstract class AbstractWarehouseInventoryLevelStrategyHelper implements WarehouseInventoryLevelStrategyHelperInterface
+abstract class AbstractInventoryLevelStrategyHelper implements InventoryLevelStrategyHelperInterface
 {
     /** @var  DatabaseHelper $databaseHelper */
     protected $databaseHelper;
@@ -14,7 +14,7 @@ abstract class AbstractWarehouseInventoryLevelStrategyHelper implements Warehous
     /** @var TranslatorInterface */
     protected $translator;
 
-    /** @var  WarehouseInventoryLevelStrategyHelperInterface $successor */
+    /** @var  InventoryLevelStrategyHelperInterface $successor */
     protected $successor;
 
     /** @var array $errors */
@@ -86,7 +86,7 @@ abstract class AbstractWarehouseInventoryLevelStrategyHelper implements Warehous
     /**
      * {@inheritdoc}
      */
-    public function setSuccessor(WarehouseInventoryLevelStrategyHelperInterface $successor)
+    public function setSuccessor(InventoryLevelStrategyHelperInterface $successor)
     {
         $this->successor = $successor;
     }

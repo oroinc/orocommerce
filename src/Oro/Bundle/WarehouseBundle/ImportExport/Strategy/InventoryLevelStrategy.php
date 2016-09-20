@@ -5,9 +5,9 @@ namespace Oro\Bundle\WarehouseBundle\ImportExport\Strategy;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\AbstractImportStrategy;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
-class WarehouseInventoryLevelStrategy extends AbstractImportStrategy
+class InventoryLevelStrategy extends AbstractImportStrategy
 {
-    /** @var  WarehouseInventoryLevelStrategyHelperInterface $inventoryLevelStrategyHelper */
+    /** @var  InventoryLevelStrategyHelperInterface $inventoryLevelStrategyHelper */
     protected $inventoryLevelStrategyHelper;
 
     /**
@@ -62,10 +62,10 @@ class WarehouseInventoryLevelStrategy extends AbstractImportStrategy
     }
 
     /**
-     * @param WarehouseInventoryLevelStrategyHelperInterface $inventoryLevelStrategyHelper
+     * @param InventoryLevelStrategyHelperInterface $inventoryLevelStrategyHelper
      */
     public function setInventoryLevelStrategyHelper(
-        WarehouseInventoryLevelStrategyHelperInterface $inventoryLevelStrategyHelper
+        InventoryLevelStrategyHelperInterface $inventoryLevelStrategyHelper
     ) {
         $this->inventoryLevelStrategyHelper = $inventoryLevelStrategyHelper;
     }

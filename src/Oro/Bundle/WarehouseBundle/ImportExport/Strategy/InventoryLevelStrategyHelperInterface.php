@@ -4,7 +4,7 @@ namespace Oro\Bundle\WarehouseBundle\ImportExport\Strategy;
 
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
-interface WarehouseInventoryLevelStrategyHelperInterface
+interface InventoryLevelStrategyHelperInterface
 {
     /**
      * Process imported entity, validate and extract existing entity base on the imported one,
@@ -24,9 +24,9 @@ interface WarehouseInventoryLevelStrategyHelperInterface
     );
 
     /**
-     * @param WarehouseInventoryLevelStrategyHelperInterface $successor
+     * @param InventoryLevelStrategyHelperInterface $successor
      */
-    public function setSuccessor(WarehouseInventoryLevelStrategyHelperInterface $successor);
+    public function setSuccessor(InventoryLevelStrategyHelperInterface $successor);
 
     /**
      * Return the errors added by the validation process of the current strategy helper or all of

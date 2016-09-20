@@ -8,16 +8,16 @@ use Akeneo\Bundle\BatchBundle\Event\StepExecutionEvent;
 use Akeneo\Bundle\BatchBundle\Item\ExecutionContext;
 
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use Oro\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategy;
+use Oro\Bundle\WarehouseBundle\ImportExport\Strategy\InventoryLevelStrategy;
 
 class InventoryLevelsImportListener
 {
     const INVENTORY_IMPORT_PROCESSOR_ALIAS = 'oro_warehouse.warehouse_inventory_level';
 
-    /** @var  WarehouseInventoryLevelStrategy $inventoryLevelStrategy */
+    /** @var  InventoryLevelStrategy $inventoryLevelStrategy */
     protected $inventoryLevelStrategy;
 
-    public function __construct(WarehouseInventoryLevelStrategy $inventoryLevelStrategy)
+    public function __construct(InventoryLevelStrategy $inventoryLevelStrategy)
     {
         $this->inventoryLevelStrategy = $inventoryLevelStrategy;
     }

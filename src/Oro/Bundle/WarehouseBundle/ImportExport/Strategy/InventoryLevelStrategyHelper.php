@@ -5,10 +5,9 @@ namespace Oro\Bundle\WarehouseBundle\ImportExport\Strategy;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
-class WarehouseInventoryLevelStrategyHelper extends AbstractWarehouseInventoryLevelStrategyHelper
+class InventoryLevelStrategyHelper extends AbstractInventoryLevelStrategyHelper
 {
     /**
      * {@inheritdoc}
@@ -21,19 +20,16 @@ class WarehouseInventoryLevelStrategyHelper extends AbstractWarehouseInventoryLe
     ) {
         $this->errors = $errors;
 
-        $existingWarehouse = $this->getProcessedEntity($newEntities, 'warehouse');
         $product = $this->getProcessedEntity($newEntities, 'product');
         $productUnitPrecision = $this->getProcessedEntity($newEntities, 'productUnitPrecision');
 
         /** @var WarehouseInventoryLevel $existingEntity */
         $existingEntity = $this->getExistingWarehouseInventoryLevel(
             $product,
-            $productUnitPrecision,
-            $existingWarehouse
+            $productUnitPrecision
         );
 
         $existingEntity->setProductUnitPrecision($productUnitPrecision);
-        $existingEntity->setWarehouse($existingWarehouse);
         $existingEntity->setQuantity($importedEntity->getQuantity());
 
         $newEntities['warehouseInventoryLevel'] = $existingEntity;
@@ -50,22 +46,16 @@ class WarehouseInventoryLevelStrategyHelper extends AbstractWarehouseInventoryLe
      *
      * @param Product $product
      * @param ProductUnitPrecision $productUnitPrecision
-     * @param Warehouse $warehouse
      * @return null|WarehouseInventoryLevel
      */
     protected function getExistingWarehouseInventoryLevel(
         Product $product,
-        ProductUnitPrecision $productUnitPrecision,
-        Warehouse $warehouse = null
+        ProductUnitPrecision $productUnitPrecision
     ) {
         $criteria = [
             'product' => $product,
             'productUnitPrecision' => $productUnitPrecision
         ];
-
-        if ($warehouse) {
-            $criteria['warehouse'] = $warehouse;
-        }
 
         $existingEntity = $this->databaseHelper->findOneBy(WarehouseInventoryLevel::class, $criteria);
 
