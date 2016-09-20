@@ -59,7 +59,9 @@
                     {{ form_row(form.region) }}
                 </div>
                 <div class="grid__column grid__column--2">
-                    {{- form_label(form.postalCode) -}}
+                    <div class="grid__row grid__row--offset-s">
+                        {{- form_label(form.postalCode) -}}
+                    </div>
                     {{- form_widget(form.postalCode, {'attr' : {'placeholder': 'oro.account.frontend.address.form.placeholder.zip'|trans}}) -}}
                     {{- form_errors(form.postalCode) -}}
                 </div>
@@ -104,7 +106,9 @@
 {% endblock %}
 
 {%- block form_row -%}
-    {{- form_label(form, null) -}}
+    <div class="grid__row grid__row--offset-s">
+        {{- form_label(form, null) -}}
+    </div>
     {{- form_widget(form) -}}
     {{- form_errors(form) -}}
 {%- endblock -%}
@@ -149,6 +153,19 @@
 
 {% block oro_frontend_country_widget %}
     {{ form_widget(form, {'class_prefix': 'checkout'}) }}
+{% endblock %}
+
+{% block genemu_jqueryselect2_widget %}
+    {% set component_options = {
+        containerCssClass: 'oro-select2 oro-select2--size-m'
+    } %}
+
+    {{ form_widget(form, { 'attr': {
+        'class': 'select',
+        'data-input-widget-options': component_options|json_encode
+    } }) }}
+
+    {{ parent() }}
 {% endblock %}
 
 {# TODO: remove due BB-3540 #}

@@ -1,4 +1,4 @@
-{% block _oro_account_user_address_form_title_widget %}
+{% block _page_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " title title--uppercase"
     }) %}
@@ -11,6 +11,16 @@
 {% block _oro_account_user_address_form_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " address-form-outer"
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _oro_account_user_address_form_content_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': " address-form"
     }) %}
 
     <div{{ block('block_attributes') }}>
