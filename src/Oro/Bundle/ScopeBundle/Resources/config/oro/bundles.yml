@@ -1,2 +1,2 @@
 bundles:
-    - { name: Oro\Bundle\ScopeBundle\OroScopeBundle, priority: 5
+    - { name: Oro\Bundle\ScopeBundle\OroScopeBundle, priority: 5 }

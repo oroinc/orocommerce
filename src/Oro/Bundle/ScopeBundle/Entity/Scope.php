@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ScopeBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * Class Scope
  *
