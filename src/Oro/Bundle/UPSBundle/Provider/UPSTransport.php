@@ -103,7 +103,9 @@ class UPSTransport extends AbstractRestTransport
             try {
                 $priceResponse->parse($data);
             } catch (\InvalidArgumentException $e) {
-                $this->logger->error(sprintf('Price request failed. %s', $e->getMessage()));
+                $this->logger->error(
+                    sprintf('Price request failed for transport #%s. %s', $transportEntity->getId(), $e->getMessage())
+                );
 
                 return null;
             }

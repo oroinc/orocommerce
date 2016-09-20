@@ -5,13 +5,17 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface;
+use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSTransportEntity;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
 class UPSTransportTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -113,7 +117,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
         $rateRequest = $this->getMock(PriceRequest::class);
 
         $integration = new Channel();
-        $transportEntity = new \Oro\Bundle\UPSBundle\Entity\UPSTransport();
+        $transportEntity = $this->getEntity(UPSTransportEntity::class, ['id' => '123']);
         $integration->setTransport($transportEntity);
 
         $this->clientFactory->expects(static::once())
@@ -154,7 +158,8 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             ->method('error')
             ->with(
                 sprintf(
-                    'Price request failed. %s',
+                    'Price request failed for transport #%s. %s',
+                    $transportEntity->getId(),
                     'No price data in provided string.'
                 )
             )
