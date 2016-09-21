@@ -2,22 +2,20 @@
 
 namespace Oro\Bundle\VisibilityBundle\Migrations\Data\Demo\ORM;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Account;
 use Oro\Bundle\VisibilityBundle\Entity\AccountGroup;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture implements
     DependentFixtureInterface,
@@ -113,6 +111,9 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     ) {
         $visibility->setWebsite($website);
         $visibility->setTargetEntity($product)->setVisibility($visibilityValue);
+        $scopeManager = $this->container->get('oro_scope.manager.scope_manager');
+        $visibility->setScope($scopeManager->findOrCreate('visibility', $visibility));
+
         $manager->persist($visibility);
     }
 
