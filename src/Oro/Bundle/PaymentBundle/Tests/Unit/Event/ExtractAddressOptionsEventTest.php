@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Event;
 
+use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\PaymentBundle\Event\ExtractAddressOptionsEvent;
 use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
 
@@ -15,7 +16,7 @@ class ExtractAddressOptionsEventTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->entity = new \stdClass();
+        $this->entity = new Address();
         $this->event = new ExtractAddressOptionsEvent($this->entity);
     }
 
@@ -24,14 +25,7 @@ class ExtractAddressOptionsEventTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($this->entity, $this->event->getEntity());
     }
 
-    public function testGetAndSetModel()
-    {
-        $addressModel = new AddressOptionModel();
-        $this->event->setModel($addressModel);
-        $this->assertSame($addressModel, $this->event->getModel());
-    }
-
-    public function testGetDefaultModel()
+    public function testGetModel()
     {
         $this->assertInstanceOf(AddressOptionModel::class, $this->event->getModel());
     }

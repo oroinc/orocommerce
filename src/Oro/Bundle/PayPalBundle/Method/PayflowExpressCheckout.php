@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\PayPalBundle\Method;
 
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
@@ -24,7 +24,9 @@ use Oro\Bundle\PayPalBundle\Provider\ExtractOptionsProvider;
 class PayflowExpressCheckout implements PaymentMethodInterface
 {
     const TYPE = 'payflow_express_checkout';
+
     const COMPLETE = 'complete';
+
     const PILOT_REDIRECT_URL = 'https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
     const PRODUCTION_REDIRECT_URL = 'https://www.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
 
@@ -369,7 +371,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
         $class = $this->doctrineHelper->getEntityClass($shippingAddress);
         $addressOption = $this->optionsProvider->getShippingAddressOptions($class, $shippingAddress);
 
-        $options = [
+        return [
             Option\ShippingAddress::SHIPTOFIRSTNAME => $addressOption->getFirstName(),
             Option\ShippingAddress::SHIPTOLASTNAME => $addressOption->getLastName(),
             Option\ShippingAddress::SHIPTOSTREET => $addressOption->getStreet(),
@@ -379,8 +381,6 @@ class PayflowExpressCheckout implements PaymentMethodInterface
             Option\ShippingAddress::SHIPTOZIP => $addressOption->getPostalCode(),
             Option\ShippingAddress::SHIPTOCOUNTRY => $addressOption->getCountryIso2()
         ];
-
-        return $options;
     }
 
     /**
@@ -405,7 +405,6 @@ class PayflowExpressCheckout implements PaymentMethodInterface
         $options = [];
         $lineItemOptions = $this->optionsProvider->getLineItemPaymentOptions($entity);
 
-        /** @var LineItemOptionModel $lineItemOption */
         foreach ($lineItemOptions as $lineItemOption) {
             $options[] = [
                 Option\LineItems::NAME => $lineItemOption->getName(),
