@@ -40,11 +40,11 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
             $this->modifySelectPart($qb, $priceList, $rootAlias);
             $this->applyRuleConditions($qb, $priceList);
             $this->restrictByManualPrices($qb, $priceList, $rootAlias);
-            $this->restrictByGivenProduct($qb, $rootAlias, $product);
             $qb->addGroupBy($rootAlias . '.id');
 
             $this->cache->save($cacheKey, $qb);
         }
+        $this->restrictByGivenProduct($qb, $product);
 
         return $qb;
     }
@@ -141,12 +141,13 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
 
     /**
      * @param QueryBuilder $qb
-     * @param string $rootAlias
      * @param Product $product
      */
-    protected function restrictByGivenProduct(QueryBuilder $qb, $rootAlias, Product $product = null)
+    protected function restrictByGivenProduct(QueryBuilder $qb, Product $product = null)
     {
         if ($product) {
+            $aliases = $qb->getRootAliases();
+            $rootAlias = reset($aliases);
             $qb->andWhere($qb->expr()->eq($rootAlias, ':product'))
                 ->setParameter('product', $product->getId());
         }

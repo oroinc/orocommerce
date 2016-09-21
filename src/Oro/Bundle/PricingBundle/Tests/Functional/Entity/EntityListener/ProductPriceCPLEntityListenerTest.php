@@ -114,7 +114,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $em = $this->getContainer()->get('doctrine')->getManager();
         $em->flush();
         /** @var PriceListToProductRepository $repository */
-        $repository = $em->getRepository(PriceListToProductRepository::class);
+        $repository = $em->getRepository(PriceListToProduct::class);
 
         // new relation should be created when new product specified
         $this->assertCount(1, $repository->findBy([

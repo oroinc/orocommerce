@@ -32,7 +32,6 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
             LoadPriceAttributeProductPrices::class,
             LoadPriceRuleLexemes::class
         ]);
-        $this->topic = Topics::RESOLVE_PRICE_RULES;
         $this->cleanQueueMessageTraces();
     }
 
@@ -56,7 +55,7 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
         $em->persist($price);
         $em->flush();
 
-        $traces = $this->getQueueMessageTraces();
+        $traces = $this->getQueueMessageTraces(Topics::RESOLVE_PRICE_RULES);
         $this->assertCount(1, $traces);
 
         $trace = $traces[0];
@@ -84,7 +83,7 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
         $em->persist($price);
         $em->flush();
 
-        $traces = $this->getQueueMessageTraces();
+        $traces = $this->getQueueMessageTraces(Topics::RESOLVE_PRICE_RULES);
         $this->assertCount(1, $traces);
 
         $trace = $traces[0];
@@ -110,7 +109,7 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
         $em->remove($price);
         $em->flush();
 
-        $traces = $this->getQueueMessageTraces();
+        $traces = $this->getQueueMessageTraces(Topics::RESOLVE_PRICE_RULES);
         $this->assertCount(1, $traces);
 
         $trace = $traces[0];

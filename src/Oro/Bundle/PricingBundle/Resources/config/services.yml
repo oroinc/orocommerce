@@ -565,7 +565,7 @@ services:
             - '@oro_pricing.price_list_trigger_handler'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_currency.class%', event: preRemove }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_currency.class%', event: prePersist }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list_currency.class%', event: postPersist }
 
     oro_pricing.entity_listener.price_rule:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceRuleEntityListener'
@@ -593,6 +593,12 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: preRemove }
+
+    oro_pricing.event_listener.category:
+        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\CategoryEntityListener'
+        parent: oro_pricing.entity_listener.abstract_rule_listener
+        public: false
+        tags:
             - { name: doctrine.event_listener, event: onFlush }
 
     oro_pricing.entity_listener.product:

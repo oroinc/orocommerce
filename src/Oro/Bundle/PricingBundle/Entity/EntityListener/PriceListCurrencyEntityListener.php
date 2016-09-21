@@ -41,7 +41,7 @@ class PriceListCurrencyEntityListener
     /**
      * @param PriceListCurrency $priceListCurrency
      */
-    public function prePersist(PriceListCurrency $priceListCurrency)
+    public function postPersist(PriceListCurrency $priceListCurrency)
     {
         $this->scheduleRulesRecalculation($priceListCurrency);
     }
@@ -68,9 +68,12 @@ class PriceListCurrencyEntityListener
     protected function scheduleRulesRecalculation(PriceListCurrency $priceListCurrency)
     {
         $priceList = $priceListCurrency->getPriceList();
-        foreach ($priceList->getPriceRules() as $priceRule) {
-            $this->clearPriceRuleCache($priceRule);
+        if (count($priceList->getPriceRules()) > 0) {
+            $priceList->setActual(false);
+            foreach ($priceList->getPriceRules() as $priceRule) {
+                $this->clearPriceRuleCache($priceRule);
+            }
+            $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList);
         }
-        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList);
     }
 }

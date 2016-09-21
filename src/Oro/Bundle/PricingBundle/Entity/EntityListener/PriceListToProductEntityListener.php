@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -14,6 +15,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class PriceListToProductEntityListener
 {
+    const FIELD_PRICE_LIST = 'priceList';
+    const FIELD_PRODUCT = 'product';
+
     /**
      * @var PriceListTriggerHandler
      */
@@ -46,9 +50,11 @@ class PriceListToProductEntityListener
 
     /**
      * @param PriceListToProduct $priceListToProduct
+     * @param PreUpdateEventArgs $event
      */
-    public function preUpdate(PriceListToProduct $priceListToProduct)
+    public function preUpdate(PriceListToProduct $priceListToProduct, PreUpdateEventArgs $event)
     {
+        $this->recalculateForOldValues($priceListToProduct, $event);
         $this->schedulePriceListRecalculations($priceListToProduct->getPriceList(), $priceListToProduct->getProduct());
     }
 
@@ -71,6 +77,7 @@ class PriceListToProductEntityListener
     public function onAssignmentRuleBuilderBuild(AssignmentBuilderBuildEvent $event)
     {
         $this->schedulePriceListRecalculations($event->getPriceList(), $event->getProduct());
+        $this->priceListTriggerHandler->sendScheduledTriggers();
     }
 
     /**
@@ -92,6 +99,27 @@ class PriceListToProductEntityListener
     {
         $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product);
         $this->scheduleDependentPriceListsUpdate($priceList, $product);
-        $this->priceListTriggerHandler->sendScheduledTriggers();
+    }
+
+    /**
+     * @param PriceListToProduct $priceListToProduct
+     * @param PreUpdateEventArgs $event
+     */
+    protected function recalculateForOldValues(PriceListToProduct $priceListToProduct, PreUpdateEventArgs $event)
+    {
+        $oldProduct = $priceListToProduct->getProduct();
+        $oldPriceList = $priceListToProduct->getPriceList();
+        if ($event->hasChangedField(self::FIELD_PRICE_LIST)) {
+            /** @var PriceList $oldPriceList */
+            $oldPriceList = $event->getOldValue(self::FIELD_PRICE_LIST);
+        }
+        if ($event->hasChangedField(self::FIELD_PRODUCT)) {
+            /** @var Product $oldProduct */
+            $oldProduct = $event->getOldValue(self::FIELD_PRODUCT);
+        }
+
+        if ($event->hasChangedField(self::FIELD_PRICE_LIST) || $event->hasChangedField(self::FIELD_PRODUCT)) {
+            $this->schedulePriceListRecalculations($oldPriceList, $oldProduct);
+        }
     }
 }

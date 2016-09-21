@@ -32,7 +32,6 @@ class CategoryEntityListenerTest extends WebTestCase
             LoadProductData::class,
             LoadCategoryProductData::class
         ]);
-        $this->topic = Topics::RESOLVE_PRICE_RULES;
         $this->cleanQueueMessageTraces();
     }
 
@@ -42,7 +41,7 @@ class CategoryEntityListenerTest extends WebTestCase
         $em->remove($this->getReference(LoadCategoryData::SECOND_LEVEL2));
         $em->flush();
 
-        $actual = $this->getActualScheduledPriceListIds();
+        $actual = $this->getActualScheduledPriceListIds(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS);
         $this->assertCount(3, $actual);
         $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(), $actual);
         $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(), $actual);
@@ -57,7 +56,7 @@ class CategoryEntityListenerTest extends WebTestCase
         $em = $this->getContainer()->get('doctrine')->getManager();
         $em->flush();
 
-        $actual = $this->getActualScheduledPriceListIds();
+        $actual = $this->getActualScheduledPriceListIds(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS);
         $this->assertCount(3, $actual);
         $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(), $actual);
         $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(), $actual);
@@ -72,7 +71,7 @@ class CategoryEntityListenerTest extends WebTestCase
         $em = $this->getContainer()->get('doctrine')->getManager();
         $em->flush();
 
-        $actual = $this->getActualScheduledPriceListIds();
+        $actual = $this->getActualScheduledPriceListIds(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS);
         $this->assertCount(1, $actual);
         $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_3)->getId(), $actual);
     }
@@ -92,7 +91,7 @@ class CategoryEntityListenerTest extends WebTestCase
             $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
             $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
         ];
-        $traces = $this->getQueueMessageTraces();
+        $traces = $this->getQueueMessageTraces(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS);
         $this->assertCount(2, $traces);
         foreach ($traces as $trace) {
             $this->assertEquals($product->getId(), $this->getProductIdFromTrace($trace));
@@ -103,7 +102,7 @@ class CategoryEntityListenerTest extends WebTestCase
     public function testProductRemove()
     {
         $this->cleanQueueMessageTraces();
-        $this->assertEquals([], $this->getQueueMessageTraces());
+        $this->assertEquals([], $this->getQueueMessageTraces(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS));
 
         /** @var Category $category */
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
@@ -117,7 +116,7 @@ class CategoryEntityListenerTest extends WebTestCase
             $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
             $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
         ];
-        $traces = $this->getQueueMessageTraces();
+        $traces = $this->getQueueMessageTraces(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS);
         $this->assertCount(2, $traces);
         foreach ($traces as $trace) {
             $this->assertEquals($product->getId(), $this->getProductIdFromTrace($trace));
@@ -128,13 +127,13 @@ class CategoryEntityListenerTest extends WebTestCase
     /**
      * @return PriceList[]
      */
-    protected function getActualScheduledPriceListIds()
+    protected function getActualScheduledPriceListIds($topic)
     {
         return array_map(
             function (array $trace) {
                 return $this->getPriceListIdFromTrace($trace);
             },
-            $this->getQueueMessageTraces()
+            $this->getQueueMessageTraces($topic)
         );
     }
 }
