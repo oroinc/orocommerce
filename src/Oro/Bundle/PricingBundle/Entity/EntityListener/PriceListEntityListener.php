@@ -129,8 +129,6 @@ class PriceListEntityListener
         );
 
         if (count($lexemes) > 0) {
-            $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes);
-
             $dependentPriceLists = [];
             foreach ($lexemes as $lexeme) {
                 $dependentPriceList = $lexeme->getPriceList();
@@ -142,6 +140,7 @@ class PriceListEntityListener
                     $this->clearAssignmentRuleCache($dependentPriceList);
                 }
             }
+            $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes);
 
             foreach ($dependentPriceLists as $dependentPriceList) {
                 $this->scheduleDependentPriceListsUpdate($dependentPriceList);

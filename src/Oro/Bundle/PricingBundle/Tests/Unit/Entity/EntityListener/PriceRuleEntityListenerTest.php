@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\Common\Cache\Cache;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceRuleEntityListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -53,7 +54,10 @@ class PriceRuleEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('addTriggerForPriceList')
             ->with(Topics::RESOLVE_PRICE_RULES, $priceList);
 
-        $this->listener->preUpdate($priceRule);
+        $event = $this->getMockBuilder(PreUpdateEventArgs::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->listener->preUpdate($priceRule, $event);
     }
 
     public function testPreRemove()

@@ -92,5 +92,6 @@ class PriceListToProductEntityListener
     {
         $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_PRICE_RULES, $priceList, $product);
         $this->scheduleDependentPriceListsUpdate($priceList, $product);
+        $this->priceListTriggerHandler->sendScheduledTriggers();
     }
 }

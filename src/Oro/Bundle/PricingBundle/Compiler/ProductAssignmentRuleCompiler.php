@@ -20,11 +20,6 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
     ];
 
     /**
-     * @var array
-     */
-    protected $processedRules = [];
-
-    /**
      * @param PriceList $priceList
      * @param Product|null $product
      * @return QueryBuilder|null
@@ -163,12 +158,6 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
      */
     protected function getProcessedAssignmentRule(PriceList $priceList)
     {
-        $ruleKey = md5($priceList->getProductAssignmentRule());
-        if (!array_key_exists($ruleKey, $this->processedRules)) {
-            $this->processedRules[$ruleKey] = $this->expressionPreprocessor
-                ->process($priceList->getProductAssignmentRule());
-        }
-
-        return $this->processedRules[$ruleKey];
+        return $this->expressionPreprocessor->process($priceList->getProductAssignmentRule());
     }
 }
