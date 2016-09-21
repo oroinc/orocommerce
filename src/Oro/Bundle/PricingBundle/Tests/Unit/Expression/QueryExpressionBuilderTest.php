@@ -40,6 +40,24 @@ class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('converted', $builder->convert($node, $expr, $params, $aliasMapping));
     }
 
+    public function testConvertZero()
+    {
+        $expr = new Expr();
+        $params = [];
+        $aliasMapping = [];
+        $node = $this->getMock(NodeInterface::class);
+
+        $converter = $this->getMock(QueryExpressionConverterInterface::class);
+        $converter->expects($this->once())
+            ->method('convert')
+            ->with($node, $expr, $params, $aliasMapping)
+            ->willReturn(0);
+
+        $builder = new QueryExpressionBuilder();
+        $builder->registerConverter($converter);
+        $this->assertSame(0, $builder->convert($node, $expr, $params, $aliasMapping));
+    }
+
     public function testConvertSorting()
     {
         $expr = new Expr();
