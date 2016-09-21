@@ -1,0 +1,76 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set pageTitle = 'oro.menu.menuitem.entity_plural_label'|trans %}
+{% set formAction = url('oro_menu_item_create_root') %}
+
+{% set entityId = entity.id %}
+
+{% oro_title_set({params : {
+    "%title%": entity.defaultTitle.string|default('N/A'|trans),
+    "%entityName%": 'oro.menu.menuitem.roots_entity_label'|trans,
+} }) %}
+
+{% block navButtons %}
+    {{ parent() }}
+
+    {{ UI.cancelButton(path('oro_menu_item_roots')) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if entityId or resource_granted('oro_menu_item_update') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% set entityLabel = 'oro.menu.menuitem.roots_entity_label' %}
+    {% set title = 'oro.ui.create_entity'|trans({'%entityName%': entityLabel|trans}) %}
+    {% set breadcrumbs = {
+        'entity':      entity,
+        'indexPath':   path('oro_menu_item_roots'),
+        'indexLabel':  'oro.menu.menuitem.roots_plural_label'|trans,
+        'entityTitle': title
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'menuitem-edit' %}
+    {% set dataForm = [
+        form_row(form.defaultTitle),
+    ] %}
+    {% if entity.parent is not null %}
+        {% set dataForm = dataForm|merge([form_row(form.uri)]) %}
+    {% endif %}
+    {% set dataBlocks = [{
+        'title': 'oro.menu.menuitem.sections.general'|trans,
+        'class': 'active',
+        'subblocks': [{
+        'title': '',
+        'data': dataForm
+    }]
+    }] %}
+
+    {% set additionalData = [] %}
+    {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
+        {% set additionalData = additionalData|merge([form_row(child)]) %}
+    {% endfor %}
+    {% if additionalData is not empty %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'oro.menu.menuitem.sections.additional'|trans,
+            'subblocks': [{
+                'title': '',
+                'useSpan': false,
+                'data' : additionalData
+            }]
+        }] ) %}
+    {% endif %}
+
+    {% set data = {
+    'formErrors': form_errors(form),
+    'dataBlocks': dataBlocks
+    } %}
+
+        {{ parent() }}
+
+{% endblock content_data %}

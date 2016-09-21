@@ -1,0 +1,10 @@
+services:
+    oro_rfp.action.duplicate:
+        class: 'Oro\Bundle\RFPBundle\Action\Duplicate'
+        arguments:
+            - '@oro_action.context_accessor'
+        calls:
+          - [setDuplicatorFactory, ['@oro_rfp.factory.duplicator_factory']]
+        tags:
+            - { name: oro_action.action, alias: duplicate }
+            - { name: oro_workflow.action, alias: duplicate }

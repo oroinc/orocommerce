@@ -1,0 +1,18 @@
+services:
+    oro_checkout.form.type.checkout_address:
+        class: 'Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType'
+        parent: oro_order.form.type.order_address
+        tags:
+            - { name: form.type, alias: oro_checkout_address }
+
+    oro_checkout.form.type.ship_to_billing_address:
+        class: 'Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType'
+        tags:
+            - { name: form.type, alias: oro_ship_to_billing_address }
+
+    oro_checkout.form.extension.checkout_workflow_state:
+        class: 'Oro\Bundle\CheckoutBundle\Form\Extension\CheckoutWorkflowStateExtension'
+        arguments:
+            - '@oro_checkout.workflow_state.handler.checkout_error'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType }

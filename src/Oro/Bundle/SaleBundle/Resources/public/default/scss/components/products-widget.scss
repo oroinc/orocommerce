@@ -1,0 +1,31 @@
+.product {
+  &__select {
+
+    &_choose {
+      max-width: 360px;
+    }
+
+    &_piece {
+      max-width: 100px;
+    }
+
+    select {
+      @include input();
+      background: $base-white-color;
+      width: 70px !important;
+
+      &:focus {
+        border-color: $base-link-color;
+        box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 .8rem rgba(102,175,233,.6);
+        outline: 0;
+      }
+    }
+  }
+}
+
+.product_view_request_quote {
+  padding-bottom: 1.3rem;
+}
+.product_view_request_quote_for_unit {
+  margin: 0 1rem;
+}

@@ -1,0 +1,14 @@
+.toggle-block {
+  .toggle-block__content {
+    display: none;
+  }
+
+  &__trigger {
+    &.checked,
+    &.active {
+      + .toggle-block__content {
+        display: block;
+      }
+    }
+  }
+}

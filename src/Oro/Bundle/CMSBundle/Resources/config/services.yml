@@ -1,0 +1,27 @@
+parameters:
+    oro_cms.entity.page.class: Oro\Bundle\CMSBundle\Entity\Page
+    oro_cms.entity.loginpage.class: Oro\Bundle\CMSBundle\Entity\LoginPage
+
+services:
+    oro_cms.page_tree_handler:
+        class: 'Oro\Bundle\CMSBundle\JsTree\PageTreeHandler'
+        arguments:
+            - '%oro_cms.entity.page.class%'
+            - "@doctrine"
+            - "@oro_redirect.slug.manager"
+
+    oro_cms.listener.page_slug_listener:
+        class: 'Oro\Bundle\CMSBundle\EventListener\PageSlugListener'
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postUpdate }
+            - { name: doctrine.event_listener, event: preRemove }
+
+    oro_cms.provider.login_page_data_provider:
+        class: 'Oro\Bundle\CMSBundle\Layout\DataProvider\LoginPageProvider'
+        arguments:
+            - "@doctrine"
+        calls:
+            - [setLoginPageClass, ['%oro_cms.entity.loginpage.class%']]
+        tags:
+            - { name: layout.data_provider, alias: oro_cms_login_page }

@@ -1,6 +1,0 @@
-{% block _create_account_user_button_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ "text-right"}) %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}

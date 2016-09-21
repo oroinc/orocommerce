@@ -1,0 +1,23 @@
+oro_sale_quote:
+    resource:     '@OroSaleBundle/Controller/QuoteController.php'
+    type:         annotation
+    prefix:       /sale/quote
+
+oro_sale_quote_ajax:
+    resource:     "@OroSaleBundle/Controller/AjaxQuoteController.php"
+    type:         annotation
+    prefix:       /quote
+
+oro_sale_frontend_quote:
+    resource: "@OroSaleBundle/Controller/Frontend/QuoteController.php"
+    type: annotation
+    prefix: /account/quote
+    options:
+        frontend: true
+
+oro_sale_frontend_quote_product_ajax:
+    resource: "@OroSaleBundle/Controller/Frontend/AjaxQuoteProductController.php"
+    type: annotation
+    prefix: /account/quoteproduct
+    options:
+        frontend: true

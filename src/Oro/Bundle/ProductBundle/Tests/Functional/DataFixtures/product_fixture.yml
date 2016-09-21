@@ -1,0 +1,107 @@
+product1:
+    productCode: product.1
+    inventoryStatus: in_stock
+    status: enabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product.1.names.default, string: product.1.names.default }
+        - { reference: product.1.names.en_US, string: product.1.names.en_US, fallback: system, localization: en_US }
+    descriptions:
+        - { reference: product.1.descriptions.default, string: product.1.descriptions.default }
+        - { reference: product.1.descriptions.en_US, string: product.1.descriptions.en_US, fallback: system, localization: en_US }
+    shortDescriptions:
+        - { reference: product.1.shortDescriptions.default, string: product.1.shortDescriptions.default }
+        - { reference: product.1.shortDescriptions.en_US, string: product.1.shortDescriptions.en_US, fallback: system, localization: en_US }
+product2:
+    productCode: product.2
+    inventoryStatus: in_stock
+    status: enabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product.2.names.default, string: product.2.names.default }
+    descriptions:
+        - { reference: product.2.descriptions.default, string: product.2.descriptions.default }
+    shortDescriptions:
+        - { reference: product.2.shortDescriptions.default, string: product.2.shortDescriptions.default }
+product3:
+    productCode: product.3
+    inventoryStatus: out_of_stock
+    status: enabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product.3.names.default, string: product.3.names.default }
+    descriptions:
+        - { reference: product.3.descriptions.default, string: product.3.descriptions.default }
+    shortDescriptions:
+        - { reference: product.3.shortDescriptions.default, string: product.3.shortDescriptions.default }
+product4:
+    productCode: product.4
+    inventoryStatus: discontinued
+    status: enabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product.4.names.default, string: product.4.names.default }
+    descriptions:
+        - { reference: product.4.descriptions.default, string: product.4.descriptions.default }
+    shortDescriptions:
+        - { reference: product.4.shortDescriptions.default, string: product.4.shortDescriptions.default }
+product5:
+    productCode: product.5
+    inventoryStatus: in_stock
+    status: disabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product.5.names.default, string: product.5.names.default }
+    descriptions:
+        - { reference: product.5.descriptions.default, string: product.5.descriptions.default }
+    shortDescriptions:
+        - { reference: product.5.shortDescriptions.default, string: product.5.shortDescriptions.default }
+product6:
+    productCode: product.6
+    inventoryStatus: in_stock
+    status: enabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product.6.names.default, string: product.6.names.default }
+    descriptions:
+        - { reference: product.6.descriptions.default, string: product.6.descriptions.default }
+    shortDescriptions:
+        - { reference: product.6.shortDescriptions.default, string: product.6.shortDescriptions.default }
+product7:
+    productCode: product.7
+    inventoryStatus: in_stock
+    status: enabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product.7.names.default, string: product.7.names.default }
+    descriptions:
+        - { reference: product.7.descriptions.default, string: product.7.descriptions.default }
+    shortDescriptions:
+        - { reference: product.7.shortDescriptions.default, string: product.7.shortDescriptions.default }
+product8:
+    productCode: product.8
+    inventoryStatus: in_stock
+    status: enabled
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product.8.names.default, string: product.8.names.default }
+    descriptions:
+        - { reference: product.8.descriptions.default, string: product.8.descriptions.default }
+    shortDescriptions:
+        - { reference: product.8.shortDescriptions.default, string: product.8.shortDescriptions.default }

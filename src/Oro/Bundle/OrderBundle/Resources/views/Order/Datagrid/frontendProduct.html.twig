@@ -1,0 +1,11 @@
+{% set isFreeFormProduct = record.getValue('productName') is empty and record.getValue('freeFormProduct') is not empty %}
+<h3 class="product-item__title product-item__title_in-cart mb1-md">
+    {% if isFreeFormProduct %}
+        {{ record.getValue('freeFormProduct') }}
+    {% else %}
+        <a href="{{ path('oro_product_frontend_product_view', {'id': record.getValue('product.id')}) }}">{{ record.getValue('productName') }}</a>
+    {% endif %}
+</h3>
+{% if not isFreeFormProduct %}
+    <div>{{ 'oro.product.item_number.label'|trans }}: <span class="red">{{ record.getValue('productSku') }}</span></div>
+{% endif %}

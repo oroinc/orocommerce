@@ -1,0 +1,10 @@
+"Product SKU",Quantity,"Unit Code",Price,Currency
+product.2,13,liter,12.2000,USD
+product.2,14,bottle,12.2000,USD
+product.1,15,liter,12.2000,USD
+product.2,24,bottle,16.5000,EUR
+product.3,,milliliter,,USD
+product.3,,liter,,USD
+product.4,,milliliter,,USD
+product.4,,box,,USD
+product.4,,bottle,,USD

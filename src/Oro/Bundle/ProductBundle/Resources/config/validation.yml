@@ -1,0 +1,115 @@
+Oro\Bundle\ProductBundle\Entity\Product:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: sku
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks: ~
+    properties:
+        sku:
+            - NotBlank:
+                message: 'oro.product.sku.blank'
+            - Length:
+                min: 3
+                max: 255
+        owner:
+            - NotBlank: ~
+        organization:
+            - NotBlank: ~
+        unitPrecisions:
+            - Count:
+                min: 1
+                minMessage: 'oro.product.unit_precisions_items.blank'
+        primaryUnitPrecision:
+            - NotBlank: ~
+        status:
+            - NotBlank: ~
+            - Choice: { callback: getStatuses }
+        names:
+            - Valid: ~
+        shortDescriptions:
+            - Valid: ~
+        descriptions:
+            - Valid: ~
+        organization:
+            - NotBlank: ~
+        inventory_status:
+            - NotBlank: ~
+        variantLinks:
+            - Valid: ~
+        images:
+            - Valid: ~
+            - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection: ~
+        hasVariants:
+            - NotNull: ~
+
+Oro\Bundle\ProductBundle\Entity\ProductUnit:
+    properties:
+        code:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        defaultPrecision:
+            - NotBlank: ~
+            - Range:
+                min: 0
+                max: 10
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+
+Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
+    properties:
+        visible:
+            - Type:
+                type: boolean
+        parentProduct:
+            - NotBlank: ~
+        product:
+            - NotBlank: ~
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [ product, unit ]
+    properties:
+        unit:
+            - NotBlank:
+                message: 'oro.product.productunit.unit.blank'
+        precision:
+            - NotBlank:
+                message: 'oro.product.productunit.precision.blank'
+            - Range:
+                min: 0
+                max: 10
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+        conversionRate:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+
+Oro\Bundle\ProductBundle\Entity\ProductImage:
+    constraints:
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImage: ~
+    properties:
+        product:
+            - NotBlank: ~
+
+Oro\Bundle\ProductBundle\Model\ProductRow:
+    properties:
+        productSku:
+            - NotBlank: ~
+        productQuantity:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+
+Oro\Bundle\ProductBundle\Model\ProductLineItem:
+    properties:
+        product:
+            - NotBlank:
+                groups: [create, update, add_product]
+        quantity:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+                groups: [create, update, add_product]
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                value: 0
+                groups: [create, update, add_product]
+            - NotBlank:
+                groups: [create, update, add_product]
+        unit:
+            - NotBlank:
+                groups: [create, update, add_product]

@@ -1,0 +1,10 @@
+sku,status,inventory_status.id,primaryUnitPrecision:unit:code,primaryUnitPrecision:precision
+SKU001,enabled,in_stock,not_existing_unit_code,wrong_precision_type
+SKU002,enabled,in_stock,not_existing_unit_code,11
+SKU003,enabled,in_stock,not_existing_unit_code,10
+SKU004,enabled,in_stock,kg,wrong_precision_type
+SKU005,enabled,in_stock,kg,11
+SKU006,enabled,in_stock,kg,10
+SKU007,enabled,in_stock,,wrong_precision_type
+SKU008,enabled,in_stock,,11
+SKU009,enabled,in_stock,,10

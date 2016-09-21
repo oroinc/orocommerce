@@ -1,0 +1,7 @@
+account,priceList,priority,mergeAllowed
+Company A,Default Price List,100,1
+Company A,Wholesale Price List,200,1
+Wholesaler B,Wholesale Price List,100,1
+Wholesaler B,Default Price List,200,1
+Partner C,Default Price List,100,1
+Partner C,Partner C Custom Price List,200,0

@@ -1,0 +1,6 @@
+SKU,Product,Inventory Status,Quantity,Unit
+product.1,"Medical Tag, Stainless Steel",In Stock,,liter
+product.1,"Medical Tag, Stainless Steel",In Stock,55,milliliter
+product.2,"Medical Tag, Sterling Silver",Out of Stock,200,liters
+product.2,"Medical Tag, Sterling Silver",,77,milliliters
+product.3,"Medical Tag, Intentional Typo Here",,300,

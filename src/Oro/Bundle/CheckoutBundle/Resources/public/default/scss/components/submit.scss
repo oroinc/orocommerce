@@ -1,0 +1,12 @@
+.checkout__submit-btn {
+  @media (max-width: $screen-sm) {
+    display: block !important;
+    width: 100% !important;
+    min-height: 60px !important;
+    min-width: inherit !important;
+    padding: 0 !important;
+
+    line-height: 60px !important;
+    font-size: 17px !important;
+  }
+}

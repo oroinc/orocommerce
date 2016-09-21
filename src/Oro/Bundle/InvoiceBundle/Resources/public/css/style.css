@@ -1,0 +1,77 @@
+.invoice-line-item-type {
+    width: 290px;
+}
+
+.invoice-lineitems .add-list-item {
+    margin-top: 10px;
+}
+
+.invoice-lineitems table.grid {
+    overflow: visible;
+}
+
+.invoice-line-item-type input[type="text"]{
+    width: 279px;
+}
+
+.invoice-line-item-type .fields-row input[type="text"] {
+    width: 400px;
+}
+
+.invoice-line-item-quantity .fields-row input[type="text"],
+.invoice-line-item-price .fields-row input[type="text"],
+.invoice-line-item-quantity select,
+.invoice-line-item-price select
+{
+    text-align: right;
+    width: 80px;
+}
+
+.invoice-line-item-sku .invoice-line-item-type-free-form,
+.invoice-line-item-sku .invoice-line-item-type-free-form input[type="text"],
+.invoice-line-item-sku .invoice-line-item-type-product {
+    width: 80px;
+}
+
+
+.invoice-line-item-quantity input[type="text"] {
+    margin-right: 3px;
+}
+
+.invoice-line-item-quantity {
+    width: 220px;
+}
+
+
+.invoice-line-item-price .fields-row {
+    position: relative;
+}
+
+.invoice-line-item-price input[type="text"] {
+    padding-left: 17px;
+}
+
+
+.invoice-line-item-quantity input[type="text"],
+.invoice-line-item-quantity .input-widget-select,
+.invoice-line-item-price input[type="text"],
+.invoice-line-item-price .input-widget-select {
+    float: left;
+}
+
+.invoice-lineitems .invoice-line-item-index,
+.invoice-line-item-price-value,
+.invoice-line-item-type-product {
+    line-height: 31px;
+}
+
+.invoice-line-item-price-value {
+    float: left;
+    margin-right: 10px;
+}
+
+.invoice-line-item-remove {
+    padding-top: 7px;
+    text-align: right;
+}
+

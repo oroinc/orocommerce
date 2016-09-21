@@ -1,0 +1,9 @@
+oro_menu_item_ajax:
+    resource:     "@OroMenuBundle/Controller/AjaxMenuItemController.php"
+    type:         annotation
+    prefix:       /menuitem/ajax
+
+oro_menu_item:
+    resource:     "@OroMenuBundle/Controller/MenuItemController.php"
+    type:         annotation
+    prefix:       /menuitem

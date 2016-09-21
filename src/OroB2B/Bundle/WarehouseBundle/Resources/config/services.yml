@@ -1,3 +1,0 @@
-parameters:
-    orob2b_warehouse.entity.warehouse.class: OroB2B\Bundle\WarehouseBundle\Entity\Warehouse
-    orob2b_warehouse.entity.warehouse_inventory_level.class: OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel

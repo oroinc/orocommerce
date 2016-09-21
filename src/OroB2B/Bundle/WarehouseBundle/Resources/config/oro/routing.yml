@@ -1,9 +1,0 @@
-orob2b_warehouse:
-    resource:     "@OroB2BWarehouseBundle/Controller/WarehouseController.php"
-    type:         annotation
-    prefix:       /warehouse
-
-orob2b_warehouse_inventory_product:
-    resource:     "@OroB2BWarehouseBundle/Controller/WarehouseInventoryLevelController.php"
-    type:         annotation
-    prefix:       /warehouse/inventory-level

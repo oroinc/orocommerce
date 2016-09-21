@@ -1,0 +1,268 @@
+@import "oroui/css/less/mixins";
+
+.product-price-collection {
+  .small-row > div > div {
+    float: left;
+  }
+
+  .grouped-fields {
+    width: 100%;
+    padding-top: 7px;
+    display: inline-block;
+  }
+
+  .group-label {
+    width: 75px;
+  }
+
+  .col-widget {
+    width: 100px;
+    margin-right: 22px;
+  }
+
+  input[type="text"].quantity,
+  input[type="text"].price-value,
+  .entity-create-or-select-container {
+    margin-left: 4px;
+    width: 100px;
+  }
+
+  .price-currency {
+    margin-left: 5px;
+    width: 100px;
+  }
+
+  .price-currency-div {
+    .selector, span {
+      width: 170px !important;
+    }
+  }
+
+  .unit {
+    width: 156px !important;
+  }
+
+  .select2-container {
+    float: left;
+  }
+
+  .entity-select-btn {
+    float: right;
+  }
+
+  .oro-multiselect-holder {
+    padding-left: 10px;
+  }
+
+  .entity-create-or-select-container {
+    margin-left: 4px;
+    width: 293px;
+  }
+
+  .oro-item-collection {
+    .row-oro {
+      position: relative;
+      padding: 10px 10px 10px 40px;
+      margin-bottom: 10px;
+      border: 1px solid #e6e6e6;
+      background: #f8f8f8;
+      .border-radius(4px);
+    }
+
+    .removeRow {
+      position: absolute;
+      width: 28px;
+      top: 4px;
+      right: 4px;
+      text-decoration: none;
+    }
+  }
+
+  div[data-validation-optional-group=""] {
+    padding-right: 20px;
+    display: inline-block;
+  }
+
+  .oro-multiselect-holder {
+    padding-right: 50px !important;
+  }
+
+  .form-horizontal {
+    max-width: none;
+  }
+}
+
+.product-container {
+  .show-tier-prices-choice {
+    label {
+      float: left;
+    }
+
+    input {
+      margin: 0 10px !important;
+    }
+  }
+
+  .sidebar-item {
+    .control-label {
+      font-weight: 700;
+    }
+  }
+
+  .grid-container {
+    .product-price-unit-with-margin {
+      margin-top: 5px !important;
+    }
+
+    .string-cell {
+      tbody {
+        td {
+          padding: 0 !important;
+          height: 10px !important;
+          border: 0 !important;
+        }
+      }
+    }
+  }
+}
+
+.product-price-filter-criteria {
+  margin-bottom: 7px;
+  .btn-group {
+    margin-bottom: 0;
+  }
+
+  .filter-end {
+    input[type="text"] {
+      border-right-width: 1px !important;
+    }
+  }
+
+  .product-price-filter {
+    display: inline;
+    .product-price-unit-filter {
+      float: none !important;
+      .dropdown-toggle {
+        border-radius: 3px !important;
+      }
+    }
+  }
+
+  .filter-update {
+    left: auto !important;
+    position: relative !important;
+    float: right;
+    margin: 8px 0;
+    border-radius: 3px !important;
+  }
+}
+
+.pricing-price-list {
+  .add-list-item {
+    margin-top: 10px;
+  }
+
+  table {
+    width: auto;
+  }
+
+  td {
+    vertical-align: top;
+  }
+
+  td {
+    span {
+      &.validation-failed {
+        white-space: nowrap;
+        width: 50px;
+      }
+    }
+  }
+
+  .entity-select-btn {
+    display: inline-block;
+    float: none;
+  }
+
+  input {
+    &.priority {
+      width: 50px !important;
+    }
+  }
+
+  .removeRow {
+    &:after {
+      text-indent: 6px;
+    }
+  }
+
+  .controls {
+    margin-left: 10px !important;
+  }
+}
+
+.price-list-grid-form {
+  width: 463px;
+}
+
+.price-list-collection-as-widget {
+  padding: 0 10px 10px;
+}
+
+.tab-content > .tab-pane.price-list-by-account-grid {
+  padding: 0 20px;
+}
+
+@media screen and (min-width: 1470px) {
+  #product_prices {
+    .control-group {
+      max-width: none;
+    }
+  }
+
+  .group-label {
+    label {
+      line-height: 25px;
+      vertical-align: middle;
+    }
+  }
+
+  .product-price-collection {
+
+    .small-row {
+      display: inline-block;
+    }
+
+    .col-widget {
+      width: auto;
+      margin-right: 5px;
+    }
+
+    .group-label {
+      width: auto !important;
+    }
+
+    .grouped-fields {
+      margin-left: 25px;
+    }
+  }
+}
+
+.pl_schedule {
+  .pl-schedule__row {
+    input[type="text"] {
+      width: 40%;
+    }
+  }
+  .pl-schedule__row.has-row-error {
+    input[type="text"] {
+      border-color: red;
+    }
+  }
+
+  .pl-schedule__error-row {
+    td {
+      border-top: none;
+    }
+  }
+}

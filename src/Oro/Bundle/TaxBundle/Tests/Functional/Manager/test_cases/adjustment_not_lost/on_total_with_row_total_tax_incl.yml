@@ -1,0 +1,248 @@
+method: getTax
+reference: simple_order
+configuration:
+    use_as_base_by_default: destination
+    destination: shipping_address
+    start_calculation_on: total
+    start_calculation_with: row_total
+    product_prices_include_tax: true
+databaseBefore:
+    'Oro\Bundle\OrderBundle\Entity\Order':
+        simple_order:
+            poNumber: { property_value: simple_order }
+            account: { class: 'Oro\Bundle\AccountBundle\Entity\Account', query: { name: 'account.orphan' } }
+            currency: 'USD'
+            shippingAddress:
+                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
+                property_value:
+                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+    'Oro\Bundle\ProductBundle\Entity\Product':
+        product_9:
+            sku: { property_value: product_9 }
+        product_10:
+            sku: { property_value: product_10 }
+        product_11:
+            sku: { property_value: product_11 }
+        product_12:
+            sku: { property_value: product_12 }
+    'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
+        order_line_item_1:
+            productSku: { property_value: order_line_item_1 }
+            order: { reference: simple_order }
+            quantity: { property_value: 1 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.4' } }
+        order_line_item_2:
+            productSku: { property_value: order_line_item_2 }
+            order: { reference: simple_order }
+            quantity: { property_value: 1 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.5' } }
+        order_line_item_3:
+            productSku: { property_value: order_line_item_3 }
+            order: { reference: simple_order }
+            quantity: { property_value: 1 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.6' } }
+        order_line_item_4:
+            productSku: { property_value: order_line_item_4 }
+            order: { reference: simple_order }
+            quantity: { property_value: 1 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.7' } }
+        order_line_item_5:
+            productSku: { property_value: order_line_item_5 }
+            order: { reference: simple_order }
+            quantity: { property_value: 1 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.8' } }
+        order_line_item_6:
+            productSku: { property_value: order_line_item_5 }
+            order: { reference: simple_order }
+            quantity: { property_value: 1 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
+            product: { reference: product_9 }
+        order_line_item_7:
+            productSku: { property_value: order_line_item_5 }
+            order: { reference: simple_order }
+            quantity: { property_value: 1 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
+            product: { reference: product_10 }
+        order_line_item_8:
+            productSku: { property_value: order_line_item_5 }
+            order: { reference: simple_order }
+            quantity: { property_value: 1 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
+            product: { reference: product_11 }
+        order_line_item_9:
+            productSku: { property_value: order_line_item_5 }
+            order: { reference: simple_order }
+            quantity: { property_value: 1 }
+            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
+            product: { reference: product_12 }
+    'Oro\Bundle\TaxBundle\Entity\ProductTaxCode':
+        product_tax_code_with_9_product:
+            code: 9_product
+            products:
+                property_value:
+                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.4' } }
+                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.5' } }
+                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.6' } }
+                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.7' } }
+                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.8' } }
+                    - { reference: product_9 }
+                    - { reference: product_10 }
+                    - { reference: product_11 }
+                    - { reference: product_12 }
+    'Oro\Bundle\TaxBundle\Entity\TaxRule':
+        tax_rule_for_9_product:
+            productTaxCode: { reference: product_tax_code_with_9_product }
+            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
+            taxJurisdiction: { class: 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX1' } }
+expectedResult:
+    total:
+        includingTax: '199.89'   # 22.21 * 9
+        excludingTax: '181.73'   # 20.1909 * 9 + 0.0081 = 181.7262 (181.71 if count by items)
+        taxAmount: '18.16'       # 2.01909 * 9 + -0.0081 = 18.16371
+        adjustment: '-0.0081'    # -0.0009 * 9
+        currency: 'USD'
+    items:
+        -
+            row:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 2.0191 - 2.02
+                currency: 'USD'
+            unit:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 2.0191 - 2.02
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
+        -
+            row:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            unit:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
+        -
+            row:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            unit:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
+        -
+            row:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            unit:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
+        -
+            row:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            unit:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
+        -
+            row:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            unit:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
+        -
+            row:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            unit:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
+        -
+            row:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            unit:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
+        -
+            row:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            unit:
+                includingTax: '22.21'
+                excludingTax: '20.19'   # 22.21 - 2.0191 = 20.1909
+                taxAmount: '2.02'       # 22.21 * 0.1 / 1.1 = 2.0191
+                adjustment: '-0.0009'   # 20.19 - 20.1909
+                currency: 'USD'
+            taxes:
+                - { tax: 'TAX1', rate: '0.1', taxableAmount: '20.19', taxAmount: '2.02', currency: 'USD' }
+    taxes:
+        - { tax: 'TAX1', rate: '0.1', taxableAmount: '181.72', taxAmount: '18.17', currency: 'USD' }

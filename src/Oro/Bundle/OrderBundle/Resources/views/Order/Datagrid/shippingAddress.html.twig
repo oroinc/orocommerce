@@ -1,0 +1,6 @@
+{% set shippingAddress = record.getValue('shippingAddress') %}
+{% if shippingAddress is not empty %}
+    {{ shippingAddress|oro_format_address }}
+{% else %}
+    {{ 'oro.ui.empty'|trans }}
+{% endif %}

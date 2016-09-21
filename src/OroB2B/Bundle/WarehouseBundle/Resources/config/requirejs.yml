@@ -1,3 +1,0 @@
-config:
-    paths:
-        'orob2bwarehouse/js/datagrid/builder/level-quantity-builder': 'bundles/orob2bwarehouse/js/datagrid/builder/level-quantity-builder.js'

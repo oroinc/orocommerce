@@ -1,0 +1,53 @@
+parameters:
+    oro_invoice.entity.invoice.class: Oro\Bundle\InvoiceBundle\Entity\Invoice
+    oro_invoice.entity.invoice_line_item.class: Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem
+
+services:
+    oro_invoice.form.type.invoice:
+        class: 'Oro\Bundle\InvoiceBundle\Form\Type\InvoiceType'
+        calls:
+            - [setDataClass, ['%oro_invoice.entity.invoice.class%']]
+        tags:
+            - { name: form.type, alias: oro_invoice_type }
+
+    oro_invoice.form.type.invoice_line_item_collection:
+        class: 'Oro\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemsCollectionType'
+        tags:
+            - { name: form.type, alias: "oro_invoice_line_items_collection" }
+
+    oro_invoice.form.type.invoice_line_item:
+        class: 'Oro\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemType'
+        arguments:
+            - "@doctrine"
+            - "@oro_product.formatter.product_unit_label"
+            - "@oro_pricing.rounding.price_rounding_service"
+        calls:
+            - [setDataClass, ['%oro_invoice.entity.invoice_line_item.class%']]
+            - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]
+        tags:
+            - { name: form.type, alias: "oro_invoice_line_item" }
+
+    oro_invoice.doctrine.orm.invoice_number_generator:
+        class: 'Oro\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator'
+
+    oro_invoice.event_listener.orm.invoice_event_listener:
+        class: 'Oro\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener'
+        public: false
+        calls:
+            - [setInvoiceNumberGenerator, ["@oro_invoice.doctrine.orm.invoice_number_generator"]]
+        tags:
+            - { name: doctrine.orm.entity_listener }
+
+    oro_invoice.event_listener.invoice_form_listener:
+        class: Oro\Bundle\InvoiceBundle\EventListener\InvoiceFormListener
+        arguments:
+            - "@oro_pricing.subtotal_processor.provider.subtotal_line_item"
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_invoice_type, method: beforeFlush}
+
+    oro_invoice.event_listener.total_calculate_listener:
+        class: 'Oro\Bundle\InvoiceBundle\EventListener\TotalCalculateListener'
+        arguments:
+            - '@form.factory'
+        tags:
+            - { name: kernel.event_listener, event: oro_pricing.total_calculate_before_event, method: onBeforeTotalCalculate }

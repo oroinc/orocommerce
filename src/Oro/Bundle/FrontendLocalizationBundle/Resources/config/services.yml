@@ -1,0 +1,27 @@
+services:
+    oro_frontend_localization.manager.user_localization:
+        class: 'Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager'
+        arguments:
+            - '@session'
+            - '@security.token_storage'
+            - '@oro_config.manager'
+            - '@oro_website.manager'
+            - '@oro_account_user.manager'
+            - '@oro_locale.manager.localization'
+
+    oro_frontend_localization.extension.current_localization:
+        class: 'Oro\Bundle\FrontendLocalizationBundle\Extension\CurrentLocalizationExtension'
+        arguments:
+            - '@security.token_storage'
+            - '@oro_frontend_localization.manager.user_localization'
+        tags:
+            - { name: oro_locale.extension.current_localization }
+
+    oro_frontend_localization.acl.voter.localization:
+        class: 'Oro\Bundle\FrontendLocalizationBundle\Acl\Voter\LocalizationVoter'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        calls:
+            - [setClassName, ['%oro_locale.entity.localization.class%']]
+        tags:
+            - { name: security.voter }

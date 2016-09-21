@@ -1,0 +1,109 @@
+{% block _categories_main_menu_widget %}
+    {% if (max_size is not null ) %}
+        {% set categories = categories[0:max_size] %}
+    {%- endif %}
+
+    {% for category in categories -%}
+        {% set hasSublist = category.childCategories is not empty %}
+        <li class="main-menu__item {{ hasSublist ? "main-menu__item--ancestor": "" }}" {{ hasSublist ? "data-dropdown-trigger": "" }}>
+            {% do block|merge_context({'category': category}) %}
+            {{ block('container_widget') }}
+        </li>
+    {%- endfor %}
+{% endblock %}
+
+{% block _categories_main_menu_first_level_item_widget %}
+    {% set hasSublist = category.childCategories is not empty %}
+    <a href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}"
+       class="main-menu__link">
+        <span>{{ category.titles|localized_value }} </span>
+        {% if hasSublist %}
+            <i class="cf-down-open-mini"></i>
+        {% endif %}
+    </a>
+    {% if hasSublist %}
+        <!-- START TOP NAVIGATION SUBLIST -->
+        <div class="main-menu__sublist-container">
+            <ul class="main-menu__sublist">
+                {% do block|merge_context({'categories': category.childCategories }) %}
+                {{ block_widget(block) }}
+            </ul>
+        </div>
+        <!-- ENDTOP NAVIGATION SUBLIST -->
+    {% endif %}
+{% endblock %}
+
+{% block _categories_main_menu_second_level_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " main-menu__sublist__item"
+    }) %}
+    <li {{ block('block_attributes') }}>
+        <div class="main-menu__sublist__title">By Category</div>
+        {% for category in categories %}
+            {% do block|merge_context({'category': category}) %}
+            {{ block('container_widget') }}
+        {% endfor %}
+    </li>
+{% endblock %}
+
+{% block _categories_main_menu_second_level_item_widget %}
+    {% set hasSublist = category.childCategories is not empty %}
+    {% set class = attr.class|default('') ~ " main-menu__sublist--nested main-menu__sublist__item_has-2columns" %}
+    {% set class = hasSublist ? class ~ " main-menu__sublist--nested main-menu__sublist--has-sibling" : class %}
+    {% set attr = attr|merge({class: class}) %}
+    <ul {{ block('block_attributes') }}>
+        <li class="main-menu__sublist-item">
+            <a href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}">
+                {{ category.titles|localized_value }}
+            </a>
+            {% if hasSublist %}
+                {% do block|merge_context({'categories': category.childCategories }) %}
+                {{ block('container_widget') }}
+            {% endif %}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block _categories_main_menu_third_level_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " main-menu__sublist_subnested"
+    }) %}
+    <ul {{ block('block_attributes') }}>
+        {% for category in categories %}
+            <li>
+                {% do block|merge_context({'category': category}) %}
+                {{ block('container_widget') }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block _categories_main_menu_third_level_item_widget %}
+    {% set attr = attr|merge({
+        href: path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true})
+    }) %}
+    <a {{ block('block_attributes') }}>{{ category.titles|localized_value }}</a>
+{% endblock %}
+
+{% block _categories_main_menu_second_level_sales_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " main-menu__sublist__item main-menu__sublist__item_has-sales-block"
+    }) %}
+    <li {{ block('block_attributes') }}>
+        <div class="main-menu__sublist__title">On Sale</div>
+        <div class="sales-block">
+            <a href="#">
+                <img class="img-responsive"
+                     src="{% image '@OroCatalogBundle/Resources/public/default/images/adv_1.jpg' %}{{ asset_url }}{% endimage %}"
+                     alt="">
+            </a>
+        </div>
+        <div class="sales-block">
+            <a href="#">
+                <img class="img-responsive"
+                     src="{% image '@OroCatalogBundle/Resources/public/default/images/adv_2.jpg' %}{{ asset_url }}{% endimage %}"
+                     alt="">
+            </a>
+        </div>
+    </li>
+{% endblock %}

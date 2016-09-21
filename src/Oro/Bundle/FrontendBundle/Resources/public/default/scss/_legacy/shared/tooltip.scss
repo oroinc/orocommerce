@@ -1,0 +1,168 @@
+.ttip__wrap {
+  position: relative;
+
+  display: inline-block;
+  *display: inline;
+  *zoom: 1; 
+}
+
+.ttip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  z-index: 99;
+
+  margin-bottom: 30px;
+
+  white-space: nowrap;
+
+  visibility: hidden;
+  opacity: 0;
+
+  &__content {
+    position: relative;
+    left: -50%;
+
+    display: block;
+
+    padding: 3px 8px;
+    border-radius: 3px;
+    box-shadow: 0 2px 6px 0 rgba(0,0,0,.2);
+
+    background: $base-white-color;
+    font-size: $base-font-size;
+    color: $base-font-color;
+
+    &.ttip__content_dark {
+      padding: 6px 15px;
+
+      background: rgba(0,0,0,1);
+      color: $base-white-color;
+      font-size: 1.2rem;
+      line-height: 2.3rem;
+
+      &:after {
+        bottom: -6px;
+
+        margin-left: -6px;
+        border-top: 6px solid rgba(0,0,0,1);
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+      }
+    }
+
+    &:after {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+
+      margin-left: -8px;
+      border-top: 8px solid rgba(255,255,255,1);
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+    }
+  }
+
+  &__toggle {
+    cursor: pointer;
+
+    &:hover {
+      + .ttip {
+        margin-bottom: 7px;
+
+        opacity: 1;
+        visibility: visible;
+
+        transition: all .5s;
+      }
+    }
+  }
+
+  &_info {
+    width: 320px;
+
+    white-space: normal;
+
+    .ttip__content {
+      padding: 15px;
+
+      h3 {
+        margin: 0 0 10px;
+
+        font-size: 15px;
+      }
+
+      p {
+        margin: 0;
+      }
+    }
+  }
+
+  table {
+    width: 145px;
+
+    thead {
+      tr {
+        td {
+          border-bottom: 1px solid $theme-lighter-gray-color !important;
+        }
+      }
+    }
+
+    td {
+      padding: 5px 0 !important;
+
+      text-align: center;
+    }
+  }
+
+  &_visible {
+    left: 0;
+    bottom: 0;
+
+    width: 100%;
+    margin-bottom: 40px;
+    padding: 15px;
+    box-sizing: border-box;
+
+    text-align: center;
+    white-space: normal;
+
+    visibility: visible;
+    opacity: 1;
+
+    &:before {
+      content: "";
+      display: inline-block;
+      width: 0;
+      height: 212px;
+      vertical-align: middle;
+    }
+
+    .ttip__content {
+      left: 0;
+
+      display: inline-block;
+      box-sizing: border-box;
+      vertical-align: middle;
+      width: 100%;
+      height: 100%;
+      padding: 80px 0;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px 0 rgba(0,0,0,.4);
+
+      font-size: $base-font-size;
+
+      &:after {
+        bottom: -8px;
+        left: 50%;
+
+        margin-left: -8px;
+        border-top: 8px solid rgba(255,255,255,1);
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%taxCode%": entity.code } }) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('oro_tax_product_tax_code_index'),
+        'indexLabel': 'oro.tax.producttaxcode.entity_plural_label'|trans,
+        'entityTitle': entity.code|default('N/A'|trans)
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set productTaxCodeInfo %}
+        {{ UI.renderProperty('oro.tax.producttaxcode.code.label'|trans, entity.code) }}
+        {{ UI.renderProperty('oro.tax.producttaxcode.description.label'|trans, entity.description) }}
+    {% endset %}
+
+    {% set dataBlocks = [{
+        'title': 'oro.tax.sections.general'|trans,
+        'class': 'active',
+        'subblocks': [
+            {'data' : [productTaxCodeInfo]},
+        ]
+    }] %}
+
+    {% set productGrid %}
+        {{ dataGrid.renderGrid('tax-product-grid', { product_tax_code_id: entity.id }, { cssClass: 'inner-grid' }) }}
+    {% endset %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+            'title': 'oro.tax.producttaxcode.products.label'|trans,
+            'subblocks': [{
+                'title': '',
+                'useSpan': false,
+                'data' : [productGrid]
+            }]
+    }] ) %}
+
+    {% set id = 'tax-product-tax-code-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

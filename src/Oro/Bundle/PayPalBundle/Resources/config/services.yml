@@ -1,0 +1,53 @@
+services:
+    oro_paypal.provider.credit_form_provider:
+        class: 'Oro\Bundle\PayPalBundle\Layout\DataProvider\CreditCardFormProvider'
+        arguments:
+            - '@form.factory'
+        tags:
+            - { name: layout.data_provider, alias: oro_paypal_credit_card_form_provider }
+
+    oro_paypal.event_listener.callback.redirect:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\RedirectListener'
+        lazy: true
+        arguments:
+            - '@session'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError, priority: 20 }
+
+    oro_paypal.event_listener.config.paypal_encrypt:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\Config\PayPalConfigurationEncryptListener'
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.get.oro_paypal.paypal_payments_pro_partner, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.oro_paypal.paypal_payments_pro_user, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.oro_paypal.paypal_payments_pro_vendor, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.oro_paypal.paypal_payments_pro_password, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.oro_paypal.paypal_payments_pro_proxy_host, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.oro_paypal.paypal_payments_pro_proxy_port, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.oro_paypal.payflow_gateway_partner, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.oro_paypal.payflow_gateway_user, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.oro_paypal.payflow_gateway_vendor, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.oro_paypal.payflow_gateway_password, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.oro_paypal.payflow_gateway_proxy_host, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.oro_paypal.payflow_gateway_proxy_port, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+
+    oro_paypal.event_listener.config.paypal_selected_countries:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\Config\PayPalSelectedCountriesListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+
+    oro_paypal.event_listener.payflow_require_payment_redirect:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\ZeroAmountAuthorizationRedirectListener'
+        arguments:
+            - '@oro_paypal.payment_method.payflow_gateway.config'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.require_payment_redirect.payflow_gateway, method: onRequirePaymentRedirect }
+
+    oro_paypal.event_listener.paypal_payments_pro_require_payment_redirect:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\ZeroAmountAuthorizationRedirectListener'
+        arguments:
+            - '@oro_paypal.payment_method.paypal_payments_pro.config'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.require_payment_redirect.paypal_payments_pro, method: onRequirePaymentRedirect }
