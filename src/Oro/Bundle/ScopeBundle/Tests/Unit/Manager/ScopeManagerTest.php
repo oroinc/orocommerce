@@ -75,6 +75,9 @@ class ScopeManagerTest extends \PHPUnit_Framework_TestCase
 
         $em = $this->getMock(EntityManagerInterface::class);
         $em->method('getRepository')->willReturn($repository);
+        $em->expects($this->once())->method('persist')->with($scope);
+        $em->expects($this->once())->method('flush')->with($scope);
+
         $this->registry->method('getManagerForClass')->willReturn($em);
 
         $this->entityFieldProvider->method('getRelations')->willReturn([]);
