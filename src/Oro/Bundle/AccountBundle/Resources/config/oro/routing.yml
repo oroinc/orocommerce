@@ -48,11 +48,6 @@ oro_account_acl_permission:
     type: annotation
     prefix: /account/acl
 
-oro_account_product_visibility:
-    resource: "@OroAccountBundle/Controller/ProductVisibilityController.php"
-    type: annotation
-    prefix: /product/visibility
-
 oro_account_frontend_account_user_profile:
     resource: "@OroAccountBundle/Controller/Frontend/AccountUserProfileController.php"
     type: annotation

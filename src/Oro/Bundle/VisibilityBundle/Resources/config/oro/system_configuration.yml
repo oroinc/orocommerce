@@ -1,0 +1,44 @@
+system_configuration:
+    groups:
+        account_category_visibility:
+            title: oro.account.system_configuration.groups.visibility.category.title
+        account_product_visibility:
+            title: oro.account.system_configuration.groups.visibility.product.title
+        visibility:
+            title: oro.account.system_configuration.groups.visibility.title
+            icon: 'icon-eye-open'
+    fields:
+        oro_account.category_visibility:
+            data_type: string
+            type: oro_account_catalog_default_visibility
+            priority: 10
+            options:
+                label: oro.account.catalog.visibility.form_label
+                required: true
+                constraints:
+                    - NotBlank: ~
+        oro_account.product_visibility:
+            data_type: string
+            type: oro_account_catalog_default_visibility
+            priority: 10
+            options:
+                label: oro.account.catalog.visibility.form_label
+                required: true
+                constraints:
+                    - NotBlank: ~
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    account:
+                        priority: 1000
+                        children:
+                            visibility:
+                                priority: 200
+                                children:
+                                    account_product_visibility:
+                                        children:
+                                            - oro_account.product_visibility
+                                    account_category_visibility:
+                                        children:
+                                            - oro_account.category_visibility

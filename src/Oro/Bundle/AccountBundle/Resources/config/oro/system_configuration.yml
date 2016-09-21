@@ -8,13 +8,6 @@ system_configuration:
         account_users_registration:
             title: oro.account.system_configuration.groups.account_users_registration.title
             icon: 'icon-user-plus'
-        account_category_visibility:
-            title: oro.account.system_configuration.groups.visibility.category.title
-        account_product_visibility:
-            title: oro.account.system_configuration.groups.visibility.product.title
-        visibility:
-            title: oro.account.system_configuration.groups.visibility.title
-            icon: 'icon-eye-open'
     fields:
         oro_account.default_account_owner:
             ui_only: true
@@ -49,24 +42,6 @@ system_configuration:
                 label: oro.account.system_configuration.fields.send_password_in_welcome_email.label
                 tooltip: oro.account.system_configuration.fields.send_password_in_welcome_email.tooltip
                 required: false
-        oro_account.category_visibility:
-            data_type: string
-            type: oro_account_catalog_default_visibility
-            priority: 10
-            options:
-                label: oro.account.catalog.visibility.form_label
-                required: true
-                constraints:
-                    - NotBlank: ~
-        oro_account.product_visibility:
-            data_type: string
-            type: oro_account_catalog_default_visibility
-            priority: 10
-            options:
-                label: oro.account.catalog.visibility.form_label
-                required: true
-                constraints:
-                    - NotBlank: ~
     tree:
         system_configuration:
             commerce:
@@ -83,12 +58,3 @@ system_configuration:
                                             - oro_account.registration_allowed
                                             - oro_account.confirmation_required
                                             - oro_account.send_password_in_welcome_email
-                            visibility:
-                                priority: 200
-                                children:
-                                    account_product_visibility:
-                                        children:
-                                            - oro_account.product_visibility
-                                    account_category_visibility:
-                                        children:
-                                            - oro_account.category_visibility

@@ -46,10 +46,6 @@ placeholders:
                 entity_pagination_frontend_edit:
                     order: 100
 
-        view_navButtons_after:
-            items:
-                product_visibility_button:
-                    order: 100
         change_history_block:
             items:
                 frontend_change_history_link: ~
@@ -89,11 +85,6 @@ placeholders:
         entity_pagination_frontend_edit:
             template: OroAccountBundle:EntityPagination:editPagination.html.twig
             applicable: "@oro_account.placeholder.filter->isUserApplicable()"
-        product_visibility_button:
-            template: OroAccountBundle:ProductVisibility:button.html.twig
-            applicable:
-                - "@oro_ui.placeholder.filter->isInstanceOf($entity$, %oro_product.entity.product.class%)"
-                - "@oro_frontend.placeholder.filter->isBackendRoute()"
         frontend_window_bundle_js:
             template: OroAccountBundle:Windows:javascript.html.twig
             applicable: "@oro_frontend.placeholder.filter->isFrontendRoute()"
