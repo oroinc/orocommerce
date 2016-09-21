@@ -65,10 +65,25 @@
     </div>
 {% endblock %}
 
+{% block _wrapper_content_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        'data-page-component-options': {
+            'view': 'orofrontend/default/js/app/views/move-blocks-view'
+            },
+        '~class': ' wrapper__content'
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _main_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' main'
     }) %}
+
     <main{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </main>

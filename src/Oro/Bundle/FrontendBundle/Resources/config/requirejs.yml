@@ -25,6 +25,7 @@ config:
         'orofrontend/default/js/widgets/expand-text-widget': 'bundles/orofrontend/default/js/widgets/expand-text-widget.js'
         'orofrontend/default/js/app/views/footer-align-view': 'orofrontend/default/js/app/views/footer-align-view.js'
         'orofrontend/default/js/app/views/sticky-panel-view': 'orofrontend/default/js/app/views/sticky-panel-view.js'
+        'orofrontend/default/js/app/views/move-blocks-view': 'orofrontend/default/js/app/views/move-blocks-view.js'
 
         'orofrontend/js/app/elements-helper': 'bundles/orofrontend/js/app/elements-helper.js'
 
