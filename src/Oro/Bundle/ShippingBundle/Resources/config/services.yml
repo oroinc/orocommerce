@@ -3,7 +3,6 @@ parameters:
     oro_shipping.model.weight.class: Oro\Bundle\ShippingBundle\Model\Weight
     oro_shipping.model.dimensions.class: Oro\Bundle\ShippingBundle\Model\Dimensions
     oro_shipping.model.dimensions_value.class: Oro\Bundle\ShippingBundle\Model\DimensionsValue
-    oro_shipping.entity.shipping_origin_warehouse.class: Oro\Bundle\WarehouseProBundle\Entity\ShippingOriginWarehouse
     oro_shipping.entity.length_unit.class: Oro\Bundle\ShippingBundle\Entity\LengthUnit
     oro_shipping.entity.freight_class.class: Oro\Bundle\ShippingBundle\Entity\FreightClass
     oro_shipping.entity.weight_unit.class: Oro\Bundle\ShippingBundle\Entity\WeightUnit
