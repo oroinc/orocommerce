@@ -578,24 +578,32 @@ services:
             - "@doctrine"
             - "@oro_entity.orm.insert_from_select_query_executor"
 
+    oro_account.visibility.cache.product.product_cache_builder.abstract:
+        class: 'Oro\Bundle\AccountBundle\Visibility\Cache\Product\AbstractProductResolvedCacheBuilder'
+        public: false
+        abstract: true
+        parent: oro_account.visibility.cache.product.cache_builder.abstract
+        calls:
+            - [setEventDispatcher, ['@event_dispatcher']]
+
     oro_account.visibility.cache.product.account_group_product_resolved_cache_builder:
         class: 'Oro\Bundle\AccountBundle\Visibility\Cache\Product\AccountGroupProductResolvedCacheBuilder'
         public: false
-        parent: oro_account.visibility.cache.product.cache_builder.abstract
+        parent: oro_account.visibility.cache.product.product_cache_builder.abstract
         calls:
             - [setCacheClass, ['%oro_account.entity.account_group_product_visibility_resolved.class%']]
 
     oro_account.visibility.cache.product.account_product_resolved_cache_builder:
         class: 'Oro\Bundle\AccountBundle\Visibility\Cache\Product\AccountProductResolvedCacheBuilder'
         public: false
-        parent: oro_account.visibility.cache.product.cache_builder.abstract
+        parent: oro_account.visibility.cache.product.product_cache_builder.abstract
         calls:
             - [setCacheClass, ['%oro_account.entity.account_product_visibility_resolved.class%']]
 
     oro_account.visibility.cache.product.product_resolved_cache_builder:
         class: 'Oro\Bundle\AccountBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder'
         public: false
-        parent: oro_account.visibility.cache.product.cache_builder.abstract
+        parent: oro_account.visibility.cache.product.product_cache_builder.abstract
         calls:
             - [setCacheClass, ['%oro_account.entity.product_visibility_resolved.class%']]
 
