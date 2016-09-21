@@ -28,7 +28,7 @@ class OroShippingBundleInstaller implements Installation
         /** Tables generation **/
         $this->createOroShippingFreightClassTable($schema);
         $this->createOroShippingLengthUnitTable($schema);
-        $this->createOroShippingOrigWarehouseTable($schema);
+//        $this->createOroShippingOrigWarehouseTable($schema);
         $this->createOroShippingProductOptsTable($schema);
         $this->createOroShippingWeightUnitTable($schema);
         $this->createOroShippingRuleTable($schema);
@@ -39,7 +39,7 @@ class OroShippingBundleInstaller implements Installation
         /** Foreign keys generation **/
         $this->addOroShippingRuleConfigForeignKeys($schema);
         $this->addOroShipFlatRateRuleCnfForeignKeys($schema);
-        $this->addOroShippingOrigWarehouseForeignKeys($schema);
+//        $this->addOroShippingOrigWarehouseForeignKeys($schema);
         $this->addOroShippingProductOptsForeignKeys($schema);
         $this->addOroShippingRuleDestinationForeignKeys($schema);
     }

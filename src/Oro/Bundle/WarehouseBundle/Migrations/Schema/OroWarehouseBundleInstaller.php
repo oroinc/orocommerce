@@ -48,15 +48,15 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOroWarehouseTable($schema);
+//        $this->createOroWarehouseTable($schema);
         $this->createOroWarehouseInventoryLevelTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroWarehouseForeignKeys($schema);
+//        $this->addOroWarehouseForeignKeys($schema);
         $this->addOroWarehouseInventoryLevelForeignKeys($schema);
 
         /** Extended fields **/
-        $this->addWarehouseRelations($schema);
+//        $this->addWarehouseRelations($schema);
     }
 
     /**
@@ -90,14 +90,14 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
         $table = $schema->createTable(self::WAREHOUSE_INVENTORY_LEVEL_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('quantity', 'decimal', ['precision' => 20, 'scale' => 10]);
-        $table->addColumn('warehouse_id', 'integer');
+//        $table->addColumn('warehouse_id', 'integer');
         $table->addColumn('product_id', 'integer');
         $table->addColumn('product_unit_precision_id', 'integer');
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(
-            ['warehouse_id', 'product_unit_precision_id'],
-            'uidx_oro_wh_wh_inventory_lev'
-        );
+//        $table->addUniqueIndex(
+//            ['warehouse_id', 'product_unit_precision_id'],
+//            'uidx_oro_wh_wh_inventory_lev'
+//        );
     }
 
     /**
@@ -132,12 +132,12 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
         $table = $schema->getTable(self::WAREHOUSE_INVENTORY_LEVEL_TABLE_NAME);
 
         /** WAREHOUSE */
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_warehouse'),
-            ['warehouse_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
+//        $table->addForeignKeyConstraint(
+//            $schema->getTable('oro_warehouse'),
+//            ['warehouse_id'],
+//            ['id'],
+//            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+//        );
 
         /** PRODUCT */
         $table->addForeignKeyConstraint(

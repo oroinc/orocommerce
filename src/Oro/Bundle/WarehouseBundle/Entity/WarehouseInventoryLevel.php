@@ -8,7 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\WarehouseBundle\Model\ExtendWarehouseInventoryLevel;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
+//use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 
 /**
  * @ORM\Table(
@@ -48,13 +48,13 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
      */
     protected $quantity = 0;
 
-    /**
-     * @var Warehouse $warehouse
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WarehouseProBundle\Entity\Warehouse")
-     * @ORM\JoinColumn(name="warehouse_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    protected $warehouse;
+//    /**
+//     * @var Warehouse $warehouse
+//     *
+//     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WarehouseProBundle\Entity\Warehouse")
+//     * @ORM\JoinColumn(name="warehouse_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+//     */
+//    protected $warehouse;
 
     /**
      * @var Product $product
@@ -98,25 +98,25 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
 
         return $this;
     }
-
-    /**
-     * @return Warehouse
-     */
-    public function getWarehouse()
-    {
-        return $this->warehouse;
-    }
-
-    /**
-     * @param Warehouse $warehouse
-     * @return WarehouseInventoryLevel
-     */
-    public function setWarehouse(Warehouse $warehouse)
-    {
-        $this->warehouse = $warehouse;
-
-        return $this;
-    }
+//
+//    /**
+//     * @return Warehouse
+//     */
+//    public function getWarehouse()
+//    {
+//        return $this->warehouse;
+//    }
+//
+//    /**
+//     * @param Warehouse $warehouse
+//     * @return WarehouseInventoryLevel
+//     */
+//    public function setWarehouse(Warehouse $warehouse)
+//    {
+//        $this->warehouse = $warehouse;
+//
+//        return $this;
+//    }
 
     /**
      * @return Product
