@@ -3,17 +3,15 @@
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query;
-
-use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
+use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
 {
@@ -33,8 +31,8 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         $update = [];
         $where = ['website' => $website, 'product' => $product];
 
-        $em = $this->registry->getManagerForClass('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved');
-        $er = $em->getRepository('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        $em = $this->registry->getManagerForClass('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
+        $er = $em->getRepository('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
         $hasProductVisibilityResolved = $er->hasEntity($where);
 
         if (!$hasProductVisibilityResolved && $selectedVisibility !== ProductVisibility::CONFIG) {
@@ -91,8 +89,8 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         if ($category) {
             $visibility = $this->getCategoryVisibility($category);
         } else {
-            $this->registry->getManagerForClass('OroAccountBundle:Visibility\ProductVisibility')
-                ->getRepository('OroAccountBundle:Visibility\ProductVisibility')
+            $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\ProductVisibility')
+                ->getRepository('OroVisibilityBundle:Visibility\ProductVisibility')
                 ->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor, $product);
             $visibility = ProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         }
@@ -133,8 +131,8 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
     protected function getCategoryIdsByVisibility($visibility)
     {
         return $this->registry
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
             ->getCategoryIdsByNotResolvedVisibility($visibility);
     }
 
@@ -145,8 +143,8 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
     protected function getCategoryVisibility(Category $category)
     {
         return $this->registry
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
             ->getFallbackToAllVisibility($category);
     }
 

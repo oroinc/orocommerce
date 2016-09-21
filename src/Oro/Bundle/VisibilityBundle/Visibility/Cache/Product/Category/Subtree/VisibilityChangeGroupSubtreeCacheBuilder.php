@@ -5,13 +5,11 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\VisibilityBundle\Entity\Account;
-use Oro\Bundle\VisibilityBundle\Entity\AccountGroup;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
 
 class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAwareSubtreeCacheBuilder
 {
@@ -56,7 +54,7 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         /** @var QueryBuilder $qb */
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->update('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved', 'agcvr')
+        $qb->update('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved', 'agcvr')
             ->set('agcvr.visibility', $visibility)
             ->where($qb->expr()->eq('agcvr.accountGroup', ':accountGroup'))
             ->andWhere($qb->expr()->in('IDENTITY(agcvr.category)', ':categoryIds'))
@@ -80,8 +78,8 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
             $parentCategory = $category->getParentCategory();
             if ($parentCategory && !empty($this->accountGroupIdsWithChangedVisibility[$parentCategory->getId()])) {
                 $visibility = $this->registry
-                    ->getManagerForClass('OroAccountBundle:Visibility\AccountGroupCategoryVisibility')
-                    ->getRepository('OroAccountBundle:Visibility\AccountGroupCategoryVisibility')
+                    ->getManagerForClass('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility')
+                    ->getRepository('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility')
                     ->getAccountGroupCategoryVisibility($this->accountGroup, $category);
                 if ($visibility === AccountGroupCategoryVisibility::PARENT_CATEGORY) {
                     return [$accountGroupId];
@@ -136,7 +134,7 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         $qb->select('account.id')
             ->from('OroAccountBundle:Account', 'account')
             ->leftJoin(
-                'OroAccountBundle:Visibility\AccountCategoryVisibility',
+                'OroVisibilityBundle:Visibility\AccountCategoryVisibility',
                 'accountCategoryVisibility',
                 Join::WITH,
                 $qb->expr()->andX(
@@ -186,10 +184,10 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
             ->createQueryBuilder();
 
-        $qb->update('OroAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved', 'agpvr')
+        $qb->update('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved', 'agpvr')
             ->set('agpvr.visibility', $visibility)
             ->where($qb->expr()->eq('agpvr.accountGroup', ':accountGroup'))
             ->andWhere($qb->expr()->in('IDENTITY(agpvr.category)', ':categoryIds'))
@@ -204,7 +202,7 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
     protected function joinCategoryVisibility(QueryBuilder $qb, $target = null)
     {
         return $qb->leftJoin(
-            'OroAccountBundle:Visibility\AccountGroupCategoryVisibility',
+            'OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility',
             'cv',
             Join::WITH,
             $qb->expr()->andX(
@@ -221,7 +219,7 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
     protected function getEntityManager()
     {
         return $this->registry
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
     }
 
     /**
@@ -230,6 +228,6 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
     protected function getRepository()
     {
         return $this->getEntityManager()
-            ->getRepository('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
     }
 }

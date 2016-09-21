@@ -2,20 +2,14 @@
 
 namespace Oro\Bundle\VisibilityBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-
+use Oro\Bundle\AccountBundle\Form\Handler\WebsiteScopedDataHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
-
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
-use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use Oro\Bundle\VisibilityBundle\Form\Handler\WebsiteScopedDataHandler;
 
 class ProductVisibilityController extends Controller
 {
@@ -66,7 +60,7 @@ class ProductVisibilityController extends Controller
      *      requirements={"productId"="\d+", "id"="\d+"}
      * )
      * @ParamConverter("product", options={"id" = "productId"})
-     * @Template("OroAccountBundle:ProductVisibility/widget:website.html.twig")
+     * @Template("OroVisibilityBundle:ProductVisibility/widget:website.html.twig")
      * @AclAncestor("oro_product_update")
      *
      * @param Product $product

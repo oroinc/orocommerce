@@ -4,9 +4,8 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 
@@ -117,7 +116,7 @@ class CategoryRepository extends EntityRepository
                 $visibilityCondition,
                 (string)CategoryVisibilityResolved::SOURCE_STATIC
             )
-            ->from('OroAccountBundle:Visibility\CategoryVisibility', 'cv')
+            ->from('OroVisibilityBundle:Visibility\CategoryVisibility', 'cv')
             ->where('cv.visibility != :config')
             ->setParameter('config', CategoryVisibility::CONFIG);
 
@@ -155,7 +154,7 @@ class CategoryRepository extends EntityRepository
                 $sourceCondition
             )
             ->from('OroCatalogBundle:Category', 'c')
-            ->leftJoin('OroAccountBundle:Visibility\CategoryVisibility', 'cv', 'WITH', 'cv.category = c')
+            ->leftJoin('OroVisibilityBundle:Visibility\CategoryVisibility', 'cv', 'WITH', 'cv.category = c')
             ->andWhere('cv.visibility IS NULL')     // parent category fallback
             ->andWhere('c.id IN (:categoryIds)');   // specific category IDs
 
@@ -181,7 +180,7 @@ class CategoryRepository extends EntityRepository
         $qb->select('COALESCE(cvr.visibility, '. $qb->expr()->literal($configFallback).')')
             ->from('OroCatalogBundle:Category', 'category')
             ->leftJoin(
-                'OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
                 'cvr',
                 Join::WITH,
                 $qb->expr()->eq('cvr.category', 'category')
@@ -203,7 +202,7 @@ class CategoryRepository extends EntityRepository
         }
 
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->update('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved', 'cvr')
+        $qb->update('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved', 'cvr')
             ->set('cvr.visibility', $visibility)
             ->andWhere($qb->expr()->in('IDENTITY(cvr.category)', ':categoryIds'))
             ->setParameter('categoryIds', $categoryIds);

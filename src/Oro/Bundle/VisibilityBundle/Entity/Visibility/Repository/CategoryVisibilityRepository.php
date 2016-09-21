@@ -21,7 +21,7 @@ class CategoryVisibilityRepository extends EntityRepository
             )
             ->from('OroCatalogBundle:Category', 'c')
             ->leftJoin(
-                'OroAccountBundle:Visibility\CategoryVisibility',
+                'OroVisibilityBundle:Visibility\CategoryVisibility',
                 'categoryVisibility',
                 Join::WITH,
                 $queryBuilder->expr()->eq('categoryVisibility.category', 'c')

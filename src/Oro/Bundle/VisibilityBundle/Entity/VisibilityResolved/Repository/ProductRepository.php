@@ -3,13 +3,12 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
-
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -48,13 +47,13 @@ class ProductRepository extends AbstractVisibilityRepository
         ->innerJoin('category.products', 'product')
         ->innerJoin('OroWebsiteBundle:Website', 'website', Join::WITH, $websiteJoinCondition)
         ->leftJoin(
-            'OroAccountBundle:Visibility\ProductVisibility',
+            'OroVisibilityBundle:Visibility\ProductVisibility',
             'pv',
             'WITH',
             'IDENTITY(pv.product) = product.id AND IDENTITY(pv.website) = website.id'
         )
         ->leftJoin(
-            'OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+            'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
             'cvr',
             'WITH',
             'cvr.category = category'
@@ -91,7 +90,7 @@ class ProductRepository extends AbstractVisibilityRepository
         );
 
         $qb = $this->getEntityManager()
-            ->getRepository('OroAccountBundle:Visibility\ProductVisibility')
+            ->getRepository('OroVisibilityBundle:Visibility\ProductVisibility')
             ->createQueryBuilder('pv')
             ->select(
                 'pv.id',
@@ -199,7 +198,7 @@ class ProductRepository extends AbstractVisibilityRepository
             ->innerJoin('category.products', 'product')
             ->innerJoin('OroWebsiteBundle:Website', 'website', Join::WITH, $websiteJoinCondition)
             ->leftJoin(
-                'OroAccountBundle:Visibility\ProductVisibility',
+                'OroVisibilityBundle:Visibility\ProductVisibility',
                 'pv',
                 Join::WITH,
                 'IDENTITY(pv.product) = product.id AND IDENTITY(pv.website) = website.id'

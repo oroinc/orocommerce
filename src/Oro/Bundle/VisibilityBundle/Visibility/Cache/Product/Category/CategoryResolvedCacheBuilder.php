@@ -3,18 +3,17 @@
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\EntityManager;
-
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CategoryVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\PositionChangeCategorySubtreeCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCategorySubtreeCacheBuilder;
-use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements CategoryCaseCacheBuilderInterface
 {
@@ -117,8 +116,8 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
     public function buildCache(Website $website = null)
     {
         /** @var CategoryVisibilityRepository $repository */
-        $repository = $this->registry->getManagerForClass('OroAccountBundle:Visibility\CategoryVisibility')
-            ->getRepository('OroAccountBundle:Visibility\CategoryVisibility');
+        $repository = $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\CategoryVisibility')
+            ->getRepository('OroVisibilityBundle:Visibility\CategoryVisibility');
         /** @var CategoryRepository $resolvedRepository */
         $resolvedRepository = $this->registry->getManagerForClass($this->cacheClass)
             ->getRepository($this->cacheClass);
@@ -196,7 +195,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
     protected function getEntityManager()
     {
         return $this->registry
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved');
     }
 
     /**
@@ -205,7 +204,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
     protected function getRepository()
     {
         return $this->getEntityManager()
-            ->getRepository('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved');
     }
 
     /**

@@ -6,13 +6,11 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-
+use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Symfony\Component\Form\FormInterface;
-
-use Oro\Bundle\VisibilityBundle\Entity\AccountAwareInterface;
-use Oro\Bundle\VisibilityBundle\Entity\AccountGroupAwareInterface;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 
 abstract class AbstractVisibilityListener
 {

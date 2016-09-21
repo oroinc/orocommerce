@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
+use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener;
+use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
+use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSet;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
-use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener;
-use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSubmitListener;
-use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
-use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSet;
 
 class EntityVisibilityType extends AbstractType
 {

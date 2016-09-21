@@ -4,10 +4,9 @@ namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 
 class ProductVisibilityRepository extends EntityRepository
 {
@@ -42,7 +41,7 @@ class ProductVisibilityRepository extends EntityRepository
                 $qb->expr()->isMemberOf('product', 'category.products')
             )
             ->leftJoin(
-                'OroAccountBundle:Visibility\ProductVisibility',
+                'OroVisibilityBundle:Visibility\ProductVisibility',
                 'productVisibility',
                 Join::WITH,
                 $qb->expr()->andX(
@@ -59,7 +58,7 @@ class ProductVisibilityRepository extends EntityRepository
         }
 
         $executor->execute(
-            'OroAccountBundle:Visibility\ProductVisibility',
+            'OroVisibilityBundle:Visibility\ProductVisibility',
             ['product', 'website', 'visibility'],
             $qb
         );

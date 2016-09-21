@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\VisibilityBundle\EventListener;
 
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\VisibilityBundle\Entity\AccountGroup;
-use Oro\Bundle\VisibilityBundle\Entity\Account;
-use Oro\Bundle\VisibilityBundle\Provider\AccountUserRelationsProvider;
-use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
-use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 
 class CategoryTreeHandlerListener
 {

@@ -3,10 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
-
-use Oro\Bundle\VisibilityBundle\Entity\AccountGroup;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -21,7 +20,7 @@ class AccountGroupProductVisibilityResolved extends BaseProductVisibilityResolve
      * @var AccountGroup
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\VisibilityBundle\Entity\AccountGroup")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountGroup")
      * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $accountGroup;

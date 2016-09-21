@@ -2,12 +2,9 @@
 
 namespace Oro\Bundle\AccountBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-
-use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
-use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 
 class Configuration implements ConfigurationInterface
 {
@@ -26,9 +23,7 @@ class Configuration implements ConfigurationInterface
                 'anonymous_account_group' => ['type' => 'integer', 'value' => null],
                 'registration_allowed' => ['type' => 'boolean', 'value' => true],
                 'confirmation_required' => ['type' => 'boolean', 'value' => true],
-                'send_password_in_welcome_email' => ['type' => 'boolean', 'value' => false],
-                'category_visibility' => ['value' => CategoryVisibility::VISIBLE],
-                'product_visibility' => ['value' => ProductVisibility::VISIBLE],
+                'send_password_in_welcome_email' => ['type' => 'boolean', 'value' => false]
             ]
         );
 

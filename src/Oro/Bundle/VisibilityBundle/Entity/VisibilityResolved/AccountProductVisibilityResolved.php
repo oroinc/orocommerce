@@ -3,10 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
-
-use Oro\Bundle\VisibilityBundle\Entity\Account;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -23,7 +22,7 @@ class AccountProductVisibilityResolved extends BaseProductVisibilityResolved
      * @var Account
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\VisibilityBundle\Entity\Account")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $account;

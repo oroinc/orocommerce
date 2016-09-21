@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-use Oro\Bundle\VisibilityBundle\Entity\Account;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -74,7 +74,7 @@ class AccountProductRepository extends AbstractVisibilityRepository
 
         foreach ($visibilityMap as $visibility => $productVisibility) {
             $qb = $this->getEntityManager()
-                ->getRepository('OroAccountBundle:Visibility\AccountProductVisibility')
+                ->getRepository('OroVisibilityBundle:Visibility\AccountProductVisibility')
                 ->createQueryBuilder('productVisibility');
 
             $qb->select([
@@ -100,7 +100,7 @@ class AccountProductRepository extends AbstractVisibilityRepository
         if ($category) {
             $configValue = AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
             $qb = $this->getEntityManager()
-                ->getRepository('OroAccountBundle:Visibility\AccountProductVisibility')
+                ->getRepository('OroVisibilityBundle:Visibility\AccountProductVisibility')
                 ->createQueryBuilder('apv');
             $qb->select([
                 'apv.id',
@@ -115,19 +115,19 @@ class AccountProductRepository extends AbstractVisibilityRepository
             ])
             ->innerJoin('apv.account', 'account')
             ->leftJoin(
-                'OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
+                'OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
                 'acvr',
                 'WITH',
                 'acvr.account = apv.account AND acvr.category = :category'
             )
             ->leftJoin(
-                'OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+                'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
                 'agcvr',
                 'WITH',
                 'agcvr.accountGroup = account.group AND agcvr.category = :category'
             )
             ->leftJoin(
-                'OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
                 'cvr',
                 'WITH',
                 'cvr.category = :category'
@@ -150,7 +150,7 @@ class AccountProductRepository extends AbstractVisibilityRepository
     {
         $configValue = AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         $qb = $this->getEntityManager()
-            ->getRepository('OroAccountBundle:Visibility\AccountProductVisibility')
+            ->getRepository('OroVisibilityBundle:Visibility\AccountProductVisibility')
             ->createQueryBuilder('apv');
         $qb->select(
             'apv.id',
@@ -164,19 +164,19 @@ class AccountProductRepository extends AbstractVisibilityRepository
         ->innerJoin('apv.account', 'account')
         ->innerJoin('OroCatalogBundle:Category', 'category', 'WITH', 'apv.product MEMBER OF category.products')
         ->leftJoin(
-            'OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
+            'OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
             'acvr',
             'WITH',
             'acvr.account = apv.account AND acvr.category = category'
         )
         ->leftJoin(
-            'OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+            'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr',
             'WITH',
             'agcvr.accountGroup = account.group AND agcvr.category = category'
         )
         ->leftJoin(
-            'OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+            'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
             'cvr',
             'WITH',
             'cvr.category = category'
@@ -221,7 +221,7 @@ ELSE
 END
 VISIBILITY;
         $queryBuilder = $this->getEntityManager()
-            ->getRepository('OroAccountBundle:Visibility\AccountProductVisibility')
+            ->getRepository('OroVisibilityBundle:Visibility\AccountProductVisibility')
             ->createQueryBuilder('apv');
         $queryBuilder
             ->select(

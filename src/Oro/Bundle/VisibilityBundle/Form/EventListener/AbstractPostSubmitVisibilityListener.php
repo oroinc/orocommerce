@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
-use Symfony\Component\Form\FormInterface;
-
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\VisibilityBundle\Entity\Account;
-use Oro\Bundle\VisibilityBundle\Entity\AccountAwareInterface;
-use Oro\Bundle\VisibilityBundle\Entity\AccountGroup;
-use Oro\Bundle\VisibilityBundle\Entity\AccountGroupAwareInterface;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
+use Symfony\Component\Form\FormInterface;
 
 abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityListener
 {

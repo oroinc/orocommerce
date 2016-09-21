@@ -3,10 +3,8 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility;
 
 use Doctrine\ORM\Mapping as ORM;
-
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\VisibilityBundle\Entity\AccountGroup;
-use Oro\Bundle\VisibilityBundle\Entity\AccountGroupAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
@@ -49,7 +47,7 @@ class AccountGroupCategoryVisibility implements VisibilityInterface, AccountGrou
     /**
      * @var AccountGroup
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\VisibilityBundle\Entity\AccountGroup")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountGroup")
      * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $accountGroup;

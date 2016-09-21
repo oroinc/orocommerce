@@ -4,8 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\VisibilityBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitiesAwareSubtreeCacheBuilder
@@ -18,8 +17,8 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
     {
         $childCategoryIds = $this->getChildCategoryIdsForUpdate($category);
 
-        $this->registry->getManagerForClass('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+        $this->registry->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
             ->updateCategoryVisibilityByCategory($childCategoryIds, $visibility);
 
         $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
@@ -118,7 +117,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
         $qb->select('accountGroup.id')
             ->from('OroAccountBundle:AccountGroup', 'accountGroup')
             ->leftJoin(
-                'OroAccountBundle:Visibility\AccountGroupCategoryVisibility',
+                'OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility',
                 'accountGroupCategoryVisibility',
                 Join::WITH,
                 $qb->expr()->andX(
@@ -162,10 +161,10 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved')
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved')
             ->createQueryBuilder();
 
-        $qb->update('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved', 'pvr')
+        $qb->update('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved', 'pvr')
             ->set('pvr.visibility', $visibility)
             ->andWhere($qb->expr()->in('IDENTITY(pvr.category)', ':categoryIds'))
             ->setParameter('categoryIds', $categoryIds);
@@ -185,10 +184,10 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
             ->createQueryBuilder();
 
-        $qb->update('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved', 'cvr')
+        $qb->update('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved', 'cvr')
             ->set('cvr.visibility', $visibility)
             ->andWhere($qb->expr()->in('IDENTITY(cvr.category)', ':categoryIds'))
             ->setParameter('categoryIds', $categoryIds);
@@ -202,7 +201,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
     protected function joinCategoryVisibility(QueryBuilder $qb, $target)
     {
         return $qb->leftJoin(
-            'OroAccountBundle:Visibility\CategoryVisibility',
+            'OroVisibilityBundle:Visibility\CategoryVisibility',
             'cv',
             Join::WITH,
             $qb->expr()->eq('node', 'cv.category')

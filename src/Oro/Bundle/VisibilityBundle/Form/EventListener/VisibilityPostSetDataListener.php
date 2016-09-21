@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
+use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
-
-use Oro\Bundle\VisibilityBundle\Entity\AccountAwareInterface;
-use Oro\Bundle\VisibilityBundle\Entity\AccountGroupAwareInterface;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 
 class VisibilityPostSetDataListener extends AbstractVisibilityListener
 {

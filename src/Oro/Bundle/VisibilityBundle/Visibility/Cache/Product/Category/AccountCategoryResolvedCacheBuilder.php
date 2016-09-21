@@ -3,15 +3,14 @@
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\VisibilityBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
@@ -63,8 +62,8 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
             ];
         } elseif ($selectedVisibility === AccountCategoryVisibility::CATEGORY) {
             $visibility = $this->registry
-                ->getManagerForClass('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
-                ->getRepository('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+                ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
+                ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
                 ->getFallbackToAllVisibility($category);
             $update = [
                 'visibility' => $visibility,
@@ -81,14 +80,14 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
             if ($accountGroup) {
                 $visibility = $this->registry
                     ->getManagerForClass(
-                        'OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved'
+                        'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved'
                     )
-                    ->getRepository('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+                    ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
                     ->getFallbackToGroupVisibility($category, $accountGroup);
             } else {
                 $visibility = $this->registry
-                    ->getManagerForClass('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
-                    ->getRepository('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+                    ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
+                    ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
                     ->getFallbackToAllVisibility($category);
             }
         } elseif ($selectedVisibility === AccountCategoryVisibility::PARENT_CATEGORY) {
@@ -211,7 +210,7 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     protected function getEntityManager()
     {
         return $this->registry
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
     }
 
     /**
@@ -220,7 +219,7 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     protected function getRepository()
     {
         return $this->getEntityManager()
-            ->getRepository('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
     }
 
     /**
