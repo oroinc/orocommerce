@@ -4,6 +4,8 @@ namespace Oro\Bundle\ShoppingListBundle\Condition;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use InvalidArgumentException;
+use Symfony\Component\PropertyAccess\PropertyPathInterface;
+
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
@@ -15,7 +17,6 @@ use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 /**
  * Check if products have at least one price
