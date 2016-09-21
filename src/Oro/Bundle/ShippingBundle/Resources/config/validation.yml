@@ -1,20 +1,3 @@
-Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse:
-    properties:
-        country:
-            - NotBlank: ~
-            - Valid: ~
-        region:
-            - NotBlank: ~
-            - Valid: ~
-        postalCode:
-            - NotBlank: ~
-        city:
-            - NotBlank: ~
-        street:
-            - NotBlank: ~
-        warehouse:
-            - NotBlank: ~
-
 Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:

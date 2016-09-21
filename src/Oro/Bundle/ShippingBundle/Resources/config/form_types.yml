@@ -14,17 +14,9 @@ services:
             - { name: form.type }
 
     oro_shipping.form.type.shipping_origin_warehouse:
-        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType
+        class: Oro\Bundle\WarehouseProBundle\Form\Type\ShippingOriginWarehouseType
         tags:
             - { name: form.type }
-
-    oro_shipping.form.extension.warehouse_shipping_origin:
-        class: Oro\Bundle\ShippingBundle\Form\Extension\WarehouseShippingOriginExtension
-        arguments:
-            - '@oro_shipping.shipping_origin.provider'
-            - '@doctrine'
-        tags:
-            - { name: form.type_extension, alias: oro_warehouse }
 
     oro_shipping.form.type.length_unit_select:
         class: Oro\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType
