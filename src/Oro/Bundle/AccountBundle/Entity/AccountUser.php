@@ -388,7 +388,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
-     * @return Account
+     * @return Account|null
      */
     public function getAccount()
     {
