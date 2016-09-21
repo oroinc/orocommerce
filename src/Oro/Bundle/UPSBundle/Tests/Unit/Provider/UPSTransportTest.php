@@ -144,9 +144,11 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             }
         }';
 
+        $jsonArr = json_decode($json, true);
+
         $restResponse->expects(static::once())
             ->method('json')
-            ->willReturn(json_decode($json, true))
+            ->willReturn($jsonArr)
         ;
 
         $this->client->expects(static::once())
@@ -160,7 +162,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
                 sprintf(
                     'Price request failed for transport #%s. %s',
                     $transportEntity->getId(),
-                    'No price data in provided string.'
+                    json_encode($jsonArr['Fault'])
                 )
             )
         ;

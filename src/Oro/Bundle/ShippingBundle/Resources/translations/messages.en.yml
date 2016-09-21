@@ -78,6 +78,7 @@ oro:
             entity_plural_label: Shipping Rule Method Types Configs
             id.label: Id
             type.label: Type
+            enabled.label: Enabled
             options.label: Options
             method_config.label: Method Config
         warehouse:

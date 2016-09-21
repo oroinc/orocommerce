@@ -17,6 +17,7 @@ class OroUPSBundle implements Migration
         $this->updateOroIntegrationTransportTable($schema);
         $this->createOroUPSShippingServiceTable($schema);
         $this->createOroUPSTransportShipServiceTable($schema);
+        $this->addOroUpsTransportShipServiceForeignKeys($schema);
         $this->addOroIntegrationTransportForeignKeys($schema);
         $this->addOroUPSShippingServiceForeignKeys($schema);
     }
@@ -36,7 +37,7 @@ class OroUPSBundle implements Migration
         $table->addColumn('ups_shipping_account_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('ups_pickup_type', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('ups_unit_of_weight', 'string', ['notnull' => false, 'length' => 3]);
-        $table->addColumn('ups_country_code', 'string', ['notnull' => false, 'length' => 2]);
+        $table->addColumn('ups_country_code', 'string', [ 'length' => 2]);
     }
 
     /**
@@ -50,7 +51,7 @@ class OroUPSBundle implements Migration
         $table->addColumn('description', 'string', ['notnull' => true, 'length' => 255]);
         $table->addColumn('country_code', 'string', ['length' => 2]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['country_code', 'code']);
+        $table->addIndex(['country_code'], 'IDX_C6DD8778F026BB7C', []);
     }
 
     /**
@@ -62,6 +63,8 @@ class OroUPSBundle implements Migration
         $table->addColumn('transport_id', 'integer', []);
         $table->addColumn('ship_service_id', 'integer', []);
         $table->setPrimaryKey(['transport_id', 'ship_service_id']);
+        $table->addIndex(['transport_id'], 'IDX_1554DDE9909C13F', []);
+        $table->addIndex(['ship_service_id'], 'IDX_1554DDE37CA9B1D', []);
     }
 
     /**
@@ -91,6 +94,28 @@ class OroUPSBundle implements Migration
             ['country_code'],
             ['iso2_code'],
             ['onUpdate' => null, 'onDelete' => null]
+        );
+    }
+
+    /**
+     * Add oro_ups_transport_ship_service foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroUpsTransportShipServiceForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_ups_transport_ship_service');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_ups_shipping_service'),
+            ['ship_service_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_integration_transport'),
+            ['transport_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }
