@@ -128,7 +128,7 @@ class ShoppingListControllerTest extends WebTestCase
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_4,
                 'expectedLineItemPrice' => '$0.00',
                 'needToTestRequestQuote' => true,
-                'expectedCreateOrderButtonVisible' => false
+                'expectedCreateOrderButtonVisible' => true
             ],
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
