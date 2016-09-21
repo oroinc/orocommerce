@@ -49,7 +49,7 @@ class ScopeManager
      * @param array|object $context
      * @return Scope
      */
-    public function findScope($scopeType, $context)
+    public function find($scopeType, $context = null)
     {
         $criteria = $this->getCriteria($scopeType, $context);
 
@@ -63,7 +63,7 @@ class ScopeManager
      * @param array|object $context
      * @return Scope
      */
-    public function findOrCreate($scopeType, $context)
+    public function findOrCreate($scopeType, $context = null)
     {
         $criteria = $this->getCriteria($scopeType, $context);
 
@@ -88,19 +88,6 @@ class ScopeManager
     }
 
     /**
-     * Returns array of possible scopes by context ordered by priority
-     *
-     * @param string $scopeType
-     * @param array|object $context
-     *
-     * @return Scope[]
-     */
-    public function findRelatedScopes($scopeType, $context)
-    {
-        return [];
-    }
-
-    /**
      * @param string $scopeType
      * @param ScopeProviderInterface $provider
      */
@@ -114,7 +101,7 @@ class ScopeManager
      * @param $context
      * @return array
      */
-    protected function getCriteria($scopeType, $context)
+    protected function getCriteria($scopeType, $context = null)
     {
         $criteria = $this->getBaseCriteria();
         $providers = empty($this->providers[$scopeType]) ? [] : $this->providers[$scopeType];

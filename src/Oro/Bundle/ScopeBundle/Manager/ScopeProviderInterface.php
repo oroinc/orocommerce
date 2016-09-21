@@ -9,5 +9,5 @@ interface ScopeProviderInterface
      * @param array|object $context
      * @return array
      */
-    public function getCriteria($scopeType, $context);
+    public function getCriteria($scopeType, $context = null);
 }
