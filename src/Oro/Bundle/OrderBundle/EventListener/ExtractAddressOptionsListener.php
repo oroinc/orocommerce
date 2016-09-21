@@ -14,9 +14,8 @@ class ExtractAddressOptionsListener
     {
         /** @var AbstractAddress $entity */
         $entity = $event->getEntity();
-        $addressModel  = $event->getModel();
 
-        $addressModel
+        $event->getModel()
             ->setFirstName((string)$entity->getFirstName())
             ->setLastName((string)$entity->getLastName())
             ->setStreet((string)$entity->getStreet())
@@ -25,7 +24,5 @@ class ExtractAddressOptionsListener
             ->setCountryIso2((string)$entity->getCountryIso2())
             ->setRegionCode((string)$entity->getRegionCode())
             ->setPostalCode((string)$entity->getPostalCode());
-
-        $event->setModel($addressModel);
     }
 }
