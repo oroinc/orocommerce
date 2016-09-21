@@ -41,7 +41,7 @@ class ScopeManagerTest extends \PHPUnit_Framework_TestCase
         unset($this->manager, $this->registry, $this->entityFieldProvider);
     }
 
-    public function testFindScope()
+    public function testFind()
     {
         $scope = new Scope();
         $provider = $this->getMock(ScopeProviderInterface::class);
@@ -61,6 +61,26 @@ class ScopeManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager->addProvider('testScope', $provider);
         $actualScope = $this->manager->find('testScope');
+        $this->assertEquals($scope, $actualScope);
+    }
+
+    public function testFindOrCreate()
+    {
+        $scope = new Scope();
+        $provider = $this->getMock(ScopeProviderInterface::class);
+        $provider->method('getCriteria')->willReturn([]);
+
+        $repository = $this->getMock(ObjectRepository::class);
+        $repository->method('findOneBy')->willReturn(null);
+
+        $em = $this->getMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturn($repository);
+        $this->registry->method('getManagerForClass')->willReturn($em);
+
+        $this->entityFieldProvider->method('getRelations')->willReturn([]);
+
+        $this->manager->addProvider('testScope', $provider);
+        $actualScope = $this->manager->findOrCreate('testScope');
         $this->assertEquals($scope, $actualScope);
     }
 }
