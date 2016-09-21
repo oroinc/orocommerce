@@ -10,7 +10,6 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class InventoryLevelFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
@@ -64,9 +63,6 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
             ->addName($name)
             ->addName($localizedName);
 
-        $warehouse = new Warehouse();
-        $warehouse->setName('First Warehouse');
-        $entity->setWarehouse($warehouse);
         $entity->setQuantity(50);
 
         $unitPrecision = new ProductUnitPrecision();
