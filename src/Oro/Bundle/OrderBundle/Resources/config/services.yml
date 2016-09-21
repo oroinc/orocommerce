@@ -175,11 +175,6 @@ services:
         arguments:
             - '@oro_entity.entity_class_name_provider'
 
-    oro_order.layout.block_type_extension.block_prefixes:
-        class: 'Oro\Bundle\OrderBundle\Layout\Block\Extension\BlockPrefixExtension'
-        tags:
-            - { name: layout.block_type_extension, alias: block }
-
     oro_order.order.listener.total_calculate_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'
         arguments:
