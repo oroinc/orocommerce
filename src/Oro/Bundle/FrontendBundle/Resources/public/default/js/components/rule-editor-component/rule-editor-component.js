@@ -60,9 +60,7 @@ define([
             var _this = this;
 
             this.$element.on('keyup paste change', function() {
-                var value = _this.$element.val().trim().replace(/\s+/g, ' ');
-
-                _this.$element.toggleClass('error', !_this.validate(value, _this.options));
+                _this.$element.toggleClass('error', !_this.validate(_this.$element.val(), _this.options));
             });
 
             this.initAutocomplete(options.autocomplete_type);
@@ -81,14 +79,16 @@ define([
             var _this = this;
 
             var normalized = this.getNormalized(value, this.opsRegEx);
-            var words = this.splitString(normalized.string, ' ').arr;
+            var words = this.splitString(normalized.string, ' ');
             var groups = this.getGroups(words);
 
             var logicIsValid = _.last(groups.logicWords) !== _.last(words) && _.every(groups.logic, function(item) {
                     return _.contains(this.options.grouping, item);
                 });
 
-            var dataWordsAreValid = _.every(groups.dataWords, this.isDataExpression.bind(_this));
+            var dataWordsAreValid = _.every(groups.dataWords, function(item) {
+                return _this.isDataExpression(item).full;
+            });
 
             return logicIsValid && dataWordsAreValid;
         },
@@ -105,12 +105,9 @@ define([
 
             switch (pluginName) {
                 case 'typeahead':
-
                     clickHandler = function() {
                         var _this = this;
                         var _arguments = arguments;
-
-                        // console.log('clickHandler', this, arguments);
 
                         setTimeout(function() {
                             _this.keyup.apply(_this, _arguments);
@@ -125,9 +122,6 @@ define([
                             clickHandler = clickHandler.bind(this);
 
                             _position = sourceData.position;
-
-
-                            console.log('sourceData', JSON.stringify(sourceData));
 
                             return sourceData.array;
                         },
@@ -152,9 +146,11 @@ define([
                     break;
             }
 
-            this.$element.on('click', function() {
-                clickHandler.apply(_context, arguments);
-            });
+            if (_context) {
+                this.$element.on('click', function() {
+                    clickHandler.apply(_context, arguments);
+                });
+            }
         },
 
         /**
@@ -190,8 +186,6 @@ define([
             var normalized = this.getNormalized(value, this.opsRegEx, caretPosition);
             var wordPosition = this.getWordPosition(value, caretPosition);
             var wordUnderCaret = this.getStringPart(value, wordPosition.start, wordPosition.end);
-
-            console.log('getAutocompleteSource', wordUnderCaret, wordPosition);
 
             return {
                 array: this.getSuggestList(normalized, wordUnderCaret),
@@ -242,13 +236,17 @@ define([
         isDataExpression: function(string) {
             var expressionMatch = string.match(this.opsRegEx);
 
-            if (_.isNull(expressionMatch)) {
+            if (_.isNull(expressionMatch) || expressionMatch.length > 1) {
                 return false;
             }
 
-            var matchSplit = expressionMatch ? this.splitString(string, expressionMatch[0]).arr : null;
+            var matchSplit = expressionMatch ? this.splitString(string, expressionMatch[0]) : null;
+            var isValidWord = _.contains(this.dataWordCases, matchSplit[0]);
 
-            return !_.isEmpty(matchSplit[1]) && _.contains(this.dataWordCases, matchSplit[0]);
+            return {
+                full: !_.isEmpty(matchSplit[1]) && isValidWord,
+                noValue: _.isEmpty(matchSplit[1]) && isValidWord
+            };
         },
 
         /**
@@ -258,37 +256,38 @@ define([
          * @returns {Array}
          */
         getSuggestList: function(normalized, wordUnderCaret) {
-            console.log(normalized, wordUnderCaret);
-
-            if (!normalized.string.trim()) { // initial suggestion for empty value
-                return this.getFilteredSuggests(wordUnderCaret, this.dataWordCases);
-            }
-
+            var result = [];
             var _this = this;
 
-            var words = this.splitString(normalized.string, ' ').arr;
+            var words = this.splitString(normalized.string, ' ');
             var groups = this.getGroups(words);
+
+            if (_.isEmpty(normalized.string.trim())) { // initial suggestion for empty value
+                return this.getFilteredSuggests(wordUnderCaret, this.dataWordCases);
+            }
 
             var previousWord = words[words.length - 2];
             var lastWord = _.last(words);
             var isLast = wordIs(lastWord);
             var lastIsValid = isLast.logic || isLast.dataWord || isLast.dataExpression;
-
             var isCheckedWord = lastIsValid || words.length === 1 ? isLast : wordIs(previousWord);
 
             if (isCheckedWord.dataExpression) { // previous word is a full valid expression of data
-                return this.getFilteredSuggests(wordUnderCaret, this.logicWordCases);
+                result = this.getFilteredSuggests(wordUnderCaret, this.logicWordCases);
             } else if (isCheckedWord.dataWord) { // previous word is a valid word of data but no full expression
-                return this.getFilteredSuggests(wordUnderCaret, this.operationsCases);
-            } else if (isCheckedWord.logic) { // previous word is a logic (AND, OR, etc.)
-                return this.getFilteredSuggests(wordUnderCaret, this.dataWordCases);
+                result = this.getFilteredSuggests(wordUnderCaret, this.operationsCases);
+            } else if (!isCheckedWord.operation) { // previous word is a operation (=, !=, etc.)
+                result = this.getFilteredSuggests(wordUnderCaret, this.dataWordCases);
             }
+
+            return result;
 
             function wordIs(word) {
                 return {
                     logic: !_.isEmpty(groups.logicWords) && _.contains(_this.logicWordCases, word),
                     dataWord: !_.isEmpty(groups.dataWords) && _.contains(_this.dataWordCases, word),
-                    dataExpression: !_.isEmpty(groups.dataWords) && _this.isDataExpression(word)
+                    dataExpression: !_.isEmpty(groups.dataWords) && _this.isDataExpression(word).full,
+                    operation: _this.isDataExpression(word).noValue
                 };
             }
         },
@@ -301,7 +300,7 @@ define([
          * @returns {{string: string, position: number}}
          */
         getNormalized: function(value, regex, caretPosition) {
-            var string = caretPosition ? this.getStringPart(value, 0, caretPosition) : '';
+            var string = caretPosition ? this.getStringPart(value, 0, caretPosition) : value;
             var normalizedSpaces = string.replace(/\s+/g, ' ');
             var normalizedString = normalizedSpaces.replace(regex, '$1');
 
@@ -393,15 +392,10 @@ define([
          *
          * @param string
          * @param splitter
-         * @returns {{arr: array, hasParts: boolean}}
+         * @returns {Array}
          */
         splitString: function(string, splitter) {
-            var arr = _.compact(string.split(splitter));
-
-            return {
-                arr: arr,
-                hasParts: arr.length > 1
-            };
+            return  _.compact(string.split(splitter));
         },
 
         /**
