@@ -6,8 +6,8 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReference;
-use Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReferenceValidator;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @dbIsolation
@@ -15,7 +15,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 class LexemeCircularReferenceValidatorTest extends WebTestCase
 {
     /**
-     * @var LexemeCircularReferenceValidator
+     * @var ValidatorInterface
      */
     protected $validator;
 

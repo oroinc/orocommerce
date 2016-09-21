@@ -64,8 +64,9 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
     }
 
     /**
-     * @param mixed $object
-     * @param Constraint $constraint
+     * {@inheritdoc}
+     * @param PriceList|PriceRule $object
+     * @param LexemeCircularReference $constraint
      *
      * @throws \InvalidArgumentException
      */
@@ -84,7 +85,7 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
                 $expressions = [$this->getFieldValue($object, $field)];
 
                 while (true) {
-                    $nodes = $this->parseExpression($expressions);
+                    $nodes = $this->parseExpressions($expressions);
                     $references = $this->findReferences($nodes);
 
                     if (in_array($primaryId, $references, true)) {
@@ -113,17 +114,17 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
     {
         $primaryId = null;
         if ($object instanceof PriceList) {
-            $primaryId = $this->getFieldValue($object, 'id');
-        } elseif (($priceList = $this->getFieldValue($object, 'priceList')) !== null) {
-            $primaryId = $this->getFieldValue($priceList, 'id');
+            $primaryId = $object->getId();
+        } elseif ($object instanceof PriceRule) {
+            $primaryId = $object->getPriceList()->getId();
         }
         return $primaryId;
     }
     /**
      * @param array $expressions
-     * @return array
+     * @return NodeInterface[]
      */
-    protected function parseExpression($expressions)
+    protected function parseExpressions($expressions)
     {
         $nodes = [];
         foreach ($expressions as $expression) {
@@ -137,23 +138,21 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
     }
 
     /**
-     * @param array $nodes
+     * @param NodeInterface[] $nodes
      * @return array
      */
-    protected function findReferences($nodes)
+    protected function findReferences(array $nodes)
     {
         $references = [];
 
         foreach ($nodes as $node) {
-            /**
-             * @var NameNode|RelationNode $node
-             */
             if (!$this->isSupportedNode($node)) {
                 continue;
             }
+            /** @var NameNode|RelationNode $node */
             $container = $node->getContainer();
 
-            if ($container !== PriceList::class) {
+            if (!is_a($container, PriceList::class, true)) {
                 continue;
             }
 

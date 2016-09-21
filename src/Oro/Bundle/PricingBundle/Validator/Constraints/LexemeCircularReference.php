@@ -29,6 +29,9 @@ class LexemeCircularReference extends Constraint
         return 'oro_pricing.validator_constraints.lexeme_circular_reference_validator';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getTargets()
     {
         return self::CLASS_CONSTRAINT;

@@ -645,11 +645,9 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
 
         $constraint = new LexemeCircularReference();
         $constraint->fields = ['rule'];
-
         $builder = $this->getMock(ConstraintViolationBuilderInterface::class);
         $builder->expects($this->at(0))->method('atPath')->with('rule')->willReturn($builder);
         $builder->expects($this->at(1))->method('addViolation');
-
         $this->context->expects($this->any())
             ->method('buildViolation')
             ->with($constraint->message)
