@@ -13,11 +13,11 @@ use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ShoppingListBundle\Condition\ProductsHaveAtLeastOnePrice;
+use Oro\Bundle\ShoppingListBundle\Condition\HasPriceInShoppingLineItems;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class ProductsHaveAtLeastOnePriceTest extends \PHPUnit_Framework_TestCase
+class HasPriceInShoppingLineItemsTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -27,7 +27,7 @@ class ProductsHaveAtLeastOnePriceTest extends \PHPUnit_Framework_TestCase
      * @param array $lineItems
      * @param null $user
      * @param array $prices
-     * @return ProductsHaveAtLeastOnePrice
+     * @return HasPriceInShoppingLineItems
      */
     private function createCondition($lineItems = [], $user = null, $prices = [])
     {
@@ -74,7 +74,7 @@ class ProductsHaveAtLeastOnePriceTest extends \PHPUnit_Framework_TestCase
             ->method('getPriceListByAccount')
             ->will($this->returnValue(new BasePriceList()));
 
-        $condition = new ProductsHaveAtLeastOnePrice(
+        $condition = new HasPriceInShoppingLineItems(
             $productPriceProvider,
             $securityFacade,
             $userCurrencyManager,
@@ -112,7 +112,7 @@ class ProductsHaveAtLeastOnePriceTest extends \PHPUnit_Framework_TestCase
     {
         $condition = $this->createCondition();
 
-        $this->assertEquals(ProductsHaveAtLeastOnePrice::NAME, $condition->getName());
+        $this->assertEquals(HasPriceInShoppingLineItems::NAME, $condition->getName());
     }
 
     public function testToArray()
@@ -120,7 +120,7 @@ class ProductsHaveAtLeastOnePriceTest extends \PHPUnit_Framework_TestCase
         $condition = $this->createCondition();
         $toArray = $condition->toArray();
 
-        $key = '@'.ProductsHaveAtLeastOnePrice::NAME;
+        $key = '@'.HasPriceInShoppingLineItems::NAME;
 
         $this->assertInternalType('array', $toArray);
         $this->assertArrayHasKey($key, $toArray);

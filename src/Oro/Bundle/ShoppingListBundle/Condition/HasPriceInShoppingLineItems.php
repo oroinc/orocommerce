@@ -3,10 +3,8 @@
 namespace Oro\Bundle\ShoppingListBundle\Condition;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use InvalidArgumentException;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
@@ -21,13 +19,13 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 /**
  * Check if products have at least one price
  * Usage:
- * @products_have_at_least_one_price: items
+ * @has_price_in_shopping_line_items: items
  */
-class ProductsHaveAtLeastOnePrice extends AbstractCondition implements ContextAccessorAwareInterface
+class HasPriceInShoppingLineItems extends AbstractCondition implements ContextAccessorAwareInterface
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'products_have_at_least_one_price';
+    const NAME = 'has_price_in_shopping_line_items';
 
     /**
      * @var PropertyPathInterface
@@ -80,7 +78,7 @@ class ProductsHaveAtLeastOnePrice extends AbstractCondition implements ContextAc
         $lineItems = $this->resolveValue($context, $this->propertyPath);
 
         if ($lineItems instanceof ArrayCollection) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 'Property must be a valid ArrayCollection. but is '
                 .get_class($lineItems)
             );
@@ -105,7 +103,7 @@ class ProductsHaveAtLeastOnePrice extends AbstractCondition implements ContextAc
         $option = reset($options);
 
         if (!$option instanceof PropertyPathInterface) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 'Condition option must be a PropertyPathInterface, but is '
                 .get_class($option)
             );
@@ -134,7 +132,7 @@ class ProductsHaveAtLeastOnePrice extends AbstractCondition implements ContextAc
      * @param LineItem[]|ArrayCollection $lineItems
      * @return boolean
      */
-    public function isThereAPricePresent($lineItems)
+    private function isThereAPricePresent($lineItems)
     {
         $productsPricesCriteria = [];
 
@@ -150,7 +148,7 @@ class ProductsHaveAtLeastOnePrice extends AbstractCondition implements ContextAc
         /** @var AccountUser $accountUser */
         $accountUser = $this->securityFacade->getLoggedUser();
         if (!$accountUser) {
-            return null;
+            return false;
         }
 
         $prices = $this->productPriceProvider->getMatchedPrices(
@@ -158,16 +156,6 @@ class ProductsHaveAtLeastOnePrice extends AbstractCondition implements ContextAc
             $this->priceListRequestHandler->getPriceListByAccount()
         );
 
-        $found = false;
-
-        foreach ($prices as $key => $price) {
-            if ($price instanceof Price) {
-                $found = true;
-
-                break;
-            }
-        }
-
-        return $found;
+        return !empty(array_filter($prices));
     }
 }

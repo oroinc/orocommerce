@@ -218,11 +218,11 @@ services:
             - { name: oro_user.privilege_category}
 
     oro_shopping_list.condition.products_have_at_least_one_price:
-        class: 'Oro\Bundle\ShoppingListBundle\Condition\ProductsHaveAtLeastOnePrice'
+        class: 'Oro\Bundle\ShoppingListBundle\Condition\HasPriceInShoppingLineItems'
         arguments:
             - '@oro_pricing.provider.combined_product_price'
             - '@oro_security.security_facade'
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.model.price_list_request_handler'
         tags:
-            - { name: oro_action.condition, alias: 'products_have_at_least_one_price' }
+            - { name: oro_action.condition, alias: 'has_price_in_shopping_line_items' }

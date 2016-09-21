@@ -30,7 +30,7 @@ operations:
         preconditions:
             '@and':
                 - '@has_elements': $lineItems
-                - '@products_have_at_least_one_price': $lineItems
+                - '@has_price_in_shopping_line_items': $lineItems
         actions:
             - '@assign_url':
                 attribute: $.editLink
