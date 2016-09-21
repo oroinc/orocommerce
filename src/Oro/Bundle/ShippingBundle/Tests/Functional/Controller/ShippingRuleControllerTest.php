@@ -12,6 +12,7 @@ use Symfony\Component\DomCrawler\Form;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @dbIsolation
  */
 class ShippingRuleControllerTest extends WebTestCase

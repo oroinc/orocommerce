@@ -1,0 +1,35 @@
+elements:
+  CheckoutTotalSum:
+    selector: 'td.order-checkout-widget__total span.blue'
+    class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+  CheckoutFormRow:
+    selector: '.checkout__form__row'
+    class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+  Shipping Rule:
+    selector: 'div#container'
+    class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+    options:
+      mapping:
+        Enabled: 'oro_shipping_rule[enabled]'
+        Name: 'oro_shipping_rule[name]'
+        Sort Order: 'oro_shipping_rule[priority]'
+        Currency: 'oro_shipping_rule[currency]'
+        Country: 'oro_shipping_rule[destinations][0][country]'
+        Country1: 'oro_shipping_rule[destinations][1][country]'
+        Country2: 'oro_shipping_rule[destinations][2][country]'
+        ZIP: 'oro_shipping_rule[destinations][0][postalCode]'
+        ZIP1: 'oro_shipping_rule[destinations][1][postalCode]'
+        ZIP2: 'oro_shipping_rule[destinations][2][postalCode]'
+        Config Enable: 'oro_shipping_rule[methodConfigs][0][typeConfigs][0][enabled]'
+        Price: 'oro_shipping_rule[methodConfigs][0][typeConfigs][0][options][price]'
+        HandlingFee: 'oro_shipping_rule[methodConfigs][0][typeConfigs][0][options][handling_fee]'
+        Type:  'oro_shipping_rule[methodConfigs][0][typeConfigs][0][options][type]'
+
+  Address:
+    selector: 'div#container'
+    class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+    options:
+      mapping:
+        State: 'oro_workflow_transition[shipping_address][region]'

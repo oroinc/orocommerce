@@ -2,50 +2,17 @@
 
 namespace Oro\Bundle\UPSBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Oro\Bundle\UPSBundle\Entity\ShippingService;
-
 class LoadShippingServicesData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-    const EU = [
-        'AT' => 'Austria',
-        'BE' => 'Belgium',
-        'BG' => 'Bulgaria',
-        'HR' => 'Croatia',
-        'CY' => 'Cyprus',
-        'CZ' => 'Czech Republic',
-        'DK' => 'Denmark',
-        'EE' => 'Estonia',
-        'FI' => 'Finland',
-        'FR' => 'France',
-        'DE' => 'Germany',
-        'GR' => 'Greece',
-        'HU' => 'Hungary',
-        'IE' => 'Ireland',
-        'IT' => 'Italy',
-        'LV' => 'Latvia',
-        'LT' => 'Lithuania',
-        'LU' => 'Luxembourg',
-        'MT' => 'Malta',
-        'NL' => 'Netherlands',
-        'PL' => 'Poland',
-        'PT' => 'Portugal',
-        'RO' => 'Romania',
-        'SK' => 'Slovakia',
-        'SI' => 'Slovenia',
-        'ES' => 'Spain',
-        'SE' => 'Sweden',
-        'GB' => 'United Kingdom'
-    ];
-
     /**
      * @var EntityRepository
      */
@@ -141,7 +108,7 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
 
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
-        $countries = array_keys(static::EU);
+        $countries = array_keys(static::getEUCountries());
         $services = [];
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $services[] = array_combine($headers, array_values($data));
@@ -204,5 +171,42 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
         fclose($handler);
 
         $manager->flush();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getEUCountries()
+    {
+        return [
+            'AT' => 'Austria',
+            'BE' => 'Belgium',
+            'BG' => 'Bulgaria',
+            'HR' => 'Croatia',
+            'CY' => 'Cyprus',
+            'CZ' => 'Czech Republic',
+            'DK' => 'Denmark',
+            'EE' => 'Estonia',
+            'FI' => 'Finland',
+            'FR' => 'France',
+            'DE' => 'Germany',
+            'GR' => 'Greece',
+            'HU' => 'Hungary',
+            'IE' => 'Ireland',
+            'IT' => 'Italy',
+            'LV' => 'Latvia',
+            'LT' => 'Lithuania',
+            'LU' => 'Luxembourg',
+            'MT' => 'Malta',
+            'NL' => 'Netherlands',
+            'PL' => 'Poland',
+            'PT' => 'Portugal',
+            'RO' => 'Romania',
+            'SK' => 'Slovakia',
+            'SI' => 'Slovenia',
+            'ES' => 'Spain',
+            'SE' => 'Sweden',
+            'GB' => 'United Kingdom'
+        ];
     }
 }

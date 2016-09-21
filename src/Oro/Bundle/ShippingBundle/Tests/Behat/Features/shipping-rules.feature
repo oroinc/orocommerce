@@ -25,16 +25,84 @@ Feature: Applying shipping rules
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then There is no shipping method available for this order
 
-  Scenario: "SHIPPING" > LIST OF COUNTRIES FOR SHIPPING RULE #2 CONTAINS COUNTRY FOR ORDER. PRIORITY - MAJOR
-    Given Admin User Created "Shipping Rule 2" with next data
-      | Currency      | EUR       |
+  Scenario: "SHIPPING 2D" > DIFFERENT COUNTRIES FOR SHIPPING RULE #1 AND ORDER. PRIORITY - MAJOR
+    Given Admin User edited "Shipping Rule 1" with next data:
+      | Enabled  | true    |
+      | Currency | EUR     |
+      | Country  | Ukraine |
+    When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
+    Then There is no shipping method available for this order
+
+  Scenario: "SHIPPING 2E" > LIST OF COUNTRIES FOR SHIPPING RULE #2 CONTAINS COUNTRY FOR ORDER. PRIORITY - MAJOR
+    Given Admin User Created "Shipping Rule 2" with next data:
       | Enabled       | true      |
+      | Currency      | EUR       |
       | Country       | Ukraine   |
       | Country2      | Germany   |
-      | Congif Enable | true      |
       | Price         | 2.5       |
       | Type          | Per Order |
       | HandlingFee   | 1.5       |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then Shipping Type "Flat Rate: €4.00" is shown for Buyer selection
     And  the order total is recalculated to "€14.00"
+
+  Scenario: "Shipping 2F" > LIST OF ZIP CODES FOR SHIPPING RULE #3 CONTAINS ZIP CODE FOR ORDER. PRIORITY - MAJOR
+    Given Admin User created "Shipping Rule 3" with next data:
+      | Enabled       | true              |
+      | Country       | Ukraine           |
+      | Country2      | Germany           |
+      | Currency      | EUR               |
+      | Sort Order    | 1                 |
+      | ZIP           | 10115,10116,10117 |
+      | ZIP2          | 10115,10116,10117 |
+      | Price         | 3                 |
+      | Type          | Per Order         |
+      | HandlingFee   | 1.5               |
+    Given Admin User edited "Shipping Rule 2" with next data:
+      | Sort Order    | 2 |
+    When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
+    Then Shipping Type "Flat Rate: €4.50" is shown for Buyer selection
+    And  the order total is recalculated to "€14.50"
+
+  Scenario: "Shipping 2G" > LIST OF ZIP CODES FOR SHIPPING RULE #3 DOES NOT CONTAIN ZIP CODE FOR ORDER. PRIORITY - MAJOR
+    Given Admin User edited "Shipping Rule 3" with next data:
+      | ZIP           | 10114,10116,10117 |
+      | ZIP1          | 10114,10116,10117 |
+    And Admin User edited "Shipping Rule 2" with next data:
+      | Enabled    | false |
+    When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
+    Then There is no shipping method available for this order
+
+  Scenario: "Shipping 2H" > CHECK CORRECTNESS OF FLAT RATE TYPE = PER ITEM CALCULATION. PRIORITY - CRITICAL
+    Given Admin User created "Shipping Rule 4" with next data:
+      | Enabled       | true              |
+      | Country       | Ukraine           |
+      | Country2      | Germany           |
+      | Currency      | EUR               |
+      | Sort Order    | 0                 |
+      | ZIP           | 10115,10116,10117 |
+      | ZIP2          | 10115,10116,10117 |
+      | Type          | Per Item          |
+      | Price         | 1.5               |
+      | HandlingFee   | 1.5               |
+    When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
+    Then Shipping Type "Flat Rate: €9.00" is shown for Buyer selection
+    And  the order total is recalculated to "€19.00"
+
+  Scenario: "Shipping 2I" > SHIPPING RULE #5 IS APPLICABLE FOR ALL COUNTRIES. PRIORITY - MAJOR
+    Given Admin User created "Shipping Rule 5" with next data:
+      | Enabled       | true      |
+      | Currency      | EUR       |
+      | Sort Order    | -1        |
+      | Type          | Per Order |
+      | Price         | 5         |
+      | HandlingFee   | 1.5       |
+    When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
+    Given Buyer created order with next shipping address:
+      | Country         | Ukraine              |
+      | City            | Kyiv                 |
+      | State           | Kyïvs'ka mis'ka rada |
+      | Zip/postal code | 01000                |
+      | Street          | Hreschatik           |
+    Then Shipping Type "Flat Rate: €6.50" is shown for Buyer selection
+    And  the order total is recalculated to "€16.50"

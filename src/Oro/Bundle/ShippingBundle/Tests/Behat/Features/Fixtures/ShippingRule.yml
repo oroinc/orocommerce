@@ -2,10 +2,11 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRule:
    shipping_rule1:
        name: 'Shipping Rule 1'
        enabled: true
-       priority: '1'
+       priority: 5
        conditions: 'true'
        currency: 'EUR'
-       stopProcessing: 'false'
+       stopProcessing: false
+       methodConfigs: ['@method_configuration']
 
 Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
    germany_destination:
@@ -15,15 +16,18 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
       regionText: 'Berlin'
       rule: '@shipping_rule1'
 
-Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
-   flatrate_configuration:
-      processingType: 'per_order'
+Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig:
+   method_configuration:
       method: 'flat_rate'
-      type: 'flat_rate'
-      enabled: true
-      value: '1.5'
-      handlingFeeValue: '1.5'
       rule: '@shipping_rule1'
+      typeConfigs: ['@method_type_configuration']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig:
+   method_type_configuration:
+      enabled: true
+      type: 'primary'
+      options: { price: '1.5', handling_fee: '1.5', type: 'per_order' }
+      methodConfig: '@method_configuration'
 
 Oro\Bundle\CurrencyBundle\Entity\Price(local):
    price1:
@@ -88,7 +92,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
        shoppingList: '@shoppinglist1'
        currency: 'EUR'
        subtotalValue: '10.1'
-       valid: 'true'
+       valid: true
 
 Oro\Bundle\AccountBundle\Entity\AccountUserAddress:
     address1:
