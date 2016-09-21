@@ -842,6 +842,7 @@ services:
             - '@oro_pricing.expression.parser'
             - '@oro_pricing.expression.preprocessor'
             - '@oro_pricing.provider.price_rule_fields_provider'
+            - '@translator.default'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.price_rule_expression_validator }
 
@@ -859,6 +860,7 @@ services:
         arguments:
             - '@oro_pricing.expression.parser'
             - '@oro_pricing.provider.price_rule_fields_provider'
+            - '@translator.default'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.price_rule_relation_expressions_validator }
 

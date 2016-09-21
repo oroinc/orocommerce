@@ -23,12 +23,12 @@ oro:
               using_as_available: "{1} Currency %curr%  is used in COMMERCE > Catalog > Pricing > Display Currencies > Available Currencies|]1,Inf[Currencies %curr% are used in COMMERCE > Catalog > Pricing > Display Currencies > Available Currencies"
               is_not_enabled: "Currency %currency% is not enabled"
               price_for_product_unit_exists.message: "Units: '%units%', are used in price attribute prices and can't be removed"
-              field_are_not_allowed.message: 'Field "%fieldName%" is not allowed'
+              field_are_not_allowed.message: 'Field "%fieldName%" is not allowed to be used as "%inputName%"'
               circular_reference:
                   message: 'Circular references are not allowed'
                   invalid_node_message: 'Invalid expression'
-              relation_not_in_rule.message: 'Relation "%relationName%" not used in rule'
-              only_price_relations_available.message: 'Only price relations available'
-              one_expression_allowed.message: 'Only one element allowed in expression'
-              too_many_relations.message: 'Too many relations in expression'
+              relation_not_in_rule.message: 'Relation "%relationName%" not used in rule in field "%fieldName%"'
+              only_price_relations_available.message: 'Only price relations available in field "%fieldName%"'
+              one_expression_allowed.message: 'Only one element allowed in expression for field "%fieldName%"'
+              too_many_relations.message: 'Too many relations in expression for field "%fieldName%"'
 

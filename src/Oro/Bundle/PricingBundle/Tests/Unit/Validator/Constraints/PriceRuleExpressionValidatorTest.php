@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
+use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression;
@@ -34,6 +35,11 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected $expressionValidator;
 
+    /**
+     * @var Translator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $translator;
+
     protected function setUp()
     {
         $this->fieldsProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
@@ -43,10 +49,14 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $expressionConverter = new ExpressionLanguageConverter($this->fieldsProvider);
         $this->parser = new ExpressionParser($expressionConverter);
         $this->parser->addNameMapping('product', Product::class);
+        $this->translator = $this->getMockBuilder(Translator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->expressionValidator = new PriceRuleExpressionValidator(
             $this->parser,
             $this->preprocessor,
-            $this->fieldsProvider
+            $this->fieldsProvider,
+            $this->translator
         );
     }
 

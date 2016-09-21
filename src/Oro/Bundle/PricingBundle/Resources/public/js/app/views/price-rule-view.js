@@ -46,9 +46,7 @@ define(function(require) {
         initQuantitySwitcher: function () {
             var $field = this.$el.find('div' + this.options.selectors.quantity.fieldType).find('input');
             var $expression = this.$el.find('div' + this.options.selectors.quantity.expressionType).find('input');
-            if (!!$field.val()) {
-                $expression.val($field.val());
-            }
+            this.changeQuantityField();
             $expression.mouseenter(_.bind(function() {
                 if (isNaN($expression.val()) && ($expression.val().length > 6)) {
                     $expression.tooltip({
@@ -142,7 +140,9 @@ define(function(require) {
             var changeFieldVisibility = function ($field1, $field2) {
                 var $input1 = $field1.find('input');
                 var $input2 = $field2.find('input');
-                $input2.val($input1.val());
+                if (!!$input1.val()) {
+                    $input2.val($input1.val());
+                }
                 $field2.addClass(self.visibleClass).show();
                 $input1.val('');
                 $field1.removeClass(self.visibleClass).hide();

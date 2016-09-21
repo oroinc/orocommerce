@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
 use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -27,18 +28,26 @@ class PriceRuleExpressionValidator extends ConstraintValidator
     protected $preprocessor;
 
     /**
+     * @var Translator
+     */
+    protected $translator;
+
+    /**
      * @param ExpressionParser $parser
      * @param ExpressionPreprocessorInterface $preprocessor
      * @param PriceRuleFieldsProvider $priceRuleFieldsProvider
+     * @param Translator $translator
      */
     public function __construct(
         ExpressionParser $parser,
         ExpressionPreprocessorInterface $preprocessor,
-        PriceRuleFieldsProvider $priceRuleFieldsProvider
+        PriceRuleFieldsProvider $priceRuleFieldsProvider,
+        Translator $translator
     ) {
         $this->parser = $parser;
         $this->priceRuleFieldsProvider = $priceRuleFieldsProvider;
         $this->preprocessor = $preprocessor;
+        $this->translator = $translator;
     }
 
     /**
@@ -68,10 +77,14 @@ class PriceRuleExpressionValidator extends ConstraintValidator
                 }
             }
             if (count($unsupportedFields) > 0) {
+                $inputName = $this->translator->trans($constraint->fieldLabel);
                 foreach ($unsupportedFields as $invalidField) {
                     $this->context->addViolation(
                         $constraint->message,
-                        ['%fieldName%' => $invalidField]
+                        [
+                            '%fieldName%' => $invalidField,
+                            '%inputName%' => $inputName
+                        ]
                     );
                 }
             }

@@ -74,6 +74,7 @@ Oro\Bundle\PricingBundle\Entity\PriceRule:
         currencyExpression:
             - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
                 withRelations: true
+                fieldLabel: 'oro.pricing.pricerule.currency.label'
         quantity:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
@@ -81,8 +82,10 @@ Oro\Bundle\PricingBundle\Entity\PriceRule:
             - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
                 numericOnly: true
                 withRelations: true
+                fieldLabel: 'oro.pricing.pricerule.quantity.label'
         ruleCondition:
             - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+                fieldLabel: 'oro.pricing.pricerule.rule_condition.label'
                 withRelations: true
                 allowedFields:
                     Oro\Bundle\PricingBundle\Entity\PriceList:
@@ -93,6 +96,7 @@ Oro\Bundle\PricingBundle\Entity\PriceRule:
         rule:
             - NotBlank: ~
             - Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression:
+                fieldLabel: 'oro.pricing.pricerule.calculate_as.label'
                 numericOnly: true
                 withRelations: true
                 groups: [NotCircularReference]

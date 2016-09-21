@@ -27,6 +27,11 @@ class PriceRuleExpression extends Constraint
     public $allowedFields = [];
 
     /**
+     * @var string
+     */
+    public $fieldLabel = '';
+
+    /**
      * {@inheritdoc}
      */
     public function validatedBy()
