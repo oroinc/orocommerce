@@ -33,5 +33,6 @@ class OroScopeBundleInstaller implements Installation
     {
         $table = $schema->createTable(self::ORO_SCOPE);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->setPrimaryKey(['id']);
     }
 }

@@ -4,17 +4,20 @@ namespace Oro\Bundle\AccountBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
-use Oro\Bundle\AccountBundle\Entity\Account;
+
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\ScopeBundle\Migrations\Schema\OroScopeBundleInstaller;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -169,6 +172,8 @@ class OroAccountBundleInstaller implements
 
         $this->addOroAccountSalesRepresentativesForeignKeys($schema);
         $this->addOroAccountUserSalesRepresentativesForeignKeys($schema);
+
+        $this->addRelationsToScope($schema);
     }
 
     /**
@@ -1151,5 +1156,33 @@ class OroAccountBundleInstaller implements
         );
 
         $table->addUniqueIndex(['account_user_id', 'website_id'], 'unique_acc_user_website');
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function addRelationsToScope(Schema $schema)
+    {
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            OroScopeBundleInstaller::ORO_SCOPE,
+            'accountGroup',
+            OroAccountBundleInstaller::ORO_ACCOUNT_GROUP_TABLE_NAME,
+            'id',
+            [],
+            RelationType::MANY_TO_ONE,
+            ['onDelete' => 'CASCADE']
+        );
+
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            OroScopeBundleInstaller::ORO_SCOPE,
+            'account',
+            OroAccountBundleInstaller::ORO_ACCOUNT_TABLE_NAME,
+            'id',
+            [],
+            RelationType::MANY_TO_ONE,
+            ['onDelete' => 'CASCADE']
+        );
     }
 }

@@ -10,9 +10,10 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroAccountBundle implements Migration, RenameExtensionAwareInterface
+class OroAccountBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
     use MigrationConstraintTrait;
 
@@ -20,6 +21,14 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
      * @var RenameExtension
      */
     private $renameExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 1;
+    }
 
     /**
      * {@inheritdoc}
