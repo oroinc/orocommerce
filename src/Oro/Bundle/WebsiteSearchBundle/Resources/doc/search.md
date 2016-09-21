@@ -6,6 +6,12 @@ How to perform search
 
 TODO: what is the search query, what is the purpose of query, 
 how it's can be used and what data cn be extracted
+
+
+###Search events
+
+TODO: what event are triggered before/after search query is executed, 
+what is the responsibility of these events
  
  
 ###Examples
