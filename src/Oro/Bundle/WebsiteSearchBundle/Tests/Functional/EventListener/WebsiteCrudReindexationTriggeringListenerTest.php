@@ -9,6 +9,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
 
+/**
+ * @dbIsolation
+ */
 class WebsiteCrudReindexationTriggeringListenerTest extends WebTestCase
 {
     /**
