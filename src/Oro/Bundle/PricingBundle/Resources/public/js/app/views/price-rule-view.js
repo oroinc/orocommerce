@@ -52,7 +52,7 @@ define(function(require) {
             $expression.mouseenter(_.bind(function() {
                 if (isNaN($expression.val()) && ($expression.val().length > 6)) {
                     $expression.tooltip({
-                        title: $expression.val(),
+                        title: $expression.attr('placeholder') + ': ' + $expression.val(),
                         trigger: 'manual'
                     });
                     $expression.tooltip('show');
@@ -118,7 +118,7 @@ define(function(require) {
             expressionInput.mouseenter(_.bind(function() {
                 if (expressionInput.val().length > 6) {
                     expressionInput.tooltip({
-                        title: expressionInput.val(),
+                        title: expressionInput.attr('placeholder') + ': ' + expressionInput.val(),
                         trigger: 'manual'
                     });
                     expressionInput.tooltip('show');

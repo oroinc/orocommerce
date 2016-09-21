@@ -78,21 +78,24 @@ class PriceRuleType extends AbstractType
                 self::QUANTITY_EXPRESSION,
                 'text',
                 [
-                    'label' => 'oro.pricing.pricerule.quantity_expression.label'
+                    'label' => 'oro.pricing.pricerule.quantity_expression.label',
+                    'attr' => array('placeholder' => 'oro.pricing.pricerule.quantity.label')
                 ]
             )
             ->add(
                 self::CURRENCY_EXPRESSION,
                 'text',
                 [
-                    'label' => 'oro.pricing.pricerule.currency_expression.label'
+                    'label' => 'oro.pricing.pricerule.currency_expression.label',
+                    'attr' => array('placeholder' => 'oro.pricing.pricerule.currency.label')
                 ]
             )
             ->add(
                 self::PRODUCT_UNIT_EXPRESSION,
                 'text',
                 [
-                    'label' => 'oro.pricing.pricerule.product_unit_expression.label'
+                    'label' => 'oro.pricing.pricerule.product_unit_expression.label',
+                    'attr' => array('placeholder' => 'oro.pricing.pricerule.product_unit.label')
                 ]
             )
         ;
