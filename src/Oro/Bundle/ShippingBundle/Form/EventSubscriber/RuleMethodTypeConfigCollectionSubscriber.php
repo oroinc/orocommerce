@@ -60,13 +60,17 @@ class RuleMethodTypeConfigCollectionSubscriber implements EventSubscriberInterfa
         $renderedTypes = [];
         foreach ($data as $index => $typeConfig) {
             $type = $method->getType($typeConfig->getType());
-            $this->createTypeForm($form, $index, $method, $type);
-            $renderedTypes[] = $type->getIdentifier();
+            if ($type) {
+                $this->createTypeForm($form, $index, $method, $type);
+                $renderedTypes[] = $type->getIdentifier();
+            } else {
+                $this->removeTypeForm($form, $index);
+            }
         }
 
         $index = count($data);
         foreach ($method->getTypes() as $type) {
-            if (!in_array($type->getIdentifier(), $renderedTypes, true)) {
+            if (null !== $type && !in_array($type->getIdentifier(), $renderedTypes, true)) {
                 $this->createTypeForm($form, $index, $method, $type);
                 $entity = new ShippingRuleMethodTypeConfig();
                 $entity->setType($type->getIdentifier())
@@ -95,7 +99,9 @@ class RuleMethodTypeConfigCollectionSubscriber implements EventSubscriberInterfa
 
         foreach ($submittedData as $index => $methodTypeData) {
             $type = $method->getType($methodTypeData['type']);
-            $this->createTypeForm($form, $index, $method, $type);
+            if ($type) {
+                $this->createTypeForm($form, $index, $method, $type);
+            }
         }
     }
 
@@ -117,5 +123,16 @@ class RuleMethodTypeConfigCollectionSubscriber implements EventSubscriberInterfa
             'label' => $type->getLabel(),
             'is_grouped' => $method->isGrouped(),
         ]);
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param string $index
+     */
+    protected function removeTypeForm(
+        FormInterface $form,
+        $index
+    ) {
+        $form->remove($index);
     }
 }

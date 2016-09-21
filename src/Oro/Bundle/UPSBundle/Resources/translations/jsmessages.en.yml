@@ -1,5 +1,0 @@
-oro:
-  ups:
-    transport:
-      shipping_service:
-        blank: Should be configured at least one Shipping Service

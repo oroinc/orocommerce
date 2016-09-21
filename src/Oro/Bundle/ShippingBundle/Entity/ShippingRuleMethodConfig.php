@@ -12,7 +12,7 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingRuleMethodConfig;
 
 /**
  * @ORM\Table(name="oro_shipping_rule_mthd_config")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleMethodConfigRepository")
  * @Config
  */
 class ShippingRuleMethodConfig extends ExtendShippingRuleMethodConfig

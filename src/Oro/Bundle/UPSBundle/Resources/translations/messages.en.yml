@@ -30,7 +30,6 @@ oro:
             shipping_service:
                 label: Shipping Service
                 plural_label: Shipping Services
-                blank: Should be configured at least one Shipping Service
         form:
             shipping_method_config_options:
                 surcharge.label: Surcharge
