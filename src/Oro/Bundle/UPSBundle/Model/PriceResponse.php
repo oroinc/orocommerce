@@ -15,13 +15,18 @@ class PriceResponse
 
     /**
      * @param array $data
+     * @throws \LogicException on UPS fault
      * @throws \InvalidArgumentException
      */
     public function parse($data)
     {
-        if ($data === null ||
-            !array_key_exists('RateResponse', $data) ||
-            !array_key_exists('RatedShipment', $data['RateResponse'])) {
+        if ($data && array_key_exists('Fault', $data)) {
+            throw new \LogicException(json_encode($data['Fault']));
+        }
+
+        if ($data === null || !array_key_exists('RateResponse', $data)
+            || !array_key_exists('RatedShipment', $data['RateResponse'])
+        ) {
             throw new \InvalidArgumentException('No price data in provided string.');
         }
 

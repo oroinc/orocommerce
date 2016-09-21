@@ -3,7 +3,6 @@
 namespace Oro\Bundle\UPSBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Exception\InvalidConfigurationException;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
@@ -11,9 +10,7 @@ use Oro\Bundle\IntegrationBundle\Provider\Rest\Transport\AbstractRestTransport;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Model\PriceResponse;
-
 use Psr\Log\LoggerInterface;
-
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class UPSTransport extends AbstractRestTransport
@@ -102,7 +99,7 @@ class UPSTransport extends AbstractRestTransport
 
             try {
                 $priceResponse->parse($data);
-            } catch (\InvalidArgumentException $e) {
+            } catch (\LogicException $e) {
                 $this->logger->error(
                     sprintf('Price request failed for transport #%s. %s', $transportEntity->getId(), $e->getMessage())
                 );

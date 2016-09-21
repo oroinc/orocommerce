@@ -148,9 +148,7 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
  
             if (count($priceRequest->getPackages()) > 0) {
                 $upsPrices = $this->transportProvider->getPrices($priceRequest, $transport);
-                if ($upsPrices === null) {
-                    return null;
-                } else {
+                if ($upsPrices) {
                     foreach ($upsPrices->getPricesByServices() as $service => $price) {
                         if (array_key_exists($service, $optionsByTypes)) {
                             $typeSurcharge = $optionsByTypes[$service][self::OPTION_SURCHARGE] ?: 0;
