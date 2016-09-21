@@ -21,6 +21,7 @@ services:
         arguments:
             - '@oro_ups.provider.transport'
             - '@doctrine'
+            - '@oro_ups.factory.price_request_factory'
         tags:
             - { name: oro_shipping_method_provider }
 
@@ -47,3 +48,9 @@ services:
             - "@oro_shipping.shipping_method.registry"
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\UPSBundle\Entity\UPSTransport', event: postUpdate }
+
+    oro_ups.factory.price_request_factory:
+        class: 'Oro\Bundle\UPSBundle\Factory\PriceRequestFactory'
+        public: false
+        arguments:
+            - '@doctrine'

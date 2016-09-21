@@ -28,6 +28,7 @@ class OroUPSExtensionTest extends ExtensionTestCase
             'oro_ups.provider.channel',
             'oro_ups.provider.transport',
             'oro_ups.form.type.transport_settings',
+            'oro_ups.factory.price_request_factory',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

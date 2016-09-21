@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\UPSBundle\Method;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
@@ -11,12 +10,15 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
+use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 
 class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingMethodInterface
 {
     const IDENTIFIER = 'ups';
+    const OPTION_SURCHARGE = 'surcharge';
+    const REQUEST_OPTION = 'Shop';
 
     /** @var UPSTransportProvider */
     protected $transportProvider;
@@ -24,19 +26,22 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
     /** @var Channel */
     protected $channel;
 
-    /** @var ManagerRegistry */
-    protected $registry;
+    /** @var PriceRequestFactory */
+    protected $priceRequestFactory;
 
     /**
      * @param UPSTransportProvider $transportProvider
      * @param Channel $channel
-     * @param ManagerRegistry $registry
+     * @param PriceRequestFactory $priceRequestFactory
      */
-    public function __construct(UPSTransportProvider $transportProvider, Channel $channel, ManagerRegistry $registry)
-    {
+    public function __construct(
+        UPSTransportProvider $transportProvider,
+        Channel $channel,
+        PriceRequestFactory $priceRequestFactory
+    ) {
         $this->transportProvider = $transportProvider;
         $this->channel = $channel;
-        $this->registry = $registry;
+        $this->priceRequestFactory = $priceRequestFactory;
     }
 
     /**
@@ -80,7 +85,7 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
                     $transport,
                     $this->transportProvider,
                     $shippingService,
-                    $this->registry
+                    $this->priceRequestFactory
                 );
             }
         }
@@ -129,10 +134,34 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
     {
         $prices = [];
 
+        $methodSurcharge = array_key_exists(UPSShippingMethod::OPTION_SURCHARGE, $methodOptions) ?
+            $methodOptions[self::OPTION_SURCHARGE] :
+            0
+        ;
+
+        /** @var UPSTransport $transport */
+        $transport = $this->channel->getTransport();
+
         $types = $this->getTypes();
         if (count($types) > 0) {
-            foreach ($types as $type) {
-                $prices[$type->getIdentifier()] = $type->calculatePrice($context, $methodOptions, $optionsByTypes);
+            $priceRequest = $this->priceRequestFactory->create($transport, $context, self::REQUEST_OPTION);
+ 
+            if (count($priceRequest->getPackages()) > 0) {
+                $upsPrices = $this->transportProvider->getPrices($priceRequest, $transport);
+                if ($upsPrices === null) {
+                    return null;
+                } else {
+                    foreach ($upsPrices->getPricesByServices() as $service => $price) {
+                        if (array_key_exists($service, $optionsByTypes)) {
+                            $typeSurcharge = $optionsByTypes[$service][self::OPTION_SURCHARGE] ?: 0;
+
+                            $prices[$service] = Price::create(
+                                (float)$price->getValue() + (float)$methodSurcharge + (float)$typeSurcharge,
+                                $price->getCurrency()
+                            );
+                        }
+                    }
+                }
             }
         }
 

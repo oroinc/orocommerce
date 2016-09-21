@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Model;
 
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class PriceRequestTest extends \PHPUnit_Framework_TestCase
 {
@@ -128,11 +128,11 @@ class PriceRequestTest extends \PHPUnit_Framework_TestCase
                                     'Name'    => self::SHIP_FROM_NAME,
                                     'Address' => $addressArray,
                                 ],
-                            'Service'  => [
-                                    'Code'        => self::SERVICE_CODE,
-                                    'Description' => self::SERVICE_DESCRIPTION,
-                                ],
                             'Package'  => [$package->toArray()],
+                            'Service'  => [
+                                'Code'        => self::SERVICE_CODE,
+                                'Description' => self::SERVICE_DESCRIPTION,
+                            ],
                         ],
                 ],
         ];

@@ -3,13 +3,16 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Method\FlatRate;
 
 use Doctrine\ORM\EntityManager;
+
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
+use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider;
 use Oro\Bundle\UPSBundle\Provider\ChannelType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
-use Oro\Component\Testing\Unit\EntityTrait;
+
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
@@ -28,6 +31,9 @@ class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
         /** @var ManagerRegistry | \PHPUnit_Framework_MockObject_MockObject $doctrine */
         $doctrine = $this->getMockBuilder(ManagerRegistry::class)
+            ->disableOriginalConstructor()->getMock();
+        /** @var PriceRequestFactory | \PHPUnit_Framework_MockObject_MockObject $priceRequestFactory */
+        $priceRequestFactory = $this->getMockBuilder(PriceRequestFactory::class)
             ->disableOriginalConstructor()->getMock();
 
         $repository = $this->getMockBuilder(ChannelRepository::class)
@@ -58,7 +64,7 @@ class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
             ])
             ->willReturn([$channel]);
 
-        $this->provider = new UPSShippingMethodProvider($transportProvider, $doctrine);
+        $this->provider = new UPSShippingMethodProvider($transportProvider, $doctrine, $priceRequestFactory);
     }
 
     public function testGetShippingMethods()

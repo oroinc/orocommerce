@@ -137,10 +137,6 @@ class PriceRequest
                                             'CountryCode'       => $this->shipFromAddress->getCountryIso2(),
                                         ],
                                 ],
-                            'Service'  => [
-                                    'Code'        => $this->serviceCode,
-                                    'Description' => $this->serviceDescription,
-                                ],
                             'Package'  => array_map(
                                 function ($package) {
                                     /** @var $package Package */
@@ -151,6 +147,13 @@ class PriceRequest
                         ],
                 ],
         ];
+
+        if (null !== $this->getServiceCode() && null !== $this->getServiceDescription()) {
+            $request['RateRequest']['Shipment']['Service'] = [
+                'Code'        => $this->serviceCode,
+                'Description' => $this->serviceDescription,
+            ];
+        }
 
         return json_encode($request);
     }

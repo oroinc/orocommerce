@@ -2,19 +2,21 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Method;
 
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
+use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodType;
+use Oro\Bundle\UPSBundle\Model\Package;
+use Oro\Bundle\UPSBundle\Model\PriceRequest;
+use Oro\Bundle\UPSBundle\Model\PriceResponse;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
-
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,9 +38,9 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
     protected $channel;
 
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceRequestFactory|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $registry;
+    protected $priceRequestFactory;
 
     /**
      * @var UPSShippingMethod
@@ -55,6 +57,10 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
             ShippingService::class,
             ['id' => 1, 'code' => 'ups_identifier', 'description' => 'ups_label', 'country' => new Country('US')]
         );
+        
+        /** @var PriceRequestFactory | \PHPUnit_Framework_MockObject_MockObject $priceRequestFactory */
+        $this->priceRequestFactory = $this->getMockBuilder(PriceRequestFactory::class)
+            ->disableOriginalConstructor()->getMock();
 
         $this->transport = $this->getMockBuilder(UPSTransport::class)
             ->disableOriginalConstructor()
@@ -66,8 +72,8 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
             ['id' => 1, 'name' => 'ups_channel_1', 'transport' => $this->transport]
         );
 
-        $this->registry = $this->getMock(ManagerRegistry::class);
-        $this->upsShippingMethod = new UPSShippingMethod($this->transportProvider, $this->channel, $this->registry);
+        $this->upsShippingMethod =
+            new UPSShippingMethod($this->transportProvider, $this->channel, $this->priceRequestFactory);
     }
 
     public function testIsGrouped()
@@ -114,30 +120,68 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
         static::assertEquals('20', $this->upsShippingMethod->getSortOrder());
     }
 
-    public function testCalculatePrices()
+
+    /**
+     * @param int $methodSurcharge
+     * @param int $typeSurcharge
+     * @param int $expectedPrice
+     *
+     * @dataProvider calculatePricesDataProvider
+     */
+    public function testCalculatePrices($methodSurcharge, $typeSurcharge, $expectedPrice)
     {
         /** @var ShippingContextInterface|\PHPUnit_Framework_MockObject_MockObject $context **/
         $context = $this->getMock(ShippingContextInterface::class);
 
-        $methodOptions = [];
-        $optionsByTypes = [];
+        $methodOptions = ['surcharge' => $methodSurcharge];
+        $optionsByTypes = ['01' => ['surcharge' => $typeSurcharge]];
 
-        $upsShippingMethodType = $this->getMockBuilder(UPSShippingMethodType::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $upsShippingMethodType->expects(self::any())->method('getIdentifier')->willReturn('type_1');
-        $upsShippingMethodType->expects(self::any())->method('calculatePrice')->willReturn(Price::create(20, 'USD'));
+        $priceRequest = $this->getMockBuilder(PriceRequest::class)->disableOriginalConstructor()->getMock();
+        $priceRequest->expects(self::once())->method('getPackages')->willReturn([new Package(), new Package()]);
 
-        /** @var UPSShippingMethod|\PHPUnit_Framework_MockObject_MockObject $upsShippingMethod */
-        $upsShippingMethod = $this->getMockBuilder(UPSShippingMethod::class)->setMethods(['getTypes'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $upsShippingMethod->expects(self::any())->method('getTypes')->willReturn([$upsShippingMethodType]);
+        $this->priceRequestFactory->expects(self::once())->method('create')->willReturn($priceRequest);
 
-        $prices = $upsShippingMethod->calculatePrices($context, $methodOptions, $optionsByTypes);
+        $priceResponse = $this->getMockBuilder(PriceResponse::class)->disableOriginalConstructor()->getMock();
+        $priceResponse->expects(self::once())
+            ->method('getPricesByServices')
+            ->willReturn(['01' => Price::create(50, 'USD')]);
+
+        $this->transportProvider->expects(self::once())->method('getPrices')->willReturn($priceResponse);
+
+
+        $prices = $this->upsShippingMethod->calculatePrices($context, $methodOptions, $optionsByTypes);
 
         static::assertCount(1, $prices);
-        static::assertTrue(array_key_exists('type_1', $prices));
-        static::assertEquals(Price::create(20, 'USD'), $prices['type_1']);
+        static::assertTrue(array_key_exists('01', $prices));
+        static::assertEquals(Price::create($expectedPrice, 'USD'), $prices['01']);
+    }
+
+    /**
+     * @return array
+     */
+    public function calculatePricesDataProvider()
+    {
+        return [
+            'TypeSurcharge' => [
+                'methodSurcharge' => 0,
+                'typeSurcharge' => 5,
+                'expectedPrice' => 55
+            ],
+            'MethodSurcharge' => [
+                'methodSurcharge' => 3,
+                'typeSurcharge' => 0,
+                'expectedPrice' => 53
+            ],
+            'Method&TypeSurcharge' => [
+                'methodSurcharge' => 3,
+                'typeSurcharge' => 5,
+                'expectedPrice' => 58
+            ],
+            'NoSurcharge' => [
+                'methodSurcharge' => 0,
+                'typeSurcharge' => 0,
+                'expectedPrice' => 50
+            ]
+        ];
     }
 }
