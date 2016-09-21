@@ -105,7 +105,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
     {
         $manager = $this->registry->getManagerForClass(PriceList::class);
         $manager->refresh($priceList);
-        if ($startTime === $priceList->getUpdatedAt()) {
+        if ($startTime == $priceList->getUpdatedAt()) {
             /** @var PriceListRepository $repo */
             $repo = $manager->getRepository(PriceList::class);
             $repo->updatePriceListsActuality([$priceList], true);

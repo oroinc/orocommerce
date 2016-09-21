@@ -336,6 +336,11 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
                     $rule->getPriceList()->getCurrencies()
                 )
             );
+        } else {
+            // Skip rules that are not in price list supported currencies
+            if (!in_array($rule->getCurrency(), $rule->getPriceList()->getCurrencies(), true)) {
+                $qb->andWhere('1 = 0');
+            }
         }
     }
 
