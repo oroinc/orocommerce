@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ScopeBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Component\PropertyAccess\PropertyAccessor;
@@ -40,7 +41,7 @@ class ScopeManager
     protected $providers = [];
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $baseCriteria = null;
 
@@ -79,6 +80,7 @@ class ScopeManager
                 }
             }
 
+            /** @var EntityManager $manager */
             $manager = $this->registry->getManagerForClass(Scope::class);
             $manager->persist($scope);
             $manager->flush($scope);
