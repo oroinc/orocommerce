@@ -96,6 +96,7 @@ define(function(require) {
             $expression.find('a' + $fieldIdentifier).click(_.bind(function() {
                 this.changeFieldVisibility($field, $expression);
                 $expression.find('input').val('');
+                $expression.find('.validation-failed').remove();
             }, this));
 
             $field.find('a' + $expressionIdentifier).click(_.bind(function() {
@@ -148,11 +149,12 @@ define(function(require) {
             }
             if ($quantity.hasClass(this.visibleClass) && (isNaN($quantity.find('input').val()))) {
                 changeFieldVisibility($quantity, $quantityExpression);
-            } else if (
-                $quantityExpression.hasClass(this.visibleClass) &&
-                (!isNaN($quantityExpression.find('input').val()))
-            ) {
-                changeFieldVisibility($quantityExpression, $quantity);
+            } else if ($quantityExpression.hasClass(this.visibleClass)) {
+                if (isNaN($quantityExpression.find('input').val())) {
+                    $quantity.find('input').val('');
+                } else {
+                    changeFieldVisibility($quantityExpression, $quantity);
+                }
             }
         },
     });

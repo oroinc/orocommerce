@@ -237,17 +237,27 @@
         >
             <div class="price_rule__row clearfix">
                 <span class="price_rule__title">Price for quantity: </span>
-                <div class="price_rule__quantity price-rule-item-quantity-type-field" style="display: none;">{{ form_widget(form.quantity) }}</div>
-                <div class="price_rule__quantity price-rule-item-quantity-type-expression visible">{{ form_widget(form.quantityExpression) }}</div>
+                <div class="price_rule__quantity price-rule-item-quantity-type-field" style="display: none;">
+                    {{ form_widget(form.quantity) }}
+                    {{ form_errors(form.quantity) }}
+                </div>
+                <div class="price_rule__quantity price-rule-item-quantity-type-expression visible">
+                    {{ form_widget(form.quantityExpression) }}
+                    {{ form_errors(form.quantityExpression) }}
+                </div>
 
                 <div class="price-rule-item-product-unit-type-field visible">
-                    <div class="price_rule__unit">{{ form_widget(form.productUnit) }}</div>
+                    <div class="price_rule__unit">
+                        {{ form_widget(form.productUnit) }}
+                    </div>
                     <a class="price-rule-item-product-unit-type-expression input-type-switcher" href="javascript: void(0);">
                         {{ 'oro.pricing.pricerule.show_expression_fields.label'|trans }}
                     </a>
                 </div>
                 <div class="price-rule-item-product-unit-type-expression" style="display: none;">
-                    <div class="price_rule__unit">{{ form_widget(form.productUnitExpression) }}</div>
+                    <div class="price_rule__unit">
+                        {{ form_widget(form.productUnitExpression) }}
+                    </div>
                     <a class="price-rule-item-product-unit-type-field input-type-switcher" href="javascript: void(0);">
                         {{ 'oro.pricing.pricerule.show_regular_fields.label'|trans }}
                     </a>
@@ -256,19 +266,35 @@
                 <span class="price_rule__in"> in</span>
 
                 <div class="price-rule-item-currency-type-field visible">
-                    <div class="price_rule__currency">{{ form_widget(form.currency) }}</div>
+                    <div class="price_rule__currency">
+                        {{ form_widget(form.currency) }}
+                    </div>
                     <a class="price-rule-item-currency-type-expression input-type-switcher" href="javascript: void(0);">
                         {{ 'oro.pricing.pricerule.show_expression_fields.label'|trans }}
                     </a>
                 </div>
                 <div class="price-rule-item-currency-type-expression input-type-switcher" style="display: none;">
-                    <div class="price_rule__currency">{{ form_widget(form.currencyExpression) }}</div>
+                    <div class="price_rule__currency">
+                        {{ form_widget(form.currencyExpression) }}
+                    </div>
                     <a class="price-rule-item-currency-type-field" href="javascript: void(0);">
                         {{ 'oro.pricing.pricerule.show_regular_fields.label'|trans }}
                     </a>
                 </div>
 
                 <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
+            </div>
+            <div class="price_rule__row clearfix price-rule-item-product-unit-type-field error-block">
+                {{ form_errors(form.productUnit) }}
+            </div>
+            <div class="price_rule__row clearfix price-rule-item-product-unit-type-expression error-block">
+                {{ form_errors(form.productUnitExpression) }}
+            </div>
+            <div class="price_rule__row clearfix price-rule-item-currency-type-field visible error-block">
+                {{ form_errors(form.currency) }}
+            </div>
+            <div class="price_rule__row clearfix price-rule-item-currency-type-expression error-block">
+                {{ form_errors(form.currencyExpression) }}
             </div>
             <div>{{ form_row(form.rule) }}</div>
             <div>{{ form_row(form.ruleCondition) }}</div>
@@ -293,10 +319,17 @@
                 height: 60px;
                 width: 323px;
             }
+            .price_rule > .price_rule__row{
+                margin-bottom: 18px;
+            }
             .price_rule__row {
                 vertical-align: middle;
                 line-height: 30px;
-                margin: 0 0 20px 0;
+                margin: 0 0 10px 0;
+            }
+            .price_rule__row.error-block{
+                margin-left: 172px;
+                margin-bottom: 0px !important;
             }
             .price_rule__row > * {
                 display: inline-block;
@@ -352,7 +385,7 @@
             .price_rule__title, .price_rule__in{
                 color: #777;
             }
-            input[name="oro_pricing_price_list[priceRules][0][quantity]"]{
+            .price_rule__quantity input{
                 margin-bottom: 22px;
             }
         </style>
