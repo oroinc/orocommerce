@@ -13,7 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
-class WarehouseInventoryLevelFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
+class InventoryLevelFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
     /**
      * {@inheritdoc}

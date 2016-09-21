@@ -67,7 +67,7 @@ services:
 
     # Template Fixture
     oro_warehouse.importexport.template_fixture.warehouse_inventory_level:
-        class: 'Oro\Bundle\WarehouseBundle\ImportExport\TemplateFixture\WarehouseInventoryLevelFixture'
+        class: 'Oro\Bundle\WarehouseBundle\ImportExport\TemplateFixture\InventoryLevelFixture'
         public: false
         tags:
             - { name: oro_importexport.template_fixture }
