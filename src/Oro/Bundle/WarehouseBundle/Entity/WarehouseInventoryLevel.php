@@ -8,7 +8,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\WarehouseBundle\Model\ExtendWarehouseInventoryLevel;
-//use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 
 /**
  * @ORM\Table(
@@ -16,7 +15,7 @@ use Oro\Bundle\WarehouseBundle\Model\ExtendWarehouseInventoryLevel;
  *     uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="uidx_oro_wh_wh_inventory_lev",
- *              columns={"warehouse_id", "product_unit_precision_id"}
+ *              columns={"product_unit_precision_id"}
  *          )
  *      }
  * )
@@ -47,14 +46,6 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
      * @ORM\Column(name="quantity", type="decimal", precision=20, scale=10, nullable=false))
      */
     protected $quantity = 0;
-
-//    /**
-//     * @var Warehouse $warehouse
-//     *
-//     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WarehouseProBundle\Entity\Warehouse")
-//     * @ORM\JoinColumn(name="warehouse_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-//     */
-//    protected $warehouse;
 
     /**
      * @var Product $product
@@ -98,25 +89,6 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
 
         return $this;
     }
-//
-//    /**
-//     * @return Warehouse
-//     */
-//    public function getWarehouse()
-//    {
-//        return $this->warehouse;
-//    }
-//
-//    /**
-//     * @param Warehouse $warehouse
-//     * @return WarehouseInventoryLevel
-//     */
-//    public function setWarehouse(Warehouse $warehouse)
-//    {
-//        $this->warehouse = $warehouse;
-//
-//        return $this;
-//    }
 
     /**
      * @return Product

@@ -4,16 +4,14 @@ namespace Oro\Bundle\WarehouseBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
-class LoadWarehouseDemoData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
+class LoadInventoryLevelDemoData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
 {
-    use UserUtilityTrait;
-
     /**
      * {@inheritdoc}
      */
@@ -29,7 +27,8 @@ class LoadWarehouseDemoData extends AbstractEntityReferenceFixture implements De
      */
     public function load(ObjectManager $manager)
     {
-        $precisions   = $this->getObjectReferences($manager, ProductUnitPrecision::class);
+        /** @var EntityManager $manager */
+        $precisions = $this->getObjectReferences($manager, 'OroProductBundle:ProductUnitPrecision');
 
         foreach ($precisions as $precision) {
             $level = new WarehouseInventoryLevel();
