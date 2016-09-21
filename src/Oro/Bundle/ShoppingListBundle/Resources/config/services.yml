@@ -217,7 +217,7 @@ services:
         tags:
             - { name: oro_user.privilege_category}
 
-    oro_shopping_list.condition.products_have_at_least_one_price:
+    oro_shopping_list.condition.has_price_in_shopping_line_items:
         class: 'Oro\Bundle\ShoppingListBundle\Condition\HasPriceInShoppingLineItems'
         arguments:
             - '@oro_pricing.provider.combined_product_price'
