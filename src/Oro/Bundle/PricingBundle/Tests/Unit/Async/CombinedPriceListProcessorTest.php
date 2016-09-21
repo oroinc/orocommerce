@@ -4,8 +4,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor;
 use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
@@ -167,7 +167,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $account = $this->getMock(Account::class);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AccountGroup $accountGroup */
-        $accountGroup = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountGroup');
+        $accountGroup = $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountGroup');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
         $website = $this->getMock(Website::class);

@@ -14,7 +14,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\AccountBundle\Form\Type\Frontend\AccountUserMultiSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\Frontend\AccountUserMultiSelectType;
 
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 

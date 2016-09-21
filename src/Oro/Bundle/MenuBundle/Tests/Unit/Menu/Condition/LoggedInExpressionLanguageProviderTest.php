@@ -43,7 +43,7 @@ class LoggedInExpressionLanguageProviderTest extends \PHPUnit_Framework_TestCase
 
         $loggedUser = null;
         if ($isLoggedUser) {
-            $loggedUser = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountUser');
+            $loggedUser = $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountUser');
         }
 
         $this->securityFacade->expects($this->once())

@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-use Oro\Bundle\AccountBundle\Form\Type\AccountGroupType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountGroupType;
 
 class AccountGroupTypeStub extends AbstractType
 {

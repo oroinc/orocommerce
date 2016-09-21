@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as TestAccountUserData;
@@ -87,7 +87,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     {
         $this->setCurrentWebsite('default');
         $user = $this->registry
-            ->getRepository('OroAccountBundle:AccountUser')
+            ->getRepository('OroCustomerBundle:AccountUser')
             ->findOneBy(['username' => TestAccountUserData::AUTH_USER]);
         $user->setAccount($this->getReference('account.level_1'));
         $token = new UsernamePasswordToken($user, false, 'key');

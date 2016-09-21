@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as OroLoadAccountUserData;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -133,7 +133,7 @@ class LineItemRepositoryTest extends WebTestCase
      */
     protected function getAccountUserRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroAccountBundle:AccountUser');
+        return $this->getContainer()->get('doctrine')->getRepository('OroCustomerBundle:AccountUser');
     }
 
     /**

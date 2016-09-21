@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
 /**
@@ -28,9 +28,9 @@ class AccountControllersTest extends WebTestCase
             ]
         );
         $manager = $this->client->getContainer()->get('doctrine')->getManagerForClass(
-            'OroAccountBundle:AccountUser'
+            'OroCustomerBundle:AccountUser'
         );
-        $this->accountUser = $manager->getRepository('OroAccountBundle:AccountUser')->findOneBy(
+        $this->accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')->findOneBy(
             ['username' => LoadOrders::ACCOUNT_USER]
         );
     }

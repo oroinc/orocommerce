@@ -10,7 +10,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
@@ -42,7 +42,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
             'Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestStatusDemoData',
             'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
         ];
@@ -141,7 +141,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
      */
     protected function getAccountUsers(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroAccountBundle:AccountUser')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository('OroCustomerBundle:AccountUser')->findBy([], null, 10));
     }
 
     /**

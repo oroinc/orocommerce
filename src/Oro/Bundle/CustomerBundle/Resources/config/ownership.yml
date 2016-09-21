@@ -1,0 +1,39 @@
+parameters:
+    oro_account.entity.owners:
+        local_level: '%oro_account.entity.account.class%'
+        basic_level: '%oro_account.entity.account_user.class%'
+
+services:
+    oro_account.owner.frontend_ownership_metadata_provider:
+        class: 'Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider'
+        public: false
+        arguments:
+            - '%oro_account.entity.owners%'
+        calls:
+            - [setContainer, ["@service_container"]]
+        tags:
+            - { name: oro_security.owner.metadata_provider, alias: frontend_ownership }
+
+    oro_account.owner.frontend_ownership_metadata_provider.cache:
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'oro_acl_entity_ownership_frontend' ] ]
+
+    oro_account.owner.decision_maker:
+        public: false
+        class: 'Oro\Bundle\CustomerBundle\Owner\EntityOwnershipDecisionMaker'
+        parent: oro_security.owner.decision_maker.abstract
+        tags:
+           - { name: oro_security.owner.ownership_decision_maker, priority: 10 }
+
+    oro_account.owner.tree_provider:
+        public: false
+        parent: oro_security.abstract_ownership_tree_provider
+        class: 'Oro\Bundle\CustomerBundle\Owner\FrontendOwnerTreeProvider'
+        tags:
+            - { name: oro_security.ownership.tree_provider }
+
+    oro_account.owner.frontend_ownership_tree_provider.cache:
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'oro_acl_owner_tree_frontend' ] ]

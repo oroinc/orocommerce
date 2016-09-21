@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
@@ -44,8 +44,8 @@ class PriceListToAccountRepositoryTest extends WebTestCase
     public function testRestrictByPriceList($priceList, array $expectedAccounts)
     {
         $qb = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:Account')
-            ->getRepository('OroAccountBundle:Account')
+            ->getManagerForClass('OroCustomerBundle:Account')
+            ->getRepository('OroCustomerBundle:Account')
             ->createQueryBuilder('account');
 
         /** @var BasePriceList $priceList */

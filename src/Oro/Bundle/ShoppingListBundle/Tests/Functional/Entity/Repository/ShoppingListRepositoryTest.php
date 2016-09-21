@@ -4,8 +4,8 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -30,7 +30,7 @@ class ShoppingListRepositoryTest extends WebTestCase
 
         $this->accountUser = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroAccountBundle:AccountUser')
+            ->getRepository('OroCustomerBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 
@@ -147,7 +147,7 @@ class ShoppingListRepositoryTest extends WebTestCase
      */
     public function getAccountUser()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroAccountBundle:AccountUser')
+        return $this->getContainer()->get('doctrine')->getRepository('OroCustomerBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 

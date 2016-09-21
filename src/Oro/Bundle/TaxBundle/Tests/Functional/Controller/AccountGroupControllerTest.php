@@ -3,7 +3,7 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
 
@@ -20,7 +20,7 @@ class AccountGroupControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
                 'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes',
             ]
         );
@@ -55,8 +55,8 @@ class AccountGroupControllerTest extends WebTestCase
 
         /** @var AccountGroup $taxAccountGroup */
         $taxAccountGroup = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:AccountGroup')
-            ->getRepository('OroAccountBundle:AccountGroup')
+            ->getManagerForClass('OroCustomerBundle:AccountGroup')
+            ->getRepository('OroCustomerBundle:AccountGroup')
             ->findOneBy(['name' => self::ACCOUNT_GROUP_NAME]);
         $this->assertNotEmpty($taxAccountGroup);
 

@@ -1,0 +1,10 @@
+@name = account_user_confirmation_email
+@entityName = Oro\Bundle\CustomerBundle\Entity\AccountUser
+@subject = Confirmation of account registration
+@isSystem = 1
+@isEditable = 1
+
+<h1>Thank you for registration, {{ entity.username }}</h1>
+<div>
+    <p>Please follow this link to confirm your email address: <a href="{{ website_path('oro_account_frontend_account_user_confirmation', {'username': entity.username, 'token': token}, entity.website) }}">Confirm</a></p>
+</div>

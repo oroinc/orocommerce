@@ -54,8 +54,8 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $this->loadFixtures(
             [
                 'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
             ]
         );
