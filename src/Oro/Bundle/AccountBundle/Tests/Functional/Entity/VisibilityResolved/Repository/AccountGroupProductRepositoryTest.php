@@ -96,7 +96,7 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
      */
     public function insertStaticDataProvider()
     {
-        return ['expected_rows' => [7]];
+        return ['expected_rows' => [8]];
     }
 
     public function clearTableDataProvider()

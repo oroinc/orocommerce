@@ -154,6 +154,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'expectedData' => [
                     'product.2',
                     'product.3',
+                    'product.5',
                     'product.6',
                 ]
             ],

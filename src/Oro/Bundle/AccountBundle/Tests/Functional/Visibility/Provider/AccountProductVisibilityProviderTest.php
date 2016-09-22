@@ -146,12 +146,18 @@ class AccountProductVisibilityProviderTest extends WebTestCase
                 'visibility_new' => 1,
                 'visibility_anonymous' => 1,
             ],
+            [
+                'productId' => $this->getReference('product.5')->getId(),
+                'visibility_new' => 0,
+                'visibility_anonymous' => 1,
+            ],
         ];
 
         $this->assertEquals(
             $expectedVisibilities,
             $this->provider->getNewUserAndAnonymousVisibilitiesForProducts([
                 $this->getReference('product.3')->getId(),
+                $this->getReference('product.5')->getId(),
             ], $this->getDefaultWebsiteId())
         );
     }
