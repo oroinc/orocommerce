@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\UPSBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;

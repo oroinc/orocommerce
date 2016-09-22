@@ -74,9 +74,8 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
                             foreach ($configuredMethods as $configuredMethod) {
                                 $configuredTypes = $configuredMethod->getTypeConfigs()->toArray();
                                 $enabledTypes = $this->getEnabledTypes($configuredTypes);
-                                
-                                if ($diff = array_diff($enabledTypes, $upsTypeIds) &&
-                                    (count($enabledTypes) >= count($upsTypeIds))) {
+                                $diff = array_diff($enabledTypes, $upsTypeIds);
+                                if (0 < count($diff) && (count($enabledTypes) >= count($upsTypeIds))) {
                                     $missingServices = $this
                                         ->doctrine
                                         ->getManagerForClass('OroUPSBundle:ShippingService')

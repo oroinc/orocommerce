@@ -213,7 +213,12 @@ class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
         }
         return $method;
     }
-    
+
+    /**
+     * @param object $data
+     * @param string $path
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     protected function createForm($data, $path)
     {
         $form = $this->getMock('Symfony\Component\Form\FormInterface');

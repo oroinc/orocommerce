@@ -57,22 +57,22 @@ class ShippingServiceRepositoryTest extends WebTestCase
             [
                 'country' => 'UU',
                 'expectedServices' => [
-                    'shipping_service.1',
-                    'shipping_service.2',
+                    'ups.shipping_service.1',
+                    'ups.shipping_service.2',
                 ]
             ],
             [
                 'country' => 'CC',
                 'expectedServices' => [
-                    'shipping_service.3',
-                    'shipping_service.4',
+                    'ups.shipping_service.3',
+                    'ups.shipping_service.4',
                 ]
             ],
             [
                 'country' => 'LL',
                 'expectedServices' => [
-                    'shipping_service.5',
-                    'shipping_service.6',
+                    'ups.shipping_service.5',
+                    'ups.shipping_service.6',
                 ]
             ],
         ];

@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\UPSBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
+use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
@@ -31,6 +31,7 @@ class UPSTransportEntityListener
      */
     public function postUpdate(UPSTransport $transport, LifecycleEventArgs $args)
     {
+        /** @var PersistentCollection $services */
         $services = $transport->getApplicableShippingServices();
         $deletedServices = $services->getDeleteDiff();
         if (0 !== count($deletedServices)) {
