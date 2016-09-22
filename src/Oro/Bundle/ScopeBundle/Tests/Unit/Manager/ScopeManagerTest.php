@@ -90,27 +90,25 @@ class ScopeManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testFindOrCreateUsingContext()
     {
-        // @todo
-//        $scope = new Scope();
-//        $context =
-//        $provider = $this->getMock(ScopeProviderInterface::class);
-//        $provider->method('getCriteriaByContext')->with()->willReturn([]);
-//        \Closure::bind()
-//
-//        $repository = $this->getMock(ObjectRepository::class);
-//        $repository->method('findOneBy')->willReturn(null);
-//
-//        $em = $this->getMock(EntityManagerInterface::class);
-//        $em->method('getRepository')->willReturn($repository);
-//        $em->expects($this->once())->method('persist')->with($scope);
-//        $em->expects($this->once())->method('flush')->with($scope);
-//
-//        $this->registry->method('getManagerForClass')->willReturn($em);
-//
-//        $this->entityFieldProvider->method('getRelations')->willReturn([]);
-//
-//        $this->manager->addProvider('testScope', $provider);
-//        $actualScope = $this->manager->findOrCreate('testScope');
-//        $this->assertEquals($scope, $actualScope);
+        $scope = new Scope();
+        $context = ['scopeAttribute' => new \stdClass()];
+        $provider = $this->getMock(ScopeProviderInterface::class);
+        $provider->method('getCriteriaByContext')->with($context)->willReturn([]);
+
+        $repository = $this->getMock(ObjectRepository::class);
+        $repository->method('findOneBy')->willReturn(null);
+
+        $em = $this->getMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturn($repository);
+        $em->expects($this->once())->method('persist')->with($scope);
+        $em->expects($this->once())->method('flush')->with($scope);
+
+        $this->registry->method('getManagerForClass')->willReturn($em);
+
+        $this->entityFieldProvider->method('getRelations')->willReturn([]);
+
+        $this->manager->addProvider('testScope', $provider);
+        $actualScope = $this->manager->findOrCreate('testScope', $context);
+        $this->assertEquals($scope, $actualScope);
     }
 }

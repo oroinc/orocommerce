@@ -9,6 +9,7 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
@@ -1740,7 +1741,7 @@ class OroAccountBundleInstaller implements
             'accountGroup',
             OroAccountBundleInstaller::ORO_ACCOUNT_GROUP_TABLE_NAME,
             'id',
-            [],
+            ['extend' => ['owner' => ExtendScope::OWNER_CUSTOM]],
             RelationType::MANY_TO_ONE,
             ['onDelete' => 'CASCADE']
         );
@@ -1751,7 +1752,7 @@ class OroAccountBundleInstaller implements
             'account',
             OroAccountBundleInstaller::ORO_ACCOUNT_TABLE_NAME,
             'id',
-            [],
+            ['extend' => ['owner' => ExtendScope::OWNER_CUSTOM]],
             RelationType::MANY_TO_ONE,
             ['onDelete' => 'CASCADE']
         );
