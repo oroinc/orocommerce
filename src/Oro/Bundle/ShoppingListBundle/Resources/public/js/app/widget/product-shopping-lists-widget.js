@@ -29,6 +29,9 @@ define(function(require) {
             lineItemEdit: '[data-role="line-item-edit"]',
             lineItemView: '[data-role="line-item-view"]',
             popupPanelForm: '[data-role="popup-panel-form"]',
+            popupPanelShoppingList: '[data-role="popup-panel-shopping-list"]',
+            popupPanelQty: '[data-role="popup-panel-qty"]',
+            popupPanelUnit: '[data-role="popup-panel-unit"]',
             popupPanelAccept: '[data-role="popup-panel-accept"]',
             popupPanelReset: '[data-role="popup-panel-reset"]'
         },
@@ -36,6 +39,9 @@ define(function(require) {
         elementsEvents: {
             edit: ['click', 'edit'],
             decline: ['click', 'decline'],
+            popupPanelShoppingList: ['change', 'onPopupPanelShoppingListChange'],
+            popupPanelUnit: ['change', 'onPopupPanelUnitChange'],
+            popupPanelAccept: ['click', 'onPopupPanelAccept'],
             popupPanelReset: ['click', 'onPopupPanelReset']
         },
 
@@ -132,7 +138,7 @@ define(function(require) {
 
             this.setElement($(this.options.template({
                 shoppingLists: shoppingLists,
-                demoShoppingLists: demoShoppingLists,
+                shoppingListsCollection: demoShoppingLists,
                 productUnits: this.model.get('product_units')
             })));
 
@@ -170,6 +176,38 @@ define(function(require) {
 
             $form[0].reset();
             $form.find('select').inputWidget('refresh');
+        },
+
+        onPopupPanelShoppingListChange: function(e) {
+            var $popupPanelQty = $(this.elements.popupPanelQty, this.$el);
+            var selectedShoppingList = this.getSelectedShoppingList();
+
+            $popupPanelQty.val(1);
+            
+            if (selectedShoppingList && selectedShoppingList.line_items.length) {
+                $popupPanelQty.val(selectedShoppingList.line_items[0].quantity);
+                this.setSelectedUnit(selectedShoppingList.line_items[0].unit);
+            }
+        },
+
+        onPopupPanelUnitChange: function(e) {
+            var $popupPanelQty = $(this.elements.popupPanelQty, this.$el);
+            var selectedShoppingList = this.getSelectedShoppingList();
+            var selectedUnit = this.getSelectedUnit();
+
+            $popupPanelQty.val(1);
+
+            if (selectedShoppingList && selectedShoppingList.line_items.length) {
+                var selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
+
+                if(selectedLineItem && selectedLineItem.quantity) {
+                    $popupPanelQty.val(selectedLineItem.quantity);
+                }
+            }
+        },
+
+        onPopupPanelAccept: function() {
+            console.log('Meow Accept Change');
         },
 
         updateShoppingLists: function(shoppingLists, shoppingListId, lineItemId, newLineItem) {
@@ -213,6 +251,28 @@ define(function(require) {
                     .find(this.elements.lineItemView)
                     .removeClass('hidden');
             }
+        },
+
+        getSelectedShoppingListId: function() {
+            return parseInt($(this.elements.popupPanelShoppingList, this.$el).val(), 10) || 0;
+        },
+
+        getSelectedShoppingList: function() {
+            var selectedShoppingListId = this.getSelectedShoppingListId();
+
+            if (!selectedShoppingListId) {
+                return;
+            }
+
+            return _.findWhere(this.model.get('shopping_lists'), {shopping_list_id: selectedShoppingListId});
+        },
+
+        getSelectedUnit: function() {
+            return $(this.elements.popupPanelUnit, this.$el).val();
+        },
+
+        setSelectedUnit: function(unit) {
+            $(this.elements.popupPanelUnit, this.$el).val(unit).inputWidget('refresh');
         },
 
         edit: function(e) {

@@ -242,10 +242,10 @@
         <div class="shopping-lists-popup__footer">
             <form method="post" class="shopping-lists-popup__item" data-role="popup-panel-form">
                 <div class="shopping-lists-popup__list">
-                    <select class="oro-select2 oro-select2--size-s" name="list">
+                    <select class="oro-select2 oro-select2--size-s" name="list" data-role="popup-panel-shopping-list">
                         <option value="0">Choose List</option>
-                        <% if (!_.isEmpty(demoShoppingLists)) { %>
-                        <% _.each(demoShoppingLists, function(list) { %>
+                        <% if (!_.isEmpty(shoppingListsCollection)) { %>
+                        <% _.each(shoppingListsCollection, function(list) { %>
                         <option value="<%= list.shopping_list_id %>"><%= list.shopping_list_label %></option>
                         <% }); %>
                         <% } %>
@@ -260,10 +260,11 @@
                                        type="number"
                                        min="1" 
                                        value="1"
-                                       name="quantity">
+                                       name="quantity"
+                                       data-role="popup-panel-qty">
                             </li>
                             <li class="shopping-lists-modify__select">
-                                <select class="oro-select2 oro-select2--size-s" name="unit">
+                                <select class="oro-select2 oro-select2--size-s" name="unit" data-role="popup-panel-unit">
                                     <% _.each(productUnits, function(unit) { %>
                                     <option value="<%= unit %>"><%= unit %></option>
                                     <% }); %>
