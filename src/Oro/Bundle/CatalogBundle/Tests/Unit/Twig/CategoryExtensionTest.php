@@ -16,11 +16,6 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
     protected $categoryTreeHandler;
 
     /**
-     * @var StubTranslator
-     */
-    protected $translator;
-
-    /**
      * @var CategoryExtension
      */
     protected $extension;
@@ -38,9 +33,7 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->translator = new StubTranslator();
-
-        $this->extension = new CategoryExtension($this->categoryTreeHandler, $this->translator);
+        $this->extension = new CategoryExtension();
         $this->extension->setContainer($this->container);
     }
 
@@ -97,7 +90,7 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
             [
                 'id' => 1,
                 'parent' => '#',
-                'text' => '[trans]oro.catalog.frontend.category.master_category.label[/trans]',
+                'text' => 'oro.catalog.frontend.category.master_category.label',
                 'state' => [
                     'opened' => true,
                 ],
@@ -110,8 +103,7 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
 
         $functions = $this->extension->getFunctions();
         $function = reset($functions);
-        $this->container->expects($this->atLeastOnce())->method('get')
-            ->willReturnOnConsecutiveCalls($this->categoryTreeHandler, $this->translator);
+        $this->container->expects($this->once())->method('get')->willReturn($this->categoryTreeHandler);
 
         $callable = $function->getCallable();
         $callable->bindTo($this->extension);

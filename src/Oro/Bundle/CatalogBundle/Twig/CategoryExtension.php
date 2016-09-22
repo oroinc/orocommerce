@@ -30,7 +30,7 @@ class CategoryExtension extends \Twig_Extension implements ContainerAwareInterfa
                 function ($rootLabel = null) {
                     $tree = $this->container->get('oro_catalog.category_tree_handler')->createTree();
                     if ($rootLabel && array_key_exists(0, $tree)) {
-                        $tree[0]['text'] = $this->container->get('translator')->trans($rootLabel);
+                        $tree[0]['text'] = $rootLabel;
                     }
 
                     return $tree;
