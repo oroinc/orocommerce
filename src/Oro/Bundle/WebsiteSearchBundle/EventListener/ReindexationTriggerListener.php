@@ -6,7 +6,6 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
-use Oro\Bundle\WebsiteSearchBundle\Exception\LogicException;
 
 class ReindexationTriggerListener
 {
@@ -59,17 +58,18 @@ class ReindexationTriggerListener
     {
         $className = $event->getClassName();
         $ids = $event->getIds();
+        $context = $this->buildContext($event);
 
         if (empty($ids)) {
-            $indexer->reindex($className);
+            $indexer->reindex($className, $context);
         } elseif (empty($className)) {
-            throw new LogicException('Event data cannot have IDs without class name');
+            throw new \LogicException('Event data cannot have IDs without class name');
         } else {
             list($savedEntities, $deletedEntities) = $this->getSavedAndDeletedEntities($event);
 
-            $indexer->save($savedEntities);
+            $indexer->save($savedEntities, $context);
 
-            $indexer->delete($deletedEntities);
+            $indexer->delete($deletedEntities, $context);
         }
     }
 
@@ -106,5 +106,22 @@ class ReindexationTriggerListener
         }
 
         return [$savedEntities, $deletedEntities];
+    }
+
+    /**
+     * @param ReindexationTriggerEvent $event
+     * @return array
+     */
+    protected function buildContext(ReindexationTriggerEvent $event)
+    {
+        $context = [];
+
+        $websiteId =$event->getWebsiteId();
+        if (!empty($websiteId)) {
+            // TODO uncomment when AbstractIndexer is available
+            // $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
+        }
+
+        return $context;
     }
 }

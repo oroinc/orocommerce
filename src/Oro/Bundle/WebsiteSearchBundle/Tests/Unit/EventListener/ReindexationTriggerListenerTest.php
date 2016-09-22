@@ -5,10 +5,14 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexationTriggerListener;
 
 class ReindexationTriggerListenerTest extends \PHPUnit_Framework_TestCase
 {
+    const TEST_CLASSNAME  = 'testClass';
+    const TEST_WEBSITE_ID = 1234;
+
     /**
      * @var ReindexationTriggerListener
      */
@@ -47,6 +51,11 @@ class ReindexationTriggerListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        // TODO
+        $event = new ReindexationTriggerEvent(
+            self::TEST_CLASSNAME,
+            self::TEST_WEBSITE_ID,
+            null,
+            false
+        );
     }
 }
