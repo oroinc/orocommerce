@@ -3,9 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility;
 
 use Doctrine\ORM\Mapping as ORM;
-
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CategoryVisibilityRepository")
@@ -141,5 +141,23 @@ class CategoryVisibility implements VisibilityInterface
     public function setTargetEntity($category)
     {
         return $this->setCategory($category);
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     */
+    public function setScope(Scope $scope)
+    {
+        // TODO: Implement setScope() method.
+        return $this;
+    }
+
+    /**
+     * @return Scope
+     */
+    public function getScope()
+    {
+        // TODO: Implement getScope() method.
     }
 }

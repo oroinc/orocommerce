@@ -3,10 +3,10 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -45,6 +45,14 @@ abstract class BaseProductVisibilityResolved extends BaseVisibilityResolved
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $category;
+
+    /**
+     * @var Scope
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
+     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    protected $scope;
 
     /**
      * @param Website $website
@@ -87,6 +95,25 @@ abstract class BaseProductVisibilityResolved extends BaseVisibilityResolved
     public function setCategory(Category $category = null)
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return Scope
+     */
+    public function getScope()
+    {
+        return $this->scope;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     */
+    public function setScope($scope)
+    {
+        $this->scope = $scope;
 
         return $this;
     }

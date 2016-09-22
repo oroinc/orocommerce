@@ -3,9 +3,11 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @ORM\Entity(
@@ -167,5 +169,23 @@ class AccountGroupCategoryVisibility implements VisibilityInterface, AccountGrou
     public function setTargetEntity($category)
     {
         return $this->setCategory($category);
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     */
+    public function setScope(Scope $scope)
+    {
+        // TODO: Implement setScope() method.
+        return $this;
+    }
+
+    /**
+     * @return Scope
+     */
+    public function getScope()
+    {
+        // TODO: Implement getScope() method.
     }
 }

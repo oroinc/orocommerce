@@ -3,9 +3,11 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
@@ -68,6 +70,14 @@ class AccountGroupProductVisibility implements VisibilityInterface, AccountGroup
      * @ORM\Column(name="visibility", type="string", length=255, nullable=true)
      */
     protected $visibility;
+
+    /**
+     * @var Scope
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
+     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    protected $scope;
 
     public function __clone()
     {
@@ -196,6 +206,25 @@ class AccountGroupProductVisibility implements VisibilityInterface, AccountGroup
     public function setWebsite(Website $website)
     {
         $this->website = $website;
+
+        return $this;
+    }
+
+    /**
+     * @return Scope
+     */
+    public function getScope()
+    {
+        return $this->scope;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     */
+    public function setScope($scope)
+    {
+        $this->scope = $scope;
 
         return $this;
     }

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility;
 
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+
 interface VisibilityInterface
 {
     const HIDDEN = 'hidden';
@@ -40,4 +42,15 @@ interface VisibilityInterface
      * @return $this
      */
     public function setTargetEntity($entity);
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     */
+    public function setScope(Scope $scope);
+
+    /**
+     * @return Scope
+     */
+    public function getScope();
 }

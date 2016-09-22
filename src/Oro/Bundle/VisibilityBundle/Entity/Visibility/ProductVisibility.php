@@ -3,9 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
@@ -45,12 +45,12 @@ class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
     protected $product;
 
     /**
-     * @var Website
+     * @var Scope
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
+     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
-    protected $website;
+    protected $scope;
 
     /**
      * @var string
@@ -166,6 +166,25 @@ class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
     public function setWebsite(Website $website)
     {
         $this->website = $website;
+
+        return $this;
+    }
+
+    /**
+     * @return Scope
+     */
+    public function getScope()
+    {
+        return $this->scope;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     */
+    public function setScope(Scope $scope)
+    {
+        $this->scope = $scope;
 
         return $this;
     }
