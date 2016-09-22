@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
 
-class ReindexationTriggerListener
+class ReindexRequestListener
 {
     /**
      * @var EntityManager
@@ -97,7 +97,7 @@ class ReindexationTriggerListener
             $ids = $metadata->getIdentifierValues($savedEntity);
             $id =  current($ids);
 
-            unset ($deletedIds[$id]);
+            unset ($deletedIds[array_search($id, $deletedIds, true)]);
         }
 
         $deletedEntities = [];
