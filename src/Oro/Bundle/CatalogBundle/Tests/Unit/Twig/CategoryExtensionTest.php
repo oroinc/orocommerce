@@ -3,10 +3,10 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Twig;
 
 use Symfony\Bridge\Twig\Tests\Extension\Fixtures\StubTranslator;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 use Oro\Bundle\CatalogBundle\Twig\CategoryExtension;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
 {
