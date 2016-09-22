@@ -40,7 +40,7 @@ class WebsiteSearchQuery extends AbstractSearchQuery
         // EVENT: allow additional fields to be selected
         // by custom bundles
         $event = new SelectDataFromSearchIndexEvent(
-            $this->query->getSelect()
+            $this->query->getSelectDataFields()
         );
         $this->dispatcher->dispatch(SelectDataFromSearchIndexEvent::EVENT_NAME, $event);
         $this->query->select($event->getSelectedData());
