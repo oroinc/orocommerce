@@ -63,7 +63,7 @@ define([
                 _this.$element.toggleClass('error', !_this.validate(_this.$element.val(), _this.options));
             });
 
-            this.initAutocomplete(options.autocomplete_type);
+            this.initAutocomplete();
         },
 
         /**
@@ -93,58 +93,50 @@ define([
             return logicIsValid && dataWordsAreValid;
         },
 
-        /**
-         *
-         * @param pluginName {String}
-         */
-        initAutocomplete: function(pluginName) {
+        initAutocomplete: function() {
             var clickHandler;
             var _context;
             var _position;
             var _this = this;
 
-            switch (pluginName) {
-                case 'typeahead':
-                    clickHandler = function() {
-                        var _this = this;
-                        var _arguments = arguments;
+            clickHandler = function() {
+                var _this = this;
+                var _arguments = arguments;
 
-                        setTimeout(function() {
-                            _this.keyup.apply(_this, _arguments);
-                        }, 10);
-                    };
+                setTimeout(function() {
+                    _this.keyup.apply(_this, _arguments);
+                }, 10);
+            };
 
-                    _context = this.$element.typeahead({
-                        minLength: 0,
-                        source: function(value) {
-                            var sourceData = _this.getAutocompleteSource(value || '');
+            _context = this.$element.typeahead({
+                minLength: 0,
+                source: function(value) {
+                    var sourceData = _this.getAutocompleteSource(value || '');
 
-                            clickHandler = clickHandler.bind(this);
+                    clickHandler = clickHandler.bind(this);
 
-                            _position = sourceData.position;
+                    _position = sourceData.position;
 
-                            return sourceData.array;
-                        },
-                        matcher: function() {
-                            return true;
-                        },
-                        updater: function(item) {
-                            return _this.getUpdateValue(this.query, item, _position);
-                        },
-                        focus: function(e) {
-                            this.focused = true;
-                            clickHandler.apply(this, arguments);
-                        },
-                        lookup: function() {
-                            this.query = _this.$element.val() || '';
+                    return sourceData.array;
+                },
+                matcher: function() {
+                    return true;
+                },
+                updater: function(item) {
+                    return _this.getUpdateValue(this.query, item, _position);
+                },
+                focus: function(e) {
+                    this.focused = true;
+                    clickHandler.apply(this, arguments);
+                },
+                lookup: function() {
+                    this.query = _this.$element.val() || '';
 
-                            var items = $.isFunction(this.source) ? this.source(this.query, $.proxy(this.process, this)) : this.source;
+                    var items = $.isFunction(this.source) ? this.source(this.query, $.proxy(this.process, this)) : this.source;
 
-                            return items ? this.process(items) : this;
-                        }
-                    });
-                    break;
-            }
+                    return items ? this.process(items) : this;
+                }
+            });
 
             if (_context) {
                 this.$element.on('click', function() {

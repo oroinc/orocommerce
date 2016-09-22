@@ -62,13 +62,12 @@
             operations: ['+', '-', '=', '!='],
             grouping: ['or', 'and'],
             array_operation: ['all', 'any'],
-            input: 'textarea',
-            autocomplete_type: 'typeahead'
+            input: 'textarea'
         },
         '~class': ' rule-editor'
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <textarea type="text" name="name" autocomplete="off"></textarea>
+        <textarea type="text" name="rule-editor" autocomplete="off"></textarea>
     </div>
 {% endblock %}
