@@ -98,7 +98,7 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
                     'accountGroupCategoryVisibility' => 14,
                     'accountCategoryVisibility' => 35,
                     'productVisibility' => 27,
-                    'accountGroupProductVisibility' => 8,
+                    'accountGroupProductVisibility' => 9,
                     'accountProductVisibility' => 5,
                 ]
             ],
@@ -114,7 +114,7 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
                     'accountGroupCategoryVisibility' => 14,
                     'accountCategoryVisibility' => 35,
                     'productVisibility' => 3,
-                    'accountGroupProductVisibility' => 6,
+                    'accountGroupProductVisibility' => 7,
                     'accountProductVisibility' => 4,
                 ]
             ],

@@ -58,13 +58,14 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
         $result = $searchEngine->search($query);
         $values = $result->getElements();
 
-        $this->assertEquals(6, $result->getRecordsCount());
+        $this->assertEquals(7, $result->getRecordsCount());
         $this->assertEquals('product.1', $values[0]->getRecordTitle());
-        $this->assertEquals('product.4', $values[1]->getRecordTitle());
-        $this->assertEquals('product.5', $values[2]->getRecordTitle());
-        $this->assertEquals('product.6', $values[3]->getRecordTitle());
-        $this->assertEquals('product.7', $values[4]->getRecordTitle());
-        $this->assertEquals('product.8', $values[5]->getRecordTitle());
+        $this->assertEquals('product.3', $values[1]->getRecordTitle());
+        $this->assertEquals('product.4', $values[2]->getRecordTitle());
+        $this->assertEquals('product.5', $values[3]->getRecordTitle());
+        $this->assertEquals('product.6', $values[4]->getRecordTitle());
+        $this->assertEquals('product.7', $values[5]->getRecordTitle());
+        $this->assertEquals('product.8', $values[6]->getRecordTitle());
     }
 
     /**
