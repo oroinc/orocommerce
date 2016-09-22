@@ -46,6 +46,7 @@ class RestrictProductsIndexEventListener
      */
     public function onRestrictIndexEntityEvent(RestrictIndexEntityEvent $event)
     {
+        return;
         $context = $event->getContext();
 
         if (!isset($context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY])) {

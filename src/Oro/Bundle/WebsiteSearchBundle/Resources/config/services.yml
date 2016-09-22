@@ -138,6 +138,9 @@ services:
         arguments:
             - '@event_dispatcher'
             - '@oro_entity.entity_alias_resolver'
+            - '@oro_website_search.placeholder.chain_replace'
+            - '@oro_website_search.helper.field'
+            - '@oro_website_search.provider.search_mapping'
 
     oro_website_search.placeholder.chain_replace:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\ChainReplacePlaceholder'

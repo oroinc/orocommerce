@@ -2,23 +2,14 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
+use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
 
-use Oro\Bundle\SearchBundle\Query\Query;
+use Symfony\Component\EventDispatcher\Event;
 
 class IndexEntityEvent extends Event
 {
     const NAME = 'oro_website_search.event.index_entity';
-    
-    /**
-     * @var array
-     */
-    private static $fieldTypes = [
-        Query::TYPE_DATETIME,
-        Query::TYPE_DECIMAL,
-        Query::TYPE_INTEGER,
-        Query::TYPE_TEXT
-    ];
 
     /**
      * @var string
@@ -78,36 +69,42 @@ class IndexEntityEvent extends Event
 
     /**
      * @param int $entityId
-     * @param string $fieldType
      * @param string $fieldName
      * @param string|int|float $value
-     *
      * @return $this
-     * @throws \InvalidArgumentException
      */
-    public function addField($entityId, $fieldType, $fieldName, $value)
+    public function addField($entityId, $fieldName, $value)
     {
-        $this->assertFieldType($fieldType);
-
-        $this->entitiesData[$entityId][$fieldType][$fieldName] = $value;
+        $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] = $value;
 
         return $this;
     }
 
     /**
-     * @param string $fieldType
-     * @throws \InvalidArgumentException
+     * @param int $entityId
+     * @param string $fieldName
+     * @param string|int|float|array $value If array passed this means batch of fields data needed to "all_text"
+     * @param array $placeholders
+     * @return $this
      */
-    private function assertFieldType($fieldType)
+    public function addPlaceholderField($entityId, $fieldName, $value, $placeholders)
     {
-        if (!in_array($fieldType, self::$fieldTypes, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Field type must be one of %s',
-                    implode(', ', self::$fieldTypes)
-                )
-            );
-        }
+        $this->entitiesData[$entityId][IndexDataProvider::PLACEHOLDER_VALUES_KEY][$fieldName][] =
+            new ValueWithPlaceholders($value, $placeholders);
+
+        return $this;
+    }
+
+    /**
+     * @param $entityId
+     * @param $placeholder
+     * @return $this
+     */
+    public function setAllTextFieldPlaceholder($entityId, $placeholder)
+    {
+        $this->entitiesData[$entityId][IndexDataProvider::ALL_TEXT_FIELD] = $placeholder;
+
+        return $this;
     }
 
     /**

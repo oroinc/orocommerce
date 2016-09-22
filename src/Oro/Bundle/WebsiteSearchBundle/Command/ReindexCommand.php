@@ -44,7 +44,7 @@ class ReindexCommand extends ContainerAwareCommand
         $websiteId = $input->getOption('website-id');
 
         $class = $class ? $this->getFQCN($class) : null;
-
+        
         $context = [];
         if ($websiteId !== null) {
             $websiteId = (int)$websiteId;

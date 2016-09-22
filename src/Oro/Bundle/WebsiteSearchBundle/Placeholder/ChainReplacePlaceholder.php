@@ -19,13 +19,16 @@ class ChainReplacePlaceholder
 
     /**
      * @param string $string
-     * @param string $replaceValue
+     * @param array $placeholdersValues
      * @return string
      */
-    public function replace($string, $replaceValue)
+    public function replace($string, $placeholdersValues)
     {
         foreach ($this->placeholderRegistry->getPlaceholders() as $placeholder) {
-            $string = $placeholder->replace($string, $replaceValue);
+            if (isset($placeholdersValues[$placeholder->getPlaceholder()])) {
+                $replaceOn = $placeholdersValues[$placeholder->getPlaceholder()];
+                $string = $placeholder->replace($string, $replaceOn);
+            }
         }
 
         return $string;

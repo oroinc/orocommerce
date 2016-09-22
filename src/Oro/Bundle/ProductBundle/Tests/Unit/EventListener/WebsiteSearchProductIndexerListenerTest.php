@@ -9,7 +9,6 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
-use Oro\Bundle\WebsiteSearchBundle\Helper\FieldHelper;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\ChainReplacePlaceholder;
 use Oro\Component\Testing\Unit\EntityTrait;
 

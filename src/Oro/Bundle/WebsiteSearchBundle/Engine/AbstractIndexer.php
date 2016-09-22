@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\ChainReplacePlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolverInterface;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
@@ -158,7 +159,7 @@ abstract class AbstractIndexer implements IndexerInterface
                 $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
                 $currentAlias = $this->chainPlaceholder->replace(
                     $entityAlias,
-                    $websiteContext[self::CONTEXT_WEBSITE_ID_KEY]
+                    [WebsiteIdPlaceholder::NAME => $websiteContext[self::CONTEXT_WEBSITE_ID_KEY]]
                 );
 
                 $ids = [];
@@ -199,9 +200,8 @@ abstract class AbstractIndexer implements IndexerInterface
     {
         $currentAlias = $this->chainPlaceholder->replace(
             $this->mappingProvider->getEntityAlias($entityClass),
-            $context[self::CONTEXT_WEBSITE_ID_KEY]
+            [WebsiteIdPlaceholder::NAME => $context[self::CONTEXT_WEBSITE_ID_KEY]]
         );
-
         $temporaryAlias = $currentAlias . '_' . uniqid('website_search', true);
 
         $entityRepository = $this->doctrineHelper->getEntityRepositoryForClass($entityClass);

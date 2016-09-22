@@ -5,10 +5,8 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
-use Oro\Bundle\WebsiteSearchBundle\Helper\FieldHelper;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\ChainReplacePlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
 class WebsiteSearchProductIndexerListener
 {
@@ -18,23 +16,15 @@ class WebsiteSearchProductIndexerListener
     private $localizationHelper;
 
     /**
-     * @var ChainReplacePlaceholder
-     */
-    private $chainReplacePlaceholder;
-
-    /**
      * @param DoctrineHelper $doctrineHelper
      * @param LocalizationHelper $localizationHelper
-     * @param ChainReplacePlaceholder $chainReplacePlaceholder
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        LocalizationHelper $localizationHelper,
-        ChainReplacePlaceholder $chainReplacePlaceholder
+        LocalizationHelper $localizationHelper
     ) {
         $this->productRepository = $doctrineHelper->getEntityRepositoryForClass(Product::class);
         $this->localizationHelper = $localizationHelper;
-        $this->chainReplacePlaceholder = $chainReplacePlaceholder;
     }
 
     /**
@@ -55,24 +45,9 @@ class WebsiteSearchProductIndexerListener
 
         foreach ($products as $product) {
             // Non localized fields
-            $event->addField(
-                $product->getId(),
-                Query::TYPE_TEXT,
-                'sku',
-                $product->getSku()
-            );
-            $event->addField(
-                $product->getId(),
-                Query::TYPE_TEXT,
-                'status',
-                $product->getStatus()
-            );
-            $event->addField(
-                $product->getId(),
-                Query::TYPE_TEXT,
-                'inventory_status',
-                $product->getInventoryStatus()->getId()
-            );
+            $event->addField($product->getId(), 'sku', $product->getSku());
+            $event->addField($product->getId(), 'status', $product->getStatus());
+            $event->addField($product->getId(), 'inventory_status', $product->getInventoryStatus()->getId());
 
             // Localized fields
             foreach ($localizations as $localization) {
@@ -83,22 +58,15 @@ class WebsiteSearchProductIndexerListener
                 ];
 
                 foreach ($localizedFields as $fieldName => $fieldValue) {
-                    $event->addField(
+                    $event->addPlaceholderField(
                         $product->getId(),
-                        Query::TYPE_TEXT,
-                        sprintf('%s_%s', $fieldName, $localization->getId()),
-                        $fieldValue
+                        $fieldName,
+                        $fieldValue,
+                        [LocalizationIdPlaceholder::NAME => $localization->getId()]
                     );
                 }
-
-                // All text field
-                $event->addField(
-                    $product->getId(),
-                    Query::TYPE_TEXT,
-                    sprintf('all_text_%s', $localization->getId()),
-                    implode(' ', $localizedFields)
-                );
             }
+            $event->setAllTextFieldPlaceholder($product->getId(), LocalizationIdPlaceholder::NAME);
         }
     }
 }

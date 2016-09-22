@@ -387,7 +387,6 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_locale.helper.localization'
-            - '@oro_website_search.placeholder.chain_replace'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
 
