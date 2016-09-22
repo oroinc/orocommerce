@@ -16,6 +16,8 @@ services:
             - '@oro_website_search.query_factory.inner'
             - '@event_dispatcher'
             - '@oro_website_search.mock.engine'
+            - '@oro_product.product.manager'
+            - '@oro_search.query.expression_builder'
 
     oro_website_search.select_data.listener:
         class: %oro_website_search.select_data.listener.class%
