@@ -1,4 +1,4 @@
-oro.account:
+oro.customer:
     entity_label: 'Account'
     entity_plural_label: 'Accounts'
     name.label: 'Name'
@@ -438,7 +438,7 @@ oro.account:
         privileges:
             entity.label: Access
             action.label: Capabillities
-        address: #oro.account.frontend.address
+        address: #oro.customer.frontend.address
             title:
                 create: 'Create'
                 edit: 'Edit'

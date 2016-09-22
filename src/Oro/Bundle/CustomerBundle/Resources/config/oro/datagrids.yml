@@ -38,13 +38,13 @@ datagrids:
                         - { join: account.internal_rating, alias: internalRating }
         columns:
             name:
-                label: oro.account.name.label
+                label: oro.customer.name.label
             group_name:
-                label: oro.account.group.label
+                label: oro.customer.group.label
             parent_name:
-                label: oro.account.parent.label
+                label: oro.customer.parent.label
             internal_rating_name:
-                label: oro.account.internal_rating.label
+                label: oro.customer.internal_rating.label
         properties:
             id: ~
         sorters:
@@ -112,7 +112,7 @@ datagrids:
                     - { table: %oro_account.entity.account_group.class%, alias: account_group }
         columns:
             name:
-                label: oro.account.accountgroup.name.label
+                label: oro.customer.accountgroup.name.label
         properties:
             id: ~
         sorters:
@@ -220,9 +220,9 @@ datagrids:
                 - group
         columns:
             name:
-                label: oro.account.name.label
+                label: oro.customer.name.label
             parent_name:
-                label: oro.account.parent.label
+                label: oro.customer.parent.label
         sorters:
             default:
                 name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
@@ -247,13 +247,13 @@ datagrids:
                 - group
         columns:
             hasGroup:
-                label: oro.account.has_group.label
+                label: oro.customer.has_group.label
                 editable: true
                 frontend_type: boolean
             name:
-                label: oro.account.name.label
+                label: oro.customer.name.label
             parent_name:
-                label: oro.account.parent.label
+                label: oro.customer.parent.label
         filters:
             columns:
                 hasGroup:
@@ -293,16 +293,16 @@ datagrids:
                     - { table: %oro_account.entity.account_user.class%, alias: accountUser }
         columns:
             firstName:
-                label: oro.account.accountuser.first_name.label
+                label: oro.customer.accountuser.first_name.label
             lastName:
-                label: oro.account.accountuser.last_name.label
+                label: oro.customer.accountuser.last_name.label
             email:
-                label: oro.account.accountuser.email.label
+                label: oro.customer.accountuser.email.label
             enabled:
-                label: oro.account.accountuser.enabled.label
+                label: oro.customer.accountuser.enabled.label
                 frontend_type: boolean
             confirmed:
-                label: oro.account.accountuser.confirmed.label
+                label: oro.customer.accountuser.confirmed.label
                 frontend_type: boolean
         properties:
             id: ~
@@ -354,7 +354,7 @@ datagrids:
                         - { join: accountUser.account, alias: account }
         columns:
             accountName:
-                label: oro.account.accountuser.account.label
+                label: oro.customer.accountuser.account.label
                 order: -1
         sorters:
             columns:
@@ -419,7 +419,7 @@ datagrids:
                         - { join: accountUser.account, alias: account }
         columns:
             accountName:
-                label: oro.account.accountuser.account.label
+                label: oro.customer.accountuser.account.label
                 order: -1
         sorters:
             columns:
@@ -470,10 +470,10 @@ datagrids:
                     - id
         columns:
             label:
-                label: oro.account.accountuserrole.role.label
+                label: oro.customer.accountuserrole.role.label
             isRolePredefined:
                 type: twig
-                label: oro.account.accountuserrole.type.label
+                label: oro.customer.accountuserrole.type.label
                 frontend_type: html
                 data_name: isRolePredefined
                 template: OroCustomerBundle:AccountUserRole:Datagrid/Property/isRolePredifined.html.twig
@@ -496,8 +496,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                true:  oro.account.accountuserrole.type.predefined.label
-                                false: oro.account.accountuserrole.type.customizable.label
+                                true:  oro.customer.accountuserrole.type.predefined.label
+                                false: oro.customer.accountuserrole.type.customizable.label
         actions:
             view:
                 type:          navigate
@@ -518,9 +518,9 @@ datagrids:
                         - { join: role.account, alias: role_account }
         columns:
             account_name:
-                label: oro.account.accountuserrole.account.label
+                label: oro.customer.accountuserrole.account.label
             self_managed:
-                label: oro.account.accountuserrole.self_managed.label
+                label: oro.customer.accountuserrole.self_managed.label
                 frontend_type: boolean
                 data_name: self_managed
         sorters:
@@ -597,15 +597,15 @@ datagrids:
         extends: account-account-users-grid-basic
         columns:
             hasRole:
-                label: oro.account.accountuser.has_role.label
+                label: oro.customer.accountuser.has_role.label
                 editable: true
                 frontend_type: boolean
             firstName:
-                label: oro.account.accountuser.first_name.label
+                label: oro.customer.accountuser.first_name.label
             lastName:
-                label: oro.account.accountuser.last_name.label
+                label: oro.customer.accountuser.last_name.label
             email:
-                label: oro.account.accountuser.email.label
+                label: oro.customer.accountuser.email.label
         filters:
             columns:
                 hasRole:
@@ -673,11 +673,11 @@ datagrids:
                     default: NULL
         columns:
             firstName:
-                label: oro.account.accountuser.first_name.label
+                label: oro.customer.accountuser.first_name.label
             lastName:
-                label: oro.account.accountuser.last_name.label
+                label: oro.customer.accountuser.last_name.label
             email:
-                label: oro.account.accountuser.email.label
+                label: oro.customer.accountuser.email.label
 
     account-account-users-grid-view:
         acl_resource: oro_account_account_user_view
@@ -691,7 +691,7 @@ datagrids:
                         - { join: user.account, alias: userAccount }
         columns:
             accountName:
-                label: oro.account.accountuser.account.label
+                label: oro.customer.accountuser.account.label
         filters:
             columns:
                 accountName:
@@ -753,19 +753,19 @@ datagrids:
                     default: NULL
         columns:
             fullName:
-                label: oro.account.frontend.account_user.full_name.label
+                label: oro.customer.frontend.account_user.full_name.label
                 type: twig
                 frontend_type: html
                 data_name: fullName
                 template: OroCustomerBundle:AccountUser:Frontend/Datagrid/fullName.html.twig
             email:
-                label: oro.account.frontend.account_user.email.label
+                label: oro.customer.frontend.account_user.email.label
                 type: twig
                 frontend_type: html
                 data_name: user.email
                 template: OroCustomerBundle:AccountUser:Frontend/Datagrid/email.html.twig
             status:
-                label: oro.account.frontend.account_user.status.label
+                label: oro.customer.frontend.account_user.status.label
                 type: twig
                 frontend_type: html
                 data_name: status
@@ -784,8 +784,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                true:  oro.account.frontend.account_user.status_active.label
-                                false: oro.account.frontend.account_user.status_inactive.label
+                                true:  oro.customer.frontend.account_user.status_active.label
+                                false: oro.customer.frontend.account_user.status_inactive.label
 
     account-account-users-grid-update:
         acl_resource: oro_account_account_user_view
@@ -799,7 +799,7 @@ datagrids:
                         - { join: user.account, alias: userAccount }
         columns:
             accountName:
-                label: oro.account.accountuser.account.label
+                label: oro.customer.accountuser.account.label
         filters:
             columns:
                 accountName:
@@ -817,23 +817,23 @@ datagrids:
         extends: frontend-account-account-users-grid-basic
         columns:
             hasRole:
-                label: oro.account.accountuser.has_role.label
+                label: oro.customer.accountuser.has_role.label
                 editable: true
                 frontend_type: boolean
             fullName:
-                label: oro.account.frontend.account_user.full_name.label
+                label: oro.customer.frontend.account_user.full_name.label
                 type: twig
                 frontend_type: html
                 data_name: fullName
                 template: OroCustomerBundle:AccountUser:Frontend/Datagrid/fullName.html.twig
             email:
-                label: oro.account.frontend.account_user.email.label
+                label: oro.customer.frontend.account_user.email.label
                 type: twig
                 frontend_type: html
                 data_name: user.email
                 template: OroCustomerBundle:AccountUser:Frontend/Datagrid/email.html.twig
             status:
-                label: oro.account.frontend.account_user.status.label
+                label: oro.customer.frontend.account_user.status.label
                 type: twig
                 frontend_type: html
                 data_name: status
@@ -855,8 +855,8 @@ datagrids:
                     options:
                         field_options:
                             choices:
-                                true:  oro.account.frontend.account_user.status_active.label
-                                false: oro.account.frontend.account_user.status_inactive.label
+                                true:  oro.customer.frontend.account_user.status_active.label
+                                false: oro.customer.frontend.account_user.status_inactive.label
         sorters:
             columns:
                 hasRole:
@@ -889,9 +889,9 @@ datagrids:
                 - target_entity_id
         columns:
             name:
-                label: oro.account.name.label
+                label: oro.customer.name.label
             visibility:
-                label: oro.account.visibility.accountcategoryvisibility.entity_label
+                label: oro.customer.visibility.accountcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
@@ -938,9 +938,9 @@ datagrids:
                 - target_entity_id
         columns:
             name:
-                label: oro.account.name.label
+                label: oro.customer.name.label
             visibility:
-                label: oro.account.visibility.accountgroupcategoryvisibility.entity_label
+                label: oro.customer.visibility.accountgroupcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
@@ -990,9 +990,9 @@ datagrids:
                 - website_id
         columns:
             name:
-                label: oro.account.name.label
+                label: oro.customer.name.label
             visibility:
-                label: oro.account.visibility.accountproductvisibility.entity_label
+                label: oro.customer.visibility.accountproductvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
@@ -1041,9 +1041,9 @@ datagrids:
                 - website_id
         columns:
             name:
-                label: oro.account.name.label
+                label: oro.customer.name.label
             visibility:
-                label: oro.account.visibility.accountgroupproductvisibility.entity_label
+                label: oro.customer.visibility.accountgroupproductvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
@@ -1195,17 +1195,17 @@ datagrids:
             id: ~
         columns:
             street:
-                label: oro.account.accountaddress.entity_label
+                label: oro.customer.accountaddress.entity_label
             city:
-                label: oro.account.accountaddress.city.label
+                label: oro.customer.accountaddress.city.label
             state:
-                label: oro.account.accountaddress.region.label
+                label: oro.customer.accountaddress.region.label
             zip:
-                label: oro.account.accountuseraddress.postal_code.label
+                label: oro.customer.accountuseraddress.postal_code.label
             countryName:
-                label: oro.account.accountaddress.country.label
+                label: oro.customer.accountaddress.country.label
             types:
-                label: oro.account.accountaddress.types.singular_label
+                label: oro.customer.accountaddress.types.singular_label
                 type: twig
                 frontend_type: html
                 template: OroCustomerBundle:Address:Frontend/Datagrid/types.html.twig

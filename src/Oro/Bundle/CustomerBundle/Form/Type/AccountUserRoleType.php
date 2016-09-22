@@ -19,7 +19,7 @@ class AccountUserRoleType extends AbstractAccountUserRoleType
             AccountSelectType::NAME,
             [
                 'required' => false,
-                'label' => 'oro.account.accountuserrole.account.label'
+                'label' => 'oro.customer.accountuserrole.account.label'
             ]
         );
     }

@@ -22,6 +22,6 @@ class AccountGroupTypeStub extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('name', 'text', ['label' => 'oro.account_group.name.label']);
+        $builder->add('name', 'text', ['label' => 'oro.customer_group.name.label']);
     }
 }

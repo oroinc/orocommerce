@@ -5,7 +5,7 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: 'oro.account.menu.account_user_login.label'
+            optionValue: 'oro.customer.menu.account_user_login.label'
         - '@addTree':
             items:
                 login_page_wrapper:
@@ -27,7 +27,7 @@ layout:
                 login_form_title:
                     blockType: text
                     options:
-                        text: oro.account.accountuser.profile.login
+                        text: oro.customer.accountuser.profile.login
                 login_form_notifications:
                     blockType: text
                     options:
@@ -40,16 +40,16 @@ layout:
                         id: userNameSignIn
                         name: _username
                         value: '=data["oro_account_sign_in"].getLastName()'
-                        placeholder: oro.account.accountuser.email.label
-                        label: oro.account.accountuser.email.label
+                        placeholder: oro.customer.accountuser.email.label
+                        label: oro.customer.accountuser.email.label
                 login_form_password:
                     blockType: input
                     options:
                         type: password
                         id: passwordSignIn
                         name: _password
-                        placeholder: oro.account.accountuser.profile.enter_password
-                        label: oro.account.accountuser.password.label
+                        placeholder: oro.customer.accountuser.profile.enter_password
+                        label: oro.customer.accountuser.password.label
                 login_form_remember:
                     blockType: input
                     options:
@@ -57,7 +57,7 @@ layout:
                         id: rememberMe
                         name: _remember_me
                         value: on
-                        label: oro.account.accountuser.profile.remember_me
+                        label: oro.customer.accountuser.profile.remember_me
                 login_form_target:
                     blockType: input
                     options:
@@ -74,7 +74,7 @@ layout:
                     options:
                         type: input
                         action: submit
-                        text: oro.account.accountuser.profile.login
+                        text: oro.customer.accountuser.profile.login
                         style: auto
                         attr:
                             class: button
@@ -82,13 +82,13 @@ layout:
                     blockType: link
                     options:
                         route_name: oro_account_frontend_account_user_reset_request
-                        text: oro.account.accountuser.profile.forgot_password
+                        text: oro.customer.accountuser.profile.forgot_password
                 login_form_register:
                     blockType: link
                     options:
                         visible: '=data["registrationAllowed"]==true'
                         route_name: oro_account_frontend_account_user_register
-                        text: oro.account.accountuser.profile.create_an_account
+                        text: oro.customer.accountuser.profile.create_an_account
             tree:
                 body:
                     login_page_wrapper:

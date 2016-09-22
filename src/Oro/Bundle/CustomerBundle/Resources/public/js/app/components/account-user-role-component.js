@@ -113,10 +113,10 @@ define(function(require) {
          */
         _createChangeAccountConfirmationDialog: function() {
             return new Modal({
-                title: __('oro.account.account_user_role.change_account_confirmation_title'),
-                okText: __('oro.account.account_user_role.continue'),
-                cancelText: __('oro.account.account_user_role.cancel'),
-                content: __('oro.account.account_user_role.content'),
+                title: __('oro.customer.account_user_role.change_account_confirmation_title'),
+                okText: __('oro.customer.account_user_role.continue'),
+                cancelText: __('oro.customer.account_user_role.cancel'),
+                content: __('oro.customer.account_user_role.content'),
                 className: 'modal modal-primary',
                 okButtonClass: 'btn-primary btn-large'
             });

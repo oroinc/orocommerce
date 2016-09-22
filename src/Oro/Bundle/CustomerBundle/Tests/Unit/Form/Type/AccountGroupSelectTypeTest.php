@@ -41,7 +41,7 @@ class AccountGroupSelectTypeTest extends \PHPUnit_Framework_TestCase
                         $this->assertEquals('oro_account_group', $options['autocomplete_alias']);
                         $this->assertEquals('oro_account_group_create', $options['create_form_route']);
                         $this->assertEquals(
-                            ['placeholder' => 'oro.account.accountgroup.form.choose'],
+                            ['placeholder' => 'oro.customer.accountgroup.form.choose'],
                             $options['configs']
                         );
 

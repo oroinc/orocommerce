@@ -117,7 +117,7 @@ class AccountGroupController extends Controller
                     'parameters' => ['id' => $group->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.account.controller.accountgroup.saved.message'),
+            $this->get('translator')->trans('oro.customer.controller.accountgroup.saved.message'),
             $handler
         );
     }

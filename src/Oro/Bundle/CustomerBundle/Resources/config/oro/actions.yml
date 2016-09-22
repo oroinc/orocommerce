@@ -1,6 +1,6 @@
 operations:
     oro_account_accountuser_disable:
-        label: oro.account.action.account_user.disable
+        label: oro.customer.action.account_user.disable
         applications: [default]
         routes:
             - oro_account_account_user_view
@@ -19,11 +19,11 @@ operations:
                     data: $.data
                     value: false
             - '@flash_message':
-                message: oro.account.controller.accountuser.disabled.message
+                message: oro.customer.controller.accountuser.disabled.message
                 type: 'success'
 
     oro_account_accountuser_enable:
-        label: oro.account.action.account_user.enable
+        label: oro.customer.action.account_user.enable
         applications: [default]
         routes:
             - oro_account_account_user_view
@@ -42,11 +42,11 @@ operations:
                     data: $.data
                     value: true
             - '@flash_message':
-                message: oro.account.controller.accountuser.enabled.message
+                message: oro.customer.controller.accountuser.enabled.message
                 type: 'success'
 
     oro_account_frontend_accountuser_disable:
-        label: oro.account.action.account_user.disable
+        label: oro.customer.action.account_user.disable
         applications: [commerce]
         routes:
             - oro_account_frontend_account_user_view
@@ -73,7 +73,7 @@ operations:
                     route_parameters:
                         id: $id
             - '@flash_message':
-                message: oro.account.controller.accountuser.disabled.message
+                message: oro.customer.controller.accountuser.disabled.message
                 type: 'success'
 
     oro_account_frontend_accountuser_disable_datagrid:
@@ -85,7 +85,7 @@ operations:
             - '@refresh_grid': frontend-account-account-user-grid
 
     oro_account_frontend_accountuser_enable:
-        label: oro.account.action.account_user.enable
+        label: oro.customer.action.account_user.enable
         applications: [commerce]
         routes:
             - oro_account_frontend_account_user_view
@@ -112,7 +112,7 @@ operations:
                     route_parameters:
                         id: $id
             - '@flash_message':
-                message: oro.account.controller.accountuser.enabled.message
+                message: oro.customer.controller.accountuser.enabled.message
                 type: 'success'
 
     oro_account_frontend_accountuser_enable_datagrid:
@@ -124,7 +124,7 @@ operations:
             - '@refresh_grid': frontend-account-account-user-grid
 
     oro_account_accountuser_confirm:
-        label: oro.account.action.account_user.confirm
+        label: oro.customer.action.account_user.confirm
         routes:
             - oro_account_account_user_view
             - oro_account_frontend_account_user_view
@@ -141,11 +141,11 @@ operations:
                 parameters_mapping:
                     data: $.data
             - '@flash_message':
-                message: oro.account.controller.accountuser.confirmed.message
+                message: oro.customer.controller.accountuser.confirmed.message
                 type: 'success'
 
     oro_account_accountuser_sendconfirmation:
-        label: oro.account.action.account_user.send_confirmation
+        label: oro.customer.action.account_user.send_confirmation
         routes:
             - oro_account_account_user_view
             - oro_account_frontend_account_user_view
@@ -162,11 +162,11 @@ operations:
                 parameters_mapping:
                     data: $.data
             - '@flash_message':
-                message: oro.account.controller.accountuser.confirmation_sent.message
+                message: oro.customer.controller.accountuser.confirmation_sent.message
                 type: 'success'
 
     oro_account_frontend_create:
-        label: oro.account.action.account_user.create
+        label: oro.customer.action.account_user.create
         applications: [commerce]
         routes:
            - oro_account_frontend_account_user_index
@@ -178,7 +178,7 @@ operations:
                    route: oro_account_frontend_account_user_create
 
     oro_account_frontend_create_role:
-        label: oro.account.action.account_user_role.create
+        label: oro.customer.action.account_user_role.create
         applications: [commerce]
         routes:
             - oro_account_frontend_account_user_role_index
@@ -190,7 +190,7 @@ operations:
                     route: oro_account_frontend_account_user_role_create
 
     oro_account_frontend_delete_user:
-        label: oro.account.action.account_user.delete
+        label: oro.customer.action.account_user.delete
         applications: [commerce]
         routes:
             - oro_account_frontend_account_user_view
@@ -204,14 +204,14 @@ operations:
         preconditions:
             '@not_equal': [$id, $.currentUser.id]
         frontend_options:
-            confirmation: oro.account.account_user.delete_confirm
+            confirmation: oro.customer.account_user.delete_confirm
         actions:
             - '@run_action_group':
                 action_group: DELETE
                 parameters_mapping:
                     data: $.data
             - '@trans':
-                id: oro.account.accountuser.entity_label
+                id: oro.customer.accountuser.entity_label
                 attribute: $.entityLabel
             - '@flash_message':
                 message: oro.action.delete_message
@@ -221,7 +221,7 @@ operations:
             - '@redirect': {route: oro_account_frontend_account_user_index}
 
     oro_account_frontend_edit_user:
-        label: oro.account.action.account_user.edit
+        label: oro.customer.action.account_user.edit
         applications: [commerce]
         routes:
             - oro_account_frontend_account_user_view
@@ -237,7 +237,7 @@ operations:
                         id: $id
 
     oro_account_frontend_profile_user:
-        label: oro.account.action.account_user.edit
+        label: oro.customer.action.account_user.edit
         applications: [commerce]
         routes:
             - oro_account_frontend_account_user_profile
@@ -251,7 +251,7 @@ operations:
                     route: oro_account_frontend_account_user_profile_update
 
     oro_account_frontend_edit_role:
-        label: oro.account.frontend.action.account_user_role.edit
+        label: oro.customer.frontend.action.account_user_role.edit
         applications: [commerce]
         routes:
             - oro_account_frontend_account_user_role_view
@@ -267,7 +267,7 @@ operations:
                         id: $id
 
     oro_account_frontend_delete_role:
-        label: oro.account.action.account_user_role.delete
+        label: oro.customer.action.account_user_role.delete
         applications: [commerce]
         routes:
             - oro_account_frontend_account_user_role_view
@@ -289,7 +289,7 @@ operations:
                 parameters_mapping:
                     data: $.data
             - '@trans':
-                id: oro.account.accountuserrole.entity_label
+                id: oro.customer.accountuserrole.entity_label
                 attribute: $.entityLabel
             - '@flash_message':
                 message: oro.action.delete_message

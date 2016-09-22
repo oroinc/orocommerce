@@ -57,9 +57,9 @@ class AccountUserRegisterController extends Controller
         $handler = new FrontendAccountUserHandler($form, $request, $userManager);
 
         if ($userManager->isConfirmationRequired()) {
-            $registrationMessage = 'oro.account.controller.accountuser.registered_with_confirmation.message';
+            $registrationMessage = 'oro.customer.controller.accountuser.registered_with_confirmation.message';
         } else {
-            $registrationMessage = 'oro.account.controller.accountuser.registered.message';
+            $registrationMessage = 'oro.customer.controller.accountuser.registered.message';
         }
         $response = $this->get('oro_form.model.update_handler')->handleUpdate(
             $form->getData(),
@@ -90,17 +90,17 @@ class AccountUserRegisterController extends Controller
         if ($accountUser === null || empty($token) || $accountUser->getConfirmationToken() !== $token) {
             throw $this->createNotFoundException(
                 $this->get('translator')
-                    ->trans('oro.account.controller.accountuser.confirmation_error.message')
+                    ->trans('oro.customer.controller.accountuser.confirmation_error.message')
             );
         }
 
         $messageType = 'warn';
-        $message = 'oro.account.controller.accountuser.already_confirmed.message';
+        $message = 'oro.customer.controller.accountuser.already_confirmed.message';
         if (!$accountUser->isConfirmed()) {
             $userManager->confirmRegistration($accountUser);
             $userManager->updateUser($accountUser);
             $messageType = 'success';
-            $message = 'oro.account.controller.accountuser.confirmed.message';
+            $message = 'oro.customer.controller.accountuser.confirmed.message';
         }
 
         $this->get('session')->getFlashBag()->add($messageType, $message);

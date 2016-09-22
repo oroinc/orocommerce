@@ -107,7 +107,7 @@ class AccountAddressController extends Controller
                     'route' => 'oro_account_frontend_account_user_address_index'
                 ];
             },
-            $this->get('translator')->trans('oro.account.controller.accountaddress.saved.message'),
+            $this->get('translator')->trans('oro.customer.controller.accountaddress.saved.message'),
             $handler,
             function (AccountAddress $accountAddress, FormInterface $form, Request $request) {
                 $url = $request->getUri();

@@ -11,13 +11,13 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'oro.account.accountuser.profile.edit'
+                - 'oro.customer.accountuser.profile.edit'
 
         - '@setOption':
             id: page_title
             optionName: text
             optionValue:
-                label: 'oro.account.accountuser.profile.edit'
+                label: 'oro.customer.accountuser.profile.edit'
 
         - '@setOption':
             id: content
@@ -48,14 +48,14 @@ layout:
                     blockType: link
                     options:
                         route_name: oro_account_frontend_account_user_profile
-                        text: oro.account.action.account_user_role.cancel_label
+                        text: oro.customer.action.account_user_role.cancel_label
                         attr:
                             'class': btn theme-btn btn-gray
                 account_profile_edit_form_actions_create:
                     blockType: button
                     options:
                         action: submit
-                        text: oro.account.action.account_user_role.save_label
+                        text: oro.customer.action.account_user_role.save_label
                         style: auto
                         attr:
                             'class': role-submit

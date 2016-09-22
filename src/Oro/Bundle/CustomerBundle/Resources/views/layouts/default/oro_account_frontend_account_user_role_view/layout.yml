@@ -13,8 +13,8 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'oro.account.menu.account_user.label'
-                - 'oro.account.frontend.account_user.role.entity_plural_label'
+                - 'oro.customer.menu.account_user.label'
+                - 'oro.customer.frontend.account_user.role.entity_plural_label'
                 - '=data["entity"].getLabel()'
         - '@addTree':
             items:
@@ -29,7 +29,7 @@ layout:
                     blockType: link
                     options:
                         route_name: oro_account_frontend_account_user_role_index
-                        text: oro.account.frontend.action.back.label
+                        text: oro.customer.frontend.action.back.label
                 account_user_role_top_actions:
                     blockType: action_line_buttons
                     options:

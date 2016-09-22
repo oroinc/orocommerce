@@ -23,7 +23,7 @@ layout:
                 __account_user_view_information_title:
                     blockType: text
                     options:
-                        text: 'oro.account.frontend.sections.account_user.user_profile'
+                        text: 'oro.customer.frontend.sections.account_user.user_profile'
                 __account_user_view_information_content:
                     blockType: account_user_awere_block
                     options:
@@ -35,7 +35,7 @@ layout:
                 __account_user_address_book_title:
                     blockType: text
                     options:
-                        text: 'oro.account.frontend.sections.account_user.address_book'
+                        text: 'oro.customer.frontend.sections.account_user.address_book'
                 __account_user_address_add_link:
                     blockType: link
                     options:
@@ -43,7 +43,7 @@ layout:
                         route_name: oro_account_frontend_account_user_address_create
                         route_parameters:
                             entityId: '=data["entity"].getId()'
-                        text: 'oro.account.address.add'
+                        text: 'oro.customer.address.add'
                         icon: plus
                 __account_user_address_book_content:
                     blockType: address_book

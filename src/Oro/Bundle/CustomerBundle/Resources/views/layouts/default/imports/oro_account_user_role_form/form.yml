@@ -38,7 +38,7 @@ layout:
                     blockType: button
                     options:
                         action: submit
-                        text: oro.account.action.account_user_role.save_label
+                        text: oro.customer.action.account_user_role.save_label
                         style: auto
                         attr:
                             'class': role-submit
@@ -46,7 +46,7 @@ layout:
                     blockType: link
                     options:
                         route_name: oro_account_frontend_account_user_role_index
-                        text: oro.account.action.account_user_role.cancel_label
+                        text: oro.customer.action.account_user_role.cancel_label
                         attr:
                             'class': btn theme-btn btn-gray
                 __account_user_role_form_actions_bottom:
@@ -55,7 +55,7 @@ layout:
                     blockType: button
                     options:
                         action: submit
-                        text: oro.account.action.account_user_role.save_label
+                        text: oro.customer.action.account_user_role.save_label
                         style: auto
                         attr:
                             'class': role-submit
@@ -63,7 +63,7 @@ layout:
                     blockType: link
                     options:
                         route_name: oro_account_frontend_account_user_role_index
-                        text: oro.account.action.account_user_role.cancel_label
+                        text: oro.customer.action.account_user_role.cancel_label
                         attr:
                             'class': btn theme-btn btn-gray
             tree:

@@ -55,7 +55,7 @@ class FrontendAccountUserRegistrationType extends AbstractType
                 [
                     'required' => true,
                     'mapped' => false,
-                    'label' => 'oro.account.accountuser.profile.company_name',
+                    'label' => 'oro.customer.accountuser.profile.company_name',
                     'constraints' => [new Assert\NotBlank()]
                 ]
             )
@@ -64,7 +64,7 @@ class FrontendAccountUserRegistrationType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'oro.account.accountuser.first_name.label'
+                    'label' => 'oro.customer.accountuser.first_name.label'
                 ]
             )
             ->add(
@@ -72,7 +72,7 @@ class FrontendAccountUserRegistrationType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'oro.account.accountuser.last_name.label'
+                    'label' => 'oro.customer.accountuser.last_name.label'
                 ]
             )
             ->add(
@@ -80,7 +80,7 @@ class FrontendAccountUserRegistrationType extends AbstractType
                 'email',
                 [
                     'required' => true,
-                    'label' => 'oro.account.accountuser.email.label'
+                    'label' => 'oro.customer.accountuser.email.label'
                 ]
             );
 
@@ -89,9 +89,9 @@ class FrontendAccountUserRegistrationType extends AbstractType
             'repeated',
             [
                 'type' => 'password',
-                'first_options' => ['label' => 'oro.account.accountuser.password.label'],
-                'second_options' => ['label' => 'oro.account.accountuser.password_confirmation.label'],
-                'invalid_message' => 'oro.account.message.password_mismatch',
+                'first_options' => ['label' => 'oro.customer.accountuser.password.label'],
+                'second_options' => ['label' => 'oro.customer.accountuser.password_confirmation.label'],
+                'invalid_message' => 'oro.customer.message.password_mismatch',
                 'required' => true,
                 'validation_groups' => ['create']
             ]

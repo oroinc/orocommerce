@@ -86,7 +86,7 @@ class AccountUserHandler
                             $session->getFlashBag()->add(
                                 'error',
                                 $this->translator
-                                    ->trans('oro.account.controller.accountuser.welcome_failed.message')
+                                    ->trans('oro.customer.controller.accountuser.welcome_failed.message')
                             );
                         }
                     }

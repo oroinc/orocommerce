@@ -21,7 +21,7 @@ class AccountUserPasswordRequestType extends AbstractType
             'email',
             [
                 'required' => true,
-                'label' => 'oro.account.accountuser.email.label',
+                'label' => 'oro.customer.accountuser.email.label',
                 'constraints' => [
                     new NotBlank(),
                     new Email()

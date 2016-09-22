@@ -29,7 +29,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
 
         $this->assertFormErrorAdded(
             $this->form,
-            'oro.account.accountuser.profile.email_not_exists',
+            'oro.customer.accountuser.profile.email_not_exists',
             ['%email%' => $email]
         );
 

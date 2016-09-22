@@ -155,7 +155,7 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
                 true,
                 true,
                 AccountUserRoleType::NAME,
-                'oro.account.security.access-level.'
+                'oro.customer.security.access-level.'
             ],
             'supported form name (FrontendAccountUserRoleType)' => [
                 true,
@@ -164,7 +164,7 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
                 true,
                 true,
                 FrontendAccountUserRoleType::NAME,
-                'oro.account.security.frontend.access-level.'
+                'oro.customer.security.frontend.access-level.'
             ],
         ];
     }

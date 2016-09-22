@@ -30,7 +30,7 @@ class AccountUserMultiSelectType extends AbstractType
                 'configs' => [
                     'multiple' => true,
                     'component' => 'autocomplete-accountuser',
-                    'placeholder' => 'oro.account.accountuser.form.choose',
+                    'placeholder' => 'oro.customer.accountuser.form.choose',
                 ],
                 'attr' => [
                     'class' => 'account-accountuser-multiselect',

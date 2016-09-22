@@ -43,7 +43,7 @@ class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
                     $this->assertEquals(
                         [
                             'component' => 'autocomplete-entity-parent',
-                            'placeholder' => 'oro.account.form.choose_parent'
+                            'placeholder' => 'oro.customer.form.choose_parent'
                         ],
                         $options['configs']
                     );

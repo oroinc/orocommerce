@@ -46,7 +46,7 @@ class AccountGroupType extends AbstractType
                 'name',
                 'text',
                 [
-                    'label' => 'oro.account.accountgroup.name.label',
+                    'label' => 'oro.customer.accountgroup.name.label',
                     'required' => true
                 ]
             )

@@ -167,11 +167,11 @@ datagrids:
                         - { join: relatedEntity.parent, alias: parent }
         columns:
             name:
-                label: oro.account.name.label
+                label: oro.customer.name.label
             groupName:
-                label: oro.account.group.label
+                label: oro.customer.group.label
             parentName:
-                label: oro.account.parent.label
+                label: oro.customer.parent.label
         properties:
             view_link:
                 route:  oro_account_view
@@ -210,7 +210,7 @@ datagrids:
                         - { join: priceListToAccountGroup.accountGroup, alias: relatedEntity }
         columns:
             name:
-                label: oro.account.accountgroup.name.label
+                label: oro.customer.accountgroup.name.label
         properties:
             view_link:
                 route:  oro_account_group_view
@@ -282,11 +282,11 @@ datagrids:
                         - { join: relatedEntity.parent, alias: parent }
         columns:
             name:
-                label:          oro.account.name.label
+                label:          oro.customer.name.label
             groupName:
-                label:          oro.account.group.label
+                label:          oro.customer.group.label
             parentName:
-                label:          oro.account.parent.label
+                label:          oro.customer.parent.label
         filters:
             columns:
                 groupName:
@@ -323,7 +323,7 @@ datagrids:
                         - { join: %oro_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.accountGroups' }
         columns:
             name:
-                label:          oro.account.accountgroup.name.label
+                label:          oro.customer.accountgroup.name.label
         options:
             rowSelection:
                 selectors:

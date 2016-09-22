@@ -99,7 +99,7 @@ class AccountUserRoleController extends Controller
             $this->addFlash(
                 'warning',
                 $this->get('translator')
-                    ->trans('oro.account.accountuserrole.frontend.edit-predifined-role.message')
+                    ->trans('oro.customer.accountuserrole.frontend.edit-predifined-role.message')
             );
         }
 
@@ -130,7 +130,7 @@ class AccountUserRoleController extends Controller
                     'parameters' => ['id' => $role->getId()],
                 ];
             },
-            $this->get('translator')->trans('oro.account.controller.accountuserrole.saved.message'),
+            $this->get('translator')->trans('oro.customer.controller.accountuserrole.saved.message'),
             $handler
         );
 

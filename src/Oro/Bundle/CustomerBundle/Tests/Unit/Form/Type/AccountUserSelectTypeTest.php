@@ -50,7 +50,7 @@ class AccountUserSelectTypeTest extends FormIntegrationTestCase
                     $this->assertEquals(
                         [
                             'component' => 'autocomplete-accountuser',
-                            'placeholder' => 'oro.account.accountuser.form.choose',
+                            'placeholder' => 'oro.customer.accountuser.form.choose',
                         ],
                         $options['configs']
                     );

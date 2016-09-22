@@ -15,13 +15,13 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'oro.account.menu.account_user.label'
-                - 'oro.account.frontend.account_user.address.label'
+                - 'oro.customer.menu.account_user.label'
+                - 'oro.customer.frontend.account_user.address.label'
 
         - '@setOption':
             id: page_title
             optionName: text
-            optionValue: 'oro.account.frontend.account_user.address.label'
+            optionValue: 'oro.customer.frontend.account_user.address.label'
 
         - '@addTree':
             items:

@@ -19,8 +19,8 @@ class ProductVisibilityType extends AbstractType
         $resolver->setDefaults(
             [
                 'choices' => [
-                    ProductVisibility::VISIBLE => 'oro.account.product.visibility.visible.label',
-                    ProductVisibility::HIDDEN => 'oro.account.product.visibility.hidden.label',
+                    ProductVisibility::VISIBLE => 'oro.customer.product.visibility.visible.label',
+                    ProductVisibility::HIDDEN => 'oro.customer.product.visibility.hidden.label',
                 ],
             ]
         );

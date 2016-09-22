@@ -22,7 +22,7 @@ class AuditController extends Controller
      * @Acl(
      *      id="oro_account_dataaudit_history",
      *      type="action",
-     *      label="oro.account.dataaudit.module_label",
+     *      label="oro.customer.dataaudit.module_label",
      *      group_name="commerce"
      * )
      * @param string $entity

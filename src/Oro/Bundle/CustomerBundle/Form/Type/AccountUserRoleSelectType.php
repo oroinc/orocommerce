@@ -69,7 +69,7 @@ class AccountUserRoleSelectType extends AbstractType
                     return (string)$role;
                 }
 
-                $roleType = 'oro.account.accountuserrole.type.';
+                $roleType = 'oro.customer.accountuserrole.type.';
                 $roleType .= $role->isPredefined() ? 'predefined.label' : 'customizable.label';
                 return sprintf('%s (%s)', $role->getLabel(), $this->translator->trans($roleType));
             }

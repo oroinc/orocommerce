@@ -19,8 +19,8 @@ class CatalogVisibilityType extends AbstractType
         $resolver->setDefaults(
             [
                 'choices' => [
-                    CategoryVisibility::VISIBLE => 'oro.account.catalog.visibility.visible.label',
-                    CategoryVisibility::HIDDEN => 'oro.account.catalog.visibility.hidden.label',
+                    CategoryVisibility::VISIBLE => 'oro.customer.catalog.visibility.visible.label',
+                    CategoryVisibility::HIDDEN => 'oro.customer.catalog.visibility.hidden.label',
                 ],
             ]
         );

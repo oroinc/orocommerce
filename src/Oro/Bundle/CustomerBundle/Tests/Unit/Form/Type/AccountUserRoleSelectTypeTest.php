@@ -73,7 +73,7 @@ class AccountUserRoleSelectTypeTest extends FormIntegrationTestCase
         $roleWithoutAccount = new AccountUserRole();
         $roleWithoutAccount->setLabel('roleWithoutAccount');
         $this->assertEquals(
-            'roleWithoutAccount (oro.account.accountuserrole.type.predefined.label.trans)',
+            'roleWithoutAccount (oro.customer.accountuserrole.type.predefined.label.trans)',
             $formOptions['choice_label']($roleWithoutAccount)
         );
 
@@ -82,7 +82,7 @@ class AccountUserRoleSelectTypeTest extends FormIntegrationTestCase
         $roleWithAccount->setAccount($account);
         $roleWithAccount->setLabel('roleWithAccount');
         $this->assertEquals(
-            'roleWithAccount (oro.account.accountuserrole.type.customizable.label.trans)',
+            'roleWithAccount (oro.customer.accountuserrole.type.customizable.label.trans)',
             $formOptions['choice_label']($roleWithAccount)
         );
 

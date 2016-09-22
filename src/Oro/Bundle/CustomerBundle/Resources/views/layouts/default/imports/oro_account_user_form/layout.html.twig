@@ -13,14 +13,14 @@
     {{ form_row(form._token) }}
 
     <fieldset class="profile__form__row">
-        <legend>{{ 'oro.account.accountuser.profile.form.sections.profile_information.label'|trans }}</legend>
+        <legend>{{ 'oro.customer.accountuser.profile.form.sections.profile_information.label'|trans }}</legend>
         <fieldset class="profile__form__row">
             <div class="profile__form__col form__col_x6 col_first">
-                {{ form_row(form.namePrefix, {'attr': {'placeholder': 'oro.account.form.placeholder.name_prefix'|trans}, 'parentClass': ''}) }}
-                {{ form_row(form.firstName, {'attr': {'placeholder': 'oro.account.form.placeholder.first_name'|trans}, 'parentClass': ''}) }}
-                {{ form_row(form.middleName, {'attr': {'placeholder': 'oro.account.form.placeholder.middle_name'|trans}, 'parentClass': ''}) }}
-                {{ form_row(form.lastName, {'attr': {'placeholder': 'oro.account.form.placeholder.last_name'|trans}, 'parentClass': ''}) }}
-                {{ form_row(form.nameSuffix, {'attr': {'placeholder': 'oro.account.form.placeholder.name_suffix'|trans}, 'parentClass': ''}) }}
+                {{ form_row(form.namePrefix, {'attr': {'placeholder': 'oro.customer.form.placeholder.name_prefix'|trans}, 'parentClass': ''}) }}
+                {{ form_row(form.firstName, {'attr': {'placeholder': 'oro.customer.form.placeholder.first_name'|trans}, 'parentClass': ''}) }}
+                {{ form_row(form.middleName, {'attr': {'placeholder': 'oro.customer.form.placeholder.middle_name'|trans}, 'parentClass': ''}) }}
+                {{ form_row(form.lastName, {'attr': {'placeholder': 'oro.customer.form.placeholder.last_name'|trans}, 'parentClass': ''}) }}
+                {{ form_row(form.nameSuffix, {'attr': {'placeholder': 'oro.customer.form.placeholder.name_suffix'|trans}, 'parentClass': ''}) }}
 
                 {{ form_row(form.enabled, {'attr': {'placeholder': ''|trans}, 'parentClass': 'profile__form__col form__col_x6'}) }}
 
@@ -29,18 +29,18 @@
                 {% endif %}
             </div>
             <div class="profile__form__col form__col_x6 col_last">
-                {{ form_row(form.email, {'attr': {'placeholder': 'oro.account.form.placeholder.email'|trans}, 'parentClass': ''}) }}
-                {{ form_row(form.birthday, {'attr': {'placeholder': 'oro.account.form.placeholder.birthday'|trans}, 'parentClass': ''}) }}
+                {{ form_row(form.email, {'attr': {'placeholder': 'oro.customer.form.placeholder.email'|trans}, 'parentClass': ''}) }}
+                {{ form_row(form.birthday, {'attr': {'placeholder': 'oro.customer.form.placeholder.birthday'|trans}, 'parentClass': ''}) }}
             </div>
         </fieldset>
     </fieldset>
 
     <fieldset class="profile__form__row">
-        <legend>{{ 'oro.account.accountuser.profile.form.sections.password.label'|trans }}</legend>
+        <legend>{{ 'oro.customer.accountuser.profile.form.sections.password.label'|trans }}</legend>
 
         <div class="password">
-            {{ form_row(form.plainPassword.first, {'attr': {'placeholder': 'oro.account.form.placeholder.new_password'|trans}, 'parentClass': 'profile__form__col form__col_x6 col_first'}) }}
-            {{ form_row(form.plainPassword.second, {'attr': {'placeholder': 'oro.account.form.placeholder.password_confirmation'|trans}, 'parentClass': 'profile__form__col form__col_x6 col_last'}) }}
+            {{ form_row(form.plainPassword.first, {'attr': {'placeholder': 'oro.customer.form.placeholder.new_password'|trans}, 'parentClass': 'profile__form__col form__col_x6 col_first'}) }}
+            {{ form_row(form.plainPassword.second, {'attr': {'placeholder': 'oro.customer.form.placeholder.password_confirmation'|trans}, 'parentClass': 'profile__form__col form__col_x6 col_last'}) }}
         </div>
 
         {% if form.passwordGenerate is defined %}
@@ -62,7 +62,7 @@
     </fieldset>
 
     <fieldset class="profile__form__row">
-        <legend>{{ 'oro.account.accountuser.profile.form.sections.roles.label'|trans }}</legend>
+        <legend>{{ 'oro.customer.accountuser.profile.form.sections.roles.label'|trans }}</legend>
         {{ form_row(form.roles)}}
     </fieldset>
 

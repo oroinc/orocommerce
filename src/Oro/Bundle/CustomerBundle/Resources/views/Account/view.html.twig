@@ -7,7 +7,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('oro_account_index'),
-        'indexLabel': 'oro.account.entity_plural_label'|trans,
+        'indexLabel': 'oro.customer.entity_plural_label'|trans,
         'entityTitle': entity.name|default('N/A'|trans)
     } %}
 
@@ -28,12 +28,12 @@
             'widgetType': 'block',
             'contentClasses': [],
             'url': path('oro_account_address_book', {id: entity.id}),
-            'title': 'oro.account.address_book.label'|trans
+            'title': 'oro.customer.address_book.label'|trans
         }) }}
     {% endset %}
 
     {% set dataBlocks = [{
-        'title': 'oro.account.sections.general'|trans,
+        'title': 'oro.customer.sections.general'|trans,
         'class': 'active',
         'subblocks': [
             {'data' : [accountInfo]},
@@ -43,7 +43,7 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
-            'title' : 'oro.account.accountuser.entity_plural_label'|trans,
+            'title' : 'oro.customer.accountuser.entity_plural_label'|trans,
             'subblocks': [
                 {
                     'title' : '',

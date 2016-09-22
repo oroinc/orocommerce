@@ -517,10 +517,10 @@ services:
         arguments:
             - "@oro_security.security_facade"
 
-    oro.account.catalog.visibility.change_set.validatior:
+    oro.customer.catalog.visibility.change_set.validatior:
         class: 'Oro\Bundle\CustomerBundle\Validator\Constraints\VisibilityChangeSetValidator'
         tags:
-            - { name: validator.constraint_validator, alias: oro.account.catalog.visibility.change_set.validatior }
+            - { name: validator.constraint_validator, alias: oro.customer.catalog.visibility.change_set.validatior }
 
     oro_account.provider.visibility_choices:
         class: 'Oro\Bundle\CustomerBundle\Provider\VisibilityChoicesProvider'

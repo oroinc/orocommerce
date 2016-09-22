@@ -22,7 +22,7 @@ class AccountUserMultiSelectType extends BaseAccountUserMultiSelectType
                     'route_name' => 'oro_frontend_autocomplete_search',
                     'multiple' => true,
                     'component' => 'autocomplete-accountuser',
-                    'placeholder' => 'oro.account.accountuser.form.choose',
+                    'placeholder' => 'oro.customer.accountuser.form.choose',
                 ],
                 'attr' => [
                     'class' => 'account-accountuser-multiselect',

@@ -40,7 +40,7 @@ abstract class AbstractAccountUserRoleType extends AbstractType
                 'label',
                 'text',
                 [
-                    'label' => 'oro.account.accountuserrole.role.label',
+                    'label' => 'oro.customer.accountuserrole.role.label',
                     'required' => true,
                     'constraints' => [new Length(['min' => 3, 'max' => 32])]
                 ]
@@ -50,7 +50,7 @@ abstract class AbstractAccountUserRoleType extends AbstractType
                 'checkbox',
                 [
                     'required' => false,
-                    'label' => 'oro.account.accountuserrole.self_managed.label'
+                    'label' => 'oro.customer.accountuserrole.self_managed.label'
                 ]
             )
             ->add(

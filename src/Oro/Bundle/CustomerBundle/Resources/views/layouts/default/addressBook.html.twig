@@ -8,8 +8,8 @@
         <script type="text/html" id="template-addressbook-item">
             <div class="actions pull-right">
                 {% if addressUpdateAclResource is not defined or resource_granted(addressUpdateAclResource) %}
-                    <a class="item-edit-button" title="<%= _.__('oro.account.address.edit') %>"><i class="icon-pencil hide-text"><%= _.__('oro.account.address.edit') %>ohjkhjkjk</i></a>
-                    <% if (!primary) { %><a class="item-remove-button" title="<%= _.__('oro.account.address.remove') %>"><i class="icon-trash mml2-md mml2-sm hide-text"><%= _.__('oro.account.address.remove') %></i></a><% } %>
+                    <a class="item-edit-button" title="<%= _.__('oro.customer.address.edit') %>"><i class="icon-pencil hide-text"><%= _.__('oro.customer.address.edit') %>ohjkhjkjk</i></a>
+                    <% if (!primary) { %><a class="item-remove-button" title="<%= _.__('oro.customer.address.remove') %>"><i class="icon-trash mml2-md mml2-sm hide-text"><%= _.__('oro.customer.address.remove') %></i></a><% } %>
                 {% endif %}
             </div>
 
@@ -25,9 +25,9 @@
 
             <% if (primary || !_.isEmpty(types)) { %>
                 <ul class="inline list-unstyled">
-                    <% if (primary) { %> <li><span class="label label-info"><%= _.__('oro.account.address.primary') %></span></li> <% } %>
+                    <% if (primary) { %> <li><span class="label label-info"><%= _.__('oro.customer.address.primary') %></span></li> <% } %>
                     <% _.each(types, function(type) { %>
-                    <li><span class="label"><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('oro.account.address.default_type', {type_name: _.escape(type.label)}) : _.escape(type.label) %></span></li>
+                    <li><span class="label"><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('oro.customer.address.default_type', {type_name: _.escape(type.label)}) : _.escape(type.label) %></span></li>
                     <% }) %>
                 </ul>
             <% } %>

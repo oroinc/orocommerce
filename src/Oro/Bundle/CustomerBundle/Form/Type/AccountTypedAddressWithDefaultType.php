@@ -62,7 +62,7 @@ class AccountTypedAddressWithDefaultType extends AbstractType
             }
 
             $choiceLabels[$pkValue] = $this->translator->trans(
-                'oro.account.account_typed_address_with_default_type.choice.default_text',
+                'oro.customer.account_typed_address_with_default_type.choice.default_text',
                 [
                     '%type_name%' => $value
                 ]

@@ -23,7 +23,7 @@ class ParentAccountSelectType extends AbstractType
                 'autocomplete_alias' => 'oro_account_parent',
                 'configs' => [
                     'component' => 'autocomplete-entity-parent',
-                    'placeholder' => 'oro.account.form.choose_parent'
+                    'placeholder' => 'oro.customer.form.choose_parent'
                 ]
             ]
         );

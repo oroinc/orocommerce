@@ -22,7 +22,7 @@ class AccountUserSelectType extends AbstractType
                 'create_form_route' => 'oro_account_account_user_create',
                 'configs' => [
                     'component' => 'autocomplete-accountuser',
-                    'placeholder' => 'oro.account.accountuser.form.choose',
+                    'placeholder' => 'oro.customer.accountuser.form.choose',
                 ],
                 'attr' => [
                     'class' => 'account-accountuser-select',

@@ -5,56 +5,56 @@
         <div class="oro-grid">
             <div class="oro-grid__row">
                 <div class="oro-grid__column-half">
-                    {{ form_row(form.label, {'label' : 'oro.account.frontend.address.form.label.address_label'|trans}) }}
+                    {{ form_row(form.label, {'label' : 'oro.customer.frontend.address.form.label.address_label'|trans}) }}
                 </div>
             </div>
             <div class="oro-grid__row oro-grid__row--offset-s">
                 <div class="oro-grid__column-half">
-                    {{ form_row(form.primary, {'label' : 'oro.account.frontend.address.form.label.primary'|trans }) }}
+                    {{ form_row(form.primary, {'label' : 'oro.customer.frontend.address.form.label.primary'|trans }) }}
                 </div>
             </div>
             <div class="oro-grid__row">
                 <div class="oro-grid__column-2">
-                    {{ form_row(form.namePrefix, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.name.prefix'|trans}}) }}
+                    {{ form_row(form.namePrefix, {'attr': {'placeholder': 'oro.customer.frontend.address.form.placeholder.name.prefix'|trans}}) }}
                 </div>
             </div>
             <div class="oro-grid__row">
                 <div class="oro-grid__column-half">
-                    {{ form_row(form.firstName, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.first_name'|trans}}) }}
+                    {{ form_row(form.firstName, {'attr': {'placeholder': 'oro.customer.frontend.address.form.placeholder.first_name'|trans}}) }}
                 </div>
                 <div class="oro-grid__column-half">
-                    {{ form_row(form.middleName, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.middle_name'|trans}}) }}
-                </div>
-            </div>
-            <div class="oro-grid__row">
-                <div class="oro-grid__column-half">
-                    {{ form_row(form.lastName, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.last_name'|trans}}) }}
-                </div>
-                <div class="oro-grid__column-half">
-                    {{ form_row(form.nameSuffix, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.name_suffix'|trans}}) }}
+                    {{ form_row(form.middleName, {'attr': {'placeholder': 'oro.customer.frontend.address.form.placeholder.middle_name'|trans}}) }}
                 </div>
             </div>
             <div class="oro-grid__row">
                 <div class="oro-grid__column-half">
-                    {{ form_row(form.organization, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.organization'|trans}}) }}
+                    {{ form_row(form.lastName, {'attr': {'placeholder': 'oro.customer.frontend.address.form.placeholder.last_name'|trans}}) }}
+                </div>
+                <div class="oro-grid__column-half">
+                    {{ form_row(form.nameSuffix, {'attr': {'placeholder': 'oro.customer.frontend.address.form.placeholder.name_suffix'|trans}}) }}
                 </div>
             </div>
             <div class="oro-grid__row">
                 <div class="oro-grid__column-half">
-                {{ form_row(form.phone, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.phone'|trans}}) }}
+                    {{ form_row(form.organization, {'attr': {'placeholder': 'oro.customer.frontend.address.form.placeholder.organization'|trans}}) }}
                 </div>
             </div>
             <div class="oro-grid__row">
                 <div class="oro-grid__column-half">
-                    {{ form_row(form.street, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.street'|trans}}) }}
-                </div>
-                <div class="oro-grid__column-half">
-                    {{ form_row(form.street2, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.street2'|trans}}) }}
+                {{ form_row(form.phone, {'attr': {'placeholder': 'oro.customer.frontend.address.form.placeholder.phone'|trans}}) }}
                 </div>
             </div>
             <div class="oro-grid__row">
                 <div class="oro-grid__column-half">
-                    {{ form_row(form.city, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.city'|trans}}) }}
+                    {{ form_row(form.street, {'attr': {'placeholder': 'oro.customer.frontend.address.form.placeholder.street'|trans}}) }}
+                </div>
+                <div class="oro-grid__column-half">
+                    {{ form_row(form.street2, {'attr': {'placeholder': 'oro.customer.frontend.address.form.placeholder.street2'|trans}}) }}
+                </div>
+            </div>
+            <div class="oro-grid__row">
+                <div class="oro-grid__column-half">
+                    {{ form_row(form.city, {'attr': {'placeholder': 'oro.customer.frontend.address.form.placeholder.city'|trans}}) }}
                 </div>
             </div>
             <div class="oro-grid__row">
@@ -68,7 +68,7 @@
             <div class="oro-grid__row">
                 <div class="oro-grid__column-2">
                     {{- form_label(form.postalCode) -}}
-                    {{- form_widget(form.postalCode, {'attr' : {'placeholder': 'oro.account.frontend.address.form.placeholder.zip'|trans}}) -}}
+                    {{- form_widget(form.postalCode, {'attr' : {'placeholder': 'oro.customer.frontend.address.form.placeholder.zip'|trans}}) -}}
                     {{- form_errors(form.postalCode) -}}
                 </div>
             </div>
@@ -77,7 +77,7 @@
              data-page-component-module="orocustomer/js/app/components/account-address-component"
              data-page-component-options="{{ {'disableDefaultWithoutType' : true}|json_encode }}">
             <div class="oro-grid__column-half">
-                <p class="oro-title">{{ "oro.account.frontend.address.form.label.address_types"|trans }}:</p>
+                <p class="oro-title">{{ "oro.customer.frontend.address.form.label.address_types"|trans }}:</p>
                 {{ form_widget(form.types) }}
                 {{ form_widget(form.defaults) }}
             </div>

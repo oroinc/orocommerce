@@ -29,14 +29,14 @@ layout:
                     blockType: link
                     options:
                         route_name: oro_account_frontend_account_user_index
-                        text: oro.account.form.action.cancel.label
+                        text: oro.customer.form.action.cancel.label
                         attr:
                             'class': btn theme-btn btn-gray
                 __account_user_form_actions_create:
                     blockType: button
                     options:
                         action: submit
-                        text: oro.account.form.action.save.label
+                        text: oro.customer.form.action.save.label
                         style: auto
                         attr:
                             'class': role-submit

@@ -179,7 +179,7 @@ class AccountUserController extends Controller
                     'parameters' => ['id' => $accountUser->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.account.controller.accountuser.saved.message'),
+            $this->get('translator')->trans('oro.customer.controller.accountuser.saved.message'),
             $handler
         );
 

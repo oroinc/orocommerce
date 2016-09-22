@@ -2,7 +2,7 @@
 
 {% set formAction = entity.id ? path('oro_account_update', {id: entity.id}) : path('oro_account_create') %}
 
-{% oro_title_set({params : {"%accountName%": entity.name|default('N/A'|trans), '%entityName%': 'oro.account.entity_label'|trans} }) %}
+{% oro_title_set({params : {"%accountName%": entity.name|default('N/A'|trans), '%entityName%': 'oro.customer.entity_label'|trans} }) %}
 
 {% block navButtons %}
     {{ parent() }}
@@ -20,12 +20,12 @@
         {% set breadcrumbs = {
             'entity':      entity,
             'indexPath':   path('oro_account_index'),
-            'indexLabel': 'oro.account.entity_plural_label'|trans,
+            'indexLabel': 'oro.customer.entity_plural_label'|trans,
             'entityTitle': entity.name|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}
-        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.account.entity_label'|trans}) %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.customer.entity_label'|trans}) %}
         {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
@@ -35,7 +35,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'oro.account.sections.general'|trans,
+            'title': 'oro.customer.sections.general'|trans,
             'class': 'active',
             'subblocks': [
                 {
@@ -48,7 +48,7 @@
                     ]
                 },
                 {
-                    'title': 'oro.account.sections.addresses'|trans,
+                    'title': 'oro.customer.sections.addresses'|trans,
                     'data': [
                         form_widget(form.addresses),
                     ]

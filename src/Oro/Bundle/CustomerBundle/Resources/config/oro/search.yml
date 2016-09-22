@@ -37,7 +37,7 @@ search:
 
     Oro\Bundle\CustomerBundle\Entity\AccountUser:
         alias: oro_account_account_user
-        label: oro.account.accountuser.entity_plural_label
+        label: oro.customer.accountuser.entity_plural_label
         title_fields: [email]
         route:
             name: oro_account_account_user_view
@@ -60,7 +60,7 @@ search:
 
     Oro\Bundle\CustomerBundle\Entity\AccountUserRole:
         alias: oro_account_account_user_role
-        label: oro.account.accountuserrole.entity_plural_label
+        label: oro.customer.accountuserrole.entity_plural_label
         title_fields: [label]
         route:
             name: oro_account_account_user_role_update

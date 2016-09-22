@@ -71,7 +71,7 @@
     {% set attr = layout_attr_defaults(attr, {'~class': " address-list__type"}) %}
     <div {{ block('block_attributes') }}>
         <% _.each(types, function(type) { %>
-        <div><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('oro.account.address.default_type', {type_name: _.escape(type.label)}) : _.escape(type.label) %></div>
+        <div><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('oro.customer.address.default_type', {type_name: _.escape(type.label)}) : _.escape(type.label) %></div>
         <% }) %>
     </div>
 {% endblock %}

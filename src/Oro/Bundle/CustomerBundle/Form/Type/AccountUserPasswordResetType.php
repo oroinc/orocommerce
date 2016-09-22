@@ -25,9 +25,9 @@ class AccountUserPasswordResetType extends AbstractType
             'repeated',
             [
                 'type' => 'password',
-                'first_options' => ['label' => 'oro.account.accountuser.password.label'],
-                'second_options' => ['label' => 'oro.account.accountuser.password_confirmation.label'],
-                'invalid_message' => 'oro.account.message.password_mismatch',
+                'first_options' => ['label' => 'oro.customer.accountuser.password.label'],
+                'second_options' => ['label' => 'oro.customer.accountuser.password_confirmation.label'],
+                'invalid_message' => 'oro.customer.message.password_mismatch',
                 'required' => true,
                 'validation_groups' => ['create']
             ]

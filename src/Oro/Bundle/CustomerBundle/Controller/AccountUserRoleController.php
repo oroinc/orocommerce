@@ -108,7 +108,7 @@ class AccountUserRoleController extends Controller
         if ($handler->process($role)) {
             $this->get('session')->getFlashBag()->add(
                 'success',
-                $this->get('translator')->trans('oro.account.controller.accountuserrole.saved.message')
+                $this->get('translator')->trans('oro.customer.controller.accountuserrole.saved.message')
             );
 
             return $this->get('oro_ui.router')->redirect($role);

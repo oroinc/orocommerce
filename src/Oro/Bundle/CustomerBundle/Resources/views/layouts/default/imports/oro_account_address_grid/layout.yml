@@ -18,7 +18,7 @@ layout:
                 __addresses_head_title:
                     blockType: text
                     options:
-                        text: 'oro.account.frontend.account_user_address_book.account_addresses'
+                        text: 'oro.customer.frontend.account_user_address_book.account_addresses'
             tree:
                 __root:
                     __addresses_head:
@@ -61,7 +61,7 @@ layout:
                 route_name: oro_account_frontend_account_address_create
                 route_parameters:
                     entityId: '=data["entity"].getId()'
-                text: 'oro.account.frontend.account_user_address_book.create.label'
+                text: 'oro.customer.frontend.account_user_address_book.create.label'
 
         - '@setOption':
             id: __addresses_datagrid_toolbar_sorting

@@ -52,7 +52,7 @@ class FrontendAccountUserType extends AbstractType
             'roles',
             FrontendAccountUserRoleSelectType::NAME,
             [
-                'label' => 'oro.account.accountuser.roles.label'
+                'label' => 'oro.customer.accountuser.roles.label'
             ]
         );
     }

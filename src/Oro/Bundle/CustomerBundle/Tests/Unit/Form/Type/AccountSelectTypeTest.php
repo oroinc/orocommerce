@@ -43,7 +43,7 @@ class AccountSelectTypeTest extends \PHPUnit_Framework_TestCase
                     $this->assertArrayHasKey('configs', $options);
                     $this->assertEquals('oro_account', $options['autocomplete_alias']);
                     $this->assertEquals('oro_account_create', $options['create_form_route']);
-                    $this->assertEquals(['placeholder' => 'oro.account.form.choose'], $options['configs']);
+                    $this->assertEquals(['placeholder' => 'oro.customer.form.choose'], $options['configs']);
                 }
             );
 

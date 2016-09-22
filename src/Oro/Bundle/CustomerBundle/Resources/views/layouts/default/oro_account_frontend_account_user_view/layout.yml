@@ -9,15 +9,15 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'oro.account.menu.account_user.label'
-                - 'oro.account.frontend.account_user.entity_plural_label'
+                - 'oro.customer.menu.account_user.label'
+                - 'oro.customer.frontend.account_user.entity_plural_label'
                 - '=data["entity"].getFullName()'
 
         - '@setOption':
             id: page_title
             optionName: text
             optionValue:
-                label: 'oro.account.frontend.title.account_user.view'
+                label: 'oro.customer.frontend.title.account_user.view'
                 parameters:
                     '%identifier%': '=data["entity"].getFullName()'
 
@@ -33,5 +33,5 @@ layout:
             prepend: true
             options:
                 route_name: oro_account_frontend_account_user_index
-                text: 'oro.account.frontend.account_user_link.text'
+                text: 'oro.customer.frontend.account_user_link.text'
 

@@ -10,14 +10,14 @@ layout:
             optionName: value
             optionValue:
                 - '=data["entity"].getFullName()'
-                - 'oro.account.frontend.title.account_user.edit'
-                - 'oro.account.frontend.account_user.entity_plural_label'
+                - 'oro.customer.frontend.title.account_user.edit'
+                - 'oro.customer.frontend.account_user.entity_plural_label'
 
         - '@setOption':
             id: page_title
             optionName: text
             optionValue:
-                label: 'oro.account.frontend.title.page.account_user.edit'
+                label: 'oro.customer.frontend.title.page.account_user.edit'
                 parameters:
                     '%identifier%': '=data["entity"].getFullName()'
 

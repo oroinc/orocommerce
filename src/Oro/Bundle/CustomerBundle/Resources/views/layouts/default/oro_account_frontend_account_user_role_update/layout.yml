@@ -14,14 +14,14 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'oro.account.menu.account_user.label'
-                - 'oro.account.frontend.account_user.role.entity_plural_label'
-                - 'oro.account.frontend.title.account_user_role.edit'
+                - 'oro.customer.menu.account_user.label'
+                - 'oro.customer.frontend.account_user.role.entity_plural_label'
+                - 'oro.customer.frontend.title.account_user_role.edit'
         - '@setOption':
             id: page_title
             optionName: text
             optionValue:
-                label: 'oro.account.frontend.title.page.account_user_role.edit'
+                label: 'oro.customer.frontend.title.page.account_user_role.edit'
         - '@setOption':
             id: account_user_role_form_fields
             optionName: vars

@@ -1,4 +1,4 @@
-oro.account:
+oro.customer:
     address:
         edit: 'Edit'
         remove: 'Remove'

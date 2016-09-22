@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraint;
 class VisibilityChangeSet extends Constraint
 {
     /** @var string */
-    public $invalidDataMessage ='oro.account.category.visibility.message.invalid_data';
+    public $invalidDataMessage ='oro.customer.category.visibility.message.invalid_data';
 
     /** @var string */
     public $entityClass;
@@ -17,6 +17,6 @@ class VisibilityChangeSet extends Constraint
      */
     public function validatedBy()
     {
-        return 'oro.account.catalog.visibility.change_set.validatior';
+        return 'oro.customer.catalog.visibility.change_set.validatior';
     }
 }

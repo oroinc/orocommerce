@@ -87,7 +87,7 @@ class ResetController extends Controller
         if (!$token || null === $user || $user->getConfirmationToken() !== $token) {
             throw $this->createNotFoundException(
                 $this->get('translator')->trans(
-                    'oro.account.controller.accountuser.token_not_found.message',
+                    'oro.customer.controller.accountuser.token_not_found.message',
                     ['%token%' => $token]
                 )
             );
@@ -98,7 +98,7 @@ class ResetController extends Controller
         if (!$user->isPasswordRequestNonExpired($ttl)) {
             $session->getFlashBag()->add(
                 'warn',
-                'oro.account.accountuser.profile.password.reset.ttl_expired.message'
+                'oro.customer.accountuser.profile.password.reset.ttl_expired.message'
             );
 
             return $this->redirect($this->generateUrl('oro_account_frontend_account_user_reset_request'));
@@ -117,7 +117,7 @@ class ResetController extends Controller
 
             $session->getFlashBag()->add(
                 'success',
-                'oro.account.accountuser.profile.password_reset.message'
+                'oro.customer.accountuser.profile.password_reset.message'
             );
 
             return $this->redirect($this->generateUrl('oro_account_account_user_security_login'));

@@ -21,7 +21,7 @@ class AccountGroupSelectType extends AbstractType
                 'autocomplete_alias' => 'oro_account_group',
                 'create_form_route' => 'oro_account_group_create',
                 'configs' => [
-                    'placeholder' => 'oro.account.accountgroup.form.choose'
+                    'placeholder' => 'oro.customer.accountgroup.form.choose'
                 ]
             ]
         );

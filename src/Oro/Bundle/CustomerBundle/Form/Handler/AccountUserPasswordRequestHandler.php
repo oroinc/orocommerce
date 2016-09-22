@@ -53,7 +53,7 @@ class AccountUserPasswordRequestHandler extends AbstractAccountUserPasswordHandl
     protected function validateUser(FormInterface $form, $email, AccountUser $user = null)
     {
         if (!$user) {
-            $this->addFormError($form, 'oro.account.accountuser.profile.email_not_exists', ['%email%' => $email]);
+            $this->addFormError($form, 'oro.customer.accountuser.profile.email_not_exists', ['%email%' => $email]);
 
             return false;
         }

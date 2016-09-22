@@ -9,7 +9,7 @@ layout:
                 top_nav_left_signed_in_as_label:
                     blockType: text
                     options:
-                        text: 'oro.account.frontend.menu.account_user_signed_in_as.label'
+                        text: 'oro.customer.frontend.menu.account_user_signed_in_as.label'
                 top_nav_left_signed_in_as:
                     blockType: text
                     options:
@@ -18,12 +18,12 @@ layout:
                     blockType: link
                     options:
                         route_name: oro_account_account_user_security_logout
-                        text: 'oro.account.frontend.menu.account_user_sign_out.label'
+                        text: 'oro.customer.frontend.menu.account_user_sign_out.label'
                 top_nav_left_my_account:
                     blockType: link
                     options:
                         route_name: oro_account_frontend_account_user_profile
-                        text: 'oro.account.frontend.menu.account_user_profile.label'
+                        text: 'oro.customer.frontend.menu.account_user_profile.label'
             tree:
                 top_nav_controls:
                     top_nav_left_logged_user:

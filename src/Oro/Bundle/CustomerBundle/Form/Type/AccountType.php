@@ -48,12 +48,12 @@ class AccountType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', 'text', ['label' => 'oro.account.name.label'])
+            ->add('name', 'text', ['label' => 'oro.customer.name.label'])
             ->add(
                 self::GROUP_FIELD,
                 AccountGroupSelectType::NAME,
                 [
-                    'label' => 'oro.account.group.label',
+                    'label' => 'oro.customer.group.label',
                     'required' => false
                 ]
             )
@@ -61,7 +61,7 @@ class AccountType extends AbstractType
                 'parent',
                 ParentAccountSelectType::NAME,
                 [
-                    'label' => 'oro.account.parent.label',
+                    'label' => 'oro.customer.parent.label',
                     'required' => false
                 ]
             )
@@ -69,7 +69,7 @@ class AccountType extends AbstractType
                 'addresses',
                 AddressCollectionType::NAME,
                 [
-                    'label' => 'oro.account.addresses.label',
+                    'label' => 'oro.customer.addresses.label',
                     'type' => AccountTypedAddressType::NAME,
                     'required' => true,
                     'options' => [
@@ -82,7 +82,7 @@ class AccountType extends AbstractType
                 'internal_rating',
                 'oro_enum_select',
                 [
-                    'label' => 'oro.account.internal_rating.label',
+                    'label' => 'oro.customer.internal_rating.label',
                     'enum_code' => Account::INTERNAL_RATING_CODE,
                     'configs' => [
                         'allowClear' => false,
@@ -94,7 +94,7 @@ class AccountType extends AbstractType
                 'salesRepresentatives',
                 UserMultiSelectType::NAME,
                 [
-                    'label' => 'oro.account.sales_representatives.label',
+                    'label' => 'oro.customer.sales_representatives.label',
                 ]
             )
             ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit'])

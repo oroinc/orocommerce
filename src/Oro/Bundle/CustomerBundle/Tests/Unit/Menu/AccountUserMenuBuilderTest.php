@@ -46,7 +46,7 @@ class AccountUserMenuBuilderTest extends \PHPUnit_Framework_TestCase
         $menu->expects($this->at(2))
             ->method('addChild')
             ->with(
-                'oro.account.menu.account_user_logout.label',
+                'oro.customer.menu.account_user_logout.label',
                 [
                     'route' => 'oro_account_account_user_security_logout',
                     'linkAttributes' => ['class' => 'no-hash']
