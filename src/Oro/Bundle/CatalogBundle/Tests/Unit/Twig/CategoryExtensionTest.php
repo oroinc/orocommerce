@@ -84,7 +84,9 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
         $functions = $this->extension->getFunctions();
         $function = reset($functions);
         $this->container->expects($this->once())->method('get')->willReturn($this->categoryTreeHandler);
-        $result = $function->getCallable()->call($this->extension);
+        $callable = $function->getCallable();
+        $callable->bindTo($this->extension);
+        $result = call_user_func_array($callable, []);
 
         $this->assertEquals($tree, $result);
     }
@@ -110,10 +112,10 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
         $function = reset($functions);
         $this->container->expects($this->atLeastOnce())->method('get')
             ->willReturnOnConsecutiveCalls($this->categoryTreeHandler, $this->translator);
-        $result = $function->getCallable()->call(
-            $this->extension,
-            'oro.catalog.frontend.category.master_category.label'
-        );
+
+        $callable = $function->getCallable();
+        $callable->bindTo($this->extension);
+        $result = call_user_func_array($callable, ['oro.catalog.frontend.category.master_category.label']);
 
         $this->assertEquals($tree, $result);
     }
