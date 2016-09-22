@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\MessageProcessor;
 
+use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Resizer\ImageResizer;
 use Oro\Bundle\LayoutBundle\Loader\ImageFilterLoader;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageType;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductImageRepository;
 use Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 
@@ -23,7 +24,7 @@ class ImageResizeMessageProcessorTest extends \PHPUnit_Framework_TestCase
     const FORCE_OPTION = false;
 
     /**
-     * @var ProductImageRepository
+     * @var EntityRepository
      */
     protected $imageRepository;
 
@@ -57,7 +58,7 @@ class ImageResizeMessageProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->imageRepository = $this->prophesize(ProductImageRepository::class);
+        $this->imageRepository = $this->prophesize(EntityRepository::class);
         $this->filterLoader = $this->prophesize(ImageFilterLoader::class);
         $this->imageTypeProvider = $this->prophesize(ImageTypeProvider::class);
         $this->imageResizer = $this->prophesize(ImageResizer::class);
