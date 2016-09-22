@@ -10,9 +10,9 @@ use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
-use Oro\Bundle\SearchBundle\Datasource\SearchDatasource;
-use Oro\Bundle\SearchBundle\Extension\SearchQueryInterface;
-use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
+use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
 class SearchCategoryFilteringEventListener
 {
@@ -79,12 +79,12 @@ class SearchCategoryFilteringEventListener
         }
 
         if (!$includeSubcategories) {
-            $this->applyCategoryToQuery($datasource->getQuery(), $categoryId);
+            $this->applyCategoryToQuery($datasource->getSearchQuery(), $categoryId);
             return;
         }
 
         $categoryIds = $this->getSubcategories($categoryId);
-        $this->applyCategoryToQuery($datasource->getQuery(), $categoryIds);
+        $this->applyCategoryToQuery($datasource->getSearchQuery(), $categoryIds);
     }
 
     /**
@@ -125,11 +125,12 @@ class SearchCategoryFilteringEventListener
      */
     private function applyCategoryToQuery(SearchQueryInterface $query, $categoryId)
     {
-        $query->getQuery()->andWhere(
-            'cat_id',
-            is_array($categoryId) ? Query::OPERATOR_IN : Query::OPERATOR_EQUALS,
-            $categoryId,
-            'integer'
-        );
+        if (is_array($categoryId)) {
+            $expr = Criteria::expr()->contains('cat_id', $categoryId);
+        } else {
+            $expr = Criteria::expr()->eq('cat_id', $categoryId);
+        }
+
+        $query->addWhere($expr);
     }
 }
