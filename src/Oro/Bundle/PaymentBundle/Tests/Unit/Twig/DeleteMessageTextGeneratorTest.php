@@ -135,7 +135,7 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
                 $paymentTermId,
                 $accountFilterUrl,
                 DeleteMessageTextGenerator::ACCOUNT_GRID_NAME,
-                'oro.customer.entity_label'
+                'oro.customer.account.entity_label'
             );
         } else {
             $this->assertNull($message['accountFilterUrl']);

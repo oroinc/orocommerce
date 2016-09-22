@@ -99,7 +99,7 @@ class DeleteMessageTextGenerator
             $paymentTerm->getId(),
             static::ACCOUNT_GRID_NAME,
             static::ACCOUNT_GRID_ROUTE,
-            'oro.customer.entity_label'
+            'oro.customer.account.entity_label'
         );
     }
 

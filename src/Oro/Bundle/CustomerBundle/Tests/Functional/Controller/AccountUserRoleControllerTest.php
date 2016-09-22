@@ -33,7 +33,7 @@ class AccountUserRoleControllerTest extends WebTestCase
             0 => [
                 'identity' => [
                     'id' => 'entity:Oro\Bundle\CustomerBundle\Entity\Account',
-                    'name' => 'oro.customer.entity_label',
+                    'name' => 'oro.customer.account.entity_label',
                 ],
                 'permissions' => [],
             ],
