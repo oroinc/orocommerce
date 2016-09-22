@@ -66,7 +66,10 @@ class WebsiteSearchQuery extends AbstractSearchQuery
             $this->productManager->restrictSearchEngineQuery($queryToModify);
 
             $this->query->getCriteria()->andWhere(
-
+                $this->expressionBuilder->orX(
+                    $this->expressionBuilder->isNull('sku'),
+                    $this->query->getCriteria()
+                )
             );
         }
 
