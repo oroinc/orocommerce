@@ -73,6 +73,24 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedData, $event->getEntitiesData());
     }
 
+    public function testAppendingValuesToFields()
+    {
+        $event = new IndexEntityEvent('', [1, 2], []);
+
+        $event->addField(1, Query::TYPE_TEXT, 'all_text', 'Product title');
+        $event->addField(1, Query::TYPE_TEXT, 'all_text', ' MetaTitle', true);
+
+        $expectedData = [
+            1 => [
+                Query::TYPE_TEXT => [
+                    'all_text' => 'Product title MetaTitle',
+                ]
+            ]
+        ];
+
+        $this->assertEquals($expectedData, $event->getEntitiesData());
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Field type must be one of datetime, decimal, integer, text

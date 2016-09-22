@@ -78,15 +78,15 @@ class IndexEntityEvent extends Event
     }
 
     /**
-     * @param int $entityId
-     * @param string $fieldType
-     * @param string $fieldName
+     * @param int              $entityId
+     * @param string           $fieldType
+     * @param string           $fieldName
      * @param string|int|float $value
      *
+     * @param bool             $appendMode
      * @return $this
-     * @throws \InvalidArgumentException
      */
-    public function addField($entityId, $fieldType, $fieldName, $value)
+    public function addField($entityId, $fieldType, $fieldName, $value, $appendMode = false)
     {
         if (!isset($this->entityIds[$entityId])) {
             throw new \InvalidArgumentException(
@@ -96,7 +96,17 @@ class IndexEntityEvent extends Event
 
         $this->assertFieldType($fieldType);
 
-        $this->entitiesData[$entityId][$fieldType][$fieldName] = $value;
+        if (!isset($this->entitiesData[$entityId][$fieldType][$fieldName])) {
+            $this->entitiesData[$entityId][$fieldType][$fieldName] = '';
+        }
+
+        if (false === $appendMode) {
+            $this->entitiesData[$entityId][$fieldType][$fieldName] = $value;
+
+            return $this;
+        }
+
+        $this->entitiesData[$entityId][$fieldType][$fieldName] .= $value;
 
         return $this;
     }

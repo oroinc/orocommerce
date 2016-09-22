@@ -44,3 +44,11 @@ services:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\CategoryFormExtension'
         tags:
             - { name: form.type_extension, alias: oro_catalog_category }
+
+    oro_seo.event_listener.website_search_index:
+        class: 'Oro\Bundle\SEOBundle\EventListener\ProductSearchIndexListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
