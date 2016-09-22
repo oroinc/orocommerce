@@ -21,9 +21,9 @@ CheckoutBundle:
 - Added new property `string $workflowName` to `Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent` and added related `setter` and `getter`.
 - Added argument `CheckoutInterface $checkout` to method `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener::getWorkflowName`.
 - `oro_checkout.repository.checkout` inherits `oro_entity.abstract_repository`.
-- Second argument `ShippingRulesProvider $rulesProvider` changed to `ShippingPriceProvider $priceProvider` in constructor of `Oro\Bundle\CheckoutBundle\Model\Action\DefaultShippingMethodSetter`.
-- Second argument `ShippingRulesProvider $shippingRulesProvider` changed to `ShippingPriceProvider $priceProvider` in constructor of `Oro\Bundle\CheckoutBundle\Model\Action\HasApplicableShippingMethods`.
-- Third argument `ShippingCostCalculationProvider $costCalculationProvider` was removed from constructor of `Oro\Bundle\CheckoutBundle\Model\Action\DefaultShippingMethodSetter`.
+- Second argument `ShippingRulesProvider $rulesProvider` changed to `ShippingPriceProvider $priceProvider` in constructor of `Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter`.
+- Second argument `ShippingRulesProvider $shippingRulesProvider` changed to `ShippingPriceProvider $priceProvider` in constructor of `Oro\Bundle\CheckoutBundle\Condition\HasApplicableShippingMethods`.
+- Third argument `ShippingCostCalculationProvider $costCalculationProvider` was removed from constructor of `Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter`.
 - Second argument `ShippingRulesProvider $shippingRulesProvider` changed to `ShippingPriceProvider $priceProvider` in constructor of `Oro\Bundle\CheckoutBundle\Condition\ShippingMethodSupports`.
 - First argument `ShippingMethodRegistry $shippingMethodRegistry` was removed from constructor of `Oro\Bundle\CheckoutBundle\Condition\ShippingMethodSupports`.
 - Added constructor to `Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory`.
@@ -109,7 +109,7 @@ ShippingBundle
 - Added `Oro\Bundle\ShippingBundle\Context\ShippingContext` - for managing sipping context data.
 - Added `Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface` - for shipping line item implementation.
 - Added `Oro\Bundle\ShippingBundle\Context\ShippingLineItem` - for managing shipping information about product.
-- Constant `TAG` changed to `oro_shipping_method_provider` in `Oro\Bundle\ShippingBundle\DependencyInjection\CompilerPass\ShippingMethodsCompilerPass`
+- Value of constant `TAG` was changed from `oro_shipping_method` to `oro_shipping_method_provider` in `Oro\Bundle\ShippingBundle\DependencyInjection\CompilerPass\ShippingMethodsCompilerPass`
 - Removed `Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration`.
 - Modified `Oro\Bundle\ShippingBundle\Entity\ShippingRule`:
     - Field `configurations` changed to `methodConfigs`.
