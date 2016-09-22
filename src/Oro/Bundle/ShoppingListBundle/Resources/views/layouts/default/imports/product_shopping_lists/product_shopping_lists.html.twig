@@ -243,6 +243,11 @@
                     <td class="shopping-lists-popup__list">
                         <select class="oro-select2 oro-select2--size-s" name="list">
                             <option value="0">Choose List</option>
+                            <% if (!_.isEmpty(demoShoppingLists)) { %>
+                            <% _.each(demoShoppingLists, function(list) { %>
+                            <option value="<%= list.shopping_list_id %>"><%= list.shopping_list_label %></option>
+                            <% }); %>
+                            <% } %>
                         </select>
                     </td>
                     <td class="shopping-lists-popup__quantity">

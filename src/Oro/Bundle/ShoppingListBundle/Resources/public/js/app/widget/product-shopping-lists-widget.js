@@ -43,6 +43,25 @@ define(function(require) {
             shopping_lists: ['change', 'render']
         },
 
+        /* Should be replaced to real shopping list collection */
+        demoShoppingLists: [
+            {
+                is_current: false,
+                shopping_list_id: 1,
+                shopping_list_label: 'Shopping List 2'
+            },
+            {
+                is_current: false,
+                shopping_list_id: 2,
+                shopping_list_label: 'Shopping List 2'
+            },
+            {
+                is_current: false,
+                shopping_list_id: 3,
+                shopping_list_label: 'Meow List 1'
+            }
+        ],
+
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, [
                 'dialogOptions', 'template', 'quantityComponentOptions'
@@ -57,6 +76,9 @@ define(function(require) {
             this.options.title = this.model.get('name');
             this.options.url = options.url = false;
             this.options.template = options.template = _.template(this.options.template);
+
+            /* Should be replaced to real data */
+            this.demoShoppingLists = _.extend(this.demoShoppingLists, this.model.get('shopping_lists'));
 
             mediator.on('frontend:item:delete',  this.onLineItemDelete, this);
             mediator.on('product:quantity-unit:update', this.onLineItemUpdate, this);
@@ -96,6 +118,8 @@ define(function(require) {
             this.clearElementsCache();
 
             var shoppingLists = this.model.get('shopping_lists');
+            var demoShoppingLists = this.demoShoppingLists;
+
             if (_.isEmpty(shoppingLists)) {
                 this.dispose();
                 return;
@@ -103,6 +127,7 @@ define(function(require) {
 
             this.setElement($(this.options.template({
                 shoppingLists: shoppingLists,
+                demoShoppingLists: demoShoppingLists,
                 productUnits: this.model.get('product_units')
             })));
 
