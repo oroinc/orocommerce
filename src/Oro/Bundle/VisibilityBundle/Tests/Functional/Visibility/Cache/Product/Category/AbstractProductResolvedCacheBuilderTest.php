@@ -1,11 +1,11 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
+namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityResolvedData;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityResolvedData;
 
 abstract class AbstractProductResolvedCacheBuilderTest extends WebTestCase
 {
@@ -19,7 +19,7 @@ abstract class AbstractProductResolvedCacheBuilderTest extends WebTestCase
         $this->initClient();
 
         $this->loadFixtures([
-//            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
+//            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
             LoadCategoryVisibilityResolvedData::class
         ]);
 

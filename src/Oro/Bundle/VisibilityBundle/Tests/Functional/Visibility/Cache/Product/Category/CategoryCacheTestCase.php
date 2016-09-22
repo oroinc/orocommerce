@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
+namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryData;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationQueryTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryData;
 
 abstract class CategoryCacheTestCase extends WebTestCase
 {
@@ -45,8 +45,8 @@ abstract class CategoryCacheTestCase extends WebTestCase
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('pvr');
         $this->selectHiddenProductSku($queryBuilder, 'pvr');
         $results = $queryBuilder->getQuery()
@@ -64,8 +64,8 @@ abstract class CategoryCacheTestCase extends WebTestCase
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('cvr');
         $this->selectHiddenCategoryTitles($queryBuilder, 'cvr');
         $results = $queryBuilder->getQuery()
@@ -83,8 +83,8 @@ abstract class CategoryCacheTestCase extends WebTestCase
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('agpvr')
             ->select('accountGroup.name as account_group_name')
             ->join('agpvr.accountGroup', 'accountGroup')
@@ -109,8 +109,8 @@ abstract class CategoryCacheTestCase extends WebTestCase
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('agcvr')
             ->select('accountGroup.name as account_group_name')
             ->addSelect('accountGroup.id')
@@ -137,8 +137,8 @@ abstract class CategoryCacheTestCase extends WebTestCase
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('apvr')
             ->select('account.name as account_name')
             ->join('apvr.account', 'account')
@@ -163,8 +163,8 @@ abstract class CategoryCacheTestCase extends WebTestCase
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('acvr')
             ->select('account.name as account_name')
             ->join('acvr.account', 'account')

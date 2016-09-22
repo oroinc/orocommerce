@@ -1,14 +1,13 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\Command;
+namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Command;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Command\VisibilityCacheBuildCommand;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Command\VisibilityCacheBuildCommand;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 
 /**
  * @dbIsolation
@@ -21,9 +20,9 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
 
         $this->loadFixtures([
             'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadGroups',
+            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
+            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
             'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
         ]);
     }
@@ -190,8 +189,8 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
     protected function getCategoryVisibilityResolvedRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved');
     }
 
     /**
@@ -200,8 +199,8 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
     protected function getAccountGroupCategoryVisibilityResolvedRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
     }
 
     /**
@@ -210,8 +209,8 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
     protected function getAccountCategoryVisibilityResolvedRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
     }
 
     /**
@@ -220,8 +219,8 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
     protected function getProductVisibilityResolvedRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
     }
 
     /**
@@ -230,8 +229,8 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
     protected function getAccountGroupProductVisibilityResolvedRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
     }
 
     /**
@@ -240,8 +239,8 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
     protected function getAccountProductVisibilityResolvedRepository()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
-            ->getRepository('OroAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved');
     }
 
     protected function clearAllResolvedTables()

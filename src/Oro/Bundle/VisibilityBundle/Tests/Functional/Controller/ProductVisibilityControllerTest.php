@@ -1,26 +1,24 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller;
-
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\PropertyAccess\PropertyAccess;
+namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
-use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
  * @dbIsolation
@@ -35,9 +33,9 @@ class ProductVisibilityControllerTest extends WebTestCase
     const VISIBLE = 'visible';
     const HIDDEN = 'hidden';
 
-    const PRODUCT_VISIBILITY_CLASS = 'OroAccountBundle:Visibility\ProductVisibility';
-    const ACCOUNT_PRODUCT_VISIBILITY_CLASS = 'OroAccountBundle:Visibility\AccountProductVisibility';
-    const ACCOUNT_GROUP_PRODUCT_VISIBILITY_CLASS = 'OroAccountBundle:Visibility\AccountGroupProductVisibility';
+    const PRODUCT_VISIBILITY_CLASS = 'OroVisibilityBundle:Visibility\ProductVisibility';
+    const ACCOUNT_PRODUCT_VISIBILITY_CLASS = 'OroVisibilityBundle:Visibility\AccountProductVisibility';
+    const ACCOUNT_GROUP_PRODUCT_VISIBILITY_CLASS = 'OroVisibilityBundle:Visibility\AccountGroupProductVisibility';
 
     /** @var  Product */
     protected $product;

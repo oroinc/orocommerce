@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
+namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Symfony\Component\Yaml\Yaml;
@@ -30,7 +30,7 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
         $category->setParentCategory($newParentCategory);
 
         $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:Visibility\CategoryVisibility')
+            ->getManagerForClass('OroVisibilityBundle:Visibility\CategoryVisibility')
             ->flush();
         $container->get('oro_account.visibility.cache.product.category.cache_builder')
             ->categoryPositionChanged($category);

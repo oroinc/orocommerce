@@ -1,16 +1,16 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache;
+namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
-use Oro\Bundle\AccountBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
+use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -28,8 +28,8 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
     {
         $this->initClient();
         $this->loadFixtures([
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
+            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
         ]);
 
         $container = $this->client->getContainer();
@@ -52,7 +52,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
 
         // new entities were generated
         $repository->createQueryBuilder('entity')
-            ->delete('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved', 'entity')
+            ->delete('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved', 'entity')
             ->getQuery()
             ->execute();
         $this->assertResolvedEntitiesCount(0);
@@ -122,7 +122,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
     protected function getManager()
     {
         return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
     }
 
     /**
@@ -130,7 +130,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
      */
     protected function getRepository()
     {
-        return $this->getManager()->getRepository('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        return $this->getManager()->getRepository('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
     }
 
     /**

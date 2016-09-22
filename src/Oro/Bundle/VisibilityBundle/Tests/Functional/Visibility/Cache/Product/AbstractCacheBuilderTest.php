@@ -1,12 +1,12 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
+namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository;
-use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository;
+use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class AbstractCacheBuilderTest extends WebTestCase
@@ -19,7 +19,7 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
         $this->initClient();
 
         $this->loadFixtures([
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
         ]);
 
         $this->registry = $this->client->getContainer()->get('doctrine');

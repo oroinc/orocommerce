@@ -1,18 +1,16 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
+namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product;
 
-use Doctrine\ORM\EntityRepository;
-
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
-use Oro\Bundle\AccountBundle\Visibility\Cache\Product\AccountGroupProductResolvedCacheBuilder;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
+use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
  */
-class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
+class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
 {
     /**
      * {@inheritdoc}
@@ -21,13 +19,13 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
     {
         return [
             'without_website' => [
-                'expectedStaticCount' => 6,
-                'expectedCategoryCount' => 2,
+                'expectedStaticCount' => 3,
+                'expectedCategoryCount' => 24,
                 'websiteReference' => null,
             ],
             'with_website1' => [
                 'expectedStaticCount' => 0,
-                'expectedCategoryCount' => 2,
+                'expectedCategoryCount' => 0,
                 'websiteReference' => LoadWebsiteData::WEBSITE1,
             ],
             'with_website2' => [
@@ -39,12 +37,12 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
     }
 
     /**
-     * @return AccountGroupProductRepository|EntityRepository
+     * @return ProductRepository
      */
     protected function getRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
-            'OroAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved'
+            'OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved'
         );
     }
 
@@ -55,12 +53,12 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
     {
         $container = $this->client->getContainer();
 
-        $builder = new AccountGroupProductResolvedCacheBuilder(
+        $builder = new ProductResolvedCacheBuilder(
             $container->get('doctrine'),
             $container->get('oro_entity.orm.insert_from_select_query_executor')
         );
         $builder->setCacheClass(
-            $container->getParameter('oro_account.entity.account_group_product_visibility_resolved.class')
+            $container->getParameter('oro_account.entity.product_visibility_resolved.class')
         );
 
         return $builder;
