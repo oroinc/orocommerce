@@ -3,11 +3,10 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
@@ -222,7 +221,7 @@ class AccountGroupProductVisibility implements VisibilityInterface, AccountGroup
      * @param Scope $scope
      * @return $this
      */
-    public function setScope($scope)
+    public function setScope(Scope $scope)
     {
         $this->scope = $scope;
 

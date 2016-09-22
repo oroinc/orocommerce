@@ -4,11 +4,11 @@ system_configuration:
             title: oro.account.system_configuration.groups.visibility.category.title
         account_product_visibility:
             title: oro.account.system_configuration.groups.visibility.product.title
-        visibility:
+        visibility_title:
             title: oro.account.system_configuration.groups.visibility.title
             icon: 'icon-eye-open'
     fields:
-        oro_account.category_visibility:
+        oro_visibility.category_visibility:
             data_type: string
             type: oro_account_catalog_default_visibility
             priority: 10
@@ -17,7 +17,7 @@ system_configuration:
                 required: true
                 constraints:
                     - NotBlank: ~
-        oro_account.product_visibility:
+        oro_visibility.product_visibility:
             data_type: string
             type: oro_account_catalog_default_visibility
             priority: 10
@@ -33,12 +33,12 @@ system_configuration:
                     account:
                         priority: 1000
                         children:
-                            visibility:
+                            visibility_title:
                                 priority: 200
                                 children:
                                     account_product_visibility:
                                         children:
-                                            - oro_account.product_visibility
+                                            - oro_visibility.product_visibility
                                     account_category_visibility:
                                         children:
-                                            - oro_account.category_visibility
+                                            - oro_visibility.category_visibility

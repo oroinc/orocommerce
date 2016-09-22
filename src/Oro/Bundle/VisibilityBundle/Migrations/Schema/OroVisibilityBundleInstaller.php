@@ -105,7 +105,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
-        $table->addColumn('source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['website_id', 'product_id']);
     }
 
@@ -124,7 +124,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
-        $table->addColumn('source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['account_group_id', 'website_id', 'product_id']);
     }
 
@@ -143,7 +143,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
-        $table->addColumn('source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['account_id', 'website_id', 'product_id']);
     }
 
@@ -159,7 +159,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
-        $table->addColumn('source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['category_id']);
     }
 
@@ -176,7 +176,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
-        $table->addColumn('source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['account_group_id', 'category_id']);
     }
 
@@ -193,7 +193,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
-        $table->addColumn('source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['account_id', 'category_id']);
     }
 
@@ -209,7 +209,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addColumn('source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['category_id'], 'oro_ctgr_vis_uidx');
     }
@@ -226,7 +226,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addColumn('source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['category_id', 'account_id'], 'oro_acc_ctgr_vis_uidx');
     }
@@ -243,7 +243,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addColumn('source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['category_id', 'account_group_id'], 'oro_acc_grp_ctgr_vis_uidx');
     }
@@ -260,7 +260,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addColumn('source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['website_id', 'product_id'], 'oro_prod_vis_uidx');
     }
@@ -278,7 +278,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addColumn('source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['website_id', 'product_id', 'account_id'], 'oro_acc_prod_vis_uidx');
     }
@@ -296,7 +296,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addColumn('source_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['website_id', 'product_id', 'account_group_id'], 'oro_acc_grp_prod_vis_uidx');
     }
