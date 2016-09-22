@@ -1,39 +1,27 @@
 define(function(require) {
     'use strict';
-    var PriceRuleView;
-    var $ = require('jquery');
+    var quantityVisibleLength = 6;
+    var unitAndCurrencyVisibleLength = 12;
+    var ExpressionFieldSwitcher;
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
-     * @export oropricing/js/app/views/price-rule-view
+     * @export oropricing/js/app/views/expression-field-switcher
      * @extends oroui.app.views.base.View
-     * @class oropricing.app.views.PriceRuleView
+     * @class oropricing.app.views.ExpressionFieldSwitcher
      */
-    PriceRuleView = BaseView.extend({
+    ExpressionFieldSwitcher = BaseView.extend({
+        options: {
+            selectors: {}
+        },
+
         /**
          * @inheritDoc
          */
-        initialize: function() {
-            var selectors = {
-                quantity: {
-                    fieldType: '.price-rule-item-quantity-type-field',
-                    expressionType: '.price-rule-item-quantity-type-expression'
-                },
-                productUnit: {
-                    fieldType: '.price-rule-item-product-unit-type-field',
-                    expressionType: '.price-rule-item-product-unit-type-expression'
-                },
-                currency: {
-                    fieldType: '.price-rule-item-currency-type-field',
-                    expressionType: '.price-rule-item-currency-type-expression'
-                }
-            };
+        initialize: function(options) {
             this.visibleClass = 'visible';
-            this.options = $.extend(true, {
-                selectors: selectors
-            }, this.options);
-
+            this.options = _.defaults(options || {}, this.options);
             this.initLayout().done(_.bind(this.initTypeSwitchers, this));
         },
 
@@ -48,7 +36,7 @@ define(function(require) {
             var $expression = this.$el.find('div' + this.options.selectors.quantity.expressionType).find('input');
             this.changeQuantityField();
             $expression.mouseenter(_.bind(function() {
-                if (isNaN($expression.val()) && ($expression.val().length > 6)) {
+                if (isNaN($expression.val()) && ($expression.val().length > quantityVisibleLength)) {
                     $expression.tooltip({
                         title: $expression.attr('placeholder') + ': ' + $expression.val(),
                         trigger: 'manual'
@@ -90,17 +78,33 @@ define(function(require) {
         {
             var $field = this.$el.find('div' + $fieldIdentifier);
             var $expression = this.$el.find('div' + $expressionIdentifier);
+            $field.find('select').append($("<option></option>")
+                .attr('value', '')
+                .attr('disabled', 'disabled')
+                .attr('hidden', 'hidden')
+                .attr('style', 'display: none')
+                .text('')
+            );
 
             $expression.find('a' + $fieldIdentifier).click(_.bind(function() {
                 this.changeFieldVisibility($field, $expression);
                 $expression.find('input').val('');
                 $expression.find('.validation-failed').remove();
+                $field.find('select').find('option:selected').removeAttr("selected").change();
+                $field.find('select').find('option:first-child').attr('selected', 'selected').change();
+                $field.find('span').text($field.find('select').find('option:first-child').attr('value'));
             }, this));
 
             $field.find('a' + $expressionIdentifier).click(_.bind(function() {
                 this.changeFieldVisibility($expression, $field);
+                $field.find('select').find('option:selected').removeAttr("selected").change();
+                $field.find('select').find('option[value=""]').attr('selected', 'selected').change();
+                $field.find('span').empty();
             }, this));
 
+            /**
+             * todo if $field.find('select').find('option:selected').length ===0
+             */
             if ($expression.find('input').val() === '') {
                 this.changeFieldVisibility($field, $expression);
             } else {
@@ -114,7 +118,7 @@ define(function(require) {
         {
             var expressionInput = $expression.find('input');
             expressionInput.mouseenter(_.bind(function() {
-                if (expressionInput.val().length > 6) {
+                if (expressionInput.val().length > unitAndCurrencyVisibleLength) {
                     expressionInput.tooltip({
                         title: expressionInput.attr('placeholder') + ': ' + expressionInput.val(),
                         trigger: 'manual'
@@ -159,5 +163,5 @@ define(function(require) {
         }
     });
 
-    return PriceRuleView;
+    return ExpressionFieldSwitcher;
 });

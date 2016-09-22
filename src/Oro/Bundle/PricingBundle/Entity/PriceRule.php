@@ -54,7 +54,7 @@ class PriceRule
      * @var ProductUnit
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL", nullable=true)
      */
     protected $productUnit;
 
@@ -172,7 +172,7 @@ class PriceRule
      * @param ProductUnit $productUnit
      * @return $this
      */
-    public function setProductUnit(ProductUnit $productUnit)
+    public function setProductUnit(ProductUnit $productUnit = null)
     {
         $this->productUnit = $productUnit;
 

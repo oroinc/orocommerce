@@ -79,7 +79,7 @@ class PriceRuleType extends AbstractType
                 'text',
                 [
                     'label' => 'oro.pricing.pricerule.quantity_expression.label',
-                    'attr' => array('placeholder' => 'oro.pricing.pricerule.quantity.label')
+                    'attr' => ['placeholder' => 'oro.pricing.pricerule.quantity.label']
                 ]
             )
             ->add(
@@ -87,7 +87,7 @@ class PriceRuleType extends AbstractType
                 'text',
                 [
                     'label' => 'oro.pricing.pricerule.currency_expression.label',
-                    'attr' => array('placeholder' => 'oro.pricing.pricerule.currency.label')
+                    'attr' => ['placeholder' => 'oro.pricing.pricerule.currency.label']
                 ]
             )
             ->add(
@@ -95,7 +95,7 @@ class PriceRuleType extends AbstractType
                 'text',
                 [
                     'label' => 'oro.pricing.pricerule.product_unit_expression.label',
-                    'attr' => array('placeholder' => 'oro.pricing.pricerule.product_unit.label')
+                    'attr' => ['placeholder' => 'oro.pricing.pricerule.product_unit.label']
                 ]
             )
         ;
