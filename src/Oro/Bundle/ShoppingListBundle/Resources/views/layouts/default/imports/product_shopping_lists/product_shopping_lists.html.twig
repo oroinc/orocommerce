@@ -258,8 +258,9 @@
                                 </li>
                                 <li class="shopping-lists-modify__select">
                                     <select class="oro-select2 oro-select2--size-s" name="unit">
-                                        <option value="pieces">Pieces</option>
-                                        <option value="boxes">Boxes</option>
+                                        <% _.each(productUnits, function(unit) { %>
+                                        <option value="<%= unit %>"><%= unit %></option>
+                                        <% }); %>
                                     </select>
                                 </li>
                                 <li class="shopping-lists-modify__badges">
