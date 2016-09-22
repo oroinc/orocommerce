@@ -32,7 +32,7 @@ class ReindexRequestListener
     public function __construct(
         EntityManager    $entityManager,
         IndexerInterface $regularIndexer = null,
-        IndexerInterface $asyncIndexer   = null
+        IndexerInterface $asyncIndexer = null
     ) {
         $this->entityManager  = $entityManager;
         $this->regularIndexer = $regularIndexer;
@@ -99,7 +99,7 @@ class ReindexRequestListener
 
             $deletedIdIndex = array_search($id, $deletedIds, true);
             if ($deletedIdIndex !== false) {
-                unset ($deletedIds[$deletedIdIndex]);
+                unset($deletedIds[$deletedIdIndex]);
             }
         }
 
