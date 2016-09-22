@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Loader;
 
 class OroWebsiteExtension extends Extension
 {
-    const ALIAS = 'oro_b2b_website';
+    const ALIAS = 'oro_website';
 
     /**
      * {@inheritDoc}

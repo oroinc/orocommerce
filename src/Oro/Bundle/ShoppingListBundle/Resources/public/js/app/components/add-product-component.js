@@ -12,8 +12,8 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            shoppingListSelector: '.orob2b-shoppinglist select',
-            shoppingListLabelSelector: '.orob2b-shoppinglist-label'
+            shoppingListSelector: '.oro-shoppinglist select',
+            shoppingListLabelSelector: '.oro-shoppinglist-label'
         },
 
         /**

@@ -121,17 +121,9 @@ class AccountGroupChangesListenerTest extends WebTestCase
             $expectedMessages
         );
 
-        $actual = array_values(array_filter($this->messageProducer->getSentMessages(), function ($data) {
-            return $data['topic'] === Topics::REBUILD_PRICE_LISTS;
-        }));
-
-        $this->assertEquals(
-            $expectedMessages,
-            $actual,
-            "Expected messages in queue should equals actual",
-            $delta = 0.0,
-            $maxDepth = 10,
-            $canonicalize = true
-        );
+        $actual = $this->messageProducer->getSentMessages();
+        foreach ($expectedMessages as $expectedMessage) {
+            $this->assertContains($expectedMessage, $actual);
+        }
     }
 }
