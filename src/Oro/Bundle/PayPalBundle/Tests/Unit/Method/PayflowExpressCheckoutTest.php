@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method;
 
-use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
 use Symfony\Component\Routing\RouterInterface;
 
+use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
@@ -50,7 +50,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->gateway = $this->getMockBuilder(Gateway::class)->disableOriginalConstructor()->getMock();
-        $this->router = $this->getMockBuilder(RouterInterface::class)->disableOriginalConstructor()->getMock();
+        $this->router = $this->getMock(RouterInterface::class);
         $this->paymentConfig = $this->getMock(PayflowExpressCheckoutConfigInterface::class);
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)->disableOriginalConstructor()->getMock();
 
@@ -670,7 +670,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'PAYMENTTYPE' => 'instantonly',
-            'ADDROVERRIDE' => 1,
+            'ADDROVERRIDE' => true,
             'AMT' => '10',
             'CURRENCY' => 'USD',
             'RETURNURL' => 'callbackReturnUrl',
@@ -706,7 +706,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             'L_DESC1' => 'Product Description',
             'L_COST1' => 55.4,
             'L_QTY1' => 15,
-            'ITEMAMT' => 831.0,
+            'ITEMAMT' => 831
         ];
     }
 
