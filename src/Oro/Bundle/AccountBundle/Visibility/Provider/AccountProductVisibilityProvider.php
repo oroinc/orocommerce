@@ -26,11 +26,6 @@ class AccountProductVisibilityProvider
     private $doctrineHelper;
 
     /**
-     * @var ConfigManager
-     */
-    private $configManager;
-
-    /**
      * @param DoctrineHelper $doctrineHelper
      * @param ConfigManager $configManager
      */
