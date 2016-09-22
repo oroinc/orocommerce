@@ -5,8 +5,8 @@ namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
 use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -28,7 +28,7 @@ class PriceRuleExpressionValidator extends ConstraintValidator
     protected $preprocessor;
 
     /**
-     * @var Translator
+     * @var TranslatorInterface
      */
     protected $translator;
 
@@ -36,13 +36,13 @@ class PriceRuleExpressionValidator extends ConstraintValidator
      * @param ExpressionParser $parser
      * @param ExpressionPreprocessorInterface $preprocessor
      * @param PriceRuleFieldsProvider $priceRuleFieldsProvider
-     * @param Translator $translator
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         ExpressionParser $parser,
         ExpressionPreprocessorInterface $preprocessor,
         PriceRuleFieldsProvider $priceRuleFieldsProvider,
-        Translator $translator
+        TranslatorInterface $translator
     ) {
         $this->parser = $parser;
         $this->priceRuleFieldsProvider = $priceRuleFieldsProvider;

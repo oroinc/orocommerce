@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
-use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
-use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression;
 use Oro\Bundle\PricingBundle\Expression\ExpressionLanguageConverter;
 use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
+use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression;
 use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,7 +35,7 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     protected $expressionValidator;
 
     /**
-     * @var Translator|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $translator;
 
@@ -49,9 +48,7 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $expressionConverter = new ExpressionLanguageConverter($this->fieldsProvider);
         $this->parser = new ExpressionParser($expressionConverter);
         $this->parser->addNameMapping('product', Product::class);
-        $this->translator = $this->getMockBuilder(Translator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->translator = $this->getMock(TranslatorInterface::class);
         $this->expressionValidator = new PriceRuleExpressionValidator(
             $this->parser,
             $this->preprocessor,

@@ -10,8 +10,8 @@ use Oro\Bundle\PricingBundle\Expression\RelationNode;
 use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -39,19 +39,19 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
     protected $fieldsProvider;
 
     /**
-     * @var Translator
+     * @var TranslatorInterface
      */
     protected $translator;
 
     /**
      * @param ExpressionParser $parser
      * @param PriceRuleFieldsProvider $fieldsProvider
-     * @param Translator $translator
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         ExpressionParser $parser,
         PriceRuleFieldsProvider $fieldsProvider,
-        Translator $translator
+        TranslatorInterface $translator
     ) {
         $this->parser = $parser;
         $this->fieldsProvider = $fieldsProvider;
@@ -91,7 +91,7 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
         if ($node->getRelationField() !== 'currency') {
             $this->addError($path, self::FIELD_ARE_NOT_ALLOWED_MESSAGE, [
                 '%fieldName%' => $node->getRelationField(),
-                '%inputName%' => $inputName
+                '%inputName%' => $inputName,
             ]);
         }
     }
@@ -111,16 +111,21 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
 
         /** @var RelationNode $node */
         $node = $nodes[0];
-        $relationContainerClassName = $this->fieldsProvider->getRealClassName($node->getContainer(), $node->getField());
-        $relationClassName = $this->fieldsProvider
-            ->getRealClassName(
-                $relationContainerClassName,
-                $node->getRelationField()
-            );
+        $relationContainerClassName = $this->fieldsProvider
+            ->getRealClassName($node->getContainer(), $node->getField());
+
+        $relationClassName = null;
+        if ($this->fieldsProvider->isRelation($relationContainerClassName, $node->getRelationField())) {
+            $relationClassName = $this->fieldsProvider
+                ->getRealClassName(
+                    $relationContainerClassName,
+                    $node->getRelationField()
+                );
+        }
         if (!is_a($relationClassName, ProductUnit::class, true)) {
             $this->addError($path, self::FIELD_ARE_NOT_ALLOWED_MESSAGE, [
                 '%fieldName%' => $node->getRelationField(),
-                '%inputName%' => $inputName
+                '%inputName%' => $inputName,
             ]);
         }
     }
@@ -141,7 +146,7 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
         foreach ($nodes as $node) {
             if ($node instanceof RelationNode && $relationNode || $node instanceof NameNode) {
                 $this->addError($path, self::TOO_MANY_RELATIONS_MESSAGE, [
-                    '%fieldName%' => $fieldName
+                    '%fieldName%' => $fieldName,
                 ]);
 
                 return;
@@ -163,7 +168,7 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
     {
         if (count($nodes) !== 1) {
             $this->addError($path, self::ONE_EXPRESSION_ALLOWED_MESSAGE, [
-                '%fieldName%' => $fieldName
+                '%fieldName%' => $fieldName,
             ]);
 
             return false;
@@ -182,7 +187,7 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
     {
         if (!$node instanceof RelationNode) {
             $this->addError($path, self::ONLY_PRICE_RELATION_MESSAGE, [
-                '%fieldName%' => $fieldName
+                '%fieldName%' => $fieldName,
             ]);
 
             return false;
@@ -203,7 +208,7 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
         if (!$this->isRelationInRule($rule, $node)) {
             $this->addError($path, self::RELATION_NOT_IN_RULE_MESSAGE, [
                 '%relationName%' => $node->getField(),
-                '%fieldName%' => $fieldName
+                '%fieldName%' => $fieldName,
             ]);
 
             return false;
@@ -241,6 +246,9 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
     public function isRelationInRule(PriceRule $rule, RelationNode $node)
     {
         $ruleNodes = $this->getNodes($rule->getRule(), PriceRuleType::RULE);
+        if (null === $ruleNodes) {
+            return false;
+        }
         foreach ($ruleNodes as $ruleNode) {
             if ($ruleNode instanceof RelationNode && $this->isSameRelation($ruleNode, $node)) {
                 return true;
@@ -257,9 +265,9 @@ class PriceRuleRelationExpressionsValidator extends ConstraintValidator
      */
     public function isSameRelation(RelationNode $node, RelationNode $other)
     {
-        return $node->getContainer() == $other->getContainer() &&
+        return $node->getContainer() === $other->getContainer() &&
         $node->getContainerId() == $other->getContainerId() &&
-        $node->getField() == $other->getField();
+        $node->getField() === $other->getField();
     }
 
     /**

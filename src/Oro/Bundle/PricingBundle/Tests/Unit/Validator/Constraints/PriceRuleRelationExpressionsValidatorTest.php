@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressions;
 use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressionsValidator;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
@@ -43,7 +44,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
     protected $context;
 
     /**
-     * @var Translator|\PHPUnit_Framework_MockObject_MockObject
+     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $translator;
 
@@ -55,9 +56,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         $this->fieldProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->translator = $this->getMockBuilder(Translator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->translator = $this->getMock(TranslatorInterface::class);
 
         $this->translator->expects($this->any())
             ->method('trans')
@@ -106,6 +105,23 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                             'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
                             'unit',
                             'Oro\Bundle\ProductBundle\Entity\ProductUnit',
+                        ],
+                    ]
+                )
+            );
+        $this->fieldProvider->method('isRelation')
+            ->will(
+                $this->returnValueMap(
+                    [
+                        [
+                            'Oro\Bundle\ProductBundle\Entity\Product',
+                            'msrp',
+                            true
+                        ],
+                        [
+                            'Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice',
+                            'unit',
+                            true
                         ],
                     ]
                 )

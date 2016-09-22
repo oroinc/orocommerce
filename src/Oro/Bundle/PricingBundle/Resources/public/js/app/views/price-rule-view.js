@@ -146,7 +146,7 @@ define(function(require) {
                 $field2.addClass(self.visibleClass).show();
                 $input1.val('');
                 $field1.removeClass(self.visibleClass).hide();
-            }
+            };
             if ($quantity.hasClass(this.visibleClass) && (isNaN($quantity.find('input').val()))) {
                 changeFieldVisibility($quantity, $quantityExpression);
             } else if ($quantityExpression.hasClass(this.visibleClass)) {
@@ -156,7 +156,7 @@ define(function(require) {
                     changeFieldVisibility($quantityExpression, $quantity);
                 }
             }
-        },
+        }
     });
 
     return PriceRuleView;
