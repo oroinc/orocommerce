@@ -23,8 +23,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.select_index_data, method: process }
 
-    oro_website_search.reindexation_trigger.listener:
-        class: %oro_website_search.reindexation_trigger.listener.class%
+    oro_website_search.reindex_request.listener:
+        class: %oro_website_search.reindex_request.listener.class%
         arguments:
             - '@doctrine.orm.entity_manager'
             - ~ # regular indexer
