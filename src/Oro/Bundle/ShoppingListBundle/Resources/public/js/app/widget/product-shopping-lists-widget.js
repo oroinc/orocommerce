@@ -27,12 +27,16 @@ define(function(require) {
             decline: '[data-role="decline"]',
             lineItem: '[data-role="line-item"]',
             lineItemEdit: '[data-role="line-item-edit"]',
-            lineItemView: '[data-role="line-item-view"]'
+            lineItemView: '[data-role="line-item-view"]',
+            popupPanelForm: '[data-role="popup-panel-form"]',
+            popupPanelAccept: '[data-role="popup-panel-accept"]',
+            popupPanelReset: '[data-role="popup-panel-reset"]'
         },
 
         elementsEvents: {
             edit: ['click', 'edit'],
-            decline: ['click', 'decline']
+            decline: ['click', 'decline'],
+            popupPanelReset: ['click', 'onPopupPanelReset']
         },
 
         modelAttr: {
@@ -82,6 +86,7 @@ define(function(require) {
 
             mediator.on('frontend:item:delete',  this.onLineItemDelete, this);
             mediator.on('product:quantity-unit:update', this.onLineItemUpdate, this);
+            mediator.on('popup-panel-form:reset', this.onPopupPanelReset, this);
 
             ProductShoppingListsWidget.__super__.initialize.apply(this, arguments);
         },
@@ -158,6 +163,13 @@ define(function(require) {
             this.model.set('shopping_lists', updatedShoppingLists);
             this.model.trigger('change:shopping_lists');
             this.toggleEditMode(updateData.event, 'disable');
+        },
+
+        onPopupPanelReset: function() {
+            var $form = $(this.elements.popupPanelForm, this.$el);
+
+            $form[0].reset();
+            $form.find('select').inputWidget('refresh');
         },
 
         updateShoppingLists: function(shoppingLists, shoppingListId, lineItemId, newLineItem) {

@@ -238,58 +238,60 @@
             </tr>
             <% }); %>
             </tbody>
-            <tfoot class="shopping-lists-popup__footer">
-                <tr class="shopping-lists-popup__item">
-                    <td class="shopping-lists-popup__list">
-                        <select class="oro-select2 oro-select2--size-s" name="list">
-                            <option value="0">Choose List</option>
-                            <% if (!_.isEmpty(demoShoppingLists)) { %>
-                            <% _.each(demoShoppingLists, function(list) { %>
-                            <option value="<%= list.shopping_list_id %>"><%= list.shopping_list_label %></option>
-                            <% }); %>
-                            <% } %>
-                        </select>
-                    </td>
-                    <td class="shopping-lists-popup__quantity">
-                        <div class="shopping-lists-units">
-                            <ul class="shopping-lists-modify"
-                                data-role="line-item-edit">
-                                <li class="shopping-lists-modify__text">
-                                    <input class="shopping-lists-modify__input input"
-                                           type="number"
-                                           min="1" 
-                                           value="1"
-                                           name="quantity">
-                                </li>
-                                <li class="shopping-lists-modify__select">
-                                    <select class="oro-select2 oro-select2--size-s" name="unit">
-                                        <% _.each(productUnits, function(unit) { %>
-                                        <option value="<%= unit %>"><%= unit %></option>
-                                        <% }); %>
-                                    </select>
-                                </li>
-                                <li class="shopping-lists-modify__badges">
-                                    <span class="shopping-lists-modify__edit">
-                                        <button class="shopping-lists-modify__button badge badge_sm badge_orange badge_circled-corners"
-                                                type="button"
-                                                title="{{ 'Accept'|trans }}">
-                                                <i class="shopping-lists-modify__icon cf-check"></i>
-                                        </button>
-                                    </span>
-                                    <span class="shopping-lists-modify__edit">
-                                        <button class="shopping-lists-modify__button badge badge_sm badge_l-dark badge_circled-corners"
-                                                type="button"
-                                                title="{{ 'Decline'|trans }}">
-                                                <i class="shopping-lists-modify__icon cf-clear"></i>
-                                        </button>
-                                    </span>
-                                </li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-            </tfoot>
         </table>
+        <div class="shopping-lists-popup__footer">
+            <form method="post" class="shopping-lists-popup__item" data-role="popup-panel-form">
+                <div class="shopping-lists-popup__list">
+                    <select class="oro-select2 oro-select2--size-s" name="list">
+                        <option value="0">Choose List</option>
+                        <% if (!_.isEmpty(demoShoppingLists)) { %>
+                        <% _.each(demoShoppingLists, function(list) { %>
+                        <option value="<%= list.shopping_list_id %>"><%= list.shopping_list_label %></option>
+                        <% }); %>
+                        <% } %>
+                    </select>
+                </div>
+                <div class="shopping-lists-popup__quantity">
+                    <div class="shopping-lists-units">
+                        <ul class="shopping-lists-modify"
+                            data-role="line-item-edit">
+                            <li class="shopping-lists-modify__text">
+                                <input class="shopping-lists-modify__input input"
+                                       type="number"
+                                       min="1" 
+                                       value="1"
+                                       name="quantity">
+                            </li>
+                            <li class="shopping-lists-modify__select">
+                                <select class="oro-select2 oro-select2--size-s" name="unit">
+                                    <% _.each(productUnits, function(unit) { %>
+                                    <option value="<%= unit %>"><%= unit %></option>
+                                    <% }); %>
+                                </select>
+                            </li>
+                            <li class="shopping-lists-modify__badges">
+                                <span class="shopping-lists-modify__edit">
+                                    <button class="shopping-lists-modify__button badge badge_sm badge_orange badge_circled-corners"
+                                            type="button"
+                                            title="{{ 'Accept'|trans }}"
+                                            data-role="popup-panel-accept">
+                                            <i class="shopping-lists-modify__icon cf-check"></i>
+                                    </button>
+                                </span>
+                                <span class="shopping-lists-modify__edit">
+                                    <button class="shopping-lists-modify__button badge badge_sm badge_l-dark badge_circled-corners"
+                                            type="reset"
+                                            title="{{ 'Decline'|trans }}"
+                                            data-role="popup-panel-reset">
+                                            <i class="shopping-lists-modify__icon cf-clear"></i>
+                                    </button>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
         <div class="widget-actions">
             <button class="btn theme-btn btn-orange" type="reset">{{ 'Close'|trans }}</button>
         </div>
