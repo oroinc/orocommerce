@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\DataAuditBundle\Metadata\ClassMetadata;
@@ -122,6 +123,9 @@ class ReindexRequestListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->process($event);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testProcessAtomic()
     {
         $event = new ReindexationTriggerEvent(
@@ -227,9 +231,11 @@ class ReindexRequestListenerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getReference')
             ->with($event->getClassName())
-            ->will($this->returnCallback(function($class, $id) {
-                return $id;
-            }));
+            ->will($this->returnCallback(
+                function ($class, $id) {
+                    return $id;
+                }
+            ));
 
         $this->regularIndexerMock
             ->expects($this->once())

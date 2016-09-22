@@ -30,9 +30,9 @@ class ReindexRequestListener
      * @param IndexerInterface|null $asyncIndexer
      */
     public function __construct(
-        EntityManager $entityManager,
-        IndexerInterface       $regularIndexer = null,
-        IndexerInterface       $asyncIndexer   = null
+        EntityManager    $entityManager,
+        IndexerInterface $regularIndexer = null,
+        IndexerInterface $asyncIndexer   = null
     ) {
         $this->entityManager  = $entityManager;
         $this->regularIndexer = $regularIndexer;
@@ -97,7 +97,10 @@ class ReindexRequestListener
             $ids = $metadata->getIdentifierValues($savedEntity);
             $id =  current($ids);
 
-            unset ($deletedIds[array_search($id, $deletedIds, true)]);
+            $deletedIdIndex = array_search($id, $deletedIds, true);
+            if ($deletedIdIndex !== false) {
+                unset ($deletedIds[$deletedIdIndex]);
+            }
         }
 
         $deletedEntities = [];
@@ -116,7 +119,7 @@ class ReindexRequestListener
     {
         $context = [];
 
-        $websiteId =$event->getWebsiteId();
+        $websiteId = $event->getWebsiteId();
         if (!empty($websiteId)) {
             // TODO uncomment when AbstractIndexer is available
             // $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
