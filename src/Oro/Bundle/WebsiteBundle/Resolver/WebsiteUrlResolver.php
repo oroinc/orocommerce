@@ -9,8 +9,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteUrlResolver
 {
-    const CONFIG_URL = 'oro_b2b_website.url';
-    const CONFIG_SECURE_URL = 'oro_b2b_website.secure_url';
+    const CONFIG_URL = 'oro_website.url';
+    const CONFIG_SECURE_URL = 'oro_website.secure_url';
 
     /**
      * @param ConfigManager $configManager

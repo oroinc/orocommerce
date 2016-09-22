@@ -1,0 +1,10 @@
+.editable {
+    padding: 6px 10px 3px;
+
+    background: get-color('additional', 'base');
+    border-radius: 3px;
+
+    &__trigger {
+        margin-bottom: $offset-x-s;
+    }
+}

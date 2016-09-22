@@ -104,7 +104,7 @@ class CheckoutLineItemsManager
     protected function getSupportedStatuses()
     {
         $supportedStatuses = [];
-        foreach ((array)$this->configManager->get('oro_b2b_order.frontend_product_visibility') as $status) {
+        foreach ((array)$this->configManager->get('oro_order.frontend_product_visibility') as $status) {
             $supportedStatuses[$status] = true;
         }
 

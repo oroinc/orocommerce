@@ -91,7 +91,7 @@ class RequestTypeTest extends AbstractTest
 
         $configManager->expects(static::any())
             ->method('get')
-            ->with('oro_b2b_rfp.default_request_status')
+            ->with('oro_rfp.default_request_status')
             ->willReturn(RequestStatus::OPEN);
 
         $this->formType = new RequestType($configManager, $registry);

@@ -31,7 +31,7 @@ services:
         public: false
         arguments:
             - '@translator'
-            - '@oro_pricing.rounding.price_rounding_service'
+            - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.user_currency_manager'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 20 }
@@ -41,7 +41,7 @@ services:
         public: false
         arguments:
             - '@translator'
-            - '@oro_pricing.rounding.price_rounding_service'
+            - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
             - '@oro_security.security_facade'
             - '@oro_pricing.user_currency_manager'
@@ -119,8 +119,8 @@ services:
         parent: oro_product.event_listener.abstract_product_select_db_query
         calls:
             - [setScope, ['order']]
-            - [setFrontendSystemConfigurationPath, ['oro_b2b_order.frontend_product_visibility']]
-            - [setBackendSystemConfigurationPath, ['oro_b2b_order.backend_product_visibility']]
+            - [setFrontendSystemConfigurationPath, ['oro_order.frontend_product_visibility']]
+            - [setBackendSystemConfigurationPath, ['oro_order.backend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
 
@@ -249,3 +249,13 @@ services:
         parent: oro_product.layout.data_provider.featured_products
         tags:
             - { name: layout.data_provider, alias: top_selling_items }
+
+    oro_order.event_listener.extract_line_item_options:
+        class: 'Oro\Bundle\OrderBundle\EventListener\ExtractLineItemPaymentOptionsListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, method: onExtractLineItemPaymentOptions }
+
+    oro_order.event_listener.extract_address_options.orderaddress:
+        class: 'Oro\Bundle\OrderBundle\EventListener\ExtractAddressOptionsListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.event.extract_address_options.orderaddress, method: onExtractShippingAddressOptions }

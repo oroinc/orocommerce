@@ -23,7 +23,7 @@ class ShoppingListControllerTest extends WebTestCase
 {
     const TEST_LABEL1 = 'Shopping list label 1';
     const TEST_LABEL2 = 'Shopping list label 2';
-    const RFP_PRODUCT_VISIBILITY_KEY = 'oro_b2b_rfp.frontend_product_visibility';
+    const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
 
     /** @var ConfigManager $configManager */
     protected $configManager;
@@ -69,11 +69,13 @@ class ShoppingListControllerTest extends WebTestCase
      * @param string $shoppingList
      * @param string $expectedLineItemPrice
      * @param bool $needToTestRequestQuote
+     * @param $expectedCreateOrderButtonVisible
      */
     public function testViewSelectedShoppingListWithLineItemPrice(
         $shoppingList,
         $expectedLineItemPrice,
-        $needToTestRequestQuote
+        $needToTestRequestQuote,
+        $expectedCreateOrderButtonVisible
     ) {
         // assert selected shopping list
         /** @var ShoppingList $shoppingList1 */
@@ -95,7 +97,12 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->assertEquals((strpos($crawler->html(), 'Request Quote') !== false), $needToTestRequestQuote);
 
-        $this->assertContains('Create Order', $crawler->html());
+        if ($expectedCreateOrderButtonVisible) {
+            $this->assertContains('Create Order', $crawler->html());
+        } else {
+            $this->assertNotContains('Create Order', $crawler->html());
+        }
+
         $this->assertLineItemPriceEquals($expectedLineItemPrice, $crawler);
     }
 
@@ -108,17 +115,20 @@ class ShoppingListControllerTest extends WebTestCase
             'price defined' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
                 'expectedLineItemPrice' => '$13.10',
-                'needToTestRequestQuote' => true
+                'needToTestRequestQuote' => true,
+                'expectedCreateOrderButtonVisible' => true
             ],
             'no price for selected quantity' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_3,
                 'expectedLineItemPrice' => 'N/A',
-                'needToTestRequestQuote' => false
+                'needToTestRequestQuote' => false,
+                'expectedCreateOrderButtonVisible' => false
             ],
             'zero price' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_4,
                 'expectedLineItemPrice' => '$0.00',
-                'needToTestRequestQuote' => true
+                'needToTestRequestQuote' => true,
+                'expectedCreateOrderButtonVisible' => true
             ],
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
@@ -126,7 +136,8 @@ class ShoppingListControllerTest extends WebTestCase
                     'N/A',
                     '$0.00',
                 ],
-                'needToTestRequestQuote' => true
+                'needToTestRequestQuote' => true,
+                'expectedCreateOrderButtonVisible' => true
             ],
         ];
     }
