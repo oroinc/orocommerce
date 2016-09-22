@@ -56,11 +56,8 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         if ($value) {
-            $upsTypeIds = [];
-            /** @var ShippingService $upsService */
-            foreach ($value->toArray() as $upsService) {
-                $upsTypeIds[] = $upsService->getCode();
-            }
+            $upsTypeIds = $this->getUpsTypesIds($value);
+
             $methodLabel = $this->getName();
             if ($methodLabel !== null) {
                 $shippingMethods = $this->registry->getShippingMethods();
@@ -76,13 +73,8 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
                             /** @var ShippingRuleMethodConfig $configuredMethod */
                             foreach ($configuredMethods as $configuredMethod) {
                                 $configuredTypes = $configuredMethod->getTypeConfigs()->toArray();
-                                $enabledTypes = [];
-                                /** @var ShippingRuleMethodTypeConfig $confType */
-                                foreach ($configuredTypes as $confType) {
-                                    if ($confType->isEnabled()) {
-                                        $enabledTypes[] = $confType->getType();
-                                    }
-                                }
+                                $enabledTypes = $this->getEnabledTypes($configuredTypes);
+                                
                                 if ($diff = array_diff($enabledTypes, $upsTypeIds) &&
                                     (count($enabledTypes) >= count($upsTypeIds))) {
                                     $missingServices = $this
@@ -90,12 +82,8 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
                                         ->getManagerForClass('OroUPSBundle:ShippingService')
                                         ->getRepository('OroUPSBundle:ShippingService')
                                         ->findBy(['code' => $diff, 'country' => $this->getCountry()]);
-                                    /** @var ShippingService $service */
-                                    foreach ($missingServices as $service) {
-                                        $this->context->addViolation($constraint->message, [
-                                            '{{ service }}' => $service->getDescription()
-                                        ]);
-                                    }
+                                    
+                                    $this->addViolations($missingServices, $constraint->message);
                                     break;
                                 }
                             }
@@ -104,6 +92,50 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * @param Collection $value
+     * @return array
+     */
+    protected function getUpsTypesIds($value)
+    {
+        $upsTypesIds = [];
+        /** @var ShippingService $upsService */
+        foreach ($value->toArray() as $upsService) {
+            $upsTypesIds[] = $upsService->getCode();
+        }
+        return $upsTypesIds;
+    }
+
+    /**
+     * @param array $configuredTypes
+     * @return array
+     */
+    protected function getEnabledTypes($configuredTypes)
+    {
+        $enabledTypes = [];
+        /** @var ShippingRuleMethodTypeConfig $confType */
+        foreach ($configuredTypes as $confType) {
+            if ($confType->isEnabled()) {
+                $enabledTypes[] = $confType->getType();
+            }
+        }
+        return $enabledTypes;
+    }
+    
+    /**
+     * @param array $missingServices
+     * @param string $message
+     */
+    protected function addViolations($missingServices, $message)
+    {
+        /** @var ShippingService $service */
+        foreach ($missingServices as $service) {
+            $this->context->addViolation($message, [
+                '{{ service }}' => $service->getDescription()
+            ]);
         }
     }
 
@@ -133,7 +165,6 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
             }
             $form = $form->getParent();
         }
-
         return $name;
     }
 
@@ -152,7 +183,6 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
             }
             $form = $form->getParent();
         }
-
         return $country;
     }
 

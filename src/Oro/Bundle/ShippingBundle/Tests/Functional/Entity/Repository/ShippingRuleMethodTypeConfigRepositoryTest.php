@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleMethodTypeConfigRepository;
+use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -35,18 +36,18 @@ class ShippingRuleMethodTypeConfigRepositoryTest extends WebTestCase
             $this->repository->findBy(
                 [
                     'methodConfig' => $methodConfig,
-                    'type' => 'primary'
+                    'type' => FlatRateShippingMethodType::IDENTIFIER
                 ]
             )
         );
 
-        $this->repository->deleteByMethodAndType($methodConfig, 'primary');
+        $this->repository->deleteByMethodAndType($methodConfig, FlatRateShippingMethodType::IDENTIFIER);
 
         static::assertEmpty(
             $this->repository->findBy(
                 [
                     'methodConfig' => $methodConfig,
-                    'type' => 'primary'
+                    'type' => FlatRateShippingMethodType::IDENTIFIER
                 ]
             )
         );

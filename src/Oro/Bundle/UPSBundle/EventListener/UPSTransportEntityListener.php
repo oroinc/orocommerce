@@ -3,16 +3,13 @@
 namespace Oro\Bundle\UPSBundle\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Provider\ChannelType;
 
-/**
- * Handle product scalar attributes change that may affect prices recalculation.
- */
 class UPSTransportEntityListener
 {
     /**
@@ -38,6 +35,7 @@ class UPSTransportEntityListener
         $deletedServices = $services->getDeleteDiff();
         if (0 !== count($deletedServices)) {
             $deleted = [];
+            /** @var ShippingService $deletedService */
             foreach ($deletedServices as $deletedService) {
                 $deleted[] = $deletedService->getCode();
             }

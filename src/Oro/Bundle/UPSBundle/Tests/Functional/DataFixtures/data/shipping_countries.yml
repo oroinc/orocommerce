@@ -1,11 +1,11 @@
-shipping_country.1:
+ups.shipping_country.1:
     iso2: 'UU'
     iso3: 'UUU'
 
-shipping_country.2:
+ups.shipping_country.2:
     iso2: 'CC'
     iso3: 'CCC'
 
-shipping_country.3:
+ups.shipping_country.3:
     iso2: 'LL'
     iso3: 'LLL'
