@@ -1,5 +1,11 @@
 #General information.
 
+Configuration data of 'Shipping Origin' is using in UPS bundle as shipper and ship from address, that is why it should be configured on 'Configuration' page:
+
+```code
+System -> Configuration -> Commerce -> Shipping -> Shipping Origin
+```
+
 UPS bundle provides new integration type with specific params (such as Base URL, Shipping Service, etc.) and can be created on 'Integration' page:
 
 ```code
