@@ -872,6 +872,15 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.price_rule_expression_validator }
 
+    oro_pricing.validator_constraints.lexeme_circular_reference_validator:
+        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReferenceValidator'
+        public: true
+        arguments:
+            - '@oro_pricing.expression.parser'
+            - '@doctrine'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.lexeme_circular_reference_validator }
+
     oro_pricing.validator_constraints.price_rule_relation_expressions_validator:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressionsValidator'
         arguments:
