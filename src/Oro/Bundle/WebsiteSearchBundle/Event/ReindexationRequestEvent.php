@@ -4,9 +4,9 @@ namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
-final class ReindexationTriggerEvent extends Event
+final class ReindexationRequestEvent extends Event
 {
-    const EVENT_NAME = 'oro_website_search.reindexation_trigger';
+    const EVENT_NAME = 'oro_website_search.reindexation_request';
 
     /**
      * @var string

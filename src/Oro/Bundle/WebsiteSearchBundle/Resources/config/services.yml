@@ -1,8 +1,8 @@
 parameters:
-    oro_website_search.mock.class:                             Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
-    oro_website_search.query_factory.class:                    Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
-    oro_website_search.select_data.listener.class:             Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
-    oro_website.website_crud_reindexation_triggering_listener: Oro\Bundle\WebsiteSearchBundle\EventListener\WebsiteCrudReindexationTriggeringListener
+    oro_website_search.mock.class:                                    Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
+    oro_website_search.query_factory.class:                           Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
+    oro_website_search.select_data.listener.class:                    Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
+    oro_website.website_reindexation_on_create_delete_listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\WebsiteReindexationOnCreateDeleteListener
 
 services:
     oro_website_search.mock.engine:
@@ -23,8 +23,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.select_index_data, method: process }
 
-    oro_website_search.website_crud_reindexation_triggering_listener:
-        class: %oro_website.website_crud_reindexation_triggering_listener%
+    oro_website_search.website_reindexation_on_create_delete_listener:
+        class: %oro_website.website_reindexation_on_create_delete_listener.class%
         arguments:
             - '@event_dispatcher'
         tags:
