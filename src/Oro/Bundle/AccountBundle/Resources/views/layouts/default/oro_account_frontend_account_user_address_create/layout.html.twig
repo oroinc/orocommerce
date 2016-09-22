@@ -17,3 +17,14 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block _oro_account_user_address_form_required_label_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': " required-label"
+    }) %}
+
+    <p {{ block('block_attributes') }}>
+        <sup>*</sup>
+        {{ 'oro.account.form.label.required'|trans }}
+    </p>
+{% endblock %}

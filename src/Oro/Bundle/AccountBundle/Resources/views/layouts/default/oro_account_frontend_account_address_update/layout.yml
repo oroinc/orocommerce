@@ -26,6 +26,10 @@ layout:
             id: oro_account_user_address_form_content
             parentId: oro_account_user_address_form_container
             blockType: container
+        - '@add':
+            id: account_user_address_form_required_label
+            parentId: account_address_edit_container
+            blockType: container
         - '@move':
             id: page_title
             parentId: oro_account_user_address_form_container
