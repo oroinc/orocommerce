@@ -14,29 +14,33 @@ services:
         arguments:
             - '@event_dispatcher'
             - '@oro_website_search.resolver.query_placeholder'
+            - '@oro_entity.doctrine_helper'
 
     oro_website_search.search.indexer:
         abstract: true
         arguments:
-            - '@event_dispatcher'
             - '@oro_entity.doctrine_helper'
             - '@oro_website_search.provider.search_mapping'
-            - '@oro_entity.entity_alias_resolver'
             - '@oro_website_search.engine.entity_dependencies_resolver'
+            - '@oro_website_search.provider.index_data'
+            - '@oro_website_search.placeholder.chain_replace'
 
     oro_website_search.placeholder.registry:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry'
+        public: false
         calls:
             - [addPlaceholder, ['@oro_website_search.website_id.placeholder']]
             - [addPlaceholder, ['@oro_website_search.localization_id.placeholder']]
 
     oro_website_search.website_id.placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder'
+        public: false
         arguments:
             - '@oro_website.manager'
 
     oro_website_search.localization_id.placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder'
+        public: false
         arguments:
             - '@oro_frontend_localization.manager.user_localization'
 
@@ -120,7 +124,23 @@ services:
             - '%oro_website_search.index_text_table_name%_v_idx'
 
     oro_website_search.engine.entity_dependencies_resolver:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\EntityDependenciesResolver'
+        class: 'Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolver'
         arguments:
             - '@event_dispatcher'
             - '@oro_website_search.provider.search_mapping'
+
+    oro_website_search.helper.field:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Helper\FieldHelper'
+        public: false
+
+    oro_website_search.provider.index_data:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider'
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_entity.entity_alias_resolver'
+
+    oro_website_search.placeholder.chain_replace:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\ChainReplacePlaceholder'
+        arguments:
+            - '@oro_website_search.placeholder.registry'
+

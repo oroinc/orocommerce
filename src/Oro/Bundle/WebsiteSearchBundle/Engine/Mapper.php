@@ -5,6 +5,10 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 
+/**
+ * It returns mappings for selected fields which
+ * are used to create result item objects
+ */
 class Mapper
 {
     /**

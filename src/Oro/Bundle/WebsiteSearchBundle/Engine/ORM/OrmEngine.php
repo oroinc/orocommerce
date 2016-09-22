@@ -8,6 +8,7 @@ use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\SearchBundle\Engine\Orm\BaseDriver;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
+use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractEngine;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
@@ -39,13 +40,13 @@ class OrmEngine extends AbstractEngine
     protected function doSearch(Query $query, array $context = [])
     {
         $results = [];
-
         $searchResults = $this->getIndexRepository()->search($query);
-
+        
         foreach ($searchResults as $searchResult) {
             $item = $searchResult['item'];
+
             $results[] = new Item(
-                $this->getRegistry()->getManagerForClass($item['entity']),
+                $this->doctrineHelper->getEntityManager($item['entity']),
                 $item['entity'],
                 $item['recordId'],
                 $item['title'],
@@ -55,10 +56,7 @@ class OrmEngine extends AbstractEngine
             );
         }
 
-        return [
-            'results'       => $results,
-            'records_count' => count($searchResults),
-        ];
+        return new Result($query, $results, count($searchResults));
     }
 
     /**
@@ -66,13 +64,11 @@ class OrmEngine extends AbstractEngine
      */
     protected function getIndexRepository()
     {
-        if ($this->indexRepository) {
-            return $this->indexRepository;
+        if (!$this->indexRepository) {
+            $this->indexRepository = $this->getIndexManager()->getRepository('OroWebsiteSearchBundle:Item');
+            $this->indexRepository->setDriversClasses($this->getDrivers());
+            $this->indexRepository->setRegistry($this->getRegistry());
         }
-
-        $this->indexRepository = $this->getIndexManager()->getRepository('OroWebsiteSearchBundle:Item');
-        $this->indexRepository->setDriversClasses($this->getDrivers());
-        $this->indexRepository->setRegistry($this->getRegistry());
 
         return $this->indexRepository;
     }
@@ -82,20 +78,24 @@ class OrmEngine extends AbstractEngine
      */
     protected function getIndexManager()
     {
-        if ($this->indexManager) {
-            return $this->indexManager;
+        if (!$this->indexManager) {
+            $this->indexManager = $this->getRegistry()->getManagerForClass('OroWebsiteSearchBundle:Item');
         }
-
-        $this->indexManager = $this->getRegistry()->getManagerForClass('OroWebsiteSearchBundle:Item');
 
         return $this->indexManager;
     }
 
     /**
-     * @param BaseDriver[] $drivers
+     * @param array $drivers
      */
     public function setDrivers(array $drivers)
     {
+        foreach ($drivers as $driver) {
+            if (!is_a($driver, BaseDriver::class, true)) {
+                throw new \InvalidArgumentException('Wrong driver class passed, please check configuration');
+            }
+        }
+        
         $this->drivers = $drivers;
     }
 

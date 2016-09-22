@@ -73,8 +73,7 @@ class OrmEngineTest extends AbstractSearchWebTestCase
 
     protected function setUp()
     {
-        $this->initClient();
-
+        parent::setUp();
         if ($this->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
             $this->markTestSkipped('Should be tested only with ORM search engine');
         }
@@ -94,31 +93,22 @@ class OrmEngineTest extends AbstractSearchWebTestCase
             ->with(TestEntity::class)
             ->willReturn($this->mappingConfig[TestEntity::class]['alias']);
 
-        $this->addFrontendRequest();
-
         $this->loadFixtures([LoadSearchItemData::class]);
 
         $this->listener = $this->setListener();
 
         $indexer = new OrmIndexer(
-            $this->getContainer()->get('event_dispatcher'),
             $this->getContainer()->get('oro_entity.doctrine_helper'),
             $this->mappingProviderMock,
-            $this->getContainer()->get('oro_entity.entity_alias_resolver'),
-            $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver')
+            $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
+            $this->getContainer()->get('oro_website_search.provider.index_data'),
+            $this->getContainer()->get('oro_website_search.placeholder.chain_replace')
         );
 
         $indexer->reindex(TestEntity::class, []);
 
         $this->ormEngine = $this->getContainer()->get('oro_website_search.engine');
         $this->ormEngine->setMappingProvider($this->mappingProviderMock);
-    }
-
-    protected function tearDown()
-    {
-        $this->clearIndexTextTable();
-
-        unset($this->listener, $this->ormEngine, $this->expectedSearchItems);
     }
 
     /**
@@ -141,7 +131,7 @@ class OrmEngineTest extends AbstractSearchWebTestCase
 
             $items = $this->getContainer()->get('doctrine')
                 ->getRepository(TestEntity::class)
-                ->findBy(['id' => $event->getEntityIds()]);
+                ->findBy(['id' => $event->getEntities()]);
 
             /** @var TestEntity $item */
             foreach ($items as $item) {

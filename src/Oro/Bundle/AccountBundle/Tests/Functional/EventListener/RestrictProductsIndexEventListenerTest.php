@@ -9,31 +9,21 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 /**
  * @dbIsolationPerTest
  */
 class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
     protected function setUp()
     {
-        $this->initClient();
+        parent::setUp();
 
-        $this->addFrontendRequest();
-
-        $this->dispatcher = $this->getContainer()->get('event_dispatcher');
         $this->clearRestrictListeners($this->getRestrictEntityEventName());
 
         $this->dispatcher->addListener(
             $this->getRestrictEntityEventName(),
             [
-                $this->getContainer()->get('oro_account.event_listener.restricted_products_index'),
+                $this->getContainer()->get('oro_account.event_listener.restrict_products_index'),
                 'onRestrictIndexEntityEvent'
             ],
             -255

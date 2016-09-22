@@ -1,5 +1,5 @@
 Oro\Bundle\ProductBundle\Entity\Product:
-    alias: oro_product_product_WEBSITE_ID
+    alias: oro_product_WEBSITE_ID
     fields:
         -
             name: title_LOCALIZATION_ID

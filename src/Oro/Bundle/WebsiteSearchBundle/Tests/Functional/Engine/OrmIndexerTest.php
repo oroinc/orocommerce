@@ -2,15 +2,13 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
-use Oro\Bundle\WebsiteSearchBundle\Engine\EntityDependenciesResolver;
+use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolver;
 use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
@@ -38,9 +36,6 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 {
     /** @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $mappingProviderMock;
-
-    /** @var EventDispatcherInterface */
-    private $dispatcher;
 
     /** @var OrmIndexer */
     private $indexer;
@@ -78,7 +73,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
     protected function setUp()
     {
-        $this->initClient();
+        parent::setUp();
         $this->doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
         $this->mappingProviderMock = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
             ->disableOriginalConstructor()
@@ -86,14 +81,12 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
         $this->entityAliasResolver = $this->getContainer()->get('oro_entity.entity_alias_resolver');
 
-        $this->dispatcher = $this->getContainer()->get('event_dispatcher');
-
         $this->indexer = new OrmIndexer(
-            $this->dispatcher,
             $this->doctrineHelper,
             $this->mappingProviderMock,
-            $this->entityAliasResolver,
-            $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver')
+            $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
+            $this->getContainer()->get('oro_website_search.provider.index_data'),
+            $this->getContainer()->get('oro_website_search.placeholder.chain_replace')
         );
 
         $this->clearRestrictListeners($this->getRestrictEntityEventName());
@@ -109,12 +102,9 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
     protected function tearDown()
     {
-        $this->clearIndexTextTable();
-
+        parent::tearDown();
         //Remove listener to not to interract with other tests
         $this->dispatcher->removeListener(IndexEntityEvent::NAME, $this->listener);
-
-        unset($this->doctrineHelper, $this->mappingProviderMock, $this->dispatcher, $this->indexer);
     }
 
     /**
@@ -123,12 +113,14 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     private function setListener()
     {
         $listener = function (IndexEntityEvent $event) {
-            foreach ($event->getEntityIds() as $entityId) {
+            /** @var TestProduct[] $entities */
+            $entities = $event->getEntities();
+            foreach ($entities as $entity) {
                 $event->addField(
-                    $entityId,
+                    $entity->getId(),
                     Query::TYPE_TEXT,
                     'name',
-                    sprintf('Reindexed product %s', $entityId)
+                    sprintf('Reindexed product %s', $entity->getId())
                 );
             }
         };
@@ -245,11 +237,11 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->setClassSupportedExpectation(1, TestProduct::class, true);
 
         $this->indexer = new OrmIndexerStub(
-            $this->dispatcher,
             $this->doctrineHelper,
             $this->mappingProviderMock,
-            $this->entityAliasResolver,
-            $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver')
+            $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
+            $this->getContainer()->get('oro_website_search.provider.index_data'),
+            $this->getContainer()->get('oro_website_search.placeholder.chain_replace')
         );
 
         $this->listener = $this->setListener();
@@ -371,21 +363,6 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     }
 
     /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Mapping config is empty.
-     */
-    public function testEmptyMappingConfigException()
-    {
-        $this->mappingProviderMock
-            ->expects($this->once())
-            ->method('getEntityClasses')
-            ->willReturn([]);
-
-        $indexedNum = $this->indexer->reindex();
-        $this->assertEquals(0, $indexedNum);
-    }
-
-    /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage There is no such entity in mapping config.
      */
@@ -439,6 +416,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
+        $this->assertEntityCount(8, Item::class);
 
         $this->indexer->delete(
             [
@@ -682,11 +660,11 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $entityDependenciesResolver = new EntityDependenciesResolver($this->dispatcher, $this->mappingProviderMock);
 
         $this->indexer = new OrmIndexer(
-            $this->dispatcher,
             $this->doctrineHelper,
             $this->mappingProviderMock,
-            $this->entityAliasResolver,
-            $entityDependenciesResolver
+            $entityDependenciesResolver,
+            $this->getContainer()->get('oro_website_search.provider.index_data'),
+            $this->getContainer()->get('oro_website_search.placeholder.chain_replace')
         );
 
         $this->assertEquals($allClasses, $this->indexer->getClassesForReindex());

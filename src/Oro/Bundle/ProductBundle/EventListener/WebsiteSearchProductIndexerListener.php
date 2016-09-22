@@ -5,30 +5,36 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Helper\FieldHelper;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\ChainReplacePlaceholder;
 
 class WebsiteSearchProductIndexerListener
 {
-    /**
-     * @var ProductRepository
-     */
-    private $productRepository;
-
     /**
      * @var LocalizationHelper
      */
     private $localizationHelper;
 
     /**
+     * @var ChainReplacePlaceholder
+     */
+    private $chainReplacePlaceholder;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param LocalizationHelper $localizationHelper
+     * @param ChainReplacePlaceholder $chainReplacePlaceholder
      */
-    public function __construct(DoctrineHelper $doctrineHelper, LocalizationHelper $localizationHelper)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        LocalizationHelper $localizationHelper,
+        ChainReplacePlaceholder $chainReplacePlaceholder
+    ) {
         $this->productRepository = $doctrineHelper->getEntityRepositoryForClass(Product::class);
         $this->localizationHelper = $localizationHelper;
+        $this->chainReplacePlaceholder = $chainReplacePlaceholder;
     }
 
     /**
@@ -38,11 +44,12 @@ class WebsiteSearchProductIndexerListener
     {
         $entityClass = $event->getEntityClass();
 
-        if ($entityClass !== Product::class) {
+        if (!is_a($entityClass, Product::class, true)) {
             return;
         }
 
-        $products = $this->productRepository->getProductsByIds($event->getEntityIds());
+        /** @var Product[] $products */
+        $products = $event->getEntities();
 
         $localizations = $this->localizationHelper->getLocalizations();
 
@@ -71,8 +78,8 @@ class WebsiteSearchProductIndexerListener
             foreach ($localizations as $localization) {
                 $localizedFields = [
                     'title' => $product->getName($localization),
-                    'description' => $this->stripTagsAndSpaces($product->getDescription($localization)),
-                    'short_desc' => $this->stripTagsAndSpaces($product->getShortDescription($localization)),
+                    'description' => $product->getDescription($localization),
+                    'short_desc' => $product->getShortDescription($localization)
                 ];
 
                 foreach ($localizedFields as $fieldName => $fieldValue) {
@@ -93,22 +100,5 @@ class WebsiteSearchProductIndexerListener
                 );
             }
         }
-    }
-
-    /**
-     * @param string $text
-     * @return string
-     */
-    private function stripTagsAndSpaces($text)
-    {
-        $stripTagsWithExcessiveSpaces = html_entity_decode(
-            strip_tags(
-                str_replace('>', '> ', $text)
-            )
-        );
-
-        return trim(
-            preg_replace('/\s+/u', ' ', $stripTagsWithExcessiveSpaces)
-        );
     }
 }

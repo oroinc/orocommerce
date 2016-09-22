@@ -21,7 +21,7 @@ class CollectDependentClassesEvent extends Event
     public function addClassDependencies($dependentEntityClass, array $entityClasses)
     {
         foreach ($entityClasses as $entityClass) {
-            $this->dependencies[$entityClass][] = $dependentEntityClass;
+            $this->dependencies[$entityClass][$dependentEntityClass] = $dependentEntityClass;
         }
     }
 

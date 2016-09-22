@@ -7,7 +7,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderExpressionVisitor;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry;
 
-class QueryPlaceholderResolver
+class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
 {
     /**
      * @var WebsiteSearchPlaceholderRegistry
@@ -23,11 +23,9 @@ class QueryPlaceholderResolver
     }
 
     /**
-     * @param Query $query
-     * @param array $context
-     * @return Query
+     * {@inheritdoc}
      */
-    public function replace(Query $query, array $context)
+    public function replace(Query $query)
     {
         foreach ($this->placeholderRegistry->getPlaceholders() as $placeholder) {
             $this->replaceInFrom($query, $placeholder);

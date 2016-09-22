@@ -13,11 +13,38 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 abstract class AbstractSearchWebTestCase extends WebTestCase
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $dispatcher;
+
+    /**
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        $this->initClient();
+        $this->addFrontendRequest();
+        $this->dispatcher = $this->getContainer()->get('event_dispatcher');
+    }
+
+    protected function tearDown()
+    {
+        $this->clearIndexTextTable();
+        unset($this->requestStack);
+    }
+
     /**
      * Workaround to clear MyISAM table as it's not rolled back by transaction.
      */
@@ -46,8 +73,8 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
 
     protected function addFrontendRequest()
     {
-        $requestStack = $this->getContainer()->get('request_stack');
-        $requestStack->push(Request::create(''));
+        $this->requestStack = $this->getContainer()->get('request_stack');
+        $this->requestStack->push(Request::create(''));
     }
 
     /**
@@ -64,11 +91,8 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
      */
     protected function clearRestrictListeners($eventName)
     {
-        /** @var EventDispatcher $dispatcher */
-        $dispatcher = $this->getContainer()->get('event_dispatcher');
-
-        foreach ($dispatcher->getListeners($eventName) as $listener) {
-            $dispatcher->removeListener($eventName, $listener);
+        foreach ($this->dispatcher->getListeners($eventName) as $listener) {
+            $this->dispatcher->removeListener($eventName, $listener);
         }
     }
 

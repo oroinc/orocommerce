@@ -55,12 +55,10 @@ class WebsiteSearchIndexRepository extends SearchIndexRepository
         $queryBuilder
             ->andWhere($queryBuilder->expr()->in('item.recordId', ':entityIds'))
             ->andWhere($queryBuilder->expr()->eq('item.entity', ':entityClass'))
-            ->setParameters([
-                'entityClass' => $entityClass,
-                'entityIds' => $entityIds
-            ]);
+            ->setParameter('entityClass', $entityClass)
+            ->setParameter('entityIds', $entityIds);
 
-        if (null !== $entityAlias) {
+        if ($entityAlias) {
             $queryBuilder
                 ->andWhere($queryBuilder->expr()->eq('item.alias', ':entityAlias'))
                 ->setParameter('entityAlias', $entityAlias);

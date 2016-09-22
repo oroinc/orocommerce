@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Engine;
+namespace Oro\Bundle\WebsiteSearchBundle\Resolver;
 
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class EntityDependenciesResolver
+class EntityDependenciesResolver implements EntityDependenciesResolverInterface
 {
     /** @var WebsiteSearchMappingProvider */
     private $mappingProvider;
@@ -19,7 +19,7 @@ class EntityDependenciesResolver
     private $classesForReindex;
 
     /** @var array */
-    private $classesDependencies = null;
+    private $classesDependencies;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
@@ -34,8 +34,7 @@ class EntityDependenciesResolver
     }
 
     /**
-     * @param null|string|string[] $class
-     * @return array
+     * {@inheritdoc}
      */
     public function getClassesForReindex($class = null)
     {

@@ -28,7 +28,7 @@ class IndexEntityEvent extends Event
     /**
      * @var array
      */
-    private $entityIds;
+    private $entities;
 
     /**
      * @var array
@@ -42,13 +42,13 @@ class IndexEntityEvent extends Event
 
     /**
      * @param string $entityClass
-     * @param array $entityIds
+     * @param object[] $entities
      * @param array $context
      */
-    public function __construct($entityClass, array $entityIds, array $context)
+    public function __construct($entityClass, array $entities, array $context)
     {
         $this->context = $context;
-        $this->entityIds = array_combine($entityIds, $entityIds);
+        $this->entities = $entities;
         $this->entityClass = $entityClass;
     }
 
@@ -63,10 +63,9 @@ class IndexEntityEvent extends Event
     /**
      * @return array
      */
-    public function getEntityIds()
+    public function getEntities()
     {
-        // @todo: check performance and optimize it
-        return array_values($this->entityIds);
+        return $this->entities;
     }
 
     /**
@@ -88,12 +87,6 @@ class IndexEntityEvent extends Event
      */
     public function addField($entityId, $fieldType, $fieldName, $value)
     {
-        if (!isset($this->entityIds[$entityId])) {
-            throw new \InvalidArgumentException(
-                sprintf('There is no entity with id %s', $entityId)
-            );
-        }
-
         $this->assertFieldType($fieldType);
 
         $this->entitiesData[$entityId][$fieldType][$fieldName] = $value;

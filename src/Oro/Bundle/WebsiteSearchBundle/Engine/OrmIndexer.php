@@ -13,7 +13,7 @@ class OrmIndexer extends AbstractIndexer
      */
     public function delete($entities, array $context = [])
     {
-        $entities = $this->convertToArray($entities);
+        $entities = is_array($entities) ? $entities : [$entities];
 
         $sortedEntitiesData = [];
         foreach ($entities as $entity) {
@@ -42,22 +42,7 @@ class OrmIndexer extends AbstractIndexer
      */
     private function getItemRepository()
     {
-        $entityManager = $this->doctrineHelper->getEntityManagerForClass(Item::class);
-
-        return $entityManager->getRepository(Item::class);
-    }
-
-    /**
-     * @param object|array $entities
-     * @return array
-     */
-    private function convertToArray($entities)
-    {
-        if (!is_array($entities)) {
-            $entities = [$entities];
-        }
-
-        return $entities;
+        return $this->doctrineHelper->getEntityRepository(Item::class);
     }
 
     /**
@@ -118,7 +103,7 @@ class OrmIndexer extends AbstractIndexer
         $entityAlias = null;
         if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
             $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
-            $entityAlias = $this->applyPlaceholders($entityAlias, $context);
+            $entityAlias = $this->chainPlaceholder->replace($entityAlias, $context[self::CONTEXT_WEBSITE_ID_KEY]);
         }
 
         return $entityAlias;
@@ -143,12 +128,11 @@ class OrmIndexer extends AbstractIndexer
         foreach ($entityClasses as $entityClass) {
             $entityAlias = $this->getEntityAlias($entityClass, $context);
 
-            if (null !== $entityAlias) {
+            if ($entityAlias) {
                 $this->getItemRepository()->removeIndexByAlias($entityAlias);
             } else {
                 $this->getItemRepository()->removeIndexByClass($entityClass);
             }
-
         }
     }
 }

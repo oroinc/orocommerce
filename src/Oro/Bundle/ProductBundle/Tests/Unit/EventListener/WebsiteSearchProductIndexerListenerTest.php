@@ -7,21 +7,20 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Helper\FieldHelper;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\ChainReplacePlaceholder;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var WebsiteSearchProductIndexerListener
      */
     private $listener;
-
-    /**
-     * @var ProductRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $productRepository;
 
     /**
      * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -33,6 +32,11 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
      */
     private $event;
 
+    /**
+     * @var ChainReplacePlaceholder|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $chainReplacePlaceholder;
+
     protected function setUp()
     {
         /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
@@ -40,41 +44,23 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $doctrineHelper
-            ->expects($this->once())
-            ->method('getEntityRepositoryForClass')
-            ->with(Product::class)
-            ->willReturn($this->productRepository);
-
         $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new WebsiteSearchProductIndexerListener($doctrineHelper, $this->localizationHelper);
-
-        $this->event = $this->getMockBuilder(IndexEntityEvent::class)
+        $this->chainReplacePlaceholder = $this->getMockBuilder(ChainReplacePlaceholder::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->listener = new WebsiteSearchProductIndexerListener(
+            $doctrineHelper,
+            $this->localizationHelper,
+            $this->chainReplacePlaceholder
+        );
     }
 
-    protected function tearDown()
+    private function setExpectations()
     {
-        unset($this->productRepository, $this->localizationHelper, $this->listener, $this->event);
-    }
-
-    /**
-     * @param string $entityClassName
-     */
-    private function initializeOnWebsiteSearchIndexTest($entityClassName)
-    {
-        $this->event->expects($this->once())->method('getEntityClass')->willReturn($entityClassName);
-
-        $this->event->expects($this->once())->method('getEntityIds')->willReturn([1]);
-
         $product = $this->getMockBuilder(Product::class)
             ->setMethods([
                 'getId',
@@ -108,14 +94,13 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                 '<h1>Description</h1>&nbsp;&nbsp;<p>Product information</p>',
                 '<h1>Opis</h1><p>Informacje o produkcie</p>'
             );
+
         $product->expects($this->exactly(2))
             ->method('getShortDescription')
             ->willReturnOnConsecutiveCalls(
                 'Short description',
                 'Krótki opis'
             );
-
-        $this->productRepository->expects($this->once())->method('getProductsByIds')->willReturn([$product]);
 
         $localization1 = $this->getMock(Localization::class);
         $localization1->expects($this->any())->method('getId')->willReturn(1);
@@ -129,38 +114,38 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                 $localization1,
                 $localization2
             ]);
+
+        $this->event = new IndexEntityEvent(Product::class, [$product], []);
     }
 
     public function testOnWebsiteSearchIndexProductClass()
     {
-        $this->initializeOnWebsiteSearchIndexTest(Product::class);
-
-        $this->event
-            ->expects($this->exactly(11))
-            ->method('addField')
-            ->withConsecutive(
-                [1, 'text', 'sku', 'sku123'],
-                [1, 'text', 'status', Product::STATUS_ENABLED],
-                [1, 'text', 'inventory_status', Product::INVENTORY_STATUS_IN_STOCK],
-                [1, 'text', 'title_1', 'Name'],
-                [1, 'text', 'description_1', 'Description Product information'],
-                [1, 'text', 'short_desc_1', 'Short description'],
-                [1, 'text', 'all_text_1', 'Name Description Product information Short description'],
-                [1, 'text', 'title_2', 'Nazwa'],
-                [1, 'text', 'description_2', 'Opis Informacje o produkcie'],
-                [1, 'text', 'short_desc_2', 'Krótki opis'],
-                [1, 'text', 'all_text_2', 'Nazwa Opis Informacje o produkcie Krótki opis']
-            );
-
+        $this->setExpectations();
         $this->listener->onWebsiteSearchIndex($this->event);
+
+        $expected[1] = [
+            'text' => [
+                'sku' => 'sku123',
+                'status' => Product::STATUS_ENABLED,
+                'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
+                'title_1' => 'Name',
+                'description_1' => '<h1>Description</h1>&nbsp;&nbsp;<p>Product information</p>',
+                'short_desc_1' => 'Short description',
+                'all_text_1' => 'Name <h1>Description</h1>&nbsp;&nbsp;<p>Product information</p> Short description',
+                'title_2' => 'Nazwa',
+                'description_2' => '<h1>Opis</h1><p>Informacje o produkcie</p>',
+                'short_desc_2' => 'Krótki opis',
+                'all_text_2' => 'Nazwa <h1>Opis</h1><p>Informacje o produkcie</p> Krótki opis'
+            ]
+        ];
+
+        $this->assertEquals($expected, $this->event->getEntitiesData());
     }
 
     public function testOnWebsiteSearchIndexNotSupportedClass()
     {
-        $this->event->expects($this->once())->method('getEntityClass')->willReturn('stdClass');
-
-        $this->event->expects($this->never())->method('addField');
-
+        $this->event = new IndexEntityEvent(\stdClass::class, [1], []);
         $this->listener->onWebsiteSearchIndex($this->event);
+        $this->assertEquals([], $this->event->getEntitiesData());
     }
 }
