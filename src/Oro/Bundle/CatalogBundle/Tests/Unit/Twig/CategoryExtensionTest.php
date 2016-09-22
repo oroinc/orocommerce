@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Twig;
 
-use Symfony\Bridge\Twig\Tests\Extension\Fixtures\StubTranslator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
