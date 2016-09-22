@@ -2,7 +2,7 @@
 "Role with this name already exists": "Role with this name already exists"
 
 oro:
-    account:
+    customer:
           message:
               password_mismatch: 'The password fields must match.'
           category:

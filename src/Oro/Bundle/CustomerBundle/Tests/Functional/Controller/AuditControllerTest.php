@@ -54,7 +54,7 @@ class AuditControllerTest extends WebTestCase
         $response = $this->client->requestGrid(
             'frontend-audit-history-grid',
             [
-                'frontend-audit-history-grid[object_class]' => 'Oro_Bundle_AccountBundle_Entity_AccountUser',
+                'frontend-audit-history-grid[object_class]' => 'Oro_Bundle_CustomerBundle_Entity_AccountUser',
                 'frontend-audit-history-grid[object_id]'    => $user->getId()
             ]
         );
