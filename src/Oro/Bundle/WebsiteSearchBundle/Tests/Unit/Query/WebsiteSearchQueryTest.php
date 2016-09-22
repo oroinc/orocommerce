@@ -74,7 +74,7 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
         $selectedData = ['foo'];
 
         $this->query->expects($this->at(0))
-            ->method('getSelect')
+            ->method('getSelectDataFields')
             ->willReturn($selectedData);
 
         $this->dispatcher->expects($this->once())
