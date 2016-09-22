@@ -45,6 +45,8 @@ class Category extends ExtendCategory
 {
     use TreeTrait;
 
+    const MATERIALIZED_PATH_DELIMITER = '_';
+
     /**
      * @var integer
      *
@@ -231,6 +233,13 @@ class Category extends ExtendCategory
      * )
      */
     protected $defaultProductOptions;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="materialized_path", type="string", length=255, nullable=true)
+     */
+    protected $materializedPath;
 
     /**
      * Constructor
@@ -531,6 +540,27 @@ class Category extends ExtendCategory
     public function setDefaultProductOptions(CategoryDefaultProductOptions $defaultProductOptions = null)
     {
         $this->defaultProductOptions = $defaultProductOptions;
+
+        return $this;
+    }
+
+    /**
+     *
+     * @return string
+     */
+    public function getMaterializedPath()
+    {
+        return $this->materializedPath;
+    }
+
+    /**
+     * @param string $materializedPath
+     *
+     * @return Category
+     */
+    public function setMaterializedPath($materializedPath)
+    {
+        $this->materializedPath = $materializedPath;
 
         return $this;
     }
