@@ -1,6 +1,6 @@
 #General information.
 
-Configuration data of 'Shipping Origin' is using in UPS bundle as shipper and ship from address, that is why it should be configured on 'Configuration' page:
+Configuration data of 'Shipping Origin' is used in UPS bundle as shipper and ship from address, that is why it should be configured on 'Configuration' page:
 
 ```code
 System -> Configuration -> Commerce -> Shipping -> Shipping Origin
