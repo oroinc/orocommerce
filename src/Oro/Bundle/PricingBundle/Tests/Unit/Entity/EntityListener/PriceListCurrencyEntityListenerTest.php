@@ -43,7 +43,7 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testPrePersist()
+    public function testPostPersist()
     {
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
@@ -64,11 +64,11 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit_Framework_TestCase
                 ['pr_4']
             );
 
-        $this->listener->prePersist($priceListCurrency);
+        $this->listener->postPersist($priceListCurrency);
         $this->assertFalse($priceList->isActual());
     }
 
-    public function testPrePersistWithoutRules()
+    public function testPostPersistWithoutRules()
     {
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 42]);
@@ -77,7 +77,7 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->priceListTriggerHandler->expects($this->never())
             ->method('addTriggerForPriceList');
-        $this->listener->prePersist($priceListCurrency);
+        $this->listener->postPersist($priceListCurrency);
         $this->assertTrue($priceList->isActual());
     }
 

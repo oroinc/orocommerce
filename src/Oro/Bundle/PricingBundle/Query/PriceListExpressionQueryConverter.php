@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Query;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\GroupingOrmQueryConverter;
@@ -38,11 +39,11 @@ class PriceListExpressionQueryConverter extends GroupingOrmQueryConverter
         $this->qb = $this->doctrine->getManagerForClass($source->getEntity())->createQueryBuilder();
         $this->doConvert($source);
 
-        if (!empty($definition['prices'])) {
-            $this->joinPriceListPrices($definition['prices']);
-        }
         if (!empty($definition['price_lists'])) {
             $this->joinPriceLists($definition['price_lists']);
+        }
+        if (!empty($definition['prices'])) {
+            $this->joinPriceListPrices($definition['prices']);
         }
 
         return $this->qb;
@@ -53,24 +54,35 @@ class PriceListExpressionQueryConverter extends GroupingOrmQueryConverter
      */
     protected function joinPriceLists(array $priceLists)
     {
-        // Price list are joined through prices, join not joined prices
-        $this->joinPriceListPrices($priceLists);
-
+        $aliases = $this->qb->getRootAliases();
+        $rootAlias = reset($aliases);
         foreach ($priceLists as $priceListId) {
-            $columnAlias = PriceList::class . '|' . $priceListId;
+            $columnAlias = $this->getPriceListTableKeyByPriceListId($priceListId);
             if (empty($this->tableAliasByColumn[$columnAlias])) {
-                $priceListId = (int)$priceListId;
+                $priceListToProductTableAlias = $this->generateTableAlias();
 
-                $priceTableAlias = $this->tableAliasByColumn[$this->getPriceTableKeyByPriceListId($priceListId)];
+                $priceListParameter = ':priceList' . $priceListId;
+                $assignedProductJoin = $this->qb->expr()->andX(
+                    $this->qb->expr()->eq($priceListToProductTableAlias . '.priceList', $priceListParameter),
+                    $this->qb->expr()->eq($priceListToProductTableAlias . '.product', $rootAlias)
+                );
+                $this->qb->setParameter($priceListParameter, $priceListId);
+                $this->addJoinStatement(
+                    self::LEFT_JOIN,
+                    PriceListToProduct::class,
+                    $priceListToProductTableAlias,
+                    self::CONDITIONAL_JOIN,
+                    $assignedProductJoin
+                );
+
                 $priceListTableAlias = $this->generateTableAlias();
-                $joinCondition = $this->qb->expr()->eq($priceTableAlias . '.priceList', $priceListTableAlias);
-
                 $this->addJoinStatement(
                     self::LEFT_JOIN,
                     PriceList::class,
                     $priceListTableAlias,
                     self::CONDITIONAL_JOIN,
-                    $joinCondition
+                    $this->qb->expr()
+                        ->eq($priceListToProductTableAlias . '.priceList', $priceListTableAlias)
                 );
                 $this->tableAliasByColumn[$columnAlias] = $priceListTableAlias;
             }
@@ -82,20 +94,22 @@ class PriceListExpressionQueryConverter extends GroupingOrmQueryConverter
      */
     protected function joinPriceListPrices(array $priceLists)
     {
+        $this->joinPriceLists($priceLists);
+
         $aliases = $this->qb->getRootAliases();
         $rootAlias = reset($aliases);
         foreach ($priceLists as $priceListId) {
             $columnAlias = $this->getPriceTableKeyByPriceListId($priceListId);
             if (empty($this->tableAliasByColumn[$columnAlias])) {
                 $priceListId = (int)$priceListId;
+                $priceListTableKey =  $this->getPriceListTableKeyByPriceListId($priceListId);
+                $priceListTableAlias = $this->tableAliasByColumn[$priceListTableKey];
 
                 $priceTableAlias = $this->generateTableAlias();
-                $priceListParameter = ':priceList' . $priceListId;
                 $joinCondition = $this->qb->expr()->andX(
                     $this->qb->expr()->eq($priceTableAlias . '.product', $rootAlias),
-                    $this->qb->expr()->eq($priceTableAlias . '.priceList', $priceListParameter)
+                    $this->qb->expr()->eq($priceTableAlias . '.priceList', $priceListTableAlias)
                 );
-                $this->qb->setParameter($priceListParameter, $priceListId);
 
                 $this->addJoinStatement(
                     self::LEFT_JOIN,
@@ -116,6 +130,15 @@ class PriceListExpressionQueryConverter extends GroupingOrmQueryConverter
     protected function getPriceTableKeyByPriceListId($priceListId)
     {
         return PriceList::class . '::prices|' . $priceListId;
+    }
+
+    /**
+     * @param int $priceListId
+     * @return string
+     */
+    protected function getPriceListTableKeyByPriceListId($priceListId)
+    {
+        return PriceList::class . '|' . $priceListId;
     }
 
     /**
