@@ -16,7 +16,19 @@
         {% set attr = layout_attr_defaults(attr, {
             '~class': " topbar__navigation topbar__navigation--has-sibling"
         }) %}
-        <nav {{ block('block_attributes') }}>
+        {% set move_options =  {
+            responsive: [
+            {
+                breakpoint: 1024,
+                moveTo: '.quick-access__list'
+            }
+            ]}|json_encode
+        %}
+
+        <nav {{ block('block_attributes') }}
+                data-move-block
+                data-move-options="{{ move_options }}"
+        >
             {{ block_widget(block) }}
         </nav>
     {% endspaceless %}
@@ -36,8 +48,24 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': " col-md-5 col-sm-5"
     }) %}
+    {% set move_options =  {
+        responsive: [
+            {
+                breakpoint: 1400,
+                moveTo: '.header-row__toggle'
+            },
+            {
+                breakpoint: 1300,
+                MoveTo: '.middlebar'
+            }
+        ]}|json_encode
+    %}
+
     <div {{ block('block_attributes') }}>
-        <nav class="topbar__navigation">
+        <nav class="topbar__navigation"
+             data-move-block
+             data-move-options="{{ move_options }}"
+        >
             <ul>
                 {{ block_widget(block) }}
             </ul>

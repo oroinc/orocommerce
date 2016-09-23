@@ -48,19 +48,7 @@
 
 {% block _main_menu_container_widget %}
     {% set attr =  layout_attr_defaults(attr, {
-        '~class': ' main-menu',
-        '~data-move-blocks': {
-            responsive: [
-                {
-                    breakpoint: 1024,
-                    placeholderId: 'sticky-header-row'
-                },
-                {
-                    breakpoint: 640,
-                    placeholderId: 'sticky-header-row'
-                }
-            ]
-        }
+        '~class': ' main-menu'
     }) %}
 
     <ul {{ block('block_attributes') }}>
