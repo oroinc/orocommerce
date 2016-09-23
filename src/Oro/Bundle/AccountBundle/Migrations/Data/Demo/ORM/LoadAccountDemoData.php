@@ -43,8 +43,8 @@ class LoadAccountDemoData extends AbstractEntityReferenceFixture implements Depe
     public function getDependencies()
     {
         return [
-            __NAMESPACE__ . '\LoadAccountInternalRatingDemoData',
-            __NAMESPACE__ . '\LoadAccountGroupDemoData',
+            LoadAccountInternalRatingDemoData::class,
+            LoadAccountGroupDemoData::class,
         ];
     }
 
