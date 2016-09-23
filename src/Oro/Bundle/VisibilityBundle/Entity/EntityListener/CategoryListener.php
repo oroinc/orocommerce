@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Entity\EntityListener;
+namespace Oro\Bundle\VisibilityBundle\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CatalogBundle\Entity\Category;

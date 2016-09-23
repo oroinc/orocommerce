@@ -58,7 +58,7 @@ class FormViewListener
         $category = $this->doctrineHelper->getEntityReference('OroCatalogBundle:Category', $categoryId);
         if ($category) {
             $template = $event->getEnvironment()->render(
-                'OroAccountBundle:Category:account_category_visibility_edit.html.twig',
+                'OroVisibilityBundle:Category:account_category_visibility_edit.html.twig',
                 [
                     'entity' => $category,
                     'form' => $event->getFormView(),

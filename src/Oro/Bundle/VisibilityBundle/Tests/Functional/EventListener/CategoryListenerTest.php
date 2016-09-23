@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\EventListener;
+namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;

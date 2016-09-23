@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyAccess;

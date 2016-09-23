@@ -220,15 +220,6 @@ services:
         class: 'Oro\Bundle\AccountBundle\Form\Handler\AccountUserPasswordResetHandler'
         parent: oro_account.account_user.password.handler.abstract
 
-    oro_account.event_listener.form_view:
-        class: 'Oro\Bundle\AccountBundle\Form\EventListener\FormViewListener'
-        arguments:
-            - "@translator"
-            - "@oro_entity.doctrine_helper"
-            - "@request_stack"
-        tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
-
     oro_account.acl.voter.account_user_role:
         class: 'Oro\Bundle\AccountBundle\Acl\Voter\AccountUserRoleVoter'
         public: false
@@ -457,15 +448,6 @@ services:
             - [objectClass, objectId]
         tags:
           - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-audit-history-grid, method: onBuildAfter }
-
-    oro_account.entity.entity_listener.category_listener:
-        class: 'Oro\Bundle\AccountBundle\Entity\EntityListener\CategoryListener'
-        public: false
-        arguments:
-            - "@oro_catalog.model.category_message_handler"
-        tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: postRemove }
 
     oro_account.event_listener.category_listener:
         class: 'Oro\Bundle\AccountBundle\EventListener\CategoryListener'
