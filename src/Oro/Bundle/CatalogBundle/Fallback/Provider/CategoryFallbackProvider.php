@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Fallback\Provider;
+namespace Oro\Bundle\CatalogBundle\Fallback\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -38,5 +38,21 @@ class CategoryFallbackProvider extends AbstractEntityFallbackProvider
         $categoryRepo = $this->doctrineHelper->getEntityRepository(Category::class);
 
         return $categoryRepo->findOneByProduct($object);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isFallbackSupported($object, $objectFieldName)
+    {
+        return $object instanceof Product;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFallbackLabel()
+    {
+        return 'oro.catalog.fallback.category.label';
     }
 }

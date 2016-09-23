@@ -1,17 +1,17 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\EventListener\CategoryManageInventoryFormViewListener;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\WarehouseBundle\EventListener\CategoryWarehouseFormViewListener;
 
-class CategoryWarehouseFormViewListenerTest extends FormViewListenerTestCase
+class CategoryManageInventoryFormViewListenerTest extends FormViewListenerTestCase
 {
     /**
      * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
@@ -24,9 +24,9 @@ class CategoryWarehouseFormViewListenerTest extends FormViewListenerTestCase
     protected $request;
 
     /**
-     * @var CategoryWarehouseFormViewListener
+     * @var CategoryManageInventoryFormViewListener
      */
-    protected $categoryWarehouseFormViewListener;
+    protected $categoryFormViewListener;
 
     /** @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject * */
     protected $event;
@@ -37,7 +37,7 @@ class CategoryWarehouseFormViewListenerTest extends FormViewListenerTestCase
         $this->requestStack = $this->getMock(RequestStack::class);
         $this->request = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
-        $this->categoryWarehouseFormViewListener = new CategoryWarehouseFormViewListener(
+        $this->categoryFormViewListener = new CategoryManageInventoryFormViewListener(
             $this->requestStack,
             $this->doctrineHelper,
             $this->translator
@@ -48,14 +48,14 @@ class CategoryWarehouseFormViewListenerTest extends FormViewListenerTestCase
     public function testOnCategoryEditIgnoredIfNoCategoryId()
     {
         $this->doctrineHelper->expects($this->never())->method('getEntityReference');
-        $this->categoryWarehouseFormViewListener->onCategoryEdit($this->event);
+        $this->categoryFormViewListener->onCategoryEdit($this->event);
     }
 
     public function testOnCategoryEditIgnoredIfNoCategoryFound()
     {
         $this->doctrineHelper->expects($this->once())->method('getEntityReference');
         $this->request->expects($this->once())->method('get')->willReturn('1');
-        $this->categoryWarehouseFormViewListener->onCategoryEdit($this->event);
+        $this->categoryFormViewListener->onCategoryEdit($this->event);
     }
 
     public function testCategoryEditRendersAndAddsSubBlock()
@@ -72,6 +72,6 @@ class CategoryWarehouseFormViewListenerTest extends FormViewListenerTestCase
         $scrollData->expects($this->once())->method('getData')->willReturn(
             ['dataBlocks' => [1 => ['title' => 'oro.catalog.sections.default_options.trans']]]
         );
-        $this->categoryWarehouseFormViewListener->onCategoryEdit($this->event);
+        $this->categoryFormViewListener->onCategoryEdit($this->event);
     }
 }

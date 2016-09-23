@@ -83,11 +83,6 @@ oro:
                 enabled_warehouses.label: Enabled Warehouses
                 manage_inventory.label: Managed Inventory
 
-        fallback:
-            category: Category Defaults
-            systemConfig: System Config
-            parentCategory: Parent Category
-
         manage_inventory:
             label: Managed Inventory
             choice:
@@ -100,10 +95,6 @@ oro:
                 label: Warehouse
         warehouse:
             label: Warehouse
-
-    catalog:
-        category:
-            manage_inventory.label: 'Managed Inventory'
 
     product:
         manage_inventory.label: 'Managed Inventory'

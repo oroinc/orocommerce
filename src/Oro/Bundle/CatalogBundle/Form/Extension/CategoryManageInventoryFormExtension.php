@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Form\Extension;
+namespace Oro\Bundle\CatalogBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 
-class WarehouseCategoryTypeFormExtension extends AbstractTypeExtension
+class CategoryManageInventoryFormExtension extends AbstractTypeExtension
 {
     /**
      * {@inheritdoc}
@@ -27,8 +27,7 @@ class WarehouseCategoryTypeFormExtension extends AbstractTypeExtension
             'manageInventory',
             EntityFieldFallbackValueType::NAME,
             [
-                'label' => 'oro.warehouse.manage_inventory.label',
-                'fallback_translation_prefix' => 'oro.warehouse.fallback',
+                'label' => 'oro.catalog.category.manage_inventory.label',
             ]
         );
     }

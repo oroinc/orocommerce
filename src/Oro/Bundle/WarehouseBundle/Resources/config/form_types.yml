@@ -46,12 +46,7 @@ services:
         tags:
             - { name: form.type, alias: oro_warehouse_collection }
 
-    oro_warehouse.form.type.extension.warehouse_product_type_extension:
-        class: Oro\Bundle\WarehouseBundle\Form\Extension\WarehouseProductTypeFormExtension
+    oro_warehouse.form.type.extension.product_manage_inventory_extension:
+        class: Oro\Bundle\WarehouseBundle\Form\Extension\ProductManageInventoryFormExtension
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
-
-    oro_warehouse.form.type.extension.warehouse_category_type_extension:
-        class: Oro\Bundle\WarehouseBundle\Form\Extension\WarehouseCategoryTypeFormExtension
-        tags:
-            - { name: form.type_extension, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }

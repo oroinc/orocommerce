@@ -42,3 +42,8 @@ services:
         public: true
         tags:
             - { name: form.type_extension, alias: oro_product_step_one }
+
+    oro_catalog.form.type.extension.category_manage_inventory_type_extension:
+        class: Oro\Bundle\CatalogBundle\Form\Extension\CategoryManageInventoryFormExtension
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }

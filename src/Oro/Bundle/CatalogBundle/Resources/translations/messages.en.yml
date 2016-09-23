@@ -22,6 +22,7 @@ oro:
             unit_precision.label:        'Unit Precision'
             unit.label:                  'Unit of Quantity'
             precision.label:             'Precision'
+            manage_inventory.label:      'Managed Inventory'
 
         sections:
             general: 'General'
@@ -55,3 +56,7 @@ oro:
         featured_categories:
             view:
                 items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
+
+        fallback:
+            category.label: 'Category Defaults'
+            parent_category.label: 'Parent Category'

@@ -4,6 +4,7 @@ namespace Oro\Bundle\WarehouseBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
@@ -12,8 +13,6 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
-use Oro\Bundle\WarehouseBundle\Fallback\Provider\CategoryFallbackProvider;
-use Oro\Bundle\WarehouseBundle\Fallback\Provider\ParentCategoryFallbackProvider;
 
 class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInterface, ExtendExtensionAwareInterface
 {
@@ -60,7 +59,6 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
 
         /** Extended fields **/
         $this->addWarehouseRelations($schema);
-        $this->addManageInventoryFieldToCategory($schema);
         $this->addManageInventoryFieldToProduct($schema);
     }
 
@@ -202,40 +200,6 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
     /**
      * @param Schema $schema
      */
-    protected function addManageInventoryFieldToCategory(Schema $schema)
-    {
-        $categoryTable = $schema->getTable('oro_catalog_category');
-        $fallbackTable = $schema->getTable('oro_entity_fallback_value');
-        $this->extendExtension->addManyToOneRelation(
-            $schema,
-            $categoryTable,
-            'manageInventory',
-            $fallbackTable,
-            'id',
-            [
-                'extend' => [
-                    'owner' => ExtendScope::OWNER_CUSTOM,
-                    'cascade' => ['all'],
-                ],
-                'form' => [
-                    'is_enabled' => false,
-                ],
-                'view' => [
-                    'is_displayable' => false,
-                ],
-                'fallback' => [
-                    'fallbackList' => [
-                        SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_warehouse.manage_inventory'],
-                        ParentCategoryFallbackProvider::ID => ['fieldName' => 'manageInventory'],
-                    ],
-                ],
-            ]
-        );
-    }
-
-    /**
-     * @param Schema $schema
-     */
     protected function addManageInventoryFieldToProduct(Schema $schema)
     {
         $productTable = $schema->getTable('oro_product');
@@ -259,8 +223,8 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
                 ],
                 'fallback' => [
                     'fallbackList' => [
-                        SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_warehouse.manage_inventory'],
                         CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageInventory'],
+                        SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_warehouse.manage_inventory'],
                     ],
                 ],
             ]

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\EventListener;
+namespace Oro\Bundle\CatalogBundle\EventListener;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -9,7 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
-class CategoryWarehouseFormViewListener
+class CategoryManageInventoryFormViewListener
 {
     /**
      * @var RequestStack

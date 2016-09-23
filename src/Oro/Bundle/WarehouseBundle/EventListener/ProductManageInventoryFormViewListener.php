@@ -8,7 +8,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class ProductWarehouseFormViewListener
+class ProductManageInventoryFormViewListener
 {
     /**
      * @var RequestStack

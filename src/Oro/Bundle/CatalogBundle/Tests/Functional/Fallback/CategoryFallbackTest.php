@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Functional\Fallback;
+namespace Oro\Bundle\CatalogBundle\Tests\Functional\Fallback;
 
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -29,22 +29,22 @@ class CategoryFallbackTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
         $manageInventoryValue = $crawler->filterXPath(self::VIEW_MANAGED_INVENTORY_XPATH)->html();
-        $this->assertEquals('N/A', $manageInventoryValue);
+        $this->assertEquals('No', $manageInventoryValue);
     }
 
     /**
-     * @param mixed $viewValue
+     * @param mixed $ownValue
      * @param bool $useFallbackValue
      * @param mixed $fallbackValue
      * @param string $expectedValue
      *
      * @dataProvider productWithNoFallbackProvider
      */
-    public function testProductWithNoFallback($viewValue, $useFallbackValue, $fallbackValue, $expectedValue)
+    public function testProductWithNoFallback($ownValue, $useFallbackValue, $fallbackValue, $expectedValue)
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $crawler = $this->setProductManageInventoryField($product, $viewValue, $useFallbackValue, $fallbackValue);
+        $crawler = $this->setProductManageInventoryField($product, $ownValue, $useFallbackValue, $fallbackValue);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertProductManageInventoryValue($crawler, $expectedValue);
@@ -62,7 +62,7 @@ class CategoryFallbackTest extends WebTestCase
     }
 
     /**
-     * @param string $categoryViewValue
+     * @param string $categoryOwnValue
      * @param bool $categoryUseFallbackValue
      * @param mixed $categoryFallbackValue
      * @param string $expectedProductValue
@@ -71,7 +71,7 @@ class CategoryFallbackTest extends WebTestCase
      * @dataProvider productCategoryFallbackProvider
      */
     public function testProductCategoryFallback(
-        $categoryViewValue,
+        $categoryOwnValue,
         $categoryUseFallbackValue,
         $categoryFallbackValue,
         $expectedProductValue,
@@ -81,7 +81,7 @@ class CategoryFallbackTest extends WebTestCase
         if ($updateProduct) {
             $this->setProductManageInventoryField($product, null, true, 'category');
         }
-        $this->setCategoryManageInventoryField($categoryViewValue, $categoryUseFallbackValue, $categoryFallbackValue);
+        $this->setCategoryManageInventoryField($categoryOwnValue, $categoryUseFallbackValue, $categoryFallbackValue);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
         $this->assertProductManageInventoryValue($crawler, $expectedProductValue);
@@ -149,12 +149,12 @@ class CategoryFallbackTest extends WebTestCase
     }
 
     /**
-     * @param mixed $viewValue
+     * @param mixed $ownValue
      * @param bool $useFallbackValue
      * @param mixed $fallbackValue
      * @return null|Crawler
      */
-    protected function setCategoryManageInventoryField($viewValue, $useFallbackValue, $fallbackValue)
+    protected function setCategoryManageInventoryField($ownValue, $useFallbackValue, $fallbackValue)
     {
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
         $crawler = $this->client->request(
@@ -164,14 +164,18 @@ class CategoryFallbackTest extends WebTestCase
 
         $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getPhpValues();
-        if (!is_null($viewValue)) {
-            $formValues['oro_catalog_category']['manageInventory']['viewValue'] = $viewValue;
+        if (is_null($ownValue)) {
+            unset($formValues['oro_catalog_category']['manageInventory']['scalarValue']);
+        } else {
+            $formValues['oro_catalog_category']['manageInventory']['scalarValue'] = $ownValue;
         }
 
         if (!is_null($useFallbackValue)) {
             $formValues['oro_catalog_category']['manageInventory']['useFallback'] = $useFallbackValue;
         }
-        if (!is_null($fallbackValue)) {
+        if (is_null($fallbackValue)) {
+            unset($formValues['oro_catalog_category']['manageInventory']['fallback']);
+        } else {
             $formValues['oro_catalog_category']['manageInventory']['fallback'] = $fallbackValue;
         }
 
@@ -185,24 +189,28 @@ class CategoryFallbackTest extends WebTestCase
 
     /**
      * @param Product $product
-     * @param mixed $viewValue
+     * @param mixed $ownValue
      * @param bool $useFallbackValue
      * @param mixed $fallbackValue
      * @return Crawler
      */
-    protected function setProductManageInventoryField($product, $viewValue, $useFallbackValue, $fallbackValue)
+    protected function setProductManageInventoryField($product, $ownValue, $useFallbackValue, $fallbackValue)
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
 
         $form = $crawler->selectButton('Save and Close')->form();
         $form['input_action'] = 'save_and_close';
-        if (!is_null($viewValue)) {
-            $form['oro_product[manageInventory][viewValue]'] = $viewValue;
+        if (is_null($ownValue)) {
+            unset($form['oro_product[manageInventory][scalarValue]']);
+        } else {
+            $form['oro_product[manageInventory][scalarValue]'] = $ownValue;
         }
         if (!is_null($useFallbackValue)) {
             $form['oro_product[manageInventory][useFallback]'] = $useFallbackValue;
         }
-        if ($fallbackValue) {
+        if (is_null($fallbackValue)) {
+            unset($form['oro_product[manageInventory][fallback]']);
+        } else {
             $form['oro_product[manageInventory][fallback]'] = $fallbackValue;
         }
 

@@ -1,16 +1,16 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Migrations\Schema\v1_2;
+namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
 
 class AddManageInventoryFields implements Migration, ExtendExtensionAwareInterface
 {
@@ -31,19 +31,19 @@ class AddManageInventoryFields implements Migration, ExtendExtensionAwareInterfa
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->addManageInventoryFieldToProduct($schema);
+        $this->addManageInventoryFieldToCategory($schema);
     }
 
     /**
      * @param Schema $schema
      */
-    protected function addManageInventoryFieldToProduct(Schema $schema)
+    protected function addManageInventoryFieldToCategory(Schema $schema)
     {
-        $productTable = $schema->getTable('oro_product');
+        $categoryTable = $schema->getTable('oro_catalog_category');
         $fallbackTable = $schema->getTable('oro_entity_fallback_value');
         $this->extendExtension->addManyToOneRelation(
             $schema,
-            $productTable,
+            $categoryTable,
             'manageInventory',
             $fallbackTable,
             'id',
@@ -60,7 +60,7 @@ class AddManageInventoryFields implements Migration, ExtendExtensionAwareInterfa
                 ],
                 'fallback' => [
                     'fallbackList' => [
-                        CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageInventory'],
+                        ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageInventory'],
                         SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_warehouse.manage_inventory'],
                     ],
                 ],

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Fallback\Provider;
+namespace Oro\Bundle\CatalogBundle\Fallback\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\Exception\Fallback\InvalidFallbackArgumentException;
@@ -8,7 +8,7 @@ use Oro\Bundle\EntityBundle\Fallback\Provider\AbstractEntityFallbackProvider;
 
 class ParentCategoryFallbackProvider extends AbstractEntityFallbackProvider
 {
-    const ID = 'parentCategory';
+    const FALLBACK_ID = 'parentCategory';
 
     /**
      * {@inheritdoc}
@@ -32,5 +32,13 @@ class ParentCategoryFallbackProvider extends AbstractEntityFallbackProvider
         }
 
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFallbackLabel()
+    {
+        return 'oro.catalog.fallback.parent_category.label';
     }
 }
