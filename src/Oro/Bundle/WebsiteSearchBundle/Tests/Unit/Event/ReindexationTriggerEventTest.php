@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Event;
 
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
-class ReindexationTriggerEventTest extends \PHPUnit_Framework_TestCase
+class ReindexationRequestEventTest extends \PHPUnit_Framework_TestCase
 {
     public function testInitialization()
     {
-        $reindexationEvent = new ReindexationTriggerEvent(
+        $reindexationEvent = new ReindexationRequestEvent(
             self::class,
             1024,
             [1, 2, 3],

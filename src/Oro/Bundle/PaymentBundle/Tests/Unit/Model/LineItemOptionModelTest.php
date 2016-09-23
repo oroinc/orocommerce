@@ -25,11 +25,8 @@ class LineItemOptionModelTest extends \PHPUnit_Framework_TestCase
     {
         $optionModel = new LineItemOptionModel();
 
-        $name = str_repeat('long_name', 10);
-        $description = str_repeat('long_description', 10);
-
-        $this->assertGreaterThan(36, strlen($name));
-        $this->assertGreaterThan(35, strlen($description));
+        $name = str_repeat('n', 37);
+        $description = str_repeat('d', 36);
 
         $optionModel->setName($name);
         $optionModel->setDescription($description);

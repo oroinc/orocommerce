@@ -7,12 +7,12 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 /**
  * @dbIsolation
  */
-class WebsiteCrudReindexationTriggeringListenerTest extends WebTestCase
+class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
 {
     /**
      * @var EntityManager
@@ -34,13 +34,16 @@ class WebsiteCrudReindexationTriggeringListenerTest extends WebTestCase
         $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
 
         /**
-         * @var ReindexationTriggerEvent $triggeredEvent
+         * @var ReindexationRequestEvent $triggeredEvent
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function (ReindexationTriggerEvent $event) use (& $triggeredEvent) {
-            $triggeredEvent = $event;
-        });
+        $eventDispatcher->addListener(
+            ReindexationRequestEvent::EVENT_NAME,
+            function (ReindexationRequestEvent $event) use (& $triggeredEvent) {
+                $triggeredEvent = $event;
+            }
+        );
 
         $website = $this->createWebsite();
 
@@ -56,15 +59,18 @@ class WebsiteCrudReindexationTriggeringListenerTest extends WebTestCase
         $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
 
         /**
-         * @var ReindexationTriggerEvent $triggeredEvent
+         * @var ReindexationRequestEvent $triggeredEvent
          */
         $triggeredEvent = null;
 
         $website = $this->createWebsite();
 
-        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function (ReindexationTriggerEvent $event) use (& $triggeredEvent) {
-            $triggeredEvent = $event;
-        });
+        $eventDispatcher->addListener(
+            ReindexationRequestEvent::EVENT_NAME,
+            function (ReindexationRequestEvent $event) use (& $triggeredEvent) {
+                $triggeredEvent = $event;
+            }
+        );
 
         $this->assertNull($triggeredEvent);
 
@@ -72,6 +78,35 @@ class WebsiteCrudReindexationTriggeringListenerTest extends WebTestCase
 
         $this->assertNotNull($triggeredEvent);
         $this->assertEquals($website->getId(), $triggeredEvent->getWebsiteId());
+    }
+
+    public function testDoesNotTriggersEventWhenWebsiteIsUpdated()
+    {
+        /**
+         * @var EventDispatcher $eventDispatcher
+         */
+        $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
+
+        /**
+         * @var ReindexationRequestEvent $triggeredEvent
+         */
+        $triggeredEvent = null;
+
+        $website = $this->createWebsite();
+
+        $eventDispatcher->addListener(
+            ReindexationRequestEvent::EVENT_NAME,
+            function (ReindexationRequestEvent $event) use (& $triggeredEvent) {
+                $triggeredEvent = $event;
+            }
+        );
+
+        $website->setName('updated_'.$website->getName());
+
+        $this->entityManager->persist($website);
+        $this->entityManager->flush();
+
+        $this->assertNull($triggeredEvent);
     }
 
     private function createWebsite()

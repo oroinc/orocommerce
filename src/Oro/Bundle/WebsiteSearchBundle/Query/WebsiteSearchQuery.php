@@ -4,9 +4,9 @@ namespace Oro\Bundle\WebsiteSearchBundle\Query;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Bundle\SearchBundle\Query\AbstractSearchQuery;
 use Oro\Bundle\WebsiteSearchBundle\Event\SelectDataFromSearchIndexEvent;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
-use Oro\Bundle\SearchBundle\Extension\AbstractSearchQuery;
 use Oro\Bundle\SearchBundle\Query\Query;
 
 class WebsiteSearchQuery extends AbstractSearchQuery
@@ -40,7 +40,7 @@ class WebsiteSearchQuery extends AbstractSearchQuery
         // EVENT: allow additional fields to be selected
         // by custom bundles
         $event = new SelectDataFromSearchIndexEvent(
-            $this->query->getSelect()
+            $this->query->getSelectDataFields()
         );
         $this->dispatcher->dispatch(SelectDataFromSearchIndexEvent::EVENT_NAME, $event);
         $this->query->select($event->getSelectedData());

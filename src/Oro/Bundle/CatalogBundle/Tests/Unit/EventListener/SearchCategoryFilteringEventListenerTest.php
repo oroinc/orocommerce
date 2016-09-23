@@ -4,6 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
+use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -13,7 +15,6 @@ use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\ImapBundle\Connector\Search\SearchQuery;
-use Oro\Bundle\SearchBundle\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 
@@ -162,6 +163,12 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         $websiteSearchQuery->method('getQuery')
             ->will($this->returnValue($query));
 
+        $expr = Criteria::expr()->eq('cat_id', $categoryId);
+
+        $websiteSearchQuery->expects($this->once())
+            ->method('addWhere')
+            ->with($expr);
+
         $dataGrid = $this->getMock(DatagridInterface::class);
 
         $event->method('getDatagrid')
@@ -170,12 +177,8 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         $dataGrid->method('getDatasource')
             ->willReturn($datasource);
 
-        $datasource->method('getQuery')
+        $datasource->method('getSearchQuery')
             ->willReturn($websiteSearchQuery);
-
-        $query->expects($this->once())
-            ->method('andWhere')
-            ->with('cat_id', Query::OPERATOR_EQUALS, $categoryId, 'integer');
 
         $listener->setConfig($this->config);
         $listener->onBuildAfter($event);
@@ -237,8 +240,14 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->disableOriginalConstructor()
             ->getMock();
 
-        $websiteSearchQuery->method('getQuery')
-            ->will($this->returnValue($query));
+        $categories   = $subcategoryIds;
+        $categories[] = $categoryId;
+
+        $expr = Criteria::expr()->contains('cat_id', $categories);
+
+        $websiteSearchQuery->expects($this->once())
+            ->method('addWhere')
+            ->with($expr);
 
         $dataGrid = $this->getMock(DatagridInterface::class);
 
@@ -248,15 +257,11 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         $dataGrid->method('getDatasource')
             ->willReturn($datasource);
 
-        $datasource->method('getQuery')
+        $websiteSearchQuery->method('getQuery')
+            ->will($this->returnValue($query));
+
+        $datasource->method('getSearchQuery')
             ->willReturn($websiteSearchQuery);
-
-        $categories   = $subcategoryIds;
-        $categories[] = $categoryId;
-
-        $query->expects($this->once())
-            ->method('andWhere')
-            ->with('cat_id', Query::OPERATOR_IN, $categories, 'integer');
 
         $listener->setConfig($this->config);
         $listener->onBuildAfter($event);

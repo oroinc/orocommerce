@@ -6,14 +6,14 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 /**
  * This listener listens for creation and deletion of Website entity
  * and triggers event telling that indexes with this website should be
  * created or deleted.
  */
-class WebsiteCrudReindexationTriggeringListener
+class WebsiteReindexationOnCreateDeleteListener
 {
     /**
      * @var EventDispatcherInterface
@@ -33,7 +33,7 @@ class WebsiteCrudReindexationTriggeringListener
      */
     public function postPersist(Website $website)
     {
-        $this->dispatchReindexationTriggeringEvent($website);
+        $this->dispatchReindexationRequestEvent($website);
     }
 
     /**
@@ -41,16 +41,16 @@ class WebsiteCrudReindexationTriggeringListener
      */
     public function preRemove(Website $website)
     {
-        $this->dispatchReindexationTriggeringEvent($website);
+        $this->dispatchReindexationRequestEvent($website);
     }
 
     /**
      * @param Website $website
      */
-    protected function dispatchReindexationTriggeringEvent(Website $website)
+    protected function dispatchReindexationRequestEvent(Website $website)
     {
-        $event = new ReindexationTriggerEvent(null, $website->getId());
+        $event = new ReindexationRequestEvent(null, $website->getId());
 
-        $this->dispatcher->dispatch(ReindexationTriggerEvent::EVENT_NAME, $event);
+        $this->dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
     }
 }
