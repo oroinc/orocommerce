@@ -188,7 +188,7 @@ define(function(require) {
 
             $popupPanelQty.val(1);
             
-            if (selectedShoppingList && selectedShoppingList.line_items.length) {
+            if (selectedShoppingList && selectedShoppingList.line_items) {
                 $popupPanelQty.val(selectedShoppingList.line_items[0].quantity);
                 this.setSelectedUnit(selectedShoppingList.line_items[0].unit);
             }
@@ -201,7 +201,7 @@ define(function(require) {
 
             $popupPanelQty.val(1);
 
-            if (selectedShoppingList && selectedShoppingList.line_items.length) {
+            if (selectedShoppingList && selectedShoppingList.line_items) {
                 var selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
 
                 if(selectedLineItem && selectedLineItem.quantity) {
@@ -215,35 +215,53 @@ define(function(require) {
             var selectedShoppingList = this.getSelectedShoppingList();
             var selectedUnit = this.getSelectedUnit();
 
-            if (selectedShoppingList && selectedShoppingList.line_items.length) {
+            if (!selectedShoppingList) {
+                return false;
+            }
+            
+            if (selectedShoppingList.line_items) {
                 var selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
 
-                if(selectedLineItem) {
-                    var updateApiAccessor = new ApiAccessor({
-                        route: 'oro_api_shopping_list_frontend_put_line_item',
-                        http_method: 'PUT',
-                        default_route_parameters: {
-                            id: selectedLineItem.line_item_id
-                        }
-                    });
-
-                    var modelData = {
-                        quantity: parseInt($popupPanelQty.val(), 10),
-                        unit: selectedLineItem.unit
-                    };
-                    
-                    var updatePromise = updateApiAccessor.send(modelData, {oro_product_frontend_line_item: modelData}, {}, {
-                        processingMessage: __('oro.form.inlineEditing.saving_progress'),
-                        preventWindowUnload: __('oro.form.inlineEditing.inline_edits')
-                    });
-
-                    updatePromise.done(_.bind(this.onLineItemUpdate, this, {
-                        shoppingListId: selectedShoppingList.shopping_list_id,
-                        lineItemId: selectedLineItem.line_item_id,
-                        value: modelData
-                    }));
+                if (selectedLineItem) {
+                    this.updateLineItem(selectedLineItem, selectedShoppingList.shopping_list_id, parseInt($popupPanelQty.val(), 10));
+                }
+                else {
+                    this.saveLineItem(selectedShoppingList.shopping_list_id, this.getSelectedUnit(), parseInt($popupPanelQty.val(), 10));
                 }
             }
+            else {
+                this.saveLineItem(selectedShoppingList.shopping_list_id, this.getSelectedUnit(), parseInt($popupPanelQty.val(), 10));
+            }
+        },
+
+        onSaveError: function(jqXHR) {
+            var errorCode = 'responseJSON' in jqXHR ? jqXHR.responseJSON.code : jqXHR.status;
+
+            this.restoreSavedState();
+
+            var errors = [];
+            switch (errorCode) {
+                case 400:
+                    var jqXHRerrors = jqXHR.responseJSON.errors.children;
+                    for (var i in jqXHRerrors) {
+                        if (jqXHRerrors.hasOwnProperty(i) && jqXHRerrors[i].errors) {
+                            errors.push.apply(errors, _.values(jqXHRerrors[i].errors));
+                        }
+                    }
+                    if (!errors.length) {
+                        errors.push(__('oro.ui.unexpected_error'));
+                    }
+                    break;
+                case 403:
+                    errors.push(__('You do not have permission to perform this action.'));
+                    break;
+                default:
+                    errors.push(__('oro.ui.unexpected_error'));
+            }
+
+            _.each(errors, function(value) {
+                mediator.execute('showFlashMessage', 'error', value);
+            });
         },
 
         updateShoppingLists: function(shoppingLists, shoppingListId, lineItemId, newLineItem) {
@@ -253,6 +271,64 @@ define(function(require) {
                 }
                 return list;
             }, this);
+        },
+
+        saveLineItem: function(shoppingListId, lineItemUnit, newQty) {
+            var urlOptions = {};
+            var formData = $(this.elements.popupPanelForm, this.$el).serialize();
+            
+            if (this.model) {
+                urlOptions.productId = this.model.get('id');
+            }
+            urlOptions.shoppingListId = shoppingListId;
+            
+            mediator.execute('showLoading');
+            $.ajax({
+                type: 'POST',
+                url: routing.generate('oro_shopping_list_frontend_add_product', urlOptions),
+                data: formData,
+                success: function(response) {
+                    mediator.execute('hideLoading');
+                    if (response && response.message) {
+                        mediator.execute(
+                            'showFlashMessage', (response.hasOwnProperty('successful') ? 'success' : 'error'),
+                            response.message
+                        );
+                    }
+                    mediator.trigger('shopping-list:updated', response.shoppingList, response.product);
+                },
+                error: function(xhr) {
+                    mediator.execute('hideLoading');
+                    Error.handle({}, xhr, {enforce: true});
+                }
+            });
+        },
+
+        updateLineItem: function(lineItem, shoppingListId, newQty) {
+            var updateApiAccessor = new ApiAccessor({
+                route: 'oro_api_shopping_list_frontend_put_line_item',
+                http_method: 'PUT',
+                default_route_parameters: {
+                    id: lineItem.line_item_id
+                }
+            });
+
+            var modelData = {
+                quantity: newQty,
+                unit: lineItem.unit
+            };
+            
+            var updatePromise = updateApiAccessor.send(modelData, {oro_product_frontend_line_item: modelData}, {}, {
+                processingMessage: __('oro.form.inlineEditing.saving_progress'),
+                preventWindowUnload: __('oro.form.inlineEditing.inline_edits')
+            });
+
+            updatePromise.done(_.bind(this.onLineItemUpdate, this, {
+                shoppingListId: shoppingListId,
+                lineItemId: lineItem.line_item_id,
+                value: modelData
+            }))
+            .fail(_.bind(this.onSaveError, this));
         },
 
         updateLineItems: function(lineItems, lineItemId, newLineItem) {
@@ -300,7 +376,7 @@ define(function(require) {
                 return;
             }
 
-            return _.findWhere(this.model.get('shopping_lists'), {shopping_list_id: selectedShoppingListId});
+            return _.findWhere(_.extend(this.demoShoppingLists, this.model.get('shopping_lists')), {shopping_list_id: selectedShoppingListId});
         },
 
         getSelectedUnit: function() {
