@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\AccountBundle\EventListener\WebsiteSearchProductVisibilityIndexerListener;
 use Oro\Bundle\AccountBundle\Visibility\Provider\AccountProductVisibilityProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -64,17 +65,17 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
                 [
                     'productId' => 1,
                     'accountId' => 1,
-                    'is_visible_by_default' => 1
+                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE
                 ],
                 [
                     'productId' => 2,
                     'accountId' => 3,
-                    'is_visible_by_default' => -1
+                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN
                 ],
                 [
                     'productId' => 3,
                     'accountId' => 2,
-                    'is_visible_by_default' => 1
+                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE
                 ]
             ]);
 
@@ -85,18 +86,18 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
             ->willReturn([
                 [
                     'productId' => 1,
-                    'visibility_anonymous' => 0,
-                    'visibility_new' => 1
+                    'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
+                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE
                 ],
                 [
                     'productId' => 2,
-                    'visibility_anonymous' => 1,
-                    'visibility_new' => 1
+                    'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE
                 ],
                 [
                     'productId' => 3,
-                    'visibility_anonymous' => 1,
-                    'visibility_new' => 0
+                    'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_HIDDEN
                 ]
             ]);
 
@@ -105,26 +106,26 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
         $expectedEntitiesData = [
             1 => [
                 Query::TYPE_INTEGER => [
-                    'is_visible_by_default' => 1,
+                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                     'visibility_account_1' => 1,
-                    'visibility_anonymous' => 0,
-                    'visibility_new' => 1
+                    'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
+                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE
                 ]
             ],
             2 => [
                 Query::TYPE_INTEGER => [
-                    'is_visible_by_default' => -1,
+                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
                     'visibility_account_3' => 1,
-                    'visibility_anonymous' => 1,
-                    'visibility_new' => 1
+                    'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE
                 ]
             ],
             3 => [
                 Query::TYPE_INTEGER => [
-                    'is_visible_by_default' => 1,
+                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                     'visibility_account_2' => 1,
-                    'visibility_anonymous' => 1,
-                    'visibility_new' => 0
+                    'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_HIDDEN
                 ]
             ]
         ];

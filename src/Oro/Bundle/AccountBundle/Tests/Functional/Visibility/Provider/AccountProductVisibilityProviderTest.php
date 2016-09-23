@@ -146,13 +146,13 @@ class AccountProductVisibilityProviderTest extends WebTestCase
         $expectedVisibilities = [
             [
                 'productId' => $this->getReference('product.3')->getId(),
-                'visibility_new' => 1,
-                'visibility_anonymous' => 1
+                'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE
             ],
             [
                 'productId' => $this->getReference('product.5')->getId(),
-                'visibility_new' => 0,
-                'visibility_anonymous' => 1
+                'visibility_new' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
+                'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE
             ],
         ];
 

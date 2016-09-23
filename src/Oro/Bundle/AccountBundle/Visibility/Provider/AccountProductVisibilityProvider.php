@@ -90,12 +90,16 @@ class AccountProductVisibilityProvider
 
         $qb
             ->addSelect(sprintf(
-                'CASE WHEN %s > 0 THEN 1 ELSE 0 END as visibility_new',
-                $productVisibilityTerm
+                'CASE WHEN %s > 0 THEN %s ELSE %s END as visibility_new',
+                $productVisibilityTerm,
+                BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                BaseVisibilityResolved::VISIBILITY_HIDDEN
             ))
             ->addSelect(sprintf(
-                'CASE WHEN %s > 0 THEN 1 ELSE 0 END as visibility_anonymous',
-                $anonymousGroupVisibilityTerm
+                'CASE WHEN %s > 0 THEN %s ELSE %s END as visibility_anonymous',
+                $anonymousGroupVisibilityTerm,
+                BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                BaseVisibilityResolved::VISIBILITY_HIDDEN
             ));
 
         return $qb->getQuery()->getArrayResult();
