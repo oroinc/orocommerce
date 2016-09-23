@@ -50,9 +50,7 @@
              data-page-component-options="{{ {
                  view: 'orosale/js/app/views/line-items-view',
                  tierPrices: tierPrices|default({}),
-                 matchedPrices: matchedPrices|default({}),
-                 tierPricesRoute: 'oro_pricing_price_by_account',
-                 matchedPricesRoute: 'oro_pricing_matching_price'
+                 tierPricesRoute: 'oro_pricing_price_by_account'
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.quoteProducts) }}

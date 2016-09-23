@@ -23,8 +23,8 @@ define(function(require) {
         initializeElements: function(options) {
             $.extend(true, this, _.pick(options, ['elements', 'modelElements']));
             this.$elements = this.$elements || {};
-            this.elementsEvents = this.elementsEvents || {};
-            this.modelEvents = this.modelEvents || {};
+            this.elementsEvents = $.extend({}, this.elementsEvents || {});
+            this.modelEvents = $.extend({}, this.modelEvents || {});
 
             this.initializeModelElements();
             this.delegateElementsEvents();
@@ -134,6 +134,10 @@ define(function(require) {
             var selector = this.elements[key] || null;
             if (!selector) {
                 return null;
+            }
+
+            if (selector instanceof $) {
+                return selector;
             }
 
             var $context;

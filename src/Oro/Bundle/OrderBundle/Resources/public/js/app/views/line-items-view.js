@@ -19,7 +19,6 @@ define(function(require) {
          */
         options: {
             tierPrices: null,
-            matchedPrices: {},
             currency: null,
             account: null,
             subtotalValidationSelector: '[data-ftid=oro_order_type_subtotalValidation]',
@@ -60,7 +59,6 @@ define(function(require) {
             this.subview('productsPricesComponent', new ProductsPricesComponent({
                 _sourceElement: this.$el,
                 tierPrices: this.options.tierPrices,
-                matchedPrices: this.options.matchedPrices,
                 currency: this.options.currency,
                 account: this.options.account
             }));

@@ -50,18 +50,6 @@ define(function(require) {
             this.$product = $(this.options.productSelector);
             this.$product
                 .on('change', _.bind(this.onProductChange, this));
-
-            mediator.on('pricing:load:line-item-price-overridden', _.bind(this.onProductPriceOverriddenLoad, this));
-        },
-
-        /**
-         * @param {Object} priceValue
-         */
-        onProductPriceOverriddenLoad: function(priceValue) {
-            if (!_.contains(this.items, priceValue)) {
-                this.items.push(priceValue);
-                mediator.trigger('pricing:set:line-items-from-matched-prices', priceValue);
-            }
         },
 
         /**

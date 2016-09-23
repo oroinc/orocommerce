@@ -57,16 +57,16 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        updatePrice: function() {
+        setPrice: function() {
             if (this.getElement('priceValue').hasClass('matched-price')) {
-                this.setPrice(this.findPriceValue());
+                this.setPriceValue(this.findPriceValue());
                 this.getElement('priceValue').addClass('matched-price');
             } else {
                 this.updateUI();
             }
         },
 
-        setPrice: function(price) {
+        setPriceValue: function(price) {
             this.model.set('price', this.calcTotalPrice(price));
         },
 
@@ -129,7 +129,7 @@ define(function(require) {
         setPriceFromHint: function(e) {
             var $target = $(e.currentTarget);
             this.model.set('unit', $target.data('unit'));
-            this.setPrice($target.data('price'));
+            this.setPriceValue($target.data('price'));
         },
 
         renderPriceOverridden: function() {
@@ -151,7 +151,7 @@ define(function(require) {
         },
 
         useFoundPrice: function() {
-            this.setPrice(this.findPriceValue());
+            this.setPriceValue(this.findPriceValue());
             this.getElement('priceValue').addClass('matched-price');
         }
     });

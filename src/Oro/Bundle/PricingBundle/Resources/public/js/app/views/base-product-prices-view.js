@@ -4,9 +4,10 @@ define(function(require) {
     var BaseProductPricesView;
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
+    var layout = require('oroui/js/layout');
+    var NumberFormatter = require('orolocale/js/formatter/number');
     var _ = require('underscore');
     var $ = require('jquery');
-    var NumberFormatter = require('orolocale/js/formatter/number');
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
         autoRender: true,
@@ -90,9 +91,7 @@ define(function(require) {
             $pricesHint.toggleClass('disabled', content.length === 0);
 
             if (!$pricesHint.data('popover')) {
-                $pricesHint.popover({
-                    animation: false,
-                    html: true,
+                layout.initPopover($pricesHint, {
                     container: 'body'
                 });
             }
@@ -129,7 +128,11 @@ define(function(require) {
             if (e && e.originalEvent) {
                 this.changeQuantity = false;
             }
-            this.model.set('price', this.findPrice());
+            this.setPriceValue(this.findPrice());
+        },
+
+        setPriceValue: function(price) {
+            this.model.set('price', price);
         },
 
         findPrice: function() {

@@ -17,8 +17,6 @@ define(function(require) {
             currency: null,
             tierPrices: null,
             tierPricesRoute: '',
-            matchedPrices: {},
-            matchedPricesRoute: '',
             requestKeys: {
                 ACCOUNT: 'account_id',
                 CURRENCY: 'currency'
@@ -30,23 +28,15 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
-            this.$el = this.options._sourceElement;
 
             this.initPricesListeners();
             this.initFieldsListeners();
-
-            if (this.options.$priceList) {
-                this.options.$priceList.change(_.bind(this.reloadPrices, this));
-            }
         },
 
         initPricesListeners: function() {
             mediator.on('pricing:load:prices', this.reloadPrices, this);
             mediator.on('pricing:get:products-tier-prices', this.getProductsTierPrices, this);
             mediator.on('pricing:load:products-tier-prices', this.loadProductsTierPrices, this);
-
-            mediator.on('pricing:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
-            mediator.on('pricing:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
         },
 
         initFieldsListeners: function() {
@@ -64,10 +54,6 @@ define(function(require) {
         reloadPrices: function() {
             this.loadProductsTierPrices(this.getProductsId(), function(response) {
                 mediator.trigger('pricing:refresh:products-tier-prices', response);
-            });
-
-            this.loadLineItemsMatchedPrices(this.getLineItems(), function(response) {
-                mediator.trigger('pricing:refresh:line-items-matched-prices', response);
             });
         },
 
@@ -90,35 +76,6 @@ define(function(require) {
                 params = _.extend({}, params, context.requestAttributes || {});
 
                 $.get(routing.generate(this.options.tierPricesRoute, params), callback);
-            }, this));
-        },
-
-        /**
-         * @param {Array} items
-         * @param {Function} callback
-         * @param {Object} context
-         */
-        loadLineItemsMatchedPrices: function(items, callback) {
-            var context =  {
-                requestAttributes: {}
-            };
-            mediator.trigger('pricing:refresh:line-items-matched-prices:before', context);
-            this.joinSubrequests(this.loadLineItemsMatchedPrices, items, callback, _.bind(function(items, callback) {
-                var params = {
-                    items: items
-                };
-                params[this.options.requestKeys.CURRENCY] = this.getCurrency();
-                params[this.options.requestKeys.ACCOUNT] = this.getAccount();
-                params = _.extend({}, params, context.requestAttributes || {});
-
-                $.ajax({
-                    url: routing.generate(this.options.matchedPricesRoute, params),
-                    type: 'GET',
-                    success: callback,
-                    error: function(response) {
-                        callback(response);
-                    }
-                });
             }, this));
         },
 
@@ -160,13 +117,6 @@ define(function(require) {
         },
 
         /**
-         * @param {Function} callback
-         */
-        getLineItemsMatchedPrices: function(callback) {
-            callback(this.options.matchedPrices);
-        },
-
-        /**
          * @returns {Array} line items
          */
         getLineItems: function() {
@@ -201,14 +151,7 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('pricing:get:products-tier-prices', this.getProductsTierPrices, this);
-            mediator.off('pricing:load:products-tier-prices', this.loadProductsTierPrices, this);
-
-            mediator.off('pricing:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
-            mediator.off('pricing:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
-
-            mediator.off('update:currency', this.setCurrency, this);
-            mediator.off('update:account', this.setAccount, this);
+            mediator.off(null, null, this);
 
             ProductsPricesComponent.__super__.dispose.call(this);
         }
