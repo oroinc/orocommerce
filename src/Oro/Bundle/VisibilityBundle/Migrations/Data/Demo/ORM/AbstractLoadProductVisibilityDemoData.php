@@ -5,9 +5,11 @@ namespace Oro\Bundle\VisibilityBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\VisibilityBundle\Entity\Account;
-use Oro\Bundle\VisibilityBundle\Entity\AccountGroup;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -38,9 +40,9 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
-            __NAMESPACE__.'\LoadAccountDemoData',
-            __NAMESPACE__.'\LoadCategoryVisibilityDemoData',
+            LoadProductDemoData::class,
+            LoadAccountDemoData::class,
+            LoadCategoryVisibilityDemoData::class,
         ];
     }
 
