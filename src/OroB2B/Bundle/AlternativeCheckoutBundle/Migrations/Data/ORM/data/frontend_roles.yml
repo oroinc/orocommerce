@@ -1,3 +1,0 @@
-BUYER:
-    permissions:
-        action|orob2b_alternativecheckout_checkout_approve: [NONE]

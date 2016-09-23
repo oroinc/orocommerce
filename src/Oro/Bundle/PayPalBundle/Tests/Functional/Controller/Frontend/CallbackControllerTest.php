@@ -4,8 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
 /**
  * @dbIsolation
@@ -39,7 +38,7 @@ class CallbackControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             $this->getUrl(
-                'orob2b_payment_callback_notify',
+                'oro_payment_callback_notify',
                 [
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => $paymentTransaction->getAccessToken(),
@@ -51,7 +50,7 @@ class CallbackControllerTest extends WebTestCase
         );
 
         $objectManager = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BPaymentBundle:PaymentTransaction');
+            ->getRepository('OroPaymentBundle:PaymentTransaction');
 
         /** @var PaymentTransaction $paymentTransaction */
         $paymentTransaction = $objectManager->find($paymentTransaction->getId());
@@ -97,7 +96,7 @@ class CallbackControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             $this->getUrl(
-                'orob2b_payment_callback_notify',
+                'oro_payment_callback_notify',
                 [
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => $paymentTransaction->getAccessToken(),
@@ -123,7 +122,7 @@ class CallbackControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             $this->getUrl(
-                'orob2b_payment_callback_notify',
+                'oro_payment_callback_notify',
                 [
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => $paymentTransaction->getAccessToken(),

@@ -1,0 +1,25 @@
+layout:
+    imports:
+        -
+            id: oro_product_list
+            root: top_selling_items_container
+            namespace: top_selling
+    actions:
+        - '@setBlockTheme':
+            themes: 'top_selling_items.html.twig'
+        - '@setOption':
+            id: top_selling_products
+            optionName: items
+            optionValue: '=data["top_selling_items"].getAll()'
+        - '@setOption':
+            id: top_selling_products
+            optionName: label
+            optionValue: oro.order.top_selling_items.label
+        - '@setOption':
+            id: top_selling_products
+            optionName: slider_options
+            optionValue: {arrows: true, responsive: [{breakpoint: 1100, settings: {arrows: false}}, {breakpoint: 924, settings: {slidesToShow: 3, arrows: false}}, {breakpoint: 480, settings: {slidesToShow: 2, arrows: false}}]}
+        - '@add':
+            id: top_selling_items_container
+            parentId: content
+            blockType: container

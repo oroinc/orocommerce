@@ -1,0 +1,44 @@
+{% block _quick_access_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " middlebar__right"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <ul class="shopping-list pull-right">
+            {{ block_widget(block) }}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block _quick_access_menu_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " quick-access"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <ul class="quick-access__list">
+            <li class="quick-access__item">
+                <a class="quick-access__link"  href="{{ path('oro_order_frontend_index') }}">
+                    <span class="badge badge_circled-corners badge_yellow quick-access__badge">
+                        <i class="cf-assignment"></i>
+                    </span>
+                    <span class="quick-access__text">Orders</span>
+                </a>
+            </li>
+            <li class="quick-access__item">
+                <a class="quick-access__link" href="{{ path('oro_sale_quote_frontend_index') }}">
+                    <span class="badge badge_circled-corners badge_orange-light quick-access__badge">
+                        <i class="cf-local_offer"></i>
+                    </span>
+                    <span class="quick-access__text">Quotes</span>
+                </a>
+            </li>
+            <li class="quick-access__item">
+                <a class="quick-access__link" href="{{ path('oro_product_frontend_quick_add') }}">
+                    <span class="badge badge_circled-corners badge_orange quick-access__badge">
+                        <i class="cf-flash"></i>
+                    </span>
+                    <span class="quick-access__text">Quick Order Form</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+{% endblock %}

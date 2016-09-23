@@ -1,0 +1,149 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+
+{% oro_title_set({
+    params : {
+        "%email%": entity.email|default('N/A'|trans),
+        "%entityName%": 'oro.account.accountuser.entity_label'|trans
+    }
+}) %}
+
+{% set formAction = entity.id ? path('oro_account_account_user_update', { 'id': entity.id }) : path('oro_account_account_user_create')  %}
+
+{% block navButtons %}
+    {{ parent() }}
+
+    {{ UI.cancelButton(path('oro_account_account_user_index')) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if entity.id or resource_granted('oro_account_account_user_update') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% if entity.id %}
+        {% set breadcrumbs = {
+            'entity':      entity,
+            'indexPath':   path('oro_account_account_user_index'),
+            'indexLabel': 'oro.account.accountuser.entity_plural_label'|trans,
+            'entityTitle': entity.email|default('N/A'|trans)
+        } %}
+        {{ parent() }}
+    {% else %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.account.accountuser.entity_label'|trans}) %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% block stats %}
+    <li>{{ 'oro.ui.created_at'|trans }}: {{ entity.createdAt ? entity.createdAt|oro_format_datetime : 'N/A' }}</li>
+    <li>{{ 'oro.ui.updated_at'|trans }}: {{ entity.updatedAt ? entity.updatedAt|oro_format_datetime : 'N/A' }}</li>
+    <li>{{ 'oro.account.accountuser.last_login.label'|trans }}: {{ entity.lastLogin ? entity.lastLogin|oro_format_datetime : 'N/A' }}</li>
+    <li>{{ 'oro.account.accountuser.login_count.label'|trans }}: {{ entity.loginCount|default(0) }}</li>
+{% endblock stats %}
+
+{% block content_data %}
+    {% set id = 'account-user-edit' %}
+    {% set roleWidgetAlias = 'oro_account_account_user_role' %}
+
+    {% set accountFormOptions = {
+        accountUserId: entity.id|default(null),
+        accountFormId: '#' ~ form.account.vars.id,
+        widgetAlias: roleWidgetAlias,
+    } %}
+
+    {% set accountForm %}
+        <div data-page-component-module="oroaccount/js/app/components/account-user-component"
+             data-page-component-options="{{ accountFormOptions|json_encode }}">
+            {{ form_row(form.account) }}
+        </div>
+    {% endset %}
+
+    {% set formRows = [
+        form_row(form.enabled),
+        form_row(form.namePrefix),
+        form_row(form.firstName),
+        form_row(form.middleName),
+        form_row(form.lastName),
+        form_row(form.nameSuffix),
+        form_row(form.email),
+        form_row(form.birthday),
+        form_widget(form.plainPassword, { 'attr': {'class': 'password'} }),
+        accountForm,
+        form_row(form.salesRepresentatives),
+    ] %}
+
+    {% if form.passwordGenerate is defined %}
+        {% set formRows = formRows|merge([
+            form_row(form.passwordGenerate, { 'attr': {'class': 'password-trigger'} })
+        ]) %}
+        <span data-page-component-module="oroaccount/js/app/components/password-generate"
+              data-page-component-options="{{ {class: 'password-trigger', targetClass: 'password'}|json_encode }}"></span>
+    {% endif %}
+
+    {% if form.sendEmail is defined %}
+        {% set formRows = formRows|merge([
+            form_row(form.sendEmail)
+        ]) %}
+    {% endif %}
+
+    {% set dataBlocks = [{
+            'title': 'oro.account.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [
+                {
+                    'title': '',
+                    'data': formRows
+                },
+                {
+                    'title': 'oro.account.sections.addresses'|trans,
+                    'data': [
+                        form_widget(form.addresses),
+                    ]
+                }
+            ]
+        }]
+    %}
+
+    {# Mark roles field af rendered, because it rendered by oro_widget_render #}
+    {% do form.roles.setRendered %}
+
+    {% set hasRoles = form.roles is defined %}
+    {% if hasRoles %}
+        {% set userRoles %}
+            {% set widgetOptions = {} %}
+            {% set widgetUrl = 'oro_account_account_user_roles' %}
+            {% if entity.id %}
+                {% set widgetOptions = widgetOptions|merge({accountUserId: entity.id}) %}
+            {% endif %}
+            {% if entity.account and entity.account.id %}
+                {% set widgetOptions = widgetOptions|merge({accountId: entity.account.id}) %}
+            {% endif %}
+
+            {{ oro_widget_render({
+                'widgetType': 'block',
+                'url': path(widgetUrl, widgetOptions),
+                'alias': roleWidgetAlias
+            }) }}
+        {% endset %}
+
+        {% set title = 'oro.account.accountuser.roles.label'|trans %}
+
+        {% set dataBlocks = dataBlocks|merge( [{
+            'title': title,
+            'subblocks': [
+                {
+                    'title': '',
+                    'data': [userRoles]
+                }
+            ]
+        }] ) %}
+    {% endif %}
+
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
+{% endblock content_data %}

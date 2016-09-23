@@ -1,0 +1,84 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+
+{% oro_title_set({params : {"%title%": entity.title }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('oro_cms_page_index'),
+        'indexLabel': 'oro.cms.page.entity_plural_label'|trans,
+        'entityTitle': entity.title|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block navButtons %}
+    {% if resource_granted('oro_cms_page_create') %}
+        {{ UI.button({
+            'path' : path('oro_cms_page_create', { 'id': entity.id }),
+            'iCss': 'icon-book',
+            'aCss': 'btn-primary',
+            'label': 'oro.ui.create_entity'|trans({'%entityName%': 'oro.cms.child_page.entity_label'|trans}),
+            'title': 'oro.ui.create_entity'|trans({'%entityName%': 'oro.cms.child_page.entity_label'|trans})
+        }) }}
+    {% endif %}
+
+    {{ parent() }}
+{% endblock navButtons %}
+
+{% block ownerLink %}{% endblock ownerLink %}
+
+{% block content_data %}
+    {% set pageInfo %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'url': path('oro_cms_page_info', {id: entity.id}),
+            'alias': 'page-info-widget'
+        }) }}
+    {% endset %}
+
+    {% set pageContent %}
+        <div class="row-fluid form-horizontal">
+            <div class="responsive-block">
+                {{ entity.content|raw }}
+            </div>
+        </div>
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.cms.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{'data' : [pageInfo]}]
+        },
+        {
+            'title': 'oro.cms.sections.content'|trans,
+            'class': 'active',
+            'subblocks': [{'data' : [pageContent]}]
+        }
+    ] %}
+
+    {% set id = 'page-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    <div class="cms-page-container tree-component-component">
+        <div class="page page-tree tree-component">
+            {% set treeOptions = {
+                'key' : 'commerce-page',
+                'data' : oro_page_list(),
+                'nodeId' : entity.id,
+                'updateAllowed' : resource_granted('oro_cms_page_update'),
+                'onSelectRoute' : 'oro_cms_page_view',
+                'onMoveRoute' : 'oro_cms_page_move',
+                'reloadWidget': 'page-info-widget'
+            } %}
+            <div
+                data-page-component-module="orocms/js/app/components/tree-manage-component"
+                data-page-component-options="{{ treeOptions|json_encode }}"
+            ></div>
+        </div>
+    </div>
+    <div class="cms-page-data">
+        {{ parent() }}
+    </div>
+{% endblock content_data %}

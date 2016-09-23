@@ -11,9 +11,8 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -282,17 +281,17 @@ class PayflowGateway implements PaymentMethodInterface
             GatewayOption\CreateSecureToken::CREATESECURETOKEN => true,
             GatewayOption\TransparentRedirect::SILENTTRAN => true,
             Option\ReturnUrl::RETURNURL => $this->router->generate(
-                'orob2b_payment_callback_return',
+                'oro_payment_callback_return',
                 ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
             GatewayOption\ErrorUrl::ERRORURL => $this->router->generate(
-                'orob2b_payment_callback_error',
+                'oro_payment_callback_error',
                 ['accessIdentifier' => $paymentTransaction->getAccessIdentifier()],
                 UrlGeneratorInterface::ABSOLUTE_URL
             ),
             GatewayOption\SilentPost::SILENTPOSTURL => $this->router->generate(
-                'orob2b_payment_callback_notify',
+                'oro_payment_callback_notify',
                 [
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => $paymentTransaction->getAccessToken(),

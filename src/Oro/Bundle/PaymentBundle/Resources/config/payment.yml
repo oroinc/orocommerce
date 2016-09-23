@@ -1,0 +1,37 @@
+services:
+    oro_payment.payment_method.registry:
+        class: 'Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry'
+        public: false
+
+    oro_payment.payment_method.payment_term.config:
+        class: 'Oro\Bundle\PaymentBundle\Method\Config\PaymentTermConfig'
+        public: false
+        arguments:
+           - '@oro_config.global'
+
+    oro_payment.payment_method.view.registry:
+        class: 'Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry'
+        public: false
+        arguments:
+            - '@oro_payment.payment_method.registry'
+
+    oro_payment.payment_method.payment_term:
+        class: 'Oro\Bundle\PaymentBundle\Method\PaymentTerm'
+        public: false
+        arguments:
+            - '@oro_payment.provider.payment_term'
+            - '@oro_payment.payment_method.payment_term.config'
+            - '@property_accessor'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: oro_payment.payment_method }
+
+    oro_payment.payment_method.view.payment_term:
+        class: 'Oro\Bundle\PaymentBundle\Method\View\PaymentTermView'
+        public: false
+        arguments:
+            - '@oro_payment.provider.payment_term'
+            - '@translator'
+            - '@oro_payment.payment_method.payment_term.config'
+        tags:
+            - { name: oro_payment.payment_method_view }

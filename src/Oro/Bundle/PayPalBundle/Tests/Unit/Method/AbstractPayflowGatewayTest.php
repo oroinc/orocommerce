@@ -15,10 +15,9 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
 use Oro\Bundle\PayPalBundle\Method\PayPalPaymentsPro;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use OroB2B\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use OroB2B\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -608,21 +607,21 @@ abstract class AbstractPayflowGatewayTest extends \PHPUnit_Framework_TestCase
             ->method('generate')
             ->withConsecutive(
                 [
-                    'orob2b_payment_callback_return',
+                    'oro_payment_callback_return',
                     [
                         'accessIdentifier' => $transaction->getAccessIdentifier(),
                     ],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 ],
                 [
-                    'orob2b_payment_callback_error',
+                    'oro_payment_callback_error',
                     [
                         'accessIdentifier' => $transaction->getAccessIdentifier(),
                     ],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 ],
                 [
-                    'orob2b_payment_callback_notify',
+                    'oro_payment_callback_notify',
                     [
                         'accessIdentifier' => $transaction->getAccessIdentifier(),
                         'accessToken' => $transaction->getAccessToken(),

@@ -1,0 +1,46 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set pageTitle = 'oro.catalog.category.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('oro_catalog_category_create') %}
+        <div class="btn-group">
+            {{ UI.addButton({
+                'path': path('oro_catalog_category_create', { 'id' : rootCategory.id }),
+                'entity_label': 'oro.catalog.category.entity_label'|trans
+            }) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {{ parent() }}
+
+    <div class="left-panel-container">
+        <div class="placeholder">
+            <div class="scrollable-container">
+                <div class="left-panel scrollable-container">
+                    <div class="category">
+                        {% set treeOptions = {
+                            'data' : oro_category_list(),
+                            'updateAllowed' : resource_granted('oro_catalog_category_update'),
+                            'onSelectRoute' : 'oro_catalog_category_update',
+                            'onMoveRoute' : 'oro_catalog_category_move'
+                        } %}
+                        <div
+                            data-page-component-module="orocatalog/js/app/components/tree-manage-component"
+                            data-page-component-options="{{ treeOptions|json_encode }}"
+                        ></div>
+                    </div>
+                </div>
+                <div class="content">
+                    {% if resource_granted('oro_catalog_category_create') and resource_granted('oro_catalog_category_update') %}
+                        <div class="text-center">
+                            {{ 'oro.catalog.template.select_existing_or_create_new'|trans }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

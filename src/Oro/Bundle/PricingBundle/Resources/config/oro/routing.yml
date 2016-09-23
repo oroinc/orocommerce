@@ -1,0 +1,43 @@
+oro_pricing:
+    resource:     "@OroPricingBundle/Controller/PriceListController.php"
+    type:         annotation
+    prefix:       /pricelist
+
+oro_price_attribute_price_list:
+    resource:     "@OroPricingBundle/Controller/PriceAttributePriceListController.php"
+    type:         annotation
+    prefix:       /priceattribute
+
+oro_pricing_ajax:
+    resource:     "@OroPricingBundle/Controller/AjaxPriceListController.php"
+    type:         annotation
+    prefix:       /pricelist
+
+oro_product_price_ajax:
+    resource:     "@OroPricingBundle/Controller/AjaxProductPriceController.php"
+    type:         annotation
+    prefix:       /productprice
+
+oro_product_price_product:
+    resource:     "@OroPricingBundle/Controller/ProductController.php"
+    type:         annotation
+    prefix:       /productprice/product
+
+oro_product_price_frontend_ajax:
+    resource:     "@OroPricingBundle/Controller/Frontend/AjaxProductPriceController.php"
+    type:         annotation
+    prefix:       /productprice
+    options:
+        frontend: true
+
+oro_entity_totals_ajax:
+    resource:     "@OroPricingBundle/Controller/AjaxEntityTotalsController.php"
+    type:         annotation
+    prefix:       /entitytotals
+
+oro_entity_totals_frontend_ajax:
+    resource:     "@OroPricingBundle/Controller/Frontend/AjaxEntityTotalsController.php"
+    type:         annotation
+    prefix:       /entitytotals
+    options:
+        frontend: true

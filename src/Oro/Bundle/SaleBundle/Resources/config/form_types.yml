@@ -1,0 +1,102 @@
+services:
+    # Quote form types
+    oro_sale.form.type.quote:
+        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteType'
+        arguments:
+            - "@oro_security.security_facade"
+            - "@oro_sale.provider.quote_address_security"
+            - "@oro_payment.provider.payment_term"
+        calls:
+            - [setDataClass, ['%oro_sale.entity.quote.class%']]
+        tags:
+            - { name: form.type, alias: oro_sale_quote }
+
+    oro_sale.form.type.quote_product:
+        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductType'
+        arguments:
+            - "@translator"
+            - "@oro_product.formatter.product_unit_label"
+            - "@oro_sale.formatter.quote_product"
+            - "@doctrine"
+        calls:
+            - [setDataClass, ['%oro_sale.entity.quote_product.class%']]
+            - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]
+        tags:
+            - { name: form.type, alias: oro_sale_quote_product }
+
+    oro_sale.form.type.quote_product_offer:
+        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType'
+        arguments:
+            - "@oro_sale.formatter.quote_product_offer"
+        calls:
+            - [setDataClass, ['%oro_sale.entity.quote_product_offer.class%']]
+        tags:
+            - { name: form.type, alias: oro_sale_quote_product_offer }
+
+    oro_sale.form.type.quote_product_request:
+        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestType'
+        calls:
+            - [setDataClass, ['%oro_sale.entity.quote_product_request.class%']]
+        tags:
+            - { name: form.type, alias: oro_sale_quote_product_request }
+
+    oro_sale.form.type.quote_product_collection:
+        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType'
+        tags:
+            - { name: form.type, alias: oro_sale_quote_product_collection }
+
+    oro_sale.form.type.quote_product_offer_collection:
+        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType'
+        tags:
+            - { name: form.type, alias: oro_sale_quote_product_offer_collection }
+
+    oro_sale.form.type.quote_product_request_collection:
+        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType'
+        tags:
+            - { name: form.type, alias: oro_sale_quote_product_request_collection }
+
+    oro_sale.form.type.extension.quote_data_storage:
+        class: 'Oro\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension'
+        parent: oro_product.form.type.extension.product_data_storage.abstract
+        calls:
+            - [setDataClass, ['%oro_sale.entity.quote.class%']]
+            - [setExtendedType, [oro_sale_quote]]
+        tags:
+            - { name: form.type_extension, alias: oro_sale_quote }
+
+    oro_sale.form.type.quote_address:
+        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType'
+        arguments:
+            - "@oro_locale.formatter.address"
+            - "@oro_sale.manager.quote_address"
+            - "@oro_sale.provider.quote_address_security"
+            - "@oro_importexport.serializer"
+        tags:
+            - { name: form.type, alias: oro_quote_address_type }
+        calls:
+            - [setDataClass, ['%oro_sale.entity.quote_address.class%']]
+
+    oro_sale.form.type.quote_demand:
+        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteDemandType'
+        arguments:
+            - "@oro_sale.manager.quote_demand_manager"
+        tags:
+            - { name: form.type, alias: oro_sale_quote_demand }
+
+    oro_sale.form.type.quote_product_demand:
+        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductDemandType'
+        tags:
+            - { name: form.type, alias: oro_sale_quote_product_demand }
+
+    oro_sale.form.type.quote_product_demand_collection:
+        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductDemandCollectionType'
+        tags:
+            - { name: form.type, alias: oro_sale_quote_product_demand_collection }
+
+    oro_sale.form.type.quote_product_demand_offer_choice:
+        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductDemandOfferChoiceType'
+        arguments:
+            - '@oro_product.formatter.product_unit_value'
+            - '@translator'
+        tags:
+            - { name: form.type, alias: oro_sale_quote_product_demand_offer_choice }

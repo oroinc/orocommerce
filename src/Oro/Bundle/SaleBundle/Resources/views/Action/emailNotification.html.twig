@@ -1,0 +1,93 @@
+{% extends 'OroActionBundle:Operation:form.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% block widget_content %}
+    <div class="widget-content email-form">
+        {{ block('widget_content_inner') }}
+    </div>
+{% endblock %}
+
+{% block errors %}
+    {% if context is defined and not context.data.locked %}
+        <div class="alert alert-warning">
+            <div class="message">
+                {{ 'oro.sale.quote.notify_customer.by_email.notify_and_lock_warning'|trans }}
+            </div>
+        </div>
+    {% endif %}
+
+    {{ parent() }}
+{% endblock %}
+
+{% block form %}
+    {% form_theme form with ['OroFormBundle:Form:fields.html.twig', 'OroEmailBundle:Form:fields.html.twig'] %}
+
+    <div class="form-container">
+        <form id="{{ form.vars.id}}" name="{{ form.vars.name }}" method="post" action="{{ app.request.uri }}" enctype="multipart/form-data">
+            {% set emailEditorOptions = {
+                entityId: context.email.entityId,
+                to: context.email.to,
+                cc: context.email.cc,
+                bcc: context.email.bcc,
+                appendSignature: context.appendSignature,
+                minimalWysiwygEditorHeight: 150,
+                isSignatureEditable: resource_granted('oro_user_user_update')
+            } %}
+            <fieldset class="form-horizontal"
+                      data-page-component-module="oroemail/js/app/components/email-editor-component"
+                      data-page-component-options="{{ emailEditorOptions | json_encode }}"
+                      data-layout="separate"
+            >
+                {{ form_row(form.email.gridName) }}
+                {{ form_row(form.email.from) }}
+                {{ form_row(form.email.to) }}
+                {{ form_row(form.email.cc) }}
+                {{ form_row(form.email.bcc) }}
+                {{ form_row(form.email.subject) }}
+                {{ form_row(form.email.template, {'includeNonEntity': true, 'includeSystemTemplates': false}) }}
+                {{ form_row(form.email.type) }}
+                {{ form_row(form.email.body) }}
+
+                <div class="control-group email-body-actions">
+                    <div class="controls">
+                        <span class="email-body-action"><a id="add-signature" href="javascript:void(0);">{{ 'oro.email.form.add_signature'|trans }}</a></span>
+
+                        <span>{{ 'oro.email.form.attach_file'|trans }}: </span>
+                        <div class="dropup" style="display: inline-block">
+                            <a class="attach-file dropdown-toggle" href="javascript:void(0);" aria-expanded="true">{{ 'oro.email.form.from_record'|trans }}</a>
+                            <div class="dropdown-menu attachment-list-popup" role="menu" aria-labelledby="attach-file"></div>
+                        </div>
+                        |
+                        <span>
+                            <a class="upload-new" href="javascript:void(0);">{{ 'oro.email.form.upload'|trans }}</a>
+                        </span>
+                    </div>
+                </div>
+
+                {% set emailAttachmentOptions = {
+                    popupTriggerButton: '.attach-file',
+                    uploadNewButton: '.upload-new',
+                    popupContentEl: '.attachment-list-popup',
+                    entityAttachments: context.email.attachments.toArray,
+                    attachmentsAvailable: context.email.attachmentsAvailable
+                } %}
+                {{ form_row(form.email.attachments, {options: emailAttachmentOptions}) }}
+                {{ form_row(form.email.contexts) }}
+
+                {{ form_widget(form.email) }}
+                {{ form_rest(form) }}
+
+                <div class="widget-actions form-actions">
+                    <button class="btn" type="reset">{{ 'oro.sale.btn.cancel'|trans }}</button>
+
+                    {% set button_text = 'oro.sale.btn.notify_and_lock'|trans %}
+                    {% if context.data.locked %}
+                        {% set button_text = 'oro.sale.btn.send'|trans %}
+                    {% endif %}
+                    <button class="btn btn-primary" type="submit">{{ button_text }}</button>
+                </div>
+            </fieldset>
+        </form>
+        {{ oro_form_js_validation(form) }}
+    </div>
+{% endblock %}

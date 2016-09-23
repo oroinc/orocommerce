@@ -1,0 +1,394 @@
+operations:
+    oro_account_accountuser_disable:
+        label: oro.account.action.account_user.disable
+        applications: [default]
+        routes:
+            - oro_account_account_user_view
+        datagrids:
+            - account-account-user-grid
+        order: 30
+        button_options:
+            icon: icon-remove
+        acl_resource: [EDIT, $.data]
+        preconditions:
+            '@equal': [$enabled, true]
+        actions:
+            - '@run_action_group':
+                action_group: oro_account_accountuser_set_enabled
+                parameters_mapping:
+                    data: $.data
+                    value: false
+            - '@flash_message':
+                message: oro.account.controller.accountuser.disabled.message
+                type: 'success'
+
+    oro_account_accountuser_enable:
+        label: oro.account.action.account_user.enable
+        applications: [default]
+        routes:
+            - oro_account_account_user_view
+        datagrids:
+            - account-account-user-grid
+        order: 30
+        button_options:
+            icon: icon-ok
+        acl_resource: [EDIT, $.data]
+        preconditions:
+            '@equal': [$enabled, false]
+        actions:
+            - '@run_action_group':
+                action_group: oro_account_accountuser_set_enabled
+                parameters_mapping:
+                    data: $.data
+                    value: true
+            - '@flash_message':
+                message: oro.account.controller.accountuser.enabled.message
+                type: 'success'
+
+    oro_account_frontend_accountuser_disable:
+        label: oro.account.action.account_user.disable
+        applications: [commerce]
+        routes:
+            - oro_account_frontend_account_user_view
+        order: 10
+        button_options:
+            icon: icon-remove
+        acl_resource: [EDIT, $.data]
+        preactions:
+            - '@get_active_user': $.currentUser
+        preconditions:
+            '@and':
+                - '@equal': [$enabled, true]
+                - '@not_equal': [$id, $.currentUser.id]
+        actions:
+            - '@run_action_group':
+                action_group: oro_account_frontend_accountuser_set_enabled
+                parameters_mapping:
+                    data: $.data
+                    value: false
+                    current_user: $.currentUser
+            - '@redirect':
+                parameters:
+                    route: oro_account_frontend_account_user_view
+                    route_parameters:
+                        id: $id
+            - '@flash_message':
+                message: oro.account.controller.accountuser.disabled.message
+                type: 'success'
+
+    oro_account_frontend_accountuser_disable_datagrid:
+        extends: oro_account_frontend_accountuser_disable
+        routes: ~
+        datagrids:
+            - frontend-account-account-user-grid
+        actions:
+            - '@refresh_grid': frontend-account-account-user-grid
+
+    oro_account_frontend_accountuser_enable:
+        label: oro.account.action.account_user.enable
+        applications: [commerce]
+        routes:
+            - oro_account_frontend_account_user_view
+        order: 10
+        button_options:
+            icon: icon-ok
+        acl_resource: [EDIT, $.data]
+        preactions:
+            - '@get_active_user': $.currentUser
+        preconditions:
+            '@and':
+                - '@equal': [$enabled, false]
+                - '@not_equal': [$id, $.currentUser.id]
+        actions:
+            - '@run_action_group':
+                action_group: oro_account_frontend_accountuser_set_enabled
+                parameters_mapping:
+                    data: $.data
+                    value: true
+                    current_user: $.currentUser
+            - '@redirect':
+                parameters:
+                    route: oro_account_frontend_account_user_view
+                    route_parameters:
+                        id: $id
+            - '@flash_message':
+                message: oro.account.controller.accountuser.enabled.message
+                type: 'success'
+
+    oro_account_frontend_accountuser_enable_datagrid:
+        extends: oro_account_frontend_accountuser_enable
+        routes: ~
+        datagrids:
+            - frontend-account-account-user-grid
+        actions:
+            - '@refresh_grid': frontend-account-account-user-grid
+
+    oro_account_accountuser_confirm:
+        label: oro.account.action.account_user.confirm
+        routes:
+            - oro_account_account_user_view
+            - oro_account_frontend_account_user_view
+        order: 20
+        button_options:
+            class: back no-hash icons-holder-text
+            icon: icon-ok
+        acl_resource: [EDIT, $.data]
+        preconditions:
+            '@equal': [$confirmed, false]
+        actions:
+            - '@run_action_group':
+                action_group: oro_account_accountuser_confirm
+                parameters_mapping:
+                    data: $.data
+            - '@flash_message':
+                message: oro.account.controller.accountuser.confirmed.message
+                type: 'success'
+
+    oro_account_accountuser_sendconfirmation:
+        label: oro.account.action.account_user.send_confirmation
+        routes:
+            - oro_account_account_user_view
+            - oro_account_frontend_account_user_view
+        order: 30
+        button_options:
+            class: back no-hash icons-holder-text
+            icon: icon-envelope-alt
+        acl_resource: [EDIT, $.data]
+        preconditions:
+            '@equal': [$confirmed, false]
+        actions:
+            - '@run_action_group':
+                action_group: oro_account_accountuser_sendconfirmation
+                parameters_mapping:
+                    data: $.data
+            - '@flash_message':
+                message: oro.account.controller.accountuser.confirmation_sent.message
+                type: 'success'
+
+    oro_account_frontend_create:
+        label: oro.account.action.account_user.create
+        applications: [commerce]
+        routes:
+           - oro_account_frontend_account_user_index
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\AccountBundle\Entity\AccountUser]
+        order: 10
+        actions:
+           - '@redirect':
+               parameters:
+                   route: oro_account_frontend_account_user_create
+
+    oro_account_frontend_create_role:
+        label: oro.account.action.account_user_role.create
+        applications: [commerce]
+        routes:
+            - oro_account_frontend_account_user_role_index
+        acl_resource: [CREATE, entity:commerce@Oro\Bundle\AccountBundle\Entity\AccountUserRole]
+        order: 10
+        actions:
+            - '@redirect':
+                parameters:
+                    route: oro_account_frontend_account_user_role_create
+
+    oro_account_frontend_delete_user:
+        label: oro.account.action.account_user.delete
+        applications: [commerce]
+        routes:
+            - oro_account_frontend_account_user_view
+            - oro_account_frontend_account_user_update
+        acl_resource: [DELETE, $.data]
+        order: 20
+        button_options:
+            icon: icon-trash
+        preactions:
+            - '@get_active_user': $.currentUser
+        preconditions:
+            '@not_equal': [$id, $.currentUser.id]
+        frontend_options:
+            confirmation: oro.account.account_user.delete_confirm
+        actions:
+            - '@run_action_group':
+                action_group: DELETE
+                parameters_mapping:
+                    data: $.data
+            - '@trans':
+                id: oro.account.accountuser.entity_label
+                attribute: $.entityLabel
+            - '@flash_message':
+                message: oro.action.delete_message
+                type: 'success'
+                message_parameters:
+                    entityLabel: $.entityLabel
+            - '@redirect': {route: oro_account_frontend_account_user_index}
+
+    oro_account_frontend_edit_user:
+        label: oro.account.action.account_user.edit
+        applications: [commerce]
+        routes:
+            - oro_account_frontend_account_user_view
+        acl_resource: [EDIT, $.data]
+        order: 5
+        button_options:
+            icon: icon-pencil
+        actions:
+            - '@redirect':
+                parameters:
+                    route: oro_account_frontend_account_user_update
+                    route_parameters:
+                        id: $id
+
+    oro_account_frontend_profile_user:
+        label: oro.account.action.account_user.edit
+        applications: [commerce]
+        routes:
+            - oro_account_frontend_account_user_profile
+        acl_resource: [EDIT, $.data]
+        order: 5
+        button_options:
+            icon: icon-pencil
+        actions:
+            - '@redirect':
+                parameters:
+                    route: oro_account_frontend_account_user_profile_update
+
+    oro_account_frontend_edit_role:
+        label: oro.account.frontend.action.account_user_role.edit
+        applications: [commerce]
+        routes:
+            - oro_account_frontend_account_user_role_view
+        acl_resource: [EDIT, entity:commerce@Oro\Bundle\AccountBundle\Entity\AccountUserRole]
+        order: 10
+        button_options:
+            icon: icon-pencil
+        actions:
+            - '@redirect':
+                parameters:
+                    route: oro_account_frontend_account_user_role_update
+                    route_parameters:
+                        id: $id
+
+    oro_account_frontend_delete_role:
+        label: oro.account.action.account_user_role.delete
+        applications: [commerce]
+        routes:
+            - oro_account_frontend_account_user_role_view
+            - oro_account_frontend_account_user_role_update
+        acl_resource: [DELETE, $.data]
+        order: 20
+        button_options:
+            icon: icon-trash
+        preactions:
+            - '@call_method':
+                object: $.data
+                method: isPredefined
+                attribute: $.isPredefined
+        preconditions:
+            '@equal': [false, $.isPredefined]
+        actions:
+            - '@run_action_group':
+                action_group: DELETE
+                parameters_mapping:
+                    data: $.data
+            - '@trans':
+                id: oro.account.accountuserrole.entity_label
+                attribute: $.entityLabel
+            - '@flash_message':
+                message: oro.action.delete_message
+                type: 'success'
+                message_parameters:
+                    entityLabel: $.entityLabel
+            - '@redirect': {route: oro_account_frontend_account_user_role_index}
+    UPDATE:
+        exclude_datagrids:
+            - account-account-user-select-grid
+            - account-account-users-grid-view
+            - account-account-users-grid-update
+            - account-accounts-select-grid
+            - account-category-visibility-grid
+            - account-group-product-visibility-grid
+            - account-groups-select-grid
+            - account-product-visibility-grid
+            - account-user-by-account-grid
+    DELETE:
+        exclude_entities:
+            - Oro\Bundle\AccountBundle\Entity\AccountGroup
+        exclude_datagrids:
+            - account-account-user-select-grid
+            - account-account-users-grid-view
+            - account-account-users-grid-update
+            - account-accounts-select-grid
+            - account-category-visibility-grid
+            - account-group-accounts-grid-basic
+            - account-group-accounts-grid-view
+            - account-group-accounts-grid-update
+            - account-groups-select-grid
+            - account-group-category-visibility-grid
+            - account-group-product-visibility-grid
+            - account-product-visibility-grid
+            - account-user-by-account-grid
+
+action_groups:
+    oro_account_accountuser_set_enabled:
+        parameters:
+            data:
+                type: Oro\Bundle\AccountBundle\Entity\AccountUser
+            value:
+                type: boolean
+        acl_resource: [EDIT, $.data]
+        conditions:
+            '@not_equal': [$.data.enabled, $.value]
+        actions:
+            - '@assign_value': [$.data.enabled, $.value]
+            - '@call_service_method':
+                service: oro_account_user.manager
+                method: updateUser
+                method_parameters: [$.data]
+
+    oro_account_frontend_accountuser_set_enabled:
+        parameters:
+            data:
+                type: Oro\Bundle\AccountBundle\Entity\AccountUser
+            value:
+                type: boolean
+            current_user:
+                type: Symfony\Component\Security\Core\User\UserInterface
+        acl_resource: [EDIT, $.data]
+        conditions:
+            '@and':
+                - '@not_equal': [$.data.enabled, $.value]
+                - '@not_equal': [$.data.id, $.current_user.id]
+        actions:
+            - '@assign_value': [$.data.enabled, $.value]
+            - '@call_service_method':
+                service: oro_account_user.manager
+                method: updateUser
+                method_parameters: [$.data]
+
+    oro_account_accountuser_confirm:
+        parameters:
+            data:
+                type: Oro\Bundle\AccountBundle\Entity\AccountUser
+        acl_resource: [EDIT, $.data]
+        conditions:
+            '@equal': [$.data.confirmed, false]
+        actions:
+            - '@call_service_method':
+                service: oro_account_user.manager
+                method: confirmRegistration
+                method_parameters: [$.data]
+            - '@call_service_method':
+                service: oro_account_user.manager
+                method: updateUser
+                method_parameters: [$.data]
+
+    oro_account_accountuser_sendconfirmation:
+        parameters:
+            data:
+                type: Oro\Bundle\AccountBundle\Entity\AccountUser
+        acl_resource: [EDIT, $.data]
+        conditions:
+            '@equal': [$.data.confirmed, false]
+        actions:
+            - '@call_service_method':
+                service: oro_account_user.manager
+                method: sendConfirmationEmail
+                method_parameters: [$.data]
