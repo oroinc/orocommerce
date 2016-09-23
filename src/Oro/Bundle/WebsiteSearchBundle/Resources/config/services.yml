@@ -106,7 +106,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_website_search.select_index_data, method: process }
 
-<<<<<<< HEAD
     oro_website_search.entity.repository.search_index:
         class: 'Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository'
         factory: ["@doctrine", getRepository]
