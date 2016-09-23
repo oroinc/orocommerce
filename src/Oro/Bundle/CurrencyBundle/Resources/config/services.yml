@@ -9,3 +9,20 @@ services:
             - '@oro_locale.formatter.number'
         tags:
             - { name: twig.extension }
+
+    oro_currency.service.abstract_rounding:
+        class: 'Oro\Bundle\CurrencyBundle\Rounding\AbstractRoundingService'
+        public: false
+        abstract: true
+        arguments:
+            - "@oro_config.manager"
+
+    oro_currency.service.quantity_rounding:
+        class: 'Oro\Bundle\CurrencyBundle\Rounding\QuantityRoundingService'
+        public: false
+        parent: oro_currency.service.abstract_rounding
+
+    oro_currency.rounding.price_rounding_service:
+        class: 'Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService'
+        public: false
+        parent: oro_currency.service.abstract_rounding

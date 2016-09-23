@@ -21,7 +21,7 @@ class AccountSelectType extends AbstractType
                 'autocomplete_alias' => 'oro_account',
                 'create_form_route' => 'oro_account_create',
                 'configs' => [
-                    'placeholder' => 'oro.customer.form.choose',
+                    'placeholder' => 'oro.customer.account.form.choose',
                 ],
                 'attr' => [
                     'class' => 'account-account-select',

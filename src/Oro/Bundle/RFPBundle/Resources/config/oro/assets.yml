@@ -1,0 +1,5 @@
+assets:
+    css:
+        'ororfp':
+            - 'bundles/ororfp/css/less/rfp.less'
+            - 'bundles/ororfp/css/less/order.less'

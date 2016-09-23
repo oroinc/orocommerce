@@ -180,7 +180,7 @@ class AccountUserType extends AbstractType
                 'salesRepresentatives',
                 UserMultiSelectType::NAME,
                 [
-                    'label' => 'oro.customer.sales_representatives.label',
+                    'label' => 'oro.customer.account.sales_representatives.label',
                 ]
             );
 

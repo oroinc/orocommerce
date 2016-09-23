@@ -10,7 +10,7 @@ workflows:
             active: true
         exclusive_record_groups:
             - b2b_checkout_flow
-        priority: 200
+        priority: 100
 
         attributes:
             billing_address:
