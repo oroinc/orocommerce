@@ -51,9 +51,22 @@
         'data-page-component-module': 'orofrontend/default/js/components/rule-editor-component',
         'data-page-component-options': {
             data: {
-                product: [ 'id', 'name', 'status', 'category' ],
-                category: [ 'id', 'name', 'parent' ],
-                account: [ 'id', 'name', 'role'],
+                product: {
+                    id: 'any',
+                    name: 'any',
+                    category: 'any',
+                    status: ['ENABLED', 'DISABLED']
+                },
+                category: {
+                    id: 'any',
+                    name: 'any',
+                    parent: 'any',
+                },
+                account: {
+                    id: 'any',
+                    name: 'any',
+                    role: 'any',
+                },
                 products: {
                     type: 'array',
                     entity: 'product'
@@ -62,6 +75,7 @@
             operations: ['+', '-', '=', '!='],
             grouping: ['or', 'and'],
             array_operation: ['all', 'any'],
+
             input: 'textarea'
         },
         '~class': ' rule-editor'

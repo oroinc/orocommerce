@@ -46,6 +46,18 @@ define([
 
         /**
          *
+         * @property {RegExp}
+         */
+        wrappedSectionRegExp: /\(\s*(\S+)\s*\)/gi,
+
+        /**
+         *
+         * @property {RegExp}
+         */
+        bracketsRegExp: /(\(|\))/gi,
+
+        /**
+         *
          * @param options
          */
         initialize: function(options) {
@@ -79,15 +91,23 @@ define([
             var _this = this;
 
             var normalized = this.getNormalized(value, this.opsRegEx);
+
+            console.log('validate normalized', normalized);
+
+            // var hasBrackets = normalized.string.match(this.bracketsRegExp);
+
+            // console.log(hasBrackets, normalized);
+
             var words = this.splitString(normalized.string, ' ');
             var groups = this.getGroups(words);
 
+
             var logicIsValid = _.last(groups.logicWords) !== _.last(words) && _.every(groups.logic, function(item) {
-                    return _.contains(this.options.grouping, item);
+                    return _this.contains(this.options.grouping, item);
                 });
 
             var dataWordsAreValid = _.every(groups.dataWords, function(item) {
-                return _this.isDataExpression(item).full;
+                return _this.isDataExpression(item).isFull;
             });
 
             return logicIsValid && dataWordsAreValid;
@@ -222,6 +242,60 @@ define([
 
         /**
          *
+         * @param normalized
+         * @param wordUnderCaret
+         * @returns {Array}
+         */
+        getSuggestList: function(normalized, wordUnderCaret) {
+            var result = [];
+            var _this = this;
+
+            console.log('suggest normalized', normalized, wordUnderCaret);
+
+            if (_.isEmpty(normalized.string)) { // initial suggestion for empty normalized value
+                return this.dataWordCases;
+            }
+
+            var words = this.splitString(normalized.string, ' ');
+            var wordsLength = words.length;
+            var groups = this.getGroups(words);
+
+            var isCheckedWord = wordIs(words[wordsLength - 1]);
+
+            if (!_.some(isCheckedWord, function(item) {
+                    return _.isBoolean(item) && item;
+                }) && words[wordsLength - 2]) {
+                isCheckedWord = wordIs(words[wordsLength - 2]);
+            }
+
+            if (isCheckedWord.dataExpression) { // previous word is a complete data expression
+                result = this.getFilteredSuggests(this.logicWordCases, wordUnderCaret);
+            } else if (isCheckedWord.dataWord) { // previous word is a data expression word
+                result = this.getFilteredSuggests(this.operationsCases, wordUnderCaret);
+            } else if (isCheckedWord.operation) { // previous word is an operation (=, !=, etc.)
+                result = this.getFilteredSuggests(isCheckedWord.hasValues, wordUnderCaret);
+            } else if (isCheckedWord.logic || wordsLength === 1) {
+                result = this.getFilteredSuggests(this.dataWordCases, wordUnderCaret);
+            }
+
+            return result;
+
+            function wordIs(word) {
+                var isDataExpression = _this.isDataExpression(word);
+
+                return {
+                    logic: !_.isEmpty(groups.logicWords) && _this.contains(_this.logicWordCases, word),
+                    dataWord: !_.isEmpty(groups.dataWords) && _this.contains(_this.dataWordCases, word),
+                    dataExpression: !_.isEmpty(groups.dataWords) && _this.isDataExpression(word).isFull,
+                    operation: isDataExpression.hasExpression,
+                    hasValues: isDataExpression.values
+
+                };
+            }
+        },
+
+        /**
+         *
          * @param string
          * @returns {Boolean}
          */
@@ -233,55 +307,23 @@ define([
             }
 
             var matchSplit = expressionMatch ? this.splitString(string, expressionMatch[0]) : null;
-            var isValidWord = _.contains(this.dataWordCases, matchSplit[0]);
+            var isValidWord = this.contains(this.dataWordCases, matchSplit[0]);
+            var pathValue = this.getValueByPath(this.options.data, matchSplit[0]);
+
+            var isPresentInCases = !_.isEmpty(matchSplit[1]) && this.contains(pathValue, matchSplit[1]);
+
+            var arrayValues = matchSplit[1] ? matchSplit[1].split(',') : [];
+            var isArrayValues = pathValue.type === 'array' && !_.isEmpty(arrayValues).length && !_.isEmpty(_.last(arrayValues));
+
+            var isValidValue = !_.isEmpty(matchSplit[1]) && (pathValue === 'any' || isPresentInCases || isArrayValues);
+
+            var isFullValid = isValidWord && isValidValue;
 
             return {
-                full: !_.isEmpty(matchSplit[1]) && isValidWord,
-                noValue: _.isEmpty(matchSplit[1]) && isValidWord
+                isFull: isFullValid,
+                hasExpression: !_.isEmpty(expressionMatch),
+                values: pathValue !== 'any' ? pathValue : []
             };
-        },
-
-        /**
-         *
-         * @param normalized
-         * @param wordUnderCaret
-         * @returns {Array}
-         */
-        getSuggestList: function(normalized, wordUnderCaret) {
-            var result = [];
-            var _this = this;
-
-            var words = this.splitString(normalized.string, ' ');
-            var groups = this.getGroups(words);
-
-            if (_.isEmpty(normalized.string.trim())) { // initial suggestion for empty value
-                return this.getFilteredSuggests(wordUnderCaret, this.dataWordCases);
-            }
-
-            var previousWord = words[words.length - 2];
-            var lastWord = _.last(words);
-            var isLast = wordIs(lastWord);
-            var lastIsValid = isLast.logic || isLast.dataWord || isLast.dataExpression;
-            var isCheckedWord = lastIsValid || words.length === 1 ? isLast : wordIs(previousWord);
-
-            if (isCheckedWord.dataExpression) { // previous word is a full valid expression of data
-                result = this.getFilteredSuggests(wordUnderCaret, this.logicWordCases);
-            } else if (isCheckedWord.dataWord) { // previous word is a valid word of data but no full expression
-                result = this.getFilteredSuggests(wordUnderCaret, this.operationsCases);
-            } else if (!isCheckedWord.operation) { // previous word is a operation (=, !=, etc.)
-                result = this.getFilteredSuggests(wordUnderCaret, this.dataWordCases);
-            }
-
-            return result;
-
-            function wordIs(word) {
-                return {
-                    logic: !_.isEmpty(groups.logicWords) && _.contains(_this.logicWordCases, word),
-                    dataWord: !_.isEmpty(groups.dataWords) && _.contains(_this.dataWordCases, word),
-                    dataExpression: !_.isEmpty(groups.dataWords) && _this.isDataExpression(word).full,
-                    operation: _this.isDataExpression(word).noValue
-                };
-            }
         },
 
         /**
@@ -292,29 +334,41 @@ define([
          * @returns {{string: string, position: number}}
          */
         getNormalized: function(value, regex, caretPosition) {
-            var string = caretPosition ? this.getStringPart(value, 0, caretPosition) : value;
-            var normalizedSpaces = string.replace(/\s+/g, ' ');
-            var normalizedString = normalizedSpaces.replace(regex, '$1');
+            var hasCutPosition = !_.isUndefined(caretPosition);
+            var string = hasCutPosition ? this.getStringPart(value, 0, caretPosition) : value;
+
+            string = string.replace(/\s*\,\s*/g, ',');
+            string = string.replace(regex, '$1');
+
+            if (hasCutPosition) {
+                string = string.replace(this.bracketsRegExp, '');
+            } else {
+                string = string.replace(this.wrappedSectionRegExp, '$1');
+            }
+
+            string = string.replace(this.wrappedSectionRegExp, '$1');
+            string = string.replace(/\s+/g, ' ');
+            string = string.trim();
 
             return {
-                string: normalizedString,
-                position: normalizedString.length
+                string: string,
+                position: string.length
             };
         },
 
         /**
          *
+         * @param list
          * @param word
-         * @param ref
          * @returns {*}
          */
-        getFilteredSuggests: function(word, ref) {
+        getFilteredSuggests: function(list, word) {
             if (_.isEmpty(word)) {
-                return ref;
+                return list;
             }
 
-            var arr = _.filter(ref, function(item) {
-                return item.indexOf(word) === 0;
+            var arr = _.filter(list, function(item) {
+                return item.toLowerCase().indexOf(word.toLowerCase()) === 0;
             });
 
             return arr.length > 1 || arr[0] !== word ? arr : [];
@@ -336,6 +390,12 @@ define([
 
                 if (_.isArray(item)) {
                     arr = _.union(arr, self.getStrings(item, name, baseArr || src));
+                } else if (_.isObject(item)) {
+                    if (item.type === 'array') {
+                        arr.push(baseName ? baseName + '.' + name : name);
+                    } else {
+                        arr = _.union(arr, self.getStrings(_.keys(item), name, baseArr || src));
+                    }
                 } else if (baseArr && _.isArray(baseArr[item])) {
                     arr = _.union(arr, self.getStrings(baseArr[item], subName, baseArr || src));
                 } else if (_.isString(item)) {
@@ -387,7 +447,7 @@ define([
          * @returns {Array}
          */
         splitString: function(string, splitter) {
-            return  _.compact(string.split(splitter));
+            return _.compact(string.split(splitter));
         },
 
         /**
@@ -407,6 +467,22 @@ define([
                     return isOdd ? !modulo : modulo;
                 });
             }
+        },
+        contains: function(arr, value) {
+            return _.some(arr, function(item) {
+                return value.toLowerCase() === item.toLowerCase();
+            });
+        },
+        getValueByPath: function(obj, path) {
+            var result = obj;
+
+            _.each(path.split('.'), function(node) {
+                if (result[node]) {
+                    result = result[node];
+                }
+            });
+
+            return result;
         }
     });
 
