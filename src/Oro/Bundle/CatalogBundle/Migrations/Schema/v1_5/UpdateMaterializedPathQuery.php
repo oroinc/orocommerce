@@ -4,9 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_5;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
-use Psr\Log\LoggerInterface;
-
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
+use Psr\Log\LoggerInterface;
 
 class UpdateMaterializedPathQuery extends ParametrizedMigrationQuery
 {

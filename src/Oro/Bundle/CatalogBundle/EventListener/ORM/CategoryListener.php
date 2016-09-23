@@ -12,15 +12,12 @@ class CategoryListener
     public function calculateMaterializedPath(Category $category)
     {
         $path = (string) $category->getId();
-        $recursiveCompletePath = function (Category $category) use (&$path, &$recursiveCompletePath) {
-            $parent = $category->getParentCategory();
-            if ($parent) {
-                $path = $parent->getId().Category::MATERIALIZED_PATH_DELIMITER.$path;
-                $recursiveCompletePath($parent);
-            }
-        };
+        $parent = $category->getParentCategory();
+        while ($parent) {
+            $path = $parent->getId().Category::MATERIALIZED_PATH_DELIMITER.$path;
+            $parent = $parent->getParentCategory();
+        }
 
-        $recursiveCompletePath($category);
         $category->setMaterializedPath($path);
     }
 }
