@@ -563,9 +563,7 @@ services:
         public: false
         arguments:
             - "@oro_config.global"
-            - "@security.token_storage"
-            - "@oro_website.manager"
-            - "@oro_account.provider.account_user_relations_provider"
+            - "@oro_scope.scope_manager"
         calls:
             - [setProductVisibilitySystemConfigurationPath, ['oro_account.product_visibility']]
             - [setCategoryVisibilitySystemConfigurationPath, ['oro_account.category_visibility']]
@@ -968,15 +966,23 @@ services:
         public: false
         arguments:
             - "@oro_security.security_facade"
+
+    oro_account.account_scope_provider.link:
+        public: false
         tags:
-            - {name: oro_scope.provider, scopeType: category_visibility, priority: 30}
-            - {name: oro_scope.provider, scopeType: product_visibility, priority: 30}
+            - { name: oro_service_link, service: oro_account.account_scope_provider }
+            - { name: oro_scope.provider, scopeType: category_visibility, priority: 30 }
+            - { name: oro_scope.provider, scopeType: account_product_visibility, priority: 30 }
 
     oro_account.account_group_scope_provider:
         class: 'Oro\Bundle\AccountBundle\Provider\ScopeAccountGroupProvider'
         public: false
         arguments:
             - "@oro_security.security_facade"
+
+    oro_account.account_group_scope_provider.link:
+        public: false
         tags:
-            - {name: oro_scope.provider, scopeType: category_visibility, priority: 30}
-            - {name: oro_scope.provider, scopeType: product_visibility, priority: 30}
+            - { name: oro_service_link, service: oro_account.account_group_scope_provider }
+            - { name: oro_scope.provider, scopeType: category_visibility, priority: 30 }
+            - { name: oro_scope.provider, scopeType: account_product_visibility, priority: 30 }

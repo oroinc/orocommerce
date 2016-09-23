@@ -2,20 +2,13 @@
 
 namespace Oro\Bundle\AccountBundle\Model;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
-
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 
 class ProductVisibilityQueryBuilderModifier
 {
@@ -35,19 +28,9 @@ class ProductVisibilityQueryBuilderModifier
     protected $configManager;
 
     /**
-     * @var TokenStorageInterface
+     * @var ScopeManager
      */
-    protected $tokenStorage;
-
-    /**
-     * @var WebsiteManager
-     */
-    protected $websiteManager;
-
-    /**
-     * @var AccountUserRelationsProvider
-     */
-    protected $relationsProvider;
+    protected $scopeManager;
 
     /**
      * @var array
@@ -56,20 +39,12 @@ class ProductVisibilityQueryBuilderModifier
 
     /**
      * @param ConfigManager $configManager
-     * @param TokenStorageInterface $tokenStorage
-     * @param WebsiteManager $websiteManager
-     * @param AccountUserRelationsProvider $relationsProvider
+     * @param ScopeManager $scopeManager
      */
-    public function __construct(
-        ConfigManager $configManager,
-        TokenStorageInterface $tokenStorage,
-        WebsiteManager $websiteManager,
-        AccountUserRelationsProvider $relationsProvider
-    ) {
+    public function __construct(ConfigManager $configManager, ScopeManager $scopeManager)
+    {
         $this->configManager = $configManager;
-        $this->tokenStorage = $tokenStorage;
-        $this->websiteManager = $websiteManager;
-        $this->relationsProvider = $relationsProvider;
+        $this->scopeManager = $scopeManager;
     }
 
     /**
@@ -93,36 +68,11 @@ class ProductVisibilityQueryBuilderModifier
      */
     public function modify(QueryBuilder $queryBuilder)
     {
-        $accountUser = $this->getAccountUser();
-        $visibilities = [$this->getProductVisibilityResolvedTerm($queryBuilder)];
-
-        $accountGroup = $this->relationsProvider->getAccountGroup($accountUser);
-        if ($accountGroup) {
-            $visibilities[] = $this->getAccountGroupProductVisibilityResolvedTerm(
-                $queryBuilder,
-                $accountGroup
-            );
-        }
-
-        $account = $this->relationsProvider->getAccount($accountUser);
-        if ($account) {
-            $visibilities[] = $this->getAccountProductVisibilityResolvedTerm($queryBuilder, $account);
-        }
+        $visibilities[] = $this->getProductVisibilityResolvedTerm($queryBuilder);
+        $visibilities[] = $this->getAccountGroupProductVisibilityResolvedTerm($queryBuilder);
+        $visibilities[] = $this->getAccountProductVisibilityResolvedTerm($queryBuilder);
 
         $queryBuilder->andWhere($queryBuilder->expr()->gt(implode(' + ', $visibilities), 0));
-    }
-
-    /**
-     * @return AccountUser|null
-     */
-    protected function getAccountUser()
-    {
-        $token = $this->tokenStorage->getToken();
-        if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            return $user;
-        }
-
-        return null;
     }
 
     /**
@@ -131,17 +81,21 @@ class ProductVisibilityQueryBuilderModifier
      */
     protected function getProductVisibilityResolvedTerm(QueryBuilder $queryBuilder)
     {
+        $scope = $this->scopeManager->find('product_visibility');
+        if (!$scope) {
+            return '0';
+        }
         $queryBuilder->leftJoin(
             'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved',
             'product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
                 $queryBuilder->expr()->eq($this->getRootAlias($queryBuilder), 'product_visibility_resolved.product'),
-                $queryBuilder->expr()->eq('product_visibility_resolved.website', ':_website')
+                $queryBuilder->expr()->eq('product_visibility_resolved.scope', ':scope_all')
             )
         );
 
-        $queryBuilder->setParameter('_website', $this->websiteManager->getCurrentWebsite());
+        $queryBuilder->setParameter('scope_all', $scope);
 
         return sprintf(
             'COALESCE(%s, %s)',
@@ -152,11 +106,15 @@ class ProductVisibilityQueryBuilderModifier
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param AccountGroup $account
      * @return string
      */
-    protected function getAccountGroupProductVisibilityResolvedTerm(QueryBuilder $queryBuilder, AccountGroup $account)
-    {
+    protected function getAccountGroupProductVisibilityResolvedTerm(
+        QueryBuilder $queryBuilder
+    ) {
+        $scope = $this->scopeManager->find('account_group_product_visibility');
+        if (!$scope) {
+            return '0';
+        }
         $queryBuilder->leftJoin(
             'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
             'account_group_product_visibility_resolved',
@@ -166,13 +124,11 @@ class ProductVisibilityQueryBuilderModifier
                     $this->getRootAlias($queryBuilder),
                     'account_group_product_visibility_resolved.product'
                 ),
-                $queryBuilder->expr()->eq('account_group_product_visibility_resolved.accountGroup', ':_account_group'),
-                $queryBuilder->expr()->eq('account_group_product_visibility_resolved.website', ':_website')
+                $queryBuilder->expr()->eq('account_group_product_visibility_resolved.accountGroup', ':scope_group')
             )
         );
 
-        $queryBuilder->setParameter('_account_group', $account);
-        $queryBuilder->setParameter('_website', $this->websiteManager->getCurrentWebsite());
+        $queryBuilder->setParameter('scope_group', $scope);
 
         return sprintf(
             'COALESCE(%s, 0) * 10',
@@ -182,11 +138,14 @@ class ProductVisibilityQueryBuilderModifier
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param Account $account
      * @return string
      */
-    protected function getAccountProductVisibilityResolvedTerm(QueryBuilder $queryBuilder, Account $account)
+    protected function getAccountProductVisibilityResolvedTerm(QueryBuilder $queryBuilder)
     {
+        $scope = $this->scopeManager->find('account_product_visibility');
+        if (!$scope) {
+            return '0';
+        }
         $queryBuilder->leftJoin(
             'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',
             'account_product_visibility_resolved',
@@ -196,13 +155,10 @@ class ProductVisibilityQueryBuilderModifier
                     $this->getRootAlias($queryBuilder),
                     'account_product_visibility_resolved.product'
                 ),
-                $queryBuilder->expr()->eq('account_product_visibility_resolved.account', ':_account'),
-                $queryBuilder->expr()->eq('account_product_visibility_resolved.website', ':_website')
+                $queryBuilder->expr()->eq('account_product_visibility_resolved.scope', ':scope_account')
             )
         );
-
-        $queryBuilder->setParameter('_account', $account);
-        $queryBuilder->setParameter('_website', $this->websiteManager->getCurrentWebsite());
+        $queryBuilder->setParameter('scope_account', $scope);
 
         $productFallback = $this->addCategoryConfigFallback('product_visibility_resolved.visibility');
         $accountFallback = $this->addCategoryConfigFallback('account_product_visibility_resolved.visibility');
@@ -294,5 +250,13 @@ TERM;
             BaseVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
             $this->getCategoryConfigValue()
         );
+    }
+
+    /**
+     * @param ScopeManager $scopeManager
+     */
+    public function setScopeManager(ScopeManager $scopeManager)
+    {
+        $this->scopeManager = $scopeManager;
     }
 }

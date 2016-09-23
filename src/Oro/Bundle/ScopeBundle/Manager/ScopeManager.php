@@ -91,9 +91,9 @@ class ScopeManager
 
     /**
      * @param string $scopeType
-     * @param ScopeProviderInterface $provider
+     * @param $provider
      */
-    public function addProvider($scopeType, ScopeProviderInterface $provider)
+    public function addProvider($scopeType, $provider)
     {
         $this->providers[$scopeType][] = $provider;
     }

@@ -17,6 +17,8 @@ services:
         tags:
             - {name: oro_scope.provider, scopeType: category_visibility, priority: 30}
             - {name: oro_scope.provider, scopeType: product_visibility, priority: 30}
+            - {name: oro_scope.provider, scopeType: account_group_product_visibility, priority: 30}
+            - {name: oro_scope.provider, scopeType: account_product_visibility, priority: 30}
 
     oro_website.twig.website_extension:
         class: 'Oro\Bundle\WebsiteBundle\Twig\OroWebsiteExtension'

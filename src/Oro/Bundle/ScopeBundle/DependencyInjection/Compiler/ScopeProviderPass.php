@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class ScopeProviderPass implements CompilerPassInterface
 {
-    const SCOPE_MANAGER = 'oro_scope.manager.scope_manager';
+    const SCOPE_MANAGER = 'oro_scope.scope_manager';
     const SCOPE_PROVIDER_TAG = 'oro_scope.provider';
 
     /**

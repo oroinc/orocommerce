@@ -1,6 +1,6 @@
 services:
-  oro_scope.manager.scope_manager:
-      class: Oro\Bundle\ScopeBundle\Manager\ScopeManager
-      arguments:
-       - @doctrine
-       - @oro_entity.entity_field_provider
+    oro_scope.scope_manager:
+        class: Oro\Bundle\ScopeBundle\Manager\ScopeManager
+        arguments:
+         - @doctrine
+         - @oro_entity.entity_field_provider
