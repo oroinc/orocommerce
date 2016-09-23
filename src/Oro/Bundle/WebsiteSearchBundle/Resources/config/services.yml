@@ -1,8 +1,9 @@
 parameters:
-    oro_website_search.mock.class:                                                Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
-    oro_website_search.query_factory.class:                                       Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
-    oro_website_search.select_data.listener.class:                                Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
-    oro_website_search.select_data.product_visibility_restriction_listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\ProductVisibilityRestrictionListener
+    oro_website_search.mock.class:                                    Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
+    oro_website_search.query_factory.class:                           Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
+    oro_website_search.select_data.listener.class:                    Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
+    oro_website_search.reindex_request.listener.class:                Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener
+    oro_website_search.product_visibility_restriction_listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\ProductVisibilityRestrictionListener
 
 services:
     oro_website_search.mock.engine:
@@ -18,18 +19,25 @@ services:
             - '@oro_website_search.query_factory.inner'
             - '@event_dispatcher'
             - '@oro_website_search.mock.engine'
-            - '@oro_product.product.manager'
-            - '@oro_search.query.expression_builder'
 
     oro_website_search.select_data.listener:
         class: %oro_website_search.select_data.listener.class%
         tags:
             - { name: kernel.event_listener, event: oro_website_search.select_index_data, method: process }
 
-    oro_website_search.select_data.product_visibility_restriction_listener:
-        class: %oro_website_search.select_data.product_visibility_restriction_listener.class%
+    oro_website_search.product_visibility_restriction_listener:
+        class: %oro_website_search.product_visibility_restriction_listener.class%
         arguments:
             - '@oro_product.product.manager'
             - '@oro_search.query.expression_builder'
         tags:
             - { name: kernel.event_listener, event: oro_search.before_search, method: process }
+
+    oro_website_search.reindex_request.listener:
+        class: %oro_website_search.reindex_request.listener.class%
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - ~ # regular indexer
+            - ~ # async indexer
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.reindexation_trigger, method: process }
