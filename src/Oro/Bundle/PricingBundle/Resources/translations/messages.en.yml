@@ -238,6 +238,12 @@ oro.pricing:
             empty_prices: Price not available
             price_not_found: Price for requested quantity is not available
 
+    notification:
+        price_list:
+            error:
+                product_assignment_build: 'Error occured during price list product assignments build'
+                price_rule_build: 'Error occured during price rule build'
+
 oro:
     importexport:
         import:

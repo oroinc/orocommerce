@@ -8,12 +8,15 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
+use Oro\Bundle\PricingBundle\NotificationMessage\Message;
+use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
@@ -43,21 +46,45 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
     protected $priceListRepository;
 
     /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @var Messenger
+     */
+    protected $messenger;
+
+    /**
      * @param PriceListTriggerFactory $triggerFactory
      * @param ProductPriceBuilder $priceBuilder
      * @param LoggerInterface $logger
      * @param ManagerRegistry $registry
+     * @param Messenger $messenger
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         PriceListTriggerFactory $triggerFactory,
         ProductPriceBuilder $priceBuilder,
         LoggerInterface $logger,
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
+        Messenger $messenger,
+        TranslatorInterface $translator
     ) {
         $this->logger = $logger;
         $this->priceBuilder = $priceBuilder;
         $this->triggerFactory = $triggerFactory;
         $this->registry = $registry;
+        $this->messenger = $messenger;
+        $this->translator = $translator;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSubscribedTopics()
+    {
+        return [Topics::RESOLVE_PRICE_RULES];
     }
 
     /**
@@ -65,9 +92,22 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
+        $trigger = null;
         try {
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
+
+            $this->messenger->remove(
+                NotificationMessages::CHANNEL_PRICE_LIST,
+                NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+                PriceList::class,
+                $trigger->getPriceList()->getId()
+            );
+
+            $priceList = $trigger->getPriceList();
+            $startTime = $priceList->getUpdatedAt();
+            $this->priceBuilder->buildByPriceList($priceList, $trigger->getProduct());
+            $this->updatePriceListActuality($priceList, $startTime);
         } catch (InvalidArgumentException $e) {
             $this->logger->error(
                 sprintf(
@@ -78,23 +118,26 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
             );
 
             return self::REJECT;
+        } catch (\Exception $e) {
+            $this->logger->error(
+                'Unexpected exception occurred during Price Rule build',
+                ['exception' => $e]
+            );
+            if ($trigger && $trigger->getPriceList()) {
+                $this->messenger->send(
+                    NotificationMessages::CHANNEL_PRICE_LIST,
+                    NotificationMessages::TOPIC_PRICE_RULES_BUILD,
+                    Message::STATUS_ERROR,
+                    $this->translator->trans('oro.pricing.notification.price_list.error.price_rule_build'),
+                    PriceList::class,
+                    $trigger->getPriceList()->getId()
+                );
+            }
+
+            return self::REJECT;
         }
 
-        $priceList = $trigger->getPriceList();
-        $startTime = $priceList->getUpdatedAt();
-
-        $this->priceBuilder->buildByPriceList($priceList, $trigger->getProduct());
-        $this->updatePriceListActuality($priceList, $startTime);
-
         return self::ACK;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedTopics()
-    {
-        return [Topics::RESOLVE_PRICE_RULES];
     }
 
     /**
