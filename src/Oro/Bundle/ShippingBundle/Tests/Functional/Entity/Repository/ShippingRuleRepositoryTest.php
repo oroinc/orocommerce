@@ -20,13 +20,13 @@ class ShippingRuleRepositoryTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], static::generateBasicAuthHeader());
 
         $this->loadFixtures([
             LoadShippingRules::class,
         ]);
 
-        $this->repository = $this->getContainer()->get('doctrine')->getRepository('OroShippingBundle:ShippingRule');
+        $this->repository = static::getContainer()->get('doctrine')->getRepository('OroShippingBundle:ShippingRule');
     }
 
     /**
@@ -47,9 +47,29 @@ class ShippingRuleRepositoryTest extends WebTestCase
             $this->findCountry($country)
         );
 
-        $this->assertTrue(false !== strpos(serialize($shippingRules), $expectedShippingRule->getName()));
-        $this->assertTrue(false !== strpos(serialize($shippingRules), $expectedShippingRule->getCurrency()));
-        $this->assertTrue(false !== strpos(serialize($shippingRules), $expectedShippingRule->getConditions()));
+        static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getName()));
+        static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getCurrency()));
+        static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getConditions()));
+    }
+
+    public function testGetRulesWithoutShippingMethods()
+    {
+        $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();
+        $enabledRulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods(true);
+
+        static::assertCount(2, $rulesWithoutShippingMethods);
+        static::assertCount(1, $enabledRulesWithoutShippingMethods);
+    }
+
+    public function testDisableRulesWithoutShippingMethods()
+    {
+        $this->repository->disableRulesWithoutShippingMethods();
+
+        $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();
+        $enabledRulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods(true);
+
+        static::assertCount(2, $rulesWithoutShippingMethods);
+        static::assertCount(0, $enabledRulesWithoutShippingMethods);
     }
 
     /**
@@ -96,7 +116,7 @@ class ShippingRuleRepositoryTest extends WebTestCase
      */
     protected function findCountry($isoCode)
     {
-        return $this->getContainer()->get('doctrine')
+        return static::getContainer()->get('doctrine')
             ->getManagerForClass('OroAddressBundle:Country')
             ->find('OroAddressBundle:Country', $isoCode);
     }

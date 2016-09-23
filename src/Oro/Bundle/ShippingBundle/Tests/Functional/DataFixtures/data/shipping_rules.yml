@@ -124,3 +124,15 @@ shipping_rule.8:
                     options:
                         type: 'per_order'
                         price: 10
+
+shipping_rule.9:
+    enabled: true
+    priority: 0
+    conditions: 'true'
+    currency: 'USD'
+
+shipping_rule.10:
+    enabled: false
+    priority: 0
+    conditions: 'true'
+    currency: 'USD'

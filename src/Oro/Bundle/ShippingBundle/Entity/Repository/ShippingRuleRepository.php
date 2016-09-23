@@ -37,4 +37,32 @@ class ShippingRuleRepository extends EntityRepository
             ->addOrderBy('rule.id')
             ->getQuery()->execute();
     }
+
+    public function getRulesWithoutShippingMethods($enabled = false)
+    {
+        $qb = $this->createQueryBuilder('rule')
+            ->select('rule.id')
+            ->leftJoin('rule.methodConfigs', 'methodConfigs');
+        if ($enabled) {
+            $qb->andWhere('rule.enabled = true');
+        }
+        return $qb->having('COUNT(methodConfigs.id) = 0')
+                  ->groupBy('rule.id')
+                  ->getQuery()->execute();
+    }
+
+    public function disableRulesWithoutShippingMethods()
+    {
+        $rules = $this->getRulesWithoutShippingMethods(true);
+        $final = array_column($rules, 'id');
+        if (0 < count($rules)) {
+            $qb = $this->createQueryBuilder('rule');
+            $qb->update()
+                ->set('rule.enabled', ':newValue')
+                ->setParameter('newValue', false)
+                ->where($qb->expr()->in('rule.id', ':rules'))
+                ->setParameter('rules', $final)
+                ->getQuery()->execute();
+        }
+    }
 }

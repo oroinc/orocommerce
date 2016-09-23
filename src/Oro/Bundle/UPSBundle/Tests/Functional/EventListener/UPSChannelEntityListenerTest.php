@@ -26,24 +26,39 @@ class UPSChannelEntityListenerTest extends WebTestCase
             ->get('oro_shipping.shipping_method.registry')
             ->getShippingMethods();
         /** @var Channel $ups_channel */
-        $ups_channel = $this->getReference('ups:channel_1');
+        $ups_channel1 = $this->getReference('ups:channel_1');
+        $ups_channel2 = $this->getReference('ups:channel_2');
+
 
         $configuredMethodsBefore = $em
             ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
             ->findBy([
-                'method' => $this->getShippingMethodIdentifierByLabel($shippingMethods, $ups_channel->getName())]);
-
+                'method' => $this->getShippingMethodIdentifierByLabel($shippingMethods, $ups_channel1->getName())]);
         static::assertNotEmpty($configuredMethodsBefore);
 
-        $em->remove($ups_channel);
+        $em->remove($ups_channel1);
         $em->flush();
 
         $configuredMethodsAfter = $em
             ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
             ->findBy([
-                'method' => $this->getShippingMethodIdentifierByLabel($shippingMethods, $ups_channel->getName())]);
-
+                'method' => $this->getShippingMethodIdentifierByLabel($shippingMethods, $ups_channel1->getName())]);
         static::assertEmpty($configuredMethodsAfter);
+
+        $rulesWithoutShippingMethodsBefore = $em->getRepository('OroShippingBundle:ShippingRule')
+            ->getRulesWithoutShippingMethods();
+        static::assertEmpty($rulesWithoutShippingMethodsBefore);
+
+        $em->remove($ups_channel2);
+        $em->flush();
+
+        $rulesWithoutShippingMethodsAfter = $em->getRepository('OroShippingBundle:ShippingRule')
+            ->getRulesWithoutShippingMethods();
+        static::assertNotEmpty($rulesWithoutShippingMethodsAfter);
+
+        $enabledRulesWithoutShippingMethodsAfter = $em->getRepository('OroShippingBundle:ShippingRule')
+            ->getRulesWithoutShippingMethods(true);
+        static::assertEmpty($enabledRulesWithoutShippingMethodsAfter);
     }
 
     /**

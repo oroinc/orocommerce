@@ -61,27 +61,29 @@ class LoadShippingRules extends AbstractFixture
                 $entity->addDestination($shippingRuleDestination);
             }
 
-            foreach ($data['methodConfigs'] as $methodConfigData) {
-                $methodConfig = new ShippingRuleMethodConfig();
+            if (array_key_exists('methodConfigs', $data)) {
+                foreach ($data['methodConfigs'] as $methodConfigData) {
+                    $methodConfig = new ShippingRuleMethodConfig();
 
-                $methodConfig
-                    ->setRule($entity)
-                    ->setMethod(FlatRateShippingMethod::IDENTIFIER);
+                    $methodConfig
+                        ->setRule($entity)
+                        ->setMethod(FlatRateShippingMethod::IDENTIFIER);
 
-                foreach ($methodConfigData['typeConfigs'] as $typeConfigData) {
-                    $typeConfig = new ShippingRuleMethodTypeConfig();
-                    $typeConfig->setType(FlatRateShippingMethodType::IDENTIFIER)
-                        ->setOptions([
-                            FlatRateShippingMethodType::PRICE_OPTION => $typeConfigData['options']['price'],
-                            FlatRateShippingMethodType::HANDLING_FEE_OPTION => null,
-                            FlatRateShippingMethodType::TYPE_OPTION => $typeConfigData['options']['type'],
-                        ]);
-                    $typeConfig->setEnabled(true);
-                    $methodConfig->addTypeConfig($typeConfig);
+                    foreach ($methodConfigData['typeConfigs'] as $typeConfigData) {
+                        $typeConfig = new ShippingRuleMethodTypeConfig();
+                        $typeConfig->setType(FlatRateShippingMethodType::IDENTIFIER)
+                            ->setOptions([
+                                FlatRateShippingMethodType::PRICE_OPTION => $typeConfigData['options']['price'],
+                                FlatRateShippingMethodType::HANDLING_FEE_OPTION => null,
+                                FlatRateShippingMethodType::TYPE_OPTION => $typeConfigData['options']['type'],
+                            ]);
+                        $typeConfig->setEnabled(true);
+                        $methodConfig->addTypeConfig($typeConfig);
+                    }
+
+                    $manager->persist($methodConfig);
+                    $entity->addMethodConfig($methodConfig);
                 }
-
-                $manager->persist($methodConfig);
-                $entity->addMethodConfig($methodConfig);
             }
 
             $manager->persist($entity);
