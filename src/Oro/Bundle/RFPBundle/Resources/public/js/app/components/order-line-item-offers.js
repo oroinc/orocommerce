@@ -7,7 +7,6 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
     var _ = require('underscore');
     var $ = require('jquery');
-    var mediator = require('oroui/js/mediator');
 
     OrderLineItemOffers = BaseComponent.extend({
         /**

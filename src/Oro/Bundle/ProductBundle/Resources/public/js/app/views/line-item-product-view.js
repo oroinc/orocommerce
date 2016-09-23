@@ -3,7 +3,6 @@ define(function(require) {
 
     var LineItemProductView;
     var BaseProductView = require('oroproduct/js/app/views/base-product-view');
-    var $ = require('jquery');
     var _ = require('underscore');
 
     LineItemProductView = BaseProductView.extend({

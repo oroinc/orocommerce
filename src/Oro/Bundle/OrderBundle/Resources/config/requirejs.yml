@@ -7,7 +7,6 @@ config:
         'oroorder/js/app/components/products-prices-component': 'bundles/oroorder/js/app/components/products-prices-component.js'
         'oroorder/js/app/components/data-load-component': 'bundles/oroorder/js/app/components/data-load-component.js'
         'oroorder/js/app/views/address-view': 'bundles/oroorder/js/app/views/address-view.js'
-        'oroorder/js/app/views/frontend-line-item-view': 'bundles/oroorder/js/app/views/frontend-line-item-view.js'
         'oroorder/js/app/views/line-item-view': 'bundles/oroorder/js/app/views/line-item-view.js'
         'oroorder/js/app/views/line-items-view': 'bundles/oroorder/js/app/views/line-items-view.js'
         'oroorder/js/app/views/payment-term-view': 'bundles/oroorder/js/app/views/payment-term-view.js'

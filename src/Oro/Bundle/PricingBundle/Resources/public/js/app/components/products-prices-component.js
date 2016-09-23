@@ -60,7 +60,6 @@ define(function(require) {
         /**
          * @param {Array} products
          * @param {Function} callback
-         * @param {Object} context
          */
         loadProductsTierPrices: function(products, callback) {
             var context =  {

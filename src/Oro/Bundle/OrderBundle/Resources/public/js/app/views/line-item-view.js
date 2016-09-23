@@ -61,10 +61,8 @@ define(function(require) {
 
         /**
          * Initialize unit loader component
-         *
-         * @param {Object} options
          */
-        initializeUnitLoader: function(options) {
+        initializeUnitLoader: function() {
             var defaultOptions = {
                 _sourceElement: this.$el,
                 productSelector: this.options.selectors.productSelector,
@@ -75,7 +73,7 @@ define(function(require) {
                 defaultValues: this.options.freeFormUnits
             };
 
-            this.subview('productUnitComponent', new ProductUnitComponent(_.extend({}, defaultOptions, options || {})));
+            this.subview('productUnitComponent', new ProductUnitComponent(_.extend({}, defaultOptions)));
         },
 
         /**
