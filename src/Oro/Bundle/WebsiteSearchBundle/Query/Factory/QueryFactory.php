@@ -24,31 +24,19 @@ class QueryFactory implements QueryFactoryInterface
     /** @var EventDispatcherInterface */
     protected $dispatcher;
 
-    /** @var ProductManager */
-    protected $productManager;
-
-    /** @var ExpressionBuilder $expressionBuilder */
-    protected $expressionBuilder;
-
     /**
      * @param QueryFactoryInterface $parentQueryFactory
      * @param EventDispatcherInterface $eventDispatcher
      * @param EngineV2Interface $engine
-     * @param ProductManager $productManager
-     * @param ExpressionBuilder $expressionBuilder
      */
     public function __construct(
         QueryFactoryInterface $parentQueryFactory,
         EventDispatcherInterface $eventDispatcher,
-        EngineV2Interface $engine,
-        ProductManager $productManager,
-        ExpressionBuilder $expressionBuilder
+        EngineV2Interface $engine
     ) {
         $this->parent            = $parentQueryFactory;
         $this->dispatcher        = $eventDispatcher;
         $this->engine            = $engine;
-        $this->productManager    = $productManager;
-        $this->expressionBuilder = $expressionBuilder;
     }
 
     /**
@@ -59,12 +47,11 @@ class QueryFactory implements QueryFactoryInterface
         if (!isset($config['search_index']) || $config['search_index'] !== 'website') {
             return $this->parent->create($grid, $config);
         }
+
         $query = new WebsiteSearchQuery(
             $this->engine,
             $this->dispatcher,
-            new Query(),
-            $this->productManager,
-            $this->expressionBuilder
+            new Query()
         );
 
         $this->configureQuery($config, $query);

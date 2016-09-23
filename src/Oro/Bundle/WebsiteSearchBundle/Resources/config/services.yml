@@ -1,13 +1,15 @@
 parameters:
-    oro_website_search.mock.class:                  Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
-    oro_website_search.query_factory.class:         Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
-    oro_website_search.select_data.listener.class:  Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
+    oro_website_search.mock.class:                                                Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
+    oro_website_search.query_factory.class:                                       Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
+    oro_website_search.select_data.listener.class:                                Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
+    oro_website_search.select_data.product_visibility_restriction_listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\ProductVisibilityRestrictionListener
 
 services:
     oro_website_search.mock.engine:
         class: %oro_website_search.mock.class%
         arguments:
             - '@doctrine.orm.entity_manager'
+            - '@event_dispatcher'
 
     oro_website_search.query_factory:
         decorates: oro_search.query_factory
@@ -23,3 +25,11 @@ services:
         class: %oro_website_search.select_data.listener.class%
         tags:
             - { name: kernel.event_listener, event: oro_website_search.select_index_data, method: process }
+
+    oro_website_search.select_data.product_visibility_restriction_listener:
+        class: %oro_website_search.select_data.product_visibility_restriction_listener.class%
+        arguments:
+            - '@oro_product.product.manager'
+            - '@oro_search.query.expression_builder'
+        tags:
+            - { name: kernel.event_listener, event: oro_search.before_search, method: process }
