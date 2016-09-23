@@ -38,13 +38,13 @@ datagrids:
                         - { join: account.internal_rating, alias: internalRating }
         columns:
             name:
-                label: oro.customer.name.label
+                label: oro.customer.account.name.label
             group_name:
-                label: oro.customer.group.label
+                label: oro.customer.account.group.label
             parent_name:
-                label: oro.customer.parent.label
+                label: oro.customer.account.parent.label
             internal_rating_name:
-                label: oro.customer.internal_rating.label
+                label: oro.customer.account.internal_rating.label
         properties:
             id: ~
         sorters:
@@ -220,9 +220,9 @@ datagrids:
                 - group
         columns:
             name:
-                label: oro.customer.name.label
+                label: oro.customer.account.name.label
             parent_name:
-                label: oro.customer.parent.label
+                label: oro.customer.account.parent.label
         sorters:
             default:
                 name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
@@ -247,13 +247,13 @@ datagrids:
                 - group
         columns:
             hasGroup:
-                label: oro.customer.has_group.label
+                label: oro.customer.account.has_group.label
                 editable: true
                 frontend_type: boolean
             name:
-                label: oro.customer.name.label
+                label: oro.customer.account.name.label
             parent_name:
-                label: oro.customer.parent.label
+                label: oro.customer.account.parent.label
         filters:
             columns:
                 hasGroup:
@@ -889,7 +889,7 @@ datagrids:
                 - target_entity_id
         columns:
             name:
-                label: oro.customer.name.label
+                label: oro.customer.account.name.label
             visibility:
                 label: oro.customer.visibility.accountcategoryvisibility.entity_label
                 frontend_type: select
@@ -938,7 +938,7 @@ datagrids:
                 - target_entity_id
         columns:
             name:
-                label: oro.customer.name.label
+                label: oro.customer.account.name.label
             visibility:
                 label: oro.customer.visibility.accountgroupcategoryvisibility.entity_label
                 frontend_type: select
@@ -990,7 +990,7 @@ datagrids:
                 - website_id
         columns:
             name:
-                label: oro.customer.name.label
+                label: oro.customer.account.name.label
             visibility:
                 label: oro.customer.visibility.accountproductvisibility.entity_label
                 frontend_type: select
@@ -1041,7 +1041,7 @@ datagrids:
                 - website_id
         columns:
             name:
-                label: oro.customer.name.label
+                label: oro.customer.account.name.label
             visibility:
                 label: oro.customer.visibility.accountgroupproductvisibility.entity_label
                 frontend_type: select

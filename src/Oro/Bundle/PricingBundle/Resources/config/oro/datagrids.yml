@@ -167,11 +167,11 @@ datagrids:
                         - { join: relatedEntity.parent, alias: parent }
         columns:
             name:
-                label: oro.customer.name.label
+                label: oro.customer.account.name.label
             groupName:
-                label: oro.customer.group.label
+                label: oro.customer.account.group.label
             parentName:
-                label: oro.customer.parent.label
+                label: oro.customer.account.parent.label
         properties:
             view_link:
                 route:  oro_account_view
@@ -282,11 +282,11 @@ datagrids:
                         - { join: relatedEntity.parent, alias: parent }
         columns:
             name:
-                label:          oro.customer.name.label
+                label:          oro.customer.account.name.label
             groupName:
-                label:          oro.customer.group.label
+                label:          oro.customer.account.group.label
             parentName:
-                label:          oro.customer.parent.label
+                label:          oro.customer.account.parent.label
         filters:
             columns:
                 groupName:

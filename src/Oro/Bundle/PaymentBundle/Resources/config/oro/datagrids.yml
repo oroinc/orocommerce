@@ -145,7 +145,7 @@ datagrids:
                         - { join: paymentTerm.accounts, alias: relatedEntity }
         columns:
             name:
-                label: oro.customer.name.label
+                label: oro.customer.account.name.label
         properties:
             view_link:
                 route:  oro_account_group_view

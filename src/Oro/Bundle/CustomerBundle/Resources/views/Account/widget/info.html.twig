@@ -4,7 +4,7 @@
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
-            {{ UI.renderProperty('oro.customer.name.label'|trans, entity.name) }}
+            {{ UI.renderProperty('oro.customer.account.name.label'|trans, entity.name) }}
 
             {% if entity.group %}
                 {% if is_granted('VIEW', entity.group) %}
@@ -13,9 +13,9 @@
                         {{ entity.group.name }}
                     </a>
                     {% endset %}
-                    {{ UI.renderHtmlProperty('oro.customer.group.label'|trans, groupData) }}
+                    {{ UI.renderHtmlProperty('oro.customer.account.group.label'|trans, groupData) }}
                 {% else %}
-                    {{ UI.renderProperty('oro.customer.group.label'|trans, entity.group.name) }}
+                    {{ UI.renderProperty('oro.customer.account.group.label'|trans, entity.group.name) }}
                 {% endif %}
             {% endif %}
 
@@ -26,18 +26,18 @@
                             {{ entity.parent.name }}
                         </a>
                     {% endset %}
-                    {{ UI.renderHtmlProperty('oro.customer.parent.label'|trans, parentData) }}
+                    {{ UI.renderHtmlProperty('oro.customer.account.parent.label'|trans, parentData) }}
                 {% else %}
-                    {{ UI.renderProperty('oro.customer.parent.label'|trans, entity.parent.name) }}
+                    {{ UI.renderProperty('oro.customer.account.parent.label'|trans, entity.parent.name) }}
                 {% endif %}
             {% endif %}
 
             {% if entity.users | length %}
-                {{ UI.renderHtmlProperty('oro.customer.users.label'|trans, UI.entityViewLinks(entity.users, 'fullName', 'oro_account_account_user_view')) }}
+                {{ UI.renderHtmlProperty('oro.customer.account.users.label'|trans, UI.entityViewLinks(entity.users, 'fullName', 'oro_account_account_user_view')) }}
             {% endif %}
 
             {% if entity.salesRepresentatives | length %}
-                {{ UI.renderHtmlProperty('oro.customer.sales_representatives.label'|trans, UI.entityViewLinks(entity.salesRepresentatives, 'fullName', 'oro_user_view')) }}
+                {{ UI.renderHtmlProperty('oro.customer.account.sales_representatives.label'|trans, UI.entityViewLinks(entity.salesRepresentatives, 'fullName', 'oro_user_view')) }}
             {% endif %}
 
             {% if entity.children.count() %}
@@ -47,11 +47,11 @@
                              data-page-component-options="{{ {'data' : treeData}|json_encode }}"></div>
                     </div>
                 {% endset %}
-                {{ UI.renderHtmlProperty('oro.customer.children.label'|trans, accountTree) }}
+                {{ UI.renderHtmlProperty('oro.customer.account.children.label'|trans, accountTree) }}
             {% endif %}
 
             {% if entity.getInternalRating and is_granted('VIEW', entity.getInternalRating)%}
-                {{ UI.renderProperty('oro.customer.internal_rating.label'|trans, entity.getInternalRating.name) }}
+                {{ UI.renderProperty('oro.customer.account.internal_rating.label'|trans, entity.getInternalRating.name) }}
             {% endif %}
         </div>
     </div>
