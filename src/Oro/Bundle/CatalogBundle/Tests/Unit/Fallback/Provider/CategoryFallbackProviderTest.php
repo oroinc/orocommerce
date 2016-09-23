@@ -29,9 +29,10 @@ class CategoryFallbackProviderTest extends \PHPUnit_Framework_TestCase
         $this->categoryFallbackProvider = new CategoryFallbackProvider($this->doctrineHelper);
     }
 
-    public function testIsFallbackSupportedReturnsTrue()
+    public function testIsFallbackSupportedReturnsCorrectValue()
     {
-        $this->assertTrue($this->categoryFallbackProvider->isFallbackSupported(new \stdClass(), 'test'));
+        $this->assertFalse($this->categoryFallbackProvider->isFallbackSupported(new \stdClass(), 'test'));
+        $this->assertTrue($this->categoryFallbackProvider->isFallbackSupported(new Product(), 'test'));
     }
 
     public function testGetFallbackHolderEntityThrowsExceptionIfNotProduct()

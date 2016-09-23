@@ -24,7 +24,7 @@ class CategoryFallbackTest extends WebTestCase
         $this->loadFixtures([LoadCategoryProductData::class]);
     }
 
-    public function testProductNoManageInventoryValue()
+    public function testProductNoManageInventoryValueFallbacksToSystemDefault()
     {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
