@@ -4,6 +4,7 @@ namespace Oro\Bundle\AccountBundle\Migrations\Schema\v1_7;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\AccountBundle\Migrations\Schema\OroAccountBundleInstaller;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
@@ -54,7 +55,7 @@ class OroAccountBundleScopeRelations implements Migration, ExtendExtensionAwareI
             'account',
             OroAccountBundleInstaller::ORO_ACCOUNT_TABLE_NAME,
             'id',
-            [],
+            ['extend' => ['owner' => ExtendScope::OWNER_CUSTOM]],
             RelationType::MANY_TO_ONE,
             ['onDelete' => 'CASCADE']
         );
@@ -65,7 +66,7 @@ class OroAccountBundleScopeRelations implements Migration, ExtendExtensionAwareI
             'accountGroup',
             OroAccountBundleInstaller::ORO_ACCOUNT_GROUP_TABLE_NAME,
             'id',
-            [],
+            ['extend' => ['owner' => ExtendScope::OWNER_CUSTOM]],
             RelationType::MANY_TO_ONE,
             ['onDelete' => 'CASCADE']
         );

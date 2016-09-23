@@ -106,9 +106,14 @@ class ScopeManager
     protected function getCriteria($scopeType, $context = null)
     {
         $criteria = $this->getBaseCriteria();
+        /** @var ScopeProviderInterface[] $providers */
         $providers = empty($this->providers[$scopeType]) ? [] : $this->providers[$scopeType];
         foreach ($providers as $provider) {
-            $criteria = array_merge($criteria, $provider->getCriteria($scopeType, $context));
+            if (null === $context) {
+                $criteria = array_merge($criteria, $provider->getCriteriaForCurrentScope());
+            } else {
+                $criteria = array_merge($criteria, $provider->getCriteriaByContext($context));
+            }
         }
 
         return $criteria;

@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebsiteBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
@@ -165,7 +166,7 @@ class OroWebsiteBundleInstaller implements Installation, NoteExtensionAwareInter
             'website',
             OroWebsiteBundleInstaller::WEBSITE_TABLE_NAME,
             'id',
-            [],
+            ['extend' => ['owner' => ExtendScope::OWNER_CUSTOM]],
             RelationType::MANY_TO_ONE,
             ['onDelete' => 'CASCADE']
         );

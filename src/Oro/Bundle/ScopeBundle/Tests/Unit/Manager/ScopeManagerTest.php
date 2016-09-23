@@ -5,6 +5,7 @@ namespace Oro\Bundle\ScopeBundle\Tests\Unit\Manager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Gedmo\Tree\Strategy\ORM\Closure;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -45,7 +46,7 @@ class ScopeManagerTest extends \PHPUnit_Framework_TestCase
     {
         $scope = new Scope();
         $provider = $this->getMock(ScopeProviderInterface::class);
-        $provider->method('getCriteria')->willReturn(['fieldName' => 1]);
+        $provider->method('getCriteriaForCurrentScope')->willReturn(['fieldName' => 1]);
 
         $repository = $this->getMock(ObjectRepository::class);
         $repository->method('findOneBy')->with(['fieldName' => 1, 'fieldName2' => null])->willReturn($scope);
@@ -68,7 +69,7 @@ class ScopeManagerTest extends \PHPUnit_Framework_TestCase
     {
         $scope = new Scope();
         $provider = $this->getMock(ScopeProviderInterface::class);
-        $provider->method('getCriteria')->willReturn([]);
+        $provider->method('getCriteriaForCurrentScope')->willReturn([]);
 
         $repository = $this->getMock(ObjectRepository::class);
         $repository->method('findOneBy')->willReturn(null);
@@ -84,6 +85,30 @@ class ScopeManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager->addProvider('testScope', $provider);
         $actualScope = $this->manager->findOrCreate('testScope');
+        $this->assertEquals($scope, $actualScope);
+    }
+
+    public function testFindOrCreateUsingContext()
+    {
+        $scope = new Scope();
+        $context = ['scopeAttribute' => new \stdClass()];
+        $provider = $this->getMock(ScopeProviderInterface::class);
+        $provider->method('getCriteriaByContext')->with($context)->willReturn([]);
+
+        $repository = $this->getMock(ObjectRepository::class);
+        $repository->method('findOneBy')->willReturn(null);
+
+        $em = $this->getMock(EntityManagerInterface::class);
+        $em->method('getRepository')->willReturn($repository);
+        $em->expects($this->once())->method('persist')->with($scope);
+        $em->expects($this->once())->method('flush')->with($scope);
+
+        $this->registry->method('getManagerForClass')->willReturn($em);
+
+        $this->entityFieldProvider->method('getRelations')->willReturn([]);
+
+        $this->manager->addProvider('testScope', $provider);
+        $actualScope = $this->manager->findOrCreate('testScope', $context);
         $this->assertEquals($scope, $actualScope);
     }
 }

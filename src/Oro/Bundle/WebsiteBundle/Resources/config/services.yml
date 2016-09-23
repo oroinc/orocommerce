@@ -9,6 +9,15 @@ services:
             - "@doctrine"
             - "@oro_frontend.request.frontend_helper"
 
+    oro_website.website_scope_provider:
+        class: 'Oro\Bundle\WebsiteBundle\Provider\ScopeProvider'
+        public: false
+        arguments:
+            - "@oro_website.manager"
+        tags:
+            - {name: oro_scope.provider, scopeType: category_visibility, priority: 30}
+            - {name: oro_scope.provider, scopeType: product_visibility, priority: 30}
+
     oro_website.twig.website_extension:
         class: 'Oro\Bundle\WebsiteBundle\Twig\OroWebsiteExtension'
         public: false
