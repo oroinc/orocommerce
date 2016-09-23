@@ -38,7 +38,7 @@ services:
     oro_product.form.type.quantity_type:
         class: 'Oro\Bundle\ProductBundle\Form\Type\QuantityType'
         arguments:
-            - "@oro_product.service.quantity_rounding"
+            - "@oro_currency.service.quantity_rounding"
             - '%oro_product.entity.product.class%'
         tags:
             - { name: form.type, alias: oro_quantity }
