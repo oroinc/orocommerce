@@ -90,6 +90,8 @@ class ProductControllerTest extends WebTestCase
      */
     public function testIndex($category, array $metaTags)
     {
+        $this->markTestSkipped('Enable after real V2 search engine is implemented');
+
         $category = $this->getCategory($category);
 
         $crawler = $this->client->request(
