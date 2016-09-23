@@ -241,6 +241,8 @@ oro.pricing:
             empty_prices: Price not available
             price_not_found: Price for requested quantity is not available
 
+    validators.field_or_expression_is_required: Field "%fieldName%" is required
+
 oro:
     importexport:
         import:
