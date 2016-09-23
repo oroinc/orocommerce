@@ -1,5 +1,5 @@
 # Prefix `customer` is temporary solution to remove route duplication
-# with OroCRMAccountBundle/Controller/AccountController.php
+# with OroAccountBundle/Controller/AccountController.php
 # @todo: all routes prefix will be chnaged in scope of BB-2679
 oro_account:
     resource:     "@OroCustomerBundle/Controller/AccountController.php"
