@@ -30,17 +30,16 @@ class WebsiteCrudReindexationTriggeringListener
 
     /**
      * @param Website $website
-     * @param LifecycleEventArgs $args
      */
-    public function postPersist(Website $website, LifecycleEventArgs $args)
+    public function postPersist(Website $website)
     {
         $this->dispatchReindexationTriggeringEvent($website);
     }
 
     /**
-     * @param LifecycleEventArgs $args
+     * @param Website $website
      */
-    public function preRemove(Website $website, LifecycleEventArgs $args)
+    public function preRemove(Website $website)
     {
         $this->dispatchReindexationTriggeringEvent($website);
     }
