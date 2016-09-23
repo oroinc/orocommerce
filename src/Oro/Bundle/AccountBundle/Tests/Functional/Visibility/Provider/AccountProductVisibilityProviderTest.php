@@ -4,6 +4,7 @@ namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Provider;
 
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\AccountBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
 use Oro\Bundle\AccountBundle\Visibility\Provider\AccountProductVisibilityProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -89,10 +90,12 @@ class AccountProductVisibilityProviderTest extends WebTestCase
             [
                 'productId' => $this->getReference('product.1')->getId(),
                 'accountId' => $this->getReference('account.level_1')->getId(),
+                'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN
             ],
             [
                 'productId' => $this->getReference('product.4')->getId(),
                 'accountId' => $this->getReference('account.orphan')->getId(),
+                'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN
             ],
         ];
 
@@ -144,12 +147,12 @@ class AccountProductVisibilityProviderTest extends WebTestCase
             [
                 'productId' => $this->getReference('product.3')->getId(),
                 'visibility_new' => 1,
-                'visibility_anonymous' => 1,
+                'visibility_anonymous' => 1
             ],
             [
                 'productId' => $this->getReference('product.5')->getId(),
                 'visibility_new' => 0,
-                'visibility_anonymous' => 1,
+                'visibility_anonymous' => 1
             ],
         ];
 

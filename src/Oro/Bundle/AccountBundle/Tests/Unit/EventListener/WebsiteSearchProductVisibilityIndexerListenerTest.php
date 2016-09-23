@@ -63,15 +63,18 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
             ->willReturn([
                 [
                     'productId' => 1,
-                    'accountId' => 1
+                    'accountId' => 1,
+                    'is_visible_by_default' => 1
                 ],
                 [
                     'productId' => 2,
-                    'accountId' => 3
+                    'accountId' => 3,
+                    'is_visible_by_default' => -1
                 ],
                 [
                     'productId' => 3,
-                    'accountId' => 2
+                    'accountId' => 2,
+                    'is_visible_by_default' => 1
                 ]
             ]);
 
@@ -102,6 +105,7 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
         $expectedEntitiesData = [
             1 => [
                 Query::TYPE_INTEGER => [
+                    'is_visible_by_default' => 1,
                     'visibility_account_1' => 1,
                     'visibility_anonymous' => 0,
                     'visibility_new' => 1
@@ -109,6 +113,7 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
             ],
             2 => [
                 Query::TYPE_INTEGER => [
+                    'is_visible_by_default' => -1,
                     'visibility_account_3' => 1,
                     'visibility_anonymous' => 1,
                     'visibility_new' => 1
@@ -116,6 +121,7 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
             ],
             3 => [
                 Query::TYPE_INTEGER => [
+                    'is_visible_by_default' => 1,
                     'visibility_account_2' => 1,
                     'visibility_anonymous' => 1,
                     'visibility_new' => 0

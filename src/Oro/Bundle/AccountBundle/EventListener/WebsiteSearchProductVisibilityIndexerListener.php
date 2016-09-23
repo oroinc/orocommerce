@@ -17,7 +17,9 @@ class WebsiteSearchProductVisibilityIndexerListener
 
     const FIELD_VISIBILITY_NEW = 'visibility_new';
 
-    const FIELD_VISIBILITY_ACCOUNT = 'visibility_account_';
+    const FIELD_VISIBILITY_ACCOUNT = 'visibility_account_%s';
+
+    const FIELD_IS_VISIBLE_BY_DEFAULT = 'is_visible_by_default';
 
     /**
      * @var DoctrineHelper
@@ -47,13 +49,11 @@ class WebsiteSearchProductVisibilityIndexerListener
         }
 
         $context = $event->getContext();
-
         if (!isset($context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY])) {
             throw new \InvalidArgumentException('Website id is absent in context');
         }
 
         $websiteId = $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY];
-
         $accountVisibilities = $this->visibilityProvider->getAccountVisibilitiesForProducts(
             $event->getEntityIds(),
             $websiteId
@@ -63,7 +63,14 @@ class WebsiteSearchProductVisibilityIndexerListener
             $event->addField(
                 $accountVisibility['productId'],
                 Query::TYPE_INTEGER,
-                self::FIELD_VISIBILITY_ACCOUNT . $accountVisibility['accountId'],
+                self::FIELD_IS_VISIBLE_BY_DEFAULT,
+                $accountVisibility['is_visible_by_default']
+            );
+
+            $event->addField(
+                $accountVisibility['productId'],
+                Query::TYPE_INTEGER,
+                sprintf(self::FIELD_VISIBILITY_ACCOUNT, $accountVisibility['accountId']),
                 self::ACCOUNT_VISIBILITY_VALUE
             );
         }
