@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Security;
 
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 
 /**
  * @dbIsolation
  */
 class ProductVisibilityTest extends WebTestCase
 {
-    const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_account.product_visibility';
+    const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
 
     /**
      * {@inheritdoc}

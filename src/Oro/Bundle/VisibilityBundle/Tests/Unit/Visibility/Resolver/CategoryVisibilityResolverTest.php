@@ -3,14 +3,13 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Visibility\Resolver;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolver;
-use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -53,7 +52,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->configManager->expects($this->any())
             ->method('get')
-            ->with('oro_account.category_visibility')
+            ->with('oro_visibility.category_visibility')
             ->willReturn(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE);
 
         $this->resolver = new CategoryVisibilityResolver($this->registry, $this->configManager);
