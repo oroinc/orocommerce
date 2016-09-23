@@ -11,7 +11,13 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 
 class WebsiteSearchProductVisibilityIndexerListener
 {
-    const VISIBLE = 1;
+    const ACCOUNT_VISIBILITY_VALUE = 1;
+
+    const FIELD_VISIBILITY_ANONYMOUS = 'visibility_anonymous';
+
+    const FIELD_VISIBILITY_NEW = 'visibility_new';
+
+    const FIELD_VISIBILITY_ACCOUNT = 'visibility_account_';
 
     /**
      * @var DoctrineHelper
@@ -57,8 +63,8 @@ class WebsiteSearchProductVisibilityIndexerListener
             $event->addField(
                 $accountVisibility['productId'],
                 Query::TYPE_INTEGER,
-                'visibility_account_' . $accountVisibility['accountId'],
-                self::VISIBLE
+                self::FIELD_VISIBILITY_ACCOUNT . $accountVisibility['accountId'],
+                self::ACCOUNT_VISIBILITY_VALUE
             );
         }
 
@@ -71,14 +77,14 @@ class WebsiteSearchProductVisibilityIndexerListener
             $event->addField(
                 $visibility['productId'],
                 Query::TYPE_INTEGER,
-                'visibility_anonymous',
+                self::FIELD_VISIBILITY_ANONYMOUS,
                 $visibility['visibility_anonymous']
             );
 
             $event->addField(
                 $visibility['productId'],
                 Query::TYPE_INTEGER,
-                'visibility_new',
+                self::FIELD_VISIBILITY_NEW,
                 $visibility['visibility_new']
             );
         }
