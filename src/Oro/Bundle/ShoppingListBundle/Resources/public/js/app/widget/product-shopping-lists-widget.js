@@ -4,6 +4,7 @@ define(function(require) {
     var ProductShoppingListsWidget;
     var DialogWidget = require('oro/dialog-widget');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
+    var ApiAccessor = require('oroui/js/tools/api-accessor');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var __ = require('orotranslation/js/translator');
@@ -168,7 +169,10 @@ define(function(require) {
 
             this.model.set('shopping_lists', updatedShoppingLists);
             this.model.trigger('change:shopping_lists');
-            this.toggleEditMode(updateData.event, 'disable');
+
+            if (updateData.event) {
+                this.toggleEditMode(updateData.event, 'disable');
+            }
         },
 
         onPopupPanelReset: function() {
@@ -207,7 +211,39 @@ define(function(require) {
         },
 
         onPopupPanelAccept: function() {
-            console.log('Meow Accept Change');
+            var $popupPanelQty = $(this.elements.popupPanelQty, this.$el);
+            var selectedShoppingList = this.getSelectedShoppingList();
+            var selectedUnit = this.getSelectedUnit();
+
+            if (selectedShoppingList && selectedShoppingList.line_items.length) {
+                var selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
+
+                if(selectedLineItem) {
+                    var updateApiAccessor = new ApiAccessor({
+                        route: 'oro_api_shopping_list_frontend_put_line_item',
+                        http_method: 'PUT',
+                        default_route_parameters: {
+                            id: selectedLineItem.line_item_id
+                        }
+                    });
+
+                    var modelData = {
+                        quantity: parseInt($popupPanelQty.val(), 10),
+                        unit: selectedLineItem.unit
+                    };
+                    
+                    var updatePromise = updateApiAccessor.send(modelData, {oro_product_frontend_line_item: modelData}, {}, {
+                        processingMessage: __('oro.form.inlineEditing.saving_progress'),
+                        preventWindowUnload: __('oro.form.inlineEditing.inline_edits')
+                    });
+
+                    updatePromise.done(_.bind(this.onLineItemUpdate, this, {
+                        shoppingListId: selectedShoppingList.shopping_list_id,
+                        lineItemId: selectedLineItem.line_item_id,
+                        value: modelData
+                    }));
+                }
+            }
         },
 
         updateShoppingLists: function(shoppingLists, shoppingListId, lineItemId, newLineItem) {
