@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebsiteSearchBundle\Entity\Repository;
 
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\SearchBundle\Entity\Repository\SearchIndexRepository;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 
@@ -72,37 +71,31 @@ class WebsiteSearchIndexRepository extends SearchIndexRepository
     /**
      * We need to remove data manually as fulltext index in MySQL is only available in MyISAM engine which doesn't
      * support cascade deletes by a foreign key.
-     *
      * @param QueryBuilder $subQueryBuilder
      */
     private function deleteFromIndexTextTable(QueryBuilder $subQueryBuilder)
     {
-        $platformName = $this->getEntityManager()->getConnection()->getDatabasePlatform()->getName();
+        $subQueryDQL = $subQueryBuilder->select('item.id')->getDQL();
 
-        if (DatabasePlatformInterface::DATABASE_MYSQL === $platformName) {
-            $subQueryDQL = $subQueryBuilder->select('item.id')->getDQL();
-
-            $queryBuilder = $this->getEntityManager()->createQueryBuilder();
-            $queryBuilder
-                ->from(IndexText::class, 'indexText')
-                ->delete()
-                ->where($queryBuilder->expr()->in('indexText.item', $subQueryDQL))
-                ->setParameters($subQueryBuilder->getParameters())
-                ->getQuery()
-                ->execute();
-        }
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $queryBuilder
+            ->from(IndexText::class, 'indexText')
+            ->delete()
+            ->where($queryBuilder->expr()->in('indexText.item', $subQueryDQL))
+            ->setParameters($subQueryBuilder->getParameters())
+            ->getQuery()
+            ->execute();
     }
 
     /**
      * Removes index data for given $entityClass or all classes.
-     *
      * @param string $entityClass
      */
     public function removeIndexByClass($entityClass = null)
     {
         $queryBuilder = $this->createQueryBuilder('item');
 
-        if (null !== $entityClass) {
+        if ($entityClass) {
             $queryBuilder
                 ->andWhere($queryBuilder->expr()->eq('item.entity', ':entityClass'))
                 ->setParameter('entityClass', $entityClass);

@@ -62,27 +62,31 @@ class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
             'Oro\Bundle\TestBundle2\Entity\Page' => [
                 'alias' => 'page_WEBSITE_ID',
                 'fields' => [
-                    [
-                        'name' => 'title_LOCALIZATION_ID',
-                        'type' => 'text',
-                    ],
-                    [
-                        'name' => 'custom_field',
-                        'type' => 'text',
-                    ],
+                    'title' =>
+                        [
+                            'name' => 'title_LOCALIZATION_ID',
+                            'type' => 'text',
+                        ],
+                    'custom_field' =>
+                        [
+                            'name' => 'custom_field',
+                            'type' => 'text',
+                        ],
                 ],
             ],
             'Oro\Bundle\TestBundle3\Entity\Product' => [
                 'alias' => 'product_WEBSITE_ID',
                 'fields' => [
-                    [
-                        'name' => 'title_LOCALIZATION_ID',
-                        'type' => 'text',
-                    ],
-                    [
-                        'name' => 'price',
-                        'type' => 'decimal',
-                    ],
+                    'title' =>
+                        [
+                            'name' => 'title_LOCALIZATION_ID',
+                            'type' => 'text',
+                        ],
+                    'price' =>
+                        [
+                            'name' => 'price',
+                            'type' => 'decimal',
+                        ],
                 ],
             ],
         ];

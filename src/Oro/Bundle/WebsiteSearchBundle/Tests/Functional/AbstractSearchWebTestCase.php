@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -52,15 +51,11 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     {
         /** @var OroEntityManager $manager */
         $manager = $this->getDoctrine()->getManager('search');
-
-        if ($manager->getConnection()->getDatabasePlatform()->getName() === DatabasePlatformInterface::DATABASE_MYSQL) {
-            $repository = $manager->getRepository(IndexText::class);
-
-            $repository->createQueryBuilder('t')
-                ->delete()
-                ->getQuery()
-                ->execute();
-        }
+        $repository = $manager->getRepository(IndexText::class);
+        $repository->createQueryBuilder('t')
+            ->delete()
+            ->getQuery()
+            ->execute();
     }
 
     /**

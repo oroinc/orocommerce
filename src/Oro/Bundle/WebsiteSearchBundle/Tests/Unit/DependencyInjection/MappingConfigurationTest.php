@@ -24,7 +24,7 @@ class MappingConfigurationTest extends \PHPUnit_Framework_TestCase
     private function processConfiguration(array $configs)
     {
         $configuration = new MappingConfiguration();
-        $processor     = new Processor();
+        $processor = new Processor();
 
         return $processor->processConfiguration($configuration, $configs);
     }
@@ -61,10 +61,11 @@ class MappingConfigurationTest extends \PHPUnit_Framework_TestCase
                     'Oro\Page' => [
                         'alias' => 'PageFirstAlias',
                         'fields' => [
-                            [
-                                'name' => 'pageFirstField',
-                                'type' => 'text'
-                            ]
+                            'pageFirstField' =>
+                                [
+                                    'name' => 'pageFirstField',
+                                    'type' => 'text'
+                                ]
                         ]
                     ]
                 ],
@@ -74,10 +75,11 @@ class MappingConfigurationTest extends \PHPUnit_Framework_TestCase
                     'Oro\Page' => [
                         'alias' => 'PageSecondAlias',
                         'fields' => [
-                            [
-                                'name' => 'pageSecondField',
-                                'type' => 'integer'
-                            ]
+                            'pageSecondField' =>
+                                [
+                                    'name' => 'pageSecondField',
+                                    'type' => 'integer'
+                                ]
                         ]
                     ]
                 ]
@@ -87,10 +89,11 @@ class MappingConfigurationTest extends \PHPUnit_Framework_TestCase
                     'Oro\Product' => [
                         'alias' => 'ProductFirstAlias',
                         'fields' => [
-                            [
-                                'name' => 'productFirstField',
-                                'type' => 'text'
-                            ]
+                            'productFirstField' =>
+                                [
+                                    'name' => 'productFirstField',
+                                    'type' => 'text'
+                                ]
                         ]
                     ]
                 ]
@@ -100,10 +103,11 @@ class MappingConfigurationTest extends \PHPUnit_Framework_TestCase
                     'Oro\Product' => [
                         'alias' => 'ProductSecondAlias',
                         'fields' => [
-                            [
-                                'name' => 'productSecondField',
-                                'type' => 'decimal'
-                            ]
+                            'productSecondField' =>
+                                [
+                                    'name' => 'productSecondField',
+                                    'type' => 'decimal'
+                                ]
                         ]
                     ]
                 ]
@@ -115,27 +119,31 @@ class MappingConfigurationTest extends \PHPUnit_Framework_TestCase
                 'Oro\Page' => [
                     'alias' => 'PageSecondAlias',
                     'fields' => [
-                        [
-                            'name' => 'pageFirstField',
-                            'type' => 'text'
-                        ],
-                        [
-                            'name' => 'pageSecondField',
-                            'type' => 'integer'
-                        ]
+                        'pageFirstField' =>
+                            [
+                                'name' => 'pageFirstField',
+                                'type' => 'text'
+                            ],
+                        'pageSecondField' =>
+                            [
+                                'name' => 'pageSecondField',
+                                'type' => 'integer'
+                            ]
                     ]
                 ],
                 'Oro\Product' => [
                     'alias' => 'ProductSecondAlias',
                     'fields' => [
-                        [
-                            'name' => 'productFirstField',
-                            'type' => 'text'
-                        ],
-                        [
-                            'name' => 'productSecondField',
-                            'type' => 'decimal'
-                        ],
+                        'productFirstField' =>
+                            [
+                                'name' => 'productFirstField',
+                                'type' => 'text'
+                            ],
+                        'productSecondField' =>
+                            [
+                                'name' => 'productSecondField',
+                                'type' => 'decimal'
+                            ],
                     ]
                 ]
             ]

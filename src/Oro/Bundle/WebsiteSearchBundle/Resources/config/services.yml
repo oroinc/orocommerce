@@ -60,6 +60,7 @@ services:
         arguments:
             - '@oro_website_search.mapping_configuration.cache'
             - '@oro_website_search.loader.mapping_configuration_loader'
+            - '@oro_website_search.provider.resources_hash'
             - '%kernel.debug%'
 
     oro_website_search.cache.configuration_cache:
@@ -146,4 +147,8 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\VisitorReplacePlaceholder'
         arguments:
             - '@oro_website_search.placeholder.registry'
+
+    oro_website_search.provider.resources_hash:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider'
+        public: false
 

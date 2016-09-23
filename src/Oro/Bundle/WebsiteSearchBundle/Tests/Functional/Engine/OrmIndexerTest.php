@@ -625,7 +625,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->indexer->save([$product1, $product2]);
     }
 
-    public function testResetIndexForAllWebsitesAndSpecificClass()
+    public function testResetIndexForSpecificClass()
     {
         $this->loadFixtures([LoadItemData::class]);
 
@@ -636,67 +636,6 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->assertEntityCount(4, IndexText::class);
         $this->assertEntityCount(0, IndexDatetime::class);
         $this->assertEntityCount(0, IndexDecimal::class);
-    }
-
-    public function testResetIndexForSpecificWebsiteAndSpecificClass()
-    {
-        $this->loadFixtures([LoadItemData::class]);
-        $this->setEntityAliasExpectation(1, TestProduct::class, $this->mappingConfig[TestProduct::class]['alias']);
-        $this->indexer->resetIndex(TestProduct::class, ['website_id' => $this->getDefaultWebsiteId()]);
-
-        $this->assertEntityCount(6, Item::class);
-        $this->assertEntityCount(1, IndexInteger::class);
-        $this->assertEntityCount(5, IndexText::class);
-        $this->assertEntityCount(1, IndexDatetime::class);
-        $this->assertEntityCount(1, IndexDecimal::class);
-    }
-
-    public function testResetIndexForSpecificWebsiteAndAllClasses()
-    {
-        $this->loadFixtures([LoadItemData::class]);
-
-        $this
-            ->mappingProviderMock
-            ->expects($this->once())
-            ->method('getEntityClasses')
-            ->willReturn(array_keys($this->mappingConfig));
-
-        $this
-            ->mappingProviderMock
-            ->expects($this->exactly(2))
-            ->method('getEntityAlias')
-            ->withConsecutive([TestProduct::class], [TestEmployee::class])
-            ->will($this->onConsecutiveCalls('oro_product_WEBSITE_ID', 'oro_employee_WEBSITE_ID'));
-
-        $this->indexer->resetIndex(null, ['website_id' => $this->getDefaultWebsiteId()]);
-
-        $this->assertEntityCount(4, Item::class);
-        $this->assertEntityCount(1, IndexInteger::class);
-        $this->assertEntityCount(3, IndexText::class);
-        $this->assertEntityCount(1, IndexDatetime::class);
-        $this->assertEntityCount(1, IndexDecimal::class);
-    }
-
-    public function testGetClassesForReindexWhenAllClassesReturned()
-    {
-        $allClasses = ['Product', 'Category', 'User'];
-
-        $this->mappingProviderMock
-            ->expects($this->once())
-            ->method('getEntityClasses')
-            ->willReturn($allClasses);
-
-        $entityDependenciesResolver = new EntityDependenciesResolver($this->dispatcher, $this->mappingProviderMock);
-
-        $this->indexer = new OrmIndexer(
-            $this->doctrineHelper,
-            $this->mappingProviderMock,
-            $entityDependenciesResolver,
-            $this->getContainer()->get('oro_website_search.provider.index_data'),
-            $this->getContainer()->get('oro_website_search.placeholder.visitor_replace')
-        );
-
-        $this->assertEquals($allClasses, $this->indexer->getClassesForReindex());
     }
 
     public function testGetClassesForReindex()

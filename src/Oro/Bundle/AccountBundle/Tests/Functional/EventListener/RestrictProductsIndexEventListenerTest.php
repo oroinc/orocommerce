@@ -41,7 +41,7 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
         $indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]);
 
         $query = new Query();
-        $query->from('oro_product_product_WEBSITE_ID');
+        $query->from('oro_product_WEBSITE_ID');
         $query->select('recordTitle');
         $query->getCriteria()->orderBy(['recordTitle' => Query::ORDER_ASC]);
 

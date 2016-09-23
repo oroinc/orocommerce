@@ -14,12 +14,15 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+
 class OrmEngine extends AbstractEngine
 {
     /** @var ManagerRegistry */
     protected $registry;
 
-    /** @var BaseDriver[] */
+    /** @var array */
     protected $drivers = [];
 
     /** @var Mapper */
@@ -34,6 +37,9 @@ class OrmEngine extends AbstractEngine
     /** @var OroEntityManager */
     protected $indexManager;
 
+    /** @var OptionsResolver */
+    private $optionsResolver;
+
     /**
      * {@inheritdoc}
      */
@@ -41,9 +47,12 @@ class OrmEngine extends AbstractEngine
     {
         $results = [];
         $searchResults = $this->getIndexRepository()->search($query);
-        
+
         foreach ($searchResults as $searchResult) {
-            $item = $searchResult['item'];
+            if (!isset($searchResult['item'])) {
+                continue;
+            }
+            $item = $this->resolveItemKeys($searchResult['item']);
 
             $results[] = new Item(
                 $this->doctrineHelper->getEntityManager($item['entity']),
@@ -57,6 +66,21 @@ class OrmEngine extends AbstractEngine
         }
 
         return new Result($query, $results, count($searchResults));
+    }
+
+    /**
+     * @param array $item
+     * @return array
+     */
+    private function resolveItemKeys(array $item)
+    {
+        if (!$this->optionsResolver) {
+            $this->optionsResolver = new OptionsResolver();
+            $this->optionsResolver->setRequired(['entity', 'recordId', 'title']);
+        }
+        $this->optionsResolver->setDefined(array_keys($item));
+
+        return $this->optionsResolver->resolve($item);
     }
 
     /**
@@ -92,10 +116,10 @@ class OrmEngine extends AbstractEngine
     {
         foreach ($drivers as $driver) {
             if (!is_a($driver, BaseDriver::class, true)) {
-                throw new \InvalidArgumentException('Wrong driver class passed, please check configuration');
+                throw new InvalidConfigurationException('Wrong driver class passed, please check configuration');
             }
         }
-        
+
         $this->drivers = $drivers;
     }
 

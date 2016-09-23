@@ -14,7 +14,7 @@ class ValueWithPlaceholders
     private $value;
 
     /**
-     * @param $value
+     * @param mixed $value
      * @param array $placeholders
      */
     public function __construct($value, array $placeholders)

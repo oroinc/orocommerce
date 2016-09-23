@@ -116,27 +116,8 @@ class OrmIndexer extends AbstractIndexer
     /**
      * {@inheritdoc}
      */
-    public function resetIndex($class = null, array $context = [])
+    public function resetIndex($class = null)
     {
-        if (null === $class && !isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
-            $this->getItemRepository()->removeIndexByClass();
-
-            return;
-        }
-
-        $entityClasses = [$class];
-        if (null === $class) {
-            $entityClasses = $this->mappingProvider->getEntityClasses();
-        }
-
-        foreach ($entityClasses as $entityClass) {
-            $entityAlias = $this->getEntityAlias($entityClass, $context);
-
-            if ($entityAlias) {
-                $this->getItemRepository()->removeIndexByAlias($entityAlias);
-            } else {
-                $this->getItemRepository()->removeIndexByClass($entityClass);
-            }
-        }
+        $this->getItemRepository()->removeIndexByClass($class);
     }
 }

@@ -222,12 +222,12 @@ class IndexDataProvider
     }
 
     /**
-     * @param $entityClass
-     * @param $queryBuilder
-     * @param $context
+     * @param string $entityClass
+     * @param QueryBuilder $queryBuilder
+     * @param array $context
      * @return QueryBuilder
      */
-    public function getRestrictedEntitiesQueryBuilder($entityClass, $queryBuilder, $context)
+    public function getRestrictedEntitiesQueryBuilder($entityClass, $queryBuilder, array $context)
     {
         $entityAlias = $this->entityAliasResolver->getAlias($entityClass);
 

@@ -17,7 +17,7 @@ class IndexEntityEvent extends Event
     private $entityClass;
 
     /**
-     * @var array
+     * @var object[]
      */
     private $entities;
 
@@ -83,7 +83,7 @@ class IndexEntityEvent extends Event
     /**
      * @param int $entityId
      * @param string $fieldName
-     * @param string|int|float|array $value If array passed this means batch of fields data needed to "all_text"
+     * @param string|int|float
      * @param array $placeholders
      * @return $this
      */

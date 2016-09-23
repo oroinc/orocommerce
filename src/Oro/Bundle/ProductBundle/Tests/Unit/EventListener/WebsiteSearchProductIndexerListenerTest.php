@@ -5,16 +5,26 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\VisitorReplacePlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
+use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
+
+    const NAME_DEFAULT_LOCALE = 'name default';
+    const NAME_CUSTOM_LOCALE = 'name custom';
+    const DESCRIPTION_DEFAULT_LOCALE = 'description default';
+    const DESCRIPTION_CUSTOM_LOCALE = 'description custom';
+    const SHORT_DESCRIPTION_DEFAULT_LOCALE = 'short description default';
+    const SHORT_DESCRIPTION_CUSTOM_LOCALE = 'short description custom';
 
     /**
      * @var WebsiteSearchProductIndexerListener
@@ -25,16 +35,6 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
      * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     private $localizationHelper;
-
-    /**
-     * @var IndexEntityEvent|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $event;
-
-    /**
-     * @var VisitorReplacePlaceholder|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $visitorReplacePlaceholder;
 
     protected function setUp()
     {
@@ -47,104 +47,141 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->visitorReplacePlaceholder = $this->getMockBuilder(VisitorReplacePlaceholder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->listener = new WebsiteSearchProductIndexerListener(
             $doctrineHelper,
-            $this->localizationHelper,
-            $this->visitorReplacePlaceholder
+            $this->localizationHelper
         );
     }
 
-    private function setExpectations()
+    /**
+     * @param Localization $localization
+     * @param string|null $string
+     * @param string|null $text
+     * @return LocalizedFallbackValue
+     */
+    private function prepareLocalizedValue($localization, $string = null, $text = null)
     {
-        $product = $this->getMockBuilder(Product::class)
-            ->setMethods([
-                'getId',
-                'getSku',
-                'getStatus',
-                'getInventoryStatus',
-                'getName',
-                'getDescription',
-                'getShortDescription',
-            ])
-            ->getMock();
+        $value = new LocalizedFallbackValue();
+        $value->setString($string)
+            ->setText($text)
+            ->setLocalization($localization);
 
+        return $value;
+    }
+
+    /**
+     * @param Localization $defaultLocale
+     * @param Localization $customLocale
+     * @return Product
+     */
+    private function prepareProduct($defaultLocale, $customLocale)
+    {
         $inventoryStatus = $this->getMockBuilder(AbstractEnumValue::class)
             ->disableOriginalConstructor()
             ->getMock();
         $inventoryStatus->expects($this->once())->method('getId')->willReturn(Product::INVENTORY_STATUS_IN_STOCK);
 
-        $product->expects($this->any())->method('getId')->willReturn(1);
-        $product->expects($this->once())->method('getSku')->willReturn('sku123');
-        $product->expects($this->once())->method('getStatus')->willReturn(Product::STATUS_ENABLED);
-        $product->expects($this->once())->method('getInventoryStatus')->willReturn($inventoryStatus);
-        $product->expects($this->exactly(2))
-            ->method('getName')
-            ->willReturnOnConsecutiveCalls(
-                'Name',
-                'Nazwa'
-            );
-        $product->expects($this->exactly(2))
-            ->method('getDescription')
-            ->willReturnOnConsecutiveCalls(
-                '<h1>Description</h1>&nbsp;&nbsp;<p>Product information</p>',
-                '<h1>Opis</h1><p>Informacje o produkcie</p>'
+        $product = $this->getEntity(Product::class, [
+            'id' => 777,
+            'sku' => 'sku123',
+            'status' => Product::STATUS_ENABLED,
+            'inventoryStatus' => $inventoryStatus
+        ]);
+
+        $product->addName($this->prepareLocalizedValue($defaultLocale, self::NAME_DEFAULT_LOCALE, null))
+            ->addName($this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null))
+            ->addDescription($this->prepareLocalizedValue($defaultLocale, null, self::DESCRIPTION_DEFAULT_LOCALE))
+            ->addDescription($this->prepareLocalizedValue($customLocale, null, self::DESCRIPTION_CUSTOM_LOCALE))
+            ->addShortDescription(
+                $this->prepareLocalizedValue(
+                    $defaultLocale,
+                    null,
+                    self::SHORT_DESCRIPTION_DEFAULT_LOCALE
+                )
+            )
+            ->addShortDescription(
+                $this->prepareLocalizedValue(
+                    $customLocale,
+                    null,
+                    self::SHORT_DESCRIPTION_CUSTOM_LOCALE
+                )
             );
 
-        $product->expects($this->exactly(2))
-            ->method('getShortDescription')
-            ->willReturnOnConsecutiveCalls(
-                'Short description',
-                'Krótki opis'
-            );
+        return $product;
+    }
 
-        $localization1 = $this->getMock(Localization::class);
-        $localization1->expects($this->any())->method('getId')->willReturn(1);
-        $localization2 = $this->getMock(Localization::class);
-        $localization2->expects($this->any())->method('getId')->willReturn(2);
+    public function testOnWebsiteSearchIndexProductClass()
+    {
+        /** @var Localization $defaultLocale */
+        $defaultLocale = $this->getEntity(Localization::class, ['id' => 1]);
+
+        /** @var Localization $customLocale */
+        $customLocale = $this->getEntity(Localization::class, ['id' => 2]);
 
         $this->localizationHelper
             ->expects($this->once())
             ->method('getLocalizations')
             ->willReturn([
-                $localization1,
-                $localization2
+                $defaultLocale,
+                $customLocale
             ]);
 
-        $this->event = new IndexEntityEvent(Product::class, [$product], []);
-    }
+        $product = $this->prepareProduct($defaultLocale, $customLocale);
 
-    public function testOnWebsiteSearchIndexProductClass()
-    {
-        $this->setExpectations();
-        $this->listener->onWebsiteSearchIndex($this->event);
+        $event = new IndexEntityEvent(Product::class, [$product], []);
 
-        $expected[1] = [
-            'text' => [
+        $this->listener->onWebsiteSearchIndex($event);
+
+        $expected[$product->getId()] = [
+            IndexDataProvider::STANDARD_VALUES_KEY => [
                 'sku' => 'sku123',
                 'status' => Product::STATUS_ENABLED,
-                'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
-                'title_1' => 'Name',
-                'description_1' => '<h1>Description</h1>&nbsp;&nbsp;<p>Product information</p>',
-                'short_desc_1' => 'Short description',
-                'all_text_1' => 'Name <h1>Description</h1>&nbsp;&nbsp;<p>Product information</p> Short description',
-                'title_2' => 'Nazwa',
-                'description_2' => '<h1>Opis</h1><p>Informacje o produkcie</p>',
-                'short_desc_2' => 'Krótki opis',
-                'all_text_2' => 'Nazwa <h1>Opis</h1><p>Informacje o produkcie</p> Krótki opis'
+                'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK
+            ],
+            IndexDataProvider::PLACEHOLDER_VALUES_KEY => [
+                'title' =>
+                    [
+                        new ValueWithPlaceholders(
+                            $this->prepareLocalizedValue($defaultLocale, self::NAME_DEFAULT_LOCALE, null),
+                            [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
+                        ),
+                        new ValueWithPlaceholders(
+                            $this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null),
+                            [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                        ),
+                    ],
+                'description' =>
+                    [
+                        new ValueWithPlaceholders(
+                            $this->prepareLocalizedValue($defaultLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
+                            [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
+                        ),
+                        new ValueWithPlaceholders(
+                            $this->prepareLocalizedValue($customLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
+                            [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                        ),
+                    ],
+                'short_desc' =>
+                    [
+                        new ValueWithPlaceholders(
+                            $this->prepareLocalizedValue($defaultLocale, null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE),
+                            [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
+                        ),
+                        new ValueWithPlaceholders(
+                            $this->prepareLocalizedValue($customLocale, null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE),
+                            [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                        ),
+                    ],
             ]
         ];
 
-        $this->assertEquals($expected, $this->event->getEntitiesData());
+        $this->assertEquals($expected, $event->getEntitiesData());
     }
 
     public function testOnWebsiteSearchIndexNotSupportedClass()
     {
-        $this->event = new IndexEntityEvent(\stdClass::class, [1], []);
-        $this->listener->onWebsiteSearchIndex($this->event);
-        $this->assertEquals([], $this->event->getEntitiesData());
+        $event = new IndexEntityEvent(\stdClass::class, [1], []);
+        $this->listener->onWebsiteSearchIndex($event);
+        $this->assertEquals([], $event->getEntitiesData());
     }
 }
