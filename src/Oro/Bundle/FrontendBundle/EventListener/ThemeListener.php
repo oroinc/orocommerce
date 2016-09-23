@@ -14,7 +14,7 @@ use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 class ThemeListener
 {
     const FRONTEND_THEME = 'demo';
-    const DEFAULT_LAYOUT_THEME_CONFIG_VALUE_KEY = 'oro_b2b_frontend.frontend_theme';
+    const DEFAULT_LAYOUT_THEME_CONFIG_VALUE_KEY = 'oro_frontend.frontend_theme';
 
     /**
      * @var ThemeRegistry

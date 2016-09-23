@@ -10,7 +10,7 @@ workflows:
             active: true
         exclusive_record_groups:
             - b2b_checkout_flow
-        priority: 100
+        priority: 200
 
         attributes:
             billing_address:
@@ -737,11 +737,26 @@ workflows:
                                 entity: $checkout
                         - '@require_payment_redirect':
                             payment_method: $payment_method
-                        - '@not':
-                            - '@check_request':
-                                is_ajax: true
-                                expected_key: _wid
-                                expected_value: ajax_checkout
+                        - '@or':
+                            - '@not':
+                                - '@check_request':
+                                    is_ajax: true
+                                    expected_key: _wid
+                                    expected_value: ajax_checkout
+                            - '@not':
+                                - '@check_request':
+                                    is_ajax: true
+                                    expected_key: transition
+                                    expected_value: continue_to_order_review
+                actions:
+                    - '@generate_checkout_state_snapshot':
+                        entity: $checkout
+                        attribute: $.result.actualCheckoutState
+                    - '@save_checkout_state':
+                        entity: $checkout
+                        state: $.result.actualCheckoutState
+                        attribute: $state_token
+                    - '@assign_value': [$internal_state_token, $state_token]
 
             place_order_definition:
                 preactions:

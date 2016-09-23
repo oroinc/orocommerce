@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Loader;
 
 class OroRFPExtension extends Extension
 {
-    const ALIAS = 'oro_b2b_rfp';
+    const ALIAS = 'oro_rfp';
 
     /**
      * {@inheritDoc}

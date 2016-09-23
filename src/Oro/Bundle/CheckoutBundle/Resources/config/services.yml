@@ -321,6 +321,11 @@ services:
             - { name: oro_workflow.condition, alias: check_checkout_states }
             - { name: oro_action.condition, alias: check_checkout_states }
 
+    oro_checkout.workflow_state.handler.checkout_error:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler'
+        arguments:
+            - '@session.flash_bag'
+
     oro_checkout.workflow.manager.b2b_flow_checkout:
         parent: oro_workflow.abstract.workflow_aware_manager
         calls:

@@ -20,7 +20,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    const FRONTEND_SYSTEM_CONFIG_PATH = 'oro_b2b_rfp.frontend_product_visibility';
+    const FRONTEND_SYSTEM_CONFIG_PATH = 'oro_rfp.frontend_product_visibility';
 
     /**
      * @var QuoteExtension

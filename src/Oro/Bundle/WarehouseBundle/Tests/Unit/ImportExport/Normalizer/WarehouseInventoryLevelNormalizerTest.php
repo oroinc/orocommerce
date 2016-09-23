@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\WarehouseBundle\Tests\Unit\ImportExport\Normalizer;
 
+use Oro\Bundle\CurrencyBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 use Oro\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelNormalizer;
