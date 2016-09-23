@@ -87,11 +87,13 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
         $entity = $this->resolveValue($context, $this->entity, false);
 
         $rules = [];
+        $methodsData = [];
         if (null !==$entity) {
             $shippingContext = $this->shippingContextProviderFactory->create($entity);
             $rules = $this->shippingPriceProvider->getApplicableShippingRules($shippingContext);
+            $methodsData = $this->shippingPriceProvider->getApplicableMethodsWithTypesData($shippingContext);
         }
-        if (0 !== count($rules)) {
+        if (0 !== count($rules) && 0 !== count($methodsData)) {
             $result = true;
             /** @var ShippingRule $rule */
             foreach ($rules as $rule) {

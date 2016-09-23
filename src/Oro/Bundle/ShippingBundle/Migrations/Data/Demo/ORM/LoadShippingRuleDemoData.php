@@ -18,6 +18,7 @@ class LoadShippingRuleDemoData extends AbstractFixture
     public function load(ObjectManager $manager)
     {
         $typeConfig = new ShippingRuleMethodTypeConfig();
+        $typeConfig->setEnabled(true);
         $typeConfig->setType(FlatRateShippingMethodType::IDENTIFIER)
             ->setOptions([
                 FlatRateShippingMethodType::PRICE_OPTION => 10,

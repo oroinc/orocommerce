@@ -86,9 +86,10 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider evaluateProvider
      * @param array $rules
+     * @param array $methods
      * @param bool $expected
      */
-    public function testEvaluate($rules, $expected)
+    public function testEvaluate($rules, $methods, $expected)
     {
         $method = $this->getMock('Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface');
         $this->shippingMethodRegistry->expects($this->any())->method('getShippingMethod')->willReturn($method);
@@ -97,6 +98,10 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
         $this->shippingPriceProvider->expects($this->any())
             ->method('getApplicableShippingRules')
             ->willReturn($rules);
+
+        $this->shippingPriceProvider->expects($this->any())
+            ->method('getApplicableMethodsWithTypesData')
+            ->willReturn($methods);
 
         $this->condition->initialize(['entity' => new Checkout()]);
         $this->assertEquals($expected, $this->condition->evaluate([]));
@@ -121,12 +126,19 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
             ->addMethodConfig($methodConfig);
         
         return [
-            'no_rules' => [
+            'no_rules_no_methods' => [
                 'rules' => [],
+                'methods' => [],
                 'expected' => false,
             ],
-            'with_rules' => [
+            'with_rules_no_methods' => [
                 'rules' => [10 => $shippingRule],
+                'methods' => [],
+                'expected' => false,
+            ],
+            'with_rules_and_methods' => [
+                'rules' => [10 => $shippingRule],
+                'methods' => ['flat_rate'],
                 'expected' => true,
             ],
         ];

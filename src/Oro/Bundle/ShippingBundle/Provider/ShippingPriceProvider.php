@@ -71,6 +71,13 @@ class ShippingPriceProvider
             }
         }
 
+        foreach ($result as $method => &$options) {
+            if (0 === count($options['types'])) {
+                unset($result[$method]);
+            }
+        }
+        unset($options);
+
         return $result;
     }
 
