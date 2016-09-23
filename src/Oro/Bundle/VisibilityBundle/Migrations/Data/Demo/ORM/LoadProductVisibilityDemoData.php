@@ -21,7 +21,7 @@ class LoadProductVisibilityDemoData extends AbstractLoadProductVisibilityDemoDat
     {
         $this->resetVisibilities($manager);
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroAccountBundle/Migrations/Data/Demo/ORM/data/products-visibility.csv');
+        $filePath = $locator->locate('@OroVisibilityBundle/Migrations/Data/Demo/ORM/data/products-visibility.csv');
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
         $website = $this->getWebsite($manager, LoadWebsiteData::DEFAULT_WEBSITE_NAME);

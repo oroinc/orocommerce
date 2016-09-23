@@ -44,7 +44,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroAccountBundle/Migrations/Data/Demo/ORM/data/categories-visibility.csv');
+        $filePath = $locator->locate('@OroVisibilityBundle/Migrations/Data/Demo/ORM/data/categories-visibility.csv');
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
@@ -147,4 +147,3 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
         return $accountGroupCategoryVisibility;
     }
 }
-
