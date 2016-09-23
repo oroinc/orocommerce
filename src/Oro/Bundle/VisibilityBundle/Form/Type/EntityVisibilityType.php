@@ -94,7 +94,7 @@ class EntityVisibilityType extends AbstractType
                 [
                     'required' => true,
                     'mapped' => false,
-                    'label' => 'oro.account.visibility.to_all.label',
+                    'label' => 'oro.visibility.to_all.label',
                     'choices' => $choices,
                 ]
             )

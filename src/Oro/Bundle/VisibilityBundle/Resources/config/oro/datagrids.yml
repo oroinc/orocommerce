@@ -18,7 +18,7 @@ datagrids:
             name:
                 label: oro.account.name.label
             visibility:
-                label: oro.account.visibility.accountcategoryvisibility.entity_label
+                label: oro.visibility.accountcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
@@ -67,7 +67,7 @@ datagrids:
             name:
                 label: oro.account.name.label
             visibility:
-                label: oro.account.visibility.accountgroupcategoryvisibility.entity_label
+                label: oro.visibility.accountgroupcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
@@ -119,7 +119,7 @@ datagrids:
             name:
                 label: oro.account.name.label
             visibility:
-                label: oro.account.visibility.accountproductvisibility.entity_label
+                label: oro.visibility.accountproductvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
@@ -170,7 +170,7 @@ datagrids:
             name:
                 label: oro.account.name.label
             visibility:
-                label: oro.account.visibility.accountgroupproductvisibility.entity_label
+                label: oro.visibility.accountgroupproductvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:

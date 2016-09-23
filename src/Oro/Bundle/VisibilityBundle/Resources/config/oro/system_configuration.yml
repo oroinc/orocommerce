@@ -1,11 +1,11 @@
 system_configuration:
     groups:
         account_category_visibility:
-            title: oro.account.system_configuration.groups.visibility.category.title
+            title: oro.visibility.system_configuration.groups.visibility.category.title
         account_product_visibility:
-            title: oro.account.system_configuration.groups.visibility.product.title
+            title: oro.visibility.system_configuration.groups.visibility.product.title
         visibility_title:
-            title: oro.account.system_configuration.groups.visibility.title
+            title: oro.visibility.system_configuration.groups.visibility.title
             icon: 'icon-eye-open'
     fields:
         oro_visibility.category_visibility:
@@ -13,7 +13,7 @@ system_configuration:
             type: oro_account_catalog_default_visibility
             priority: 10
             options:
-                label: oro.account.catalog.visibility.form_label
+                label: oro.visibility.catalog.visibility.form_label
                 required: true
                 constraints:
                     - NotBlank: ~
@@ -22,7 +22,7 @@ system_configuration:
             type: oro_account_catalog_default_visibility
             priority: 10
             options:
-                label: oro.account.catalog.visibility.form_label
+                label: oro.visibility.catalog.visibility.form_label
                 required: true
                 constraints:
                     - NotBlank: ~

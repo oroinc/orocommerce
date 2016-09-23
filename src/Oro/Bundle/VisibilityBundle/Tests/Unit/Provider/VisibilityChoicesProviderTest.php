@@ -37,10 +37,10 @@ class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = $this->formatter->getFormattedChoices(self::VISIBILITY_CLASS, $this->createCategory());
         $expected = [
-            'parent_category' => '[trans]oro.account.visibility.categoryvisibility.choice.parent_category[/trans]',
-            'config' => '[trans]oro.account.visibility.categoryvisibility.choice.config[/trans]',
-            'hidden' => '[trans]oro.account.visibility.categoryvisibility.choice.hidden[/trans]',
-            'visible' => '[trans]oro.account.visibility.categoryvisibility.choice.visible[/trans]',
+            'parent_category' => '[trans]oro.visibility.categoryvisibility.choice.parent_category[/trans]',
+            'config' => '[trans]oro.visibility.categoryvisibility.choice.config[/trans]',
+            'hidden' => '[trans]oro.visibility.categoryvisibility.choice.hidden[/trans]',
+            'visible' => '[trans]oro.visibility.categoryvisibility.choice.visible[/trans]',
         ];
         $this->assertEquals($expected, $actual);
     }

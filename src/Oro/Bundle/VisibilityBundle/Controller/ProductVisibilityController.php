@@ -55,7 +55,7 @@ class ProductVisibilityController extends Controller
                     'parameters' => ['id' => $product->getId()],
                 ];
             },
-            $this->get('translator')->trans('oro.account.visibility.event.saved.message'),
+            $this->get('translator')->trans('oro.visibility.event.saved.message'),
             $handler
         );
     }

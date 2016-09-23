@@ -41,7 +41,7 @@ class VisibilityChoicesProvider
 
         $sourceClassReflection = new \ReflectionClass($sourceClass);
         $className = strtolower($sourceClassReflection->getShortName());
-        $translationPattern = 'oro.account.visibility.' . $className . '.choice.%s';
+        $translationPattern = 'oro.visibility.' . $className . '.choice.%s';
 
         return $this->formatChoices($translationPattern, $choices);
     }

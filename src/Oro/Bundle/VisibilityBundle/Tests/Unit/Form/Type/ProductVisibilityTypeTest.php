@@ -30,8 +30,8 @@ class PruductVisibilityTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals(
             [
-                ProductVisibility::VISIBLE => 'oro.account.product.visibility.visible.label',
-                ProductVisibility::HIDDEN => 'oro.account.product.visibility.hidden.label',
+                ProductVisibility::VISIBLE => 'oro.visibility.product.visibility.visible.label',
+                ProductVisibility::HIDDEN => 'oro.visibility.product.visibility.hidden.label',
             ],
             $resolvedOptions['choices']
         );
