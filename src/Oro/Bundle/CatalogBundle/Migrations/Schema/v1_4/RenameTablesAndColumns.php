@@ -8,15 +8,24 @@ use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
-class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
+class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
     /**
      * @var RenameExtension
      */
     private $renameExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 10;
+    }
 
     /**
      * {@inheritdoc}
