@@ -31,7 +31,7 @@ $shopping-lists-popup-offset: 15px;
 
     &__quantity {
         width: 46%;
-        padding: ($shopping-lists-popup-offset / 2) 0 ($shopping-lists-popup-offset / 2) $shopping-lists-popup-offset;
+        padding: ($shopping-lists-popup-offset * 2 / 3) 0 ($shopping-lists-popup-offset * 2 / 3) $shopping-lists-popup-offset;
     }
 
     &__headline {

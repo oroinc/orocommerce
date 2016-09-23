@@ -57,17 +57,14 @@ define(function(require) {
         /* Should be replaced to real shopping list collection */
         demoShoppingLists: [
             {
-                is_current: false,
                 shopping_list_id: 1,
-                shopping_list_label: 'Shopping List 2'
+                shopping_list_label: 'Shopping List 1'
             },
             {
-                is_current: false,
                 shopping_list_id: 2,
                 shopping_list_label: 'Shopping List 2'
             },
             {
-                is_current: false,
                 shopping_list_id: 3,
                 shopping_list_label: 'Meow List 1'
             }
@@ -87,9 +84,6 @@ define(function(require) {
             this.options.title = this.model.get('name');
             this.options.url = options.url = false;
             this.options.template = options.template = _.template(this.options.template);
-
-            /* Should be replaced to real data */
-            this.demoShoppingLists = _.extend(this.demoShoppingLists, this.model.get('shopping_lists'));
 
             mediator.on('frontend:item:delete',  this.onLineItemDelete, this);
             mediator.on('product:quantity-unit:update', this.onLineItemUpdate, this);
@@ -370,13 +364,15 @@ define(function(require) {
         },
 
         getSelectedShoppingList: function() {
-            var selectedShoppingListId = this.getSelectedShoppingListId();
+            var properties = {
+                shopping_list_id: this.getSelectedShoppingListId()
+            };
 
-            if (!selectedShoppingListId) {
+            if (!properties.shopping_list_id) {
                 return;
             }
 
-            return _.findWhere(_.extend(this.demoShoppingLists, this.model.get('shopping_lists')), {shopping_list_id: selectedShoppingListId});
+            return _.findWhere(this.model.get('shopping_lists'), properties) || _.findWhere(this.demoShoppingLists, properties);
         },
 
         getSelectedUnit: function() {
