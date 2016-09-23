@@ -3,12 +3,23 @@
 namespace Oro\Bundle\ValidationBundle\Validator\Constraints;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class NotBlankOneOfValidator extends ConstraintValidator
 {
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
+
     /**
      * {@inheritdoc}
      * @param NotBlankOneOf $constraint
@@ -41,7 +52,9 @@ class NotBlankOneOfValidator extends ConstraintValidator
             $context->buildViolation(
                 $constraint->message,
                 [
-                    "%fields%" => join(', ', $fieldGroup),
+                    "%fields%" => implode(', ', array_map(function ($value) {
+                        return $this->translator->trans($value);
+                    }, $fieldGroup))
                 ]
             )
                 ->atPath($field)

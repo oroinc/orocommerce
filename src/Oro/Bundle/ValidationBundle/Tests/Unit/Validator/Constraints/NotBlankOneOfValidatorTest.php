@@ -4,6 +4,7 @@ namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ValidationBundle\Validator\Constraints\NotBlankOneOf;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\NotBlankOneOfValidator;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
@@ -25,13 +26,36 @@ class NotBlankOneOfValidatorTest extends \PHPUnit_Framework_TestCase
     protected $constraint;
 
     /**
+     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $translator;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         $this->context = $this->getMock(ExecutionContextInterface::class);
-        $this->validator = new NotBlankOneOfValidator();
         $this->constraint = new NotBlankOneOf();
+        $this->translator = $this->getMock(TranslatorInterface::class);
+
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->with(
+                $this->logicalOr(
+                    $this->equalTo('Field 1'),
+                    $this->equalTo('Field 2')
+                )
+            )
+            ->will(
+                $this->returnCallback(
+                    function ($param) {
+                        return $param;
+                    }
+                )
+            );
+
+        $this->validator = new NotBlankOneOfValidator($this->translator);
 
         $this->validator->initialize($this->context);
     }
