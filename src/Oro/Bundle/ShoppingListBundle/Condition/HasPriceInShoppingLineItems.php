@@ -17,7 +17,8 @@ use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 /**
- * Check if products have at least one price
+ * Check if shopping list has at least one price
+ * in the line items
  * Usage:
  * @has_price_in_shopping_line_items: items
  */
