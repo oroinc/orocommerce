@@ -20,7 +20,7 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
 
         $this->loadFixtures([
             'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
-            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadGroups',
+            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
             'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
             'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
             'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
