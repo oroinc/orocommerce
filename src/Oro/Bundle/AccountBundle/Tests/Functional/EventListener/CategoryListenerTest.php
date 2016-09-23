@@ -40,7 +40,7 @@ class CategoryListenerTest extends WebTestCase
         $this->categoryRepository = $this->categoryManager
             ->getRepository('OroCatalogBundle:Category');
 
-        $this->loadFixtures(['Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
+        $this->loadFixtures(['Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
 
         $this->messageProducer = $this->getContainer()->get('oro_message_queue.client.message_producer');
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();

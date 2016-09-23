@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use Symfony\Component\Config\Definition\Processor;
 
-use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\AccountBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
@@ -64,14 +62,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                         ],
                         'send_password_in_welcome_email' => [
                             'value' => false,
-                            'scope' => 'app'
-                        ],
-                        'category_visibility' => [
-                            'value' => CategoryVisibility::VISIBLE,
-                            'scope' => 'app'
-                        ],
-                        'product_visibility' => [
-                            'value' => ProductVisibility::VISIBLE,
                             'scope' => 'app'
                         ]
                     ]

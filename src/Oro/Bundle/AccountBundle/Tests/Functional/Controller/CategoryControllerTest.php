@@ -14,9 +14,9 @@ use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 
 /**
  * @dbIsolation
@@ -111,13 +111,13 @@ class CategoryControllerTest extends WebTestCase
         /** @var EntityManager $em */
         $em = $this->client->getContainer()->get('doctrine')->getManager();
         $categoryVisibilityRepo = $em->getRepository(
-            'Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility'
+            'Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility'
         );
         $accountCategoryVisibilityRepo = $em->getRepository(
-            'Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility'
+            'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility'
         );
         $accountGroupCategoryVisibilityRepo = $em->getRepository(
-            'Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility'
+            'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility'
         );
 
         $this->assertNotEquals(0, $this->getEntitiesCount($categoryVisibilityRepo));

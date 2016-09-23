@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional;
 
-use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
+use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageFactory;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
 use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;

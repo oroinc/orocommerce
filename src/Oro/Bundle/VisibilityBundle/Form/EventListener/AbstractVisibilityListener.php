@@ -37,6 +37,7 @@ abstract class AbstractVisibilityListener
         $targetEntityField = $config->getOption('targetEntityField');
         $criteria = [];
         $criteria[$targetEntityField] = $targetEntity;
+
         if ($website = $config->getOption('website')) {
             $criteria['website'] = $website;
         }
