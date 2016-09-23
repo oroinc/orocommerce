@@ -1,6 +1,10 @@
 parameters:
     oro_website_search.entity.item.class: Oro\Bundle\WebsiteSearchBundle\Entity\Item
     oro_website_search.index_text_table_name: oro_website_search_text
+    oro_website_search.mock.class:                     Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
+    oro_website_search.query_factory.class:            Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
+    oro_website_search.select_data.listener.class:     Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
+    oro_website_search.reindex_request.listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener
 
 services:
     oro_website_search.resolver.query_placeholder:
@@ -152,3 +156,11 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider'
         public: false
 
+    oro_website_search.reindex_request.listener:
+        class: %oro_website_search.reindex_request.listener.class%
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - ~ # regular indexer
+            - ~ # async indexer
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.reindexation_trigger, method: process }
