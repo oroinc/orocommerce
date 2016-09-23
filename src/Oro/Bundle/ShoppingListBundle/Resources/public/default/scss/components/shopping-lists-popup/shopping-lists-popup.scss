@@ -3,7 +3,7 @@ $shopping-lists-popup-offset: 15px;
 .shopping-lists-popup {
     width: 100%;
 
-    font-family: $lato-font;
+    font-family: $base-font;
 
     &__content {
         display: block;
@@ -15,7 +15,7 @@ $shopping-lists-popup-offset: 15px;
     &__item {
         display: block;
 
-        border-top: 1px solid $base-topbar-background-color;
+        border-top: 1px solid get-color('additional', 'light');
     }
 
     &__list,
@@ -35,7 +35,7 @@ $shopping-lists-popup-offset: 15px;
     }
 
     &__headline {
-        background: $base-sidebar-background-color-light;
+        background: get-color('additional', 'light');
     }
 
     &__headline &__item {
@@ -56,7 +56,7 @@ $shopping-lists-popup-offset: 15px;
     }
 
     &__footer {
-        background: $base-sidebar-background-color-light;
+        background: get-color('additional', 'light');
     }
 
     &__footer &__list {
