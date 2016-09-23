@@ -2,7 +2,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
     alias: oro_product_WEBSITE_ID
     fields:
         title:
-            name: title_LOCALIZATION_ID2
+            name: title_LOCALIZATION_ID
             type: text
         sku:
             name: sku
@@ -30,4 +30,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             type: text
         inventory_status:
             name: status
+            type: text
+        all_text:
+            name: all_text_LOCALIZATION_ID
             type: text

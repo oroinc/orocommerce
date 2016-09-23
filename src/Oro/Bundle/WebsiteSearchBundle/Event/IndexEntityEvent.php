@@ -96,18 +96,6 @@ class IndexEntityEvent extends Event
     }
 
     /**
-     * @param $entityId
-     * @param $placeholder
-     * @return $this
-     */
-    public function setAllTextFieldPlaceholder($entityId, $placeholder)
-    {
-        $this->entitiesData[$entityId][IndexDataProvider::ALL_TEXT_FIELD] = $placeholder;
-
-        return $this;
-    }
-
-    /**
      * @return array
      */
     public function getEntitiesData()

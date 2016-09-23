@@ -11,6 +11,7 @@ use Oro\Bundle\TestFrameworkBundle\Entity\Item as TestEntity;
 use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 
@@ -39,34 +40,58 @@ class OrmEngineTest extends AbstractSearchWebTestCase
         TestEntity::class => [
             'alias' => 'oro_test_item_WEBSITE_ID',
             'fields' => [
-                [
-                    'name' => 'stringValue_LOCALIZATION_ID',
-                    'type' => 'text',
-                ],
-                [
-                    'name' => 'integerValue',
-                    'type' => 'integer',
-                ],
-                [
-                    'name' => 'decimalValue',
-                    'type' => 'decimal',
-                ],
-                [
-                    'name' => 'floatValue',
-                    'type' => 'decimal',
-                ],
-                [
-                    'name' => 'datetimeValue',
-                    'type' => 'datetime',
-                ],
-                [
-                    'name' => 'blobValue',
-                    'type' => 'text',
-                ],
-                [
-                    'name' => 'phone',
-                    'type' => 'text',
-                ],
+                'title' =>
+                    [
+                        'name' => 'title_LOCALIZATION_ID',
+                        'type' => 'text'
+                    ],
+                'stringValue' =>
+                    [
+                        'name' => 'stringValue',
+                        'type' => 'text',
+                    ],
+
+                'integerValue' =>
+                    [
+                        'name' => 'integerValue',
+                        'type' => 'integer',
+                    ],
+
+                'decimalValue' =>
+                    [
+                        'name' => 'decimalValue',
+                        'type' => 'decimal',
+                    ],
+
+                'floatValue' =>
+                    [
+                        'name' => 'floatValue',
+                        'type' => 'decimal'
+                    ],
+
+                'datetimeValue' =>
+                    [
+                        'name' => 'datetimeValue',
+                        'type' => 'datetime'
+                    ],
+
+                'blobValue' =>
+                    [
+                        'name' => 'blobValue',
+                        'type' => 'text'
+                    ],
+
+                'phone' =>
+                    [
+                        'name' => 'phone',
+                        'type' => 'text'
+                    ],
+                'all_text' =>
+                    [
+                        'name' => 'all_text_LOCALIZATION_ID',
+                        'type' => 'text'
+                    ]
+
             ],
         ]
     ];
@@ -93,6 +118,12 @@ class OrmEngineTest extends AbstractSearchWebTestCase
             ->with(TestEntity::class)
             ->willReturn($this->mappingConfig[TestEntity::class]['alias']);
 
+        $this->mappingProviderMock
+            ->expects($this->any())
+            ->method('getEntityConfig')
+            ->with(TestEntity::class)
+            ->willReturn($this->mappingConfig[TestEntity::class]);
+
         $this->loadFixtures([LoadSearchItemData::class]);
 
         $this->listener = $this->setListener();
@@ -102,7 +133,7 @@ class OrmEngineTest extends AbstractSearchWebTestCase
             $this->mappingProviderMock,
             $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
             $this->getContainer()->get('oro_website_search.provider.index_data'),
-            $this->getContainer()->get('oro_website_search.placeholder.chain_replace')
+            $this->getContainer()->get('oro_website_search.placeholder.visitor_replace')
         );
 
         $indexer->reindex(TestEntity::class, []);
@@ -135,53 +166,19 @@ class OrmEngineTest extends AbstractSearchWebTestCase
 
             /** @var TestEntity $item */
             foreach ($items as $item) {
-                $event->addField(
+                $event->addField($item->getId(), 'stringValue', $item->stringValue);
+                $event->addField($item->getId(), 'integerValue', $item->integerValue);
+                $event->addField($item->getId(), 'decimalValue', $item->decimalValue);
+                $event->addField($item->getId(), 'floatValue', $item->floatValue);
+                $event->addField($item->getId(), 'datetimeValue', $item->datetimeValue);
+                $event->addField($item->getId(), 'phone', $item->phone);
+                $event->addField($item->getId(), 'blobValue', (string)$item->blobValue);
+
+                $event->addPlaceholderField(
                     $item->getId(),
-                    Query::TYPE_INTEGER,
-                    'integerValue',
-                    $item->integerValue
-                );
-                $event->addField(
-                    $item->getId(),
-                    Query::TYPE_DECIMAL,
-                    'decimalValue',
-                    $item->decimalValue
-                );
-                $event->addField(
-                    $item->getId(),
-                    Query::TYPE_DECIMAL,
-                    'floatValue',
-                    $item->floatValue
-                );
-                $event->addField(
-                    $item->getId(),
-                    Query::TYPE_DATETIME,
-                    'datetimeValue',
-                    $item->datetimeValue
-                );
-                $event->addField(
-                    $item->getId(),
-                    Query::TYPE_TEXT,
-                    'stringValue_' . $defaultLocalizationId,
-                    $item->stringValue
-                );
-                $event->addField(
-                    $item->getId(),
-                    Query::TYPE_TEXT,
-                    'all_text_' . $defaultLocalizationId,
-                    $item->stringValue
-                );
-                $event->addField(
-                    $item->getId(),
-                    Query::TYPE_TEXT,
-                    'phone',
-                    $item->phone
-                );
-                $event->addField(
-                    $item->getId(),
-                    Query::TYPE_TEXT,
-                    'blobValue',
-                    (string)$item->blobValue
+                    'title',
+                    "Some text with placeholder {$defaultLocalizationId} for {$item->stringValue}",
+                    [LocalizationIdPlaceholder::NAME => $defaultLocalizationId]
                 );
             }
         };
@@ -197,20 +194,9 @@ class OrmEngineTest extends AbstractSearchWebTestCase
 
     public function testSearchAll()
     {
-        $defaultLocalizationId = $this->getDefaultLocalizationId();
-
-        $this->mappingProviderMock
-            ->expects($this->exactly(9))
-            ->method('getEntityConfig')
-            ->with(TestEntity::class)
-            ->willReturn($this->mappingConfig[TestEntity::class]);
-
         $query = new Query();
         $query->from('*');
-        $query->getCriteria()->orderBy([
-            'stringValue_' . $defaultLocalizationId => Query::ORDER_ASC
-        ]);
-
+        $query->getCriteria()->orderBy(['stringValue'  => Query::ORDER_ASC]);
         $items = $this->getSearchItems($query);
 
         $this->assertEquals('item1@mail.com', $items[0]->getRecordTitle());
@@ -226,20 +212,10 @@ class OrmEngineTest extends AbstractSearchWebTestCase
 
     public function testSearchByAliasWithSelect()
     {
-        $defaultLocalizationId = $this->getDefaultLocalizationId();
-
-        $this->mappingProviderMock
-            ->expects($this->exactly(9))
-            ->method('getEntityConfig')
-            ->with(TestEntity::class)
-            ->willReturn($this->mappingConfig[TestEntity::class]);
-
         $query = new Query();
         $query->from('oro_test_item_WEBSITE_ID');
-        $query->select('stringValue_' . $defaultLocalizationId);
-        $query->getCriteria()->orderBy([
-            'stringValue_' . $defaultLocalizationId => Query::ORDER_ASC
-        ]);
+        $query->select('stringValue');
+        $query->getCriteria()->orderBy(['stringValue' => Query::ORDER_ASC]);
 
         $items = $this->getSearchItems($query);
 
@@ -259,13 +235,6 @@ class OrmEngineTest extends AbstractSearchWebTestCase
     {
         $query = new Query();
         $query->from('oro_test_item_WEBSITE_ID');
-
-        $this->mappingProviderMock
-            ->expects($this->once())
-            ->method('getEntityConfig')
-            ->with(TestEntity::class)
-            ->willReturn($this->mappingConfig[TestEntity::class]);
-
         $expr = new Comparison("integer.integerValue", "=", 5000);
         $criteria = new Criteria();
         $criteria->where($expr);

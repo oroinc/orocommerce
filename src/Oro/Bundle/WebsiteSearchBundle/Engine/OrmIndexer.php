@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 
 class OrmIndexer extends AbstractIndexer
 {
@@ -103,7 +104,10 @@ class OrmIndexer extends AbstractIndexer
         $entityAlias = null;
         if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
             $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
-            $entityAlias = $this->chainPlaceholder->replace($entityAlias, $context[self::CONTEXT_WEBSITE_ID_KEY]);
+            $entityAlias = $this->chainPlaceholder->replace(
+                $entityAlias,
+                [WebsiteIdPlaceholder::NAME => $context[self::CONTEXT_WEBSITE_ID_KEY]]
+            );
         }
 
         return $entityAlias;

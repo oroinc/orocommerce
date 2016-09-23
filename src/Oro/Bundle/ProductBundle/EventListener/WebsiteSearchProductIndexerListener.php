@@ -66,7 +66,6 @@ class WebsiteSearchProductIndexerListener
                     );
                 }
             }
-            $event->setAllTextFieldPlaceholder($product->getId(), LocalizationIdPlaceholder::NAME);
         }
     }
 }

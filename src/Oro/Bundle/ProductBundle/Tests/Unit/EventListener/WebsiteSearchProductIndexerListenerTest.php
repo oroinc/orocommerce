@@ -9,7 +9,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\ChainReplacePlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\VisitorReplacePlaceholder;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCase
@@ -32,9 +32,9 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
     private $event;
 
     /**
-     * @var ChainReplacePlaceholder|\PHPUnit_Framework_MockObject_MockObject
+     * @var VisitorReplacePlaceholder|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $chainReplacePlaceholder;
+    private $visitorReplacePlaceholder;
 
     protected function setUp()
     {
@@ -47,14 +47,14 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->chainReplacePlaceholder = $this->getMockBuilder(ChainReplacePlaceholder::class)
+        $this->visitorReplacePlaceholder = $this->getMockBuilder(VisitorReplacePlaceholder::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->listener = new WebsiteSearchProductIndexerListener(
             $doctrineHelper,
             $this->localizationHelper,
-            $this->chainReplacePlaceholder
+            $this->visitorReplacePlaceholder
         );
     }
 

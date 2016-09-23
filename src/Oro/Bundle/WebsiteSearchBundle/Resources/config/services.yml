@@ -23,7 +23,7 @@ services:
             - '@oro_website_search.provider.search_mapping'
             - '@oro_website_search.engine.entity_dependencies_resolver'
             - '@oro_website_search.provider.index_data'
-            - '@oro_website_search.placeholder.chain_replace'
+            - '@oro_website_search.placeholder.visitor_replace'
 
     oro_website_search.placeholder.registry:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry'
@@ -138,12 +138,12 @@ services:
         arguments:
             - '@event_dispatcher'
             - '@oro_entity.entity_alias_resolver'
-            - '@oro_website_search.placeholder.chain_replace'
+            - '@oro_website_search.placeholder.visitor_replace'
             - '@oro_website_search.helper.field'
             - '@oro_website_search.provider.search_mapping'
 
-    oro_website_search.placeholder.chain_replace:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\ChainReplacePlaceholder'
+    oro_website_search.placeholder.visitor_replace:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\VisitorReplacePlaceholder'
         arguments:
             - '@oro_website_search.placeholder.registry'
 

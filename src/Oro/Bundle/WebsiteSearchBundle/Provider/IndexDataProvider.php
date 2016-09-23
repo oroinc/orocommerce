@@ -11,7 +11,7 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Helper\FieldHelper;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\ChainReplacePlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\VisitorReplacePlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -33,8 +33,8 @@ class IndexDataProvider
     /** @var EntityAliasResolver */
     private $entityAliasResolver;
 
-    /** @var ChainReplacePlaceholder */
-    private $chainReplacePlaceholder;
+    /** @var VisitorReplacePlaceholder */
+    private $visitorReplacePlaceholder;
 
     /** @var FieldHelper */
     private $fieldHelper;
@@ -48,20 +48,20 @@ class IndexDataProvider
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param EntityAliasResolver $entityAliasResolver
-     * @param ChainReplacePlaceholder $chainReplacePlaceholder
+     * @param VisitorReplacePlaceholder $visitorReplacePlaceholder
      * @param FieldHelper $fieldHelper
      * @param WebsiteSearchMappingProvider $mappingProvider
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         EntityAliasResolver $entityAliasResolver,
-        ChainReplacePlaceholder $chainReplacePlaceholder,
+        VisitorReplacePlaceholder $visitorReplacePlaceholder,
         FieldHelper $fieldHelper,
         WebsiteSearchMappingProvider $mappingProvider
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->entityAliasResolver = $entityAliasResolver;
-        $this->chainReplacePlaceholder = $chainReplacePlaceholder;
+        $this->visitorReplacePlaceholder = $visitorReplacePlaceholder;
         $this->fieldHelper = $fieldHelper;
         $this->mappingProvider = $mappingProvider;
     }
@@ -84,35 +84,30 @@ class IndexDataProvider
      * @param string $entityClass
      * @param object[] $restrictedEntities
      * @param array $context
+     * @param array $entityConfig
      * @return array
      */
-    public function getEntitiesData($entityClass, array $restrictedEntities, array $context)
+    public function getEntitiesData($entityClass, array $restrictedEntities, array $context, array $entityConfig)
     {
         $indexEntityEvent = new IndexEntityEvent($entityClass, $restrictedEntities, $context);
         $this->eventDispatcher->dispatch(IndexEntityEvent::NAME, $indexEntityEvent);
 
-        return $this->prepareIndexData($indexEntityEvent->getEntitiesData(), $entityClass);
+        return $this->prepareIndexData($indexEntityEvent->getEntitiesData(), $entityConfig);
     }
 
     /**
      * Adds field types according to entity config, applies placeholders
-     *
      * @param array $indexData
-     * @param string $entityClass
+     * @param array $entityConfig
      * @return array Structured and cleared data ready to be saved
      */
-    private function prepareIndexData(array $indexData, $entityClass)
+    private function prepareIndexData(array $indexData, $entityConfig)
     {
-        $mappingConfig = $this->mappingProvider->getEntityConfig($entityClass);
-        $fieldsConfig = $mappingConfig['fields'];
+        $fieldsConfig = $entityConfig['fields'];
 
         $this->preparedIndexData = [];
 
         foreach ($indexData as $entityId => $fieldsCategories) {
-            $allTextPlaceholder = '';
-            if (isset($fieldsCategories[self::ALL_TEXT_FIELD])) {
-                $allTextPlaceholder = $fieldsCategories[self::ALL_TEXT_FIELD];
-            }
             if (isset($fieldsCategories[self::STANDARD_VALUES_KEY])) {
                 $this->processStandardValues(
                     $entityId,
@@ -124,8 +119,7 @@ class IndexDataProvider
                 $this->processPlaceholderValues(
                     $entityId,
                     $fieldsCategories[self::PLACEHOLDER_VALUES_KEY],
-                    $fieldsConfig,
-                    $allTextPlaceholder
+                    $fieldsConfig
                 );
             }
         }
@@ -151,34 +145,30 @@ class IndexDataProvider
      * @param int $entityId
      * @param array $fieldsData
      * @param array $fieldsConfig
-     * @param string $allTextPlaceholder
      */
-    private function processPlaceholderValues($entityId, array $fieldsData, array $fieldsConfig, $allTextPlaceholder)
+    private function processPlaceholderValues($entityId, array $fieldsData, array $fieldsConfig)
     {
-        $allStandardTexts = [];
         $allTextsWithPlaceholders = [];
-        if (isset($this->preparedIndexData[$entityId][Query::TYPE_TEXT]) && $allTextPlaceholder) {
-            $allStandardTexts = $this->preparedIndexData[$entityId][Query::TYPE_TEXT];
-        }
+        $allStandardTexts = $this->preparedIndexData[$entityId][Query::TYPE_TEXT];
+        $allTextFieldConfigName = $this->getFieldConfig($fieldsConfig, self::ALL_TEXT_FIELD)['name']; //all_text_LOCALIZATION_ID
 
-        foreach ($fieldsData as $fieldName => $localizedValues) {
-            foreach ($localizedValues as $localeId => $value) {
+        foreach ($fieldsData as $fieldName => $placeholderValues) {
+            foreach ($placeholderValues as $value) {
                 /** @var ValueWithPlaceholders $valueWithPlaceholders */
                 $valueWithPlaceholders = $value;
                 $fieldConfig = $this->getFieldConfig($fieldsConfig, $fieldName);
                 $placeholders = $valueWithPlaceholders->getPlaceholders();
                 $type = $fieldConfig['type'];
-                $replacedFieldName = $this->chainReplacePlaceholder->replace($fieldConfig['name'], $placeholders);
+                $replacedFieldName = $this->visitorReplacePlaceholder->replace($fieldConfig['name'], $placeholders);
                 $clearedValue = $this->clearTextValue($type, $valueWithPlaceholders->getValue());
                 $this->preparedIndexData[$entityId][$type][$replacedFieldName] = $clearedValue;
 
-                /** Todo:need to discuss could we have all texts combined for "all_text" field (without localization)*/
-                if ($allTextPlaceholder && $type === Query::TYPE_TEXT && isset($placeholders[$allTextPlaceholder])) {
-                    $allTextField = $this->chainReplacePlaceholder->replace(
-                        self::ALL_TEXT_FIELD . '_' . $allTextPlaceholder,
+                if ($type === Query::TYPE_TEXT) {
+                    $replacedTextField = $this->visitorReplacePlaceholder->replace(
+                        $allTextFieldConfigName,
                         $placeholders
                     );
-                    $allTextsWithPlaceholders[$allTextField][] = $clearedValue;
+                    $allTextsWithPlaceholders[$replacedTextField][] = $clearedValue;
                 }
             }
         }

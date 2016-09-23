@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
-use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
@@ -54,19 +53,22 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         TestProduct::class => [
             'alias' => 'oro_product_WEBSITE_ID',
             'fields' => [
-                [
-                    'name' => 'title_LOCALIZATION_ID',
-                    'type' => 'text'
-                ]
+                'title' =>
+                    [
+                        'name' => 'title_LOCALIZATION_ID',
+                        'type' => 'text'
+                    ]
             ]
+
         ],
         TestEmployee::class => [
             'alias' => 'oro_employee_WEBSITE_ID',
             'fields' => [
-                [
-                    'name' => 'name',
-                    'type' => 'text'
-                ]
+                'title' =>
+                    [
+                        'name' => 'title_LOCALIZATION_ID',
+                        'type' => 'text'
+                    ]
             ]
         ]
     ];
@@ -86,7 +88,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             $this->mappingProviderMock,
             $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
             $this->getContainer()->get('oro_website_search.provider.index_data'),
-            $this->getContainer()->get('oro_website_search.placeholder.chain_replace')
+            $this->getContainer()->get('oro_website_search.placeholder.visitor_replace')
         );
 
         $this->clearRestrictListeners($this->getRestrictEntityEventName());
@@ -118,8 +120,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             foreach ($entities as $entity) {
                 $event->addField(
                     $entity->getId(),
-                    Query::TYPE_TEXT,
-                    'name',
+                    'title',
                     sprintf('Reindexed product %s', $entity->getId())
                 );
             }
@@ -162,11 +163,24 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ->willReturn($return);
     }
 
+    /**
+     * @param $class
+     */
+    private function setGetEntityConfigExpectation($class = TestProduct::class)
+    {
+        $this->mappingProviderMock
+            ->expects($this->any())
+            ->method('getEntityConfig')
+            ->with($class)
+            ->willReturn($this->mappingConfig[$class]);
+    }
+
     public function testReindexForSpecificWebsite()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
         $this->setClassSupportedExpectation(1, TestProduct::class, true);
         $this->setEntityAliasExpectation(1, TestProduct::class, $this->mappingConfig[TestProduct::class]['alias']);
+        $this->setGetEntityConfigExpectation();
         $this->listener = $this->setListener();
 
         $this->indexer->reindex(
@@ -206,6 +220,15 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
                 $this->mappingConfig[TestEmployee::class]['alias']
             );
 
+        $this->mappingProviderMock
+            ->expects($this->exactly(2))
+            ->method('getEntityConfig')
+            ->withConsecutive([TestProduct::class], [TestEmployee::class])
+            ->willReturnOnConsecutiveCalls(
+                $this->mappingConfig[TestProduct::class],
+                $this->mappingConfig[TestEmployee::class]
+            );
+
         $this->listener = $this->setListener();
 
         $this->indexer->reindex(
@@ -235,13 +258,14 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->loadFixtures([LoadProductsToIndex::class]);
         $this->setEntityAliasExpectation(1, TestProduct::class, $this->mappingConfig[TestProduct::class]['alias']);
         $this->setClassSupportedExpectation(1, TestProduct::class, true);
+        $this->setGetEntityConfigExpectation();
 
         $this->indexer = new OrmIndexerStub(
             $this->doctrineHelper,
             $this->mappingProviderMock,
             $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
             $this->getContainer()->get('oro_website_search.provider.index_data'),
-            $this->getContainer()->get('oro_website_search.placeholder.chain_replace')
+            $this->getContainer()->get('oro_website_search.placeholder.visitor_replace')
         );
 
         $this->listener = $this->setListener();
@@ -265,6 +289,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->loadFixtures([LoadProductsToIndex::class]);
         $this->setClassSupportedExpectation(1, TestProduct::class, true);
         $this->setEntityAliasExpectation(1, TestProduct::class, $this->mappingConfig[TestProduct::class]['alias']);
+        $this->setGetEntityConfigExpectation();
 
         $restrictedProduct = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
 
@@ -339,6 +364,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ->willReturn([TestProduct::class]);
 
         $this->setEntityAliasExpectation(2, TestProduct::class, $this->mappingConfig[TestProduct::class]['alias']);
+        $this->setGetEntityConfigExpectation();
 
         $this->listener = $this->setListener();
         $this->indexer->reindex();
@@ -515,7 +541,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->loadFixtures([LoadProductsToIndex::class]);
         $this->setClassSupportedExpectation(2, TestProduct::class, true);
         $this->setEntityAliasExpectation(2, TestProduct::class, $this->mappingConfig[TestProduct::class]['alias']);
-
+        $this->setGetEntityConfigExpectation();
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $this->listener = $this->setListener();
 
@@ -535,6 +561,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->loadFixtures([LoadProductsToIndex::class]);
         $this->setClassSupportedExpectation(2, TestProduct::class, true);
         $this->setEntityAliasExpectation(2, TestProduct::class, $this->mappingConfig[TestProduct::class]['alias']);
+        $this->setGetEntityConfigExpectation();
 
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $this->listener = $this->setListener();
@@ -552,6 +579,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
         $this->listener = $this->setListener();
         $this->setClassSupportedExpectation(3, TestProduct::class, true);
+        $this->setGetEntityConfigExpectation();
 
         $this->indexer->save(
             [$product1, $product2],
@@ -573,6 +601,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->listener = $this->setListener();
         $this->setClassSupportedExpectation(3, TestProduct::class, true);
         $this->setEntityAliasExpectation(2, TestProduct::class, $this->mappingConfig[TestProduct::class]['alias']);
+        $this->setGetEntityConfigExpectation();
 
         $this->indexer->save([$product1, $product2]);
 
@@ -664,7 +693,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             $this->mappingProviderMock,
             $entityDependenciesResolver,
             $this->getContainer()->get('oro_website_search.provider.index_data'),
-            $this->getContainer()->get('oro_website_search.placeholder.chain_replace')
+            $this->getContainer()->get('oro_website_search.placeholder.visitor_replace')
         );
 
         $this->assertEquals($allClasses, $this->indexer->getClassesForReindex());

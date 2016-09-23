@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\ChainReplacePlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\VisitorReplacePlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolverInterface;
@@ -30,7 +30,7 @@ abstract class AbstractIndexer implements IndexerInterface
     /** @var IndexDataProvider */
     protected $indexDataProvider;
 
-    /** @var ChainReplacePlaceholder */
+    /** @var VisitorReplacePlaceholder */
     protected $chainPlaceholder;
 
     /**
@@ -38,14 +38,14 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param WebsiteSearchMappingProvider $mappingProvider
      * @param EntityDependenciesResolverInterface $entityDependenciesResolver
      * @param IndexDataProvider $indexDataProvider
-     * @param ChainReplacePlaceholder $chainPlaceholder
+     * @param VisitorReplacePlaceholder $chainPlaceholder
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         WebsiteSearchMappingProvider $mappingProvider,
         EntityDependenciesResolverInterface $entityDependenciesResolver,
         IndexDataProvider $indexDataProvider,
-        ChainReplacePlaceholder $chainPlaceholder
+        VisitorReplacePlaceholder $chainPlaceholder
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->mappingProvider = $mappingProvider;
@@ -253,7 +253,13 @@ abstract class AbstractIndexer implements IndexerInterface
             return 0;
         }
 
-        $entitiesData = $this->indexDataProvider->getEntitiesData($entityClass, $restrictedEntities, $context);
+        $entityConfig = $this->mappingProvider->getEntityConfig($entityClass);
+        $entitiesData = $this->indexDataProvider->getEntitiesData(
+            $entityClass,
+            $restrictedEntities,
+            $context,
+            $entityConfig
+        );
 
         return $this->saveIndexData($entityClass, $entitiesData, $aliasToSave);
     }

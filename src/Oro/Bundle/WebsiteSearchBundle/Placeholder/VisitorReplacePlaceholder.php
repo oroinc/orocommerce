@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
-class ChainReplacePlaceholder
+class VisitorReplacePlaceholder
 {
     /**
      * @var WebsiteSearchPlaceholderRegistry
