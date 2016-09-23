@@ -29,7 +29,6 @@ services:
         class: %oro_website_search.product_visibility_restriction_listener.class%
         arguments:
             - '@oro_product.product.manager'
-            - '@oro_search.query.expression_builder'
         tags:
             - { name: kernel.event_listener, event: oro_search.before_search, method: process }
 

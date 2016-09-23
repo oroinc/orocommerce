@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Event\BeforeSearchEvent;
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Criteria\ExpressionBuilder;
 use Oro\Bundle\SearchBundle\Query\Query;
 
@@ -16,20 +17,12 @@ class ProductVisibilityRestrictionListener
     private $productManager;
 
     /**
-     * @var ExpressionBuilder
-     */
-    private $expressionBuilder;
-
-    /**
      * @param ProductManager $productManager
-     * @param ExpressionBuilder $expressionBuilder
      */
     public function __construct(
-        ProductManager $productManager,
-        ExpressionBuilder $expressionBuilder
+        ProductManager $productManager
     ) {
         $this->productManager = $productManager;
-        $this->expressionBuilder = $expressionBuilder;
     }
 
     /**
@@ -65,8 +58,8 @@ class ProductVisibilityRestrictionListener
         }
 
         $query->getCriteria()->andWhere(
-            $this->expressionBuilder->orX(
-                $this->expressionBuilder->isNull('sku'),
+            Criteria::expr()->orX(
+                Criteria::expr()->isNull('sku'),
                 $restrictions
             )
         );

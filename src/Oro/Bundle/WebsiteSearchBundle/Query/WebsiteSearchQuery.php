@@ -30,9 +30,9 @@ class WebsiteSearchQuery extends AbstractSearchQuery
         EventDispatcherInterface $eventDispatcher,
         Query $query
     ) {
-        $this->engine         = $engine;
-        $this->dispatcher     = $eventDispatcher;
-        $this->query          = $query;
+        $this->engine     = $engine;
+        $this->dispatcher = $eventDispatcher;
+        $this->query      = $query;
     }
 
     /**

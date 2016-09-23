@@ -34,9 +34,9 @@ class QueryFactory implements QueryFactoryInterface
         EventDispatcherInterface $eventDispatcher,
         EngineV2Interface $engine
     ) {
-        $this->parent            = $parentQueryFactory;
-        $this->dispatcher        = $eventDispatcher;
-        $this->engine            = $engine;
+        $this->parent     = $parentQueryFactory;
+        $this->dispatcher = $eventDispatcher;
+        $this->engine     = $engine;
     }
 
     /**

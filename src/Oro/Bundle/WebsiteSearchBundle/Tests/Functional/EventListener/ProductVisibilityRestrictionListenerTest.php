@@ -31,7 +31,12 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
     /**
      * @var string
      */
-    private $testValue;
+    private static $testValue;
+
+    /**
+     * @var bool
+     */
+    private static $listenerInitialized = false;
 
     protected function setUp()
     {
@@ -40,16 +45,20 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
         $this->engine = $this->client->getContainer()->get('oro_website_search.mock.engine');
         $this->eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
 
-        $this->testValue = 'test_'.uniqid();
+        self::$testValue = 'test_'.uniqid();
 
-        $this->eventDispatcher->addListener(
-            ProductSearchRestrictionEvent::NAME,
-            function (ProductSearchRestrictionEvent $event) {
-                $expr = Criteria::expr();
+        if (!self::$listenerInitialized) {
+            $this->eventDispatcher->addListener(
+                ProductSearchRestrictionEvent::NAME,
+                function (ProductSearchRestrictionEvent $event) {
+                    $expr = Criteria::expr();
 
-                $event->getQuery()->getCriteria()->andWhere($expr->eq('name', $this->testValue));
-            }
-        );
+                    $event->getQuery()->getCriteria()->andWhere($expr->eq('name', self::$testValue));
+                }
+            );
+        }
+
+        self::$listenerInitialized = true;
     }
 
     public function testRestrictsVisibilityForJustProducts()
@@ -71,14 +80,14 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
                     $foundSkuExpression = true;
                 }
 
-                if (($expr->getField() == 'name') && ($expr->getValue()->getValue() == $this->testValue)) {
+                if (($expr->getField() == 'name') && ($expr->getValue()->getValue() == self::$testValue)) {
                     $foundCustomExpression = true;
                 }
             }
         }
 
         if ($where instanceof Comparison) {
-            if (($where->getField() == 'name') && ($where->getValue()->getValue() == $this->testValue)) {
+            if (($where->getField() == 'name') && ($where->getValue()->getValue() == self::$testValue)) {
                 $foundCustomExpression = true;
             }
         }
@@ -106,7 +115,7 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
                     $foundSkuExpression = true;
                 }
 
-                if (($expr->getField() == 'name') && ($expr->getValue()->getValue() == $this->testValue)) {
+                if (($expr->getField() == 'name') && ($expr->getValue()->getValue() == self::$testValue)) {
                     $foundCustomExpression = true;
                 }
             }
@@ -138,7 +147,7 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
                             $foundSkuExpression = true;
                         }
 
-                        if (($expr->getField() == 'name') && ($expr->getValue()->getValue() == $this->testValue)) {
+                        if (($expr->getField() == 'name') && ($expr->getValue()->getValue() == self::$testValue)) {
                             $foundCustomExpression = true;
                         }
                     }

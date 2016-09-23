@@ -3,17 +3,18 @@
 namespace Oro\Bundle\ProductBundle\Entity\Manager;
 
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Event\ProductSearchRestrictionEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
+use Oro\Bundle\ProductBundle\Event\ProductSearchRestrictionEvent;
 
 class ProductManager
 {
-    /** @var  EventDispatcherInterface */
+    /**
+     * @var  EventDispatcherInterface
+     */
     protected $eventDispatcher;
 
     /**
