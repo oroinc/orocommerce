@@ -86,7 +86,8 @@ class MenuUpdate extends ExtendMenuUpdate implements
         $extras = [
             'image'     => $this->getImage(),
             'condition' => $this->getCondition(),
-            'website'   => $this->getWebsite()
+            'website'   => $this->getWebsite(),
+            'existsInNavigationYml' => $this->isExistsInNavigationYml()
         ];
 
         if ($this->getPriority() !== null) {
