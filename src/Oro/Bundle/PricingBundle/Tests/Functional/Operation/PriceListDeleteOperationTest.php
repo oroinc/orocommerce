@@ -25,8 +25,8 @@ class PriceListDeleteOperationTest extends ActionTestCase
 
         $this->assertDeleteOperation(
             $priceList->getId(),
-            'orob2b_pricing.entity.price_list.class',
-            'orob2b_pricing_price_list_index'
+            'oro_pricing.entity.price_list.class',
+            'oro_pricing_price_list_index'
         );
     }
 
@@ -40,7 +40,7 @@ class PriceListDeleteOperationTest extends ActionTestCase
         $this->assertExecuteOperation(
             'DELETE',
             $priceList->getId(),
-            $this->getContainer()->getParameter('orob2b_pricing.entity.price_list.class'),
+            $this->getContainer()->getParameter('oro_pricing.entity.price_list.class'),
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
             404

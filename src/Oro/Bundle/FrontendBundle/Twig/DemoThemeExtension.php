@@ -9,9 +9,9 @@ use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
 
 class DemoThemeExtension extends \Twig_Extension
 {
-    const NAME = 'orob2b_frontend_theme';
+    const NAME = 'oro_frontend_theme';
 
-    const TAG_NAME = 'orob2b_css';
+    const TAG_NAME = 'oro_css';
     const PARSER_OUTPUT = 'css/*.css';
 
     /**

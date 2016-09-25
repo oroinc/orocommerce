@@ -8,7 +8,7 @@ use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository")
- * @ORM\Table(name="orob2b_prod_vsb_resolv")
+ * @ORM\Table(name="oro_prod_vsb_resolv")
  */
 class ProductVisibilityResolved extends BaseProductVisibilityResolved
 {

@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\MessageProcessor;
 
+use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\AttachmentBundle\Resizer\ImageResizer;
 use Oro\Bundle\LayoutBundle\Loader\ImageFilterLoader;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductImageRepository;
 use Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener;
 
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -19,7 +20,7 @@ use Oro\Component\MessageQueue\Util\JSON;
 class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
-     * @var ProductImageRepository
+     * @var EntityRepository
      */
     protected $imageRepository;
 
@@ -39,13 +40,13 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
     protected $imageResizer;
 
     /**
-     * @param ProductImageRepository $imageRepository
+     * @param EntityRepository $imageRepository
      * @param ImageFilterLoader $filterLoader
      * @param ImageTypeProvider $imageTypeProvider
      * @param ImageResizer $imageResizer
      */
     public function __construct(
-        ProductImageRepository $imageRepository,
+        EntityRepository $imageRepository,
         ImageFilterLoader $filterLoader,
         ImageTypeProvider $imageTypeProvider,
         ImageResizer $imageResizer

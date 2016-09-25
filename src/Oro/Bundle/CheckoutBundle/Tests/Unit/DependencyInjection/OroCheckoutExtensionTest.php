@@ -25,10 +25,10 @@ class OroCheckoutExtensionTest extends ExtensionTestCase
         $this->loadExtension($this->extension);
 
         $expectedDefinitions = [
-            'orob2b_checkout.layout.data_provider.shipping_methods',
-            'orob2b_checkout.shipping_cost.calculator',
-            'orob2b_checkout.condition.has_applicable_shipping_methods',
-            'orob2b_checkout.condition.shipping_method_supports'
+            'oro_checkout.layout.data_provider.shipping_methods',
+            'oro_checkout.shipping_cost.calculator',
+            'oro_checkout.condition.has_applicable_shipping_methods',
+            'oro_checkout.condition.shipping_method_supports'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

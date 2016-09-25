@@ -2,18 +2,21 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
+use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
-use Oro\Bundle\PricingBundle\TriggersFiller\PriceRuleTriggerFiller;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 abstract class AbstractRuleEntityListener
 {
     /**
-     * @var PriceRuleTriggerFiller
+     * @var PriceListTriggerHandler
      */
-    protected $priceRuleTriggersFiller;
+    protected $priceRuleChangeTriggerHandler;
 
     /**
      * @var PriceRuleFieldsProvider
@@ -26,16 +29,16 @@ abstract class AbstractRuleEntityListener
     protected $registry;
 
     /**
-     * @param PriceRuleTriggerFiller $priceRuleTriggersFiller
+     * @param PriceListTriggerHandler $priceRuleChangeTriggerHandler
      * @param PriceRuleFieldsProvider $fieldsProvider
      * @param RegistryInterface $registry
      */
     public function __construct(
-        PriceRuleTriggerFiller $priceRuleTriggersFiller,
+        PriceListTriggerHandler $priceRuleChangeTriggerHandler,
         PriceRuleFieldsProvider $fieldsProvider,
         RegistryInterface $registry
     ) {
-        $this->priceRuleTriggersFiller = $priceRuleTriggersFiller;
+        $this->priceRuleChangeTriggerHandler = $priceRuleChangeTriggerHandler;
         $this->fieldsProvider = $fieldsProvider;
         $this->registry = $registry;
     }
@@ -58,7 +61,8 @@ abstract class AbstractRuleEntityListener
             $priceLists[$priceList->getId()] = $priceList;
         }
 
-        $this->priceRuleTriggersFiller->addTriggersForPriceLists($priceLists, $product);
+        $this->priceRuleChangeTriggerHandler->addTriggersForPriceLists(Topics::CALCULATE_RULE, $priceLists, $product);
+        $this->updatePriceListActuality($priceLists);
     }
 
     /**
@@ -80,6 +84,17 @@ abstract class AbstractRuleEntityListener
             ->findBy($criteria);
 
         return $lexemes;
+    }
+
+    /**
+     * @param array|PriceList[] $priceLists
+     */
+    protected function updatePriceListActuality(array $priceLists)
+    {
+        /** @var PriceListRepository $priceListRepository */
+        $priceListRepository = $this->registry->getManagerForClass(PriceList::class)
+            ->getRepository(PriceList::class);
+        $priceListRepository->updatePriceListsActuality($priceLists, false);
     }
 
     /**

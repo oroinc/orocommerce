@@ -4,7 +4,6 @@ namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Cat
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
@@ -43,12 +42,12 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
             $container->get('oro_entity.orm.insert_from_select_query_executor')
         );
         $this->builder->setCacheClass(
-            $container->getParameter('orob2b_account.entity.account_group_category_visibility_resolved.class')
+            $container->getParameter('oro_account.entity.account_group_category_visibility_resolved.class')
         );
         
         $subtreeBuilder = new VisibilityChangeGroupSubtreeCacheBuilder(
             $container->get('doctrine'),
-            $container->get('orob2b_account.visibility.resolver.category_visibility_resolver'),
+            $container->get('oro_account.visibility.resolver.category_visibility_resolver'),
             $container->get('oro_config.manager')
         );
 
@@ -65,7 +64,7 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
         $em = $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountGroupCategoryVisibility');
         $em->persist($visibility);
         $em->flush();
-
+        $this->builder->buildCache();
         $visibilityResolved = $this->getVisibilityResolved();
         $this->assertStatic($visibilityResolved, $visibility, BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN);
     }
@@ -80,7 +79,7 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
 
         $em = $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountGroupCategoryVisibility');
         $em->flush();
-
+        $this->builder->buildCache();
         $visibilityResolved = $this->getVisibilityResolved();
         $this->assertStatic($visibilityResolved, $visibility, BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE);
     }
@@ -95,7 +94,7 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
 
         $em = $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountGroupCategoryVisibility');
         $em->flush();
-
+        $this->builder->buildCache();
         $visibilityResolved = $this->getVisibilityResolved();
         $this->assertEquals(
             $visibility->getVisibility(),
@@ -215,88 +214,88 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
                         'category' => 'category_1',
                         'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                         'source' => AccountGroupCategoryVisibilityResolved::SOURCE_STATIC,
-                        'accountGroup' => 'account_group.group1'
+                        'accountGroup' => 'account_group.group1',
                     ],
                     [
                         'category' => 'category_1_2',
                         'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                         'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
-                        'accountGroup' => 'account_group.group1'
+                        'accountGroup' => 'account_group.group1',
                     ],
                     [
                         'category' => 'category_1_2_3',
                         'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                         'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
-                        'accountGroup' => 'account_group.group1'
+                        'accountGroup' => 'account_group.group1',
                     ],
                     [
                         'category' => 'category_1_2_3_4',
                         'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                         'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
-                        'accountGroup' => 'account_group.group1'
+                        'accountGroup' => 'account_group.group1',
                     ],
                     [
                         'category' => 'category_1_5_6',
                         'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                         'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
-                        'accountGroup' => 'account_group.group1'
+                        'accountGroup' => 'account_group.group1',
                     ],
                     [
                         'category' => 'category_1_5_6_7',
                         'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                         'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
-                        'accountGroup' => 'account_group.group1'
+                        'accountGroup' => 'account_group.group1',
                     ],
                     [
                         'category' => 'category_1_2',
                         'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                         'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
-                        'accountGroup' => 'account_group.group2'
+                        'accountGroup' => 'account_group.group2',
                     ],
                     [
                         'category' => 'category_1_5_6',
                         'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                         'source' => AccountGroupCategoryVisibilityResolved::SOURCE_STATIC,
-                        'accountGroup' => 'account_group.group2'
+                        'accountGroup' => 'account_group.group2',
                     ],
                     [
                         'category' => 'category_1',
                         'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
                         'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
-                        'accountGroup' => 'account_group.group3'
+                        'accountGroup' => 'account_group.group3',
                     ],
                     [
                         'category' => 'category_1_2_3',
                         'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                         'source' => AccountGroupCategoryVisibilityResolved::SOURCE_STATIC,
-                        'accountGroup' => 'account_group.group3'
+                        'accountGroup' => 'account_group.group3',
                     ],
                     [
                         'category' => 'category_1_2_3_4',
                         'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                         'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
-                        'accountGroup' => 'account_group.group3'
+                        'accountGroup' => 'account_group.group3',
                     ],
                     [
                         'category' => 'category_1_5',
                         'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
                         'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
-                        'accountGroup' => 'account_group.group3'
+                        'accountGroup' => 'account_group.group3',
                     ],
                     [
                         'category' => 'category_1_5_6',
                         'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
                         'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
-                        'accountGroup' => 'account_group.group3'
+                        'accountGroup' => 'account_group.group3',
                     ],
                     [
                         'category' => 'category_1_5_6_7',
                         'visibility' => AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
                         'source' => AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
-                        'accountGroup' => 'account_group.group3'
-                    ]
-                ]
-            ]
+                        'accountGroup' => 'account_group.group3',
+                    ],
+                ],
+            ],
         ];
     }
 

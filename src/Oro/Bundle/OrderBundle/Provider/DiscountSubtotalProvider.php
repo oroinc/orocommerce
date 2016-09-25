@@ -19,7 +19,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 class DiscountSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'discount';
-    const NAME = 'orob2b_order.subtotal_discount_cost';
+    const NAME = 'oro_order.subtotal_discount_cost';
 
     /** @var TranslatorInterface */
     protected $translator;

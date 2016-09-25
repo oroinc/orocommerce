@@ -5,7 +5,8 @@ define(function (require) {
 
     var PasswordGenerateComponent,
         BaseComponent = require('oroui/js/app/components/base/component'),
-        $ = require('jquery');
+        $ = require('jquery'),
+        _ = require('underscore');
 
     PasswordGenerateComponent = BaseComponent.extend({
         initialize: function (options) {

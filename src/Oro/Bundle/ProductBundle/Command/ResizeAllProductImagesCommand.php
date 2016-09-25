@@ -37,7 +37,7 @@ DESC
         $forceOption = (bool) $input->getOption(self::OPTION_FORCE);
 
         $container = $this->getContainer();
-        $productImageClass = $container->getParameter('orob2b_product.entity.product_image.class');
+        $productImageClass = $container->getParameter('oro_product.entity.product_image.class');
 
         /** @var ProductImage[] $productImages */
         $productImages = $container

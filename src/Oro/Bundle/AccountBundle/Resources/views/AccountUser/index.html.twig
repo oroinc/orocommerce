@@ -4,10 +4,10 @@
 {% set pageTitle = 'oro.account.accountuser.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% if resource_granted('orob2b_account_account_user_create') %}
+    {% if resource_granted('oro_account_account_user_create') %}
         <div class="btn-group">
             {{ UI.addButton({
-                'path': path('orob2b_account_account_user_create'),
+                'path': path('oro_account_account_user_create'),
                 'entity_label': 'oro.account.accountuser.entity_label'|trans
             }) }}
         </div>

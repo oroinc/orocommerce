@@ -2,36 +2,22 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use Doctrine\Common\Util\ClassUtils as DoctrineClassUtils;
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
+use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Entity\ProductPriceChangeTrigger;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceChangeTriggerRepository;
-use Oro\Bundle\PricingBundle\Event\ProductPriceChange;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductPriceEntityListener
 {
     /**
-     * @var EntityRepository
-     */
-    protected $repository;
-
-    /**
      * @var ExtraActionEntityStorageInterface
      */
     protected $extraActionsStorage;
-
-    /**
-     * @var  EventDispatcherInterface
-     */
-    protected $eventDispatcher;
 
     /**
      * @var RegistryInterface
@@ -39,18 +25,23 @@ class ProductPriceEntityListener
     protected $registry;
 
     /**
+     * @var PriceListTriggerHandler
+     */
+    protected $priceListTriggerHandler;
+
+    /**
      * @param ExtraActionEntityStorageInterface $extraActionsStorage
-     * @param EventDispatcherInterface $eventDispatcher
      * @param RegistryInterface $registry
+     * @param PriceListTriggerHandler $priceListTriggerHandler
      */
     public function __construct(
         ExtraActionEntityStorageInterface $extraActionsStorage,
-        EventDispatcherInterface $eventDispatcher,
-        RegistryInterface $registry
+        RegistryInterface $registry,
+        PriceListTriggerHandler $priceListTriggerHandler
     ) {
         $this->extraActionsStorage = $extraActionsStorage;
-        $this->eventDispatcher = $eventDispatcher;
         $this->registry = $registry;
+        $this->priceListTriggerHandler = $priceListTriggerHandler;
     }
 
     /**
@@ -88,66 +79,14 @@ class ProductPriceEntityListener
      */
     protected function handleChanges(ProductPrice $productPrice)
     {
-        $trigger = $this->createProductPriceChangeTrigger($productPrice);
-
-        if (null === $trigger || $this->isExistingTrigger($trigger)) {
-            return;
-        }
-
-        $this->eventDispatcher->dispatch(ProductPriceChange::NAME, new ProductPriceChange());
-        $this->extraActionsStorage->scheduleForExtraInsert($trigger);
-    }
-
-    /**
-     * @param ProductPriceChangeTrigger $trigger
-     * @return bool
-     */
-    protected function isExistingTrigger(ProductPriceChangeTrigger $trigger)
-    {
-        /** @var ProductPriceChangeTrigger[] $scheduledForInsert */
-        $scheduledForInsert = $this->extraActionsStorage
-            ->getScheduledForInsert(DoctrineClassUtils::getClass($trigger));
-
-        foreach ($scheduledForInsert as $scheduledTrigger) {
-            if ($scheduledTrigger->getPriceList()->getId() === $trigger->getPriceList()->getId()
-                && $scheduledTrigger->getProduct()->getId() === $trigger->getProduct()->getId()
-            ) {
-                return true;
-            }
-        }
-
-        return $this->getRepository()->isExisting($trigger);
-    }
-
-    /**
-     * @param ProductPrice $productPrice
-     * @return ProductPriceChangeTrigger|null
-     */
-    protected function createProductPriceChangeTrigger(ProductPrice $productPrice)
-    {
         /** @var PriceList $priceList */
         $priceList = $productPrice->getPriceList();
         $product = $productPrice->getProduct();
 
         if (!$priceList || !$product || !$priceList->getId() || !$product->getId()) {
-            return null;
+            return;
         }
-
-        return new ProductPriceChangeTrigger($priceList, $product);
-    }
-
-    /**
-     * @return ProductPriceChangeTriggerRepository
-     */
-    protected function getRepository()
-    {
-        if (!$this->repository) {
-            $this->repository = $this->registry
-                ->getManagerForClass(ProductPriceChangeTrigger::class)
-                ->getRepository(ProductPriceChangeTrigger::class);
-        }
-
-        return $this->repository;
+        $this->priceListTriggerHandler->addTriggersForPriceList(Topics::PRICE_LIST_CHANGE, $priceList, $product);
     }
 
     /**

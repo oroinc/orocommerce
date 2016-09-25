@@ -9,12 +9,12 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
- * @ORM\Table(name="orob2b_price_attribute_pl")
+ * @ORM\Table(name="oro_price_attribute_pl")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceAttributePriceListRepository")
  * @Config(
- *      routeName="orob2b_pricing_price_attribute_price_list_index",
- *      routeView="orob2b_pricing_price_attribute_price_list_view",
- *      routeUpdate="orob2b_pricing_price_attribute_price_list_update"
+ *      routeName="oro_pricing_price_attribute_price_list_index",
+ *      routeView="oro_pricing_price_attribute_price_list_view",
+ *      routeUpdate="oro_pricing_price_attribute_price_list_update"
  * )
  */
 class PriceAttributePriceList extends BasePriceList

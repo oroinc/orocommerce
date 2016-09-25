@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ShippingOriginWarehouseType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_origin_warehouse';
+    const NAME = 'oro_shipping_origin_warehouse';
 
     /**
      * {@inheritdoc}

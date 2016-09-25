@@ -51,9 +51,9 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit_Framework_TestCase
         $this->session->getFlashBag()->willReturn($flashBag->reveal());
 
         $this->listener->beforeSave($this->prepareEvent([
-            'orob2b_product.product_image_watermark_size' => 20,
-            'orob2b_product.product_image_watermark_position' => 'center',
-            'orob2b_product.product_image_watermark_file' => 'file'
+            'oro_product.product_image_watermark_size' => 20,
+            'oro_product.product_image_watermark_position' => 'center',
+            'oro_product.product_image_watermark_file' => 'file'
         ]));
     }
 
@@ -62,7 +62,7 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit_Framework_TestCase
         $this->translator->trans(Argument::type('string'))->shouldNotBeCalled();
 
         $this->listener->beforeSave($this->prepareEvent([
-            'orob2b_product.product_unit' => 'something',
+            'oro_product.product_unit' => 'something',
         ]));
     }
 

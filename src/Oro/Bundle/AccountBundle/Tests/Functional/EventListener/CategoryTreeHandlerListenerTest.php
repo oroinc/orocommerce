@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional\EventListener;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
@@ -10,6 +9,7 @@ use Oro\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -33,6 +33,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
      */
     public function testCheckCalculatedCategories(array $visibleCategories, array $invisibleCategories)
     {
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -73,7 +74,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         /** @var Category $category */
         $category = $this->getReference($categoryToHide);
         $this->createAccountGroupCategoryVisibility($category, AccountGroupCategoryVisibility::HIDDEN);
-
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -117,7 +118,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         $category = $this->getReference($categoryToShow);
 
         $this->updateAccountGroupCategoryVisibility($category, AccountGroupCategoryVisibility::VISIBLE);
-
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -160,7 +161,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         /** @var Category $category */
         $category = $this->getReference($categoryToShow);
         $this->updateAccountCategoryVisibility($category, AccountCategoryVisibility::HIDDEN);
-
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -203,7 +204,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         /** @var Category $category */
         $category = $this->getReference($categoryToShow);
         $this->updateAccountCategoryVisibility($category, AccountCategoryVisibility::VISIBLE);
-
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -325,7 +326,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     {
         $accountUser = $this->getAccountUser();
         $categories = $this->getContainer()
-            ->get('orob2b_catalog.provider.category_tree_provider')
+            ->get('oro_catalog.provider.category_tree_provider')
             ->getCategories($accountUser);
 
         $categoryTitles = [];

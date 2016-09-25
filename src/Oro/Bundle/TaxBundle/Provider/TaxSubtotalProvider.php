@@ -15,7 +15,7 @@ use Oro\Bundle\TaxBundle\Model\Result;
 class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterface
 {
     const TYPE = 'tax';
-    const NAME = 'orob2b_tax.subtotal_tax';
+    const NAME = 'oro_tax.subtotal_tax';
 
     /**
      * @var TranslatorInterface

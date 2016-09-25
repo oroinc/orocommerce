@@ -21,7 +21,7 @@ class AccountTaxCodeTypeTest extends AbstractTaxCodeTypeTest
      */
     public function testGetName()
     {
-        $this->assertEquals('orob2b_tax_account_tax_code_type', $this->formType->getName());
+        $this->assertEquals('oro_tax_account_tax_code_type', $this->formType->getName());
     }
 
     /**

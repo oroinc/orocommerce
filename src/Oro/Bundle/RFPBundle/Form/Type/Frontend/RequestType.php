@@ -19,7 +19,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
 class RequestType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_frontend_request';
+    const NAME = 'oro_rfp_frontend_request';
 
     /**
      * @var ConfigManager
@@ -140,7 +140,7 @@ class RequestType extends AbstractType
             ->getManagerForClass($this->requestStatusClass)
             ->getRepository($this->requestStatusClass)
             ->findOneBy([
-                'name' => $this->configManager->get('oro_b2b_rfp.default_request_status')
+                'name' => $this->configManager->get('oro_rfp.default_request_status')
             ]);
     }
 

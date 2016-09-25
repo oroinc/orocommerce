@@ -128,6 +128,54 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         ]
     ];
 
+    protected $expectedTemplateForQuote = [
+        'source' => [
+            'query' => [
+                'select' => [
+                    'payment_term.label as payment_term_label',
+                ],
+                'join' => [
+                    'left' => [
+                        [
+                            'join' => 'quote.paymentTerm',
+                            'alias' => 'payment_term',
+                        ],
+                    ]
+                ],
+            ],
+        ],
+        'columns' => [
+            DatagridListener::PAYMENT_TERM_LABEL_ALIAS => [
+                'label' => 'oro.payment.paymentterm.entity_label',
+                'renderable' => false,
+            ],
+        ],
+        'sorters' => [
+            'columns' => [
+                DatagridListener::PAYMENT_TERM_LABEL_ALIAS => [
+                    'data_name' => 'payment_term_label',
+                ],
+            ],
+        ],
+        'filters' => [
+            'columns' => [
+                DatagridListener::PAYMENT_TERM_LABEL_ALIAS=> [
+                    'type' => 'entity',
+                    'data_name' => 'payment_term.id',
+                    'options' => [
+                        'field_type' => 'entity',
+                        'field_options' => [
+                            'class' => self::PAYMENT_TERM_CLASS,
+                            'property' => 'label',
+                            'multiple' => true,
+                        ],
+                    ],
+                    'enabled' => false,
+                ]
+            ]
+        ]
+    ];
+
     protected function setUp()
     {
         $this->listener = new DatagridListener();
@@ -167,5 +215,17 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onBuildBeforeAccountGroups($event);
 
         $this->assertEquals($this->expectedTemplateForAccountGroup, $config->toArray());
+    }
+
+    public function testOnBuildBeforeQuotes()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
+        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $config = DatagridConfiguration::create([]);
+
+        $event = new BuildBefore($datagrid, $config);
+        $this->listener->onBuildBeforeQuotes($event);
+
+        $this->assertEquals($this->expectedTemplateForQuote, $config->toArray());
     }
 }

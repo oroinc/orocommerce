@@ -9,12 +9,12 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\TaxBundle\Entity\Repository\TaxRuleRepository")
- * @ORM\Table(name="orob2b_tax_rule")
+ * @ORM\Table(name="oro_tax_rule")
  * @ORM\HasLifecycleCallbacks
  * @Config(
- *      routeName="orob2b_tax_rule_index",
- *      routeView="orob2b_tax_rule_view",
- *      routeUpdate="orob2b_tax_rule_update"
+ *      routeName="oro_tax_rule_index",
+ *      routeView="oro_tax_rule_view",
+ *      routeUpdate="oro_tax_rule_update"
  * )
  */
 class TaxRule

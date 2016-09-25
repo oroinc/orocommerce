@@ -1,5 +1,5 @@
 services:
-    orob2b_payment.layout.block_type.payment_methods:
+    oro_payment.layout.block_type.payment_methods:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             -

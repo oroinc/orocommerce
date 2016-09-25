@@ -12,7 +12,7 @@ class ProductSelectTypeTest extends AbstractScopedProductSelectTypeTest
     public function setUp()
     {
         $this->setDataParameters(['scope' => 'order']);
-        $this->setConfigPath('oro_b2b_order.backend_product_visibility');
+        $this->setConfigPath('oro_order.backend_product_visibility');
 
         parent::setUp();
     }

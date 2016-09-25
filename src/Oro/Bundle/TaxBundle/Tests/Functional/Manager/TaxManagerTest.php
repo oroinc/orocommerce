@@ -71,7 +71,7 @@ class TaxManagerTest extends WebTestCase
         array $databaseAfter = []
     ) {
         foreach ($configuration as $key => $value) {
-            $this->configManager->set(sprintf('orob2b_tax.%s', $key), $value);
+            $this->configManager->set(sprintf('oro_tax.%s', $key), $value);
         }
 
         $this->prepareDatabase($databaseBefore);
@@ -110,7 +110,7 @@ class TaxManagerTest extends WebTestCase
      */
     protected function executeMethod($method, $object, $expectedResult)
     {
-        $manager = $this->getContainer()->get('orob2b_tax.manager.tax_manager');
+        $manager = $this->getContainer()->get('oro_tax.manager.tax_manager');
 
         $this->compareResult($expectedResult, $manager->{$method}($object, true));
 
@@ -124,8 +124,8 @@ class TaxManagerTest extends WebTestCase
     protected function prepareDatabase(array $databaseBefore)
     {
         // Disable taxation for load fixtures
-        $previousTaxEnableState = $this->configManager->get('orob2b_tax.tax_enable');
-        $this->configManager->set('orob2b_tax.tax_enable', false);
+        $previousTaxEnableState = $this->configManager->get('oro_tax.tax_enable');
+        $this->configManager->set('oro_tax.tax_enable', false);
 
         foreach ($databaseBefore as $class => $items) {
             /** @var EntityManager $em */
@@ -146,7 +146,7 @@ class TaxManagerTest extends WebTestCase
         }
 
         // Restore previous taxation state after load fixtures
-        $this->configManager->set('orob2b_tax.tax_enable', $previousTaxEnableState);
+        $this->configManager->set('oro_tax.tax_enable', $previousTaxEnableState);
     }
 
     /**

@@ -1,17 +1,17 @@
 services:
-    orob2b_cms.form.type.slug:
+    oro_cms.form.type.slug:
         class: 'Oro\Bundle\CMSBundle\Form\Type\SlugType'
         tags:
-            - { name: form.type, alias: orob2b_slug }
+            - { name: form.type, alias: oro_slug }
 
-    orob2b_cms.form.type.page:
+    oro_cms.form.type.page:
         class: 'Oro\Bundle\CMSBundle\Form\Type\PageType'
         calls:
-            - [setDataClass, ['%orob2b_cms.entity.page.class%']]
+            - [setDataClass, ['%oro_cms.entity.page.class%']]
         tags:
-            - { name: form.type, alias: orob2b_cms_page }
+            - { name: form.type, alias: oro_cms_page }
 
-    orob2b_cms.form.type.loginpage:
+    oro_cms.form.type.loginpage:
         class: 'Oro\Bundle\CMSBundle\Form\Type\LoginPageType'
         tags:
-            - { name: form.type, alias: orob2b_cms_login_page }
+            - { name: form.type, alias: oro_cms_login_page }

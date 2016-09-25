@@ -11,7 +11,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
 use Oro\Bundle\SaleBundle\Model\ExtendQuoteAddress;
 
 /**
- * @ORM\Table("orob2b_quote_address")
+ * @ORM\Table("oro_quote_address")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *       defaultValues={

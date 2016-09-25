@@ -39,7 +39,7 @@ class ProductControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_pricing_price_product_sidebar'),
+            $this->getUrl('oro_pricing_price_product_sidebar'),
             ['_widgetContainer' => 'widget']
         );
         $result = $this->client->getResponse();
@@ -47,7 +47,7 @@ class ProductControllerTest extends WebTestCase
 
         /** @var PriceListRepository $repository */
         $repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_pricing.entity.price_list.class')
+            $this->getContainer()->getParameter('oro_pricing.entity.price_list.class')
         );
         /** @var PriceList $defaultPriceList */
         $defaultPriceList = $repository->getDefault();
@@ -71,7 +71,7 @@ class ProductControllerTest extends WebTestCase
     {
         /** @var PriceListRepository $repository */
         $repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_pricing.entity.price_list.class')
+            $this->getContainer()->getParameter('oro_pricing.entity.price_list.class')
         );
         /** @var PriceList $priceList */
         $priceList = $repository->findOneBy([]);
@@ -79,7 +79,7 @@ class ProductControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_pricing_price_product_sidebar',
+                'oro_pricing_price_product_sidebar',
                 [
                     PriceListRequestHandler::PRICE_LIST_KEY => $priceList->getId(),
                 ]
@@ -99,7 +99,7 @@ class ProductControllerTest extends WebTestCase
     {
         /** @var PriceListRepository $repository */
         $repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_pricing.entity.price_list.class')
+            $this->getContainer()->getParameter('oro_pricing.entity.price_list.class')
         );
         /** @var PriceList $priceList */
         $priceList = $repository->findOneBy([]);
@@ -107,7 +107,7 @@ class ProductControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_pricing_price_product_sidebar',
+                'oro_pricing_price_product_sidebar',
                 [
                     PriceListRequestHandler::PRICE_LIST_KEY => $priceList->getId(),
                     PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY => false,
@@ -135,7 +135,7 @@ class ProductControllerTest extends WebTestCase
     {
         /** @var PriceListRepository $repository */
         $repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_pricing.entity.price_list.class')
+            $this->getContainer()->getParameter('oro_pricing.entity.price_list.class')
         );
         /** @var PriceList $priceList */
         $priceList = $repository->findOneBy([]);
@@ -143,7 +143,7 @@ class ProductControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_pricing_price_product_sidebar',
+                'oro_pricing_price_product_sidebar',
                 [
                     PriceListRequestHandler::PRICE_LIST_KEY => $priceList->getId(),
                     PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY => $priceList->getCurrencies(),
@@ -179,7 +179,7 @@ class ProductControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_pricing_price_product_sidebar',
+                'oro_pricing_price_product_sidebar',
                 [
                     PriceListRequestHandler::PRICE_LIST_KEY => $priceList->getId(),
                     PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY => $selectedCurrencies,
@@ -216,7 +216,7 @@ class ProductControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_pricing_price_product_sidebar',
+                'oro_pricing_price_product_sidebar',
                 [
                     PriceListRequestHandler::TIER_PRICES_KEY => true,
                 ]
@@ -237,7 +237,7 @@ class ProductControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_pricing_price_product_sidebar',
+                'oro_pricing_price_product_sidebar',
                 [
                     PriceListRequestHandler::TIER_PRICES_KEY => false,
                 ]
@@ -262,17 +262,17 @@ class ProductControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_product_update', ['id' => $product->getId()])
+            $this->getUrl('oro_product_update', ['id' => $product->getId()])
         );
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $formValues = $form->getPhpValues();
-        $formValues['orob2b_product']['additionalUnitPrecisions'][] = [
+        $formValues['oro_product']['additionalUnitPrecisions'][] = [
             'unit' => $this->newPrice['unit'],
             'precision' => 0
         ];
-        $formValues['orob2b_product']['prices'][] = [
+        $formValues['oro_product']['prices'][] = [
             'priceList' => $priceList->getId(),
             'quantity' => $this->newPrice['quantity'],
             'unit' => $this->newPrice['unit'],

@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class Configuration implements ConfigurationInterface
 {
-    const ROOT_NODE = 'orob2b_product';
+    const ROOT_NODE = 'oro_product';
     const PRODUCT_IMAGE_WATERMARK_FILE = 'product_image_watermark_file';
     const PRODUCT_IMAGE_WATERMARK_SIZE = 'product_image_watermark_size';
     const PRODUCT_IMAGE_WATERMARK_POSITION = 'product_image_watermark_position';

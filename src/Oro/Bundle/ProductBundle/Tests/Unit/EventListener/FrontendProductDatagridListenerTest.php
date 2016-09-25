@@ -299,15 +299,15 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'id' => 1,
                         'image' => 1,
                         'expectedUnits' => [
-                            'item' => 'itemFormatted',
-                            'pack' => 'packFormatted'
+                            'item',
+                            'pack'
                         ]
                     ],
                     [
                         'id' => 2,
                         'image' => null,
                         'expectedUnits' => [
-                            'bottle' => 'bottleFormatted',
+                            'bottle'
                         ]
                     ],
                     [

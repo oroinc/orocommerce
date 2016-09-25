@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Command;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 
 use Prophecy\Argument;
 
@@ -14,7 +14,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Command\ResizeAllProductImagesCommand;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductImageRepository;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 
 class ResizeAllProductImagesCommandTest extends \PHPUnit_Framework_TestCase
@@ -33,7 +32,7 @@ class ResizeAllProductImagesCommandTest extends \PHPUnit_Framework_TestCase
     protected $doctrineHelper;
 
     /**
-     * @var ProductImageRepository
+     * @var EntityRepository
      */
     protected $productImageRepository;
 
@@ -44,7 +43,7 @@ class ResizeAllProductImagesCommandTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->productImageRepository = $this->prophesize(ProductImageRepository::class);
+        $this->productImageRepository = $this->prophesize(EntityRepository::class);
 
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
 
@@ -56,7 +55,7 @@ class ResizeAllProductImagesCommandTest extends \PHPUnit_Framework_TestCase
         $container = $this->prophesize(ContainerInterface::class);
         $container->get('oro_entity.doctrine_helper')->willReturn($this->doctrineHelper);
         $container->get('event_dispatcher')->willReturn($this->eventDispatcher);
-        $container->getParameter('orob2b_product.entity.product_image.class')->willReturn(self::PRODUCT_IMAGE_CLASS);
+        $container->getParameter('oro_product.entity.product_image.class')->willReturn(self::PRODUCT_IMAGE_CLASS);
 
         $this->command = new ResizeAllProductImagesCommand();
         $this->command->setContainer($container->reveal());

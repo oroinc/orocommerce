@@ -12,21 +12,21 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\Repository\AccountGroupRepository")
  * @ORM\Table(
- *      name="orob2b_account_group",
+ *      name="oro_account_group",
  *      indexes={
- *          @ORM\Index(name="orob2b_account_group_name_idx", columns={"name"})
+ *          @ORM\Index(name="oro_account_group_name_idx", columns={"name"})
  *      }
  * )
  * @Config(
- *      routeName="orob2b_account_group_index",
- *      routeView="orob2b_account_group_view",
- *      routeUpdate="orob2b_account_group_update",
+ *      routeName="oro_account_group_index",
+ *      routeView="oro_account_group_view",
+ *      routeUpdate="oro_account_group_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-group"
  *          },
  *          "form"={
- *              "form_type"="orob2b_account_group_select",
+ *              "form_type"="oro_account_group_select",
  *              "grid_name"="account-groups-select-grid",
  *          },
  *          "dataaudit"={

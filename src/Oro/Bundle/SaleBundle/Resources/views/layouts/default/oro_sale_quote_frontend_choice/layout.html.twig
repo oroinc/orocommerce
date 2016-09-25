@@ -1,0 +1,146 @@
+{% block _quote_choice_page_widget %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quote_choice_form_widget %}
+    {% set componentOptions = {
+        subtotalsRoute: 'oro_sale_quote_frontend_subtotals',
+        quoteDemandId: quoteDemand.id,
+        subtotalSelector: '#quote-choice-subtotal',
+        lineItemsSelector: '.quote-line-items'
+    } %}
+
+        {{ form_errors(form) }}
+
+    <form method="POST"
+          data-nohash="true"
+          data-disable-autofocus="true"
+          id="{{ form.vars.id }}"
+          name="{{ form.vars.name }}"
+          data-page-component-module="orosale/js/app/components/quote-demand-component"
+          data-page-component-options="{{ componentOptions|json_encode }}"
+          class="quote-choice-form"
+    >
+        {{ form_widget(form.demandProducts) }}
+        {{ form_rest(form) }}
+        <div class="order-checkout-widget order-checkout-widget_block text-right">
+            {{ block_widget(block) }}
+        </div>
+    </form>
+{% endblock %}
+
+{% block _quote_choice_submit_button_widget %}
+    <div class=" order-checkout-widget order-checkout-widget_block text-right mb4-md">
+        <div class=" text-right mb4-md">
+            <button class="btn theme-btn btn-orange" type="submit">{{ 'oro.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _quote_choice_subtotals_widget %}
+    <div id="quote-choice-subtotal" class="order-checkout-widget__container-wrapper">
+        <div class="order-checkout-widget__container order-checkout-widget__container_lg">
+            <table class="order-checkout-widget__table pull-right">
+                {% for subtotal in subtotals %}
+                    {% if subtotal.visible %}
+                        <tr>
+                            <td>{{ subtotal.label }}</td>
+                            <td>{{ subtotal.amount|oro_format_currency({'currency': subtotal.currency}) }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+                <tr>
+                    <td class="order-checkout-widget__total"><span class="text-uppercase">{{ total.label }}</span></td>
+                    <td class="order-checkout-widget__total"><span class="blue">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _quote_view_information_widget %}
+    <div class="account-oq-container">
+        <div class="account-oq__item__head">
+            <div class="account-oq__item account-oq__item_full mb0-sm">
+                <h2 class="account-oq__item__title">
+                    {{ 'oro.frontend.sale.quote.sections.general'|trans }}
+                </h2>
+            </div>
+        </div>
+        <div class="account-oq__item__body">
+            <div class="account-oq__item">
+                <div class="account-oq__order-info">
+                    <table class="table borderless mobile-table">
+                        <tbody>
+                        {% if quote.assignedUsers | length %}
+                            <tr>
+                                <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.assigned_account_users.label'|trans }}</td>
+                                <td>
+                                    {% set assigned_users = [] %}
+                                    {% for entity in quote.assignedUsers %}
+                                        {% set assigned_users = assigned_users|merge([entity.fullName]) %}
+                                    {% endfor %}
+                                    {{ assigned_users|join(', ') }}
+                                </td>
+                            </tr>
+                        {% endif %}
+                        <tr class="account-oq__order-info__control">
+                            <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.valid_until.label'|trans }}</td>
+                            <td>{{ quote.validUntil ? quote.validUntil|oro_format_datetime : 'N/A'|trans }}</td>
+                        </tr>
+                        <tr class="account-oq__order-info__control">
+                            <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
+                            <td>{{ quote.poNumber|default('N/A'|trans) }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="account-oq__item">
+                <div class="account-oq__order-info">
+                    <table class="table borderless  mobile-table">
+                        <tbody>
+                        <tr class="account-oq__order-info__control">
+                            <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
+                            <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
+                        </tr>
+                        {% if quote.paymentTerm is not empty %}
+                            <tr class="account-oq__order-info__control">
+                                <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.payment_term.label'|trans }}</td>
+                                <td>{{ quote.paymentTerm.label|escape }}</td>
+                            </tr>
+                        {% endif %}
+                        {{ block_widget(block) }}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _quote_view_page_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " quote"}) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block address_widget %}
+    {% if address %}
+        {{ address|oro_format_address|escape|nl2br }}
+    {% else %}
+        {{ 'oro.ui.empty'|trans }}
+    {% endif %}
+{% endblock %}
+
+{% block quote_body_column_element_widget %}
+    {% if address is not null %}
+        <tr class="account-oq__order-info__control">
+            <td class="account-oq__order-info__title">{{ label|trans }}</td>
+            <td>{{ block_widget(block) }}</td>
+        </tr>
+    {% endif %}
+{% endblock %}

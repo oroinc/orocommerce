@@ -14,12 +14,12 @@ use Oro\Bundle\MenuBundle\Model\ExtendMenuItem;
 use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
- * @ORM\Table(name="orob2b_menu_item")
+ * @ORM\Table(name="oro_menu_item")
  * @ORM\Entity(repositoryClass="Oro\Bundle\MenuBundle\Entity\Repository\MenuItemRepository")
  * @ORM\EntityListeners({ "Oro\Bundle\MenuBundle\Entity\Listener\MenuItemListener" })
  * @Gedmo\Tree(type="nested")
  * @Config(
- *      routeName="orob2b_menu_item_roots",
+ *      routeName="oro_menu_item_roots",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-th"
@@ -31,7 +31,7 @@ class MenuItem extends ExtendMenuItem
 {
     use TreeTrait;
 
-    const LOCALE_OPTION = 'orob2b_website_locale';
+    const LOCALE_OPTION = 'oro_website_locale';
 
     /**
      * @var integer
@@ -51,7 +51,7 @@ class MenuItem extends ExtendMenuItem
      *      orphanRemoval=true
      * )
      * @ORM\JoinTable(
-     *      name="orob2b_menu_item_title",
+     *      name="oro_menu_item_title",
      *      joinColumns={
      *          @ORM\JoinColumn(name="menu_item_id", referencedColumnName="id", onDelete="CASCADE")
      *      },

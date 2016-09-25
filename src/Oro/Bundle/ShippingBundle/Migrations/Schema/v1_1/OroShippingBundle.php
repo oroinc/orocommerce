@@ -4,38 +4,42 @@ namespace Oro\Bundle\ShippingBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroShippingBundle implements Migration
 {
-    const ORO_B2B_SHIPPING_RULE_TABLE_NAME = 'orob2b_shipping_rule';
-    const ORO_B2B_SHIPPING_DESTINATION_TABLE_NAME = 'orob2b_shipping_rl_destination';
+    const ORO_SHIPPING_RULE_TABLE_NAME = 'oro_shipping_rule';
+    const ORO_SHIPPING_DESTINATION_TABLE_NAME = 'oro_shipping_rl_destination';
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BShippingRuleTable($schema);
-        $this->createOrob2BShippingRuleDestinationTable($schema);
-        $this->createOrob2BShippingRuleConfigTable($schema);
-        $this->createOrob2BShipFlatRateRuleCnfTable($schema);
+        $this->createOroShippingRuleTable($schema);
+        $this->createOroShippingRuleDestinationTable($schema);
+        $this->createOroShippingRuleConfigTable($schema);
+        $this->createOroShipFlatRateRuleCnfTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BShippingRuleDestinationForeignKeys($schema);
-        $this->addOrob2BShippingRuleConfigForeignKeys($schema);
-        $this->addOrob2BShipFlatRateRuleCnfForeignKeys($schema);
+        $this->addOroShippingRuleDestinationForeignKeys($schema);
+        $this->addOroShippingRuleConfigForeignKeys($schema);
+        $this->addOroShipFlatRateRuleCnfForeignKeys($schema);
+
+        /** Rename parameters in system configuration **/
+        $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_shipping', 'oro_shipping'));
     }
 
     /**
-     * Create orob2b_shipping_rule table
+     * Create oro_shipping_rule table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BShippingRuleTable(Schema $schema)
+    protected function createOroShippingRuleTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_SHIPPING_RULE_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_SHIPPING_RULE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'text', ['notnull' => true]);
         $table->addColumn('enabled', 'boolean', ['notnull' => true, 'default' => true]);
@@ -44,17 +48,17 @@ class OroShippingBundle implements Migration
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('stop_processing', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['enabled', 'currency'], 'orob2b_shipping_rl_en_cur_idx', []);
+        $table->addIndex(['enabled', 'currency'], 'oro_shipping_rl_en_cur_idx', []);
     }
 
     /**
-     * Create orob2b_shipping_rl_destination table
+     * Create oro_shipping_rl_destination table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BShippingRuleDestinationTable(Schema $schema)
+    protected function createOroShippingRuleDestinationTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_B2B_SHIPPING_DESTINATION_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_SHIPPING_DESTINATION_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('country_code', 'string', ['length' => 2]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
@@ -65,13 +69,13 @@ class OroShippingBundle implements Migration
     }
 
     /**
-     * Add orob2b_shipping_rl_destination foreign keys.
+     * Add oro_shipping_rl_destination foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BShippingRuleDestinationForeignKeys(Schema $schema)
+    protected function addOroShippingRuleDestinationForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_B2B_SHIPPING_DESTINATION_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_SHIPPING_DESTINATION_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_dictionary_country'),
             ['country_code'],
@@ -85,7 +89,7 @@ class OroShippingBundle implements Migration
             ['onDelete' => null, 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_B2B_SHIPPING_RULE_TABLE_NAME),
+            $schema->getTable(self::ORO_SHIPPING_RULE_TABLE_NAME),
             ['rule_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -93,13 +97,13 @@ class OroShippingBundle implements Migration
     }
 
     /**
-     * Create orob2b_shipping_rule_config table
+     * Create oro_shipping_rule_config table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BShippingRuleConfigTable(Schema $schema)
+    protected function createOroShippingRuleConfigTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_shipping_rule_config');
+        $table = $schema->createTable('oro_shipping_rule_config');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('rule_id', 'integer', []);
         $table->addColumn('type', 'string', ['length' => 255]);
@@ -110,13 +114,13 @@ class OroShippingBundle implements Migration
     }
 
     /**
-     * Create orob2b_ship_flat_rate_rule_cnf table
+     * Create oro_ship_flat_rate_rule_cnf table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BShipFlatRateRuleCnfTable(Schema $schema)
+    protected function createOroShipFlatRateRuleCnfTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_ship_flat_rate_rule_cnf');
+        $table = $schema->createTable('oro_ship_flat_rate_rule_cnf');
         $table->addColumn('id', 'integer', []);
         $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
         $table->addColumn('handling_fee_value', 'money', [
@@ -130,15 +134,15 @@ class OroShippingBundle implements Migration
     }
 
     /**
-     * Add orob2b_shipping_rule_config foreign keys.
+     * Add oro_shipping_rule_config foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BShippingRuleConfigForeignKeys(Schema $schema)
+    protected function addOroShippingRuleConfigForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_shipping_rule_config');
+        $table = $schema->getTable('oro_shipping_rule_config');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_shipping_rule'),
+            $schema->getTable('oro_shipping_rule'),
             ['rule_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -146,15 +150,15 @@ class OroShippingBundle implements Migration
     }
 
     /**
-     * Add orob2b_ship_flat_rate_rule_cnf foreign keys.
+     * Add oro_ship_flat_rate_rule_cnf foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BShipFlatRateRuleCnfForeignKeys(Schema $schema)
+    protected function addOroShipFlatRateRuleCnfForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_ship_flat_rate_rule_cnf');
+        $table = $schema->getTable('oro_ship_flat_rate_rule_cnf');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_shipping_rule_config'),
+            $schema->getTable('oro_shipping_rule_config'),
             ['id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']

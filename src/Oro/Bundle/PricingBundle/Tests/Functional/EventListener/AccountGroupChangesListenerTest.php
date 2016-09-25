@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\EventListener;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
-use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
-use Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
+use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -16,11 +15,13 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 class AccountGroupChangesListenerTest extends WebTestCase
 {
     /**
-     * @param bool $api
+     * @var MessageCollector
      */
-    protected function load($api = true)
+    protected $messageProducer;
+
+    protected function setUp()
     {
-        $this->initClient([], $api ? $this->generateWsseAuthHeader() : $this->generateBasicAuthHeader(), true);
+        $this->initClient([], $this->generateWsseAuthHeader(), true);
 
         $this->loadFixtures(
             [
@@ -28,108 +29,30 @@ class AccountGroupChangesListenerTest extends WebTestCase
             ],
             true
         );
-        $this->disableRealTimeMode();
-    }
-
-    /**
-     * @dataProvider updateAccountDataProvider
-     * @param $accountGroupReference
-     * @param string $accountReference
-     * @param array $expectedChanges
-     * @internal param string $actualGroupReference
-     */
-    public function testUpdateAccount($accountGroupReference, $accountReference, array $expectedChanges)
-    {
-        $this->load(false);
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $previousChanges = $em->getRepository('OroPricingBundle:PriceListChangeTrigger')->findAll();
-        /** @var Account $account */
-        $account = $this->getReference($accountReference);
-        /** @var AccountGroup $group */
-        $group = $this->getReference($accountGroupReference);
-        $this->client->followRedirects();
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_account_update', ['id' => $account->getId()])
-        );
-
-        $form = $crawler->selectButton('Save')->form();
-        $form->setValues(['orob2b_account_type[group]' => $group->getId()]);
-        $this->client->submit($form);
-        $changes = $em->getRepository('OroPricingBundle:PriceListChangeTrigger')->findAll();
-        $expectedCount = count($expectedChanges) + count($previousChanges);
-        $this->assertCount($expectedCount, $changes);
-        $this->checkChanges($expectedChanges, $changes);
-    }
-
-    /**
-     * @return array
-     */
-    public function updateAccountDataProvider()
-    {
-        return [
-            [
-                'accountGroupReference' => 'account_group.group2',
-                'accountReference' => 'account.level_1.3',
-                'expectedChanges' => [
-                    [
-                        'accountReference' => 'account.level_1.3',
-                        'websiteReference' => 'US'
-                    ]
-                ]
-            ],
-            [
-                'accountGroupReference' => 'account_group.group3',
-                'accountReference' => 'account.level_1.3',
-                'expectedChanges' => [
-                    [
-                        'accountReference' => 'account.level_1.3',
-                        'websiteReference' => 'US'
-                    ]
-                ]
-            ],
-            [
-                'accountGroupReference' => 'account_group.group3',
-                'accountReference' => 'account.level_1.2',
-                'expectedChanges' => [
-                    [
-                        'accountReference' => 'account.level_1.2',
-                        'websiteReference' => 'US'
-                    ]
-                ]
-            ],
-            [
-                'accountGroupReference' => 'account_group.group2',
-                'accountReference' => 'account.level_1',
-                'expectedChanges' => []
-            ]
-        ];
+        $this->messageProducer = $this->getContainer()->get('oro_message_queue.message_producer');
+        $this->getContainer()->get('oro_pricing.price_list_trigger_handler')->sendScheduledTriggers();
+        $this->messageProducer->clear();
+        $this->messageProducer->enable();
     }
 
     /**
      * @dataProvider deleteGroupDataProvider
      * @param string $deletedGroupReference
-     * @param array $expectedChanges
+     * @param array $expectedMessages
      */
-    public function testDeleteGroup($deletedGroupReference, array $expectedChanges)
+    public function testDeleteGroup($deletedGroupReference, array $expectedMessages)
     {
-        $this->load();
-        $em = $this->getContainer()->get('doctrine')->getManager();
         /** @var AccountGroup $group */
         $group = $this->getReference($deletedGroupReference);
 
-        $previousChanges = $em->getRepository('OroPricingBundle:PriceListChangeTrigger')->findAll();
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_account_delete_account_group', ['id' => $group->getId()])
+            $this->getUrl('oro_api_account_delete_account_group', ['id' => $group->getId()])
         );
         $result = $this->client->getResponse();
 
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
-        $changes = $em->getRepository('OroPricingBundle:PriceListChangeTrigger')->findAll();
-        $expectedChangesCount = count($expectedChanges) + count($previousChanges);
-        $this->assertCount($expectedChangesCount, $changes);
-        $this->checkChanges($expectedChanges, $changes);
+        $this->checkQueueMessages($expectedMessages);
     }
 
     /**
@@ -140,65 +63,68 @@ class AccountGroupChangesListenerTest extends WebTestCase
         return [
             [
                 'deletedGroupReference' => 'account_group.group1',
-                'expectedChanges' => [
+                'expectedMessages' => [
                     [
-                        'accountReference' => 'account.level_1.3',
-                        'websiteReference' => 'US'
-                    ]
-                ]
+                        'topic' => Topics::REBUILD_PRICE_LISTS,
+                        'message' => [
+                            PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
+                            PriceListRelationTrigger::ACCOUNT => 'account.level_1.3',
+                        ],
+                    ],
+                ],
             ],
             [
                 'deletedGroupReference' => 'account_group.group2',
-                'expectedChanges' => [
+                'expectedMessages' => [
                     [
-                        'accountReference' => 'account.level_1.2',
-                        'websiteReference' => 'US'
-                    ]
-                ]
+                        'topic' => Topics::REBUILD_PRICE_LISTS,
+                        'message' => [
+                            PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
+                            PriceListRelationTrigger::ACCOUNT => 'account.level_1.2',
+                        ],
+                    ],
+                ],
             ],
             [
                 'deletedGroupReference' => 'account_group.group3',
-                'expectedChanges' => []
-            ]
+                'expectedMessages' => [],
+            ],
         ];
     }
 
     /**
-     * @param array $expectedChanges
-     * @param PriceListChangeTrigger[] $actual
+     * @param array $expectedMessages
      */
-    protected function checkChanges($expectedChanges, $actual)
+    protected function checkQueueMessages($expectedMessages)
     {
-        foreach ($expectedChanges as $expected) {
-            /** @var Account $account */
-            $account = $this->getReference($expected['accountReference']);
-            /** @var Website $website */
-            $website = $this->getReference($expected['websiteReference']);
-            $exist = false;
-            foreach ($actual as $actualChanges) {
-                if ($actualChanges->getAccount() && $actualChanges->getAccount()->getId() === $account->getId()
-                    && $actualChanges->getWebsite()->getId() === $website->getId()
-                ) {
-                    $exist = true;
-                    break;
+        $expectedMessages = array_map(
+            function ($data) {
+                $message = [];
+                if (!empty($data['message'][PriceListRelationTrigger::ACCOUNT])) {
+                    $message[PriceListRelationTrigger::ACCOUNT] = $this->getReference(
+                        $data['message'][PriceListRelationTrigger::ACCOUNT]
+                    )->getId();
                 }
-            }
-            $this->assertTrue($exist);
-        }
-    }
-
-    /**
-     * Disable realtime price update mode
-     */
-    protected function disableRealTimeMode()
-    {
-        $configManager = $this->getContainer()->get('oro_config.scope.global');
-        $configManager->set(
-            Configuration::getConfigKeyByName(
-                Configuration::PRICE_LISTS_UPDATE_MODE
-            ),
-            CombinedPriceListQueueConsumer::MODE_SCHEDULED
+                if (!empty($data['message'][PriceListRelationTrigger::ACCOUNT_GROUP])) {
+                    $message[PriceListRelationTrigger::ACCOUNT_GROUP] = $this->getReference(
+                        $data['message'][PriceListRelationTrigger::ACCOUNT_GROUP]
+                    )->getId();
+                }
+                if (!empty($data['message'][PriceListRelationTrigger::WEBSITE])) {
+                    $message[PriceListRelationTrigger::WEBSITE] = $this->getReference(
+                        $data['message'][PriceListRelationTrigger::WEBSITE]
+                    )->getId();
+                }
+                $data['message'] = $message;
+                return $data;
+            },
+            $expectedMessages
         );
-        $configManager->flush();
+
+
+        $actual = $this->messageProducer->getSentMessages();
+        foreach ($expectedMessages as $expectedMessage) {
+            $this->assertContains($expectedMessage, $actual);
+        }
     }
 }

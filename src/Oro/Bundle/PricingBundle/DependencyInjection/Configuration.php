@@ -2,14 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
-
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration as LocaleConfiguration;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
-use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
@@ -19,7 +17,6 @@ class Configuration implements ConfigurationInterface
     const PRECISION = 'precision';
     const COMBINED_PRICE_LIST = 'combined_price_list';
     const FULL_COMBINED_PRICE_LIST = 'full_combined_price_list';
-    const PRICE_LISTS_UPDATE_MODE = 'price_lists_update_mode';
     const OFFSET_OF_PROCESSING_CPL_PRICES = 'offset_of_processing_cpl_prices';
     const DEFAULT_CURRENCY = 'default_currency';
 
@@ -50,7 +47,6 @@ class Configuration implements ConfigurationInterface
                 self::PRECISION => ['value' => PriceRoundingService::FALLBACK_PRECISION],
                 self::COMBINED_PRICE_LIST => ['value' => null],
                 self::FULL_COMBINED_PRICE_LIST => ['value' => null],
-                self::PRICE_LISTS_UPDATE_MODE => ['value' => CombinedPriceListQueueConsumer::MODE_REAL_TIME],
                 self::OFFSET_OF_PROCESSING_CPL_PRICES => [
                     'value' => CombinedPriceListsBuilder::DEFAULT_OFFSET_OF_PROCESSING_CPL_PRICES
                 ],

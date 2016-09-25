@@ -8,7 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 
 class ProductImageResizeEvent extends Event
 {
-    const NAME = 'orob2b_product.product_image.resize';
+    const NAME = 'oro_product.product_image.resize';
 
     /**
      * @var ProductImage

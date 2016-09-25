@@ -10,9 +10,7 @@ class AccountGroupVoter extends AbstractEntityVoter
     /**
      * @var array
      */
-    protected $supportedAttributes = [
-        'DELETE'
-    ];
+    protected $supportedAttributes = ['DELETE'];
 
     /**
      * @var ConfigManager
@@ -48,6 +46,6 @@ class AccountGroupVoter extends AbstractEntityVoter
      */
     protected function isAnonymousAccountGroup($identifier)
     {
-        return $identifier === (int)$this->configManager->get('oro_b2b_account.anonymous_account_group');
+        return $identifier === (int)$this->configManager->get('oro_account.anonymous_account_group');
     }
 }

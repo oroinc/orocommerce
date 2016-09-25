@@ -4,8 +4,8 @@ frontend_billing_not_granted:
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
         - ['VIEW;entity:AccountUserOrderClass', null, false]
-        - [orob2b_order_address_shipping_allow_manual_backend, null, false]
-        - [orob2b_order_address_billing_account_user_use_any_backend, null, false]
+        - [oro_order_address_shipping_allow_manual_backend, null, false]
+        - [oro_order_address_billing_account_user_use_any_backend, null, false]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
     hasEntity: ~
@@ -18,7 +18,7 @@ frontend_billing_view_account_user_granted:
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
         - ['VIEW;entity:AccountUserOrderClass', null, true]
-        - [orob2b_order_address_billing_account_user_use_any, null, false]
+        - [oro_order_address_billing_account_user_use_any, null, false]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
     hasEntity: ~
@@ -31,7 +31,7 @@ frontend_billing_use_account_user_granted:
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
         - ['VIEW;entity:AccountUserOrderClass', null, false]
-        - [orob2b_order_address_billing_account_user_use_any, null, true]
+        - [oro_order_address_billing_account_user_use_any, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
     hasEntity: ~
@@ -44,7 +44,7 @@ frontend_billing_use_account_user_granted:
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
         - ['VIEW;entity:AccountUserOrderClass', null, false]
-        - [orob2b_order_address_billing_account_user_use_any, null, true]
+        - [oro_order_address_billing_account_user_use_any, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
     hasEntity: ~
@@ -57,7 +57,7 @@ frontend_billing_account_user_address_granted:
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
         - ['VIEW;entity:AccountUserOrderClass', null, true]
-        - [orob2b_order_address_billing_account_user_use_any, null, true]
+        - [oro_order_address_billing_account_user_use_any, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
     hasEntity: ~
@@ -70,7 +70,7 @@ frontend_billing_account_user_address_granted_with_entity:
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
         - ['VIEW;entity:AccountUserOrderClass', null, true]
-        - [orob2b_order_address_billing_account_user_use_any, null, true]
+        - [oro_order_address_billing_account_user_use_any, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
     hasEntity: true
@@ -83,7 +83,7 @@ frontend_billing_account_user_address_granted_with_entity_and_address:
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
         - ['VIEW;entity:AccountUserOrderClass', null, true]
-        - [orob2b_order_address_billing_account_user_use_any, null, true]
+        - [oro_order_address_billing_account_user_use_any, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: true
     hasEntity: true
@@ -96,7 +96,7 @@ frontend_billing_account_user_address_granted_with_entity_and_address:
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
         - ['VIEW;entity:AccountUserOrderClass', null, true]
-        - [orob2b_order_address_billing_account_user_use_any, null, true]
+        - [oro_order_address_billing_account_user_use_any, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: true
     hasEntity: true
@@ -109,8 +109,8 @@ frontend_billing_account_user_address_granted_with_manual:
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, false]
         - ['VIEW;entity:AccountUserOrderClass', null, true]
-        - [orob2b_order_address_billing_allow_manual, null, true]
-        - [orob2b_order_address_billing_account_user_use_any, null, true]
+        - [oro_order_address_billing_allow_manual, null, true]
+        - [oro_order_address_billing_account_user_use_any, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: true
     hasEntity: ~
@@ -171,7 +171,7 @@ frontend_billing_account_with_manual:
     isGranted:
         - ['VIEW;entity:AccountOrderClass', null, true]
         - ['VIEW;entity:AccountUserOrderClass', null, false]
-        - [orob2b_order_address_billing_allow_manual, null, true]
+        - [oro_order_address_billing_allow_manual, null, true]
     hasAccountAddresses: ~
     hasAccountUserAddresses: ~
     hasEntity: ~

@@ -2,17 +2,11 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
-use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\AccountBundle\Visibility\Cache\Product\AccountGroupProductResolvedCacheBuilder;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
@@ -20,82 +14,6 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
  */
 class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
 {
-    public function testChangeAccountGroupProductVisibilityToHidden()
-    {
-        $visibility = new AccountGroupProductVisibility();
-        $visibility->setWebsite($this->website);
-        $visibility->setProduct($this->product);
-        $visibility->setAccountGroup($this->accountGroup);
-        $visibility->setVisibility(ProductVisibility::HIDDEN);
-
-        $entityManager = $this->getManagerForVisibility();
-        $entityManager->persist($visibility);
-        $entityManager->flush();
-
-        $visibilityResolved = $this->getVisibilityResolved();
-        $this->assertStatic($visibilityResolved, $visibility, BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
-    }
-
-    /**
-     * @depends testChangeAccountGroupProductVisibilityToHidden
-     */
-    public function testChangeAccountGroupProductVisibilityToVisible()
-    {
-        $visibility = $this->getVisibility();
-        $visibility->setVisibility(ProductVisibility::VISIBLE);
-
-        $entityManager = $this->getManagerForVisibility();
-        $entityManager->flush();
-
-        $visibilityResolved = $this->getVisibilityResolved();
-        $this->assertStatic($visibilityResolved, $visibility, BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
-    }
-
-    /**
-     * @depends testChangeAccountGroupProductVisibilityToVisible
-     */
-    public function testChangeAccountGroupProductVisibilityToCategory()
-    {
-        $visibility = $this->getVisibility();
-        $visibility->setVisibility(AccountGroupProductVisibility::CATEGORY);
-
-        $entityManager = $this->getManagerForVisibility();
-        $entityManager->flush();
-
-        $visibilityResolved = $this->getVisibilityResolved();
-
-        $this->assertEquals(
-            $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId(),
-            $visibilityResolved->getCategory()->getId()
-        );
-
-        $this->assertEquals(
-            $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId(),
-            $visibilityResolved->getCategory()->getId()
-        );
-
-        $this->assertEquals(BaseProductVisibilityResolved::SOURCE_CATEGORY, $visibilityResolved->getSource());
-        $this->assertEquals($visibility, $visibilityResolved->getSourceProductVisibility());
-        $this->assertEquals(
-            BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
-            $visibilityResolved->getVisibility()
-        );
-        $this->assertProductIdentifyEntitiesAccessory($visibilityResolved);
-    }
-
-    public function testChangeAccountGroupProductVisibilityToCurrentProduct()
-    {
-        $visibility = $this->getVisibility();
-        $visibility->setVisibility(AccountGroupProductVisibility::CURRENT_PRODUCT);
-
-        $this->assertNotNull($this->getVisibilityResolved());
-
-        $entityManager = $this->getManagerForVisibility();
-        $entityManager->flush();
-
-        $this->assertNull($this->getVisibilityResolved());
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -121,72 +39,6 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
     }
 
     /**
-     * @param BaseProductVisibilityResolved|AccountGroupProductVisibilityResolved $visibilityResolved
-     */
-    protected function assertProductIdentifyEntitiesAccessory(BaseProductVisibilityResolved $visibilityResolved)
-    {
-        parent::assertProductIdentifyEntitiesAccessory($visibilityResolved);
-        $this->assertEquals($this->accountGroup, $visibilityResolved->getAccountGroup());
-    }
-
-    /**
-     * @return EntityManager
-     */
-    protected function getManagerForVisibility()
-    {
-        return $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountGroupProductVisibility');
-    }
-
-    /**
-     * @return EntityManager
-     */
-    protected function getManagerForVisibilityResolved()
-    {
-        return $this->registry->getManagerForClass(
-            'OroAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved'
-        );
-    }
-
-    /**
-     * @return ProductVisibilityResolved
-     */
-    protected function getVisibilityResolved()
-    {
-        $entityManager = $this->getManagerForVisibilityResolved();
-        $entity = $entityManager
-            ->getRepository('OroAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
-            ->findByPrimaryKey($this->accountGroup, $this->product, $this->website);
-
-        if ($entity) {
-            $entityManager->refresh($entity);
-        }
-
-        return $entity;
-    }
-
-    /**
-     * @return ProductVisibility
-     */
-    protected function getVisibility()
-    {
-        return $this->getManagerForVisibility()
-            ->getRepository('OroAccountBundle:Visibility\AccountGroupProductVisibility')
-            ->findOneBy(
-                ['website' => $this->website, 'product' => $this->product, 'accountGroup' => $this->accountGroup]
-            );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function getSourceRepository()
-    {
-        return $this->getContainer()->get('doctrine')->getRepository(
-            'OroAccountBundle:Visibility\AccountGroupProductVisibility'
-        );
-    }
-
-    /**
      * @return AccountGroupProductRepository|EntityRepository
      */
     protected function getRepository()
@@ -208,7 +60,7 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
             $container->get('oro_entity.orm.insert_from_select_query_executor')
         );
         $builder->setCacheClass(
-            $container->getParameter('orob2b_account.entity.account_group_product_visibility_resolved.class')
+            $container->getParameter('oro_account.entity.account_group_product_visibility_resolved.class')
         );
 
         return $builder;

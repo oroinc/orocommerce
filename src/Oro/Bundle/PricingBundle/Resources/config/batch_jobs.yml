@@ -9,7 +9,7 @@ connector:
                     title:     export
                     class:     Oro\Bundle\BatchBundle\Step\ItemStep
                     services:
-                        reader:    orob2b_pricing.importexport.reader.price_list_product_prices
+                        reader:    oro_pricing.importexport.reader.price_list_product_prices
                         processor: oro_importexport.processor.export_delegate
                         writer:    oro_importexport.writer.csv
                     parameters: ~
@@ -17,7 +17,7 @@ connector:
                     title: export
                     class:     Oro\Bundle\BatchBundle\Step\ItemStep
                     services:
-                        reader:    orob2b_pricing.importexport.reader.price_list_additional_product_prices
+                        reader:    oro_pricing.importexport.reader.price_list_additional_product_prices
                         processor: oro_importexport.processor.export_delegate
                         writer:    oro_importexport.writer.csv
                     parameters: ~
@@ -32,5 +32,5 @@ connector:
                     services:
                         reader:    oro_importexport.reader.csv
                         processor: oro_importexport.processor.import_delegate
-                        writer:    orob2b_pricing.importexport.writer.product_price
+                        writer:    oro_pricing.importexport.writer.product_price
                     parameters: ~

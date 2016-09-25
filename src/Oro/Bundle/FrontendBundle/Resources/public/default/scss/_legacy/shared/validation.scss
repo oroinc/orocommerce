@@ -1,0 +1,41 @@
+.input-widget-select.error {
+  border: 1px solid $theme-input-error;
+  box-shadow: 0 1px 7px 0 rgba(223,96,96,.6);
+}
+
+.validation-failed,
+.validation-passed {
+  display: block;
+
+  min-height: 24px;
+
+  padding: 0 10px;
+
+  line-height: 24px;
+  font-size: 13px;
+
+  border-radius: 3px;
+}
+
+.validation-failed {
+  background: $theme-error-bg-color;
+  color: $theme-error-font-color;
+
+  &:before {
+    content: "\e900";
+
+    display: inline-block;
+
+    width: 11px;
+
+    margin-right: 6px;
+
+    font-style: normal;
+    font-family: $base-font-icon;
+  }
+}
+
+.validation-passed {
+  background-color: $theme-notice-bg-color;
+  color: $theme-notice-font-color;
+}

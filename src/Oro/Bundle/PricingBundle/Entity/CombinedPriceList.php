@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="orob2b_price_list_combined")
+ * @ORM\Table(name="oro_price_list_combined")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository")
  */
 class CombinedPriceList extends BasePriceList

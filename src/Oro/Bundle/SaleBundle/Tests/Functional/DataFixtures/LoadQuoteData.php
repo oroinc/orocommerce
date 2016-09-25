@@ -2,14 +2,16 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-
+use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadQuoteData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
@@ -134,6 +136,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'accountUser'   => LoadUserData::ACCOUNT1_USER3,
             'validUntil'    => null,
             'products'      => [],
+            'paymentTerm'   => LoadPaymentTermData::TERM_LABEL_NET_10,
         ],
     ];
 
@@ -155,10 +158,11 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses',
-            'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
+            LoadUserData::class,
+            LoadAccountUserAddresses::class,
+            LoadAccountAddresses::class,
+            LoadProductUnitPrecisions::class,
+            LoadPaymentTermData::class,
         ];
     }
 
@@ -168,14 +172,17 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     public function load(ObjectManager $manager)
     {
         $user = $this->getUser($manager);
+        /** @var Website $website */
+        $website = $manager->getRepository(Website::class)->findOneBy(['default' => true]);
 
         foreach (self::$items as $item) {
-            $poNumber = 'CA' . rand(1000, 9999) . 'USD';
+            $poNumber = 'CA' . mt_rand(1000, 9999) . 'USD';
 
             /* @var $quote Quote */
             $quote = new Quote();
             $quote
                 ->setQid($item['qid'])
+                ->setWebsite($website)
                 ->setOwner($user)
                 ->setOrganization($user->getOrganization())
                 ->setShipUntil(new \DateTime('+10 day'))
@@ -192,6 +199,12 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
 
             if (!empty($item['accountUser'])) {
                 $quote->setAccountUser($this->getReference($item['accountUser']));
+            }
+
+            if (!empty($item['paymentTerm'])) {
+                $quote->setPaymentTerm(
+                    $this->getReference(LoadPaymentTermData::PAYMENT_TERM_REFERENCE_PREFIX. $item['paymentTerm'])
+                );
             }
 
             foreach ($item['products'] as $sku => $items) {
