@@ -84,3 +84,10 @@ services:
             - '@oro_website.resolver.website_url_resolver'
         tags:
             - { name: twig.extension }
+
+    oro_website.repository.website:
+        class: 'Doctrine\ORM\EntityRepository'
+        public: false
+        factory:  ["@oro_entity.doctrine_helper", getEntityRepository]
+        arguments:
+            - '%oro_website.entity.website.class%'
