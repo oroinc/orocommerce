@@ -86,6 +86,7 @@ oro.pricing:
         show_expression_fields.label: Enter expression
         show_unit_fields.label: Select unit
         show_currency_fields.label: Select currency
+        in_separator: in
 
     quantity.label: Quantity
     fallback:

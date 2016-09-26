@@ -12,9 +12,19 @@ define(function(require) {
      */
     AbstractSwitcher = BaseView.extend({
         options: {
-            selectors: {},
+            selectors: {
+                fieldType: null,
+                expressionType: null
+            },
             errorMessage: ''
         },
+
+        field: null,
+        expression: null,
+        expressionInput: null,
+
+        expressionLink: null,
+        fieldLink:null,
 
         /**
          * @inheritDoc
@@ -22,6 +32,20 @@ define(function(require) {
         initialize: function(options) {
             this.visibleClass = 'visible';
             this.options = _.defaults(options || {}, this.options);
+            if (!this.options.selectors.fieldType) {
+                throw "Option fieldType must be defined";
+            }
+            if (!this.options.selectors.expressionType) {
+                throw "Option expressionType must be defined";
+            }
+
+            this.field = this.$el.find('div' + this.options.selectors.fieldType);
+            this.expression = this.$el.find('div' + this.options.selectors.expressionType);
+            this.expressionInput = this.expression.find('input');
+
+            this.expressionLink = this.expression.find('a' + this.options.selectors.fieldType);
+            this.fieldLink = this.field.find('a' + this.options.selectors.expressionType);
+
             this.$form = this.$el.closest('form');
             AbstractSwitcher.isFormValid = true;
             this.resetSubmitCounter();
@@ -30,12 +54,12 @@ define(function(require) {
 
         onSubmit: function(e) {
             AbstractSwitcher.onSubmitCounter = AbstractSwitcher.onSubmitCounter + 1;
-            if (!this.isValid(this.options.selectors)) {
+            if (!this.isValid()) {
                 AbstractSwitcher.isFormValid = false;
                 var visibleIdentifier;
-                if (this.isVisible(this.options.selectors.fieldType)) {
+                if (this.isVisible(this.field)) {
                     visibleIdentifier = this.options.selectors.fieldType;
-                } else if (this.isVisible(this.options.selectors.expressionType)) {
+                } else if (this.isVisible(this.expression)) {
                     visibleIdentifier = this.options.selectors.expressionType;
                 }
                 this.addValidationError(visibleIdentifier);
@@ -60,13 +84,11 @@ define(function(require) {
             AbstractSwitcher.childrenCounter = 0;
         },
 
-        isVisible: function($identifier) {
-            var $field = this.$el.find('div' + $identifier);
+        isVisible: function($field) {
             return $field.hasClass(this.visibleClass);
         },
 
-        getValue: function($identifier) {
-            var $field = this.$el.find('div' + $identifier);
+        getValue: function($field) {
             var $value = null;
             if ($field.find('select').length > 0) {
                 $value = $field.find('select').find('option:selected').attr('value');
@@ -74,6 +96,24 @@ define(function(require) {
                 $value = $field.find('input').val();
             }
             return $value;
+        },
+
+        setMouseLeaveEvent: function ($expression) {
+            $expression.mouseleave(_.bind(function() {
+                this.destroyTooltip($expression);
+            }, this));
+        },
+
+        showTooltip: function($expression) {
+            $expression.tooltip({
+                title: $expression.attr('placeholder') + ': ' + $expression.val(),
+                trigger: 'manual'
+            });
+            $expression.tooltip('show');
+        },
+
+        destroyTooltip: function($expression) {
+            $expression.tooltip('destroy');
         },
 
         isValid: function() {

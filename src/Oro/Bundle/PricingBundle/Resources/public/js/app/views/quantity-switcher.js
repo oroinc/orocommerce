@@ -13,9 +13,14 @@ define(function(require) {
      */
     QuantitySwitcher = AbstractSwitcher.extend({
         options: {
-            selectors: {},
+            selectors: {
+                fieldType: null,
+                expressionType: null
+            },
             errorMessage: ''
         },
+        visibleClass: null,
+        fieldInput: null,
 
         /**
          * @inheritDoc
@@ -28,52 +33,40 @@ define(function(require) {
             }, this));
         },
 
-        addValidationError: function($identifier) {
-            var $field = this.$el.find('div' + $identifier);
-            $field.append($('<span></span>').addClass('validation-failed').text(this.options.errorMessage));
-
+        addValidationError: function() {
+            this.field.append($('<span></span>').addClass('validation-failed').text(this.options.errorMessage));
         },
 
         initSwitcher: function () {
-            var $field = this.$el.find('div' + this.options.selectors.fieldType).find('input');
-            var $expression = this.$el.find('div' + this.options.selectors.expressionType).find('input');
+            this.fieldInput = this.field.find('input');
             this.changeQuantityField();
-            $expression.mouseenter(_.bind(function() {
-                if (isNaN($expression.val()) && ($expression.val().length > quantityVisibleLength)) {
-                    $expression.tooltip({
-                        title: $expression.attr('placeholder') + ': ' + $expression.val(),
-                        trigger: 'manual'
-                    });
-                    $expression.tooltip('show');
+            this.expressionInput.mouseenter(_.bind(function() {
+                if (isNaN(this.expressionInput.val()) && (this.expressionInput.val().length > quantityVisibleLength)) {
+                    this.showTooltip(this.expressionInput);
                 } else {
-                    $expression.tooltip('destroy');
+                    this.destroyTooltip(this.expressionInput);
                 }
             }, this));
 
-            $expression.mouseleave(_.bind(function() {
-                $expression.tooltip('destroy');
-            }, this));
+            this.setMouseLeaveEvent(this.expressionInput);
 
-            $expression.change(_.bind(function() {
+            this.expressionInput.change(_.bind(function() {
                 this.changeQuantityField();
             }, this));
 
-            $field.change(_.bind(function() {
+            this.fieldInput.change(_.bind(function() {
                 this.changeQuantityField();
             }, this));
         },
 
         changeQuantityField: function () {
-            var $quantity = this.$el.find('div' + this.options.selectors.fieldType);
-            var $quantityExpression = this.$el.find('div' + this.options.selectors.expressionType);
-
-            if ($quantity.hasClass(this.visibleClass) && (isNaN($quantity.find('input').val()))) {
-                this.changeVisibility($quantity, $quantityExpression);
-            } else if ($quantityExpression.hasClass(this.visibleClass)) {
-                if (isNaN($quantityExpression.find('input').val())) {
-                    $quantity.find('input').val('');
+            if (this.field.hasClass(this.visibleClass) && (isNaN(this.fieldInput.val()))) {
+                this.changeVisibility(this.field, this.expression);
+            } else if (this.expression.hasClass(this.visibleClass)) {
+                if (isNaN(this.expressionInput.val())) {
+                    this.fieldInput.val('');
                 } else {
-                    this.changeVisibility($quantityExpression, $quantity);
+                    this.changeVisibility(this.expression, this.field);
                 }
             }
         },
@@ -89,8 +82,8 @@ define(function(require) {
             $field1.removeClass(this.visibleClass).hide();
         },
 
-        isValid: function ($selectors) {
-            return !!(this.getValue($selectors.fieldType) || this.getValue($selectors.expressionType));
+        isValid: function () {
+            return !!(this.getValue(this.field) || this.getValue(this.expression));
         }
     });
 

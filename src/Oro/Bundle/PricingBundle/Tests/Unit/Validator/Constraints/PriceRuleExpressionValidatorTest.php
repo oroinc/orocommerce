@@ -95,6 +95,8 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $constraint->allowedFields = [
             Product::class => ['additionalField']
         ];
+        $constraint->fieldLabel = 'Field label';
+
         $this->fieldsProvider->method('getFields')->willReturn(['fieldKnown']);
 
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
@@ -118,10 +120,8 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function doTestValidation($value, ExecutionContextInterface $context)
     {
-        /** @var PriceRuleExpression|\PHPUnit_Framework_MockObject_MockObject $constraint * */
-        $constraint = $this->getMockBuilder(PriceRuleExpression::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $constraint = new PriceRuleExpression();
+        $constraint->fieldLabel = 'Field label';
         $this->preprocessor->expects($this->any())
             ->method('process')
             ->with($value)

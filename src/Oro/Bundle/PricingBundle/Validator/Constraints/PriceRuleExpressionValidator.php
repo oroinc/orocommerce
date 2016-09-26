@@ -77,20 +77,35 @@ class PriceRuleExpressionValidator extends ConstraintValidator
                 }
             }
             if (count($unsupportedFields) > 0) {
-                $inputName = $this->translator->trans($constraint->fieldLabel);
+                list($message, $parameters) = $this->getErrorData($constraint);
+
                 foreach ($unsupportedFields as $invalidField) {
-                    $this->context->addViolation(
-                        $constraint->message,
-                        [
-                            '%fieldName%' => $invalidField,
-                            '%inputName%' => $inputName
-                        ]
-                    );
+                    $this->context->addViolation($message, array_merge($parameters, [
+                        '%fieldName%' => $invalidField
+                    ]));
                 }
             }
         } catch (SyntaxError $ex) {
             $this->context->addViolation($ex->getMessage());
         }
+    }
+
+    /**
+     * @param PriceRuleExpression $constraint
+     * @return array
+     */
+    protected function getErrorData(Constraint $constraint)
+    {
+        if ($constraint->fieldLabel === null) {
+            $message = $constraint->message;
+            $params = [];
+        } else {
+            $inputName = $this->translator->trans($constraint->fieldLabel);
+            $message = $constraint->messageAs;
+            $params = ['%inputName%' => $inputName];
+        }
+
+        return [$message, $params];
     }
 
     /**

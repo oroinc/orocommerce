@@ -13,9 +13,13 @@ define(function(require) {
      */
     ExpressionFieldSwitcher = AbstractSwitcher.extend({
         options: {
-            selectors: {},
+            selectors: {
+                fieldType: null,
+                expressionType: null
+            },
             errorMessage: ''
         },
+        visibleClass: null,
 
         /**
          * @inheritDoc
@@ -30,49 +34,41 @@ define(function(require) {
 
         addValidationError: function($identifier) {
             var $field = $('div.error-block' + $identifier);
-            $field.addClass(this.visibleClass).append($('<span></span>').addClass('validation-failed').text(this.options.errorMessage).show());
+            $field.addClass(this.visibleClass).append($('<span></span>')
+                .addClass('validation-failed').text(this.options.errorMessage).show());
         },
 
         initSwitcher: function()
         {
-            var $fieldIdentifier = this.options.selectors.fieldType;
             var $expressionIdentifier = this.options.selectors.expressionType;
-            var $field = this.$el.find('div' + $fieldIdentifier);
-            var $expression = this.$el.find('div' + $expressionIdentifier);
-            $expression.find('a' + $fieldIdentifier).click(_.bind(function() {
-                this.changeFieldVisibility($field, $expression);
-                $expression.find('input').val('');
+            this.expressionLink.click(_.bind(function() {
+                this.changeFieldVisibility(this.field, this.expression);
+                this.expressionInput.val('');
                 $('div.error-block' + $expressionIdentifier).find('.validation-failed').remove();
             }, this));
 
-            $field.find('a' + $expressionIdentifier).click(_.bind(function() {
-                this.changeFieldVisibility($expression, $field);
+            this.fieldLink.click(_.bind(function() {
+                this.changeFieldVisibility(this.expression, this.field);
             }, this));
 
-            if ($expression.find('input').val() === '') {
-                this.changeFieldVisibility($field, $expression);
+            if (this.expressionInput.val() === '') {
+                this.changeFieldVisibility(this.field, this.expression);
             } else {
-                this.changeFieldVisibility($expression, $field);
+                this.changeFieldVisibility(this.expression, this.field);
             }
 
-            this.bindTooltipEvents($expression);
+            this.bindTooltipEvents(this.expressionInput);
         },
 
-        bindTooltipEvents: function($expression)
+        bindTooltipEvents: function($expressionInput)
         {
-            var expressionInput = $expression.find('input');
-            expressionInput.mouseenter(_.bind(function() {
-                if (expressionInput.val().length > unitAndCurrencyVisibleLength) {
-                    expressionInput.tooltip({
-                        title: expressionInput.attr('placeholder') + ': ' + expressionInput.val(),
-                        trigger: 'manual'
-                    });
-                    expressionInput.tooltip('show');
+            $expressionInput.mouseenter(_.bind(function() {
+                if ($expressionInput.val().length > unitAndCurrencyVisibleLength) {
+                    this.showTooltip($expressionInput);
                 }
             }, this));
-            expressionInput.mouseleave(_.bind(function() {
-                expressionInput.tooltip('destroy');
-            }, this));
+
+            this.setMouseLeaveEvent($expressionInput);
         },
 
         changeFieldVisibility: function($show, $hide) {
@@ -80,14 +76,12 @@ define(function(require) {
             $show.addClass(this.visibleClass).show();
         },
 
-        isValid: function ($selectors) {
+        isValid: function () {
             return !!(
                 (
-                    this.getValue($selectors.fieldType) &&
-                    (this.$el.find('div' + $selectors.fieldType).hasClass(this.visibleClass))
+                    this.getValue(this.field) && this.field.hasClass(this.visibleClass)
                 ) || (
-                    this.getValue($selectors.expressionType) &&
-                    (this.$el.find('div' + $selectors.expressionType).hasClass(this.visibleClass))
+                    this.getValue(this.expression) && this.expression.hasClass(this.visibleClass)
                 )
             );
         }

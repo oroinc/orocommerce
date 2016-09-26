@@ -31,6 +31,11 @@ class NotBlankOneOfValidatorTest extends \PHPUnit_Framework_TestCase
     protected $translator;
 
     /**
+     * @var string
+     */
+    protected $translatedLabel = ' key was translated.';
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -50,7 +55,7 @@ class NotBlankOneOfValidatorTest extends \PHPUnit_Framework_TestCase
             ->will(
                 $this->returnCallback(
                     function ($param) {
-                        return $param;
+                        return $param . $this->translatedLabel;
                     }
                 )
             );
@@ -111,7 +116,7 @@ class NotBlankOneOfValidatorTest extends \PHPUnit_Framework_TestCase
             ->expects($this->exactly(2))
             ->method('buildViolation')
             ->with($this->constraint->message, [
-                '%fields%' => 'Field 1, Field 2'
+                '%fields%' => 'Field 1' . $this->translatedLabel . ', Field 2' . $this->translatedLabel
             ])
             ->willReturn($violationBuilder);
 
