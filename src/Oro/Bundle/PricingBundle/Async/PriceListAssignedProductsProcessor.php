@@ -2,10 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -15,7 +12,7 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 
-class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class PriceListAssignedProductsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
      * @var PriceListTriggerFactory
@@ -28,36 +25,23 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
     protected $logger;
 
     /**
-     * @var ProductPriceBuilder
+     * @var PriceListProductAssignmentBuilder
      */
-    protected $priceBuilder;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var  PriceListRepository
-     */
-    protected $priceListRepository;
+    protected $assignmentBuilder;
 
     /**
      * @param PriceListTriggerFactory $triggerFactory
-     * @param ProductPriceBuilder $priceBuilder
+     * @param PriceListProductAssignmentBuilder $assignmentBuilder
      * @param LoggerInterface $logger
-     * @param ManagerRegistry $registry
      */
     public function __construct(
         PriceListTriggerFactory $triggerFactory,
-        ProductPriceBuilder $priceBuilder,
-        LoggerInterface $logger,
-        ManagerRegistry $registry
+        PriceListProductAssignmentBuilder $assignmentBuilder,
+        LoggerInterface $logger
     ) {
         $this->logger = $logger;
-        $this->priceBuilder = $priceBuilder;
+        $this->assignmentBuilder = $assignmentBuilder;
         $this->triggerFactory = $triggerFactory;
-        $this->registry = $registry;
     }
 
     /**
@@ -80,11 +64,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
             return self::REJECT;
         }
 
-        $priceList = $trigger->getPriceList();
-        $startTime = $priceList->getUpdatedAt();
-
-        $this->priceBuilder->buildByPriceList($priceList, $trigger->getProduct());
-        $this->updatePriceListActuality($priceList, $startTime);
+        $this->assignmentBuilder->buildByPriceList($trigger->getPriceList(), $trigger->getProduct());
 
         return self::ACK;
     }
@@ -94,21 +74,6 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::RESOLVE_PRICE_RULES];
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @param \DateTime $startTime
-     */
-    protected function updatePriceListActuality(PriceList $priceList, \DateTime $startTime)
-    {
-        $manager = $this->registry->getManagerForClass(PriceList::class);
-        $manager->refresh($priceList);
-        if ($startTime == $priceList->getUpdatedAt()) {
-            /** @var PriceListRepository $repo */
-            $repo = $manager->getRepository(PriceList::class);
-            $repo->updatePriceListsActuality([$priceList], true);
-        }
+        return [Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS];
     }
 }

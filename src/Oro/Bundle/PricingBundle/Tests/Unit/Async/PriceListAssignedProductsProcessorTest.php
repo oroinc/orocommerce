@@ -2,27 +2,21 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\PricingBundle\Async\PriceListProcessor;
+use Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
-use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
+class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -32,14 +26,9 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
     protected $triggerFactory;
 
     /**
-     * @var CombinedProductPriceResolver|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListProductAssignmentBuilder|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $priceResolver;
-
-    /**
-     * @var EventDispatcher|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $eventDispatcher;
+    protected $assignmentBuilder;
 
     /**
      * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -47,48 +36,23 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
     protected $logger;
 
     /**
-     * @var PriceListProcessor
+     * @var PriceListAssignedProductsProcessor
      */
-    protected $priceRuleProcessor;
-
-    /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $registry;
-
-    /**
-     * @var CombinedPriceListRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $repository;
+    protected $processor;
 
     protected function setUp()
     {
         $this->triggerFactory = $this->getMockBuilder(PriceListTriggerFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->priceResolver = $this->getMockBuilder(CombinedProductPriceResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->eventDispatcher = $this->getMockBuilder(EventDispatcher::class)
+        $this->assignmentBuilder = $this->getMockBuilder(PriceListProductAssignmentBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->logger = $this->getMock(LoggerInterface::class);
 
-        $this->repository = $this->getMockBuilder(CombinedPriceListRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $manager = $this->getMock(ObjectManager::class);
-        $manager->method('getRepository')->willReturn($this->repository);
-
-        $this->registry = $this->getMock(RegistryInterface::class);
-        $this->registry->method('getManagerForClass')->willReturn($manager);
-
-        $this->priceRuleProcessor = new PriceListProcessor(
+        $this->processor = new PriceListAssignedProductsProcessor(
             $this->triggerFactory,
-            $this->registry,
-            $this->priceResolver,
-            $this->eventDispatcher,
+            $this->assignmentBuilder,
             $this->logger
         );
     }
@@ -122,7 +86,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->with($data)
             ->willThrowException(new InvalidArgumentException('Test message'));
 
-        $this->assertEquals(MessageProcessorInterface::REJECT, $this->priceRuleProcessor->process($message, $session));
+        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
     }
 
     public function testProcess()
@@ -130,6 +94,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 1];
         $body = json_encode($data);
 
+        $updateDate = new \DateTime();
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         /** @var Product $product */
@@ -150,28 +115,15 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->with($data)
             ->willReturn($trigger);
 
-        $cplId = 1;
-        $cpl = $this->getMock(CombinedPriceList::class);
-        $cpl->method('getId')->willReturn($cplId);
+        $this->assignmentBuilder->expects($this->once())
+            ->method('buildByPriceList')
+            ->with($priceList, $product);
 
-        $this->repository->method('getCombinedPriceListsByPriceList')
-            ->with($priceList, true)
-            ->willReturn([$cpl]);
-
-        $this->priceResolver->expects($this->once())
-            ->method('combinePrices')
-            ->with($cpl, $product);
-
-        $event = new CombinedPriceListsUpdateEvent([$cplId]);
-        $this->eventDispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(CombinedPriceListsUpdateEvent::NAME, $event);
-
-        $this->assertEquals(MessageProcessorInterface::ACK, $this->priceRuleProcessor->process($message, $session));
+        $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
 
     public function testGetSubscribedTopics()
     {
-        $this->assertEquals([Topics::RESOLVE_COMBINED_PRICES], $this->priceRuleProcessor->getSubscribedTopics());
+        $this->assertEquals([Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS], $this->processor->getSubscribedTopics());
     }
 }

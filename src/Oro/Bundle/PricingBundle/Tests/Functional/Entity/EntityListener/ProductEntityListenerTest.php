@@ -26,7 +26,7 @@ class ProductEntityListenerTest extends WebTestCase
             LoadProductData::class,
             LoadPriceRuleLexemes::class
         ]);
-        $this->topic = Topics::CALCULATE_RULE;
+        $this->topic = Topics::RESOLVE_PRICE_RULES;
         $this->cleanQueueMessageTraces();
     }
 

@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Compiler;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
@@ -14,7 +13,6 @@ use Oro\Bundle\PricingBundle\Expression\NodeInterface;
 use Oro\Bundle\PricingBundle\Expression\RelationNode;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
@@ -60,11 +58,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected $qbSelectPart = [];
 
     /**
-     * @var array
-     */
-    protected $processedConditions = [];
-
-    /**
      * @param PriceRuleFieldsProvider $fieldsProvider
      */
     public function setFieldsProvider(PriceRuleFieldsProvider $fieldsProvider)
@@ -90,7 +83,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
             $this->modifySelectPart($qb, $rule, $rootAlias);
             $this->applyRuleConditions($qb, $rule);
             $this->restrictBySupportedUnits($qb, $rule, $rootAlias);
-            $this->restrictBySupportedCurrencies($qb, $rule, $rootAlias);
+            $this->restrictBySupportedCurrencies($qb, $rule);
             $this->restrictBySupportedQuantity($qb, $rule);
             $this->restrictByAssignedProducts($rule, $qb, $rootAlias);
             $this->restrictByManualPrices($qb, $rule, $rootAlias);
@@ -313,20 +306,18 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      */
     protected function restrictBySupportedUnits(QueryBuilder $qb, PriceRule $rule, $rootAlias)
     {
-        if (!$rule->getProductUnitExpression()) {
+        if ($rule->getProductUnitExpression()) {
+            $qb->join($rootAlias.'.unitPrecisions', '_allowedUnit')
+                ->andWhere(
+                    $qb->expr()->eq(
+                        '_allowedUnit.unit',
+                        (string)$this->getValueByExpression($qb, $rule->getProductUnitExpression(), [])
+                    )
+                );
+        } else {
             $qb->join($rootAlias.'.unitPrecisions', '_allowedUnit')
                 ->andWhere($qb->expr()->eq('_allowedUnit.unit', ':requiredUnitUnit'))
                 ->setParameter('requiredUnitUnit', $rule->getProductUnit());
-        } else {
-            $joins = array_key_exists($rootAlias, $qb->getDQLPart('join')) ? $qb->getDQLPart('join')[$rootAlias] : [];
-            $joinConditions = [];
-            /** @var Join $join */
-            foreach ($joins as $join) {
-                if (is_subclass_of($join->getJoin(), ProductUnitHolderInterface::class)) {
-                    $joinConditions[] = sprintf('_allowedUnit.unit = %s.unit', $join->getAlias());
-                }
-            }
-            $qb->join($rootAlias.'.unitPrecisions', '_allowedUnit', Join::WITH, implode(' AND ', $joinConditions));
         }
     }
 
@@ -335,29 +326,20 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      *
      * @param QueryBuilder $qb
      * @param PriceRule $rule
-     * @param string $rootAlias
      */
-    protected function restrictBySupportedCurrencies(QueryBuilder $qb, PriceRule $rule, $rootAlias)
+    protected function restrictBySupportedCurrencies(QueryBuilder $qb, PriceRule $rule)
     {
         if ($rule->getCurrencyExpression()) {
-            $currencyCondition = $qb->expr()->andX();
-            $joins = array_key_exists($rootAlias, $qb->getDQLPart('join')) ? $qb->getDQLPart('join')[$rootAlias] : [];
-            /** @var Join $join */
-            foreach ($joins as $join) {
-                if (is_subclass_of($join->getJoin(), BaseProductPrice::class) ||
-                    is_subclass_of($join->getJoin(), CurrencyAwareInterface::class)
-                ) {
-                    $field = sprintf('%s.currency', $join->getAlias());
-                    $currencyCondition->add(
-                        $qb->expr()->in(
-                            $field,
-                            $rule->getPriceList()->getCurrencies()
-                        )
-                    );
-                }
-            }
-            if ($currencyCondition->count() > 0) {
-                $qb->andWhere($currencyCondition);
+            $qb->andWhere(
+                $qb->expr()->in(
+                    (string)$this->getValueByExpression($qb, $rule->getCurrencyExpression(), []),
+                    $rule->getPriceList()->getCurrencies()
+                )
+            );
+        } else {
+            // Skip rules that are not in price list supported currencies
+            if (!in_array($rule->getCurrency(), $rule->getPriceList()->getCurrencies(), true)) {
+                $qb->andWhere('1 = 0');
             }
         }
     }
@@ -576,12 +558,6 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
      */
     protected function getProcessedRuleCondition(PriceRule $rule)
     {
-        $conditionKey = md5($rule->getRuleCondition());
-        if (!array_key_exists($conditionKey, $this->processedConditions)) {
-            $this->processedConditions[$conditionKey] = $this->expressionPreprocessor
-                ->process($rule->getRuleCondition());
-        }
-
-        return $this->processedConditions[$conditionKey];
+        return $this->expressionPreprocessor->process($rule->getRuleCondition());
     }
 }
