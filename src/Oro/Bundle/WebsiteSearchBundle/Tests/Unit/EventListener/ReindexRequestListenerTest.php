@@ -10,7 +10,7 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\DataAuditBundle\Metadata\ClassMetadata;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener;
 
 class ReindexRequestListenerTest extends \PHPUnit_Framework_TestCase
@@ -56,7 +56,7 @@ class ReindexRequestListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        $event = new ReindexationTriggerEvent(
+        $event = new ReindexationRequestEvent(
             self::TEST_CLASSNAME,
             self::TEST_WEBSITE_ID,
             null,
@@ -91,7 +91,7 @@ class ReindexRequestListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessAsync()
     {
-        $event = new ReindexationTriggerEvent(
+        $event = new ReindexationRequestEvent(
             self::TEST_CLASSNAME,
             self::TEST_WEBSITE_ID,
             null,
@@ -128,7 +128,7 @@ class ReindexRequestListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessAtomic()
     {
-        $event = new ReindexationTriggerEvent(
+        $event = new ReindexationRequestEvent(
             self::TEST_CLASSNAME,
             self::TEST_WEBSITE_ID,
             [1, 2, 3, 4],
@@ -255,7 +255,7 @@ class ReindexRequestListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testNoClassAndIdArray()
     {
-        $event = new ReindexationTriggerEvent(
+        $event = new ReindexationRequestEvent(
             null,
             self::TEST_WEBSITE_ID,
             [1, 2, 3, 4],

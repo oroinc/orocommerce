@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 class ReindexRequestListener
 {
@@ -40,9 +40,9 @@ class ReindexRequestListener
     }
 
     /**
-     * @param ReindexationTriggerEvent $event
+     * @param ReindexationRequestEvent $event
      */
-    public function process(ReindexationTriggerEvent $event)
+    public function process(ReindexationRequestEvent $event)
     {
         $indexer = $event->isScheduled() ? $this->asyncIndexer : $this->regularIndexer;
         if ($indexer !== null) {
@@ -51,10 +51,10 @@ class ReindexRequestListener
     }
 
     /**
-     * @param ReindexationTriggerEvent $event
+     * @param ReindexationRequestEvent $event
      * @param IndexerInterface $indexer
      */
-    protected function processWithIndexer(ReindexationTriggerEvent $event, IndexerInterface $indexer)
+    protected function processWithIndexer(ReindexationRequestEvent $event, IndexerInterface $indexer)
     {
         $className = $event->getClassName();
         $ids = $event->getIds();
@@ -74,12 +74,12 @@ class ReindexRequestListener
     }
 
     /**
-     * @param ReindexationTriggerEvent $event
+     * @param ReindexationRequestEvent $event
      *
      * @return array [ [0] => <entities to save>, [1] => <entities to delete> ]
      *
      */
-    protected function getSavedAndDeletedEntities(ReindexationTriggerEvent $event)
+    protected function getSavedAndDeletedEntities(ReindexationRequestEvent $event)
     {
         $class = $event->getClassName();
         $repository = $this->entityManager->getRepository($class);
@@ -112,10 +112,10 @@ class ReindexRequestListener
     }
 
     /**
-     * @param ReindexationTriggerEvent $event
+     * @param ReindexationRequestEvent $event
      * @return array
      */
-    protected function buildContext(ReindexationTriggerEvent $event)
+    protected function buildContext(ReindexationRequestEvent $event)
     {
         $context = [];
 
