@@ -7,7 +7,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class LoadWarehousesInventoryLevelWithPrimaryUnit extends AbstractFixture implements DependentFixtureInterface
@@ -25,14 +24,11 @@ class LoadWarehousesInventoryLevelWithPrimaryUnit extends AbstractFixture implem
      */
     public function load(ObjectManager $manager)
     {
-        /** @var Warehouse $warehouse */
-        $warehouse = $this->getReference(LoadWarehousesAndInventoryLevels::WAREHOUSE1);
         /** @var Product $product */
         $product = $this->getReference('product.1');
 
         $level = new WarehouseInventoryLevel();
         $level
-            ->setWarehouse($warehouse)
             ->setProductUnitPrecision($product->getPrimaryUnitPrecision())
             ->setQuantity(10);
 

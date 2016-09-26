@@ -10,33 +10,23 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\WarehouseProBundle\Entity\Helper\WarehouseCounter;
-use Oro\Bundle\WarehouseProBundle\Entity\Repository\WarehouseRepository;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 
 class NormalizeInventoryLevelRequestData implements ProcessorInterface
 {
     const PRODUCT = 'product';
-    const WAREHOUSE = 'warehouse';
     const UNIT = 'unit';
     const UNIT_PRECISION = 'productUnitPrecision';
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var  WarehouseCounter */
-    protected $warehouseCounter;
-
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param WarehouseCounter $warehouseCounter
      */
     public function __construct(
-        DoctrineHelper $doctrineHelper,
-        WarehouseCounter $warehouseCounter
+        DoctrineHelper $doctrineHelper
     ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->warehouseCounter = $warehouseCounter;
     }
 
     /**
@@ -81,18 +71,6 @@ class NormalizeInventoryLevelRequestData implements ProcessorInterface
             $productUnitPrecision->getId()
         );
 
-        if ($this->warehouseCounter->areMoreWarehouses()) {
-            if (!$this->isRelationshipValid($relationships, self::WAREHOUSE)) {
-                // warehouse is required if there are more warehouses in the system
-                return;
-            }
-        } else {
-            $warehouse = $this->resolveWarehouse();
-            if ($warehouse) {
-                $this->addRelationship($relationships, self::WAREHOUSE, Warehouse::class, $warehouse->getId());
-            }
-        }
-
         $requestData[JsonApiDoc::DATA][JsonApiDoc::RELATIONSHIPS] = $relationships;
         $context->setRequestData($requestData);
     }
@@ -135,17 +113,6 @@ class NormalizeInventoryLevelRequestData implements ProcessorInterface
             ->getProductsIdsBySku([$relationships[self::PRODUCT][JsonApiDoc::DATA][JsonApiDoc::ID]]);
 
         return reset($productIds);
-    }
-
-    /**
-     * @return null|Warehouse
-     */
-    protected function resolveWarehouse()
-    {
-        /** @var WarehouseRepository $warehouseRepository */
-        $warehouseRepository = $this->doctrineHelper->getEntityRepository(Warehouse::class);
-
-        return $warehouseRepository->getSingularWarehouse();
     }
 
     /**

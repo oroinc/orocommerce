@@ -7,18 +7,13 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class LoadWarehousesAndInventoryLevels extends AbstractFixture implements DependentFixtureInterface
 {
     use UserUtilityTrait;
-
-    const WAREHOUSE1 = 'warehouse.1';
-    const WAREHOUSE2 = 'warehouse.2';
 
     /**
      * {@inheritdoc}
@@ -35,71 +30,33 @@ class LoadWarehousesAndInventoryLevels extends AbstractFixture implements Depend
      */
     public function load(ObjectManager $manager)
     {
-        $user = $this->getFirstUser($manager);
-
-        $this->createWarehouse($manager, 'First Warehouse', $user, self::WAREHOUSE1);
-        $this->createWarehouse($manager, 'Second Warehouse', $user, self::WAREHOUSE2);
-
-        $this->createWarehouseInventoryLevel($manager, self::WAREHOUSE1, 'product_unit_precision.product.1.liter', 10);
-        $this->createWarehouseInventoryLevel($manager, self::WAREHOUSE1, 'product_unit_precision.product.1.bottle', 99);
-        $this->createWarehouseInventoryLevel(
-            $manager,
-            self::WAREHOUSE1,
-            'product_unit_precision.product.2.liter',
-            12.345
-        );
-        $this->createWarehouseInventoryLevel($manager, self::WAREHOUSE1, 'product_unit_precision.product.2.bottle', 98);
-        $this->createWarehouseInventoryLevel($manager, self::WAREHOUSE1, 'product_unit_precision.product.2.box', 42);
-        $this->createWarehouseInventoryLevel(
-            $manager,
-            self::WAREHOUSE2,
-            'product_unit_precision.product.2.box',
-            98.765
-        );
+        $this->createWarehouseInventoryLevel($manager, 'product_unit_precision.product.1.liter', 10);
+        $this->createWarehouseInventoryLevel($manager, 'product_unit_precision.product.1.bottle', 99);
+        $this->createWarehouseInventoryLevel($manager, 'product_unit_precision.product.2.liter', 12.345);
+        $this->createWarehouseInventoryLevel($manager, 'product_unit_precision.product.2.bottle', 98);
+        $this->createWarehouseInventoryLevel($manager, 'product_unit_precision.product.2.box', 42);
 
         $manager->flush();
     }
 
     /**
-     * @param string $name
-     * @param string $reference
-     */
-    protected function createWarehouse(ObjectManager $manager, $name, User $owner, $reference)
-    {
-        $warehouse = new Warehouse();
-        $warehouse->setName($name)
-            ->setOwner($owner->getBusinessUnits()->first())
-            ->setOrganization($owner->getOrganization());
-
-        $manager->persist($warehouse);
-        $this->addReference($reference, $warehouse);
-    }
-
-    /**
      * @param ObjectManager $manager
-     * @param string $warehouseReference
      * @param string $precisionReference
      * @param int|float $quantity
      */
-    protected function createWarehouseInventoryLevel(
-        ObjectManager $manager,
-        $warehouseReference,
-        $precisionReference,
-        $quantity
-    ) {
-        /** @var Warehouse $warehouse */
-        $warehouse = $this->getReference($warehouseReference);
+    protected function createWarehouseInventoryLevel(ObjectManager $manager, $precisionReference, $quantity)
+    {
         /** @var ProductUnitPrecision $precision */
         $precision = $this->getReference($precisionReference);
 
         $level = new WarehouseInventoryLevel();
-        $level->setWarehouse($warehouse)
+        $level
             ->setProductUnitPrecision($precision)
             ->setQuantity($quantity);
 
         $manager->persist($level);
         $this->addReference(
-            sprintf('warehouse_inventory_level.%s.%s', $warehouseReference, $precisionReference),
+            sprintf('warehouse_inventory_level.%s', $precisionReference),
             $level
         );
     }

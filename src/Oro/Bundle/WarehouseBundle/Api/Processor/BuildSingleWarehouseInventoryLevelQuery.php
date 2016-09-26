@@ -9,7 +9,6 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
 
 class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
 {
@@ -19,22 +18,16 @@ class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
     /** @var CriteriaConnector */
     protected $criteriaConnector;
 
-    /** @var  WarehouseCounter */
-    protected $warehouseCounter;
-
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param CriteriaConnector $criteriaConnector
-     * @param WarehouseCounter $warehouseCounter
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        CriteriaConnector $criteriaConnector,
-        WarehouseCounter $warehouseCounter
+        CriteriaConnector $criteriaConnector
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->criteriaConnector = $criteriaConnector;
-        $this->warehouseCounter = $warehouseCounter;
     }
 
     /**
@@ -43,6 +36,11 @@ class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
     public function process(ContextInterface $context)
     {
         if (!$context instanceof UpdateContext) {
+            return;
+        }
+
+        if ($context->hasQuery()) {
+            // a query is already built
             return;
         }
 
@@ -66,15 +64,6 @@ class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
         $sku = $requestData['sku'];
         unset($requestData['sku']);
 
-        if ($this->warehouseCounter->areMoreWarehouses()) {
-            if (!array_key_exists('warehouse', $requestData)) {
-                // warehouse is required if there are more warehouses in the system
-                return;
-            }
-            $warehouse = $requestData['warehouse'];
-            unset($requestData['warehouse']);
-        }
-
         $unit = $this->getUnit($requestData, $sku);
         unset($requestData['unit']);
 
@@ -88,11 +77,6 @@ class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
             ->andWhere($queryBuilder->expr()->eq('IDENTITY(productPrecision.unit)', ':unit'))
             ->setParameter('sku', $sku)
             ->setParameter('unit', $unit);
-        if (isset($warehouse)) {
-            $queryBuilder
-                ->andWhere($queryBuilder->expr()->eq('e.warehouse', ':warehouse'))
-                ->setParameter('warehouse', $warehouse);
-        }
 
         $context->setQuery($queryBuilder);
         $context->setRequestData($requestData);
