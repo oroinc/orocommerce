@@ -40,57 +40,48 @@ class OrmEngineTest extends AbstractSearchWebTestCase
         TestEntity::class => [
             'alias' => 'oro_test_item_WEBSITE_ID',
             'fields' => [
-                'title' =>
-                    [
-                        'name' => 'title_LOCALIZATION_ID',
-                        'type' => 'text'
-                    ],
-                'stringValue' =>
-                    [
-                        'name' => 'stringValue',
-                        'type' => 'text',
-                    ],
+                'title' => [
+                    'name' => 'title_LOCALIZATION_ID',
+                    'type' => 'text'
+                ],
+                'stringValue' => [
+                    'name' => 'stringValue',
+                    'type' => 'text',
+                ],
 
-                'integerValue' =>
-                    [
-                        'name' => 'integerValue',
-                        'type' => 'integer',
-                    ],
+                'integerValue' => [
+                    'name' => 'integerValue',
+                    'type' => 'integer',
+                ],
 
-                'decimalValue' =>
-                    [
-                        'name' => 'decimalValue',
-                        'type' => 'decimal',
-                    ],
+                'decimalValue' => [
+                    'name' => 'decimalValue',
+                    'type' => 'decimal',
+                ],
 
-                'floatValue' =>
-                    [
-                        'name' => 'floatValue',
-                        'type' => 'decimal'
-                    ],
+                'floatValue' => [
+                    'name' => 'floatValue',
+                    'type' => 'decimal'
+                ],
 
-                'datetimeValue' =>
-                    [
-                        'name' => 'datetimeValue',
-                        'type' => 'datetime'
-                    ],
+                'datetimeValue' => [
+                    'name' => 'datetimeValue',
+                    'type' => 'datetime'
+                ],
 
-                'blobValue' =>
-                    [
-                        'name' => 'blobValue',
-                        'type' => 'text'
-                    ],
+                'blobValue' => [
+                    'name' => 'blobValue',
+                    'type' => 'text'
+                ],
 
-                'phone' =>
-                    [
-                        'name' => 'phone',
-                        'type' => 'text'
-                    ],
-                'all_text' =>
-                    [
-                        'name' => 'all_text_LOCALIZATION_ID',
-                        'type' => 'text'
-                    ]
+                'phone' => [
+                    'name' => 'phone',
+                    'type' => 'text'
+                ],
+                'all_text' => [
+                    'name' => 'all_text_LOCALIZATION_ID',
+                    'type' => 'text'
+                ]
 
             ],
         ]
@@ -196,7 +187,7 @@ class OrmEngineTest extends AbstractSearchWebTestCase
     {
         $query = new Query();
         $query->from('*');
-        $query->getCriteria()->orderBy(['stringValue'  => Query::ORDER_ASC]);
+        $query->getCriteria()->orderBy(['stringValue' => Query::ORDER_ASC]);
         $items = $this->getSearchItems($query);
 
         $this->assertEquals('item1@mail.com', $items[0]->getRecordTitle());

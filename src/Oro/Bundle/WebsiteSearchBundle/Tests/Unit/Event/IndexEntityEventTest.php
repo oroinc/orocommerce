@@ -3,7 +3,6 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Event;
 
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
-use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
 
 class IndexEntityEventTest extends \PHPUnit_Framework_TestCase

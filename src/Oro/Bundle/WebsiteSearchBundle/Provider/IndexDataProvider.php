@@ -150,7 +150,8 @@ class IndexDataProvider
     {
         $allTextsWithPlaceholders = [];
         $allStandardTexts = $this->preparedIndexData[$entityId][Query::TYPE_TEXT];
-        $allTextFieldConfigName = $this->getFieldConfig($fieldsConfig, self::ALL_TEXT_FIELD)['name']; //all_text_LOCALIZATION_ID
+        //all_text_LOCALIZATION_ID
+        $allTextFieldConfigName = $this->getFieldConfig($fieldsConfig, self::ALL_TEXT_FIELD)['name'];
 
         foreach ($fieldsData as $fieldName => $placeholderValues) {
             foreach ($placeholderValues as $value) {

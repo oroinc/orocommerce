@@ -48,7 +48,7 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
         // This check required because getFrom can return false
         if ($from) {
             foreach ($from as $alias) {
-                $newEntities[] = str_replace($placeholder->getPlaceholder(), $placeholder->getValue(), $alias);
+                $newEntities[] = $placeholder->replace($alias, $placeholder->getValue());
             }
         }
 

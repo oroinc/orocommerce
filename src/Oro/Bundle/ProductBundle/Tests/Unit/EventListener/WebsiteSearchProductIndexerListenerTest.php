@@ -18,7 +18,6 @@ use Oro\Component\Testing\Unit\EntityTrait;
 class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
-
     const NAME_DEFAULT_LOCALE = 'name default';
     const NAME_CUSTOM_LOCALE = 'name custom';
     const DESCRIPTION_DEFAULT_LOCALE = 'description default';
@@ -139,39 +138,36 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                 'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK
             ],
             IndexDataProvider::PLACEHOLDER_VALUES_KEY => [
-                'title' =>
-                    [
-                        new ValueWithPlaceholders(
-                            $this->prepareLocalizedValue($defaultLocale, self::NAME_DEFAULT_LOCALE, null),
-                            [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
-                        ),
-                        new ValueWithPlaceholders(
-                            $this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null),
-                            [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
-                        ),
-                    ],
-                'description' =>
-                    [
-                        new ValueWithPlaceholders(
-                            $this->prepareLocalizedValue($defaultLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
-                            [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
-                        ),
-                        new ValueWithPlaceholders(
-                            $this->prepareLocalizedValue($customLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
-                            [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
-                        ),
-                    ],
-                'short_desc' =>
-                    [
-                        new ValueWithPlaceholders(
-                            $this->prepareLocalizedValue($defaultLocale, null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE),
-                            [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
-                        ),
-                        new ValueWithPlaceholders(
-                            $this->prepareLocalizedValue($customLocale, null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE),
-                            [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
-                        ),
-                    ],
+                'title' => [
+                    new ValueWithPlaceholders(
+                        $this->prepareLocalizedValue($defaultLocale, self::NAME_DEFAULT_LOCALE, null),
+                        [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
+                    ),
+                    new ValueWithPlaceholders(
+                        $this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null),
+                        [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                    ),
+                ],
+                'description' => [
+                    new ValueWithPlaceholders(
+                        $this->prepareLocalizedValue($defaultLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
+                        [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
+                    ),
+                    new ValueWithPlaceholders(
+                        $this->prepareLocalizedValue($customLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
+                        [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                    ),
+                ],
+                'short_desc' => [
+                    new ValueWithPlaceholders(
+                        $this->prepareLocalizedValue($defaultLocale, null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE),
+                        [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
+                    ),
+                    new ValueWithPlaceholders(
+                        $this->prepareLocalizedValue($customLocale, null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE),
+                        [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                    ),
+                ],
             ]
         ];
 
