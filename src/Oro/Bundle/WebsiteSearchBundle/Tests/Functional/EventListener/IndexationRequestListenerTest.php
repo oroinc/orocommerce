@@ -13,7 +13,7 @@ use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 /**
  * @dbIsolation
  */
-class IndexationTriggeringListenerTest extends WebTestCase
+class IndexationRequestListenerTest extends WebTestCase
 {
     use UserUtilityTrait;
 

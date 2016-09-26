@@ -14,7 +14,7 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
 use Oro\Bundle\SearchBundle\EventListener\IndexationListenerTrait;
 
-class IndexationTriggeringListener implements OptionalListenerInterface
+class IndexationRequestListener implements OptionalListenerInterface
 {
     use IndexationListenerTrait;
     
