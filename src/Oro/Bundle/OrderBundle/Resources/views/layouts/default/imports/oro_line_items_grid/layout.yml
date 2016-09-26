@@ -13,7 +13,7 @@ layout:
                 __grid_container_head:
                     blockType: container
                     options:
-                        block_prefixes: ['order_head_block_container']
+                        additional_block_prefixes: ['order_head_block_container']
                 __grid_container_head_title:
                     blockType: text
                     options:
@@ -21,7 +21,7 @@ layout:
                 __grid_container_body:
                     blockType: container
                     options:
-                        block_prefixes: ['order_body_block_container']
+                        additional_block_prefixes: ['order_body_block_container']
             tree:
                 __root:
                     __grid_container:

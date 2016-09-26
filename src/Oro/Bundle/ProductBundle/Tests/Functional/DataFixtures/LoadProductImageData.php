@@ -45,6 +45,7 @@ class LoadProductImageData extends AbstractFixture implements DependentFixtureIn
 
             $productImage = new ProductImage();
             $productImage->setImage($image);
+            $productImage->addType(ProductImageType::TYPE_MAIN);
             $productImage->addType(ProductImageType::TYPE_LISTING);
 
             $product->addImage($productImage);
