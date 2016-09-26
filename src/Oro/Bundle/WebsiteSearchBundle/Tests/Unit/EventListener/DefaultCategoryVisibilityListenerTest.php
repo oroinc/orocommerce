@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Event;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+use Oro\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\DefaultCategoryVisibilityListener;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class DefaultCategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,14 +23,15 @@ class DefaultCategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
+        $this->eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
+            ->getMock();
         $this->listener = new DefaultCategoryVisibilityListener($this->eventDispatcher);
     }
 
-    public function testOnUpdateAfter()
+    public function testOnUpdateAfterWithChanges()
     {
         $event = new ConfigUpdateEvent([
-            DefaultCategoryVisibilityListener::CATEGORY_VISIBILITY_FIELD => [
+            CategoryVisibilityResolver::OPTION_CATEGORY_VISIBILITY => [
                 'new' => 'new',
                 'old' => 'old',
             ]
@@ -42,7 +45,7 @@ class DefaultCategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onUpdateAfter($event);
     }
 
-    public function testOnUpdateAfterEmpty()
+    public function testOnUpdateAfterWithoutChanges()
     {
         $event = new ConfigUpdateEvent([]);
 
