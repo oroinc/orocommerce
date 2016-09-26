@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
-class Topics
+final class Topics
 {
     const RESOLVE_PRICE_RULES = 'oro_pricing.price_rule.build';
     const RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS = 'oro_pricing.price_lists.resolve_assigned_products';

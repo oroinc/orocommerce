@@ -921,6 +921,8 @@ services:
             - '@oro_pricing.builder.product_price_builder'
             - '@logger'
             - '@doctrine'
+            - '@oro_pricing.notification_message.messenger'
+            - '@translator'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -930,6 +932,8 @@ services:
             - '@oro_pricing.price_list_trigger_factory'
             - '@oro_pricing.builder.price_list_product_assignment_builder'
             - '@logger'
+            - '@oro_pricing.notification_message.messenger'
+            - '@translator'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
