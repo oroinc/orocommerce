@@ -57,16 +57,16 @@ define(function(require) {
         /* Should be replaced to real shopping list collection */
         demoShoppingLists: [
             {
-                shopping_list_id: 1,
-                shopping_list_label: 'Shopping List 1'
+                id: 1,
+                label: 'Shopping List 1'
             },
             {
-                shopping_list_id: 2,
-                shopping_list_label: 'Shopping List 2'
+                id: 2,
+                label: 'Shopping List 2'
             },
             {
-                shopping_list_id: 3,
-                shopping_list_label: 'Meow List 1'
+                id: 3,
+                label: 'Meow List 1'
             }
         ],
 
@@ -144,7 +144,7 @@ define(function(require) {
             var shoppingLists = this.model.get('shopping_lists');
             shoppingLists = _.filter(shoppingLists, function(shoppingList, key) {
                 shoppingList.line_items = _.filter(shoppingList.line_items, function(lineItem) {
-                    return lineItem.line_item_id != deleteData.lineItemId;
+                    return lineItem.id != deleteData.lineItemId;
                 });
                 return !_.isEmpty(shoppingList.line_items);
             }, this);
@@ -217,14 +217,14 @@ define(function(require) {
                 var selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
 
                 if (selectedLineItem) {
-                    this.updateLineItem(selectedLineItem, selectedShoppingList.shopping_list_id, parseInt($popupPanelQty.val(), 10));
+                    this.updateLineItem(selectedLineItem, selectedShoppingList.id, parseInt($popupPanelQty.val(), 10));
                 }
                 else {
-                    this.saveLineItem(selectedShoppingList.shopping_list_id, this.getSelectedUnit(), parseInt($popupPanelQty.val(), 10));
+                    this.saveLineItem(selectedShoppingList.id, this.getSelectedUnit(), parseInt($popupPanelQty.val(), 10));
                 }
             }
             else {
-                this.saveLineItem(selectedShoppingList.shopping_list_id, this.getSelectedUnit(), parseInt($popupPanelQty.val(), 10));
+                this.saveLineItem(selectedShoppingList.id, this.getSelectedUnit(), parseInt($popupPanelQty.val(), 10));
             }
         },
 
@@ -260,7 +260,7 @@ define(function(require) {
 
         updateShoppingLists: function(shoppingLists, shoppingListId, lineItemId, newLineItem) {
             return _.map(shoppingLists, function(list) {
-                if (list.shopping_list_id === parseInt(shoppingListId, 10)) {
+                if (list.id === parseInt(shoppingListId, 10)) {
                     list.line_items = this.updateLineItems(list.line_items, lineItemId, newLineItem);
                 }
                 return list;
@@ -303,7 +303,7 @@ define(function(require) {
                 route: 'oro_api_shopping_list_frontend_put_line_item',
                 http_method: 'PUT',
                 default_route_parameters: {
-                    id: lineItem.line_item_id
+                    id: lineItem.id
                 }
             });
 
@@ -319,7 +319,7 @@ define(function(require) {
 
             updatePromise.done(_.bind(this.onLineItemUpdate, this, {
                 shoppingListId: shoppingListId,
-                lineItemId: lineItem.line_item_id,
+                lineItemId: lineItem.id,
                 value: modelData
             }))
             .fail(_.bind(this.onSaveError, this));
@@ -327,7 +327,7 @@ define(function(require) {
 
         updateLineItems: function(lineItems, lineItemId, newLineItem) {
             return _.map(lineItems, function(item) {
-                if (item.line_item_id === parseInt(lineItemId, 10)) {
+                if (item.id === parseInt(lineItemId, 10)) {
                     item.unit = newLineItem.unit;
                     item.quantity = newLineItem.quantity;
                 }
@@ -365,10 +365,10 @@ define(function(require) {
 
         getSelectedShoppingList: function() {
             var properties = {
-                shopping_list_id: this.getSelectedShoppingListId()
+                id: this.getSelectedShoppingListId()
             };
 
-            if (!properties.shopping_list_id) {
+            if (!properties.id) {
                 return;
             }
 

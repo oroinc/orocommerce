@@ -43,7 +43,7 @@
                         {count: lineItem.quantity},
                         lineItem.quantity
                     ),
-                    shoppingList: currentShoppingList.shopping_list_label
+                    shoppingList: currentShoppingList.label
             }) %></span>
         </div>
         <div class="shopping-lists__ui-row">
@@ -53,7 +53,7 @@
                             title="{{ 'Edit'|trans }}"
                             class="actions-row__button"
                             data-role="edit-line-item"
-                            data-line-item-id="<%= lineItem.line_item_id %>"
+                            data-line-item-id="<%= lineItem.id %>"
                     >
                         <i class="actions-row__icon cf-pencil"></i>
                     </button>
@@ -111,7 +111,7 @@
             <% _.each(shoppingLists, function(list) { %>
             <tr class="shopping-lists-popup__item">
                 <td class="shopping-lists-popup__list">
-                    <a class="shopping-lists-popup__link" href="#"><%= list.shopping_list_label %></a>
+                    <a class="shopping-lists-popup__link" href="#"><%= list.label %></a>
                 </td>
                 <td class="shopping-lists-popup__quantity">
                     <% var ListLineItems = list.line_items; %>
@@ -132,7 +132,7 @@
                                     },
                                     save_api_accessor: {
                                         default_route_parameters: {
-                                            id: '<%=lineItem.line_item_id %>'
+                                            id: '<%=lineItem.id %>'
                                         },
                                         route: 'oro_api_shopping_list_frontend_put_line_item'
                                     },
@@ -140,8 +140,8 @@
                                         showErrorsHandler: 'oroshoppinglist/js/shopping-list-item-errors-handler'
                                     },
                                     triggerData: {
-                                        lineItemId: '<%= lineItem.line_item_id %>',
-                                        shoppingListId: '<%= list.shopping_list_id %>'
+                                        lineItemId: '<%= lineItem.id %>',
+                                        shoppingListId: '<%= list.id %>'
                                     }
                                 }
                             })) }}>
@@ -170,10 +170,10 @@
                                                             options: {
                                                                 route: 'oro_api_shopping_list_frontend_delete_line_item',
                                                                 routeParams: {
-                                                                    id: '<%= lineItem.line_item_id %>'
+                                                                    id: '<%= lineItem.id %>'
                                                                 },
                                                                 triggerData: {
-                                                                    lineItemId: '<%= lineItem.line_item_id %>'
+                                                                    lineItemId: '<%= lineItem.id %>'
                                                                 },
                                                                 confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
                                                                 sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans,
@@ -246,7 +246,7 @@
                         <option value="0">Choose List</option>
                         <% if (!_.isEmpty(shoppingListsCollection)) { %>
                         <% _.each(shoppingListsCollection, function(list) { %>
-                        <option value="<%= list.shopping_list_id %>"><%= list.shopping_list_label %></option>
+                        <option value="<%= list.id %>"><%= list.label %></option>
                         <% }); %>
                         <% } %>
                     </select>
