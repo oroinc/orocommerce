@@ -43,7 +43,7 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
         $query = new Query();
         $query->from('oro_product_WEBSITE_ID');
         $query->select('recordTitle');
-        $query->getCriteria()->orderBy(['recordTitle' => Query::ORDER_ASC]);
+        $query->getCriteria()->orderBy(['recordId' => Query::ORDER_ASC]);
 
         $result = $searchEngine->search($query);
         $values = $result->getElements();

@@ -15,7 +15,6 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class AbstractIndexer implements IndexerInterface
 {
-    const BATCH_SIZE = 100;
     const CONTEXT_WEBSITE_ID_KEY = 'website_id';
 
     /** @var DoctrineHelper */
@@ -31,27 +30,30 @@ abstract class AbstractIndexer implements IndexerInterface
     protected $indexDataProvider;
 
     /** @var VisitorReplacePlaceholder */
-    protected $chainPlaceholder;
+    protected $visitorReplacePlaceholder;
+
+    /** @var int */
+    private $batchSize = 100;
 
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param WebsiteSearchMappingProvider $mappingProvider
      * @param EntityDependenciesResolverInterface $entityDependenciesResolver
      * @param IndexDataProvider $indexDataProvider
-     * @param VisitorReplacePlaceholder $chainPlaceholder
+     * @param VisitorReplacePlaceholder $visitorReplacePlaceholder
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         WebsiteSearchMappingProvider $mappingProvider,
         EntityDependenciesResolverInterface $entityDependenciesResolver,
         IndexDataProvider $indexDataProvider,
-        VisitorReplacePlaceholder $chainPlaceholder
+        VisitorReplacePlaceholder $visitorReplacePlaceholder
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->mappingProvider = $mappingProvider;
         $this->entityDependenciesResolver = $entityDependenciesResolver;
         $this->indexDataProvider = $indexDataProvider;
-        $this->chainPlaceholder = $chainPlaceholder;
+        $this->visitorReplacePlaceholder = $visitorReplacePlaceholder;
     }
 
     /**
@@ -157,7 +159,7 @@ abstract class AbstractIndexer implements IndexerInterface
 
             foreach ($entitiesByClass as $entityClass => $entities) {
                 $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
-                $currentAlias = $this->chainPlaceholder->replace(
+                $currentAlias = $this->visitorReplacePlaceholder->replace(
                     $entityAlias,
                     [WebsiteIdPlaceholder::NAME => $websiteContext[self::CONTEXT_WEBSITE_ID_KEY]]
                 );
@@ -198,7 +200,7 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     protected function reindexEntityClass($entityClass, array $context)
     {
-        $currentAlias = $this->chainPlaceholder->replace(
+        $currentAlias = $this->visitorReplacePlaceholder->replace(
             $this->mappingProvider->getEntityAlias($entityClass),
             [WebsiteIdPlaceholder::NAME => $context[self::CONTEXT_WEBSITE_ID_KEY]]
         );
@@ -212,7 +214,7 @@ abstract class AbstractIndexer implements IndexerInterface
         $queryBuilder->select("entity.$identifierName as id");
 
         $iterator = new BufferedQueryResultIterator($queryBuilder);
-        $iterator->setBufferSize(static::BATCH_SIZE);
+        $iterator->setBufferSize($this->getBatchSize());
 
         $itemsCount = 0;
         $entityIds = [];
@@ -221,14 +223,14 @@ abstract class AbstractIndexer implements IndexerInterface
         foreach ($iterator as $entity) {
             $entityIds[] = $entity['id'];
             $itemsCount++;
-            if (0 === $itemsCount % static::BATCH_SIZE) {
+            if (0 === $itemsCount % $this->getBatchSize()) {
                 $indexedItemsNum += $this->indexEntities($entityClass, $entityIds, $context, $temporaryAlias);
                 $entityIds = [];
                 $entityManager->clear($entityClass);
             }
         }
 
-        if ($itemsCount % static::BATCH_SIZE > 0) {
+        if ($itemsCount % $this->getBatchSize() > 0) {
             $indexedItemsNum += $this->indexEntities($entityClass, $entityIds, $context, $temporaryAlias);
             $entityManager->clear($entityClass);
         }
@@ -236,6 +238,22 @@ abstract class AbstractIndexer implements IndexerInterface
         $this->renameIndex($temporaryAlias, $currentAlias);
 
         return $indexedItemsNum;
+    }
+
+    /**
+     * @param int $batchSize
+     */
+    public function setBatchSize($batchSize)
+    {
+        $this->batchSize = $batchSize;
+    }
+
+    /**
+     * @return int
+     */
+    public function getBatchSize()
+    {
+        return $this->batchSize;
     }
 
     /**

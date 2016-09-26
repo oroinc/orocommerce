@@ -104,7 +104,7 @@ class OrmIndexer extends AbstractIndexer
         $entityAlias = null;
         if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
             $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
-            $entityAlias = $this->chainPlaceholder->replace(
+            $entityAlias = $this->visitorReplacePlaceholder->replace(
                 $entityAlias,
                 [WebsiteIdPlaceholder::NAME => $context[self::CONTEXT_WEBSITE_ID_KEY]]
             );

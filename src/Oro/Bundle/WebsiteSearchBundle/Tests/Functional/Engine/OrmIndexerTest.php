@@ -24,7 +24,6 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadOtherWebsite;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Stub\OrmIndexerStub;
 
 /**
  * @dbIsolationPerTest
@@ -259,15 +258,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->setEntityAliasExpectation(1, TestProduct::class, $this->mappingConfig[TestProduct::class]['alias']);
         $this->setClassSupportedExpectation(1, TestProduct::class, true);
         $this->setGetEntityConfigExpectation();
-
-        $this->indexer = new OrmIndexerStub(
-            $this->doctrineHelper,
-            $this->mappingProviderMock,
-            $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
-            $this->getContainer()->get('oro_website_search.provider.index_data'),
-            $this->getContainer()->get('oro_website_search.placeholder.visitor_replace')
-        );
-
+        $this->indexer->setBatchSize(2);
         $this->listener = $this->setListener();
         $this->indexer->reindex(
             TestProduct::class,

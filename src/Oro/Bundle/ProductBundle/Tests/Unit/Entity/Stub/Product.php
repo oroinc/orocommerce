@@ -6,6 +6,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product as BaseProduct;
 use Oro\Component\PropertyAccess\PropertyAccessor;
+
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class Product extends BaseProduct

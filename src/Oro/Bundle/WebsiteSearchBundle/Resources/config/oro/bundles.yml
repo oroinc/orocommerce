@@ -1,2 +1,2 @@
 bundles:
-    - Oro\Bundle\WebsiteSearchBundle\OroWebsiteSearchBundle
+    - { name: Oro\Bundle\WebsiteSearchBundle\OroWebsiteSearchBundle, priority: -255}

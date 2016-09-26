@@ -18,6 +18,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
+    
     const NAME_DEFAULT_LOCALE = 'name default';
     const NAME_CUSTOM_LOCALE = 'name custom';
     const DESCRIPTION_DEFAULT_LOCALE = 'description default';
