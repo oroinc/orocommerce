@@ -54,7 +54,7 @@ class DatabaseTransport implements TransportInterface
      */
     public function receive($channel, $receiverEntityFQCN = null, $receiverEntityId = null, $topic = null)
     {
-        $messages = $this->getRepository()->receiveMessages($channel, $receiverEntityFQCN, $receiverEntityId);
+        $messages = $this->getRepository()->receiveMessages($channel, $receiverEntityFQCN, $receiverEntityId, $topic);
         foreach ($messages as $messageEntity) {
             yield new Message(
                 $messageEntity->getChannel(),

@@ -7,10 +7,22 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 class FlashMessageRenderer implements RendererInterface
 {
+    const DEFAULT_STATUS = 'info';
+
     /**
      * @var FlashBagInterface
      */
     private $flashBag;
+
+    /**
+     * @var array
+     */
+    private static $statusMap = [
+        Message::STATUS_ERROR => 'error',
+        Message::STATUS_INFO => 'info',
+        Message::STATUS_SUCCESS => 'success',
+        Message::STATUS_WARNING => 'warning',
+    ];
 
     /**
      * @param FlashBagInterface $flashBag
@@ -25,6 +37,12 @@ class FlashMessageRenderer implements RendererInterface
      */
     public function render(Message $message)
     {
-        $this->flashBag->add($message->getStatus(), $message->getMessage());
+        if (array_key_exists($message->getStatus(), self::$statusMap)) {
+            $status = self::$statusMap[$message->getStatus()];
+        } else {
+            $status = self::DEFAULT_STATUS;
+        }
+
+        $this->flashBag->add($status, $message->getMessage());
     }
 }
