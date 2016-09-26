@@ -3,10 +3,12 @@
 namespace Oro\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use Doctrine\Common\Util\ClassUtils;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 abstract class AbstractProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
