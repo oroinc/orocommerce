@@ -23,14 +23,12 @@ class PriceRuleEntityListener
 
     /**
      * @param Cache $cache
-     * @param PriceListTriggerHandler $priceRuleChangeTriggerHandler
+     * @param PriceListTriggerHandler $priceListTriggerHandler
      */
-    public function __construct(
-        Cache $cache,
-        PriceListTriggerHandler $priceRuleChangeTriggerHandler
-    ) {
+    public function __construct(Cache $cache, PriceListTriggerHandler $priceListTriggerHandler)
+    {
         $this->cache = $cache;
-        $this->priceListTriggerHandler = $priceRuleChangeTriggerHandler;
+        $this->priceListTriggerHandler = $priceListTriggerHandler;
     }
 
     /**

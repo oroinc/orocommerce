@@ -21,6 +21,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\PhpUtils\ArrayUtil;
 
 /**
  * @dbIsolation
@@ -79,14 +80,14 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $expected = [
             [
-                $product1->getId(),
-                $priceList->getId(),
-                $unitLitre->getCode(),
-                'USD',
-                1,
-                $product1->getSku(),
-                $priceRule->getId(),
-                110,
+                'product' => $product1->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => $unitLitre->getCode(),
+                'currency' => 'USD',
+                'quantity' => 1,
+                'productSku' => $product1->getSku(),
+                'priceRule' => $priceRule->getId(),
+                'value' => 110,
             ],
         ];
         $qb = $this->getQueryBuilder($priceRule);
@@ -131,50 +132,50 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $expected = [
             [
-                $product1->getId(),
-                $priceList->getId(),
-                'bottle',
-                'EUR',
-                '6',
-                'product.1',
-                $priceRule->getId(),
-                '200.0000',
+                'product' => $product1->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => 'liter',
+                'currency' => 'EUR',
+                'quantity' => '6',
+                'productSku' => 'product.1',
+                'priceRule' => $priceRule->getId(),
+                'value' => '100.0000',
             ],
             [
-                $product1->getId(),
-                $priceList->getId(),
-                'bottle',
-                'USD',
-                '6',
-                'product.1',
-                $priceRule->getId(),
-                '122.0000',
+                'product' => $product1->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => 'liter',
+                'currency' => 'USD',
+                'quantity' => '6',
+                'productSku' => 'product.1',
+                'priceRule' => $priceRule->getId(),
+                'value' => '110.0000',
             ],
             [
-                $product1->getId(),
-                $priceList->getId(),
-                'liter',
-                'EUR',
-                '6',
-                'product.1',
-                $priceRule->getId(),
-                '100.0000',
+                'product' => $product1->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => 'bottle',
+                'currency' => 'USD',
+                'quantity' => '6',
+                'productSku' => 'product.1',
+                'priceRule' => $priceRule->getId(),
+                'value' => '122.0000',
             ],
             [
-                $product1->getId(),
-                $priceList->getId(),
-                'liter',
-                'USD',
-                '6',
-                'product.1',
-                $priceRule->getId(),
-                '110.0000',
-            ],
+                'product' => $product1->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => 'bottle',
+                'currency' => 'EUR',
+                'quantity' => '6',
+                'productSku' => 'product.1',
+                'priceRule' => $priceRule->getId(),
+                'value' => '200.0000',
+            ]
         ];
 
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEquals($expected, $actual);
     }
 
     public function testApplyRuleConditionsWithTwoBaseRelations()
@@ -222,21 +223,21 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $expected = [
             [
-                $product1->getId(),
-                $priceList->getId(),
-                'liter',
-                'USD',
-                1,
-                'product.1',
-                $priceRule->getId(),
-                '31.0000',
+                'product' => $product1->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => 'liter',
+                'currency' => 'USD',
+                'quantity' => 1,
+                'productSku' => 'product.1',
+                'priceRule' => $priceRule->getId(),
+                'value' => '31.0000'
             ],
         ];
 
 
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEquals($expected, $actual);
     }
 
     public function testApplyRuleConditionsWithExpressionsAndDefinedValues()
@@ -271,30 +272,30 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $expected = [
             [
-                $product1->getId(),
-                $priceList->getId(),
-                'bottle',
-                'EUR',
-                '6',
-                'product.1',
-                $priceRule->getId(),
-                '122.0000',
+                'product' => $product1->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => 'liter',
+                'currency' => 'EUR',
+                'quantity' => '6',
+                'productSku' => 'product.1',
+                'priceRule' => $priceRule->getId(),
+                'value' => '110.0000',
             ],
             [
-                $product1->getId(),
-                $priceList->getId(),
-                'liter',
-                'EUR',
-                '6',
-                'product.1',
-                $priceRule->getId(),
-                '110.0000',
+                'product' => $product1->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => 'bottle',
+                'currency' => 'EUR',
+                'quantity' => '6',
+                'productSku' => 'product.1',
+                'priceRule' => $priceRule->getId(),
+                'value' => '122.0000',
             ],
         ];
 
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        $this->assertEquals($expected, $actual);
     }
 
     public function testRestrictByManualPrices()
@@ -327,14 +328,14 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $expected = [
             [
-                $product1->getId(),
-                $priceList->getId(),
-                $unitLitre->getCode(),
-                'EUR',
-                1,
-                $product1->getSku(),
-                $priceRule->getId(),
-                420,
+                'product' => $product1->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => $unitLitre->getCode(),
+                'currency' => 'EUR',
+                'quantity' => 1,
+                'productSku' => $product1->getSku(),
+                'priceRule' => $priceRule->getId(),
+                'value' => 420,
             ],
         ];
 
@@ -363,14 +364,14 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $expected = [
             [
-                $product1->getId(),
-                $priceList->getId(),
-                $unitLitre->getCode(),
-                'EUR',
-                1,
-                $product1->getSku(),
-                $priceRule->getId(),
-                420,
+                'product' => $product1->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => $unitLitre->getCode(),
+                'currency' => 'EUR',
+                'quantity' => 1,
+                'productSku' => $product1->getSku(),
+                'priceRule' => $priceRule->getId(),
+                'value' => 420,
             ],
         ];
 
@@ -406,14 +407,14 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $expected = [
             [
-                $product2->getId(),
-                $priceList->getId(),
-                $unitLitre->getCode(),
-                'EUR',
-                1,
-                $product2->getSku(),
-                $priceRule->getId(),
-                200,
+                'product' => $product2->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => $unitLitre->getCode(),
+                'currency' => 'EUR',
+                'quantity' => 1,
+                'productSku' => $product2->getSku(),
+                'priceRule' => $priceRule->getId(),
+                'value' => 200,
             ],
         ];
         $actual = $this->getActualResult($qb);
@@ -439,14 +440,14 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $expected = [
             [
-                $product2->getId(),
-                $priceList->getId(),
-                $unit->getCode(),
-                'EUR',
-                1,
-                $product2->getSku(),
-                $priceRule->getId(),
-                10,
+                'product' => $product2->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => $unit->getCode(),
+                'currency' => 'EUR',
+                'quantity' => 1,
+                'productSku' => $product2->getSku(),
+                'priceRule' => $priceRule->getId(),
+                'value' => 10,
             ],
         ];
         $qb = $this->getQueryBuilder($priceRule);
@@ -491,14 +492,14 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $expected = [
             [
-                $product3->getId(),
-                $priceList->getId(),
-                $unitLitre->getCode(),
-                'USD',
-                1,
-                $product3->getSku(),
-                $priceRule->getId(),
-                10
+                'product' => $product3->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => $unitLitre->getCode(),
+                'currency' => 'USD',
+                'quantity' => 1,
+                'productSku' => $product3->getSku(),
+                'priceRule' => $priceRule->getId(),
+                'value' => 10,
             ],
         ];
         $qb = $this->getQueryBuilder($priceRule);
@@ -538,14 +539,14 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $expected = [
             [
-                $product3->getId(),
-                $priceList->getId(),
-                $unitLitre->getCode(),
-                'USD',
-                1,
-                $product3->getSku(),
-                $priceRule->getId(),
-                10
+                'product' => $product3->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => $unitLitre->getCode(),
+                'currency' => 'USD',
+                'quantity' => 1,
+                'productSku' => $product3->getSku(),
+                'priceRule' => $priceRule->getId(),
+                'value' => 10,
             ],
         ];
         $qb = $this->getQueryBuilder($priceRule);
@@ -585,14 +586,14 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $expected = [
             [
-                $product3->getId(),
-                $priceList->getId(),
-                $unitLitre->getCode(),
-                'USD',
-                1,
-                $product3->getSku(),
-                $priceRule->getId(),
-                10
+                'product' => $product3->getId(),
+                'priceList' => $priceList->getId(),
+                'unit' => $unitLitre->getCode(),
+                'currency' => 'USD',
+                'quantity' => 1,
+                'productSku' => $product3->getSku(),
+                'priceRule' => $priceRule->getId(),
+                'value' => 10,
             ],
         ];
         $qb = $this->getQueryBuilder($priceRule);
@@ -663,14 +664,8 @@ class PriceListRuleCompilerTest extends WebTestCase
      */
     protected function getActualResult(QueryBuilder $qb)
     {
-        $actual = $qb->getQuery()->getArrayResult();
-        $actual = array_map(
-            function (array $value) {
-                return array_values($value);
-            },
-            $actual
-        );
-
+        $actual = $qb->getQuery()->getResult();
+        ArrayUtil::sortBy($actual, false, 'value');
         return $actual;
     }
 
