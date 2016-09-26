@@ -382,6 +382,23 @@ services:
         tags:
             - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_product.entity.product.class%'}
 
+    oro_product.event_listener.website_search_index:
+        class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
+
+    oro_product.event_listener.restrict_index_products:
+        class: 'Oro\Bundle\ProductBundle\EventListener\RestrictIndexProductsEventListener'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_product.model.product_visibility_query_builder_modifier'
+            - 'oro_product.general_frontend_product_visibility'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.restrict_index_entity.product, method: onRestrictIndexEntityEvent }
+
     oro_product.layout.data_provider.featured_products:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
         arguments:

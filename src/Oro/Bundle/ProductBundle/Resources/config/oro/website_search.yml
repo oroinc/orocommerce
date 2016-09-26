@@ -1,0 +1,27 @@
+Oro\Bundle\ProductBundle\Entity\Product:
+    alias: oro_product_product_WEBSITE_ID
+    fields:
+        -
+            name: title_LOCALIZATION_ID
+            type: text
+        -
+            name: sku
+            type: text
+        -
+            name: description_LOCALIZATION_ID
+            type: text
+        -
+            name: short_desc_LOCALIZATION_ID
+            type: text
+        -
+            name: minimum_price
+            type: decimal
+        -
+            name: is_visible_by_default
+            type: integer
+        -
+            name: visibility_anonymous
+            type: integer
+        -
+            name: visibility_new
+            type: integer

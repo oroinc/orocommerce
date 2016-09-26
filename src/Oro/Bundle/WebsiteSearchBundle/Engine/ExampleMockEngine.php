@@ -53,7 +53,7 @@ class ExampleMockEngine implements EngineV2Interface
      * @param array $context
      * @return Result
      */
-    public function search(Query $query, $context = [])
+    public function search(Query $query, array $context = [])
     {
         $event = new BeforeSearchEvent($query);
         $this->eventDispatcher->dispatch(BeforeSearchEvent::EVENT_NAME, $event);
