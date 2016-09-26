@@ -5,6 +5,7 @@ namespace Oro\Bundle\FrontendNavigationBundle\Provider;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate;
 use Oro\Bundle\FrontendNavigationBundle\Entity\Repository\MenuUpdateRepository;
 use Oro\Bundle\NavigationBundle\Provider\AbstractMenuUpdateProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -35,19 +36,23 @@ class MenuUpdateProvider extends AbstractMenuUpdateProvider
     /**
      * {@inheritdoc}
      */
-    public function getUpdates($menu)
+    public function getUpdates($menu, $ownershipType)
     {
+        /** @var MenuUpdateRepository $repository */
+        $repository = $this->doctrineHelper->getEntityRepository('OroFrontendNavigationBundle:MenuUpdate');
+
         $organization = $this->getCurrentOrganization();
         $accountUser = $this->getCurrentAccountUser();
         $account = $this->getCurrentAccount($accountUser);
         $website = $this->websiteManager->getCurrentWebsite();
 
-        /** @var MenuUpdateRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository('OroFrontendNavigationBundle:MenuUpdate');
-
-        $updates = $repository->getUpdates($menu, $organization, $account, $accountUser, $website);
-
-        return $updates;
+        if ($ownershipType == MenuUpdate::OWNERSHIP_ORGANIZATION) {
+            return $repository->getUpdates($menu, $organization, null, null, $website);
+        } elseif ($ownershipType == MenuUpdate::OWNERSHIP_ACCOUNT) {
+            return $repository->getUpdates($menu, $organization, $account, null, $website);
+        } else {
+            return $repository->getUpdates($menu, $organization, $account, $accountUser, $website);
+        }
     }
 
     /**

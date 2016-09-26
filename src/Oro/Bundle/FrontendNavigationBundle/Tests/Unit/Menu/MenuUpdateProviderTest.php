@@ -5,6 +5,7 @@ namespace Oro\Bundle\FrontendNavigationBundle\Tests\Unit\Menu;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate;
 use Oro\Bundle\FrontendNavigationBundle\Provider\MenuUpdateProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -98,6 +99,8 @@ class MenuUpdateProviderTest extends \PHPUnit_Framework_TestCase
             ->with(self::MENU, $organization, $account, $accountUser, $website)
             ->willReturn([$update]);
 
-        $this->assertEquals([$update], $this->provider->getUpdates('user_menu'));
+        $updates = $this->provider->getUpdates(self::MENU, MenuUpdate::OWNERSHIP_ACCOUNT_USER);
+
+        $this->assertEquals([$update], $updates);
     }
 }
