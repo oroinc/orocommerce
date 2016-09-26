@@ -38,12 +38,16 @@ class ShippingRuleRepository extends EntityRepository
             ->getQuery()->execute();
     }
 
-    public function getRulesWithoutShippingMethods($enabled = false)
+    /**
+     * @param bool $onlyEnabled
+     * @return mixed
+     */
+    public function getRulesWithoutShippingMethods($onlyEnabled = false)
     {
         $qb = $this->createQueryBuilder('rule')
             ->select('rule.id')
             ->leftJoin('rule.methodConfigs', 'methodConfigs');
-        if ($enabled) {
+        if ($onlyEnabled) {
             $qb->andWhere('rule.enabled = true');
         }
         return $qb->having('COUNT(methodConfigs.id) = 0')
@@ -54,14 +58,14 @@ class ShippingRuleRepository extends EntityRepository
     public function disableRulesWithoutShippingMethods()
     {
         $rules = $this->getRulesWithoutShippingMethods(true);
-        $final = array_column($rules, 'id');
+        $enabledRulesIds = array_column($rules, 'id');
         if (0 < count($rules)) {
             $qb = $this->createQueryBuilder('rule');
             $qb->update()
                 ->set('rule.enabled', ':newValue')
                 ->setParameter('newValue', false)
                 ->where($qb->expr()->in('rule.id', ':rules'))
-                ->setParameter('rules', $final)
+                ->setParameter('rules', $enabledRulesIds)
                 ->getQuery()->execute();
         }
     }

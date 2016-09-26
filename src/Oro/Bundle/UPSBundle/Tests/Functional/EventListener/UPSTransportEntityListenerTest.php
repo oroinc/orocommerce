@@ -3,7 +3,6 @@
 namespace Oro\Bundle\UPSBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;

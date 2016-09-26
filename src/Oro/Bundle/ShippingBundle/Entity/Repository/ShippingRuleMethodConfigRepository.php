@@ -4,8 +4,6 @@ namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
-
 class ShippingRuleMethodConfigRepository extends EntityRepository
 {
     /**

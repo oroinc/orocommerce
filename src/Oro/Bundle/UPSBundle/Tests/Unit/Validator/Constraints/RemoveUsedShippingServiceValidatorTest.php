@@ -4,7 +4,6 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Validator\Constraints;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
@@ -15,7 +14,6 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingService;
 use Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator;
-
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 

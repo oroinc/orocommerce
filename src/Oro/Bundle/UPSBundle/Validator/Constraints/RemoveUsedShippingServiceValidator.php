@@ -4,7 +4,6 @@ namespace Oro\Bundle\UPSBundle\Validator\Constraints;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
@@ -13,7 +12,6 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Component\PropertyAccess\PropertyAccessor;
-
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -199,7 +197,7 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
     protected function getFormPath()
     {
         $path = $this->context->getPropertyPath();
-        $path = str_replace(['children', '.'], ['', ''], $path);
+        $path = str_replace(['children', '.'], '', $path);
         $path = preg_replace('/\][^\]]*$/', ']', $path);
         return $path;
     }

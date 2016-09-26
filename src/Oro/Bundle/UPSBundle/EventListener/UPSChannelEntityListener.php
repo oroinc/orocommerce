@@ -6,8 +6,6 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Oro\Bundle\UPSBundle\Provider\ChannelType;
 
 class UPSChannelEntityListener
 {
