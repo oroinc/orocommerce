@@ -88,18 +88,13 @@ services:
         arguments:
             - '@oro_website_search.loader.mapping_configuration_cache_loader'
 
-    oro_website_search.mock.engine:
-        class: Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
-        arguments:
-            - '@doctrine.orm.entity_manager'
-
     oro_website_search.query_factory:
         decorates: oro_search.query_factory
         class: Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
         arguments:
             - '@oro_website_search.query_factory.inner'
             - '@event_dispatcher'
-            - '@oro_website_search.mock.engine'
+            - '@oro_website_search.engine'
 
     oro_website_search.select_data.listener:
         class: Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
