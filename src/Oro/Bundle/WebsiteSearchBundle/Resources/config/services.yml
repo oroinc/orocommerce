@@ -5,7 +5,7 @@ parameters:
     oro_website_search.query_factory.class:            Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
     oro_website_search.select_data.listener.class:     Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
     oro_website_search.reindex_request.listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener
-
+    oro_website.indexation_triggering_listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\IndexationTriggeringListener
 services:
     oro_website_search.resolver.query_placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver'
@@ -137,3 +137,14 @@ services:
             - ~ # async indexer
         tags:
             - { name: kernel.event_listener, event: oro_website_search.reindexation_trigger, method: process }
+
+    oro_website.indexation_triggering_listener:
+        class: %oro_website.indexation_triggering_listener.class%
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_search.provider.search_mapping'
+            - '@event_dispatcher'
+            - '@oro_website.manager'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
