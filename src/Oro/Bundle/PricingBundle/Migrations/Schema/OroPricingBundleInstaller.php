@@ -67,6 +67,7 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
         $this->createOroriceListToProductTable($schema);
         $this->createOroPriceRuleTable($schema);
         $this->createOroPriceRuleLexemeTable($schema);
+        $this->createOroNotificationMessageTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroPriceListCurrencyForeignKeys($schema);
@@ -1015,6 +1016,29 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
         $table->addColumn('class_name', 'string', ['length' => 255]);
         $table->addColumn('field_name', 'string', ['length' => 255]);
         $table->addColumn('relation_id', 'integer', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create oro_notification_message table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroNotificationMessageTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_notification_message');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('message', 'text', []);
+        $table->addColumn('message_status', 'string', ['length' => 255]);
+        $table->addColumn('channel', 'string', ['length' => 255]);
+        $table->addColumn('receiver_entity_fqcn', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('receiver_entity_id', 'integer', ['notnull' => false]);
+        $table->addColumn('is_resolved', 'boolean', []);
+        $table->addColumn('resolved_at', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('topic', 'string', ['length' => 255]);
+        $table->addIndex(['channel', 'topic'], 'oro_notif_msg_channel', []);
+        $table->addIndex(['receiver_entity_fqcn', 'receiver_entity_id'], 'oro_notif_msg_entity', []);
         $table->setPrimaryKey(['id']);
     }
 
