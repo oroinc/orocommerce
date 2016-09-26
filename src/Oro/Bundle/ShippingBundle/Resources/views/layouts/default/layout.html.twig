@@ -9,9 +9,11 @@
                     {% for name, method in methods if methods is defined and method is iterable %}
 
                         {% if method.types is defined and method.types|length > 0 %}
+                            <div class="fs13 method_title">
                             {% if method.isGrouped %}
                                 <span class="checkbox_custom__text fs13">{{ method.label|trans }}</span>
                             {% endif %}
+                            </div>
                             {% for type in method.types if method.types is defined and type is iterable %}
                                 {% if type.price %}
                                     {% set selected = currentShippingMethodType == type.identifier %}
