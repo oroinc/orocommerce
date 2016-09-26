@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Oro\Bundle\ProductBundle\Event\ProductSearchRestrictionEvent;
+use Oro\Bundle\ProductBundle\Event\ProductSearchQueryEvent;
 use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -49,8 +49,8 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
 
         if (!self::$listenerInitialized) {
             $this->eventDispatcher->addListener(
-                ProductSearchRestrictionEvent::NAME,
-                function (ProductSearchRestrictionEvent $event) {
+                ProductSearchQueryEvent::NAME,
+                function (ProductSearchQueryEvent $event) {
                     $expr = Criteria::expr();
 
                     $event->getQuery()->getCriteria()->andWhere($expr->eq('name', self::$testValue));
@@ -76,18 +76,18 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
 
         if ($where instanceof CompositeExpression) {
             foreach ($where->getExpressionList() as $expr) {
-                if (($expr->getField() == 'sku') && ($expr->getValue()->getValue() == null)) {
+                if (($expr->getField() === 'sku') && ($expr->getValue()->getValue() === null)) {
                     $foundSkuExpression = true;
                 }
 
-                if (($expr->getField() == 'name') && ($expr->getValue()->getValue() == self::$testValue)) {
+                if (($expr->getField() === 'name') && ($expr->getValue()->getValue() === self::$testValue)) {
                     $foundCustomExpression = true;
                 }
             }
         }
 
         if ($where instanceof Comparison) {
-            if (($where->getField() == 'name') && ($where->getValue()->getValue() == self::$testValue)) {
+            if (($where->getField() === 'name') && ($where->getValue()->getValue() === self::$testValue)) {
                 $foundCustomExpression = true;
             }
         }
@@ -111,11 +111,11 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
 
         if ($where instanceof CompositeExpression) {
             foreach ($where->getExpressionList() as $expr) {
-                if (($expr->getField() == 'sku') && ($expr->getValue()->getValue() == null)) {
+                if (($expr->getField() === 'sku') && ($expr->getValue()->getValue() === null)) {
                     $foundSkuExpression = true;
                 }
 
-                if (($expr->getField() == 'name') && ($expr->getValue()->getValue() == self::$testValue)) {
+                if (($expr->getField() === 'name') && ($expr->getValue()->getValue() === self::$testValue)) {
                     $foundCustomExpression = true;
                 }
             }
@@ -143,11 +143,11 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
             foreach ($where->getExpressionList() as $mainExpr) {
                 if ($mainExpr instanceof CompositeExpression) {
                     foreach ($mainExpr->getExpressionList() as $expr) {
-                        if (($expr->getField() == 'sku') && ($expr->getValue()->getValue() == null)) {
+                        if (($expr->getField() === 'sku') && ($expr->getValue()->getValue() === null)) {
                             $foundSkuExpression = true;
                         }
 
-                        if (($expr->getField() == 'name') && ($expr->getValue()->getValue() == self::$testValue)) {
+                        if (($expr->getField() === 'name') && ($expr->getValue()->getValue() === self::$testValue)) {
                             $foundCustomExpression = true;
                         }
                     }

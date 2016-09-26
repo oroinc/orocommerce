@@ -10,8 +10,6 @@ use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
-use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\SearchBundle\Query\Criteria\ExpressionBuilder;
 
 class QueryFactory implements QueryFactoryInterface
 {

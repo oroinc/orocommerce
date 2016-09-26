@@ -6,7 +6,6 @@ use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Event\BeforeSearchEvent;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
-use Oro\Bundle\SearchBundle\Query\Criteria\ExpressionBuilder;
 use Oro\Bundle\SearchBundle\Query\Query;
 
 class ProductVisibilityRestrictionListener
@@ -41,7 +40,7 @@ class ProductVisibilityRestrictionListener
     private function applyQueryRestrictions(Query $query)
     {
         if ($query->getFrom() == [Product::class]) {
-            $this->productManager->restrictSearchEngineQuery($query);
+            $this->productManager->restrictSearchQuery($query);
 
             return;
         }
@@ -49,7 +48,7 @@ class ProductVisibilityRestrictionListener
         $queryToModify = new Query();
         $queryToModify->from([Product::class]);
 
-        $this->productManager->restrictSearchEngineQuery($queryToModify);
+        $this->productManager->restrictSearchQuery($queryToModify);
 
         $restrictions = $queryToModify->getCriteria()->getWhereExpression();
 
