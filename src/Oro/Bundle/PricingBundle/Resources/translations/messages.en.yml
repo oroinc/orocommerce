@@ -241,8 +241,8 @@ oro.pricing:
     notification:
         price_list:
             error:
-                product_assignment_build: 'Error occured during price list product assignments build'
-                price_rule_build: 'Error occured during price rule build'
+                product_assignment_build: 'Error occurred during price list product assignments build'
+                price_rule_build: 'Error occurred during price rule build'
 
 oro:
     importexport:
