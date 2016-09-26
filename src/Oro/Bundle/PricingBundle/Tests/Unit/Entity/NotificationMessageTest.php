@@ -24,4 +24,15 @@ class NotificationMessageTest extends \PHPUnit_Framework_TestCase
             ['createdAt', new \DateTime()]
         ]);
     }
+
+    public function testSetResolved()
+    {
+        $message = new NotificationMessage();
+        $this->assertFalse($message->isResolved());
+        $this->assertNull($message->getResolvedAt());
+
+        $message->setResolved(true);
+        $this->assertTrue($message->isResolved());
+        $this->assertInstanceOf(\DateTime::class, $message->getResolvedAt());
+    }
 }
