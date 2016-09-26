@@ -48,12 +48,6 @@ define([
          *
          * @property {RegExp}
          */
-        wrappedSectionRegExp: /\(\s*(\S+)\s*\)/gi,
-
-        /**
-         *
-         * @property {RegExp}
-         */
         bracketsRegExp: /(\(|\))/gi,
 
         /**
@@ -72,7 +66,7 @@ define([
             var _this = this;
 
             this.$element.on('keyup paste change', function() {
-                _this.$element.toggleClass('error', !_this.validate(_this.$element.val(), _this.options));
+                _this.$element.toggleClass('error', !_this.validate(_this.$element.val()));
             });
 
             this.initAutocomplete();
@@ -84,23 +78,19 @@ define([
          * @returns {Boolean}
          */
         validate: function(value) {
-            if (value === '') {
+            if (_.isEmpty(value)) {
                 return true;
+            }
+
+            if (!this.validateBrackets(value)) {
+                return false;
             }
 
             var _this = this;
 
             var normalized = this.getNormalized(value, this.opsRegEx);
-
-            console.log('validate normalized', normalized);
-
-            // var hasBrackets = normalized.string.match(this.bracketsRegExp);
-
-            // console.log(hasBrackets, normalized);
-
             var words = this.splitString(normalized.string, ' ');
             var groups = this.getGroups(words);
-
 
             var logicIsValid = _.last(groups.logicWords) !== _.last(words) && _.every(groups.logic, function(item) {
                     return _this.contains(this.options.grouping, item);
@@ -167,6 +157,28 @@ define([
 
         /**
          *
+         * @param value {String}
+         * @returns {Boolean}
+         */
+        validateBrackets: function(value) {
+            var nestingLevel = 0;
+
+            _.each(value, function(char) {
+                if (nestingLevel >= 0) {
+                    if (char === '(') {
+                        nestingLevel++;
+                    }
+                    if (char === ')') {
+                        nestingLevel--;
+                    }
+                }
+            });
+
+            return nestingLevel === 0;
+        },
+
+        /**
+         *
          * @param query
          * @param item
          * @param position
@@ -207,9 +219,9 @@ define([
 
         /**
          *
-         * @param value {String}
-         * @param position {Number}
-         * @returns {{start: *, end: *, index: number, spaces: array}}
+         * @param value
+         * @param position
+         * @returns {{start: number, end: *}}
          */
         getWordPosition: function(value, position) {
             var index = 0;
@@ -218,7 +230,7 @@ define([
                 end: position
             };
             var separatorsPositions = _.compact(value.split('').map(function(char, i) {
-                return (/^\s$/.test(char)) ? i + 1 : null;
+                return (/^(\s|\(|\))$/.test(char)) ? i + 1 : null;
             }));
 
 
@@ -249,8 +261,6 @@ define([
         getSuggestList: function(normalized, wordUnderCaret) {
             var result = [];
             var _this = this;
-
-            console.log('suggest normalized', normalized, wordUnderCaret);
 
             if (_.isEmpty(normalized.string)) { // initial suggestion for empty normalized value
                 return this.dataWordCases;
@@ -297,7 +307,7 @@ define([
         /**
          *
          * @param string
-         * @returns {Boolean}
+         * @returns {*}
          */
         isDataExpression: function(string) {
             var expressionMatch = string.match(this.opsRegEx);
@@ -310,12 +320,12 @@ define([
             var isValidWord = this.contains(this.dataWordCases, matchSplit[0]);
             var pathValue = this.getValueByPath(this.options.data, matchSplit[0]);
 
-            var isPresentInCases = !_.isEmpty(matchSplit[1]) && this.contains(pathValue, matchSplit[1]);
+            var hasInCases = !_.isEmpty(matchSplit[1]) && this.contains(pathValue, matchSplit[1]);
 
             var arrayValues = matchSplit[1] ? matchSplit[1].split(',') : [];
             var isArrayValues = pathValue.type === 'array' && !_.isEmpty(arrayValues).length && !_.isEmpty(_.last(arrayValues));
 
-            var isValidValue = !_.isEmpty(matchSplit[1]) && (pathValue === 'any' || isPresentInCases || isArrayValues);
+            var isValidValue = !_.isEmpty(matchSplit[1]) && (pathValue === 'any' || hasInCases || isArrayValues);
 
             var isFullValid = isValidWord && isValidValue;
 
@@ -337,16 +347,9 @@ define([
             var hasCutPosition = !_.isUndefined(caretPosition);
             var string = hasCutPosition ? this.getStringPart(value, 0, caretPosition) : value;
 
-            string = string.replace(/\s*\,\s*/g, ',');
+            string = string.replace(/\s*,\s*/g, ',');
             string = string.replace(regex, '$1');
-
-            if (hasCutPosition) {
-                string = string.replace(this.bracketsRegExp, '');
-            } else {
-                string = string.replace(this.wrappedSectionRegExp, '$1');
-            }
-
-            string = string.replace(this.wrappedSectionRegExp, '$1');
+            string = string.replace(this.bracketsRegExp, ' ');
             string = string.replace(/\s+/g, ' ');
             string = string.trim();
 
@@ -363,7 +366,7 @@ define([
          * @returns {*}
          */
         getFilteredSuggests: function(list, word) {
-            if (_.isEmpty(word)) {
+            if (_.isEmpty(word) || _.isEmpty(list)) {
                 return list;
             }
 
@@ -469,6 +472,10 @@ define([
             }
         },
         contains: function(arr, value) {
+            if (!_.isArray(arr)) {
+                return false;
+            }
+
             return _.some(arr, function(item) {
                 return value.toLowerCase() === item.toLowerCase();
             });
