@@ -33,13 +33,6 @@ class MenuUpdateRepository extends EntityRepository
         $qb = $this->createQueryBuilder('mu')
             ->leftJoin('mu.website', 'ws');
 
-        $exprs = [
-            $qb->expr()->andX(
-                $qb->expr()->eq('mu.ownershipType', MenuUpdate::OWNERSHIP_GLOBAL),
-                $qb->expr()->isNull('mu.ownerId')
-            )
-        ];
-
         if ($organization !== null) {
             $exprs[] = $qb->expr()->andX(
                 $qb->expr()->eq('mu.ownershipType', MenuUpdate::OWNERSHIP_ORGANIZATION),

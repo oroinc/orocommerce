@@ -47,13 +47,6 @@ class LoadMenuUpdateData extends AbstractFixture implements
                 'url' => '/profile',
             ],
             [
-                'ownershipType' => MenuUpdate::OWNERSHIP_GLOBAL,
-                'ownerId' => null,
-                'key' => 'shipping_lists',
-                'parentKey' => 'profile',
-                'url' => '/shipping-lists',
-            ],
-            [
                 'ownershipType' => MenuUpdate::OWNERSHIP_ACCOUNT_USER,
                 'ownerId' => $this->getReference(LoadAccountUserData::EMAIL)->getId(),
                 'key' => 'orders',
