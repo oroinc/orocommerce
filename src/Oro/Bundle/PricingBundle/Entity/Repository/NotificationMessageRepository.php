@@ -50,6 +50,7 @@ class NotificationMessageRepository extends EntityRepository
     {
         $criteria = [
             'channel' => $channel,
+            'resolved' => false
         ];
         if ($topic) {
             $criteria['topic'] = $topic;

@@ -96,7 +96,7 @@ class NotificationMessage implements CreatedAtAwareInterface
      *
      * @ORM\Column(name="is_resolved", type="boolean")
      */
-    protected $resolved;
+    protected $resolved = false;
 
     /**
      * @var \DateTime
