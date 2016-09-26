@@ -7,6 +7,7 @@ define(function(require) {
     var ApiAccessor = require('oroui/js/tools/api-accessor');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
+    var Error = require('oroui/js/error');
     var __ = require('orotranslation/js/translator');
     var _ = require('underscore');
     var $ = require('jquery');
@@ -20,8 +21,17 @@ define(function(require) {
                 resizable: false,
                 width: 580,
                 autoResize: true
+            },
+            update_api_accessor: {
+                http_method: 'PUT',
+                route: 'oro_api_shopping_list_frontend_put_line_item'
             }
         }),
+
+        messages: {
+            processingMessage: __('oro.form.inlineEditing.saving_progress'),
+            preventWindowUnload: __('oro.form.inlineEditing.inline_edits')
+        },
 
         elements: {
             edit: '[data-role="edit"]',
@@ -170,14 +180,14 @@ define(function(require) {
         },
 
         onPopupPanelReset: function() {
-            var $form = $(this.elements.popupPanelForm, this.$el);
+            var $form = this.getElement('popupPanelForm');
 
             $form[0].reset();
             $form.find('select').inputWidget('refresh');
         },
 
         onPopupPanelShoppingListChange: function(e) {
-            var $popupPanelQty = $(this.elements.popupPanelQty, this.$el);
+            var $popupPanelQty = this.getElement('popupPanelQty');
             var selectedShoppingList = this.getSelectedShoppingList();
 
             $popupPanelQty.val(1);
@@ -189,7 +199,7 @@ define(function(require) {
         },
 
         onPopupPanelUnitChange: function(e) {
-            var $popupPanelQty = $(this.elements.popupPanelQty, this.$el);
+            var $popupPanelQty = this.getElement('popupPanelQty');
             var selectedShoppingList = this.getSelectedShoppingList();
             var selectedUnit = this.getSelectedUnit();
 
@@ -205,7 +215,7 @@ define(function(require) {
         },
 
         onPopupPanelAccept: function() {
-            var $popupPanelQty = $(this.elements.popupPanelQty, this.$el);
+            var $popupPanelQty = this.getElement('popupPanelQty');
             var selectedShoppingList = this.getSelectedShoppingList();
             var selectedUnit = this.getSelectedUnit();
 
@@ -218,20 +228,16 @@ define(function(require) {
 
                 if (selectedLineItem) {
                     this.updateLineItem(selectedLineItem, selectedShoppingList.shopping_list_id, parseInt($popupPanelQty.val(), 10));
-                }
-                else {
+                } else {
                     this.saveLineItem(selectedShoppingList.shopping_list_id, this.getSelectedUnit(), parseInt($popupPanelQty.val(), 10));
                 }
-            }
-            else {
+            } else {
                 this.saveLineItem(selectedShoppingList.shopping_list_id, this.getSelectedUnit(), parseInt($popupPanelQty.val(), 10));
             }
         },
 
         onSaveError: function(jqXHR) {
             var errorCode = 'responseJSON' in jqXHR ? jqXHR.responseJSON.code : jqXHR.status;
-
-            this.restoreSavedState();
 
             var errors = [];
             switch (errorCode) {
@@ -269,7 +275,7 @@ define(function(require) {
 
         saveLineItem: function(shoppingListId, lineItemUnit, newQty) {
             var urlOptions = {};
-            var formData = $(this.elements.popupPanelForm, this.$el).serialize();
+            var formData = this.getElement('popupPanelForm').serialize();
             
             if (this.model) {
                 urlOptions.productId = this.model.get('id');
@@ -299,13 +305,11 @@ define(function(require) {
         },
 
         updateLineItem: function(lineItem, shoppingListId, newQty) {
-            var updateApiAccessor = new ApiAccessor({
-                route: 'oro_api_shopping_list_frontend_put_line_item',
-                http_method: 'PUT',
+            var updateApiAccessor = new ApiAccessor(_.extend(this.options.update_api_accessor, {
                 default_route_parameters: {
                     id: lineItem.line_item_id
                 }
-            });
+            }));
 
             var modelData = {
                 quantity: newQty,
@@ -313,16 +317,17 @@ define(function(require) {
             };
             
             var updatePromise = updateApiAccessor.send(modelData, {oro_product_frontend_line_item: modelData}, {}, {
-                processingMessage: __('oro.form.inlineEditing.saving_progress'),
-                preventWindowUnload: __('oro.form.inlineEditing.inline_edits')
+                processingMessage: this.messages.processingMessage,
+                preventWindowUnload: this.messages.preventWindowUnload
             });
 
-            updatePromise.done(_.bind(this.onLineItemUpdate, this, {
-                shoppingListId: shoppingListId,
-                lineItemId: lineItem.line_item_id,
-                value: modelData
-            }))
-            .fail(_.bind(this.onSaveError, this));
+            updatePromise
+                .done(_.bind(this.onLineItemUpdate, this, {
+                    shoppingListId: shoppingListId,
+                    lineItemId: lineItem.line_item_id,
+                    value: modelData
+                }))
+                .fail(_.bind(this.onSaveError, this));
         },
 
         updateLineItems: function(lineItems, lineItemId, newLineItem) {
@@ -360,7 +365,7 @@ define(function(require) {
         },
 
         getSelectedShoppingListId: function() {
-            return parseInt($(this.elements.popupPanelShoppingList, this.$el).val(), 10) || 0;
+            return parseInt(this.getElement('popupPanelShoppingList').val(), 10) || 0;
         },
 
         getSelectedShoppingList: function() {
@@ -376,11 +381,11 @@ define(function(require) {
         },
 
         getSelectedUnit: function() {
-            return $(this.elements.popupPanelUnit, this.$el).val();
+            return this.getElement('popupPanelUnit').val();
         },
 
         setSelectedUnit: function(unit) {
-            $(this.elements.popupPanelUnit, this.$el).val(unit).inputWidget('refresh');
+            this.getElement('popupPanelUnit').val(unit).inputWidget('refresh');
         },
 
         edit: function(e) {

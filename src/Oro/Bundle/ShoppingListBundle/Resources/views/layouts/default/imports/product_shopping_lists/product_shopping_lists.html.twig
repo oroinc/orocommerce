@@ -243,7 +243,7 @@
             <form method="post" class="shopping-lists-popup__item" data-role="popup-panel-form">
                 <div class="shopping-lists-popup__list">
                     <select class="oro-select2 oro-select2--size-s" name="list" data-role="popup-panel-shopping-list">
-                        <option value="0">Choose List</option>
+                        <option value="0">{{ 'oro.shoppinglist.actions.choose_list'|trans }}</option>
                         <% if (!_.isEmpty(shoppingListsCollection)) { %>
                         <% _.each(shoppingListsCollection, function(list) { %>
                         <option value="<%= list.shopping_list_id %>"><%= list.shopping_list_label %></option>
