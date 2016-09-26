@@ -3,12 +3,12 @@
 namespace Oro\Bundle\ProductBundle\Entity\Manager;
 
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryEvent;
+use Oro\Bundle\SearchBundle\Query\Query;
 
 class ProductManager
 {
