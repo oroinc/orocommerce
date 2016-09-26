@@ -4,9 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
-use Doctrine\ORM\UnitOfWork;
 use Doctrine\Common\Util\ClassUtils;
-use Oro\Bundle\SearchBundle\EventListener\IndexationListenerTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
@@ -14,6 +12,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+use Oro\Bundle\SearchBundle\EventListener\IndexationListenerTrait;
 
 class IndexationTriggeringListener implements OptionalListenerInterface
 {
