@@ -4,11 +4,10 @@ namespace Oro\Bundle\AccountBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-
-use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorInterface;
-use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorTrait;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorInterface;
+use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorTrait;
 
 class AccountGroupRepository extends EntityRepository implements BatchIteratorInterface
 {
@@ -39,7 +38,7 @@ class AccountGroupRepository extends EntityRepository implements BatchIteratorIn
 
         $qb->select('accountGroup.id')
             ->leftJoin(
-                'OroAccountBundle:Visibility\AccountGroupCategoryVisibility',
+                'OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility',
                 'AccountGroupCategoryVisibility',
                 Join::WITH,
                 $qb->expr()->eq('AccountGroupCategoryVisibility.accountGroup', 'accountGroup')
@@ -53,7 +52,7 @@ class AccountGroupRepository extends EntityRepository implements BatchIteratorIn
 
         if ($restrictedAccountGroupIds !== null) {
             $qb->andWhere($qb->expr()->in('accountGroup.id', ':restrictedAccountGroupIds'))
-            ->setParameter('restrictedAccountGroupIds', $restrictedAccountGroupIds);
+                ->setParameter('restrictedAccountGroupIds', $restrictedAccountGroupIds);
         }
 
         // Return only account group ids

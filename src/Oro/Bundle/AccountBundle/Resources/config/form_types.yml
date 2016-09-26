@@ -184,39 +184,6 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_acl_access_level_selector }
 
-    oro_account.form.event_listener.category.post_set_data:
-        class: 'Oro\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener'
-        parent: oro_account.form.event_listener.abstract_visibility
-
-    oro_account.form.event_listener.abstract_visibility:
-        class: 'Oro\Bundle\AccountBundle\Form\EventListener\AbstractVisibilityListener'
-        abstract: true
-        arguments:
-            - '@doctrine'
-
-    oro_account.form.event_listener.abstract_visibility_post_submit:
-        class: 'Oro\Bundle\AccountBundle\Form\EventListener\AbstractPostSubmitVisibilityListener'
-        parent: oro_account.form.event_listener.abstract_visibility
-
-    oro_account.form.extension.category_type:
-        class: 'Oro\Bundle\AccountBundle\Form\Extension\CategoryFormExtension'
-        tags:
-            - { name: form.type_extension, alias: oro_catalog_category }
-        calls:
-            - [setVisibilityToAllClass, ['%oro_account.entity.category_visibility.class%']]
-            - [setVisibilityToAccountGroupClass,['%oro_account.entity.account_group_category_visibility.class%']]
-            - [setVisibilityToAccountClass,['%oro_account.entity.account_category_visibility.class%']]
-
-    oro_account.form.type.catalog_visibility:
-        class: 'Oro\Bundle\AccountBundle\Form\Type\CatalogVisibilityType'
-        tags:
-            - { name: form.type, alias: oro_account_catalog_default_visibility }
-
-    oro_account.form.type.product_visibility:
-        class: 'Oro\Bundle\AccountBundle\Form\Type\ProductVisibilityType'
-        tags:
-            - { name: form.type, alias: oro_account_product_default_visibility }
-
     oro_account.form.extension.select_or_create_inline:
         class: 'Oro\Bundle\AccountBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension'
         arguments:
@@ -237,14 +204,3 @@ services:
             - '@security.token_storage'
         tags:
             - { name: form.type_extension, alias: "oro_address" }
-
-    oro_account.form.type.entity_visibility_type:
-        class: 'Oro\Bundle\AccountBundle\Form\Type\EntityVisibilityType'
-        arguments:
-            - '@oro_account.form.event_listener.category.post_set_data'
-            - '@oro_account.provider.visibility_choices'
-        tags:
-            - { name: form.type, alias: oro_account_entity_visibility_type }
-        calls:
-            - [setAccountClass,['%oro_account.entity.account.class%']]
-            - [setAccountGroupClass,['%oro_account.entity.account_group.class%']]

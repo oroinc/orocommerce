@@ -5,7 +5,7 @@ namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
 
 /**
  * @method assertTrue($actual)

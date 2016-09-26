@@ -4,11 +4,11 @@ namespace Oro\Bundle\AccountBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorInterface;
 use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorTrait;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class AccountRepository extends EntityRepository implements BatchIteratorInterface
 {
@@ -68,7 +68,7 @@ class AccountRepository extends EntityRepository implements BatchIteratorInterfa
 
         $qb->select('account.id')
             ->join(
-                'OroAccountBundle:Visibility\AccountCategoryVisibility',
+                'OroVisibilityBundle:Visibility\AccountCategoryVisibility',
                 'accountCategoryVisibility',
                 Join::WITH,
                 $qb->expr()->eq('accountCategoryVisibility.account', 'account')

@@ -1,0 +1,15 @@
+operations:
+    UPDATE:
+        exclude_datagrids:
+            - account-category-visibility-grid
+            - account-group-product-visibility-grid
+            - account-product-visibility-grid
+    DELETE:
+        exclude_entities:
+            - Oro\Bundle\AccountBundle\Entity\AccountGroup
+        exclude_datagrids:
+            - account-category-visibility-grid
+            - account-group-category-visibility-grid
+            - account-group-product-visibility-grid
+            - account-product-visibility-grid
+

@@ -3,16 +3,15 @@
 namespace Oro\Bundle\AccountBundle\Migrations\Schema\v1_7;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
+use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
 class OroAccountBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
@@ -45,6 +44,8 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
 
         $this->renameEntityTables($schema, $queries);
         $this->renameIndexes($schema, $queries);
+
+        $this->dropVisibilityTables($schema);
 
         $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_account', 'oro_account'));
     }
@@ -79,13 +80,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
         $extension->renameTable($schema, $queries, 'orob2b_account_user_address', 'oro_account_user_address');
         $extension->renameTable($schema, $queries, 'orob2b_acc_usr_adr_to_adr_type', 'oro_acc_usr_adr_to_adr_type');
 
-        $extension->renameTable($schema, $queries, 'orob2b_category_visibility', 'oro_category_visibility');
-        $extension->renameTable($schema, $queries, 'orob2b_acc_category_visibility', 'oro_acc_category_visibility');
-        $extension->renameTable($schema, $queries, 'orob2b_acc_grp_ctgr_visibility', 'oro_acc_grp_ctgr_visibility');
-        $extension->renameTable($schema, $queries, 'orob2b_product_visibility', 'oro_product_visibility');
-        $extension->renameTable($schema, $queries, 'orob2b_acc_product_visibility', 'oro_acc_product_visibility');
-        $extension->renameTable($schema, $queries, 'orob2b_acc_grp_prod_visibility', 'oro_acc_grp_prod_visibility');
-
         $extension->renameTable($schema, $queries, 'orob2b_prod_vsb_resolv', 'oro_prod_vsb_resolv');
         $extension->renameTable($schema, $queries, 'orob2b_acc_grp_prod_vsb_resolv', 'oro_acc_grp_prod_vsb_resolv');
         $extension->renameTable($schema, $queries, 'orob2b_acc_prod_vsb_resolv', 'oro_acc_prod_vsb_resolv');
@@ -95,6 +89,19 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
 
         $extension->renameTable($schema, $queries, 'orob2b_account_sales_reps', 'oro_account_sales_reps');
         $extension->renameTable($schema, $queries, 'orob2b_account_user_sales_reps', 'oro_account_user_sales_reps');
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function dropVisibilityTables(Schema $schema)
+    {
+        $schema->dropTable('orob2b_category_visibility');
+        $schema->dropTable('orob2b_acc_category_visibility');
+        $schema->dropTable('orob2b_acc_grp_ctgr_visibility');
+        $schema->dropTable('orob2b_product_visibility');
+        $schema->dropTable('orob2b_acc_product_visibility');
+        $schema->dropTable('orob2b_acc_grp_prod_visibility');
     }
 
     /**
@@ -136,10 +143,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
     {
         $extension = $this->renameExtension;
 
-        $categoryVisibility = $schema->getTable('orob2b_category_visibility');
-        $categoryVisibilityForeignKey = $this->getConstraintName($categoryVisibility, 'category_id');
-        $categoryVisibility->removeForeignKey($categoryVisibilityForeignKey);
-
         $windowsState = $schema->getTable('orob2b_windows_state');
         $windowsStateForeignKey = $this->getConstraintName($windowsState, 'customer_user_id');
         $windowsState->removeForeignKey($windowsStateForeignKey);
@@ -156,22 +159,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
         $schema->getTable('orob2b_windows_state')->dropIndex('orob2b_windows_state_acu_idx');
         $schema->getTable('orob2b_account_adr_adr_type')->dropIndex('orob2b_account_adr_id_type_name_idx');
         $schema->getTable('orob2b_acc_usr_adr_to_adr_type')->dropIndex('orob2b_account_user_adr_id_type_name_idx');
-        $schema->getTable('orob2b_category_visibility')->dropIndex('orob2b_ctgr_vis_uidx');
-        $schema->getTable('orob2b_acc_category_visibility')->dropIndex('orob2b_acc_ctgr_vis_uidx');
-        $schema->getTable('orob2b_acc_grp_ctgr_visibility')->dropIndex('orob2b_acc_grp_ctgr_vis_uidx');
-        $schema->getTable('orob2b_product_visibility')->dropIndex('orob2b_prod_vis_uidx');
-        $schema->getTable('orob2b_acc_product_visibility')->dropIndex('orob2b_acc_prod_vis_uidx');
-        $schema->getTable('orob2b_acc_grp_prod_visibility')->dropIndex('orob2b_acc_grp_prod_vis_uidx');
 
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_category_visibility',
-            'oro_catalog_category',
-            ['category_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
         $extension->addForeignKeyConstraint(
             $schema,
             $queries,
@@ -253,42 +241,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
             'oro_acc_usr_adr_to_adr_type',
             ['account_user_address_id', 'type_name'],
             'oro_account_user_adr_id_type_name_idx'
-        );
-        $extension->addUniqueIndex($schema, $queries, 'oro_category_visibility', ['category_id'], 'oro_ctgr_vis_uidx');
-        $extension->addUniqueIndex(
-            $schema,
-            $queries,
-            'oro_acc_category_visibility',
-            ['category_id', 'account_id'],
-            'oro_acc_ctgr_vis_uidx'
-        );
-        $extension->addUniqueIndex(
-            $schema,
-            $queries,
-            'oro_acc_grp_ctgr_visibility',
-            ['category_id', 'account_group_id'],
-            'oro_acc_grp_ctgr_vis_uidx'
-        );
-        $extension->addUniqueIndex(
-            $schema,
-            $queries,
-            'oro_product_visibility',
-            ['website_id', 'product_id'],
-            'oro_prod_vis_uidx'
-        );
-        $extension->addUniqueIndex(
-            $schema,
-            $queries,
-            'oro_acc_product_visibility',
-            ['website_id', 'product_id', 'account_id'],
-            'oro_acc_prod_vis_uidx'
-        );
-        $extension->addUniqueIndex(
-            $schema,
-            $queries,
-            'oro_acc_grp_prod_visibility',
-            ['website_id', 'product_id', 'account_group_id'],
-            'oro_acc_grp_prod_vis_uidx'
         );
     }
 

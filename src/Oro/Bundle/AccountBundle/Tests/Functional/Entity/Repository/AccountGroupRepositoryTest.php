@@ -5,7 +5,7 @@ namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\Repository\AccountGroupRepository;
-use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\AccountBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -33,7 +33,7 @@ class AccountGroupRepositoryTest extends WebTestCase
             [
                 'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
                 'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
+                'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
             ]
         );
     }
