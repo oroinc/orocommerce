@@ -176,16 +176,4 @@ class CategoryRepository extends NestedTreeRepository
             ->getQuery()
             ->getResult();
     }
-
-    /**
-     * @param Category $category
-     * @return Category[]
-     */
-    public function getChildrenWithPath(Category $category)
-    {
-        return $this->getChildrenQueryBuilder($category)
-            ->select('partial node.{id, parentCategory, materializedPath}')
-            ->getQuery()
-            ->getResult();
-    }
 }

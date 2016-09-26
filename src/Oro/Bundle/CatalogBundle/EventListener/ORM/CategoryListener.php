@@ -38,13 +38,12 @@ class CategoryListener
     public function preUpdate(Category $category, PreUpdateEventArgs $args)
     {
         $changeSet = $args->getEntityChangeSet();
-        unset($changeSet['materializedPath']);
 
         $children = [];
-        if ($changeSet) {
+        if (!empty($changeSet[Category::FIELD_PARENT_CATEGORY])) {
             /** @var CategoryRepository $repository */
             $repository = $args->getEntityManager()->getRepository(Category::class);
-            $children = $repository->getChildrenWithPath($category);
+            $children = $repository->children($category);
         }
         $this->modifier->updateMaterializedPathNested($category, $children);
     }

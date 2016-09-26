@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Tests\Unit\Model;;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Model;
 
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;

@@ -47,6 +47,9 @@ class Category extends ExtendCategory
 
     const MATERIALIZED_PATH_DELIMITER = '_';
 
+    const FIELD_PARENT_CATEGORY = 'parentCategory';
+    const FIELD_PRODUCTS = 'products';
+
     /**
      * @var integer
      *
