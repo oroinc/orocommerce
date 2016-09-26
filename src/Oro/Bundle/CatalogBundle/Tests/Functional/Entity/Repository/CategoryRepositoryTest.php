@@ -92,19 +92,6 @@ class CategoryRepositoryTest extends WebTestCase
         $this->assertNull($this->repository->findOneByDefaultTitle('Not existing category'));
     }
 
-    public function testGetChildrenWithPath()
-    {
-        $this->registry->getManagerForClass('OroCatalogBundle:Category')->clear();
-
-        $rootCategory = $this->getReference(LoadCategoryData::FIRST_LEVEL);
-        $categories = $this->repository->getChildrenWithPath($rootCategory);
-        $this->assertCount(6, $categories);
-
-        /** @var Category $category */
-        $category = current($categories);
-        $this->assertNotEmpty($category->getMaterializedPath());
-    }
-
     /**
      * @param $categories Category[]
      * @param $title string
