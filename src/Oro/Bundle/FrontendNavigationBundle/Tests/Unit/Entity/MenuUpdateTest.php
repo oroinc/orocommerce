@@ -40,7 +40,8 @@ class MenuUpdateTest extends \PHPUnit_Framework_TestCase
             'image' => $image,
             'condition' => 'test condition',
             'website' => $website,
-            'position' => $priority,
+            'existsInNavigationYml' => false,
+            'position' => $priority
         ];
 
         $this->assertSame($expected, $update->getExtras());
