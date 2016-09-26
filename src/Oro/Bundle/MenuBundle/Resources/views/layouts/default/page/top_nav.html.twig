@@ -16,18 +16,8 @@
         {% set attr = layout_attr_defaults(attr, {
             '~class': " topbar__navigation topbar__navigation--has-sibling"
         }) %}
-        {% set move_options =  {
-            responsive: [
-            {
-                breakpoint: 1024,
-                moveTo: '.quick-access__list'
-            }
-            ]}|json_encode
-        %}
 
         <nav {{ block('block_attributes') }}
-                data-move-block
-                data-move-options="{{ move_options }}"
         >
             {{ block_widget(block) }}
         </nav>
@@ -51,12 +41,8 @@
     {% set move_options =  {
         responsive: [
             {
-                breakpoint: 1400,
-                moveTo: '.header-row__toggle'
-            },
-            {
-                breakpoint: 1300,
-                MoveTo: '.middlebar'
+                breakpoint: 990,
+                moveTo: '[data-main-menu-container]'
             }
         ]}|json_encode
     %}

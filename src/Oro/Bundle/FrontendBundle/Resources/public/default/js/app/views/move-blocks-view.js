@@ -11,8 +11,8 @@ define(function(require) {
         autoRender: true,
 
         options: {
-            resizeTimeout: 25,
-            layoutTimeout: 40
+            resizeTimeout: 250,
+            layoutTimeout: 250
         },
 
         targetBreakpoint: null,
@@ -51,7 +51,7 @@ define(function(require) {
         undelegateEvents: function() {
             this.$window.off(this.eventNamespace());
             mediator.off(null, null, this);
-
+            this.elements = null;
             return MoveBlocksView.__super__.undelegateEvents.apply(this, arguments);
         },
 
@@ -92,23 +92,32 @@ define(function(require) {
 
             $.each(this.$elements, function(index, el) {
                 var $el = $(el);
-                var targetOptions = self.checkTargetResponsive(windowSize, $el.data('responsiveOptions')) || 0;
+                var options = self.checkTargetOptions(windowSize, $el.data('responsiveOptions'));
 
-                (windowSize < targetOptions.breakpoint ? $(targetOptions.moveTo) : $el.data('originalPosition')).append($el);
+                if (_.isObject(options)) {
+                    if ($el.data('targetBreakPoint') !== options.breakpoint) {
+                        $(options.moveTo).first().append($el);
+                        $el.data('targetBreakPoint', options.breakpoint);
+                    }
+                } else {
+                    $el.data('originalPosition').append($el);
+                    $el.data('targetBreakPoint', null);
+                }
             });
         },
 
-        checkTargetResponsive: function( windowSize, responsiveOptions) {
+        checkTargetOptions: function(windowSize, responsiveOptions) {
+            var breakpoints = [];
+
             for (var i = 0; i <= responsiveOptions.length -1 ; i++) {
                 if (windowSize < responsiveOptions[i].breakpoint ) {
-                    this.targetBreakpoint = responsiveOptions[i].breakpoint;
-                    return responsiveOptions[i];
+                    breakpoints.push(responsiveOptions[i]);
                 }
             }
-        },
 
-        createPlaceholder: function() {
-            return $('<div/>').addClass(this.options.placeholderClass);
+            return breakpoints.sort(function(a, b) {
+                      return a.breakpoint - b.breakpoint;
+                   })[0] || null;
         },
 
         collectElements: function() {
@@ -122,6 +131,7 @@ define(function(require) {
                 var $element = $(element);
                 $element.data('originalPosition', $element.parent());
                 $element.data('responsiveOptions', $element.data('move-options').responsive || []);
+                $element.data('targetBreakPoint', null);
             });
         }
     });
