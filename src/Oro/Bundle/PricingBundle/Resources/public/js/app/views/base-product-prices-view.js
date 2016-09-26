@@ -91,9 +91,9 @@ define(function(require) {
             $pricesHint.toggleClass('disabled', content.length === 0);
 
             if (!$pricesHint.data('popover')) {
-                layout.initPopover($pricesHint, {
+                layout.initPopoverForElements($pricesHint, {
                     container: 'body'
-                });
+                }, true);
             }
 
             $pricesHint.data('popover').updateContent(content);
