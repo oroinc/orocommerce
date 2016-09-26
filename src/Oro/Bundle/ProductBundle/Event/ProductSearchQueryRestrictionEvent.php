@@ -12,7 +12,7 @@ use Oro\Bundle\SearchBundle\Query\Query;
  * The listeners of this event should modify the inner
  * query to apply additional conditions.
  */
-class ProductSearchQueryEvent extends Event
+class ProductSearchQueryRestrictionEvent extends Event
 {
     const NAME = 'oro_product.search_restriction';
 

@@ -10,7 +10,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\AccountBundle\EventListener\ProductSelectDBQueryEventListener;
-use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
 class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -92,7 +92,7 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ProductSelectDBQueryEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductDBQueryRestrictionEvent|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getEventMock()
     {

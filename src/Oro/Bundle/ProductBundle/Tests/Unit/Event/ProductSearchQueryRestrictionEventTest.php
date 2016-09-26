@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Event;
 
-use Oro\Bundle\ProductBundle\Event\ProductSearchQueryEvent;
+use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\SearchBundle\Query\Query;
 
-class ProductSearchQueryEventTest extends \PHPUnit_Framework_TestCase
+class ProductSearchQueryRestrictionEventTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetQuery()
     {
@@ -14,7 +14,7 @@ class ProductSearchQueryEventTest extends \PHPUnit_Framework_TestCase
          */
         $query = $this->getMock(Query::class);
 
-        $event = new ProductSearchQueryEvent($query);
+        $event = new ProductSearchQueryRestrictionEvent($query);
 
         $this->assertEquals($query, $event->getQuery());
     }

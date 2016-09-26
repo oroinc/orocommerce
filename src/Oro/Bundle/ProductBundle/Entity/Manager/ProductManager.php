@@ -6,8 +6,8 @@ use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
-use Oro\Bundle\ProductBundle\Event\ProductSearchQueryEvent;
+use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
+use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\SearchBundle\Query\Query;
 
 class ProductManager
@@ -34,8 +34,8 @@ class ProductManager
         QueryBuilder $queryBuilder,
         array $dataParameters
     ) {
-        $event = new ProductSelectDBQueryEvent($queryBuilder, new ParameterBag($dataParameters));
-        $this->eventDispatcher->dispatch(ProductSelectDBQueryEvent::NAME, $event);
+        $event = new ProductDBQueryRestrictionEvent($queryBuilder, new ParameterBag($dataParameters));
+        $this->eventDispatcher->dispatch(ProductDBQueryRestrictionEvent::NAME, $event);
 
         return $event->getQueryBuilder();
     }
@@ -46,8 +46,8 @@ class ProductManager
      */
     public function restrictSearchQuery(Query $query)
     {
-        $ProductSearchQueryEvent = new ProductSearchQueryEvent($query);
-        $this->eventDispatcher->dispatch(ProductSearchQueryEvent::NAME, $ProductSearchQueryEvent);
+        $ProductSearchQueryEvent = new ProductSearchQueryRestrictionEvent($query);
+        $this->eventDispatcher->dispatch(ProductSearchQueryRestrictionEvent::NAME, $ProductSearchQueryEvent);
 
         return $ProductSearchQueryEvent->getQuery();
     }

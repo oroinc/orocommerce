@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Oro\Bundle\ProductBundle\Event\ProductSearchQueryEvent;
+use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -49,8 +49,8 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
 
         if (!self::$listenerInitialized) {
             $this->eventDispatcher->addListener(
-                ProductSearchQueryEvent::NAME,
-                function (ProductSearchQueryEvent $event) {
+                ProductSearchQueryRestrictionEvent::NAME,
+                function (ProductSearchQueryRestrictionEvent $event) {
                     $expr = Criteria::expr();
 
                     $event->getQuery()->getCriteria()->andWhere($expr->eq('name', self::$testValue));

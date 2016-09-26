@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 use Doctrine\ORM\QueryBuilder;
 
-class ProductSelectDBQueryEvent extends Event
+class ProductDBQueryRestrictionEvent extends Event
 {
     const NAME = 'oro_product.product_select.db.query';
 
