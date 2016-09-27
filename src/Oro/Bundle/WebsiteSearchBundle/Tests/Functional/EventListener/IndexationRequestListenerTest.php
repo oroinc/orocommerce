@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
