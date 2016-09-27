@@ -9,7 +9,7 @@ use Oro\Bundle\SearchBundle\Query\Query;
 class IndexEntityEvent extends Event
 {
     const NAME = 'oro_website_search.event.index_entity';
-    
+
     /**
      * @var array
      */
@@ -42,13 +42,13 @@ class IndexEntityEvent extends Event
 
     /**
      * @param string $entityClass
-     * @param array $entityIds
-     * @param array $context
+     * @param array  $entityIds
+     * @param array  $context
      */
     public function __construct($entityClass, array $entityIds, array $context)
     {
-        $this->context = $context;
-        $this->entityIds = array_combine($entityIds, $entityIds);
+        $this->context     = $context;
+        $this->entityIds   = array_combine($entityIds, $entityIds);
         $this->entityClass = $entityClass;
     }
 
@@ -82,11 +82,42 @@ class IndexEntityEvent extends Event
      * @param string           $fieldType
      * @param string           $fieldName
      * @param string|int|float $value
-     *
+     * @return $this
+     */
+    public function addField($entityId, $fieldType, $fieldName, $value)
+    {
+        return $this->addFieldInternal($entityId, $fieldType, $fieldName, $value);
+    }
+
+    /**
+     * @param int              $entityId
+     * @param string           $fieldType
+     * @param string           $fieldName
+     * @param string|int|float $value
+     * @return $this
+     */
+    public function appendField($entityId, $fieldType, $fieldName, $value)
+    {
+        return $this->addFieldInternal($entityId, $fieldType, $fieldName, $value, true);
+    }
+
+    /**
+     * @return array
+     */
+    public function getEntitiesData()
+    {
+        return $this->entitiesData;
+    }
+
+    /**
+     * @param int              $entityId
+     * @param string           $fieldType
+     * @param string           $fieldName
+     * @param string|int|float $value
      * @param bool             $appendMode
      * @return $this
      */
-    public function addField($entityId, $fieldType, $fieldName, $value, $appendMode = false)
+    private function addFieldInternal($entityId, $fieldType, $fieldName, $value, $appendMode = false)
     {
         if (!isset($this->entityIds[$entityId])) {
             throw new \InvalidArgumentException(
@@ -96,7 +127,11 @@ class IndexEntityEvent extends Event
 
         $this->assertFieldType($fieldType);
 
-        if (!isset($this->entitiesData[$entityId][$fieldType][$fieldName])) {
+        if (!isset(
+            $this->entitiesData[$entityId],
+            $this->entitiesData[$entityId][$fieldType],
+            $this->entitiesData[$entityId][$fieldType][$fieldName]
+        )) {
             $this->entitiesData[$entityId][$fieldType][$fieldName] = '';
         }
 
@@ -125,13 +160,5 @@ class IndexEntityEvent extends Event
                 )
             );
         }
-    }
-
-    /**
-     * @return array
-     */
-    public function getEntitiesData()
-    {
-        return $this->entitiesData;
     }
 }

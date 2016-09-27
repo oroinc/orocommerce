@@ -31,12 +31,16 @@ class ProductSearchIndexListener
     /**
      * @param DoctrineHelper     $doctrineHelper
      * @param LocalizationHelper $localizationHelper
+     * @param PropertyAccessor   $propertyAccessor
      */
-    public function __construct(DoctrineHelper $doctrineHelper, LocalizationHelper $localizationHelper)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        LocalizationHelper $localizationHelper,
+        PropertyAccessor $propertyAccessor
+    ) {
         $this->productRepository  = $doctrineHelper->getEntityRepositoryForClass(Product::class);
         $this->localizationHelper = $localizationHelper;
-        $this->propertyAccessor   = new PropertyAccessor();
+        $this->propertyAccessor   = $propertyAccessor;
     }
 
     /**
@@ -59,12 +63,11 @@ class ProductSearchIndexListener
             foreach ($localizations as $localization) {
                 $metaStrings = $this->getMetaStringsFromProduct($product, $localization);
                 // All text field
-                $event->addField(
+                $event->appendField(
                     $product->getId(),
                     Query::TYPE_TEXT,
                     sprintf('all_text_%s', $localization->getId()),
-                    ' ' . $metaStrings,
-                    true
+                    ' ' . $metaStrings
                 );
             }
         }
@@ -90,7 +93,7 @@ class ProductSearchIndexListener
      * Cleans up a unicode string from control characters.
      *
      * @param $string
-     * @return mixed
+     * @return string
      */
     private function cleanUpString($string)
     {

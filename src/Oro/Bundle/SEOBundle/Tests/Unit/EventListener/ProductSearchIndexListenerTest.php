@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SEOBundle\EventListener\ProductSearchIndexListener;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -53,46 +54,43 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($productRepository);
 
         $event->expects($this->at(2))
-            ->method('addField')
+            ->method('appendField')
             ->with(
                 1,
                 Query::TYPE_TEXT,
                 'all_text_1',
-                ' Polish metaTitle Polish meta description Polish meta keywords',
-                true
+                ' Polish metaTitle Polish meta description Polish meta keywords'
             );
 
         $event->expects($this->at(3))
-            ->method('addField')
+            ->method('appendField')
             ->with(
                 1,
                 Query::TYPE_TEXT,
                 'all_text_2',
-                ' English metaTitle English meta description English meta keywords',
-                true
+                ' English metaTitle English meta description English meta keywords'
             );
 
         $event->expects($this->at(4))
-            ->method('addField')
+            ->method('appendField')
             ->with(
                 2,
                 Query::TYPE_TEXT,
                 'all_text_1',
-                ' Polish metaTitle Polish meta description Polish meta keywords',
-                true
+                ' Polish metaTitle Polish meta description Polish meta keywords'
             );
 
         $event->expects($this->at(5))
-            ->method('addField')
+            ->method('appendField')
             ->with(
                 2,
                 Query::TYPE_TEXT,
                 'all_text_2',
-                ' English metaTitle English meta description English meta keywords',
-                true
+                ' English metaTitle English meta description English meta keywords'
             );
 
-        $testable = new ProductSearchIndexListener($doctrineHelper, $localizationHelper);
+        $propertyAccessor = new PropertyAccessor();
+        $testable = new ProductSearchIndexListener($doctrineHelper, $localizationHelper, $propertyAccessor);
         $testable->onWebsiteSearchIndex($event);
     }
 

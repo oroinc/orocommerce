@@ -78,7 +78,7 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
         $event = new IndexEntityEvent('', [1, 2], []);
 
         $event->addField(1, Query::TYPE_TEXT, 'all_text', 'Product title');
-        $event->addField(1, Query::TYPE_TEXT, 'all_text', ' MetaTitle', true);
+        $event->appendField(1, Query::TYPE_TEXT, 'all_text', ' MetaTitle');
 
         $expectedData = [
             1 => [
