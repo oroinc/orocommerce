@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\PricingBundle\Model\PriceListIsReferentialCheckerInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
@@ -18,6 +19,11 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
      */
     protected $repository;
 
+    /**
+     * @var PriceListIsReferentialCheckerInterface
+     */
+    protected $checker;
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -28,6 +34,21 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
             ->getRepository('OroPricingBundle:PriceRuleLexeme');
     }
 
+    public function testCountReferencesForRelation()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_attribute_price_list_1');
+        $expectedCounters = [
+            ['relationId' => null, 'relationCount' => 2],
+            ['relationId' => $priceList->getId(), 'relationCount' => 1]
+        ];
+        $this->assertEquals($expectedCounters, $this->repository->countReferencesForRelation());
+
+    }
+
+    /**
+     * @depends testCountReferencesForRelation
+     */
     public function testDeleteByPriceList()
     {
         /** @var PriceList $priceList */

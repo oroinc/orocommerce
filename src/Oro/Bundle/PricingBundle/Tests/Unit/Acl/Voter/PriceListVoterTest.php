@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Acl\Voter;
 
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
+use Oro\Bundle\PricingBundle\Model\PriceListIsReferentialCheckerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Acl\Voter\PriceListVoter;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class PriceListVoterTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,13 +20,18 @@ class PriceListVoterTest extends \PHPUnit_Framework_TestCase
      */
     protected $doctrineHelper;
 
+    /**
+     * @var PriceListIsReferentialCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $isReferentialChecker;
+
     protected function setUp()
     {
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->voter = new PriceListVoter($this->doctrineHelper);
+        $this->isReferentialChecker = $this->getMock(PriceListIsReferentialCheckerInterface::class);
+        $this->voter = new PriceListVoter($this->doctrineHelper, $this->isReferentialChecker);
     }
 
     protected function tearDown()

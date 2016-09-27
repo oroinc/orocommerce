@@ -21,4 +21,19 @@ class PriceRuleLexemeRepository extends EntityRepository
         
         $qb->getQuery()->execute();
     }
+
+    /**
+     * @return array
+     */
+    public function countReferencesForRelation()
+    {
+        $qb = $this->createQueryBuilder('referenceLexeme');
+        $qb->select([
+            'referenceLexeme.relationId',
+            $qb->expr()->count('referenceLexeme.id') . ' relationCount',
+        ])
+            ->groupBy('referenceLexeme.relationId');
+
+        return $qb->getQuery()->getScalarResult();
+    }
 }
