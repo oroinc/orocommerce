@@ -31,6 +31,11 @@ class WebsiteSearchProductVisibilityIndexerListener
      */
     private $visibilityProvider;
 
+    /**
+     *
+     * @param DoctrineHelper $doctrineHelper
+     * @param AccountProductVisibilityProvider $visibilityProvider
+     */
     public function __construct(DoctrineHelper $doctrineHelper, AccountProductVisibilityProvider $visibilityProvider)
     {
         $this->doctrineHelper = $doctrineHelper;
