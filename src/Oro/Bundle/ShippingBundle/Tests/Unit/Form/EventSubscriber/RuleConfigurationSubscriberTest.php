@@ -12,13 +12,10 @@ use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
@@ -30,6 +27,9 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType;
 use Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
+use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class RuleConfigurationSubscriberTest extends FormIntegrationTestCase
 {

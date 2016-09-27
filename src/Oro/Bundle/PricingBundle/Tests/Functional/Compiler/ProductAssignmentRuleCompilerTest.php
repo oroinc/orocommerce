@@ -85,6 +85,40 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
         $this->assertEquals($expected, $actual);
     }
 
+    public function testCompileRestrictredByProduct()
+    {
+        /** @var Product $product1 */
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+
+        /** @var Category $category1 */
+        $category1 = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        /** @var Category $category2 */
+        $category2 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+
+        $assignmentRule = sprintf(
+            'product.category in [%s, %s] and (
+                product.price_attribute_price_list_1.value > 1
+                or product.price_attribute_price_list_2.currency == "USD"
+            )',
+            $category1->getId(),
+            $category2->getId()
+        );
+
+        $priceList = $this->createPriceList($assignmentRule);
+        $qb = $this->getQueryBuilder($priceList, $product1);
+
+        $expected = [
+            [$product1->getId(), $priceList->getId(), false],
+        ];
+        $actual = $this->getActualResult($qb);
+        $this->assertEquals($expected, $actual);
+
+        // Check that cache does not affect results
+        $qb = $this->getQueryBuilder($priceList, $product1);
+        $actual = $this->getActualResult($qb);
+        $this->assertEquals($expected, $actual);
+    }
+
     public function testCompileRuleBasedOnOtherPriseList()
     {
         $basePriceList = $this->createPriceList(
@@ -190,11 +224,12 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
 
     /**
      * @param PriceList $priceList
-     * @return \Doctrine\ORM\QueryBuilder
+     * @param Product|null $product
+     * @return QueryBuilder
      */
-    protected function getQueryBuilder(PriceList $priceList)
+    protected function getQueryBuilder(PriceList $priceList, Product $product = null)
     {
-        $qb = $this->compiler->compile($priceList);
+        $qb = $this->compiler->compile($priceList, $product);
         $aliases = $qb->getRootAliases();
         $rootAlias = reset($aliases);
         $qb->orderBy($rootAlias . '.id');

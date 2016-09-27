@@ -31,7 +31,7 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
 
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroPricingBundle:PriceRuleLexeme');
+            ->getRepository(PriceRuleLexeme::class);
     }
 
     public function testCountReferencesForRelation()

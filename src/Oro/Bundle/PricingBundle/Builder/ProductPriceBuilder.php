@@ -71,7 +71,7 @@ class ProductPriceBuilder
                 $this->applyRule($rule, $product);
             }
         }
-        $this->priceListTriggerHandler->addTriggersForPriceList(Topics::PRICE_LIST_CHANGE, $priceList, $product);
+        $this->priceListTriggerHandler->addTriggerForPriceList(Topics::RESOLVE_COMBINED_PRICES, $priceList, $product);
         $this->priceListTriggerHandler->sendScheduledTriggers();
     }
 

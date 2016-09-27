@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class PriceRuleLexemeRepository extends EntityRepository

@@ -86,7 +86,7 @@ abstract class AbstractRuleCompiler
     {
         $select = [];
         foreach ($this->getOrderedFields() as $fieldName) {
-            $select[] = $fieldsMap[$fieldName];
+            $select[] = $fieldsMap[$fieldName] . ' ' . $fieldName;
         }
         $qb->select($select);
     }

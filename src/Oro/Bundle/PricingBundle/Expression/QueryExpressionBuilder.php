@@ -66,7 +66,7 @@ class QueryExpressionBuilder implements QueryExpressionConverterInterface
             }
         }
 
-        if (!$convertedExpression) {
+        if ($convertedExpression === null) {
             throw new \InvalidArgumentException(sprintf('Unsupported node type %s', get_class($node)));
         }
 
