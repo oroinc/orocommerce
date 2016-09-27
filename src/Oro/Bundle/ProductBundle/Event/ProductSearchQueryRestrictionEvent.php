@@ -14,7 +14,7 @@ use Oro\Bundle\SearchBundle\Query\Query;
  */
 class ProductSearchQueryRestrictionEvent extends Event
 {
-    const NAME = 'oro_product.search_query.restriction';
+    const NAME = 'oro_product.product_search_query.restriction';
 
     /**
      * @var Query
