@@ -11,6 +11,7 @@ abstract class AbstractCombinedPriceListRelationRepositoryTest extends WebTestCa
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
