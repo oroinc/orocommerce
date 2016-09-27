@@ -28,11 +28,33 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
     public function replace(Query $query)
     {
         foreach ($this->placeholderRegistry->getPlaceholders() as $placeholder) {
+            $this->replaceInSelect($query, $placeholder);
             $this->replaceInFrom($query, $placeholder);
             $this->replaceInCriteria($query, $placeholder);
         }
 
         return $query;
+    }
+
+    /**
+     * @param Query $query
+     * @param WebsiteSearchPlaceholderInterface $placeholder
+     */
+    private function replaceInSelect(Query $query, WebsiteSearchPlaceholderInterface $placeholder)
+    {
+        $selects = $query->getSelect();
+        $selectAliases = $query->getSelectAliases();
+        $newSelects = [];
+        foreach ($query->getSelect() as $select) {
+            $newSelect = str_replace($placeholder->getPlaceholder(), $placeholder->getValue(), $select);
+            if (isset($selectAliases[$select])) {
+                $newSelect .= ' as ' . $selectAliases[$select];
+            }
+
+            $newSelects[] = $newSelect;
+        }
+
+        $query->select($newSelects);
     }
 
     /**

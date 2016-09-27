@@ -108,7 +108,7 @@ services:
         arguments:
             - '@oro_website_search.query_factory.inner'
             - '@event_dispatcher'
-            - '@oro_website_search.mock.engine'
+            - '@oro_website_search.engine'
 
     oro_website_search.select_data.listener:
         class: Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
