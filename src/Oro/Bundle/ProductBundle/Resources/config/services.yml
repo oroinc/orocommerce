@@ -6,7 +6,7 @@ parameters:
     oro_product.entity.product_image.class: Oro\Bundle\ProductBundle\Entity\ProductImage
     oro_product.entity.product_image_type.class: Oro\Bundle\ProductBundle\Entity\ProductImageType
 
-    oro_product.event_listener.scoped_product_select_db_query.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener
+    oro_product.event_listener.scoped_product_select_db_query.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener
 
 services:
     oro_product.product.manager.api:
@@ -292,7 +292,7 @@ services:
             - "@oro_frontend.request.frontend_helper"
 
     oro_product.event_listener.product_select_db_query:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener'
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductDBQueryRestrictionEventListener'
         parent: oro_product.event_listener.abstract_product_select_db_query
         calls:
             - [setFrontendSystemConfigurationPath, ['oro_product.general_frontend_product_visibility']]

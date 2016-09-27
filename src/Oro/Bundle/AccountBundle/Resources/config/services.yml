@@ -673,7 +673,7 @@ services:
         parent: oro_account.visibility.cache.product.category.subtree.category_subtree_cache_builder
 
     oro_account.event_listener.product_select_db_query:
-        class: 'Oro\Bundle\AccountBundle\EventListener\ProductSelectDBQueryEventListener'
+        class: 'Oro\Bundle\AccountBundle\EventListener\ProductDBQueryRestrictionEventListener'
         arguments:
             - "@oro_frontend.request.frontend_helper"
             - "@oro_account.model.product_visibility_query_builder_modifier"
