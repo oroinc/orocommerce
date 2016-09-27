@@ -38,7 +38,7 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': " col-md-5 col-sm-5"
     }) %}
-    {% set move_options =  {
+    {% set dom_relocation_options =  {
         responsive: [
             {
                 breakpoint: 990,
@@ -50,7 +50,7 @@
     <div {{ block('block_attributes') }}>
         <nav class="topbar__navigation"
              data-dom-relocation
-             data-dom-relocation-options="{{ move_options }}"
+             data-dom-relocation-options="{{ dom_relocation_options }}"
         >
             <ul>
                 {{ block_widget(block) }}
