@@ -292,8 +292,7 @@
                         </ul>
                     </div>
                 </div>
-                <!-- Need replace to real _token input -->
-                <input type="hidden" name="oro_product_frontend_line_item[_token]" value="isY4tZg3LwJIvsXlp-nzmIs1VyjN6xhgyntUV-wStbw">
+                <input type="hidden" name="oro_product_frontend_line_item[_token]" value="{{ csrf_token('oro_product_frontend_line_item') }}">
             </form>
         </div>
         <div class="widget-actions">
