@@ -54,26 +54,14 @@ define(function(require) {
             shopping_lists: ['change', 'render']
         },
 
-        /* Should be replaced to real shopping list collection */
-        demoShoppingLists: [
-            {
-                id: 1,
-                label: 'Shopping List 1'
-            },
-            {
-                id: 2,
-                label: 'Shopping List 2'
-            },
-            {
-                id: 3,
-                label: 'Meow List 1'
-            }
-        ],
+        shoppingLists: [],
 
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, [
                 'dialogOptions', 'template', 'quantityComponentOptions'
             ]));
+
+            this.shoppingLists = options.shoppingLists || [];
 
             this.initModel(options);
             if (!this.model) {
@@ -124,7 +112,6 @@ define(function(require) {
             this.clearElementsCache();
 
             var shoppingLists = this.model.get('shopping_lists');
-            var demoShoppingLists = this.demoShoppingLists;
 
             if (_.isEmpty(shoppingLists)) {
                 this.dispose();
@@ -133,7 +120,7 @@ define(function(require) {
 
             this.setElement($(this.options.template({
                 shoppingLists: shoppingLists,
-                shoppingListsCollection: demoShoppingLists,
+                shoppingListsCollection: this.shoppingLists,
                 productUnits: this.model.get('product_units')
             })));
 
@@ -372,7 +359,7 @@ define(function(require) {
                 return;
             }
 
-            return _.findWhere(this.model.get('shopping_lists'), properties) || _.findWhere(this.demoShoppingLists, properties);
+            return _.findWhere(this.shoppingLists, properties);
         },
 
         getSelectedUnit: function() {

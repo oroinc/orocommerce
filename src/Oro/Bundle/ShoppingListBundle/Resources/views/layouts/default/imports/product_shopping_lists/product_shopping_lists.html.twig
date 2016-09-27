@@ -85,6 +85,7 @@
             createOnEvent: 'click',
             options: {
                 template: utils.underscoreRaw('<%#' ~ shoppingListsTemplate ~ '#%>'),
+                shoppingLists: shoppingLists,
                 quantityComponentOptions: {
                     dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
                     enable: resource_granted('oro_shopping_list_frontend_update'),
