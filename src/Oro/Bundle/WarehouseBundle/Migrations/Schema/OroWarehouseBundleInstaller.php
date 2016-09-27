@@ -213,6 +213,9 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
             $fallbackTable,
             'id',
             [
+                'entity' => [
+                    'label' => 'oro.warehouse.manage_inventory.label',
+                ],
                 'extend' => [
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'cascade' => ['all'],
@@ -247,6 +250,9 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
             $fallbackTable,
             'id',
             [
+                'entity' => [
+                    'label' => 'oro.warehouse.manage_inventory.label',
+                ],
                 'extend' => [
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'cascade' => ['all'],

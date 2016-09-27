@@ -81,10 +81,10 @@ oro:
                 product_inventory_options.title: Product Inventory Options
             fields:
                 enabled_warehouses.label: Enabled Warehouses
-                manage_inventory.label: Managed Inventory
+                manage_inventory.label: Manage Inventory
 
         manage_inventory:
-            label: Managed Inventory
+            label: Manage Inventory
             choice:
                 'true': Yes
                 'false': No
@@ -95,6 +95,3 @@ oro:
                 label: Warehouse
         warehouse:
             label: Warehouse
-
-    product:
-        manage_inventory.label: 'Managed Inventory'

@@ -50,6 +50,9 @@ class AddManageInventoryFields implements Migration, ExtendExtensionAwareInterfa
             $fallbackTable,
             'id',
             [
+                'entity' => [
+                    'label' => 'oro.warehouse.manage_inventory.label',
+                ],
                 'extend' => [
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'cascade' => ['all'],
@@ -84,6 +87,9 @@ class AddManageInventoryFields implements Migration, ExtendExtensionAwareInterfa
             $fallbackTable,
             'id',
             [
+                'entity' => [
+                    'label' => 'oro.warehouse.manage_inventory.label',
+                ],
                 'extend' => [
                     'owner' => ExtendScope::OWNER_CUSTOM,
                     'cascade' => ['all'],
