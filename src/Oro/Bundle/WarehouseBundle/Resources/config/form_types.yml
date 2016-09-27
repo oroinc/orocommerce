@@ -50,3 +50,8 @@ services:
         class: Oro\Bundle\WarehouseBundle\Form\Extension\ProductManageInventoryFormExtension
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
+
+    oro_warehouse.form.type.extension.category_manage_inventory_type_extension:
+        class: Oro\Bundle\WarehouseBundle\Form\Extension\CategoryManageInventoryFormExtension
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }

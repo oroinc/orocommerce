@@ -112,12 +112,3 @@ services:
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
-
-    oro_catalog.event_listener.category_manage_inventory_form_view:
-        class: 'Oro\Bundle\CatalogBundle\EventListener\CategoryManageInventoryFormViewListener'
-        arguments:
-            - "@request_stack"
-            - "@oro_entity.doctrine_helper"
-            - "@translator"
-        tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }

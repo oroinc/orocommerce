@@ -80,3 +80,11 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
 
+    oro_warehouse.event_listener.category_manage_inventory_form_view:
+        class: 'Oro\Bundle\WarehouseBundle\EventListener\CategoryManageInventoryFormViewListener'
+        arguments:
+            - "@request_stack"
+            - "@oro_entity.doctrine_helper"
+            - "@translator"
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
