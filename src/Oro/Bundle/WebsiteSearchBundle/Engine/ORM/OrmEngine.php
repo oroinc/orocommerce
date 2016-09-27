@@ -76,11 +76,13 @@ class OrmEngine extends AbstractEngine
     {
         if (!$this->optionsResolver) {
             $this->optionsResolver = new OptionsResolver();
-            $this->optionsResolver->setRequired(['entity', 'recordId', 'title']);
         }
+        $this->optionsResolver->setRequired(['entity', 'recordId', 'title']);
         $this->optionsResolver->setDefined(array_keys($item));
+        $resolvedOptions =  $this->optionsResolver->resolve($item);
+        $this->optionsResolver->clear();
 
-        return $this->optionsResolver->resolve($item);
+        return $resolvedOptions;
     }
 
     /**
