@@ -46,9 +46,15 @@ class OroWebsiteBundle implements Migration, ExtendExtensionAwareInterface
             'website',
             OroWebsiteBundleInstaller::WEBSITE_TABLE_NAME,
             'id',
-            ['extend' => ['owner' => ExtendScope::OWNER_CUSTOM]],
-            RelationType::MANY_TO_ONE,
-            ['onDelete' => 'CASCADE']
+            [
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['all'],
+                    'on_delete' => 'CASCADE',
+                    'nullable' => true
+                ]
+            ],
+            RelationType::MANY_TO_ONE
         );
     }
 }

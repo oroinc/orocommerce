@@ -7,6 +7,7 @@ use Oro\Bundle\AccountBundle\Migrations\Schema\OroAccountBundleInstaller;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\ScopeBundle\Migrations\Schema\OroScopeBundleInstaller;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -315,6 +316,12 @@ class OroVisibilityBundleInstaller implements Installation
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
+            ['scope_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
     }
 
     /**
@@ -337,6 +344,12 @@ class OroVisibilityBundleInstaller implements Installation
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
+            ['scope_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
     }
 
     /**
@@ -358,6 +371,12 @@ class OroVisibilityBundleInstaller implements Installation
             ['account_group_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
+            ['scope_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 
@@ -609,6 +628,12 @@ class OroVisibilityBundleInstaller implements Installation
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
+            ['scope_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
     }
 
     /**
@@ -637,6 +662,12 @@ class OroVisibilityBundleInstaller implements Installation
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
+            ['scope_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
     }
 
     /**
@@ -664,6 +695,12 @@ class OroVisibilityBundleInstaller implements Installation
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
+            ['scope_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 }

@@ -4,6 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 
@@ -28,6 +29,14 @@ abstract class BaseCategoryVisibilityResolved extends BaseVisibilityResolved
     protected $category;
 
     /**
+     * @var Scope
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
+     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    protected $scope;
+
+    /**
      * @param Category $category
      */
     public function __construct(Category $category)
@@ -41,5 +50,21 @@ abstract class BaseCategoryVisibilityResolved extends BaseVisibilityResolved
     public function getCategory()
     {
         return $this->category;
+    }
+
+    /**
+     * @return Scope
+     */
+    public function getCope()
+    {
+        return $this->scope;
+    }
+
+    /**
+     * @param Scope $scope
+     */
+    public function setCope(Scope $scope)
+    {
+        $this->scope = $scope;
     }
 }
