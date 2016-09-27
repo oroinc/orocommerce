@@ -26,17 +26,63 @@
     {{ block('form_start_widget') }}
 {% endblock %}
 
+{% block __oro_rfp_frontend_request_edit__rfp_form_edit_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " rfp-form"
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block __oro_rfp_frontend_request_edit__rfp_form_fields_widget %}
-    {{ form_row(form.firstName) }}
-    {{ form_row(form.lastName) }}
-    {{ form_row(form.email)  }}
-    {{ form_row(form.phone) }}
-    {{ form_row(form.company) }}
-    {{ form_row(form.role) }}
-    {{ form_row(form.note) }}
-    {{ form_row(form.poNumber) }}
-    {{ form_row(form.shipUntil, { 'attr': {'class': 'input input_md'} }) }}
-    {{ form_row(form.assignedAccountUsers) }}
+    <div class="grid">
+        <div class="grid__row">
+            <div class="grid__column grid__column--6">
+                {{ form_row(form.firstName) }}
+            </div>
+            <div class="grid__column grid__column--6">
+                {{ form_row(form.lastName) }}
+            </div>
+        </div>
+        <div class="grid__row">
+            <div class="grid__column grid__column--6">
+                {{ form_row(form.email)  }}
+            </div>
+            <div class="grid__column grid__column--6">
+                {{ form_row(form.phone) }}
+            </div>
+        </div>
+        <div class="grid__row">
+            <div class="grid__column grid__column--6">
+                {{ form_row(form.company) }}
+            </div>
+            <div class="grid__column grid__column--6">
+                {{ form_row(form.role) }}
+            </div>
+        </div>
+        <div class="grid__row">
+            <div class="grid__column grid__column--12">
+                {{ form_row(form.note, { 'attr': {'rows': 5} }) }}
+            </div>
+        </div>
+        <div class="grid__row">
+            <div class="grid__column grid__column--6">
+                {{ form_row(form.poNumber) }}
+            </div>
+            <div class="grid__column grid__column--6">
+                {{ form_row(form.shipUntil, { 'attr': {'class': 'input input--size-m'} }) }}
+            </div>
+        </div>
+        <div class="grid__row">
+            <div class="grid__column grid__column--6">
+                <div class="input-rfp">
+                    {{ form_row(form.assignedAccountUsers) }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block __oro_rfp_frontend_request_edit__rfp_form_lineitems_widget %}
@@ -55,5 +101,3 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
-
-

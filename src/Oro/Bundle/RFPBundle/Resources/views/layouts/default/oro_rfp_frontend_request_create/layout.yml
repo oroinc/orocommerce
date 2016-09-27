@@ -2,9 +2,11 @@ layout:
     imports:
         -
             id: oro_rfp_frontend_request_edit
-            root: content
+            root: oro_rfp_request_form_container
         - oro_account_menu
     actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
         - '@appendOption':
             id: title
             optionName: value
@@ -13,13 +15,15 @@ layout:
                 - 'oro.frontend.rfp.request.entity_plural_label'
                 - 'oro.frontend.rfp.request.create_title.label'
 
-        - '@setOption':
-            id: page_title
-            optionName: class_prefix
-            optionValue: 'account'
+        - '@add':
+            id: oro_rfp_request_form_title
+            parentId: oro_rfp_request_form_container
+            prepend: true
+            blockType: text
+            options:
+                text: oro.frontend.rfp.request.create_title.label
 
-        - '@setOption':
-            id: page_title
-            optionName: text
-            optionValue:
-                label: 'oro.frontend.rfp.request.create_title.label'
+        - '@add':
+            id: oro_rfp_request_form_container
+            parentId: content
+            blockType: container

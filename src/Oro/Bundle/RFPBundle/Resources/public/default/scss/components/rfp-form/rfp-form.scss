@@ -1,0 +1,9 @@
+.rfp-form {
+    padding: 28px 24px;
+    
+    background: get-color('additional', 'base');
+
+    &:not(:last-child) {
+        margin-bottom: 60px;
+    }
+}

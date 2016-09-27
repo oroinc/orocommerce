@@ -3,6 +3,9 @@ layout:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
 
+        - '@setFormTheme':
+            themes: 'form.html.twig'
+
         - '@addTree':
             items:
                 __rfp_page:
@@ -15,6 +18,8 @@ layout:
                     blockType: form_start
                     options:
                         form: '=data["oro_rfp_request_form"].getRequestForm(data["entity"])'
+                __rfp_form_edit_container:
+                    blockType: container
                 __rfp_form_fields:
                     blockType: form_fields
                     options:
@@ -36,7 +41,6 @@ layout:
                         text: oro.frontend.rfp.request.create_form.back.label
                         icon: cf-left-open-mini
                 __rfp_form_actions_create:
-                __rfp_form_actions_create:
                     blockType: button
                     options:
                         action: submit
@@ -49,7 +53,8 @@ layout:
                     __rfp_page:
                         __rfp_form_container:
                             __rfp_form_start: ~
-                            __rfp_form_fields: ~
+                            __rfp_form_edit_container:
+                                __rfp_form_fields: ~
                             __rfp_form_lineitems: ~
                             __rfp_form_actions:
                                 __rfp_form_actions_create: ~

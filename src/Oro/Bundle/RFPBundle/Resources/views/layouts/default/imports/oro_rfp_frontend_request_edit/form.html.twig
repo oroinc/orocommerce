@@ -1,0 +1,67 @@
+{% extends 'OroFrontendBundle:layouts/default:form_theme.html.twig' %}
+
+{% block genemu_jqueryselect2_widget %}
+    {% if configs.grid is defined and configs.grid.name is defined %}
+        {% set url = path('oro_datagrid_index', {'gridName': configs.grid.name}) %}
+    {% elseif configs.route_name is defined and configs.route_name %}
+        {% set url = path(configs.route_name, configs.route_parameters | default([])) %}
+    {%  else %}
+        {% set url = '' %}
+    {% endif %}
+    {% if configs.placeholder is defined %}
+        {% set configs = configs|merge({'placeholder': configs.placeholder|trans }) %}
+    {% endif %}
+    {% if configs.result_template_twig is defined and configs.result_template_twig %}
+        {% set configs = configs|merge({'result_template': include(configs.result_template_twig) }) %}
+    {% endif %}
+    {% if configs.selection_template_twig is defined and configs.selection_template_twig %}
+        {% set configs = configs|merge({'selection_template': include(configs.selection_template_twig) }) %}
+    {% endif %}
+    {% set configs = configs|merge({
+        containerCssClass: 'oro-select2 oro-select2--size-m',
+        dropdownCssClass: 'oro-select2__dropdown'
+    }) %}
+    {% if configs.component is defined %}
+        {% set component = 'oro/select2-'~configs.component~'-component' %}
+    {%  else %}
+        {% set component = 'oro/select2-component' %}
+    {% endif %}
+    {% if component_options is not defined %}
+        {% set component_options = {} %}
+    {% endif %}
+    {% set component_options = component_options|merge({'configs': configs, 'url': url}) %}
+    {% if excluded is defined %}
+        {% set component_options = component_options|merge({'excluded': excluded }) %}
+    {% endif %}
+    
+    {{ form_widget(form, { 'attr': {
+        'class': 'select2',
+        'data-page-component-module': component,
+        'data-page-component-options': component_options|json_encode|raw
+    } }) }}
+{% endblock %}
+
+{%- block form_row -%}
+    <div class="grid__row grid__row--offset-s">
+        {{- form_label(form, null) -}}
+    </div>
+    {{- form_widget(form) -}}
+    {{- form_errors(form) -}}
+{%- endblock -%}
+
+{% block form_widget_simple %}
+    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
+    {% set attr = attr|merge({
+        class: [
+            attr.class|default(''),
+            class_prefix ~ "__form__input",
+            "input input--full input--size-m"
+        ]|join(' ')
+    }) %}
+    {{ parent() }}
+{% endblock %}
+
+{% block textarea_widget %}
+	{% set attr = attr|merge({class: "input input_sm input_block"}) %}
+    {{ parent() }}
+{% endblock %}
