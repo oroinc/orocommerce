@@ -12,7 +12,6 @@ use Oro\Bundle\ApiBundle\Config\FiltersConfigExtra;
 use Oro\Bundle\ApiBundle\Util\CriteriaConnector;
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
 use Oro\Bundle\WarehouseBundle\Api\Processor\BuildSingleWarehouseInventoryLevelQuery;
-use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 
 class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelatedTestCase
@@ -22,9 +21,6 @@ class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelated
 
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $criteriaConnector;
-
-    /** @var WarehouseCounter|\PHPUnit_Framework_MockObject_MockObject */
-    protected $warehouseCounter;
 
     /** @var BuildSingleWarehouseInventoryLevelQuery */
     protected $processor;
@@ -47,15 +43,7 @@ class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelated
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->warehouseCounter = $this->getMockBuilder(WarehouseCounter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->processor = new BuildSingleWarehouseInventoryLevelQuery(
-            $this->doctrineHelper,
-            $this->criteriaConnector,
-            $this->warehouseCounter
-        );
+        $this->processor = new BuildSingleWarehouseInventoryLevelQuery($this->doctrineHelper, $this->criteriaConnector);
     }
 
     public function testProcessWhenCriteriaObjectDoesNotExist()
@@ -84,68 +72,8 @@ class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelated
         $this->assertFalse($this->context->hasQuery());
     }
 
-    public function testMoreWarehousesAndNoProduct()
-    {
-        $this->warehouseCounter->expects($this->once())
-            ->method('areMoreWarehouses')
-            ->willReturn(true);
-
-        $this->context->setRequestData(['sku' => 'product.1']);
-
-        $resolver = $this->getMockBuilder(EntityClassResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $criteria = new Criteria($resolver);
-
-        $this->context->setCriteria($criteria);
-
-        $this->processor->process($this->context);
-
-        $this->assertFalse($this->context->hasQuery());
-    }
-
-    public function testProcessBuildQueryWithMultipleWarehouses()
-    {
-        $this->warehouseCounter->expects($this->once())
-            ->method('areMoreWarehouses')
-            ->willReturn(true);
-
-        $requestData = [
-            'sku' => 'product.1',
-            'warehouse' => 1,
-            'unit' => 'liter'
-        ];
-        $this->context->setRequestData($requestData);
-
-        $resolver = $this->getMockBuilder(EntityClassResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $criteria = new Criteria($resolver);
-
-        $this->criteriaConnector->expects($this->once())
-            ->method('applyCriteria');
-
-        $this->context->setCriteria($criteria);
-        $this->context->setClassName(WarehouseInventoryLevel::class);
-
-        $this->processor->process($this->context);
-
-        $this->assertTrue($this->context->hasQuery());
-
-        /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $this->context->getQuery();
-
-        foreach ($requestData as $parameter => $value) {
-            $this->assertEquals($queryBuilder->getParameter($parameter)->getValue(), $value);
-        }
-    }
-
     public function testProcessBuildQueryWithOneWarehouses()
     {
-        $this->warehouseCounter->expects($this->once())
-            ->method('areMoreWarehouses')
-            ->willReturn(false);
-
         $requestData = [
             'sku' => 'product.1',
             'unit' => 'liter'

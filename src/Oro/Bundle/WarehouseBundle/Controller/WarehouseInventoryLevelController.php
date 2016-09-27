@@ -101,25 +101,10 @@ class WarehouseInventoryLevelController extends Controller
         $noDataReason = '';
         if (0 === count($product->getUnitPrecisions())) {
             $noDataReason = 'oro.warehouse.warehouseinventorylevel.error.units';
-        } elseif (0 === $this->getAvailableWarehousesCount()) {
-            $noDataReason = 'oro.warehouse.warehouseinventorylevel.error.warehouses';
         }
 
         return $noDataReason
             ? ['noDataReason' => $this->get('translator')->trans($noDataReason)]
             : [];
-    }
-
-    /**
-     * @return integer
-     */
-    private function getAvailableWarehousesCount()
-    {
-        $warehouseClass = $this->getParameter('oro_warehouse.entity.warehouse.class');
-
-        return $this->getDoctrine()
-            ->getManagerForClass($warehouseClass)
-            ->getRepository($warehouseClass)
-            ->countAll();
     }
 }
