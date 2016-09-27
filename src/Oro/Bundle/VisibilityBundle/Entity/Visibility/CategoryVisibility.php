@@ -50,6 +50,14 @@ class CategoryVisibility implements VisibilityInterface
     protected $visibility;
 
     /**
+     * @var Scope
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
+     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    protected $scope;
+
+    /**
      * @return int
      */
     public function getId()
@@ -118,11 +126,12 @@ class CategoryVisibility implements VisibilityInterface
             self::PARENT_CATEGORY,
             self::CONFIG,
             self::HIDDEN,
-            self::VISIBLE
+            self::VISIBLE,
         ];
         if ($category instanceof Category && !$category->getParentCategory()) {
             unset($visibilityList[array_search(self::PARENT_CATEGORY, $visibilityList)]);
         }
+
         return $visibilityList;
     }
 
@@ -147,9 +156,10 @@ class CategoryVisibility implements VisibilityInterface
      * @param Scope $scope
      * @return $this
      */
-    public function setScope(Scope $scope)
+    public function setScope(Scope $scope = null)
     {
-        // TODO: Implement setScope() method.
+        $this->scope = $scope;
+
         return $this;
     }
 
@@ -158,6 +168,6 @@ class CategoryVisibility implements VisibilityInterface
      */
     public function getScope()
     {
-        // TODO: Implement getScope() method.
+        return $this->scope;
     }
 }

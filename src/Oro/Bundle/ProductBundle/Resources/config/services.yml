@@ -16,18 +16,6 @@ services:
             - '%oro_product.entity.product.class%'
             - "@doctrine.orm.entity_manager"
 
-    oro_product.service.abstract_rounding:
-        class: 'Oro\Bundle\ProductBundle\Rounding\AbstractRoundingService'
-        public: false
-        abstract: true
-        arguments:
-            - "@oro_config.manager"
-
-    oro_product.service.quantity_rounding:
-        class: 'Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService'
-        public: false
-        parent: oro_product.service.abstract_rounding
-
     oro_product.formatter.unit_value:
         abstract: true
         class: 'Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter'

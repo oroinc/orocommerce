@@ -62,6 +62,14 @@ class AccountGroupCategoryVisibility implements VisibilityInterface, AccountGrou
     protected $visibility;
 
     /**
+     * @var Scope
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
+     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    protected $scope;
+
+    /**
      * @return int
      */
     public function getId()
@@ -175,9 +183,10 @@ class AccountGroupCategoryVisibility implements VisibilityInterface, AccountGrou
      * @param Scope $scope
      * @return $this
      */
-    public function setScope(Scope $scope)
+    public function setScope(Scope $scope = null)
     {
-        // TODO: Implement setScope() method.
+        $this->scope = $scope;
+
         return $this;
     }
 
@@ -186,6 +195,6 @@ class AccountGroupCategoryVisibility implements VisibilityInterface, AccountGrou
      */
     public function getScope()
     {
-        // TODO: Implement getScope() method.
+        return $this->scope;
     }
 }

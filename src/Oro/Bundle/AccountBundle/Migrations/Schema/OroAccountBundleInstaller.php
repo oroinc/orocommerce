@@ -1170,9 +1170,15 @@ class OroAccountBundleInstaller implements
             'accountGroup',
             OroAccountBundleInstaller::ORO_ACCOUNT_GROUP_TABLE_NAME,
             'id',
-            ['extend' => ['owner' => ExtendScope::OWNER_CUSTOM]],
-            RelationType::MANY_TO_ONE,
-            ['onDelete' => 'CASCADE']
+            [
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['all'],
+                    'on_delete' => 'CASCADE',
+                    'nullable' => true
+                ]
+            ],
+            RelationType::MANY_TO_ONE
         );
 
         $this->extendExtension->addManyToOneRelation(
@@ -1181,9 +1187,15 @@ class OroAccountBundleInstaller implements
             'account',
             OroAccountBundleInstaller::ORO_ACCOUNT_TABLE_NAME,
             'id',
-            ['extend' => ['owner' => ExtendScope::OWNER_CUSTOM]],
-            RelationType::MANY_TO_ONE,
-            ['onDelete' => 'CASCADE']
+            [
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['all'],
+                    'on_delete' => 'CASCADE',
+                    'nullable' => true
+                ]
+            ],
+            RelationType::MANY_TO_ONE
         );
     }
 }
