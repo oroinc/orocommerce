@@ -22,7 +22,6 @@ oro:
             unit_precision.label:        'Unit Precision'
             unit.label:                  'Unit of Quantity'
             precision.label:             'Precision'
-            manage_inventory.label:      'Managed Inventory'
 
         sections:
             general: 'General'

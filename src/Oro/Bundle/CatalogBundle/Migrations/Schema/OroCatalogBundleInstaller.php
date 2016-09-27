@@ -4,8 +4,6 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
@@ -19,8 +17,7 @@ use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInte
 class OroCatalogBundleInstaller implements
     Installation,
     NoteExtensionAwareInterface,
-    AttachmentExtensionAwareInterface,
-    ExtendExtensionAwareInterface
+    AttachmentExtensionAwareInterface
 {
     const ORO_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME = 'oro_catalog_cat_short_desc';
     const ORO_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME = 'oro_catalog_cat_long_desc';
@@ -35,9 +32,6 @@ class OroCatalogBundleInstaller implements
     /** @var NoteExtension */
     protected $noteExtension;
 
-    /** @var ExtendExtension */
-    protected $extendExtension;
-
     /**
      * Sets the NoteExtension
      *
@@ -46,14 +40,6 @@ class OroCatalogBundleInstaller implements
     public function setNoteExtension(NoteExtension $noteExtension)
     {
         $this->noteExtension = $noteExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
     }
 
     /** @var AttachmentExtension */
