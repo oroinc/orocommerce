@@ -18,13 +18,39 @@ class ScopeRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('scope');
         foreach ($criteria as $field => $value) {
+            if ($value === null) {
+                $qb->andWhere($qb->expr()->isNull('scope.' . $field));
+            } else {
+                if ($value === self::IS_NOT_NULL) {
+                    $qb->andWhere($qb->expr()->isNotNull('scope.' . $field));
+                } else {
+                    $qb->andWhere($qb->expr()->eq('scope.' . $field, $value));
+                }
+            }
+        }
+
+        return new BufferedQueryResultIterator($qb);
+    }
+
+    /**
+     * @param array $criteria
+     * @return Scope
+     */
+    public function findOneByCriteria(array $criteria)
+    {
+        $qb = $this->createQueryBuilder('scope');
+        foreach ($criteria as $field => $value) {
+            if ($value === null) {
+                $qb->andWhere($qb->expr()->isNull('scope.' . $field));
+            }
             if ($value === self::IS_NOT_NULL) {
                 $qb->andWhere($qb->expr()->isNotNull('scope.' . $field));
             } else {
                 $qb->andWhere($qb->expr()->eq('scope.' . $field, $value));
             }
         }
+        $qb->setMaxResults(1);
 
-        return new BufferedQueryResultIterator($qb);
+        return $qb->getQuery()->getSingleResult();
     }
 }

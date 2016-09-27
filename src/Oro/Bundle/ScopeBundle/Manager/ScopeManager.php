@@ -57,9 +57,10 @@ class ScopeManager
     {
         $criteria = $this->getCriteria($scopeType, $context);
 
-        return $this->registry->getManagerForClass(Scope::class)
-            ->getRepository(Scope::class)
-            ->findOneBy($criteria);
+        /** @var ScopeRepository $repository */
+        $repository = $this->registry->getManagerForClass(Scope::class)->getRepository(Scope::class);
+
+        return $repository->findOneByCriteria($criteria);
     }
 
     /**
