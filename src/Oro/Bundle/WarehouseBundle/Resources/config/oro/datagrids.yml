@@ -9,7 +9,7 @@ datagrids:
                     - IDENTITY(precision.unit) as unitCode
 #                    - warehouse.name as warehouseName
                     - IDENTITY(precision.unit) as productUnit
-                    - level.quantity as levelQuantity
+                    - inventory_level.quantity as levelQuantity
                 from:
 #                    - { table: %oro_warehouse.entity.warehouse.class%, alias: warehouse }
                     - { table: %oro_warehouse.entity.warehouse_inventory_level.class%, alias: inventory_level }
