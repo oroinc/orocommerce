@@ -97,3 +97,10 @@ ShippingBundle
 ShoppingListBundle
 ------------------
 - `oro_shopping_list.repository.line_item` inherits `oro_entity.abstract_repository`
+
+WarehouseBundle
+---------------
+- added manageInventory field to Category entity and related admin pages with fallback support
+- added manageInventory field to Product entity and related admin pages with fallback support
+- added CategoryFallbackProvider with fallback id `category`
+- added ParentCategoryFallbackProvider with fallback id `parentCategory`

@@ -5,6 +5,11 @@ system_configuration:
             icon: icon-building
         warehouse_configuration:
             title: oro.warehouse.system_configuration.groups.warehouse_configuration.title
+        product_options:
+            title: oro.warehouse.system_configuration.groups.product_options.title
+            icon: 'icon-gears'
+        product_inventory_options:
+            title: oro.warehouse.system_configuration.groups.product_inventory_options.title
 
     fields:
         oro_warehouse.enabled_warehouses:
@@ -13,6 +18,15 @@ system_configuration:
             options:
                 label: oro.warehouse.system_configuration.fields.enabled_warehouses.label
                 resettable: false
+        oro_warehouse.manage_inventory:
+            data_type: boolean
+            type: choice
+            options:
+                label: oro.warehouse.system_configuration.fields.manage_inventory.label
+                choice_translation_domain: messages
+                choices:
+                    false: oro.warehouse.manage_inventory.choice.false
+                    true: oro.warehouse.manage_inventory.choice.true
 
     tree:
         system_configuration:
@@ -26,3 +40,9 @@ system_configuration:
                                     warehouse_configuration:
                                         children:
                                             - oro_warehouse.enabled_warehouses
+                            product_options:
+                                priority: 90
+                                children:
+                                    product_inventory_options:
+                                        children:
+                                            - oro_warehouse.manage_inventory
