@@ -50,7 +50,7 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCas
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->event = $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent')
+        $this->event = $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent')
             ->disableOriginalConstructor()
             ->getMock();
 

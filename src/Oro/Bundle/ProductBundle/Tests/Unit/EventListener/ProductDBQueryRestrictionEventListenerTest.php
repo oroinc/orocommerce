@@ -10,13 +10,13 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
-use Oro\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener;
+use Oro\Bundle\ProductBundle\EventListener\ProductDBQueryRestrictionEventListener;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
-class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
+class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ProductSelectDBQueryEventListener
+     * @var ProductDBQueryRestrictionEventListener
      */
     protected $listener;
 
@@ -55,7 +55,7 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->modifier = $this->getMock('Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier');
 
-        $this->event = $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent')
+        $this->event = $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent')
             ->disableOriginalConstructor()->getMock();
 
         $this->queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')->disableOriginalConstructor()
@@ -69,13 +69,13 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ProductSelectDBQueryEventListener
+     * @return ProductDBQueryRestrictionEventListener
      */
     protected function createListener()
     {
         $requestStack = new RequestStack();
         $requestStack->push(new Request());
-        return new ProductSelectDBQueryEventListener(
+        return new ProductDBQueryRestrictionEventListener(
             $this->configManager,
             $this->modifier,
             $this->frontendHelper,
@@ -175,7 +175,7 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \LogicException
-     * @expectedExceptionMessage SystemConfigurationPath not configured for ProductSelectDBQueryEventListener
+     * @expectedExceptionMessage SystemConfigurationPath not configured for ProductDBQueryRestrictionEventListener
      */
     public function testSystemConfigurationPathEmpty()
     {

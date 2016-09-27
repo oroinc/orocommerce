@@ -6,7 +6,7 @@ use Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
-class ProductSelectDBQueryEventListener
+class ProductDBQueryRestrictionEventListener
 {
     /**
      * @var FrontendHelper

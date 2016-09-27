@@ -7,7 +7,7 @@ use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
-class ProductSelectDBQueryEventListener
+class ProductDBQueryRestrictionEventListener
 {
     /**
      * @var ConfigManager
@@ -98,7 +98,7 @@ class ProductSelectDBQueryEventListener
     protected function isConditionsAcceptable()
     {
         if (!$this->backendSystemConfigurationPath && !$this->frontendSystemConfigurationPath) {
-            throw new \LogicException('SystemConfigurationPath not configured for ProductSelectDBQueryEventListener');
+            throw new \LogicException('SystemConfigurationPath not configured for ProductDBQueryRestrictionEventListener');
         }
 
         return true;
