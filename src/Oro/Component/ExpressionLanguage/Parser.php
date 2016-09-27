@@ -2,65 +2,93 @@
 
 namespace Oro\Component\ExpressionLanguage;
 
+use Oro\Component\ExpressionLanguage\Node as CustomNode;
+use Symfony\Component\ExpressionLanguage\Node;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\ExpressionLanguage\Token;
 use Symfony\Component\ExpressionLanguage\TokenStream;
-use Symfony\Component\ExpressionLanguage\Node;
-use Oro\Component\ExpressionLanguage\Node\BinaryNode;
-use Oro\Component\ExpressionLanguage\Node\GetAttrNode;
-use Symfony\Component\ExpressionLanguage\SyntaxError;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class Parser
 {
     const OPERATOR_LEFT = 1;
     const OPERATOR_RIGHT = 2;
 
+    /**
+     * @var TokenStream
+     */
     private $stream;
+
+    /**
+     * @var array
+     */
     private $unaryOperators;
+
+    /**
+     * @var array
+     */
     private $binaryOperators;
+
+    /**
+     * @var array
+     */
     private $functions;
+
+    /**
+     * @var array
+     */
     private $names;
+
+    /**
+     * @var array
+     */
     private $methods;
 
+    /**
+     * @param array $functions
+     */
     public function __construct(array $functions)
     {
         $this->functions = $functions;
 
-        $this->unaryOperators = array(
-            'not' => array('precedence' => 50),
-            '!' => array('precedence' => 50),
-            '-' => array('precedence' => 500),
-            '+' => array('precedence' => 500),
-        );
-        $this->binaryOperators = array(
-            'or' => array('precedence' => 10, 'associativity' => self::OPERATOR_LEFT),
-            '||' => array('precedence' => 10, 'associativity' => self::OPERATOR_LEFT),
-            'and' => array('precedence' => 15, 'associativity' => self::OPERATOR_LEFT),
-            '&&' => array('precedence' => 15, 'associativity' => self::OPERATOR_LEFT),
-            '|' => array('precedence' => 16, 'associativity' => self::OPERATOR_LEFT),
-            '^' => array('precedence' => 17, 'associativity' => self::OPERATOR_LEFT),
-            '&' => array('precedence' => 18, 'associativity' => self::OPERATOR_LEFT),
-            '=' => array('precedence' => 20, 'associativity' => self::OPERATOR_LEFT),
-            '!=' => array('precedence' => 20, 'associativity' => self::OPERATOR_LEFT),
-            '<' => array('precedence' => 20, 'associativity' => self::OPERATOR_LEFT),
-            '>' => array('precedence' => 20, 'associativity' => self::OPERATOR_LEFT),
-            '>=' => array('precedence' => 20, 'associativity' => self::OPERATOR_LEFT),
-            '<=' => array('precedence' => 20, 'associativity' => self::OPERATOR_LEFT),
-            'not in' => array('precedence' => 20, 'associativity' => self::OPERATOR_LEFT),
-            'in' => array('precedence' => 20, 'associativity' => self::OPERATOR_LEFT),
-            'matches' => array('precedence' => 20, 'associativity' => self::OPERATOR_LEFT),
-            '..' => array('precedence' => 25, 'associativity' => self::OPERATOR_LEFT),
-            '+' => array('precedence' => 30, 'associativity' => self::OPERATOR_LEFT),
-            '-' => array('precedence' => 30, 'associativity' => self::OPERATOR_LEFT),
-            '~' => array('precedence' => 40, 'associativity' => self::OPERATOR_LEFT),
-            '*' => array('precedence' => 60, 'associativity' => self::OPERATOR_LEFT),
-            '/' => array('precedence' => 60, 'associativity' => self::OPERATOR_LEFT),
-            '%' => array('precedence' => 60, 'associativity' => self::OPERATOR_LEFT),
-            '**' => array('precedence' => 200, 'associativity' => self::OPERATOR_RIGHT),
-        );
-        $this->methods = array(
-            'all' => GetAttrNode::ALL_CALL,
-            'any' => GetAttrNode::ANY_CALL,
-        );
+        $this->unaryOperators = [
+            'not' => ['precedence' => 50],
+            '!' => ['precedence' => 50],
+            '-' => ['precedence' => 500],
+            '+' => ['precedence' => 500],
+        ];
+        $this->binaryOperators = [
+            'or' => ['precedence' => 10, 'associativity' => self::OPERATOR_LEFT],
+            '||' => ['precedence' => 10, 'associativity' => self::OPERATOR_LEFT],
+            'and' => ['precedence' => 15, 'associativity' => self::OPERATOR_LEFT],
+            '&&' => ['precedence' => 15, 'associativity' => self::OPERATOR_LEFT],
+            '|' => ['precedence' => 16, 'associativity' => self::OPERATOR_LEFT],
+            '^' => ['precedence' => 17, 'associativity' => self::OPERATOR_LEFT],
+            '&' => ['precedence' => 18, 'associativity' => self::OPERATOR_LEFT],
+            '=' => ['precedence' => 20, 'associativity' => self::OPERATOR_LEFT],
+            '!=' => ['precedence' => 20, 'associativity' => self::OPERATOR_LEFT],
+            '<' => ['precedence' => 20, 'associativity' => self::OPERATOR_LEFT],
+            '>' => ['precedence' => 20, 'associativity' => self::OPERATOR_LEFT],
+            '>=' => ['precedence' => 20, 'associativity' => self::OPERATOR_LEFT],
+            '<=' => ['precedence' => 20, 'associativity' => self::OPERATOR_LEFT],
+            'not in' => ['precedence' => 20, 'associativity' => self::OPERATOR_LEFT],
+            'in' => ['precedence' => 20, 'associativity' => self::OPERATOR_LEFT],
+            'matches' => ['precedence' => 20, 'associativity' => self::OPERATOR_LEFT],
+            '..' => ['precedence' => 25, 'associativity' => self::OPERATOR_LEFT],
+            '+' => ['precedence' => 30, 'associativity' => self::OPERATOR_LEFT],
+            '-' => ['precedence' => 30, 'associativity' => self::OPERATOR_LEFT],
+            '~' => ['precedence' => 40, 'associativity' => self::OPERATOR_LEFT],
+            '*' => ['precedence' => 60, 'associativity' => self::OPERATOR_LEFT],
+            '/' => ['precedence' => 60, 'associativity' => self::OPERATOR_LEFT],
+            '%' => ['precedence' => 60, 'associativity' => self::OPERATOR_LEFT],
+            '**' => ['precedence' => 200, 'associativity' => self::OPERATOR_RIGHT],
+        ];
+        $this->methods = [
+            'all' => CustomNode\GetAttrNode::ALL_CALL,
+            'any' => CustomNode\GetAttrNode::ANY_CALL,
+        ];
     }
 
     /**
@@ -77,35 +105,47 @@ class Parser
      * but the compiled code will use 'this'.
      *
      * @param TokenStream $stream A token stream instance
-     * @param array       $names  An array of valid names
+     * @param array $names An array of valid names
      *
      * @return Node\Node A node tree
      *
      * @throws SyntaxError
      */
-    public function parse(TokenStream $stream, $names = array())
+    public function parse(TokenStream $stream, $names = [])
     {
         $this->stream = $stream;
         $this->names = $names;
 
         $node = $this->parseExpression();
         if (!$stream->isEOF()) {
-            throw new SyntaxError(sprintf('Unexpected token "%s" of value "%s"', $stream->current->type, $stream->current->value), $stream->current->cursor);
+            throw new SyntaxError(
+                sprintf('Unexpected token "%s" of value "%s"', $stream->current->type, $stream->current->value),
+                $stream->current->cursor
+            );
         }
 
         return $node;
     }
 
+    /**
+     * @param int $precedence
+     * @return CustomNode\BinaryNode|CustomNode\GetAttrNode|Node\ConditionalNode|Node\ConstantNode
+     */
     public function parseExpression($precedence = 0)
     {
         $expr = $this->getPrimary();
         $token = $this->stream->current;
-        while ($token->test(Token::OPERATOR_TYPE) && isset($this->binaryOperators[$token->value]) && $this->binaryOperators[$token->value]['precedence'] >= $precedence) {
+        while ($token->test(Token::OPERATOR_TYPE)
+            && isset($this->binaryOperators[$token->value])
+            && $this->binaryOperators[$token->value]['precedence'] >= $precedence
+        ) {
             $op = $this->binaryOperators[$token->value];
             $this->stream->next();
 
-            $expr1 = $this->parseExpression(self::OPERATOR_LEFT === $op['associativity'] ? $op['precedence'] + 1 : $op['precedence']);
-            $expr = new BinaryNode($token->value, $expr, $expr1);
+            $expr1 = $this->parseExpression(
+                self::OPERATOR_LEFT === $op['associativity'] ? $op['precedence'] + 1 : $op['precedence']
+            );
+            $expr = new CustomNode\BinaryNode($token->value, $expr, $expr1);
 
             $token = $this->stream->current;
         }
@@ -117,6 +157,9 @@ class Parser
         return $expr;
     }
 
+    /**
+     * @return CustomNode\GetAttrNode|Node\ConstantNode
+     */
     protected function getPrimary()
     {
         $token = $this->stream->current;
@@ -140,6 +183,10 @@ class Parser
         return $this->parsePrimaryExpression();
     }
 
+    /**
+     * @param $expr
+     * @return Node\ConditionalNode
+     */
     protected function parseConditionalExpression($expr)
     {
         while ($this->stream->current->test(Token::PUNCTUATION_TYPE, '?')) {
@@ -164,6 +211,11 @@ class Parser
         return $expr;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
+     * @return CustomNode\GetAttrNode|Node\ConstantNode
+     */
     public function parsePrimaryExpression()
     {
         $token = $this->stream->current;
@@ -186,12 +238,19 @@ class Parser
                     default:
                         if ('(' === $this->stream->current->value) {
                             if (false === isset($this->functions[$token->value])) {
-                                throw new SyntaxError(sprintf('The function "%s" does not exist', $token->value), $token->cursor);
+                                throw new SyntaxError(
+                                    sprintf('The function "%s" does not exist', $token->value),
+                                    $token->cursor
+                                );
                             }
 
                             $node = new Node\FunctionNode($token->value, $this->parseArguments());
                         } else {
-                            $node = new Node\NameNode($token->value);
+                            $name = array_search($token->value, $this->names, true);
+                            if (is_int($name) || $name === false) {
+                                $name = $token->value;
+                            }
+                            $node = new Node\NameNode($name);
                         }
                 }
                 break;
@@ -208,13 +267,19 @@ class Parser
                 } elseif ($token->test(Token::PUNCTUATION_TYPE, '{')) {
                     $node = $this->parseHashExpression();
                 } else {
-                    throw new SyntaxError(sprintf('Unexpected token "%s" of value "%s"', $token->type, $token->value), $token->cursor);
+                    throw new SyntaxError(
+                        sprintf('Unexpected token "%s" of value "%s"', $token->type, $token->value),
+                        $token->cursor
+                    );
                 }
         }
 
         return $this->parsePostfixExpression($node);
     }
 
+    /**
+     * @return Node\ArrayNode
+     */
     public function parseArrayExpression()
     {
         $this->stream->expect(Token::PUNCTUATION_TYPE, '[', 'An array element was expected');
@@ -239,6 +304,9 @@ class Parser
         return $node;
     }
 
+    /**
+     * @return Node\ArrayNode
+     */
     public function parseHashExpression()
     {
         $this->stream->expect(Token::PUNCTUATION_TYPE, '{', 'A hash element was expected');
@@ -262,7 +330,10 @@ class Parser
             //  * a string -- 'a'
             //  * a name, which is equivalent to a string -- a
             //  * an expression, which must be enclosed in parentheses -- (1 + 2)
-            if ($this->stream->current->test(Token::STRING_TYPE) || $this->stream->current->test(Token::NAME_TYPE) || $this->stream->current->test(Token::NUMBER_TYPE)) {
+            if ($this->stream->current->test(Token::STRING_TYPE)
+                || $this->stream->current->test(Token::NAME_TYPE)
+                || $this->stream->current->test(Token::NUMBER_TYPE)
+            ) {
                 $key = new Node\ConstantNode($this->stream->current->value);
                 $this->stream->next();
             } elseif ($this->stream->current->test(Token::PUNCTUATION_TYPE, '(')) {
@@ -270,7 +341,12 @@ class Parser
             } else {
                 $current = $this->stream->current;
 
-                throw new SyntaxError(sprintf('A hash key must be a quoted string, a number, a name, or an expression enclosed in parentheses (unexpected token "%s" of value "%s"', $current->type, $current->value), $current->cursor);
+                throw new SyntaxError(sprintf(
+                    'A hash key must be a quoted string,'
+                    .' a number, a name, or an expression enclosed in parentheses (unexpected token "%s" of value "%s"',
+                    $current->type,
+                    $current->value
+                ), $current->cursor);
             }
 
             $this->stream->expect(Token::PUNCTUATION_TYPE, ':', 'A hash key must be followed by a colon (:)');
@@ -283,6 +359,12 @@ class Parser
         return $node;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
+     * @param $node
+     * @return CustomNode\GetAttrNode
+     */
     public function parsePostfixExpression($node)
     {
         $token = $this->stream->current;
@@ -292,21 +374,26 @@ class Parser
                 $token = $this->stream->current;
                 $this->stream->next();
 
-                if (
-                    $token->type !== Token::NAME_TYPE
+                if ($token->type !== Token::NAME_TYPE
                     &&
                     // Operators like "not" and "matches" are valid method or property names,
                     //
                     // In other words, besides NAME_TYPE, OPERATOR_TYPE could also be parsed as a property or method.
-                    // This is because operators are processed by the lexer prior to names. So "not" in "foo.not()" or "matches" in "foo.matches" will be recognized as an operator first.
+                    // This is because operators are processed by the lexer prior to names.
+                    // So "not" in "foo.not()" or "matches" in "foo.matches" will be recognized as an operator first.
                     // But in fact, "not" and "matches" in such expressions shall be parsed as method or property names.
                     //
                     // And this ONLY works if the operator consists of valid characters for a property or method name.
                     //
                     // Other types, such as STRING_TYPE and NUMBER_TYPE, can't be parsed as property nor method names.
                     //
-                    // As a result, if $token is NOT an operator OR $token->value is NOT a valid property or method name, an exception shall be thrown.
-                    ($token->type !== Token::OPERATOR_TYPE || !preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/A', $token->value))
+                    // As a result,
+                    // if $token is NOT an operator OR $token->value is NOT a valid property or method name,
+                    // an exception shall be thrown.
+                    (
+                        $token->type !== Token::OPERATOR_TYPE
+                        || !preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/A', $token->value)
+                    )
                 ) {
                     throw new SyntaxError('Expected name', $token->cursor);
                 }
@@ -318,22 +405,37 @@ class Parser
                     foreach ($this->parseArguments()->nodes as $n) {
                         $arguments->addElement($n);
                     }
-                    $type = $this->methods[strtolower($token->value)];
+                    $methodName = strtolower($token->value);
+                    if (!array_key_exists($methodName, $this->methods)) {
+                        throw new SyntaxError(sprintf(
+                            'Unsupported method: %s, supported methods are %s',
+                            $token->value,
+                            implode(', ', $this->methods)
+                        ), $token->cursor);
+                    }
+                    $type = $this->methods[$methodName];
                 } else {
-                    $type = GetAttrNode::PROPERTY_CALL;
+                    $type = CustomNode\GetAttrNode::PROPERTY_CALL;
                 }
 
-                $node = new GetAttrNode($node, $arg, $arguments, $type);
+                $node = new CustomNode\GetAttrNode($node, $arg, $arguments, $type);
             } elseif ('[' === $token->value) {
-                throw new SyntaxError('Array is denied', $token->cursor);
-//                if ($node instanceof GetAttrNode && GetAttrNode::METHOD_CALL === $node->attributes['type'] && PHP_VERSION_ID < 50400) {
-//                }
+                if ($node instanceof CustomNode\GetAttrNode
+                    && in_array($node->attributes['type'], $this->methods, true)
+                ) {
+                    throw new SyntaxError('Array calls on a method call is not allowed', $token->cursor);
+                }
 
                 $this->stream->next();
                 $arg = $this->parseExpression();
                 $this->stream->expect(Token::PUNCTUATION_TYPE, ']');
 
-                $node = new GetAttrNode($node, $arg, new Node\ArgumentsNode(), GetAttrNode::ARRAY_CALL);
+                $node = new CustomNode\GetAttrNode(
+                    $node,
+                    $arg,
+                    new Node\ArgumentsNode(),
+                    CustomNode\GetAttrNode::ARRAY_CALL
+                );
             } else {
                 break;
             }
@@ -349,8 +451,12 @@ class Parser
      */
     public function parseArguments()
     {
-        $args = array();
-        $this->stream->expect(Token::PUNCTUATION_TYPE, '(', 'A list of arguments must begin with an opening parenthesis');
+        $args = [];
+        $this->stream->expect(
+            Token::PUNCTUATION_TYPE,
+            '(',
+            'A list of arguments must begin with an opening parenthesis'
+        );
         while (!$this->stream->current->test(Token::PUNCTUATION_TYPE, ')')) {
             if (!empty($args)) {
                 $this->stream->expect(Token::PUNCTUATION_TYPE, ',', 'Arguments must be separated by a comma');
@@ -361,4 +467,5 @@ class Parser
         $this->stream->expect(Token::PUNCTUATION_TYPE, ')', 'A list of arguments must be closed by a parenthesis');
 
         return new Node\Node($args);
-    }}
+    }
+}

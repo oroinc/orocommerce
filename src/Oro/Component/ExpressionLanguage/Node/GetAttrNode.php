@@ -19,9 +19,7 @@ use Symfony\Component\ExpressionLanguage\Node\NameNode;
 use Symfony\Component\ExpressionLanguage\Node\Node;
 
 /**
- * @author Fabien Potencier <fabien@symfony.com>
- *
- * @internal
+ * Copy of \Symfony\Component\ExpressionLanguage\Node\GetAttrNode only with "all" and "any" method calls
  */
 class GetAttrNode extends Node
 {
@@ -54,17 +52,6 @@ class GetAttrNode extends Node
                 ;
                 break;
 
-            case self::METHOD_CALL:
-                $compiler
-                    ->compile($this->nodes['node'])
-                    ->raw('->')
-                    ->raw($this->nodes['attribute']->attributes['value'])
-                    ->raw('(')
-                    ->compile($this->nodes['arguments'])
-                    ->raw(')')
-                ;
-                break;
-
             case self::ARRAY_CALL:
                 $compiler
                     ->compile($this->nodes['node'])
@@ -87,14 +74,6 @@ class GetAttrNode extends Node
                 $property = $this->nodes['attribute']->attributes['value'];
 
                 return $this->getPropertyAccessor()->getValue($obj, $property);
-
-//            case self::METHOD_CALL:
-//                $obj = $this->nodes['node']->evaluate($functions, $values);
-//                if (!is_object($obj)) {
-//                    throw new \RuntimeException('Unable to call method on a non-object.');
-//                }
-//
-//                return call_user_func_array(array($obj, $this->nodes['attribute']->attributes['value']), $this->nodes['arguments']->evaluate($functions, $values));
 
             case self::ARRAY_CALL:
                 $array = $this->nodes['node']->evaluate($functions, $values);

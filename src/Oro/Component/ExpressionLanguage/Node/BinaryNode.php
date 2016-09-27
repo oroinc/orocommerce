@@ -1,102 +1,43 @@
 <?php
 
-/*
- * This file is part of the Symfony package.
- *
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Oro\Component\ExpressionLanguage\Node;
 
-use Symfony\Component\ExpressionLanguage\Compiler;
-use Symfony\Component\ExpressionLanguage\Node\Node;
+use Symfony\Component\ExpressionLanguage\Node\BinaryNode as SymfonyBinaryNode;
 
-/**
- * @author Fabien Potencier <fabien@symfony.com>
- *
- * @internal
- */
-class BinaryNode extends Node
+class BinaryNode extends SymfonyBinaryNode
 {
-    private static $operators = array(
-        '~' => '.',
-        'and' => '&&',
-        'or' => '||',
-    );
-
-    private static $functions = array(
+    /**
+     * @var array
+     */
+    protected static $functions = [
         '**' => 'pow',
         '..' => 'range',
         'in' => 'in_array',
         'not in' => '!in_array',
-    );
+    ];
 
-    public function __construct($operator, Node $left, Node $right)
-    {
-        parent::__construct(
-            array('left' => $left, 'right' => $right),
-            array('operator' => $operator)
-        );
-    }
-
-    public function compile(Compiler $compiler)
-    {
-        $operator = $this->attributes['operator'];
-
-        if ('matches' == $operator) {
-            $compiler
-                ->raw('preg_match(')
-                ->compile($this->nodes['right'])
-                ->raw(', ')
-                ->compile($this->nodes['left'])
-                ->raw(')')
-            ;
-
-            return;
-        }
-
-        if (isset(self::$functions[$operator])) {
-            $compiler
-                ->raw(sprintf('%s(', self::$functions[$operator]))
-                ->compile($this->nodes['left'])
-                ->raw(', ')
-                ->compile($this->nodes['right'])
-                ->raw(')')
-            ;
-
-            return;
-        }
-
-        if (isset(self::$operators[$operator])) {
-            $operator = self::$operators[$operator];
-        }
-
-        $compiler
-            ->raw('(')
-            ->compile($this->nodes['left'])
-            ->raw(' ')
-            ->raw($operator)
-            ->raw(' ')
-            ->compile($this->nodes['right'])
-            ->raw(')')
-        ;
-    }
-
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
+     * Copy of \Symfony\Component\ExpressionLanguage\Node\BinaryNode::evaluate with "=" and without "==", "===", "!=="
+     *
+     * @param $functions
+     * @param $values
+     * @return float|int|string
+     */
     public function evaluate($functions, $values)
     {
         $operator = $this->attributes['operator'];
         $left = $this->nodes['left']->evaluate($functions, $values);
 
-        if (isset(self::$functions[$operator])) {
+        if (isset(static::$functions[$operator])) {
             $right = $this->nodes['right']->evaluate($functions, $values);
 
             if ('not in' === $operator) {
-                return !in_array($left, $right);
+                return !in_array($left, $right, true);
             }
-            $f = self::$functions[$operator];
+            $f = static::$functions[$operator];
 
             return $f($left, $right);
         }
@@ -120,9 +61,9 @@ class BinaryNode extends Node
             case '&':
                 return $left & $right;
             case '=':
-                return $left == $right;
+                return $left === $right;
             case '!=':
-                return $left != $right;
+                return $left !== $right;
             case '<':
                 return $left < $right;
             case '>':
@@ -132,9 +73,9 @@ class BinaryNode extends Node
             case '<=':
                 return $left <= $right;
             case 'not in':
-                return !in_array($left, $right);
+                return !in_array($left, $right, true);
             case 'in':
-                return in_array($left, $right);
+                return in_array($left, $right, true);
             case '+':
                 return $left + $right;
             case '-':
