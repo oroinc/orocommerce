@@ -16,7 +16,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 class ManageInventoryFallbackTest extends WebTestCase
 {
     const VIEW_MANAGED_INVENTORY_XPATH =
-        "//label[text() = 'Managed Inventory']/following-sibling::div/div[contains(@class,  'control-label')]";
+        "//label[text() = 'Manage Inventory']/following-sibling::div/div[contains(@class,  'control-label')]";
 
     public function setUp()
     {
