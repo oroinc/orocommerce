@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Driver;
 
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
+use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
+use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
 
 /**
  * @dbIsolationPerTest
@@ -16,13 +17,9 @@ class OrmAccountPartialUpdateDriverTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $this->loadFixtures([LoadItemData::class]);
+        $this->loadFixtures([LoadProductVisibilityData::class]);
 
-        /*
-        if ($this->getContainer()->getParameter('') != 'orm') {
-            $this->markTestSkipped('This test depends on orm search engine');
-        }
-        */
+        $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
     }
 
     public function testDeleteAccountVisibility()
@@ -32,11 +29,60 @@ class OrmAccountPartialUpdateDriverTest extends WebTestCase
 
         $indexer->reindex(Product::class);
 
-        $doctrine = $this->getContainer()->get('doctrine');
-        $repository = $doctrine
-            ->getManagerForClass(IndexInteger::class)
-            ->getRepository(IndexInteger::class);
+        $this->assertProductAccountVisibilities(
+            $this->getReference('product.2')->getId(),
+            [
+                $this->getReference('account.level_1')->getId(),
+            ]
+        );
 
-        $visibilities = $repository->findAll();
+        $this->assertProductAccountVisibilities(
+            $this->getReference('product.5')->getId(),
+            [
+                $this->getReference('account.level_1')->getId(),
+            ]
+        );
+
+        $this->assertProductAccountVisibilities(
+            $this->getReference('product.5')->getId(),
+            [
+                $this->getReference('account.level_1.3')->getId(),
+            ]
+        );
+    }
+
+    /**
+     * @param int $productId
+     * @param array $accountIds
+     */
+    private function assertProductAccountVisibilities($productId, array $accountIds)
+    {
+        $doctrine = $this->getContainer()->get('doctrine');
+        /** @var WebsiteSearchIndexRepository $itemRepository */
+        $itemRepository = $doctrine
+            ->getManagerForClass(Item::class)
+            ->getRepository(Item::class);
+
+        $accountFields = [];
+        foreach ($accountIds as $accountId) {
+            $accountFields[] = 'visibility_account_' . $accountId;
+        }
+
+        $queryBuilder = $itemRepository->createQueryBuilder('item');
+        $rowsCount = $queryBuilder
+            ->select('COUNT(integerFields)')
+            ->join('item.integerFields', 'integerFields')
+            ->andWhere($queryBuilder->expr()->eq('item.entity', ':entityClass'))
+            ->andWhere($queryBuilder->expr()->like('integerFields.field', ':accountFields'))
+            ->andWhere($queryBuilder->expr()->eq('item.recordId', ':productId'))
+            ->setParameters([
+                'entityClass' => Product::class,
+                'productId' => $productId,
+                'accountFields' => $accountFields
+            ])
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $this->assertEquals(count($accountIds), $rowsCount);
     }
 }
