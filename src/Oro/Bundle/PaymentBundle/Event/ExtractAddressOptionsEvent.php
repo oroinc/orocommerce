@@ -4,28 +4,30 @@ namespace Oro\Bundle\PaymentBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\PaymentBundle\Model\AddressOptionModel;
 
 class ExtractAddressOptionsEvent extends Event
 {
     const NAME = 'oro_payment.event.extract_address_options';
 
-    /** @var object */
+    /** @var AbstractAddress */
     protected $entity;
 
     /** @var AddressOptionModel */
     protected $model;
 
     /**
-     * @param object $entity
+     * @param AbstractAddress $entity
      */
-    public function __construct($entity)
+    public function __construct(AbstractAddress $entity)
     {
         $this->entity = $entity;
+        $this->model = new AddressOptionModel();
     }
 
     /**
-     * @return object
+     * @return AbstractAddress
      */
     public function getEntity()
     {
@@ -37,14 +39,6 @@ class ExtractAddressOptionsEvent extends Event
      */
     public function getModel()
     {
-        return ($this->model ?: new AddressOptionModel());
-    }
-
-    /**
-     * @param AddressOptionModel $model
-     */
-    public function setModel(AddressOptionModel $model)
-    {
-        $this->model = $model;
+        return $this->model;
     }
 }

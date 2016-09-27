@@ -110,13 +110,19 @@
                     }
                 }
             }) }}>
-                <label for="addANote" data-checkbox
-                       class="checkbox_custom checkbox_custom_blue mml5-md {% if notes is not empty %}checked{% endif %}">
-                    <input type="checkbox" name="addANote" id="addANote" data-role="start-editing"
-                           {% if notes is not empty %}checked="checked"{% endif %}>
-                    <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
-                    <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
-                    <span class="checkbox_custom__text fs13">{{ 'oro.frontend.shoppinglist.view.add_note.label'|trans }}</span>
+                <label for="addANote"
+                       data-checkbox
+                       class="custom-checkbox {% if notes is not empty %}checked{% endif %}"
+                >
+                    <input id="addANote"
+                           name="addANote"
+                           type="checkbox"
+                           data-role="start-editing"
+                           class="custom-checkbox__input"
+                           {% if notes is not empty %}checked="checked"{% endif %}
+                    >
+                    <span class="custom-checkbox__icon"></span>
+                    <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_note.label'|trans }}</span>
                 </label>
                 <div class="form-input" data-role="editor">
                 <textarea placeholder="{{ 'oro.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
@@ -323,7 +329,7 @@
                     <tr class="borderless t_paddingless">
                         {% set notes = lineItem.notes %}
                         <td colspan="6">
-                            <div class="checkbox_custom-wrapper" {{ UI.renderPageComponentAttributes({
+                            <div class="editable" {{ UI.renderPageComponentAttributes({
                                 module: 'orofrontend/js/app/components/switchable-editable-view-component',
                                 options: {
                                     frontend_type: 'multilineText',
@@ -344,15 +350,23 @@
                                     }
                                 }
                             }) }}>
-                                <label for="{{ 'lineItem'~lineItem.id }}" class="checkbox_custom checkbox_custom_blue
-                                    {% if notes is not empty %} checked {% endif %}" data-checkbox>
-                                    <input type="checkbox" name="{{ 'lineItem'~lineItem.id }}" id="{{ 'lineItem'~lineItem.id }}"
-                                        data-role="start-editing" {% if notes is not empty %} checked = "checked" {% endif %}">
-                                    <i class="cf-check_box checkbox_checked fs18 mmr5-md"></i>
-                                    <i class="cf-check_box_outline_blank checkbox_not-checked fs18 mmr5-md"></i>
-                                    <span class="checkbox_custom__text fs13">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
-                                </label>
-
+                                <div class="editable__trigger">
+                                    <label for="{{ 'lineItem'~lineItem.id }}"
+                                           data-checkbox
+                                           class="custom-checkbox
+                                       {% if notes is not empty %} checked {% endif %}"
+                                    >
+                                        <input name="{{ 'lineItem'~lineItem.id }}"
+                                               id="{{ 'lineItem'~lineItem.id }}"
+                                               type="checkbox"
+                                               data-role="start-editing"
+                                                {% if notes is not empty %} checked = "checked" {% endif %}
+                                               class="custom-checkbox__input"
+                                        >
+                                        <span class="custom-checkbox__icon"></span>
+                                        <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
+                                    </label>
+                                </div>
                             <div class="form-input form-input_textarea" data-role="editor">
                                 <textarea class="input input_sm input_block" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
                                     placeholder="{{ 'oro.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>

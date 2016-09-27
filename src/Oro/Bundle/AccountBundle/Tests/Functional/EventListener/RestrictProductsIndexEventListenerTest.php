@@ -40,6 +40,8 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
         );
 
         $this->loadFixtures([LoadProductVisibilityData::class]);
+
+        $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
     }
 
     public function testRestrictIndexEntityEventListener()
