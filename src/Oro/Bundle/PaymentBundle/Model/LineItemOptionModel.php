@@ -13,7 +13,7 @@ class LineItemOptionModel
     /** @var float */
     private $cost;
 
-    /** @var string */
+    /** @var int */
     private $qty;
 
     /**
@@ -68,7 +68,7 @@ class LineItemOptionModel
      */
     public function setCost($cost)
     {
-        $this->cost = $cost;
+        $this->cost = (float)$cost;
 
         return $this;
     }
@@ -87,7 +87,7 @@ class LineItemOptionModel
      */
     public function setQty($qty)
     {
-        $this->qty = $qty;
+        $this->qty = (int)$qty;
 
         return $this;
     }
