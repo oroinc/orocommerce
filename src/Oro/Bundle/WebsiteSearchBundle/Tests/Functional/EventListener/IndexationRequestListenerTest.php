@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 /**
@@ -30,11 +30,11 @@ class IndexationRequestListenerTest extends WebTestCase
         $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
 
         /**
-         * @var ReindexationTriggerEvent $triggeredEvent
+         * @var ReindexationRequestEvent $triggeredEvent
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
             $triggeredEvent = $event;
         });
 
@@ -55,11 +55,11 @@ class IndexationRequestListenerTest extends WebTestCase
         $product = $this->createProduct();
 
         /**
-         * @var ReindexationTriggerEvent $triggeredEvent
+         * @var ReindexationRequestEvent $triggeredEvent
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
             $triggeredEvent = $event;
         });
 
@@ -87,11 +87,11 @@ class IndexationRequestListenerTest extends WebTestCase
         $product = $this->createProduct();
 
         /**
-         * @var ReindexationTriggerEvent $triggeredEvent
+         * @var ReindexationRequestEvent $triggeredEvent
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
             $triggeredEvent = $event;
         });
 
@@ -117,11 +117,11 @@ class IndexationRequestListenerTest extends WebTestCase
         $product = $this->createProduct();
 
         /**
-         * @var ReindexationTriggerEvent $triggeredEvent
+         * @var ReindexationRequestEvent $triggeredEvent
          */
         $triggeredEvent = null;
 
-        $eventDispatcher->addListener(ReindexationTriggerEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
+        $eventDispatcher->addListener(ReindexationRequestEvent::EVENT_NAME, function ($event) use (& $triggeredEvent) {
             $triggeredEvent = $event;
         });
 

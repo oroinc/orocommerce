@@ -3,7 +3,6 @@
 namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
-use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\Common\Util\ClassUtils;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -11,7 +10,7 @@ use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\SearchBundle\EventListener\IndexationListenerTrait;
 
 class IndexationRequestListener implements OptionalListenerInterface
@@ -102,9 +101,9 @@ class IndexationRequestListener implements OptionalListenerInterface
     }
 
     /**
-     * @param PostFlushEventArgs $args
+     * Post flush listening method
      */
-    public function postFlush(PostFlushEventArgs $args)
+    public function postFlush()
     {
         if (!$this->enabled) {
             return;
@@ -116,7 +115,7 @@ class IndexationRequestListener implements OptionalListenerInterface
     }
 
     /**
-     * Add an entity to a helper array before sending them with an ReindexationTriggerEvent
+     * Add an entity to a helper array before sending them with an ReindexationRequestEvent
      *
      * @param $entity
      * @throws \InvalidArgumentException
@@ -154,13 +153,13 @@ class IndexationRequestListener implements OptionalListenerInterface
             $websiteId = $this->websiteManager->getCurrentWebsite() !== null ?
                 $this->websiteManager->getCurrentWebsite()->getId() : null;
 
-            $reindexationTriggerEvent = new ReindexationTriggerEvent(
+            $ReindexationRequestEvent = new ReindexationRequestEvent(
                 $class,
                 $websiteId,
                 $ids
             );
 
-            $this->dispatcher->dispatch(ReindexationTriggerEvent::EVENT_NAME, $reindexationTriggerEvent);
+            $this->dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $ReindexationRequestEvent);
         }
 
         $this->changedEntities = [];
