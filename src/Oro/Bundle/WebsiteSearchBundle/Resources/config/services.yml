@@ -6,6 +6,7 @@ parameters:
     oro_website_search.select_data.listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
     oro_website_search.reindex_request.listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener
     oro_website_search.product_visibility_restriction_listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\ProductVisibilityRestrictionListener
+    oro_website.website_reindexation_on_create_delete_listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\WebsiteReindexationOnCreateDeleteListener
 
 services:
     oro_website_search.resolver.query_placeholder:
@@ -114,6 +115,14 @@ services:
             - '@oro_product.product.manager'
         tags:
             - { name: kernel.event_listener, event: oro_search.before_search, method: process }
+
+    oro_website_search.website_reindexation_on_create_delete_listener:
+        class: %oro_website.website_reindexation_on_create_delete_listener.class%
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebsiteBundle\Entity\Website', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\WebsiteBundle\Entity\Website', event: preRemove }
 
     oro_website_search.entity.repository.search_index:
         class: 'Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository'
