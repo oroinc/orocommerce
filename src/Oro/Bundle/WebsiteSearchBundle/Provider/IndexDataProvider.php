@@ -39,9 +39,6 @@ class IndexDataProvider
     /** @var FieldHelper */
     private $fieldHelper;
 
-    /** @var WebsiteSearchMappingProvider */
-    private $mappingProvider;
-
     /** @var array */
     private $preparedIndexData = [];
 
@@ -50,20 +47,17 @@ class IndexDataProvider
      * @param EntityAliasResolver $entityAliasResolver
      * @param VisitorReplacePlaceholder $visitorReplacePlaceholder
      * @param FieldHelper $fieldHelper
-     * @param WebsiteSearchMappingProvider $mappingProvider
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         EntityAliasResolver $entityAliasResolver,
         VisitorReplacePlaceholder $visitorReplacePlaceholder,
-        FieldHelper $fieldHelper,
-        WebsiteSearchMappingProvider $mappingProvider
+        FieldHelper $fieldHelper
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->entityAliasResolver = $entityAliasResolver;
         $this->visitorReplacePlaceholder = $visitorReplacePlaceholder;
         $this->fieldHelper = $fieldHelper;
-        $this->mappingProvider = $mappingProvider;
     }
 
     /**

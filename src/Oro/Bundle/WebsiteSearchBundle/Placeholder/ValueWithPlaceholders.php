@@ -10,11 +10,11 @@ class ValueWithPlaceholders
     /** @var array */
     private $placeholders;
 
-    /** @var mixed */
+    /** @var string */
     private $value;
 
     /**
-     * @param mixed $value
+     * @param string $value
      * @param array $placeholders
      */
     public function __construct($value, array $placeholders)
@@ -32,7 +32,7 @@ class ValueWithPlaceholders
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getValue()
     {

@@ -78,6 +78,7 @@ services:
 
     oro_website_search.event_listener.orm.fulltext_index_listener:
         class: 'Oro\Bundle\SearchBundle\EventListener\ORM\FulltextIndexListener'
+        public: false
         arguments:
             - '%database_driver%'
             - 'oro_website_search_text'
@@ -87,9 +88,11 @@ services:
 
     oro_website_search.engine.mapper:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\Mapper'
+        public: false
 
     oro_website_search.provider.search_mapping:
         class: Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider
+        public: false
         arguments:
             - '@oro_website_search.loader.mapping_configuration_cache_loader'
 
@@ -101,6 +104,7 @@ services:
     oro_website_search.query_factory:
         decorates: oro_search.query_factory
         class: Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory
+        public: false
         arguments:
             - '@oro_website_search.query_factory.inner'
             - '@event_dispatcher'
@@ -145,7 +149,6 @@ services:
             - '@oro_entity.entity_alias_resolver'
             - '@oro_website_search.placeholder.visitor_replace'
             - '@oro_website_search.helper.field'
-            - '@oro_website_search.provider.search_mapping'
 
     oro_website_search.placeholder.visitor_replace:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\VisitorReplacePlaceholder'
