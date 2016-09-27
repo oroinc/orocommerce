@@ -12,6 +12,7 @@ use Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @dbIsolation
  */
@@ -22,6 +23,7 @@ class ShippingRuleControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadShippingRules::class, LoadUserData::class]);
     }
 

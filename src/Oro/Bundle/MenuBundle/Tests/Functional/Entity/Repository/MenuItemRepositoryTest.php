@@ -28,6 +28,7 @@ class MenuItemRepositoryTest extends WebTestCase
     public function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(['Oro\Bundle\MenuBundle\Tests\Functional\DataFixtures\LoadMenuItemData']);
         $this->em = $this->getContainer()->get('doctrine')->getManagerForClass('OroMenuBundle:MenuItem');
