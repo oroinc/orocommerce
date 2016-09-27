@@ -62,12 +62,7 @@ class ShippingPriceProvider
                     ];
                 }
 
-                // already existing types should be second argument of array_merge,
-                // because they should not be overridden
-                $result[$methodConfig->getMethod()]['types'] =
-                    $this->getMethodTypesConfigs($context, $methodConfig) +
-                    $result[$methodConfig->getMethod()]['types']
-                ;
+                $result[$methodConfig->getMethod()]['types'] += $this->getMethodTypesConfigs($context, $methodConfig);
             }
         }
 

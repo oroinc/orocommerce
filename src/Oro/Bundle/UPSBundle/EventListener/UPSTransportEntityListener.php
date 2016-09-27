@@ -7,6 +7,7 @@ use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
+use Oro\Bundle\UPSBundle\Provider\ChannelType;
 
 class UPSTransportEntityListener
 {
