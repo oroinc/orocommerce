@@ -59,10 +59,10 @@ class ShoppingListController extends Controller
                     /** @var LineItem $lineItem */
                     $products[]['productSku'] = $lineItem->getProduct()->getSku();
                 }
-                if (!empty($this->container)) {
+                if (!empty($this->container) && $this->container->has('oro_shopping_list.rfp_product_checker')) {
                     $shoppingList->setIsAllowedRFP(
                         $this->container
-                            ->get('oro_rfp.form.type.extension.frontend_request_data_storage')
+                            ->get('oro_shopping_list.rfp_product_checker')
                             ->isAllowedRFP($products)
                     );
                 }

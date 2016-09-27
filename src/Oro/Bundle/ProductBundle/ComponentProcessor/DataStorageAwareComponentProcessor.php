@@ -164,11 +164,11 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
      */
     public function process(array $data, Request $request)
     {
-        $isAllowedRFP = true;
-        if (!empty($this->container)) {
+        if (!empty($this->container) && $this->container->has('oro_product.rfp_product_checker')) {
             $isAllowedRFP = $this->container
-                ->get('oro_rfp.form.type.extension.frontend_request_data_storage')
-                ->isAllowedRFP($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]);
+                ->get('oro_product.rfp_product_checker')
+                ->isAllowedRFP($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
+            ;
 
             if ($isAllowedRFP === false) {
                 $this->session->getFlashBag()->add(

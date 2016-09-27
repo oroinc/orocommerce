@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
+use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\RfpProductCheckerPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ComponentProcessorPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\DefaultProductUnitProvidersCompilerPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductDataStorageSessionBagPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\TwigSandboxConfigurationPass;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroProductBundle extends Bundle
 {
@@ -45,6 +45,8 @@ class OroProductBundle extends Bundle
                     'description' => 'descriptions',
                     'shortDescription' => 'shortDescriptions'
                 ],
-            ]));
+            ]))
+            ->addCompilerPass(new RfpProductCheckerPass())
+        ;
     }
 }

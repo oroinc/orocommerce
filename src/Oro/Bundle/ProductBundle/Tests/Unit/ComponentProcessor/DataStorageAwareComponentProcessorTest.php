@@ -2,19 +2,16 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
-
-use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -62,11 +59,6 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected $container;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|RequestDataStorageExtension
-     */
-    protected $storageExtension;
-
     protected function setUp()
     {
         $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
@@ -92,11 +84,6 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->storageExtension = $this
-            ->getMockBuilder('Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->processor = new DataStorageAwareComponentProcessor(
             $this->router,
             $this->storage,
@@ -116,7 +103,6 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
             $this->session,
             $this->translator,
             $this->container,
-            $this->storageExtension,
             $this->processor
         );
     }
@@ -135,10 +121,10 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('set')
             ->with($data);
 
-        $this->container->expects($this->once())
+        $this->container->expects($this->any())
             ->method('get')
-            ->with('oro_rfp.form.type.extension.frontend_request_data_storage')
-            ->willReturn($this->storageExtension);
+            ->with('oro_product.rfp_product_checker')
+            ->willReturn(false);
 
         $this->assertNull($this->processor->process($data, new Request()));
     }
@@ -166,10 +152,10 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('set')
             ->with($data);
 
-        $this->container->expects($this->once())
+        $this->container->expects($this->any())
             ->method('get')
-            ->with('oro_rfp.form.type.extension.frontend_request_data_storage')
-            ->willReturn($this->storageExtension);
+            ->with('oro_product.rfp_product_checker')
+            ->willReturn(false);
 
         $this->processor->setRedirectRouteName($redirectRouteName);
 
@@ -256,10 +242,10 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
         if ($isRedirectRoute) {
             $this->assertProcessorReturnRedirectResponse($this->processor, $this->router, $data);
         } else {
-            $this->container->expects($this->once())
+            $this->container->expects($this->any())
                 ->method('get')
-                ->with('oro_rfp.form.type.extension.frontend_request_data_storage')
-                ->willReturn($this->storageExtension);
+                ->with('oro_product.rfp_product_checker')
+                ->willReturn(false);
 
             $this->assertNull($this->processor->process($data, new Request()));
         }
@@ -375,10 +361,10 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
         $this->router->expects($this->never())
             ->method('generate');
 
-        $this->container->expects($this->once())
+        $this->container->expects($this->any())
             ->method('get')
-            ->with('oro_rfp.form.type.extension.frontend_request_data_storage')
-            ->willReturn($this->storageExtension);
+            ->with('oro_product.rfp_product_checker')
+            ->willReturn(false);
 
         $this->assertNull($this->processor->process($data, new Request()));
     }
@@ -433,10 +419,10 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
         $this->session->expects($this->never())
             ->method('getFlashBag');
 
-        $this->container->expects($this->once())
+        $this->container->expects($this->any())
             ->method('get')
-            ->with('oro_rfp.form.type.extension.frontend_request_data_storage')
-            ->willReturn($this->storageExtension);
+            ->with('oro_product.rfp_product_checker')
+            ->willReturn(false);
 
         if ($isRedirectRoute) {
             $this->assertProcessorReturnRedirectResponse($this->processor, $this->router, $data);
@@ -536,10 +522,10 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
             ->with($redirectRoute, [ProductDataStorage::STORAGE_KEY => true])
             ->willReturn($targetUrl);
 
-        $this->container->expects($this->once())
+        $this->container->expects($this->any())
             ->method('get')
-            ->with('oro_rfp.form.type.extension.frontend_request_data_storage')
-            ->willReturn($this->storageExtension);
+            ->with('oro_product.rfp_product_checker')
+            ->willReturn(false);
 
         $response = $this->processor->process($data, new Request());
 
