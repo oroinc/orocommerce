@@ -1,15 +1,15 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\WarehouseBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\EventListener\CategoryManageInventoryFormViewListener;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\WarehouseBundle\EventListener\CategoryManageInventoryFormViewListener;
 
 class CategoryManageInventoryFormViewListenerTest extends FormViewListenerTestCase
 {

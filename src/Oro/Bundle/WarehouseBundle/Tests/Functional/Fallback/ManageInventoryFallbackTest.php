@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Tests\Functional\Fallback;
+namespace Oro\Bundle\WarehouseBundle\Tests\Functional\Fallback;
 
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -13,7 +13,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 /**
  * @dbIsolation
  */
-class CategoryFallbackTest extends WebTestCase
+class ManageInventoryFallbackTest extends WebTestCase
 {
     const VIEW_MANAGED_INVENTORY_XPATH =
         "//label[text() = 'Managed Inventory']/following-sibling::div/div[contains(@class,  'control-label')]";
