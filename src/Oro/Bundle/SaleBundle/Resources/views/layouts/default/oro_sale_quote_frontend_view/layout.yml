@@ -65,7 +65,7 @@ layout:
                     options:
                         address: '=data["entity"].getShippingAddress()'
                         label: 'oro.sale.quote.shipping_address.label'
-                        block_prefixes: ['quote_body_column_element']
+                        additional_block_prefixes: ['quote_body_column_element']
             tree:
                 content:
                     quote_view_page:
