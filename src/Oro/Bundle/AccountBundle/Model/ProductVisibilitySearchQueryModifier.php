@@ -38,7 +38,8 @@ class ProductVisibilitySearchQueryModifier
     /**
      * @return CompositeExpression
      */
-    protected function createProductVisibilityExpression() {
+    protected function createProductVisibilityExpression()
+    {
         $exprBuilder = Criteria::expr();
         $accountUser = $this->getAccountUser();
 
