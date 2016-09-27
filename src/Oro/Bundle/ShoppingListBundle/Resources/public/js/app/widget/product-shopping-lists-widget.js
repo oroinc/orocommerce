@@ -364,7 +364,7 @@ define(function(require) {
                 return;
             }
 
-            return _.findWhere(this.shoppingLists, properties);
+            return _.findWhere(this.model.get('shopping_lists'), properties) || _.findWhere(this.shoppingLists, properties);
         },
 
         getSelectedUnit: function() {
