@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
@@ -15,8 +15,8 @@ class UPSShippingMethodOptionsTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
         
-        /** @var RoundingServiceInterface | \PHPUnit_Framework_MockObject_MockObject $roundingService */
-        $roundingService = $this->getMock(RoundingServiceInterface::class);
+        /** @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject $roundingService */
+        $roundingService = $this->getMockForAbstractClass(RoundingServiceInterface::class);
         $roundingService->expects(static::any())
             ->method('getPrecision')
             ->willReturn(4);
