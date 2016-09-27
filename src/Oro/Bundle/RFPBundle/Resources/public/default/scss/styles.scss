@@ -1,4 +1,6 @@
 @import 'form.scss';
+@import './components/rfq-form-items/rfq-form-items';
+@import './components/rfq-form-actions/rfq-form-actions';
 
 .account-rfp_request-assigned_users {
   ul {

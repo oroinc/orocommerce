@@ -1,0 +1,17 @@
+.rfq-form-items {
+    margin: 14px 0 20px 0;
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid get-color('additional', 'light');
+
+    &__title {
+        margin: 0 0 20px 0;
+        padding-bottom: 14px;
+
+        font-size: 20px;
+
+        text-transform: uppercase;
+
+        border-bottom: 1px solid get-color('additional', 'light');
+    }
+}
