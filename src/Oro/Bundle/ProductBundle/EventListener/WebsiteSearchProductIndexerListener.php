@@ -3,32 +3,53 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 
 class WebsiteSearchProductIndexerListener
 {
+    /**
+     * @var DoctrineHelper
+     */
+    private $doctrineHelper;
+
+    /**
+     * @var WebsiteLocalizationProvider
+     */
+    private $websiteLocalizationProvider;
+
     /**
      * @var ProductRepository
      */
     private $productRepository;
 
     /**
-     * @var LocalizationHelper
+     * @param DoctrineHelper $doctrineHelper
+     * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
      */
-    private $localizationHelper;
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
+    ) {
+        $this->doctrineHelper = $doctrineHelper;
+        $this->websiteLocalizationProvider = $websiteLocalizationProvider;
+    }
 
     /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param LocalizationHelper $localizationHelper
+     * @return ProductRepository
      */
-    public function __construct(DoctrineHelper $doctrineHelper, LocalizationHelper $localizationHelper)
+    protected function getProductRepository()
     {
-        $this->productRepository = $doctrineHelper->getEntityRepositoryForClass(Product::class);
-        $this->localizationHelper = $localizationHelper;
+        if (!$this->productRepository) {
+            $this->productRepository = $this->doctrineHelper->getEntityRepositoryForClass(Product::class);
+        }
+
+        return $this->productRepository;
     }
 
     /**
@@ -42,9 +63,15 @@ class WebsiteSearchProductIndexerListener
             return;
         }
 
-        $products = $this->productRepository->getProductsByIds($event->getEntityIds());
+        $products = $this->getProductRepository()->getProductsByIds($event->getEntityIds());
 
-        $localizations = $this->localizationHelper->getLocalizations();
+        $context = $event->getContext();
+
+        $websiteId = (array_key_exists(AbstractIndexer::CONTEXT_WEBSITE_ID_KEY, $context))
+            ? $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY]
+            : null;
+
+        $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 
         foreach ($products as $product) {
             // Non localized fields

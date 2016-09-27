@@ -80,9 +80,9 @@
         alt: category.defaultTitle
     }) %}
 
-    {% if category.largeImage %}
+    {% if category.smallImage %}
         {% set attr = layout_attr_defaults(attr, {
-            src: Image.url(category.largeImage, 'product_large')
+            src: Image.url(category.smallImage, 'product_large')
         }) %}
     {% else %}
         {% set attr = layout_attr_defaults(attr, {
