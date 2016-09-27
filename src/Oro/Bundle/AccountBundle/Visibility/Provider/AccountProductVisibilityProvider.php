@@ -9,6 +9,7 @@ use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\AccountBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -26,13 +27,23 @@ class AccountProductVisibilityProvider
     private $doctrineHelper;
 
     /**
+     * @var AccountUserRelationsProvider
+     */
+    private $relationsProvider;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param ConfigManager $configManager
+     * @param AccountUserRelationsProvider $relationsProvider
      */
-    public function __construct(DoctrineHelper $doctrineHelper, ConfigManager $configManager)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        ConfigManager $configManager,
+        AccountUserRelationsProvider $relationsProvider
+    ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->configManager = $configManager;
+        $this->relationsProvider = $relationsProvider;
     }
 
     /**
@@ -106,6 +117,40 @@ class AccountProductVisibilityProvider
     }
 
     /**
+     * @param Account $account
+     * @param Website $website
+     * @return QueryBuilder
+     */
+    public function getAccountProductsVisibilitiesByWebsiteQueryBuilder(Account $account, Website $website)
+    {
+        $queryBuilder = $this->doctrineHelper->getEntityManagerForClass(Product::class)->createQueryBuilder();
+
+        $queryBuilder->from(Product::class, 'product');
+
+        $visibilities = [
+            $this->getProductVisibilityResolvedTermByWebsite($queryBuilder, $website),
+            $this->getAccountProductVisibilityResolvedTermByWebsite($queryBuilder, $account, $website)
+        ];
+
+        $accountGroup = $this->relationsProvider->getAccountGroup($account);
+        if ($accountGroup) {
+            $visibilities[] = $this->getAccountGroupProductVisibilityResolvedTermByWebsite(
+                $queryBuilder,
+                $accountGroup,
+                $website
+            );
+        }
+
+        $visibilityCondition = $this->getVisibilityConditionForVisibilityTerms($visibilities);
+
+        $queryBuilder
+            ->andWhere($queryBuilder->expr()->neq($visibilityCondition, $this->getCategoryConfigValue()))
+            ->addOrderBy('product.id', Query::ORDER_ASC);
+
+        return $queryBuilder;
+    }
+
+    /**
      * @param int $websiteId
      * @return Website
      */
@@ -141,9 +186,18 @@ class AccountProductVisibilityProvider
             $this->getAllAccountsProductVisibilityResolvedTerm($queryBuilder, $website)
         ];
 
+        return $this->getVisibilityConditionForVisibilityTerms($productVisibilityTerms);
+    }
+
+    /**
+     * @param array $visibilityTerms
+     * @return string
+     */
+    private function getVisibilityConditionForVisibilityTerms(array $visibilityTerms)
+    {
         return sprintf(
             'CASE WHEN %s > 0 THEN %s ELSE %s END',
-            implode('+', $productVisibilityTerms),
+            implode('+', $visibilityTerms),
             BaseVisibilityResolved::VISIBILITY_VISIBLE,
             BaseVisibilityResolved::VISIBILITY_HIDDEN
         );

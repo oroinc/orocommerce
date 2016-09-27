@@ -977,6 +977,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_config.global'
+            - '@oro_account.provider.account_user_relations_provider'
         calls:
             - [setProductVisibilitySystemConfigurationPath, ['oro_account.product_visibility']]
             - [setCategoryVisibilitySystemConfigurationPath, ['oro_account.category_visibility']]
