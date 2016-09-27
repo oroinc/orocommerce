@@ -672,13 +672,13 @@ services:
         public: false
         parent: oro_account.visibility.cache.product.category.subtree.category_subtree_cache_builder
 
-    oro_account.event_listener.product_select_db_query:
+    oro_account.event_listener.product_db_query_restriction:
         class: 'Oro\Bundle\AccountBundle\EventListener\ProductDBQueryRestrictionEventListener'
         arguments:
             - "@oro_frontend.request.frontend_helper"
             - "@oro_account.model.product_visibility_query_builder_modifier"
         tags:
-            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
     oro_account.entity.entity_listener.category_listener:
         class: 'Oro\Bundle\AccountBundle\Entity\EntityListener\CategoryListener'

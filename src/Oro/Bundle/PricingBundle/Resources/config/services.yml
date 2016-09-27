@@ -478,7 +478,7 @@ services:
             - '@oro_pricing.model.frontend_product_list_modifier'
             - '@doctrine'
         tags:
-            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
     oro_pricing.event_listener.system_config:
         class: 'Oro\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber'

@@ -9,7 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 
 class ProductDBQueryRestrictionEvent extends Event
 {
-    const NAME = 'oro_product.product_select.db.query';
+    const NAME = 'oro_product.product_db_query.restriction';
 
     /** @var QueryBuilder */
     protected $queryBuilder;
