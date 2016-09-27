@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Acl\Voter;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Model\PriceListIsReferentialCheckerInterface;
+use Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
@@ -24,19 +24,19 @@ class PriceListVoter extends AbstractEntityVoter
     protected $object;
 
     /**
-     * @var PriceListIsReferentialCheckerInterface
+     * @var PriceListReferenceChecker
      */
-    protected $isReferentialChecker;
+    protected $priceListReferenceChecker;
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param PriceListIsReferentialCheckerInterface $isReferentialChecker
+     * @param PriceListReferenceChecker $isReferentialChecker
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        PriceListIsReferentialCheckerInterface $isReferentialChecker
+        PriceListReferenceChecker $isReferentialChecker
     ) {
-        $this->isReferentialChecker = $isReferentialChecker;
+        $this->priceListReferenceChecker = $isReferentialChecker;
         parent::__construct($doctrineHelper);
     }
 
@@ -55,7 +55,7 @@ class PriceListVoter extends AbstractEntityVoter
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
-        if ($this->isReferentialChecker->isReferential($this->object)) {
+        if ($this->priceListReferenceChecker->isReferential($this->object)) {
             return self::ACCESS_DENIED;
         }
 

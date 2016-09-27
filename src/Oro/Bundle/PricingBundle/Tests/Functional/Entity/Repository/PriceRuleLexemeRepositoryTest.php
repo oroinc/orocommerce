@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\PricingBundle\Model\PriceListIsReferentialCheckerInterface;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -20,7 +20,7 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
     protected $repository;
 
     /**
-     * @var PriceListIsReferentialCheckerInterface
+     * @var PriceListReferenceChecker
      */
     protected $checker;
 
@@ -34,20 +34,15 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
             ->getRepository(PriceRuleLexeme::class);
     }
 
-    public function testCountReferencesForRelation()
+    public function testGetRelationIds()
     {
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_attribute_price_list_1');
-        $expectedCounters = [
-            ['relationId' => null, 'relationCount' => 2],
-            ['relationId' => $priceList->getId(), 'relationCount' => 1]
-        ];
-        $this->assertEquals($expectedCounters, $this->repository->countReferencesForRelation());
-
+        $this->assertContains($priceList->getId(), $this->repository->getRelationIds());
     }
 
     /**
-     * @depends testCountReferencesForRelation
+     * @depends testGetRelationIds
      */
     public function testDeleteByPriceList()
     {

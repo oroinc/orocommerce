@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Acl\Voter;
 
-use Oro\Bundle\PricingBundle\Model\PriceListIsReferentialCheckerInterface;
+use Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Acl\Voter\PriceListVoter;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -21,17 +21,19 @@ class PriceListVoterTest extends \PHPUnit_Framework_TestCase
     protected $doctrineHelper;
 
     /**
-     * @var PriceListIsReferentialCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PriceListReferenceChecker|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $isReferentialChecker;
+    protected $priceListReferenceChecker;
 
     protected function setUp()
     {
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->isReferentialChecker = $this->getMock(PriceListIsReferentialCheckerInterface::class);
-        $this->voter = new PriceListVoter($this->doctrineHelper, $this->isReferentialChecker);
+        $this->priceListReferenceChecker = $this->getMockBuilder(PriceListReferenceChecker::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->voter = new PriceListVoter($this->doctrineHelper, $this->priceListReferenceChecker);
     }
 
     protected function tearDown()

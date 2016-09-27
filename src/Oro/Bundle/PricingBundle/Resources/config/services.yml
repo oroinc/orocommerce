@@ -961,7 +961,7 @@ services:
             - { name: 'oro_message_queue.client.message_processor' }
 
     oro_pricing.price_list_reference_checker:
-        class: 'Oro\Bundle\PricingBundle\Model\PriceListIsReferentialChecker'
+        class: 'Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker'
         public: false
         arguments:
             - '@doctrine'
