@@ -14,8 +14,6 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -59,16 +57,6 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     /**
      * @param ObjectManager $manager
      * @param string $name
-     * @return Website
-     */
-    protected function getWebsite(ObjectManager $manager, $name)
-    {
-        return $manager->getRepository('OroWebsiteBundle:Website')->findOneBy(['name' => $name]);
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @param string $name
      * @return Account
      */
     protected function getAccount(ObjectManager $manager, $name)
@@ -99,19 +87,16 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
 
     /**
      * @param ObjectManager $manager
-     * @param Website $website
-     * @param VisibilityInterface|WebsiteAwareInterface $visibility
+     * @param VisibilityInterface $visibility
      * @param Product $product
      * @param string $visibilityValue
      */
     protected function saveVisibility(
         ObjectManager $manager,
-        Website $website,
         VisibilityInterface $visibility,
         Product $product,
         $visibilityValue
     ) {
-        $visibility->setWebsite($website);
         $visibility->setTargetEntity($product)->setVisibility($visibilityValue);
         $scopeManager = $this->container->get('oro_scope.manager.scope_manager');
         $visibility->setScope($scopeManager->findOrCreate('visibility', $visibility));
@@ -155,34 +140,33 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     /**
      * @param ObjectManager $manager
      * @param array $row
-     * @param Website $website
      * @param Product $product
      * @param string $visibility
      */
-    protected function setProductVisibility(ObjectManager $manager, $row, $website, $product, $visibility)
+    protected function setProductVisibility(ObjectManager $manager, $row, $product, $visibility)
     {
         if ($row['all']) {
             $productVisibility = $this->findVisibilityEntity(
                 $manager,
                 'Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility',
-                ['website' => $website, 'product' => $product]
+                ['product' => $product]
             );
             if (!$productVisibility) {
                 $productVisibility = new ProductVisibility();
             }
-            $this->saveVisibility($manager, $website, $productVisibility, $product, $visibility);
+            $this->saveVisibility($manager, $productVisibility, $product, $visibility);
         }
 
         if ($row['account']) {
             $accountVisibility = new AccountProductVisibility();
             $accountVisibility->setAccount($this->getAccount($manager, $row['account']));
-            $this->saveVisibility($manager, $website, $accountVisibility, $product, $visibility);
+            $this->saveVisibility($manager, $accountVisibility, $product, $visibility);
         }
 
         if ($row['accountGroup']) {
             $accountGroupVisibility = new AccountGroupProductVisibility();
             $accountGroupVisibility->setAccountGroup($this->getAccountGroup($manager, $row['accountGroup']));
-            $this->saveVisibility($manager, $website, $accountGroupVisibility, $product, $visibility);
+            $this->saveVisibility($manager, $accountGroupVisibility, $product, $visibility);
         }
     }
 }

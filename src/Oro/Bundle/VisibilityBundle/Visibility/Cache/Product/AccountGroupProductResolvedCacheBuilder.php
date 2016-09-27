@@ -5,13 +5,13 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements
     ProductCaseCacheBuilderInterface
@@ -22,8 +22,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
         $product = $visibilitySettings->getProduct();
-        $website = $visibilitySettings->getWebsite();
-        $accountGroup = $visibilitySettings->getAccountGroup();
+        $scope = $visibilitySettings->getScope();
 
         $selectedVisibility = $visibilitySettings->getVisibility();
         $visibilitySettings = $this->refreshEntity($visibilitySettings);
@@ -31,7 +30,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         $insert = false;
         $delete = false;
         $update = [];
-        $where = ['accountGroup' => $accountGroup, 'website' => $website, 'product' => $product];
+        $where = ['scope' => $scope, 'product' => $product];
 
         $em = $this->registry
             ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
@@ -110,14 +109,14 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
     /**
      * {@inheritdoc}
      */
-    public function buildCache(Website $website = null)
+    public function buildCache(Scope $scope = null)
     {
         $this->getManager()->beginTransaction();
         try {
             $repository = $this->getRepository();
-            $repository->clearTable($website);
-            $repository->insertStatic($this->insertFromSelectQueryExecutor, $website);
-            $repository->insertByCategory($this->insertFromSelectQueryExecutor, $website);
+            $repository->clearTable($scope);
+            $repository->insertStatic($this->insertFromSelectQueryExecutor, $scope);
+            $repository->insertByCategory($this->insertFromSelectQueryExecutor, $scope);
             $this->getManager()->commit();
         } catch (\Exception $exception) {
             $this->getManager()->rollback();

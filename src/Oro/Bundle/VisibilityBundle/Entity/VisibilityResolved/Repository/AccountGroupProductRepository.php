@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * Composite primary key fields order:
@@ -23,9 +22,9 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
 
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelect
-     * @param Website|null $website
+     * @param Scope|null $scope
      */
-    public function insertByCategory(InsertFromSelectQueryExecutor $insertFromSelect, Website $website = null)
+    public function insertByCategory(InsertFromSelectQueryExecutor $insertFromSelect, Scope $scope = null)
     {
         $configValue = AccountGroupProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         $qb = $this->getEntityManager()
@@ -33,7 +32,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             ->createQueryBuilder('agpv');
         $qb->select(
             'agpv.id',
-            'IDENTITY(agpv.website)',
+            'IDENTITY(agpv.scope)',
             'IDENTITY(agpv.product)',
             'IDENTITY(agpv.accountGroup)',
             'COALESCE(agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
@@ -56,16 +55,16 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
         ->andWhere('agpv.visibility = :categoryVisibility')
         ->setParameter('categoryVisibility', AccountGroupProductVisibility::CATEGORY);
 
-        if ($website) {
-            $qb->andWhere('agpv.website = :website')
-                ->setParameter('website', $website);
+        if ($scope) {
+            $qb->andWhere('agpv.scope = :scope')
+                ->setParameter('scope', $scope);
         }
 
         $insertFromSelect->execute(
             $this->getClassName(),
             [
                 'sourceProductVisibility',
-                'website',
+                'scope',
                 'product',
                 'accountGroup',
                 'visibility',
@@ -78,9 +77,9 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
 
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelect
-     * @param Website|null $website
+     * @param Scope|null $scope
      */
-    public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, Website $website = null)
+    public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, Scope $scope = null)
     {
         $queryBuilder = $this->getEntityManager()
             ->getRepository('OroVisibilityBundle:Visibility\AccountGroupProductVisibility')
@@ -88,7 +87,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             ->select(
                 [
                     'agpv.id',
-                    'IDENTITY(agpv.website)',
+                    'IDENTITY(agpv.scope)',
                     'IDENTITY(agpv.product)',
                     'IDENTITY(agpv.accountGroup)',
                     'CASE WHEN agpv.visibility = :visible THEN :cacheVisible ELSE :cacheHidden END',
@@ -101,16 +100,16 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             ->setParameter('cacheVisible', BaseProductVisibilityResolved::VISIBILITY_VISIBLE)
             ->setParameter('cacheHidden', BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
 
-        if ($website) {
-            $queryBuilder->andWhere('agpv.website = :website')
-                ->setParameter('website', $website);
+        if ($scope) {
+            $queryBuilder->andWhere('agpv.scope = :scope')
+                ->setParameter('scope', $scope);
         }
 
         $insertFromSelect->execute(
             $this->getClassName(),
             [
                 'sourceProductVisibility',
-                'website',
+                'scope',
                 'product',
                 'accountGroup',
                 'visibility',
@@ -154,7 +153,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             ],
         ];
 
-        $fields = ['sourceProductVisibility', 'product', 'website', 'accountGroup', 'visibility', 'source'];
+        $fields = ['sourceProductVisibility', 'product', 'scope', 'accountGroup', 'visibility', 'source'];
 
         foreach ($visibilityMap as $visibility => $productVisibility) {
             $qb = $this->getEntityManager()
@@ -163,7 +162,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             $qb->select([
                 'productVisibility.id',
                 'IDENTITY(productVisibility.product)',
-                'IDENTITY(productVisibility.website)',
+                'IDENTITY(productVisibility.scope)',
                 'IDENTITY(productVisibility.accountGroup)',
                 (string)$productVisibility['visibility'],
                 (string)$productVisibility['source'],
@@ -184,7 +183,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             $qb->select([
                 'productVisibility.id',
                 'IDENTITY(productVisibility.product)',
-                'IDENTITY(productVisibility.website)',
+                'IDENTITY(productVisibility.scope)',
                 'IDENTITY(productVisibility.accountGroup)',
                 'COALESCE(agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
                 (string)AccountGroupProductVisibilityResolved::SOURCE_CATEGORY,
@@ -214,13 +213,12 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
     }
 
     /**
-     * @param AccountGroup $accountGroup
      * @param Product $product
-     * @param Website $website
+     * @param Scope $scope
      * @return null|AccountGroupProductVisibilityResolved
      */
-    public function findByPrimaryKey(AccountGroup $accountGroup, Product $product, Website $website)
+    public function findByPrimaryKey(Product $product, Scope $scope)
     {
-        return $this->findOneBy(['accountGroup' => $accountGroup, 'website' => $website, 'product' => $product]);
+        return $this->findOneBy(['scope' => $scope, 'product' => $product]);
     }
 }

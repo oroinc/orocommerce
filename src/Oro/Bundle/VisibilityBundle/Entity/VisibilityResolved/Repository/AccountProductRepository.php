@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * Composite primary key fields order:
@@ -22,14 +21,13 @@ class AccountProductRepository extends AbstractVisibilityRepository
     use BasicOperationRepositoryTrait;
 
     /**
-     * @param Account $account
      * @param Product $product
-     * @param Website $website
+     * @param Scope $scope
      * @return null|AccountProductVisibilityResolved
      */
-    public function findByPrimaryKey(Account $account, Product $product, Website $website)
+    public function findByPrimaryKey(Product $product, Scope $scope)
     {
-        return $this->findOneBy(['account' => $account, 'website' => $website, 'product' => $product]);
+        return $this->findOneBy(['scope' => $scope, 'product' => $product]);
     }
 
     /**
@@ -70,7 +68,7 @@ class AccountProductRepository extends AbstractVisibilityRepository
             ],
         ];
 
-        $fields = ['sourceProductVisibility', 'product', 'website', 'account', 'visibility', 'source'];
+        $fields = ['sourceProductVisibility', 'product', 'scope', 'account', 'visibility', 'source'];
 
         foreach ($visibilityMap as $visibility => $productVisibility) {
             $qb = $this->getEntityManager()
@@ -80,7 +78,7 @@ class AccountProductRepository extends AbstractVisibilityRepository
             $qb->select([
                 'productVisibility.id',
                 'IDENTITY(productVisibility.product)',
-                'IDENTITY(productVisibility.website)',
+                'IDENTITY(productVisibility.scope)',
                 'IDENTITY(productVisibility.account)',
                 (string)$productVisibility['visibility'],
                 (string)$productVisibility['source'],
@@ -105,7 +103,7 @@ class AccountProductRepository extends AbstractVisibilityRepository
             $qb->select([
                 'apv.id',
                 'IDENTITY(apv.product)',
-                'IDENTITY(apv.website)',
+                'IDENTITY(apv.scope)',
                 'IDENTITY(apv.account)',
                 'COALESCE(' .
                     'acvr.visibility, agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configValue) .
@@ -146,7 +144,7 @@ class AccountProductRepository extends AbstractVisibilityRepository
     /**
      * {@inheritdoc}
      */
-    public function insertByCategory(InsertFromSelectQueryExecutor $insertFromSelect, Website $website = null)
+    public function insertByCategory(InsertFromSelectQueryExecutor $insertFromSelect, Scope $scope = null)
     {
         $configValue = AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         $qb = $this->getEntityManager()
@@ -154,7 +152,7 @@ class AccountProductRepository extends AbstractVisibilityRepository
             ->createQueryBuilder('apv');
         $qb->select(
             'apv.id',
-            'IDENTITY(apv.website)',
+            'IDENTITY(apv.scope)',
             'IDENTITY(apv.product)',
             'IDENTITY(apv.account)',
             'COALESCE(acvr.visibility, agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
@@ -184,16 +182,16 @@ class AccountProductRepository extends AbstractVisibilityRepository
         ->andWhere('apv.visibility = :categoryVisibility')
         ->setParameter('categoryVisibility', AccountProductVisibility::CATEGORY);
 
-        if ($website) {
-            $qb->andWhere('apv.website = :website')
-                ->setParameter('website', $website);
+        if ($scope) {
+            $qb->andWhere('apv.scope = :scope')
+                ->setParameter('scope', $scope);
         }
 
         $insertFromSelect->execute(
             $this->getClassName(),
             [
                 'sourceProductVisibility',
-                'website',
+                'scope',
                 'product',
                 'account',
                 'visibility',
@@ -206,9 +204,9 @@ class AccountProductRepository extends AbstractVisibilityRepository
 
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelect
-     * @param Website|null $website
+     * @param Scope|null $scope
      */
-    public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, Website $website = null)
+    public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, Scope $scope = null)
     {
         $visibility = <<<VISIBILITY
 CASE WHEN apv.visibility = :visible
@@ -226,7 +224,7 @@ VISIBILITY;
         $queryBuilder
             ->select(
                 'apv.id',
-                'IDENTITY(apv.website)',
+                'IDENTITY(apv.scope)',
                 'IDENTITY(apv.product)',
                 'IDENTITY(apv.account)',
                 $visibility,
@@ -244,15 +242,15 @@ VISIBILITY;
             ->setParameter('cacheHidden', BaseProductVisibilityResolved::VISIBILITY_HIDDEN)
             ->setParameter('cacheFallbackAll', AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL);
 
-        if ($website) {
-            $queryBuilder->andWhere('apv.website = :website')
-                ->setParameter('website', $website);
+        if ($scope) {
+            $queryBuilder->andWhere('apv.scope = :scope')
+                ->setParameter('scope', $scope);
         }
         $insertFromSelect->execute(
             $this->getClassName(),
             [
                 'sourceProductVisibility',
-                'website',
+                'scope',
                 'product',
                 'account',
                 'visibility',

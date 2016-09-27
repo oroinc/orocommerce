@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Visibility\Cache\Product;
 
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CacheBuilder as ProductCaseCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CacheBuilder as CategoryCaseCacheBuilder;
@@ -41,7 +42,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCallAllBuilders(
             'buildCache',
-            $this->getMock('Oro\Bundle\WebsiteBundle\Entity\Website')
+            $this->getMock(Scope::class)
         );
     }
 
@@ -106,7 +107,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildCache()
     {
-        $this->assertCallAllBuilders('buildCache', $this->getMock('Oro\Bundle\WebsiteBundle\Entity\Website'));
+        $this->assertCallAllBuilders('buildCache', $this->getMock(Scope::class));
     }
 
     /**

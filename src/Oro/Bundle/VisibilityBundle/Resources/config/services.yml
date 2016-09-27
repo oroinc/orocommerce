@@ -139,6 +139,7 @@ services:
         parent: oro_account.visibility.cache.product.cache_builder.abstract
         calls:
             - [setCacheClass, ['%oro_account.entity.product_visibility_resolved.class%']]
+            - [setScopeManager, ['@oro_scope.scope_manager']]
 
     oro_account.visibility.cache.product.cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CacheBuilder'
@@ -376,17 +377,3 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: postRemove }
-
-    oro_account.account_group_scope_provider.link:
-        public: false
-        tags:
-            - { name: oro_service_link, service: oro_account.account_group_scope_provider }
-            - { name: oro_scope.provider, scopeType: category_visibility, priority: 30 }
-            - { name: oro_scope.provider, scopeType: account_product_visibility, priority: 30 }
-
-    oro_account.account_scope_provider.link:
-        public: false
-        tags:
-            - { name: oro_service_link, service: oro_account.account_scope_provider }
-            - { name: oro_scope.provider, scopeType: category_visibility, priority: 30 }
-            - { name: oro_scope.provider, scopeType: account_product_visibility, priority: 30 }

@@ -37,7 +37,7 @@ abstract class AbstractScopeProvider implements ScopeProviderInterface
     /**
      * @return string
      */
-    abstract protected function getCriteriaField();
+    abstract public function getCriteriaField();
 
     /**
      * @return string

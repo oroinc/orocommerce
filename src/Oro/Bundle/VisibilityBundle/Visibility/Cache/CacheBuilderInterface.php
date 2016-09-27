@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache;
 
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 interface CacheBuilderInterface
 {
@@ -19,8 +19,8 @@ interface CacheBuilderInterface
     public function isVisibilitySettingsSupported(VisibilityInterface $visibilitySettings);
 
     /**
-     * @param Website|null $website
+     * @param Scope|null $scope
      * @return mixed
      */
-    public function buildCache(Website $website = null);
+    public function buildCache(Scope $scope = null);
 }

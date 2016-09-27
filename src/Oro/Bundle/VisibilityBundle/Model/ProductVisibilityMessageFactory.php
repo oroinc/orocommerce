@@ -4,24 +4,20 @@ namespace Oro\Bundle\VisibilityBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class ProductVisibilityMessageFactory implements MessageFactoryInterface
 {
     const ID = 'id';
     const ENTITY_CLASS_NAME = 'entity_class_name';
     const PRODUCT_ID = 'product';
-    const WEBSITE_ID = 'website';
-    const ACCOUNT_ID = 'account';
-    const ACCOUNT_GROUP_ID = 'account_group';
+    const SCOPE_ID = 'scope';
 
     /**
      * @var ManagerRegistry
@@ -42,22 +38,18 @@ class ProductVisibilityMessageFactory implements MessageFactoryInterface
      */
     public function createMessage($visibility)
     {
-        $entityClass = ClassUtils::getClass($visibility);
-        switch ($entityClass) {
-            case ProductVisibility::class:
-                $message = $this->productVisibilityToArray($visibility);
-                break;
-            case AccountProductVisibility::class:
-                $message = $this->accountProductVisibilityToArray($visibility);
-                break;
-            case AccountGroupProductVisibility::class:
-                $message = $this->accountGroupProductVisibilityToArray($visibility);
-                break;
-            default:
-                throw new InvalidArgumentException('Unsupported entity class');
+        if ($visibility instanceof ProductVisibility
+            || $visibility instanceof AccountProductVisibility
+            || $visibility instanceof AccountGroupProductVisibility
+        ) {
+            return [
+                self::ID => $visibility->getId(),
+                self::ENTITY_CLASS_NAME => ClassUtils::getClass($visibility),
+                self::PRODUCT_ID => $visibility->getTargetEntity()->getId(),
+                self::SCOPE_ID => $visibility->getScope()->getId(),
+            ];
         }
-
-        return $message;
+        throw new InvalidArgumentException('Unsupported entity class');
     }
 
     /**
@@ -104,18 +96,18 @@ class ProductVisibilityMessageFactory implements MessageFactoryInterface
         $product = $this->registry->getManagerForClass(Product::class)
             ->getRepository(Product::class)
             ->find($data[self::PRODUCT_ID]);
-        $website = $this->registry->getManagerForClass(Website::class)
-            ->getRepository(Website::class)
-            ->find($data[self::WEBSITE_ID]);
+        $scope = $this->registry->getManagerForClass(Scope::class)
+            ->getRepository(Scope::class)
+            ->find($data[self::SCOPE_ID]);
         if (!$product) {
             throw new InvalidArgumentException('Product object was not found.');
         }
-        if (!$website) {
-            throw new InvalidArgumentException('Website object was not found.');
+        if (!$scope) {
+            throw new InvalidArgumentException('Scope object was not found.');
         }
         $visibility = new ProductVisibility();
+        $visibility->setScope($scope);
         $visibility->setProduct($product);
-        $visibility->setWebsite($website);
         $visibility->setVisibility(ProductVisibility::getDefault($product));
 
         return $visibility;
@@ -130,25 +122,19 @@ class ProductVisibilityMessageFactory implements MessageFactoryInterface
         $product = $this->registry->getManagerForClass(Product::class)
             ->getRepository(Product::class)
             ->find($data[self::PRODUCT_ID]);
-        $website = $this->registry->getManagerForClass(Website::class)
-            ->getRepository(Website::class)
-            ->find($data[self::WEBSITE_ID]);
-        $account = $this->registry->getManagerForClass(Account::class)
-            ->getRepository(Account::class)
-            ->find($data[self::ACCOUNT_ID]);
+        $scope = $this->registry->getManagerForClass(Scope::class)
+            ->getRepository(Scope::class)
+            ->find($data[self::SCOPE_ID]);
+
         if (!$product) {
             throw new InvalidArgumentException('Product object was not found.');
         }
-        if (!$website) {
-            throw new InvalidArgumentException('Website object was not found.');
-        }
-        if (!$account) {
-            throw new InvalidArgumentException('Account object was not found.');
+        if (!$scope) {
+            throw new InvalidArgumentException('Scope object was not found.');
         }
         $visibility = new AccountProductVisibility();
+        $visibility->setScope($scope);
         $visibility->setProduct($product);
-        $visibility->setWebsite($website);
-        $visibility->setAccount($account);
         $visibility->setVisibility(AccountProductVisibility::getDefault($product));
 
         return $visibility;
@@ -163,65 +149,17 @@ class ProductVisibilityMessageFactory implements MessageFactoryInterface
         $product = $this->registry->getManagerForClass(Product::class)
             ->getRepository(Product::class)
             ->find($data[self::PRODUCT_ID]);
-        $website = $this->registry->getManagerForClass(Website::class)
-            ->getRepository(Website::class)
-            ->find($data[self::WEBSITE_ID]);
-        $accountGroup = $this->registry->getManagerForClass(AccountGroup::class)
-            ->getRepository(AccountGroup::class)
-            ->find($data[self::ACCOUNT_GROUP_ID]);
-        if (!$product) {
-            throw new InvalidArgumentException('Product object was not found.');
-        }
-        if (!$website) {
-            throw new InvalidArgumentException('Website object was not found.');
-        }
-        if (!$accountGroup) {
-            throw new InvalidArgumentException('AccountGroup object was not found.');
+        $scope = $this->registry->getManagerForClass(Scope::class)
+            ->getRepository(Scope::class)
+            ->find($data[self::SCOPE_ID]);
+        if (!$scope) {
+            throw new InvalidArgumentException('Scope object was not found.');
         }
         $visibility = new AccountGroupProductVisibility();
         $visibility->setProduct($product);
-        $visibility->setWebsite($website);
-        $visibility->setAccountGroup($accountGroup);
+        $visibility->setScope($scope);
         $visibility->setVisibility(AccountGroupProductVisibility::getDefault($product));
 
         return $visibility;
-    }
-
-    /**
-     * @param VisibilityInterface|ProductVisibility $visibility
-     * @return array
-     */
-    protected function productVisibilityToArray(VisibilityInterface $visibility)
-    {
-        return [
-            self::ID => $visibility->getId(),
-            self::ENTITY_CLASS_NAME => ClassUtils::getClass($visibility),
-            self::PRODUCT_ID => $visibility->getProduct()->getId(),
-            self::WEBSITE_ID => $visibility->getWebsite()->getId(),
-        ];
-    }
-
-    /**
-     * @param VisibilityInterface|AccountProductVisibility $visibility
-     * @return array
-     */
-    protected function accountProductVisibilityToArray(VisibilityInterface $visibility)
-    {
-        $data = $this->productVisibilityToArray($visibility);
-        $data[self::ACCOUNT_ID] = $visibility->getAccount()->getId();
-
-        return $data;
-    }
-
-    /**
-     * @param VisibilityInterface|AccountGroupProductVisibility $visibility
-     * @return array
-     */
-    protected function accountGroupProductVisibilityToArray(VisibilityInterface $visibility)
-    {
-        $data = $this->productVisibilityToArray($visibility);
-        $data[self::ACCOUNT_GROUP_ID] = $visibility->getAccountGroup()->getId();
-
-        return $data;
     }
 }

@@ -5,13 +5,13 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeGroupSubtreeCacheBuilder;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
@@ -142,7 +142,7 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
     /**
      * {@inheritdoc}
      */
-    public function buildCache(Website $website = null)
+    public function buildCache(Scope $scope = null)
     {
         /** @var AccountGroupCategoryRepository $resolvedRepository */
         $resolvedRepository = $this->registry->getManagerForClass($this->cacheClass)

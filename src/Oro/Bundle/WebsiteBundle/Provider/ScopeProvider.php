@@ -34,7 +34,7 @@ class ScopeProvider extends AbstractScopeProvider
     /**
      * @return string
      */
-    protected function getCriteriaField()
+    public function getCriteriaField()
     {
         return self::WEBSITE;
     }

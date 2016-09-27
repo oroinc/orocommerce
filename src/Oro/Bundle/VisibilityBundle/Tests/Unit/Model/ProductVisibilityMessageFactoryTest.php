@@ -3,23 +3,16 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Entity\Repository\AccountGroupRepository;
-use Oro\Bundle\AccountBundle\Entity\Repository\AccountRepository;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountGroupProductVisibilityRepository;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityMessageFactory;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
@@ -50,18 +43,18 @@ class ProductVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $productId = 123;
         $productVisibilityId = 42;
-        $websiteId = 1;
+        $scopeId = 1;
 
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => $productId]);
 
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
 
         /** @var ProductVisibility $productVisibility */
         $productVisibility = $this->getEntity(ProductVisibility::class, ['id' => $productVisibilityId]);
         $productVisibility->setProduct($product);
-        $productVisibility->setWebsite($website);
+        $productVisibility->setScope($scope);
 
         $this->productVisibilityMessageFactory->createMessage($productVisibility);
 
@@ -69,7 +62,7 @@ class ProductVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ProductVisibilityMessageFactory::ID => $productVisibilityId,
             ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => ProductVisibility::class,
             ProductVisibilityMessageFactory::PRODUCT_ID => $productId,
-            ProductVisibilityMessageFactory::WEBSITE_ID => $websiteId
+            ProductVisibilityMessageFactory::SCOPE_ID => $scopeId
         ];
 
         $this->assertEquals($expected, $this->productVisibilityMessageFactory->createMessage($productVisibility));
@@ -80,7 +73,7 @@ class ProductVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $accountGroupId = 1;
         $productId = 123;
         $productVisibilityId = 42;
-        $websiteId = 1;
+        $scopeId = 1;
         
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => $productId]);
@@ -88,8 +81,8 @@ class ProductVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getEntity(AccountGroup::class, ['id' => $accountGroupId]);
 
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
 
         /** @var AccountGroupProductVisibility $accountGroupProductVisibility */
         $accountGroupProductVisibility = $this->getEntity(
@@ -98,14 +91,13 @@ class ProductVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
         );
         $accountGroupProductVisibility->setProduct($product);
         $accountGroupProductVisibility->setAccountGroup($accountGroup);
-        $accountGroupProductVisibility->setWebsite($website);
+        $accountGroupProductVisibility->setScope($scope);
 
         $expected = [
             ProductVisibilityMessageFactory::ID => $productVisibilityId,
             ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupProductVisibility::class,
             ProductVisibilityMessageFactory::PRODUCT_ID => $productId,
-            ProductVisibilityMessageFactory::ACCOUNT_GROUP_ID => $accountGroupId,
-            ProductVisibilityMessageFactory::WEBSITE_ID => $websiteId
+            ProductVisibilityMessageFactory::SCOPE_ID => $scopeId
         ];
 
         $this->assertEquals(
@@ -119,7 +111,7 @@ class ProductVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $accountId = 5;
         $productId = 123;
         $productVisibilityId = 42;
-        $websiteId = 1;
+        $scopeId = 1;
 
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => $productId]);
@@ -127,8 +119,8 @@ class ProductVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
         /** @var Account $account */
         $account = $this->getEntity(Account::class, ['id' => $accountId]);
 
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
 
         /** @var AccountProductVisibility $accountProductVisibility */
         $accountProductVisibility = $this->getEntity(
@@ -137,7 +129,7 @@ class ProductVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
         );
         $accountProductVisibility->setProduct($product);
         $accountProductVisibility->setAccount($account);
-        $accountProductVisibility->setWebsite($website);
+        $accountProductVisibility->setScope($scope);
 
         $this->productVisibilityMessageFactory->createMessage($accountProductVisibility);
 
@@ -145,8 +137,7 @@ class ProductVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ProductVisibilityMessageFactory::ID => $productVisibilityId,
             ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountProductVisibility::class,
             ProductVisibilityMessageFactory::PRODUCT_ID => $productId,
-            ProductVisibilityMessageFactory::ACCOUNT_ID => $accountId,
-            ProductVisibilityMessageFactory::WEBSITE_ID => $websiteId
+            ProductVisibilityMessageFactory::SCOPE_ID => $scopeId
         ];
 
         $this->assertEquals(
@@ -196,833 +187,6 @@ class ProductVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         $this->assertEquals($productVisibility, $this->productVisibilityMessageFactory->getEntityFromMessage($data));
-    }
-
-    public function testGetEntityFromMessageProductVisibilityWithoutVisibility()
-    {
-        $productVisibilityId = 123;
-        $productId = 42;
-        $websiteId = 1;
-
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => $productId]);
-
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
-
-        $data =  [
-            ProductVisibilityMessageFactory::ID => $productVisibilityId,
-            ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => ProductVisibility::class,
-            ProductVisibilityMessageFactory::PRODUCT_ID => $productId,
-            ProductVisibilityMessageFactory::WEBSITE_ID => $websiteId
-        ];
-
-        $websiteRepository = $this->getMockBuilder(WebsiteRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $websiteRepository->expects($this->once())
-            ->method('find')
-            ->with($websiteId)
-            ->willReturn($website);
-
-        $productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productRepository->expects($this->once())
-            ->method('find')
-            ->with($productId)
-            ->willReturn($product);
-
-        $productVisibilityRepository = $this->getMockBuilder(ProductVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($productVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [ProductVisibility::class, $productVisibilityRepository],
-                [Product::class, $productRepository],
-                [Website::class, $websiteRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $expectedVisibility = new ProductVisibility();
-        $expectedVisibility->setProduct($product);
-        $expectedVisibility->setWebsite($website);
-        $expectedVisibility->setVisibility(ProductVisibility::CATEGORY);
-
-        $this->assertEquals($expectedVisibility, $this->productVisibilityMessageFactory->getEntityFromMessage($data));
-    }
-
-    /**
-     * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Product object was not found.
-     */
-    public function testGetEntityFromMessageProductVisibilityWithoutProduct()
-    {
-        $productVisibilityId = 123;
-        $productId = 42;
-        $websiteId = 1;
-
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
-
-        $data =  [
-            ProductVisibilityMessageFactory::ID => $productVisibilityId,
-            ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => ProductVisibility::class,
-            ProductVisibilityMessageFactory::PRODUCT_ID => $productId,
-            ProductVisibilityMessageFactory::WEBSITE_ID => $websiteId
-        ];
-
-        $websiteRepository = $this->getMockBuilder(WebsiteRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $websiteRepository->expects($this->once())
-            ->method('find')
-            ->with($websiteId)
-            ->willReturn($website);
-
-        $productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productRepository->expects($this->once())
-            ->method('find')
-            ->with($productId)
-            ->willReturn(null);
-
-        $productVisibilityRepository = $this->getMockBuilder(ProductVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($productVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [ProductVisibility::class, $productVisibilityRepository],
-                [Product::class, $productRepository],
-                [Website::class, $websiteRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->productVisibilityMessageFactory->getEntityFromMessage($data);
-    }
-
-    /**
-     * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Website object was not found.
-     */
-    public function testGetEntityFromMessageProductVisibilityWithoutWebsite()
-    {
-        $productVisibilityId = 123;
-        $productId = 42;
-        $websiteId = 1;
-
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => $productId]);
-
-        $data =  [
-            ProductVisibilityMessageFactory::ID => $productVisibilityId,
-            ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => ProductVisibility::class,
-            ProductVisibilityMessageFactory::PRODUCT_ID => $productId,
-            ProductVisibilityMessageFactory::WEBSITE_ID => $websiteId
-        ];
-
-        $websiteRepository = $this->getMockBuilder(WebsiteRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $websiteRepository->expects($this->once())
-            ->method('find')
-            ->with($websiteId)
-            ->willReturn(null);
-
-        $productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productRepository->expects($this->once())
-            ->method('find')
-            ->with($productId)
-            ->willReturn($product);
-
-        $productVisibilityRepository = $this->getMockBuilder(ProductVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($productVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [ProductVisibility::class, $productVisibilityRepository],
-                [Product::class, $productRepository],
-                [Website::class, $websiteRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->productVisibilityMessageFactory->getEntityFromMessage($data);
-    }
-
-    public function testGetEntityFromMessageAccountProductVisibilityWithoutVisibility()
-    {
-        $accountProductVisibilityId = 123;
-        $productId = 42;
-        $accountId = 4;
-        $websiteId = 1;
-
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => $productId]);
-
-        /** @var Account $account */
-        $account = $this->getEntity(Account::class, ['id' => $accountId]);
-
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
-
-        $data =  [
-            ProductVisibilityMessageFactory::ID => $accountProductVisibilityId,
-            ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountProductVisibility::class,
-            ProductVisibilityMessageFactory::PRODUCT_ID => $productId,
-            ProductVisibilityMessageFactory::ACCOUNT_ID => $accountId,
-            ProductVisibilityMessageFactory::WEBSITE_ID => $websiteId
-        ];
-
-        $websiteRepository = $this->getMockBuilder(WebsiteRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $websiteRepository->expects($this->once())
-            ->method('find')
-            ->with($websiteId)
-            ->willReturn($website);
-
-        $productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productRepository->expects($this->once())
-            ->method('find')
-            ->with($productId)
-            ->willReturn($product);
-
-        $accountRepository = $this->getMockBuilder(AccountRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountRepository->expects($this->once())
-            ->method('find')
-            ->with($accountId)
-            ->willReturn($account);
-
-        $accountProductVisibilityRepository = $this->getMockBuilder(AccountProductVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountProductVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($accountProductVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AccountProductVisibility::class, $accountProductVisibilityRepository],
-                [Product::class, $productRepository],
-                [Account::class, $accountRepository],
-                [Website::class, $websiteRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $expectedVisibility = new AccountProductVisibility();
-        $expectedVisibility->setProduct($product);
-        $expectedVisibility->setAccount($account);
-        $expectedVisibility->setVisibility(AccountProductVisibility::ACCOUNT_GROUP);
-        $expectedVisibility->setWebsite($website);
-
-        $this->assertEquals($expectedVisibility, $this->productVisibilityMessageFactory->getEntityFromMessage($data));
-    }
-
-    /**
-     * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Product object was not found.
-     */
-    public function testGetEntityFromMessageAccountProductVisibilityWithoutProduct()
-    {
-        $accountProductVisibilityId = 123;
-        $productId = 42;
-        $accountId = 4;
-        $websiteId = 1;
-
-        /** @var Account $account */
-        $account = $this->getEntity(Account::class, ['id' => $accountId]);
-
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
-
-        $data =  [
-            ProductVisibilityMessageFactory::ID => $accountProductVisibilityId,
-            ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountProductVisibility::class,
-            ProductVisibilityMessageFactory::PRODUCT_ID => $productId,
-            ProductVisibilityMessageFactory::ACCOUNT_ID => $accountId,
-            ProductVisibilityMessageFactory::WEBSITE_ID => $websiteId
-        ];
-
-        $websiteRepository = $this->getMockBuilder(WebsiteRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $websiteRepository->expects($this->once())
-            ->method('find')
-            ->with($websiteId)
-            ->willReturn($website);
-
-        $productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productRepository->expects($this->once())
-            ->method('find')
-            ->with($productId)
-            ->willReturn(null);
-
-        $accountRepository = $this->getMockBuilder(AccountRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountRepository->expects($this->once())
-            ->method('find')
-            ->with($accountId)
-            ->willReturn($account);
-
-        $accountProductVisibilityRepository = $this->getMockBuilder(AccountProductVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountProductVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($accountProductVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AccountProductVisibility::class, $accountProductVisibilityRepository],
-                [Product::class, $productRepository],
-                [Account::class, $accountRepository],
-                [Website::class, $websiteRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->productVisibilityMessageFactory->getEntityFromMessage($data);
-    }
-    
-    /**
-     * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Account object was not found.
-     */
-    public function testGetEntityFromMessageAccountProductVisibilityWithoutAccountGroup()
-    {
-        $accountProductVisibilityId = 123;
-        $productId = 42;
-        $accountId = 4;
-        $websiteId = 1;
-
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => $productId]);
-
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
-
-        $data =  [
-            ProductVisibilityMessageFactory::ID => $accountProductVisibilityId,
-            ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountProductVisibility::class,
-            ProductVisibilityMessageFactory::PRODUCT_ID => $productId,
-            ProductVisibilityMessageFactory::ACCOUNT_ID => $accountId,
-            ProductVisibilityMessageFactory::WEBSITE_ID => $websiteId
-        ];
-
-        $websiteRepository = $this->getMockBuilder(WebsiteRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $websiteRepository->expects($this->once())
-            ->method('find')
-            ->with($websiteId)
-            ->willReturn($website);
-
-        $productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productRepository->expects($this->once())
-            ->method('find')
-            ->with($productId)
-            ->willReturn($product);
-
-        $accountRepository = $this->getMockBuilder(AccountRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountRepository->expects($this->once())
-            ->method('find')
-            ->with($accountId)
-            ->willReturn(null);
-
-        $accountProductVisibilityRepository = $this->getMockBuilder(AccountProductVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountProductVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($accountProductVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AccountProductVisibility::class, $accountProductVisibilityRepository],
-                [Product::class, $productRepository],
-                [Account::class, $accountRepository],
-                [Website::class, $websiteRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->productVisibilityMessageFactory->getEntityFromMessage($data);
-    }
-    
-    /**
-     * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Website object was not found.
-     */
-    public function testGetEntityFromMessageAccountProductVisibilityWithoutWebsite()
-    {
-        $accountProductVisibilityId = 123;
-        $productId = 42;
-        $accountId = 4;
-        $websiteId = 1;
-
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => $productId]);
-
-        /** @var Account $account */
-        $account = $this->getEntity(Account::class, ['id' => $accountId]);
-
-        $data =  [
-            ProductVisibilityMessageFactory::ID => $accountProductVisibilityId,
-            ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountProductVisibility::class,
-            ProductVisibilityMessageFactory::PRODUCT_ID => $productId,
-            ProductVisibilityMessageFactory::ACCOUNT_ID => $accountId,
-            ProductVisibilityMessageFactory::WEBSITE_ID => $websiteId
-        ];
-
-        $websiteRepository = $this->getMockBuilder(WebsiteRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $websiteRepository->expects($this->once())
-            ->method('find')
-            ->with($websiteId)
-            ->willReturn(null);
-
-        $productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productRepository->expects($this->once())
-            ->method('find')
-            ->with($productId)
-            ->willReturn($product);
-
-        $accountRepository = $this->getMockBuilder(AccountRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountRepository->expects($this->once())
-            ->method('find')
-            ->with($accountId)
-            ->willReturn($account);
-
-        $accountProductVisibilityRepository = $this->getMockBuilder(AccountProductVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountProductVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($accountProductVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AccountProductVisibility::class, $accountProductVisibilityRepository],
-                [Product::class, $productRepository],
-                [Account::class, $accountRepository],
-                [Website::class, $websiteRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->productVisibilityMessageFactory->getEntityFromMessage($data);
-    }
-
-    public function testGetEntityFromMessageAccountGroupProductVisibilityWithoutVisibility()
-    {
-        $accountGroupProductVisibilityId = 123;
-        $productId = 42;
-        $accountGroupId = 4;
-        $websiteId = 1;
-
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => $productId]);
-
-        /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity(AccountGroup::class, ['id' => $accountGroupId]);
-
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
-
-        $data =  [
-            ProductVisibilityMessageFactory::ID => $accountGroupProductVisibilityId,
-            ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupProductVisibility::class,
-            ProductVisibilityMessageFactory::PRODUCT_ID => $productId,
-            ProductVisibilityMessageFactory::ACCOUNT_GROUP_ID => $accountGroupId,
-            ProductVisibilityMessageFactory::WEBSITE_ID => $websiteId
-        ];
-
-        $websiteRepository = $this->getMockBuilder(WebsiteRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $websiteRepository->expects($this->once())
-            ->method('find')
-            ->with($websiteId)
-            ->willReturn($website);
-
-        $productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productRepository->expects($this->once())
-            ->method('find')
-            ->with($productId)
-            ->willReturn($product);
-
-        $accountGroupRepository = $this->getMockBuilder(AccountGroupRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountGroupRepository->expects($this->once())
-            ->method('find')
-            ->with($accountGroupId)
-            ->willReturn($accountGroup);
-
-        $accountProductVisibilityRepository = $this->getMockBuilder(AccountGroupProductVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountProductVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($accountGroupProductVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AccountGroupProductVisibility::class, $accountProductVisibilityRepository],
-                [Product::class, $productRepository],
-                [AccountGroup::class, $accountGroupRepository],
-                [Website::class, $websiteRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $expectedVisibility = new AccountGroupProductVisibility();
-        $expectedVisibility->setProduct($product);
-        $expectedVisibility->setAccountGroup($accountGroup);
-        $expectedVisibility->setVisibility(AccountGroupProductVisibility::CURRENT_PRODUCT);
-        $expectedVisibility->setWebsite($website);
-
-        $this->assertEquals($expectedVisibility, $this->productVisibilityMessageFactory->getEntityFromMessage($data));
-    }
-
-    /**
-     * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage AccountGroup object was not found.
-     */
-    public function testGetEntityFromMessageAccountGroupProductVisibilityWithoutAccountGroup()
-    {
-        $accountGroupProductVisibilityId = 123;
-        $productId = 42;
-        $accountGroupId = 4;
-        $websiteId = 1;
-
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => $productId]);
-
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
-
-        $data =  [
-            ProductVisibilityMessageFactory::ID => $accountGroupProductVisibilityId,
-            ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupProductVisibility::class,
-            ProductVisibilityMessageFactory::PRODUCT_ID => $productId,
-            ProductVisibilityMessageFactory::ACCOUNT_GROUP_ID => $accountGroupId,
-            ProductVisibilityMessageFactory::WEBSITE_ID => $websiteId
-        ];
-
-        $websiteRepository = $this->getMockBuilder(WebsiteRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $websiteRepository->expects($this->once())
-            ->method('find')
-            ->with($websiteId)
-            ->willReturn($website);
-
-        $productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productRepository->expects($this->once())
-            ->method('find')
-            ->with($productId)
-            ->willReturn($product);
-
-        $accountGroupRepository = $this->getMockBuilder(AccountGroupRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountGroupRepository->expects($this->once())
-            ->method('find')
-            ->with($accountGroupId)
-            ->willReturn(null);
-
-        $accountProductVisibilityRepository = $this->getMockBuilder(AccountGroupProductVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountProductVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($accountGroupProductVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AccountGroupProductVisibility::class, $accountProductVisibilityRepository],
-                [Product::class, $productRepository],
-                [AccountGroup::class, $accountGroupRepository],
-                [Website::class, $websiteRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->productVisibilityMessageFactory->getEntityFromMessage($data);
-    }
-
-    /**
-     * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Product object was not found.
-     */
-    public function testGetEntityFromMessageAccountGroupProductVisibilityWithoutProduct()
-    {
-        $accountGroupProductVisibilityId = 123;
-        $productId = 42;
-        $accountGroupId = 4;
-        $websiteId = 1;
-
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
-
-        /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity(AccountGroup::class, ['id' => $accountGroupId]);
-
-        $data =  [
-            ProductVisibilityMessageFactory::ID => $accountGroupProductVisibilityId,
-            ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupProductVisibility::class,
-            ProductVisibilityMessageFactory::PRODUCT_ID => $productId,
-            ProductVisibilityMessageFactory::ACCOUNT_GROUP_ID => $accountGroupId,
-            ProductVisibilityMessageFactory::WEBSITE_ID => $websiteId
-        ];
-
-        $websiteRepository = $this->getMockBuilder(WebsiteRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $websiteRepository->expects($this->once())
-            ->method('find')
-            ->with($websiteId)
-            ->willReturn($website);
-
-        $productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productRepository->expects($this->once())
-            ->method('find')
-            ->with($productId)
-            ->willReturn(null);
-
-        $accountGroupRepository = $this->getMockBuilder(AccountGroupRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountGroupRepository->expects($this->once())
-            ->method('find')
-            ->with($accountGroupId)
-            ->willReturn($accountGroup);
-
-        $accountProductVisibilityRepository = $this->getMockBuilder(AccountGroupProductVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountProductVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($accountGroupProductVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AccountGroupProductVisibility::class, $accountProductVisibilityRepository],
-                [Product::class, $productRepository],
-                [AccountGroup::class, $accountGroupRepository],
-                [Website::class, $websiteRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->productVisibilityMessageFactory->getEntityFromMessage($data);
-    }
-
-    /**
-     * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Website object was not found.
-     */
-    public function testGetEntityFromMessageAccountGroupProductVisibilityWithoutWebsite()
-    {
-        $accountGroupProductVisibilityId = 123;
-        $productId = 42;
-        $accountGroupId = 4;
-        $websiteId = 1;
-
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => $productId]);
-
-        /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity(AccountGroup::class, ['id' => $accountGroupId]);
-
-        $data =  [
-            ProductVisibilityMessageFactory::ID => $accountGroupProductVisibilityId,
-            ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupProductVisibility::class,
-            ProductVisibilityMessageFactory::PRODUCT_ID => $productId,
-            ProductVisibilityMessageFactory::ACCOUNT_GROUP_ID => $accountGroupId,
-            ProductVisibilityMessageFactory::WEBSITE_ID => $websiteId
-        ];
-
-        $websiteRepository = $this->getMockBuilder(WebsiteRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $websiteRepository->expects($this->once())
-            ->method('find')
-            ->with($websiteId)
-            ->willReturn(null);
-
-        $productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productRepository->expects($this->once())
-            ->method('find')
-            ->with($productId)
-            ->willReturn($product);
-
-        $accountGroupRepository = $this->getMockBuilder(AccountGroupRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountGroupRepository->expects($this->once())
-            ->method('find')
-            ->with($accountGroupId)
-            ->willReturn($accountGroup);
-
-        $accountProductVisibilityRepository = $this->getMockBuilder(AccountGroupProductVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountProductVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($accountGroupProductVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AccountGroupProductVisibility::class, $accountProductVisibilityRepository],
-                [Product::class, $productRepository],
-                [AccountGroup::class, $accountGroupRepository],
-                [Website::class, $websiteRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->productVisibilityMessageFactory->getEntityFromMessage($data);
     }
 
     /**

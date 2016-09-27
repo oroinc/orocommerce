@@ -5,13 +5,13 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
@@ -121,7 +121,7 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     /**
      * {@inheritdoc}
      */
-    public function buildCache(Website $website = null)
+    public function buildCache(Scope $scope = null)
     {
         /** @var AccountCategoryRepository $resolvedRepository */
         $resolvedRepository = $this->registry->getManagerForClass($this->cacheClass)

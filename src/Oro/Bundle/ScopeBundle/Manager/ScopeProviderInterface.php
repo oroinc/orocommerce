@@ -14,4 +14,9 @@ interface ScopeProviderInterface
      * @return array
      */
     public function getCriteriaForCurrentScope();
+
+    /**
+     * @return string
+     */
+    public function getCriteriaField();
 }

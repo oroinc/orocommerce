@@ -4,13 +4,13 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements
     ProductCaseCacheBuilderInterface
@@ -21,8 +21,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
         $product = $visibilitySettings->getProduct();
-        $website = $visibilitySettings->getWebsite();
-        $account = $visibilitySettings->getAccount();
+        $scope = $visibilitySettings->getScope();
 
         $selectedVisibility = $visibilitySettings->getVisibility();
         $visibilitySettings = $this->refreshEntity($visibilitySettings);
@@ -30,7 +29,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
         $insert = false;
         $delete = false;
         $update = [];
-        $where = ['account' => $account, 'website' => $website, 'product' => $product];
+        $where = ['scope' => $scope, 'product' => $product];
 
         $er = $this->registry
             ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved')
@@ -47,10 +46,11 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
                 ->getRepository('OroCatalogBundle:Category')
                 ->findOneByProduct($product);
             if ($category) {
+                //TODO: use scopes for category visibility
                 $visibility = $this->registry
                     ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
                     ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-                    ->getFallbackToAccountVisibility($category, $account);
+                    ->getFallbackToAccountVisibility($category, $scope->getAccount());
                 $update = [
                     'sourceProductVisibility' => $visibilitySettings,
                     'visibility' => $visibility,
@@ -113,14 +113,14 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
     /**
      * {@inheritdoc}
      */
-    public function buildCache(Website $website = null)
+    public function buildCache(Scope $scope = null)
     {
         $this->getManager()->beginTransaction();
         try {
             $repository = $this->getRepository();
-            $repository->clearTable($website);
-            $repository->insertStatic($this->insertFromSelectQueryExecutor, $website);
-            $repository->insertByCategory($this->insertFromSelectQueryExecutor, $website);
+            $repository->clearTable($scope);
+            $repository->insertStatic($this->insertFromSelectQueryExecutor, $scope);
+            $repository->insertByCategory($this->insertFromSelectQueryExecutor, $scope);
             $this->getManager()->commit();
         } catch (\Exception $exception) {
             $this->getManager()->rollback();

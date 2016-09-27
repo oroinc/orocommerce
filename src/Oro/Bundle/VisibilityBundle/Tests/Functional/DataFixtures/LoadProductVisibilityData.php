@@ -2,21 +2,19 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Yaml\Yaml;
-
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
-
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Yaml\Yaml;
 
 class LoadProductVisibilityData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -75,20 +73,21 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
      */
     protected function createProductVisibilities(ObjectManager $manager, Product $product, array $data)
     {
-        $website = $this->getWebsite($data['website']);
-
-        $productVisibility = (new ProductVisibility())
-            ->setProduct($product)
-            ->setWebsite($website)
+        $productVisibility = new ProductVisibility();
+        $productVisibility->setProduct($product)
             ->setVisibility($data['all']['visibility']);
+
+        $scope = $this->container->get('oro_scope.scope_manager')
+            ->findOrCreate('product_visibility', $productVisibility);
+        $productVisibility->setScope($scope);
 
         $manager->persist($productVisibility);
 
         $this->setReference($data['all']['reference'], $productVisibility);
 
-        $this->createAccountGroupVisibilities($manager, $product, $website, $data['groups']);
+        $this->createAccountGroupVisibilities($manager, $product, $data['groups']);
 
-        $this->createAccountVisibilities($manager, $product, $website, $data['accounts']);
+        $this->createAccountVisibilities($manager, $product, $data['accounts']);
     }
 
     /**
@@ -110,25 +109,28 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     /**
      * @param ObjectManager $manager
      * @param Product $product
-     * @param Website $website
      * @param array $accountGroupsData
      */
     protected function createAccountGroupVisibilities(
         ObjectManager $manager,
         Product $product,
-        Website $website,
         array $accountGroupsData
     ) {
         foreach ($accountGroupsData as $groupReference => $accountGroupData) {
             /** @var AccountGroup $accountGroup */
             $accountGroup = $this->getReference($groupReference);
 
-            $accountGroupProductVisibility = (new AccountGroupProductVisibility())
-                ->setProduct($product)
-                ->setWebsite($website)
+            $accountGroupProductVisibility = new AccountGroupProductVisibility();
+            $accountGroupProductVisibility->setProduct($product)
                 ->setAccountGroup($accountGroup)
                 ->setVisibility($accountGroupData['visibility'])
             ;
+
+            $scopeManager = $this->container->get('oro_scope.scope_manager');
+            $scope = $scopeManager
+                ->findOrCreate('account_group_product_visibility', $accountGroupProductVisibility);
+
+            $accountGroupProductVisibility->setScope($scope);
 
             $manager->persist($accountGroupProductVisibility);
 
@@ -139,25 +141,26 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     /**
      * @param ObjectManager $manager
      * @param Product $product
-     * @param Website $website
      * @param array $accountsData
      */
     protected function createAccountVisibilities(
         ObjectManager $manager,
         Product $product,
-        Website $website,
         array $accountsData
     ) {
         foreach ($accountsData as $accountReference => $accountData) {
             /** @var Account $account */
             $account = $this->getReference($accountReference);
 
-            $accountProductVisibility = (new AccountProductVisibility())
-                ->setProduct($product)
-                ->setWebsite($website)
+            $accountProductVisibility = new AccountProductVisibility();
+            $accountProductVisibility->setProduct($product)
                 ->setAccount($account)
                 ->setVisibility($accountData['visibility'])
             ;
+
+            $scopeManager = $this->container->get('oro_scope.scope_manager');
+            $scope = $scopeManager->findOrCreate('account_product_visibility', $accountProductVisibility);
+            $accountProductVisibility->setScope($scope);
 
             $manager->persist($accountProductVisibility);
 

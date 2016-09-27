@@ -40,7 +40,7 @@ class ScopeAccountProvider extends AbstractScopeProvider
     /**
      * @return string
      */
-    protected function getCriteriaField()
+    public function getCriteriaField()
     {
         return static::ACCOUNT;
     }

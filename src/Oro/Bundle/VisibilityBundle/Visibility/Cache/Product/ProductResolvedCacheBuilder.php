@@ -5,23 +5,29 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
 {
+    /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
     /**
      * @param VisibilityInterface|ProductVisibility $visibilitySettings
      */
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
+        $scope = $visibilitySettings->getScope();
         $product = $visibilitySettings->getProduct();
-        $website = $visibilitySettings->getWebsite();
 
         $selectedVisibility = $visibilitySettings->getVisibility();
         $visibilitySettings = $this->refreshEntity($visibilitySettings);
@@ -29,7 +35,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         $insert = false;
         $delete = false;
         $update = [];
-        $where = ['website' => $website, 'product' => $product];
+        $where = ['scope' => $scope, 'product' => $product];
 
         $em = $this->registry->getManagerForClass('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
         $er = $em->getRepository('OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved');
@@ -97,26 +103,37 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
 
         $repository = $this->getRepository();
         $repository->deleteByProduct($product);
-        $repository->insertByProduct(
-            $this->insertFromSelectQueryExecutor,
-            $product,
-            $visibility,
-            $category
-        );
+        $scopes = $this->scopeManager->findRelatedScopes('product_visibility');
+        foreach ($scopes as $scope) {
+            $repository->insertByProduct(
+                $this->insertFromSelectQueryExecutor,
+                $product,
+                $visibility,
+                $scope,
+                $category
+            );
+        }
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildCache(Website $website = null)
+    public function buildCache(Scope $scope = null)
     {
         $manager = $this->getManager();
         $manager->beginTransaction();
         try {
             $repository = $this->getRepository();
-            $repository->clearTable($website);
-            $repository->insertStatic($this->insertFromSelectQueryExecutor, $website);
-            $repository->insertByCategory($this->insertFromSelectQueryExecutor, $website);
+            $repository->clearTable($scope);
+            $repository->insertStatic($this->insertFromSelectQueryExecutor, $scope);
+            if ($scope) {
+                $repository->insertByCategory($this->insertFromSelectQueryExecutor, $scope);
+            } else {
+                $scopes = $this->scopeManager->findRelatedScopes('product_visibility');
+                foreach ($scopes as $scope) {
+                    $repository->insertByCategory($this->insertFromSelectQueryExecutor, $scope);
+                }
+            }
             $manager->commit();
         } catch (\Exception $exception) {
             $manager->rollback();
@@ -162,5 +179,13 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
     protected function getManager()
     {
         return $this->registry->getManagerForClass($this->cacheClass);
+    }
+
+    /**
+     * @param ScopeManager $scopeManager
+     */
+    public function setScopeManager($scopeManager)
+    {
+        $this->scopeManager = $scopeManager;
     }
 }

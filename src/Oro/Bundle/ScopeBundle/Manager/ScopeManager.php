@@ -4,8 +4,11 @@ namespace Oro\Bundle\ScopeBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
+use Oro\Bundle\ScopeBundle\Entity\Repository\ScopeRepository;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class ScopeManager
@@ -47,7 +50,7 @@ class ScopeManager
 
     /**
      * @param string $scopeType
-     * @param array|object $context
+     * @param array|object|null $context
      * @return Scope
      */
     public function find($scopeType, $context = null)
@@ -57,6 +60,31 @@ class ScopeManager
         return $this->registry->getManagerForClass(Scope::class)
             ->getRepository(Scope::class)
             ->findOneBy($criteria);
+    }
+
+    /**
+     * @param $scopeType
+     * @param array|object|null $context
+     * @return BufferedQueryResultIterator|Scope[]
+     */
+    public function findRelatedScopes($scopeType, $context = null)
+    {
+        /** @var ScopeRepository $scopeRepository */
+        $scopeRepository = $this->registry->getManagerForClass(Scope::class)
+            ->getRepository(Scope::class);
+
+        $criteria = $this->getBaseCriteria();
+        /** @var ScopeProviderInterface[] $providers */
+        $providers = $this->getProviders($scopeType);
+        foreach ($providers as $provider) {
+            $localCriteria = $provider->getCriteriaByContext($context);
+            if (count($criteria) === 0) {
+                $localCriteria = [$provider->getCriteriaField() => ScopeRepository::IS_NOT_NULL];
+            }
+            $criteria = array_merge($criteria, $localCriteria);
+        }
+
+        return $scopeRepository->findByCriteria($criteria);
     }
 
     /**
@@ -107,7 +135,7 @@ class ScopeManager
     {
         $criteria = $this->getBaseCriteria();
         /** @var ScopeProviderInterface[] $providers */
-        $providers = empty($this->providers[$scopeType]) ? [] : $this->providers[$scopeType];
+        $providers = $this->getProviders($scopeType);
         foreach ($providers as $provider) {
             if (null === $context) {
                 $criteria = array_merge($criteria, $provider->getCriteriaForCurrentScope());
@@ -145,5 +173,23 @@ class ScopeManager
         }
 
         return $this->propertyAccessor;
+    }
+
+    /**
+     * @param $scopeType
+     * @return ScopeProviderInterface[]
+     */
+    protected function getProviders($scopeType)
+    {
+        $rawProviders = empty($this->providers[$scopeType]) ? [] : $this->providers[$scopeType];
+        $providers = [];
+        foreach ($rawProviders as $provider) {
+            if ($provider instanceof ServiceLink) {
+                $provider = $provider->getService();
+            }
+            $providers[] = $provider;
+        }
+
+        return $providers;
     }
 }

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 
 class LoadProductVisibilityDemoData extends AbstractLoadProductVisibilityDemoData
 {
@@ -12,7 +11,7 @@ class LoadProductVisibilityDemoData extends AbstractLoadProductVisibilityDemoDat
      */
     public function getDependencies()
     {
-        return array_merge(parent::getDependencies(), [LoadWebsiteData::class, LoadCategoryVisibilityDemoData::class]);
+        return array_merge(parent::getDependencies(), [LoadCategoryVisibilityDemoData::class]);
     }
     /**
      * {@inheritdoc}
@@ -24,12 +23,11 @@ class LoadProductVisibilityDemoData extends AbstractLoadProductVisibilityDemoDat
         $filePath = $locator->locate('@OroVisibilityBundle/Migrations/Data/Demo/ORM/data/products-visibility.csv');
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
-        $website = $this->getWebsite($manager, LoadWebsiteData::DEFAULT_WEBSITE_NAME);
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
             $product = $this->getProduct($manager, $row['product']);
             $visibility = $row['visibility'];
-            $this->setProductVisibility($manager, $row, $website, $product, $visibility);
+            $this->setProductVisibility($manager, $row, $product, $visibility);
         }
         fclose($handler);
         $manager->flush();

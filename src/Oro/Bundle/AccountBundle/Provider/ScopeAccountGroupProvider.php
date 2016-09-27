@@ -12,6 +12,8 @@ use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
 class ScopeAccountGroupProvider implements ScopeProviderInterface
 {
+    const FIELD_NAME = 'accountGroup';
+
     /**
      * @var SecurityFacade
      */
@@ -60,7 +62,7 @@ class ScopeAccountGroupProvider implements ScopeProviderInterface
             && $loggedUser instanceof AccountUser
             && null !== $loggedUser->getAccount()
         ) {
-            return ['accountGroup' => $loggedUser->getAccount()->getGroup()];
+            return [$this->getCriteriaField() => $loggedUser->getAccount()->getGroup()];
         }
 
         return [];
@@ -91,5 +93,13 @@ class ScopeAccountGroupProvider implements ScopeProviderInterface
         } catch (NoSuchPropertyException $e) {
             return null;
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getCriteriaField()
+    {
+        return self::FIELD_NAME;
     }
 }

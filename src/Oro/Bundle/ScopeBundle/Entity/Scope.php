@@ -9,7 +9,7 @@ use Oro\Bundle\ScopeBundle\Model\ExtendScope;
  * Class Scope
  *
  * @ORM\Table("oro_scope")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\ScopeBundle\Entity\Repository\ScopeRepository")
  */
 class Scope extends ExtendScope
 {

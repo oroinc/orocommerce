@@ -4,13 +4,13 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\VisibilityResolved
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -195,9 +195,8 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
     public function findByPrimaryKey($visibilityResolved)
     {
         return $this->getRepository()->findByPrimaryKey(
-            $visibilityResolved->getAccount(),
             $visibilityResolved->getProduct(),
-            $visibilityResolved->getWebsite()
+            $visibilityResolved->getScope()
         );
     }
 

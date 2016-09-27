@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache;
 
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class CompositeCacheBuilder implements CacheBuilderInterface
 {
@@ -51,10 +51,10 @@ class CompositeCacheBuilder implements CacheBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function buildCache(Website $website = null)
+    public function buildCache(Scope $scope = null)
     {
         foreach ($this->builders as $builder) {
-            $builder->buildCache($website);
+            $builder->buildCache($scope);
         }
     }
 }

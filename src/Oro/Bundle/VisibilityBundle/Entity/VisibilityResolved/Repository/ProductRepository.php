@@ -6,14 +6,14 @@ use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * Composite primary key fields order:
- *  - website
+ *  - scope
  *  - product
  */
 class ProductRepository extends AbstractVisibilityRepository
@@ -22,35 +22,33 @@ class ProductRepository extends AbstractVisibilityRepository
 
     /**
      * @param InsertFromSelectQueryExecutor $executor
-     * @param Website|null $website
+     * @param Scope|null $scope
      */
-    public function insertByCategory(InsertFromSelectQueryExecutor $executor, Website $website = null)
+    public function insertByCategory(InsertFromSelectQueryExecutor $executor, Scope $scope)
     {
+        var_dump("insertByCategory");
         $qb = $this->getEntityManager()
             ->getRepository('OroCatalogBundle:Category')
             ->createQueryBuilder('category');
 
-        $websiteJoinCondition = '1 = 1';
-        if ($website) {
-            $websiteJoinCondition = 'website = :website';
-            $qb->setParameter('website', $website);
-        }
+        $scopeJoinCondition = 'scope = :scope';
+        $qb->setParameter('scope', $scope);
 
         $configValue = ProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         $qb->select([
-            'website.id',
+            'scope.id',
             'product.id',
             'COALESCE(cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
             (string)ProductVisibilityResolved::SOURCE_CATEGORY,
             'category.id',
         ])
         ->innerJoin('category.products', 'product')
-        ->innerJoin('OroWebsiteBundle:Website', 'website', Join::WITH, $websiteJoinCondition)
+        ->innerJoin('OroScopeBundle:Scope', 'scope', Join::WITH, $scopeJoinCondition)
         ->leftJoin(
             'OroVisibilityBundle:Visibility\ProductVisibility',
             'pv',
             'WITH',
-            'IDENTITY(pv.product) = product.id AND IDENTITY(pv.website) = website.id'
+            'IDENTITY(pv.product) = product.id AND IDENTITY(pv.scope) = scope.id'
         )
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
@@ -60,26 +58,21 @@ class ProductRepository extends AbstractVisibilityRepository
         )
         ->where('pv.id is null');
 
-        if ($website) {
-            $qb->andWhere('pv.website = :website')
-                ->setParameter('website', $website);
-        }
-
         $executor->execute(
             $this->getClassName(),
-            ['website', 'product', 'visibility', 'source', 'category'],
+            ['scope', 'product', 'visibility', 'source', 'category'],
             $qb
         );
     }
 
     /**
      * @param InsertFromSelectQueryExecutor $executor
-     * @param Website|null $website
+     * @param Scope|null $scope
      * @param Product|null $product
      */
     public function insertStatic(
         InsertFromSelectQueryExecutor $executor,
-        Website $website = null,
+        Scope $scope = null,
         $product = null
     ) {
         $visibilityCondition = sprintf(
@@ -94,7 +87,7 @@ class ProductRepository extends AbstractVisibilityRepository
             ->createQueryBuilder('pv')
             ->select(
                 'pv.id',
-                'IDENTITY(pv.website)',
+                'IDENTITY(pv.scope)',
                 'IDENTITY(pv.product)',
                 $visibilityCondition,
                 (string)ProductVisibilityResolved::SOURCE_STATIC
@@ -102,9 +95,9 @@ class ProductRepository extends AbstractVisibilityRepository
             ->where('pv.visibility != :config')
             ->setParameter('config', ProductVisibility::CONFIG);
 
-        if ($website) {
-            $qb->andWhere('pv.website = :website')
-                ->setParameter('website', $website);
+        if ($scope) {
+            $qb->andWhere('pv.scope = :scope')
+                ->setParameter('scope', $scope);
         }
         if ($product) {
             $qb->andWhere('pv.product = :product')
@@ -113,19 +106,19 @@ class ProductRepository extends AbstractVisibilityRepository
 
         $executor->execute(
             $this->getClassName(),
-            ['sourceProductVisibility', 'website', 'product', 'visibility', 'source'],
+            ['sourceProductVisibility', 'scope', 'product', 'visibility', 'source'],
             $qb
         );
     }
 
     /**
      * @param Product $product
-     * @param Website $website
+     * @param Scope $scope
      * @return null|ProductVisibilityResolved
      */
-    public function findByPrimaryKey(Product $product, Website $website)
+    public function findByPrimaryKey(Product $product, Scope $scope)
     {
-        return $this->findOneBy(['website' => $website, 'product' => $product]);
+        return $this->findOneBy(['scope' => $scope, 'product' => $product]);
     }
 
     /**
@@ -145,67 +138,65 @@ class ProductRepository extends AbstractVisibilityRepository
      * @param InsertFromSelectQueryExecutor $executor
      * @param Product $product
      * @param int $visibility
+     * @param Scope $scope
      * @param Category $category
      */
     public function insertByProduct(
         InsertFromSelectQueryExecutor $executor,
         Product $product,
         $visibility,
-        Category $category = null
+        Scope $scope,
+        Category $category
     ) {
         $this->insertStatic($executor, null, $product);
 
-        if ($category) {
-            $qb = $this->getVisibilitiesByCategoryQb($visibility, [$category->getId()]);
+        $qb = $this->getVisibilitiesByCategoryQb($visibility, [$category->getId()], $scope);
+        $qb->andWhere('product = :product')
+            ->setParameter('product', $product);
 
-            $qb->andWhere('product = :product')
-                ->setParameter('product', $product);
-
-            $executor->execute(
-                $this->getClassName(),
-                ['website', 'product', 'visibility', 'source', 'category'],
-                $qb
-            );
-        }
+        $executor->execute(
+            $this->getClassName(),
+            ['scope', 'product', 'visibility', 'source', 'category'],
+            $qb
+        );
     }
 
     /**
      * @param int $visibility
      * @param array $categoryIds
-     * @param Website|null $website
+     * @param Scope $scope
      * @return \Doctrine\ORM\QueryBuilder
      */
-    protected function getVisibilitiesByCategoryQb($visibility, array $categoryIds, Website $website = null)
+    protected function getVisibilitiesByCategoryQb($visibility, array $categoryIds, Scope $scope)
     {
         $qb = $this->getEntityManager()
             ->getRepository('OroCatalogBundle:Category')
             ->createQueryBuilder('category');
 
-        // DQL requires condition to be presented in join, "1 = 1" is used as a dummy condition
-        $websiteJoinCondition = '1 = 1';
-        if ($website) {
-            $websiteJoinCondition = 'website.id = :websiteId';
-            $qb->setParameter('websiteId', $website->getId());
-        }
-
         $qb->select([
-            'website.id as w_id',
+            'scope.id as w_id',
             'product.id as p_id',
             (string)$visibility,
             (string)BaseProductVisibilityResolved::SOURCE_CATEGORY,
             'category.id as c_id',
         ])
             ->innerJoin('category.products', 'product')
-            ->innerJoin('OroWebsiteBundle:Website', 'website', Join::WITH, $websiteJoinCondition)
+            ->innerJoin(
+                'OroScopeBundle:Scope',
+                'scope',
+                Join::WITH,
+                'scope.id = :scopeId'
+            )
             ->leftJoin(
                 'OroVisibilityBundle:Visibility\ProductVisibility',
                 'pv',
                 Join::WITH,
-                'IDENTITY(pv.product) = product.id AND IDENTITY(pv.website) = website.id'
+                'IDENTITY(pv.product) = product.id AND IDENTITY(pv.scope) = scope.id'
             )
             ->where('pv.id is null')
             ->andWhere('category.id in (:ids)')
-            ->setParameter('ids', $categoryIds);
+            ->setParameter('ids', $categoryIds)
+            ->setParameter('scopeId', $scope->getId());
 
         return $qb;
     }
