@@ -27,7 +27,7 @@ class CategoryManageInventoryFormExtension extends AbstractTypeExtension
             'manageInventory',
             EntityFieldFallbackValueType::NAME,
             [
-                'label' => 'oro.catalog.category.manage_inventory.label',
+                'label' => 'oro.warehouse.manage_inventory.label',
             ]
         );
     }
