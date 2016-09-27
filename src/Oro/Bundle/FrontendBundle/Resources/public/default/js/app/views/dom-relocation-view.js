@@ -1,13 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var MoveBlocksView;
+    var DomRelocationView;
     var BaseView = require('oroui/js/app/views/base/view');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
     var $ = require('jquery');
 
-    MoveBlocksView = BaseView.extend({
+    DomRelocationView = BaseView.extend({
         autoRender: true,
 
         options: {
@@ -23,7 +23,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.extend({}, this.options, options || {});
 
-            MoveBlocksView.__super__.initialize.apply(this, arguments);
+            DomRelocationView.__super__.initialize.apply(this, arguments);
 
             this.$window = $(window);
             this.elements = null;
@@ -33,7 +33,7 @@ define(function(require) {
          * @inheritDoc
          */
         delegateEvents: function() {
-            MoveBlocksView.__super__.delegateEvents.apply(this, arguments);
+            DomRelocationView.__super__.delegateEvents.apply(this, arguments);
 
             this.$window.on(
                 'resize' + this.eventNamespace(),
@@ -52,7 +52,7 @@ define(function(require) {
             this.$window.off(this.eventNamespace());
             mediator.off(null, null, this);
             this.elements = null;
-            return MoveBlocksView.__super__.undelegateEvents.apply(this, arguments);
+            return DomRelocationView.__super__.undelegateEvents.apply(this, arguments);
         },
 
         /**
@@ -79,20 +79,19 @@ define(function(require) {
 
             this.undelegateEvents();
 
-            return MoveBlocksView.__super__.dispose.apply(this, arguments);
+            return DomRelocationView.__super__.dispose.apply(this, arguments);
         },
 
         onResize: function() {
-            var self = this;
             var windowSize = this.$window.outerWidth();
 
             if (!this.$elements.length) {
-                return ;
+                return;
             }
 
-            $.each(this.$elements, function(index, el) {
+            _.each(this.$elements, function(el) {
                 var $el = $(el);
-                var options = self.checkTargetOptions(windowSize, $el.data('responsiveOptions'));
+                var options = this.checkTargetOptions(windowSize, $el.data('responsiveOptions'));
 
                 if (_.isObject(options)) {
                     if ($el.data('targetBreakPoint') !== options.breakpoint) {
@@ -103,14 +102,14 @@ define(function(require) {
                     $el.data('originalPosition').append($el);
                     $el.data('targetBreakPoint', null);
                 }
-            });
+            }, this);
         },
 
         checkTargetOptions: function(windowSize, responsiveOptions) {
             var breakpoints = [];
 
-            for (var i = 0; i <= responsiveOptions.length -1 ; i++) {
-                if (windowSize < responsiveOptions[i].breakpoint ) {
+            for (var i = 0; i <= responsiveOptions.length - 1 ; i++) {
+                if (windowSize < responsiveOptions[i].breakpoint) {
                     breakpoints.push(responsiveOptions[i]);
                 }
             }
@@ -121,7 +120,7 @@ define(function(require) {
         },
 
         collectElements: function() {
-            this.$elements = $('[data-move-block]');
+            this.$elements = $('[data-dom-relocation]');
 
             if (!this.$elements.length) {
                 return ;
@@ -130,11 +129,11 @@ define(function(require) {
             $.each(this.$elements, function(index, element) {
                 var $element = $(element);
                 $element.data('originalPosition', $element.parent());
-                $element.data('responsiveOptions', $element.data('move-options').responsive || []);
+                $element.data('responsiveOptions', $element.data('dom-relocation-options').responsive || []);
                 $element.data('targetBreakPoint', null);
             });
         }
     });
 
-    return MoveBlocksView;
+    return DomRelocationView;
 });
