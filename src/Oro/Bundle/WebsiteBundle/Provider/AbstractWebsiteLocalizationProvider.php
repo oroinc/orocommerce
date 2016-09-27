@@ -72,10 +72,8 @@ abstract class AbstractWebsiteLocalizationProvider
     public function getLocalizationsByWebsiteId($websiteId = null)
     {
         $website = null;
-        if (null !== $websiteId && is_int($websiteId)) {
-            $website = $this->getWebsiteRepository()->findOneBy([
-                'id' => $websiteId,
-            ]);
+        if ($websiteId && filter_var($websiteId, FILTER_VALIDATE_INT)) {
+            $website = $this->getWebsiteRepository()->findOneBy(['id' => (int)$websiteId]);
         }
 
         if (!$website) {

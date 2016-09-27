@@ -28,12 +28,6 @@ class WebsiteLocalizationProviderTest extends AbstractWebsiteLocalizationProvide
         $this->websiteRepository = $this->getMockBuilder(WebsiteRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->doctrineHelper
-            ->expects($this->any())
-            ->method('getEntityRepositoryForClass')
-            ->with(Website::class)
-            ->willReturn($this->websiteRepository);
     }
 
     public function testGetLocalizations()
@@ -63,6 +57,12 @@ class WebsiteLocalizationProviderTest extends AbstractWebsiteLocalizationProvide
 
     public function testGetLocalizationsByWebsiteId()
     {
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityRepositoryForClass')
+            ->with(Website::class)
+            ->willReturn($this->websiteRepository);
+
         $this->websiteRepository
             ->expects($this->once())
             ->method('findOneBy')
@@ -78,6 +78,12 @@ class WebsiteLocalizationProviderTest extends AbstractWebsiteLocalizationProvide
 
     public function testGetLocalizationsByWebsiteIdEmptyId()
     {
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityRepositoryForClass')
+            ->with(Website::class)
+            ->willReturn($this->websiteRepository);
+
         $this->websiteRepository
             ->expects($this->never())
             ->method('findOneBy');
@@ -92,6 +98,12 @@ class WebsiteLocalizationProviderTest extends AbstractWebsiteLocalizationProvide
 
     public function testGetLocalizationsByWebsiteIdNonExistentId()
     {
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityRepositoryForClass')
+            ->with(Website::class)
+            ->willReturn($this->websiteRepository);
+
         $this->websiteRepository
             ->expects($this->once())
             ->method('findOneBy')
@@ -108,6 +120,12 @@ class WebsiteLocalizationProviderTest extends AbstractWebsiteLocalizationProvide
 
     public function testGetLocalizationsByWebsiteIdNonIntegerId()
     {
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityRepositoryForClass')
+            ->with(Website::class)
+            ->willReturn($this->websiteRepository);
+
         $this->websiteRepository
             ->expects($this->never())
             ->method('findOneBy');
