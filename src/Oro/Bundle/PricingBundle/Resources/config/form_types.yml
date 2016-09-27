@@ -158,7 +158,7 @@ services:
        class: Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceType
        public: true
        arguments:
-           - "@oro_pricing.rounding.price_rounding_service"
+           - "@oro_currency.rounding.price_rounding_service"
        tags:
            - { name: form.type, alias: oro_pricing_product_attribute_price }
 

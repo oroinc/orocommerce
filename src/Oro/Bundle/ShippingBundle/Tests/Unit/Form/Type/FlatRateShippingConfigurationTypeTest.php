@@ -4,12 +4,12 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
 use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationType;
 use Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class FlatRateShippingConfigurationTypeTest extends FormIntegrationTestCase
 {
