@@ -6,9 +6,9 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
+use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
@@ -18,7 +18,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
-    
+
     const NAME_DEFAULT_LOCALE = 'name default';
     const NAME_CUSTOM_LOCALE = 'name custom';
     const DESCRIPTION_DEFAULT_LOCALE = 'description default';
@@ -32,24 +32,28 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
     private $listener;
 
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $localizationHelper;
+    private $doctrineHelper;
+
+    /**
+     * @var AbstractWebsiteLocalizationProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $websiteLocalizationProvider;
 
     protected function setUp()
     {
-        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
-        $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
+        $this->websiteLocalizationProvider = $this->getMockBuilder(AbstractWebsiteLocalizationProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->listener = new WebsiteSearchProductIndexerListener(
-            $doctrineHelper,
-            $this->localizationHelper
+            $this->doctrineHelper,
+            $this->websiteLocalizationProvider
         );
     }
 
@@ -118,9 +122,9 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
         /** @var Localization $customLocale */
         $customLocale = $this->getEntity(Localization::class, ['id' => 2]);
 
-        $this->localizationHelper
+        $this->websiteLocalizationProvider
             ->expects($this->once())
-            ->method('getLocalizations')
+            ->method('getLocalizationsByWebsiteId')
             ->willReturn([
                 $defaultLocale,
                 $customLocale
@@ -177,7 +181,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
 
     public function testOnWebsiteSearchIndexNotSupportedClass()
     {
-        $event = new IndexEntityEvent(\stdClass::class, [1], []);
+        $event = new IndexEntityEvent(\stdClass::class, [new Product()], []);
         $this->listener->onWebsiteSearchIndex($event);
         $this->assertEquals([], $event->getEntitiesData());
     }

@@ -3,28 +3,35 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
 class WebsiteSearchProductIndexerListener
 {
     /**
-     * @var LocalizationHelper
+     * @var DoctrineHelper
      */
-    private $localizationHelper;
+    private $doctrineHelper;
+
+    /**
+     * @var WebsiteLocalizationProvider
+     */
+    private $websiteLocalizationProvider;
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param LocalizationHelper $localizationHelper
+     * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        LocalizationHelper $localizationHelper
+        AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
     ) {
-        $this->productRepository = $doctrineHelper->getEntityRepositoryForClass(Product::class);
-        $this->localizationHelper = $localizationHelper;
+        $this->doctrineHelper = $doctrineHelper;
+        $this->websiteLocalizationProvider = $websiteLocalizationProvider;
     }
 
     /**
@@ -41,7 +48,13 @@ class WebsiteSearchProductIndexerListener
         /** @var Product[] $products */
         $products = $event->getEntities();
 
-        $localizations = $this->localizationHelper->getLocalizations();
+        $context = $event->getContext();
+
+        $websiteId = (array_key_exists(AbstractIndexer::CONTEXT_WEBSITE_ID_KEY, $context))
+            ? $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY]
+            : null;
+
+        $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 
         foreach ($products as $product) {
             // Non localized fields

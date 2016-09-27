@@ -36,6 +36,9 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
 
     public function testRestrictIndexEntityEventListener()
     {
+        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager->set('oro_account.product_visibility', 'visible');
+
         $indexer = $this->getContainer()->get('oro_website_search.indexer');
         $searchEngine = $this->getContainer()->get('oro_website_search.engine');
         $indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]);
@@ -55,6 +58,8 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
         $this->assertEquals('product.6', $values[3]->getRecordTitle());
         $this->assertEquals('product.7', $values[4]->getRecordTitle());
         $this->assertEquals('product.8', $values[5]->getRecordTitle());
+
+        $configManager->reset('oro_account.product_visibility');
     }
 
     /**
