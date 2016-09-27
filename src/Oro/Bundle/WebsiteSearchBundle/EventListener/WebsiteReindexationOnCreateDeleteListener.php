@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\WebsiteBundle\Entity\Website;
