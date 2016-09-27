@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -24,6 +25,9 @@ class OroShippingBundle implements Migration
         $this->addOroShippingRuleMthdConfigForeignKeys($schema);
         $this->addOroShippingRuleMthdTpCnfgForeignKeys($schema);
         $this->addOroShippingRuleDestinationForeignKeys($schema);
+
+        /** Rename parameters in system configuration **/
+        $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_shipping', 'oro_shipping'));
     }
 
     /**

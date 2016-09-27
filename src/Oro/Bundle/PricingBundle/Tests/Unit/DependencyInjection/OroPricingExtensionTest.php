@@ -20,13 +20,13 @@ class OroPricingExtensionTest extends ExtensionTestCase
 
         $this->assertParametersLoaded($expectedParameters);
 
-        $this->assertEquals('oro_b2b_pricing', $extension->getAlias());
+        $this->assertEquals('oro_pricing', $extension->getAlias());
     }
 
     public function testGetAlias()
     {
         $extension = new OroPricingExtension();
 
-        $this->assertSame('oro_b2b_pricing', $extension->getAlias());
+        $this->assertSame('oro_pricing', $extension->getAlias());
     }
 }

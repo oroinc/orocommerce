@@ -8,7 +8,7 @@ system_configuration:
             title: oro.website.system_configuration.groups.routing.title
             icon: 'icon-sitemap'
     fields:
-        oro_b2b_website.url:
+        oro_website.url:
             data_type: string
             type: 'Symfony\Component\Form\Extension\Core\Type\UrlType'
             priority: 2000
@@ -17,7 +17,7 @@ system_configuration:
                 label: oro.website.system_configuration.fields.url.label
                 constraints:
                     - Url: ~
-        oro_b2b_website.secure_url:
+        oro_website.secure_url:
             data_type: string
             type: 'Symfony\Component\Form\Extension\Core\Type\UrlType'
             priority: 1000
@@ -40,5 +40,5 @@ system_configuration:
                                     general:
                                         priority: 100
                                         children:
-                                            - oro_b2b_website.url
-                                            - oro_b2b_website.secure_url
+                                            - oro_website.url
+                                            - oro_website.secure_url

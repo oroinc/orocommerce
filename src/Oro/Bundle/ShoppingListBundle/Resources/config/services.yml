@@ -31,7 +31,7 @@ services:
             - "@doctrine"
             - "@security.token_storage"
             - "@translator"
-            - "@oro_product.service.quantity_rounding"
+            - "@oro_currency.service.quantity_rounding"
             - '@oro_pricing.user_currency_manager'
             - "@oro_website.manager"
             - "@oro_shopping_list.manager.shopping_list_total"
@@ -97,7 +97,7 @@ services:
         parent: oro_product.event_listener.abstract_product_select_db_query
         calls:
             - [setScope, ['shopping_list']]
-            - [setBackendSystemConfigurationPath, ['oro_b2b_shopping_list.backend_product_visibility']]
+            - [setBackendSystemConfigurationPath, ['oro_shopping_list.backend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
 
@@ -216,3 +216,13 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\Provider\PrivilegeCategoryProvider'
         tags:
             - { name: oro_user.privilege_category}
+
+    oro_shopping_list.condition.has_price_in_shopping_line_items:
+        class: 'Oro\Bundle\ShoppingListBundle\Condition\HasPriceInShoppingLineItems'
+        arguments:
+            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_security.security_facade'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.model.price_list_request_handler'
+        tags:
+            - { name: oro_action.condition, alias: 'has_price_in_shopping_line_items' }
