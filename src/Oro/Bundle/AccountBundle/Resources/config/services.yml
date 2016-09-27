@@ -981,3 +981,11 @@ services:
         calls:
             - [setProductVisibilitySystemConfigurationPath, ['oro_account.product_visibility']]
             - [setCategoryVisibilitySystemConfigurationPath, ['oro_account.category_visibility']]
+
+    oro_account.event_listener.website_search_product_visibility_indexer_listener:
+        class: 'Oro\Bundle\AccountBundle\EventListener\WebsiteSearchProductVisibilityIndexerListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_account.visibility.provider.account_product_visibility_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
