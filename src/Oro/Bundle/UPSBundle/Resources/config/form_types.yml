@@ -11,6 +11,6 @@ services:
     oro_ups.form.type.shipping_method_config_options:
         class: Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType
         arguments:
-            - '@oro_pricing.rounding.price_rounding_service'
+            - '@oro_currency.rounding.price_rounding_service'
         tags:
             - { name: form.type }
