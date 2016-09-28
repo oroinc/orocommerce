@@ -60,7 +60,7 @@ class AccountUserRoleControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(OroLoadAccountUserData::AUTH_USER, OroLoadAccountUserData::AUTH_PW)
         );
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
@@ -110,7 +110,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Account User Role has been saved', $crawler->html());
+        $this->assertContains('Customer User Role has been saved', $crawler->html());
     }
 
     /**
@@ -171,7 +171,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $crawler->html();
-        $this->assertContains('Account User Role has been saved', $content);
+        $this->assertContains('Customer User Role has been saved', $content);
 
         $this->getObjectManager()->clear();
 
@@ -255,7 +255,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $content = $crawler->html();
-        $this->assertContains('Account User Role has been saved', $content);
+        $this->assertContains('Customer User Role has been saved', $content);
 
         // Find id of new role
         $response = $this->client->requestGrid(

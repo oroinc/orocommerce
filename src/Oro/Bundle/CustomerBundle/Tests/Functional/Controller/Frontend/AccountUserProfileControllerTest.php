@@ -16,6 +16,7 @@ class AccountUserProfileControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
+        $this->client->useHashNavigation(true);
     }
 
     public function testViewProfile()

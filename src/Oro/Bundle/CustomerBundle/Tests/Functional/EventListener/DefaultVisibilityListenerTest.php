@@ -53,6 +53,7 @@ class DefaultVisibilityListenerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([
             'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
             'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',

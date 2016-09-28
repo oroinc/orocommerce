@@ -29,6 +29,7 @@ class OrderTaxListenerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->doctrine = $this->getContainer()->get('doctrine');
         $this->orderEm = $this->doctrine->getManagerForClass(self::ORDER_CLASS);
     }

@@ -22,6 +22,7 @@ class AccountControllersTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',

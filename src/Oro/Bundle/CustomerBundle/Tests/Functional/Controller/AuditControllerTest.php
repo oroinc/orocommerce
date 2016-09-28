@@ -35,6 +35,7 @@ class AuditControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
+        $this->client->useHashNavigation(true);
     }
 
     public function testAuditHistory()
@@ -104,7 +105,7 @@ class AuditControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Account User has been saved', $crawler->html());
+        $this->assertContains('Customer User has been saved', $crawler->html());
     }
 
     /**

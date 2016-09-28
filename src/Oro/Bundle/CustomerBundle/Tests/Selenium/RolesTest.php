@@ -88,12 +88,12 @@ class RolesTest extends Selenium2TestCase
 
         /** @var Roles $login */
         $roles = $login->openRoles('Oro\Bundle\CustomerBundle')
-            ->assertTitle('All - Account Users - Customers')
+            ->assertTitle('All - Customer Users - Customers')
             ->add()
-            ->assertTitle('Create Account User Role - Account Users - Customers')
+            ->assertTitle('Create Customer User Role - Customer Users - Customers')
             ->setLabel($roleLabel)
             ->save()
-            ->assertMessage('Account User Role has been saved')
+            ->assertMessage('Customer User Role has been saved')
             ->close();
 
         //verify new Role

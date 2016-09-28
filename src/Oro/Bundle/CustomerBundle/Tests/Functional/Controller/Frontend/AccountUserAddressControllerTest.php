@@ -28,7 +28,7 @@ class AccountUserAddressControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(OroLoadAccountUserData::AUTH_USER, OroLoadAccountUserData::AUTH_PW)
         );
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts'
@@ -77,7 +77,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains('Account User Address has been saved', $crawler->html());
+        $this->assertContains('Customer User Address has been saved', $crawler->html());
     }
 
     /**
@@ -167,7 +167,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains('Account User Address has been saved', $crawler->html());
+        $this->assertContains('Customer User Address has been saved', $crawler->html());
 
         $address = $this->getUserAddressById($addressId);
 

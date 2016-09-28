@@ -38,6 +38,7 @@ class PriceListRuleCompilerTest extends WebTestCase
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 LoadPriceAttributeProductPrices::class,
