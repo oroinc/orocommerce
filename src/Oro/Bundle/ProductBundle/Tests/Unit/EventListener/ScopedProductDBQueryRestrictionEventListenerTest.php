@@ -6,25 +6,25 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Oro\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener;
+use Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener;
 
-class ScopedProductSelectDBQueryEventListenerTest extends ProductSelectDBQueryEventListenerTest
+class ScopedProductDBQueryRestrictionEventListenerTest extends ProductDBQueryRestrictionEventListenerTest
 {
     const SCOPE = 'test_scope';
 
     /**
-     * @var ScopedProductSelectDBQueryEventListener
+     * @var ScopedProductDBQueryRestrictionEventListener
      */
     protected $listener;
 
     /**
-     * @return ScopedProductSelectDBQueryEventListener
+     * @return ScopedProductDBQueryRestrictionEventListener
      */
     protected function createListener()
     {
         $requestStack = new RequestStack();
         $requestStack->push(new Request());
-        $listener = new ScopedProductSelectDBQueryEventListener(
+        $listener = new ScopedProductDBQueryRestrictionEventListener(
             $this->configManager,
             $this->modifier,
             $this->frontendHelper,
@@ -67,7 +67,7 @@ class ScopedProductSelectDBQueryEventListenerTest extends ProductSelectDBQueryEv
 
     /**
      * @expectedException \LogicException
-     * @expectedExceptionMessage Scope not configured for ProductSelectDBQueryEventListener
+     * @expectedExceptionMessage Scope not configured for ProductDBQueryRestrictionEventListener
      */
     public function testScopeEmpty()
     {

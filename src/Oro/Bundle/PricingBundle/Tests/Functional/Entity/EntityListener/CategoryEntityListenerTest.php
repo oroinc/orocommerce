@@ -27,6 +27,7 @@ class CategoryEntityListenerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([
             LoadCategoryPriceRuleLexemes::class,
             LoadPriceLists::class,

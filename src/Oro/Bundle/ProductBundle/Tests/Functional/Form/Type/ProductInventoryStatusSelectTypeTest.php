@@ -26,6 +26,7 @@ class ProductInventoryStatusSelectTypeTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
 
         $this->formFactory = $this->getContainer()->get('form.factory');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');

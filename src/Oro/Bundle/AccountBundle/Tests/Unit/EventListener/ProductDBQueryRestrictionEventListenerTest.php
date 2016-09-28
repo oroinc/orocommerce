@@ -9,10 +9,10 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\AccountBundle\EventListener\ProductSelectDBQueryEventListener;
-use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\AccountBundle\EventListener\ProductDBQueryRestrictionEventListener;
+use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
-class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
+class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
@@ -25,7 +25,7 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
     protected $modifier;
 
     /**
-     * @var ProductSelectDBQueryEventListener
+     * @var ProductDBQueryRestrictionEventListener
      */
     protected $listener;
 
@@ -39,7 +39,7 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->modifier = $this
             ->getMockBuilder('Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier')
             ->disableOriginalConstructor()->getMock();
-        $this->listener = new ProductSelectDBQueryEventListener(
+        $this->listener = new ProductDBQueryRestrictionEventListener(
             $this->frontendHelper,
             $this->modifier
         );
@@ -92,11 +92,11 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ProductSelectDBQueryEvent|\PHPUnit_Framework_MockObject_MockObject
+     * @return ProductDBQueryRestrictionEvent|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getEventMock()
     {
-        return $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent')
+        return $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent')
             ->disableOriginalConstructor()->getMock();
     }
 }

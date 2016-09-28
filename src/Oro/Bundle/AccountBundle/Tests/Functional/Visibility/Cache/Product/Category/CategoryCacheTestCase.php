@@ -16,7 +16,7 @@ abstract class CategoryCacheTestCase extends WebTestCase
     public function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([
             LoadProductVisibilityFallbackCategoryData::class
         ]);

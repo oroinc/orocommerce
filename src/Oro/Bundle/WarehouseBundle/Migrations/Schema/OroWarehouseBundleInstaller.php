@@ -4,6 +4,9 @@ namespace Oro\Bundle\WarehouseBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
+use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
+use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
@@ -57,6 +60,8 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
 
         /** Extended fields **/
         $this->addWarehouseRelations($schema);
+        $this->addManageInventoryFieldToProduct($schema);
+        $this->addManageInventoryFieldToCategory($schema);
     }
 
     /**
@@ -178,7 +183,7 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
             $warehouseTable,
             'id',
             [
-                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM, 'without_default' => true]
+                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM, 'without_default' => true],
             ]
         );
 
@@ -189,7 +194,81 @@ class OroWarehouseBundleInstaller implements Installation, NoteExtensionAwareInt
             $warehouseTable,
             'id',
             [
-                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM, 'without_default' => true]
+                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM, 'without_default' => true],
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addManageInventoryFieldToProduct(Schema $schema)
+    {
+        $productTable = $schema->getTable('oro_product');
+        $fallbackTable = $schema->getTable('oro_entity_fallback_value');
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $productTable,
+            'manageInventory',
+            $fallbackTable,
+            'id',
+            [
+                'entity' => [
+                    'label' => 'oro.warehouse.manage_inventory.label',
+                ],
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['all'],
+                ],
+                'form' => [
+                    'is_enabled' => false,
+                ],
+                'view' => [
+                    'is_displayable' => false,
+                ],
+                'fallback' => [
+                    'fallbackList' => [
+                        CategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageInventory'],
+                        SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_warehouse.manage_inventory'],
+                    ],
+                ],
+            ]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addManageInventoryFieldToCategory(Schema $schema)
+    {
+        $categoryTable = $schema->getTable('oro_catalog_category');
+        $fallbackTable = $schema->getTable('oro_entity_fallback_value');
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            $categoryTable,
+            'manageInventory',
+            $fallbackTable,
+            'id',
+            [
+                'entity' => [
+                    'label' => 'oro.warehouse.manage_inventory.label',
+                ],
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['all'],
+                ],
+                'form' => [
+                    'is_enabled' => false,
+                ],
+                'view' => [
+                    'is_displayable' => false,
+                ],
+                'fallback' => [
+                    'fallbackList' => [
+                        ParentCategoryFallbackProvider::FALLBACK_ID => ['fieldName' => 'manageInventory'],
+                        SystemConfigFallbackProvider::FALLBACK_ID => ['configName' => 'oro_warehouse.manage_inventory'],
+                    ],
+                ],
             ]
         );
     }

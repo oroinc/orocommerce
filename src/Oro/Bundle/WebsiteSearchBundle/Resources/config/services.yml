@@ -87,15 +87,10 @@ services:
         public: false
 
     oro_website_search.provider.search_mapping:
-        class: Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider
+        class: 'Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider'
         public: false
         arguments:
             - '@oro_website_search.loader.mapping_configuration_cache_loader'
-
-    oro_website_search.mock.engine:
-        class: Oro\Bundle\WebsiteSearchBundle\Engine\ExampleMockEngine
-        arguments:
-            - '@doctrine.orm.entity_manager'
 
     oro_website_search.query_factory:
         decorates: oro_search.query_factory
@@ -110,6 +105,13 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.select_index_data, method: process }
+
+    oro_website_search.product_visibility_restriction_listener:
+        class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\ProductVisibilityRestrictionListener'
+        arguments:
+            - '@oro_product.product.manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_search.before_search, method: process }
 
     oro_website_search.website_reindexation_on_create_delete_listener:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\WebsiteReindexationOnCreateDeleteListener'
@@ -161,4 +163,15 @@ services:
             - ~ # regular indexer
             - ~ # async indexer
         tags:
-            - { name: kernel.event_listener, event: oro_website_search.reindexation_trigger, method: process }
+            - { name: kernel.event_listener, event: oro_website_search.reindexation_request, method: process }
+
+    oro_website.indexation_request_listener:
+        class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\IndexationRequestListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_search.provider.search_mapping'
+            - '@event_dispatcher'
+            - '@oro_website.manager'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
