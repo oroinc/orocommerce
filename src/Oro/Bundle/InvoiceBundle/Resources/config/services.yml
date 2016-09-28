@@ -20,7 +20,7 @@ services:
         arguments:
             - "@doctrine"
             - "@oro_product.formatter.product_unit_label"
-            - "@oro_pricing.rounding.price_rounding_service"
+            - "@oro_currency.rounding.price_rounding_service"
         calls:
             - [setDataClass, ['%oro_invoice.entity.invoice_line_item.class%']]
             - [setProductUnitClass, ['%oro_product.entity.product_unit.class%']]

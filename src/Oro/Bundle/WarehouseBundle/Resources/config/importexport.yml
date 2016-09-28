@@ -36,7 +36,7 @@ services:
         class: 'Oro\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelNormalizer'
         arguments:
             - '@oro_product.formatter.product_unit_label'
-            - '@oro_product.service.quantity_rounding'
+            - '@oro_currency.service.quantity_rounding'
         public: false
 
     # Import processor

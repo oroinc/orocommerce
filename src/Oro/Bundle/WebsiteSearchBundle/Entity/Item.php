@@ -23,8 +23,6 @@ use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
  */
 class Item extends AbstractItem
 {
-    const TABLE_NAME = 'oro_website_search_item';
-
     /**
      * Save index item data. Needed to use classes from the proper namespace.
      *
