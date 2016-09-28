@@ -79,9 +79,13 @@ oro:
                 warehouse_configuration.title: Warehouse Configuration
                 product_options.title: Product Options
                 product_inventory_options.title: Product Inventory Options
+                product_quantity_limitations.title: Quantity Limitations
+                limitations.title: Limitations
             fields:
                 enabled_warehouses.label: Enabled Warehouses
                 manage_inventory.label: Manage Inventory
+                minimum_quantity_to_order.label: Minimum Quantity To Order
+                maximum_quantity_to_order.label: Maximum Quantity To Order
 
         manage_inventory:
             label: Manage Inventory

@@ -10,6 +10,11 @@ system_configuration:
             icon: 'icon-gears'
         product_inventory_options:
             title: oro.warehouse.system_configuration.groups.product_inventory_options.title
+        limitations:
+            title: oro.warehouse.system_configuration.groups.limitations.title
+            icon: 'icon-minus'
+        product_quantity_limitations:
+            title: oro.warehouse.system_configuration.groups.product_quantity_limitations.title
 
     fields:
         oro_warehouse.enabled_warehouses:
@@ -27,6 +32,20 @@ system_configuration:
                 choices:
                     false: oro.warehouse.manage_inventory.choice.false
                     true: oro.warehouse.manage_inventory.choice.true
+        oro_warehouse.minimum_quantity_to_order:
+            data_type: integer
+            type: integer
+            options:
+                label: oro.warehouse.system_configuration.fields.minimum_quantity_to_order.label
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+        oro_warehouse.maximum_quantity_to_order:
+            data_type: integer
+            type: integer
+            options:
+                label: oro.warehouse.system_configuration.fields.maximum_quantity_to_order.label
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
 
     tree:
         system_configuration:
@@ -46,3 +65,11 @@ system_configuration:
                                     product_inventory_options:
                                         children:
                                             - oro_warehouse.manage_inventory
+                            limitations:
+                                priority: 80
+                                children:
+                                    product_quantity_limitations:
+                                        children:
+                                            - oro_warehouse.minimum_quantity_to_order
+                                            - oro_warehouse.maximum_quantity_to_order
+
