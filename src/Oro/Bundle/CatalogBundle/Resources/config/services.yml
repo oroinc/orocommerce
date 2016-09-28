@@ -121,3 +121,9 @@ services:
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
+
+    oro_catalog.manager.product_index_scheduler:
+        class: 'Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@event_dispatcher'
