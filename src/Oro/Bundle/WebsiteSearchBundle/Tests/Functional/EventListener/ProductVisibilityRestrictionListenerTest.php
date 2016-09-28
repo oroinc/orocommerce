@@ -32,10 +32,13 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
      */
     private static $testValue;
 
+    public static function setUpBeforeClass()
+    {
+        self::markTestSkipped('BB-4191');
+    }
+
     protected function setUp()
     {
-        $this->markTestSkipped('BB-4191');
-
         parent::setUp();
 
         $this->engine = $this->client->getContainer()->get('oro_website_search.engine');
