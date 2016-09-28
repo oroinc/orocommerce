@@ -37,7 +37,6 @@ class ImportExportTest extends AbstractImportExportTestCase
         'SKU',
         'Product',
         'Inventory Status',
-        'Warehouse',
         'Quantity',
         'Unit',
     ];
