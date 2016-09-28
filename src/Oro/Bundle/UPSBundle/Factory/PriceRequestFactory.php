@@ -102,6 +102,10 @@ class PriceRequestFactory
                     $dimensionLength = 0;
 
                     foreach ($productsParams as $productsParam) {
+                        // TODO: refactor due BB-4537
+                        if ($productsParam['weight'] >= $weightLimit) {
+                            return [];
+                        }
                         if (($weight + $productsParam['weight']) >= $weightLimit) {
                             $packages[] = Package::create(
                                 (string)$dimensionUnit,
