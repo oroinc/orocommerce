@@ -240,6 +240,10 @@ class ProductRepository extends EntityRepository
         return $this->getProductsQueryBuilder($ids)->getQuery()->getResult();
     }
 
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @return $this
+     */
     public function selectImages(QueryBuilder $queryBuilder)
     {
         $queryBuilder->addSelect('product_images,product_images_types,product_images_file')

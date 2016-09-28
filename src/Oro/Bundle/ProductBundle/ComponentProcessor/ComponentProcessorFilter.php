@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\ComponentProcessor;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Search\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class ComponentProcessorFilter implements ComponentProcessorFilterInterface
@@ -13,28 +11,19 @@ class ComponentProcessorFilter implements ComponentProcessorFilterInterface
     /** @var  ProductManager */
     protected $productManager;
 
-    /** @var  ManagerRegistry */
-    protected $registry;
-
-    /** @var string */
-    protected $productClass;
+    /** @var ProductRepository */
+    protected $repository;
 
     /**
-     * @param ProductManager $productManager
-     * @param ManagerRegistry $registry
+     * @param ProductManager    $productManager
+     * @param ProductRepository $repository
      */
-    public function __construct(ProductManager $productManager, ManagerRegistry $registry)
-    {
+    public function __construct(
+        ProductManager $productManager,
+        ProductRepository $repository
+    ) {
         $this->productManager = $productManager;
-        $this->registry = $registry;
-    }
-
-    /**
-     * @param string $productClass
-     */
-    public function setProductClass($productClass)
-    {
-        $this->productClass = $productClass;
+        $this->repository     = $repository;
     }
 
     /**
@@ -52,22 +41,14 @@ class ComponentProcessorFilter implements ComponentProcessorFilterInterface
             return $data;
         }
 
-        $queryBuilder = $this->getRepository()->getFilterSkuQueryBuilder(array_keys($products));
-        $queryBuilder = $this->productManager->restrictQueryBuilder($queryBuilder, $dataParameters);
+        $searchQuery      = $this->repository->getFilterSkuQuery(array_keys($products));
+        $searchQuery      = $this->productManager->restrictSearchQuery($searchQuery, $dataParameters);
+        $filteredProducts = $searchQuery->getResult()->toArray();
 
-        $filteredProducts = $queryBuilder->getQuery()->getResult();
         foreach ($filteredProducts as $product) {
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = $products[strtoupper($product['sku'])];
         }
 
         return $data;
-    }
-
-    /**
-     * @return ProductRepository
-     */
-    protected function getRepository()
-    {
-        return $this->registry->getManagerForClass($this->productClass)->getRepository($this->productClass);
     }
 }

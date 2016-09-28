@@ -139,9 +139,12 @@ services:
         public: false
         arguments:
             - "@oro_product.product.manager"
-            - "@doctrine"
-        calls:
-            - [setProductClass, ['%oro_product.entity.product.class%']]
+            - "@oro_product.product.repository"
+
+    oro_product.product.repository:
+        class: 'Oro\Bundle\ProductBundle\Search\Repository\ProductRepository'
+        arguments:
+            - "@oro_search.query_factory"
 
     oro_product.component_processor.registry:
         class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry'

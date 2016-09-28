@@ -40,10 +40,10 @@ class QueryFactory implements QueryFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function create(DatagridInterface $grid, array $config)
+    public function create(array $config = [])
     {
         if (!isset($config['search_index']) || $config['search_index'] !== 'website') {
-            return $this->parent->create($grid, $config);
+            return $this->parent->create($config);
         }
         $query = new WebsiteSearchQuery($this->engine, $this->dispatcher, new Query());
         $this->configureQuery($config, $query);
