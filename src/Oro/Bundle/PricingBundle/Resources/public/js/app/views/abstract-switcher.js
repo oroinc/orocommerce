@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
     var AbstractSwitcher;
     var _ = require('underscore');
-    // var $ = require('jquery');
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
@@ -53,7 +52,7 @@ define(function(require) {
         },
 
         onSubmit: function(e) {
-            AbstractSwitcher.onSubmitCounter = AbstractSwitcher.onSubmitCounter + 1;
+            AbstractSwitcher.onSubmitCounter += 1;
             if (!this.isValid()) {
                 AbstractSwitcher.isFormValid = false;
                 var visibleIdentifier;

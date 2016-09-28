@@ -83,6 +83,7 @@ oro.pricing:
         rule.label: Rule
         priority.label: Priority
         calculate_as.label: Calculate As
+        price_for_quantity.label: Price for quantity
         show_expression_fields.label: Enter expression
         show_unit_fields.label: Select unit
         show_currency_fields.label: Select currency
@@ -248,7 +249,9 @@ oro.pricing:
                 product_assignment_build: 'Error occurred during price list product assignments build'
                 price_rule_build: 'Error occurred during price rule build'
 
-    validators.field_or_expression_is_required: Field "%fieldName%" is required
+    validators:
+        field_or_expression_is_required: Field "%fieldName%" is required
+
 
 oro:
     importexport:
