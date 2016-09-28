@@ -32,7 +32,7 @@ class CategoryListener
     }
 
     /**
-     * @param Category           $category
+     * @param Category $category
      * @param PreUpdateEventArgs $args
      */
     public function preUpdate(Category $category, PreUpdateEventArgs $args)

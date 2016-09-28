@@ -33,17 +33,16 @@ class UpdateMaterializedPathQuery extends ParametrizedMigrationQuery
     /**
      * @param LoggerInterface $logger
      * @param bool $dryRun
-     * @throws \Doctrine\DBAL\ConnectionException
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
-        $sql = 'SELECT * FROM oro_catalog_category ORDER BY tree_left';
+        $sql = 'SELECT id, parent_id, materialized_path FROM oro_catalog_category ORDER BY tree_left';
         $this->logQuery($logger, $sql);
-        $result = $this->connection->fetchAll($sql);
+        $categoriesResult = $this->connection->fetchAll($sql);
 
         $this->connection->beginTransaction();
         $categories = [];
-        foreach ($result as $item) {
+        foreach ($categoriesResult as $item) {
             $categories[$item['id']] = $item;
         }
 
