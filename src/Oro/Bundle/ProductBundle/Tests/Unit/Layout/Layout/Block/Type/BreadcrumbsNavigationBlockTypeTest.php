@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Layout\Block\Type;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Layout\Block\Type\BreadcrumbsNavigationBlockType;
-use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
+use Oro\Component\Layout\Block\Type\Options;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 
@@ -20,28 +20,40 @@ class BreadcrumbsNavigationBlockTypeTest extends \PHPUnit_Framework_TestCase
         $this->blockType = new BreadcrumbsNavigationBlockType();
     }
 
+    public function testBuildView()
+    {
+        /** @var BlockView $blockView */
+        $blockView = $this->getMock(BlockView::class);
+        $block = $this->getMock(BlockInterface::class);
+        $category = new Category();
+
+        $this->blockType->buildView($blockView, $block, new Options(['currentCategory' => $category]));
+
+        $this->assertArrayHasKey('currentCategory', $blockView->vars);
+        $this->assertEquals($category, $blockView->vars['currentCategory']);
+    }
+
     /**
      * {@inheritdoc}
      */
-    public function testBuildingView()
+    public function testFinishView()
     {
-        $parentCategory = $this->getMock(Category::class);
         $parentParentCategory = $this->getMock(Category::class);
+
+        $parentCategory = $this->getMock(Category::class);
+        $parentCategory->method('getParentCategory')
+            ->willReturn($parentParentCategory);
 
         $category = $this->getMock(Category::class);
         $category->method('getParentCategory')
             ->willReturn($parentCategory);
 
-        $parentCategory->method('getParentCategory')
-            ->willReturn($parentParentCategory);
-
+        /** @var BlockView $blockView */
         $blockView = $this->getMock(BlockView::class);
+        $blockView->vars['currentCategory'] = $category;
+        $block = $this->getMock(BlockInterface::class);
 
-        $blockInterface = $this->getMock(BlockInterface::class);
-
-        $options = ['currentCategory' => $category];
-
-        $this->blockType->buildView($blockView, $blockInterface, $options);
+        $this->blockType->finishView($blockView, $block);
 
         $this->assertSame([$parentParentCategory, $parentCategory], $blockView->vars['parentCategories']);
     }

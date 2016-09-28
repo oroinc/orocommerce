@@ -28,7 +28,7 @@ class PlaceholderExpressionVisitor extends ExpressionVisitor
     public function walkComparison(Comparison $comparison)
     {
         return new Comparison(
-            str_replace($this->placeholder->getPlaceholder(), $this->placeholder->getValue(), $comparison->getField()),
+            $this->placeholder->replace($comparison->getField(), $this->placeholder->getValue()),
             $comparison->getOperator(),
             $this->walkValue($comparison->getValue())
         );

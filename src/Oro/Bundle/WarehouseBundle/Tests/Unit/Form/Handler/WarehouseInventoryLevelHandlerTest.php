@@ -9,12 +9,12 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WarehouseBundle\Form\Handler\WarehouseInventoryLevelHandler;
 use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -49,7 +49,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
         $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $this->roundingService = $this->getMock('Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
+        $this->roundingService = $this->getMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
         $this->request = new Request();
 
         $this->handler = new WarehouseInventoryLevelHandler(
