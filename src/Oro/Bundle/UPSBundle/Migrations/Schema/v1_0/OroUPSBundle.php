@@ -37,7 +37,7 @@ class OroUPSBundle implements Migration
         $table->addColumn('ups_shipping_account_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('ups_pickup_type', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('ups_unit_of_weight', 'string', ['notnull' => false, 'length' => 3]);
-        $table->addColumn('ups_country_code', 'string', [ 'length' => 2]);
+        $table->addColumn('ups_country_code', 'string', ['notnull' => false, 'length' => 2]);
     }
 
     /**

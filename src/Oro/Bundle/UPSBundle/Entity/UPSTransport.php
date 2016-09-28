@@ -88,7 +88,7 @@ class UPSTransport extends Transport
      * @var Country
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\AddressBundle\Entity\Country")
-     * @ORM\JoinColumn(name="ups_country_code", referencedColumnName="iso2_code", nullable=false)
+     * @ORM\JoinColumn(name="ups_country_code", referencedColumnName="iso2_code")
      */
     protected $country;
 
