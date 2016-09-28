@@ -308,14 +308,13 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     protected function getEntityAlias($entityClass, array $context)
     {
-        $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
         if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
-            $entityAlias = $this->placeholderVisitor->replace(
-                $entityAlias,
+            return $this->placeholderVisitor->replace(
+                $this->mappingProvider->getEntityAlias($entityClass),
                 [WebsiteIdPlaceholder::NAME => $context[self::CONTEXT_WEBSITE_ID_KEY]]
             );
         }
 
-        return $entityAlias;
+        return null;
     }
 }
