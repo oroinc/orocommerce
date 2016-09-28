@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
 
 class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -105,7 +106,7 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
 
         $expectedEntitiesData = [
             1 => [
-                Query::TYPE_INTEGER => [
+                IndexDataProvider::STANDARD_VALUES_KEY => [
                     'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                     'visibility_account_1' => 1,
                     'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
@@ -113,7 +114,7 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
                 ]
             ],
             2 => [
-                Query::TYPE_INTEGER => [
+                IndexDataProvider::STANDARD_VALUES_KEY => [
                     'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
                     'visibility_account_3' => 1,
                     'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
@@ -121,7 +122,7 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
                 ]
             ],
             3 => [
-                Query::TYPE_INTEGER => [
+                IndexDataProvider::STANDARD_VALUES_KEY => [
                     'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                     'visibility_account_2' => 1,
                     'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
