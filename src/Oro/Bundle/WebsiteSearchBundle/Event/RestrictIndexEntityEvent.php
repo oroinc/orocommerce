@@ -36,14 +36,6 @@ class RestrictIndexEntityEvent extends Event
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
-     */
-    public function setQueryBuilder(QueryBuilder $queryBuilder)
-    {
-        $this->queryBuilder = $queryBuilder;
-    }
-
-    /**
      * @return array
      */
     public function getContext()

@@ -34,20 +34,41 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
     public function testReplaceInFrom()
     {
         $query = new Query();
-        $query->from([
+        $fromArray = [
             'oro_first_TEST_ID',
             'oro_second',
             'oro_third_NAME_ID'
-        ]);
+        ];
+        $query->from($fromArray);
+        $placeholder1 = $this->getPlaceholder('TEST_ID', '1');
+        $placeholder2 = $this->getPlaceholder('NAME_ID', '2');
 
         $this->registry->expects($this->once())
             ->method('getPlaceholders')
             ->willReturn([
-                'TEST_ID' => $this->getPlaceholder('TEST_ID', '1'),
-                'NAME_ID' => $this->getPlaceholder('NAME_ID', '2')
+                'TEST_ID' => $placeholder1,
+                'NAME_ID' => $placeholder2
             ]);
 
-        $result = $this->placeholderResolver->replace($query, []);
+        $placeholder1->expects($this->exactly(3))
+            ->method('replace')
+            ->withConsecutive(
+                ['oro_first_TEST_ID', 1],
+                ['oro_second', 1],
+                ['oro_third_NAME_ID', 1]
+            )
+            ->willReturnOnConsecutiveCalls('oro_first_1', 'oro_second', 'oro_third_NAME_ID');
+
+        $placeholder2->expects($this->exactly(3))
+            ->method('replace')
+            ->withConsecutive(
+                ['oro_first_1', 2],
+                ['oro_second', 2],
+                ['oro_third_NAME_ID', 2]
+            )
+            ->willReturnOnConsecutiveCalls('oro_first_1', 'oro_second', 'oro_third_2');
+
+        $result = $this->placeholderResolver->replace($query);
 
         $this->assertInstanceOf(Query::class, $result);
         $this->assertEquals(
@@ -69,13 +90,24 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
             'oro_third_NAME_ID'
         ]);
 
+        $placeholder1 = $this->getPlaceholder('TEST_ID', '1');
+
         $this->registry->expects($this->once())
             ->method('getPlaceholders')
             ->willReturn([
-                'TEST_ID' => $this->getPlaceholder('TEST_ID', '1')
+                'TEST_ID' => $placeholder1
             ]);
 
-        $result = $this->placeholderResolver->replace($query, []);
+        $placeholder1->expects($this->exactly(3))
+            ->method('replace')
+            ->withConsecutive(
+                ['oro_first_TEST_ID', 1],
+                ['oro_second', 1],
+                ['oro_third_NAME_ID', 1]
+            )
+            ->willReturnOnConsecutiveCalls('oro_first_1', 'oro_second', 'oro_third_NAME_ID');
+
+        $result = $this->placeholderResolver->replace($query);
 
         $this->assertInstanceOf(Query::class, $result);
         $this->assertEquals(
@@ -104,7 +136,7 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
                 'NAME_ID' => $this->getPlaceholder('NAME_ID', '2')
             ]);
 
-        $result = $this->placeholderResolver->replace($query, []);
+        $result = $this->placeholderResolver->replace($query);
 
         $this->assertInstanceOf(Query::class, $result);
 

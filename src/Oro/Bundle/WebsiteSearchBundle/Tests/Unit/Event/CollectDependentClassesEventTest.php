@@ -20,8 +20,8 @@ class CollectDependentClassesEventTest extends \PHPUnit_Framework_TestCase
         $event->addClassDependencies('Product', ['Category', 'User']);
 
         $expectedDependencies = [
-            'Category' => ['Product'],
-            'User' => ['Product'],
+            'Category' => ['Product' => 'Product'],
+            'User' => ['Product' => 'Product'],
         ];
 
         $this->assertEquals($expectedDependencies, $event->getDependencies());
@@ -36,9 +36,9 @@ class CollectDependentClassesEventTest extends \PHPUnit_Framework_TestCase
         $event->addClassDependencies('SomeEntity', ['Product']);
 
         $expectedDependencies = [
-            'Category' => ['Product'],
-            'SomeEntity' => ['Category'],
-            'Product' => ['SomeEntity'],
+            'Category' => ['Product' => 'Product'],
+            'SomeEntity' => ['Category' => 'Category'],
+            'Product' => ['SomeEntity' => 'SomeEntity'],
         ];
 
         $this->assertEquals($expectedDependencies, $event->getDependencies());
