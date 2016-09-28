@@ -6,7 +6,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 class DefaultCategoryVisibilityListener
 {
@@ -31,8 +31,8 @@ class DefaultCategoryVisibilityListener
     public function onUpdateAfter(ConfigUpdateEvent $event)
     {
         if ($event->isChanged(CategoryVisibilityResolver::OPTION_CATEGORY_VISIBILITY)) {
-            $reindexationEvent = new ReindexationTriggerEvent();
-            $this->eventDispatcher->dispatch(ReindexationTriggerEvent::EVENT_NAME, $reindexationEvent);
+            $reindexationEvent = new ReindexationRequestEvent();
+            $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $reindexationEvent);
         }
     }
 }

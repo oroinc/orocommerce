@@ -6,7 +6,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\DefaultCategoryVisibilityListener;
 
 class DefaultCategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
@@ -37,10 +37,10 @@ class DefaultCategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $reindexationEvent = new ReindexationTriggerEvent();
+        $reindexationEvent = new ReindexationRequestEvent();
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(ReindexationTriggerEvent::EVENT_NAME, $reindexationEvent);
+            ->with(ReindexationRequestEvent::EVENT_NAME, $reindexationEvent);
 
         $this->listener->onUpdateAfter($event);
     }
@@ -49,10 +49,10 @@ class DefaultCategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
     {
         $event = new ConfigUpdateEvent([]);
 
-        $reindexationEvent = new ReindexationTriggerEvent();
+        $reindexationEvent = new ReindexationRequestEvent();
         $this->eventDispatcher->expects($this->never())
             ->method('dispatch')
-            ->with(ReindexationTriggerEvent::EVENT_NAME, $reindexationEvent);
+            ->with(ReindexationRequestEvent::EVENT_NAME, $reindexationEvent);
 
         $this->listener->onUpdateAfter($event);
     }
