@@ -7,7 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -54,10 +54,10 @@ class ProductIndexSchedulerTest extends \PHPUnit_Framework_TestCase
             ->method('getProductIdsByCategories')
             ->with($categories)
             ->willReturn($productIds);
-        $event = new ReindexationTriggerEvent(Product::class, $websiteId, $productIds);
+        $event = new ReindexationRequestEvent(Product::class, $websiteId, $productIds);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(ReindexationTriggerEvent::EVENT_NAME, $event);
+            ->with(ReindexationRequestEvent::EVENT_NAME, $event);
 
         $this->productIndexScheduler->scheduleProductsReindex($categories, $websiteId);
     }

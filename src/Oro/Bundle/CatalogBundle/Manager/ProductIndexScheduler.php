@@ -6,7 +6,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -42,8 +42,8 @@ class ProductIndexScheduler
         $repository = $this->doctrineHelper->getEntityRepository(Category::class);
         $productIds = $repository->getProductIdsByCategories($categories);
         if ($productIds) {
-            $event = new ReindexationTriggerEvent(Product::class, $websiteId, $productIds);
-            $this->eventDispatcher->dispatch(ReindexationTriggerEvent::EVENT_NAME, $event);
+            $event = new ReindexationRequestEvent(Product::class, $websiteId, $productIds);
+            $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
         }
     }
 }
