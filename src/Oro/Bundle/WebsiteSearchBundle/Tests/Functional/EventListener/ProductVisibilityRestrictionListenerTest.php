@@ -4,19 +4,18 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\EventListener;
 
 use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 
 /**
  * @dbIsolation
  */
-class ProductVisibilityRestrictionListenerTest extends WebTestCase
+class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
 {
     /**
      * @var EngineInterface
@@ -24,41 +23,40 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
     private $engine;
 
     /**
-     * @var EventDispatcherInterface
+     * @var \Closure
      */
-    private $eventDispatcher;
+    private $listener;
 
     /**
      * @var string
      */
     private static $testValue;
 
-    /**
-     * @var bool
-     */
-    private static $listenerInitialized = false;
-
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->markTestSkipped('BB-4191');
+
+        parent::setUp();
 
         $this->engine = $this->client->getContainer()->get('oro_website_search.engine');
-        $this->eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
 
         self::$testValue = 'test_'.uniqid();
 
-        if (!self::$listenerInitialized) {
-            $this->eventDispatcher->addListener(
-                ProductSearchQueryRestrictionEvent::NAME,
-                function (ProductSearchQueryRestrictionEvent $event) {
-                    $expr = Criteria::expr();
+        $this->listener = function (ProductSearchQueryRestrictionEvent $event) {
+            $expr = Criteria::expr();
 
-                    $event->getQuery()->getCriteria()->andWhere($expr->eq('name', self::$testValue));
-                }
-            );
-        }
+            $event->getQuery()->getCriteria()->andWhere($expr->eq('name', self::$testValue));
+        };
 
-        self::$listenerInitialized = true;
+
+        $this->dispatcher->addListener(ProductSearchQueryRestrictionEvent::NAME, $this->listener);
+    }
+
+    protected function tearDown()
+    {
+        $this->dispatcher->removeListener(ProductSearchQueryRestrictionEvent::NAME, $this->listener);
+
+        parent::tearDown();
     }
 
     public function testRestrictsVisibilityForJustProducts()

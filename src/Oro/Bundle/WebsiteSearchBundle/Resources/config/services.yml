@@ -110,8 +110,9 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\ProductVisibilityRestrictionListener'
         arguments:
             - '@oro_product.product.manager'
-        tags:
-            - { name: kernel.event_listener, event: oro_search.before_search, method: process }
+#        @todo: BB-4191
+#        tags:
+#            - { name: kernel.event_listener, event: oro_website_search.before_search, method: process }
 
     oro_website_search.website_reindexation_on_create_delete_listener:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\WebsiteReindexationOnCreateDeleteListener'
