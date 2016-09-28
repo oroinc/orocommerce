@@ -114,15 +114,15 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
 
-    oro_order.event_listener.product_select_db_query:
-        class: '%oro_product.event_listener.scoped_product_select_db_query.common_class%'
-        parent: oro_product.event_listener.abstract_product_select_db_query
+    oro_order.event_listener.product_db_query_restriction:
+        class: '%oro_product.event_listener.scoped_product_db_query_restriction.common_class%'
+        parent: oro_product.event_listener.abstract_product_db_query_restriction
         calls:
             - [setScope, ['order']]
             - [setFrontendSystemConfigurationPath, ['oro_order.frontend_product_visibility']]
             - [setBackendSystemConfigurationPath, ['oro_order.backend_product_visibility']]
         tags:
-            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
     oro_order.event_listener.order.total:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderTotalEventListener'

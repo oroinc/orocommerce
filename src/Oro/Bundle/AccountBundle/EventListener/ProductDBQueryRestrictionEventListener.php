@@ -4,9 +4,9 @@ namespace Oro\Bundle\AccountBundle\EventListener;
 
 use Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
-class ProductSelectDBQueryEventListener
+class ProductDBQueryRestrictionEventListener
 {
     /**
      * @var FrontendHelper
@@ -31,9 +31,9 @@ class ProductSelectDBQueryEventListener
     }
 
     /**
-     * @param ProductSelectDBQueryEvent $event
+     * @param ProductDBQueryRestrictionEvent $event
      */
-    public function onDBQuery(ProductSelectDBQueryEvent $event)
+    public function onDBQuery(ProductDBQueryRestrictionEvent $event)
     {
         if ($this->frontendHelper->isFrontendRequest()) {
             $this->modifier->modify($event->getQueryBuilder());

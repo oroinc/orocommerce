@@ -5,8 +5,7 @@ parameters:
     oro_product.entity.product_variant_link.class: Oro\Bundle\ProductBundle\Entity\ProductVariantLink
     oro_product.entity.product_image.class: Oro\Bundle\ProductBundle\Entity\ProductImage
     oro_product.entity.product_image_type.class: Oro\Bundle\ProductBundle\Entity\ProductImageType
-
-    oro_product.event_listener.scoped_product_select_db_query.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener
+    oro_product.event_listener.scoped_product_db_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener
 
 services:
     oro_product.product.manager.api:
@@ -282,22 +281,22 @@ services:
         arguments:
             - "@oro_product.model.product_visibility_query_builder_modifier"
         tags:
-            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
-    oro_product.event_listener.abstract_product_select_db_query:
+    oro_product.event_listener.abstract_product_db_query_restriction:
         abstract: true
         arguments:
             - "@oro_config.manager"
             - "@oro_product.model.product_visibility_query_builder_modifier"
             - "@oro_frontend.request.frontend_helper"
 
-    oro_product.event_listener.product_select_db_query:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener'
-        parent: oro_product.event_listener.abstract_product_select_db_query
+    oro_product.event_listener.product_db_query_restriction:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductDBQueryRestrictionEventListener'
+        parent: oro_product.event_listener.abstract_product_db_query_restriction
         calls:
             - [setFrontendSystemConfigurationPath, ['oro_product.general_frontend_product_visibility']]
         tags:
-            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
     oro_product.repository.product:
         class: 'Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository'

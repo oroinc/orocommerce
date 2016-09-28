@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
-class ScopedProductSelectDBQueryEventListener extends ProductSelectDBQueryEventListener
+class ScopedProductDBQueryRestrictionEventListener extends ProductDBQueryRestrictionEventListener
 {
     /**
      * @var string
@@ -24,7 +24,7 @@ class ScopedProductSelectDBQueryEventListener extends ProductSelectDBQueryEventL
     protected function isConditionsAcceptable()
     {
         if (!$this->scope) {
-            throw new \LogicException('Scope not configured for ProductSelectDBQueryEventListener');
+            throw new \LogicException('Scope not configured for ProductDBQueryRestrictionEventListener');
         }
 
         return parent::isConditionsAcceptable() && $this->event->getDataParameters()->get('scope') === $this->scope;

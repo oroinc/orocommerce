@@ -84,7 +84,7 @@ datagrids:
         acl_resource: oro_tax_account_tax_code_view
         extends: tax-base-tax-codes-grid
         options:
-            entityHint: account tax code
+            entityHint: customer tax code
         source:
             query:
                 from:

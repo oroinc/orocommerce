@@ -6,9 +6,9 @@ use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
-class ProductSelectDBQueryEventTest extends \PHPUnit_Framework_TestCase
+class ProductDBQueryRestrictionEventTest extends \PHPUnit_Framework_TestCase
 {
     public function testEvent()
     {
@@ -19,7 +19,7 @@ class ProductSelectDBQueryEventTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $event = new ProductSelectDBQueryEvent($queryBuilder, $dataParameters);
+        $event = new ProductDBQueryRestrictionEvent($queryBuilder, $dataParameters);
 
         $this->assertSame($dataParameters, $event->getDataParameters());
         $this->assertSame($queryBuilder, $event->getQueryBuilder());

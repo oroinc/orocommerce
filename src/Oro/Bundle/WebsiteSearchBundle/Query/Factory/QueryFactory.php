@@ -23,9 +23,9 @@ class QueryFactory implements QueryFactoryInterface
     protected $dispatcher;
 
     /**
-     * @param QueryFactoryInterface    $parentQueryFactory
+     * @param QueryFactoryInterface $parentQueryFactory
      * @param EventDispatcherInterface $eventDispatcher
-     * @param EngineV2Interface        $engine
+     * @param EngineV2Interface $engine
      */
     public function __construct(
         QueryFactoryInterface $parentQueryFactory,
@@ -45,7 +45,13 @@ class QueryFactory implements QueryFactoryInterface
         if (!isset($config['search_index']) || $config['search_index'] !== 'website') {
             return $this->parent->create($grid, $config);
         }
-        $query = new WebsiteSearchQuery($this->engine, $this->dispatcher, new Query());
+
+        $query = new WebsiteSearchQuery(
+            $this->engine,
+            $this->dispatcher,
+            new Query()
+        );
+
         $this->configureQuery($config, $query);
 
         return $query;

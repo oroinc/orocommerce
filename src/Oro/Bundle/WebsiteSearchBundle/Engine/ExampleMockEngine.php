@@ -7,9 +7,11 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Common\Collections\Expr\Expression;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
+use Oro\Bundle\SearchBundle\Event\BeforeSearchEvent;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
@@ -20,6 +22,11 @@ class ExampleMockEngine implements EngineV2Interface
      * @var EntityManager
      */
     private $entityManager;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
 
     /**
      * @var array
@@ -33,10 +40,12 @@ class ExampleMockEngine implements EngineV2Interface
 
     /**
      * @param EntityManager $entityManager
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, EventDispatcherInterface $eventDispatcher)
     {
         $this->entityManager = $entityManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -46,6 +55,9 @@ class ExampleMockEngine implements EngineV2Interface
      */
     public function search(Query $query, array $context = [])
     {
+        $event = new BeforeSearchEvent($query);
+        $this->eventDispatcher->dispatch(BeforeSearchEvent::EVENT_NAME, $event);
+
         $selectedColumns = $query->getSelect();
         $queryBuilder = $this->prepareQueryBuilder($selectedColumns);
 

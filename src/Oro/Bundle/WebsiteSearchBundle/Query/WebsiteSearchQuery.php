@@ -8,6 +8,9 @@ use Oro\Bundle\SearchBundle\Query\AbstractSearchQuery;
 use Oro\Bundle\WebsiteSearchBundle\Event\SelectDataFromSearchIndexEvent;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Query\Criteria\ExpressionBuilder;
 
 class WebsiteSearchQuery extends AbstractSearchQuery
 {
@@ -18,9 +21,9 @@ class WebsiteSearchQuery extends AbstractSearchQuery
     protected $dispatcher;
 
     /**
+     * @param EngineV2Interface $engine
      * @param EventDispatcherInterface $eventDispatcher
-     * @param EngineV2Interface        $engine
-     * @param Query                    $query
+     * @param Query $query
      */
     public function __construct(
         EngineV2Interface $engine,
