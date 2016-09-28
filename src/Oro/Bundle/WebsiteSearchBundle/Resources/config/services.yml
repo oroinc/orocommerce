@@ -6,6 +6,7 @@ parameters:
     oro_website_search.select_data.listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener
     oro_website_search.reindex_request.listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener
     oro_website_search.product_visibility_restriction_listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\ProductVisibilityRestrictionListener
+    oro_website.indexation_request_listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\IndexationRequestListener
     oro_website.website_reindexation_on_create_delete_listener.class: Oro\Bundle\WebsiteSearchBundle\EventListener\WebsiteReindexationOnCreateDeleteListener
 
 services:
@@ -154,4 +155,15 @@ services:
             - ~ # regular indexer
             - ~ # async indexer
         tags:
-            - { name: kernel.event_listener, event: oro_website_search.reindexation_trigger, method: process }
+            - { name: kernel.event_listener, event: oro_website_search.reindexation_request, method: process }
+
+    oro_website.indexation_request_listener:
+        class: %oro_website.indexation_request_listener.class%
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_search.provider.search_mapping'
+            - '@event_dispatcher'
+            - '@oro_website.manager'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }

@@ -109,7 +109,7 @@ services:
     oro_pricing.provider.price_rule_fields_provider:
         class: 'Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider'
         arguments:
-            - '@oro_entity.entity_field_provider'
+            - '@oro_entity.entity_field_provider.link'
             - '@oro_entity.doctrine_helper'
 
     oro_pricing.provider.product_virtual_relation_provider.config:

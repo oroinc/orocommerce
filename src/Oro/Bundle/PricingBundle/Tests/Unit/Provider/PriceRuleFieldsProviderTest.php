@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
@@ -40,8 +41,22 @@ class PriceRuleFieldsProviderTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        /**
+         * @var $entityFieldProviderLink ServiceLink
+         */
+        $entityFieldProviderLink = $this
+            ->getMockBuilder('Oro\Component\DependencyInjection\ServiceLink')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $entityFieldProviderLink
+            ->expects($this->any())
+            ->method('getService')
+            ->willReturn($this->entityFieldProvider);
+
         $this->priceRuleAttributeProvider = new PriceRuleFieldsProvider(
-            $this->entityFieldProvider,
+            $entityFieldProviderLink,
             $this->doctrineHelper
         );
     }

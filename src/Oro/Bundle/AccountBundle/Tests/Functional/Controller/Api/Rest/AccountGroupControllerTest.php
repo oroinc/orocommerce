@@ -14,7 +14,7 @@ class AccountGroupControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader());
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups'

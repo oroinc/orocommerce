@@ -56,7 +56,6 @@ system_configuration:
             priority: 10
             options:
                 label: oro.product.system_configuration.fields.default_unit_precision.label
-
     tree:
         system_configuration:
             commerce:
