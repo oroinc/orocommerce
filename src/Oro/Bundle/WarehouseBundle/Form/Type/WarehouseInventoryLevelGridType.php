@@ -77,8 +77,8 @@ class WarehouseInventoryLevelGridType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
-     */
+      * {@inheritdoc}
+      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired('product');

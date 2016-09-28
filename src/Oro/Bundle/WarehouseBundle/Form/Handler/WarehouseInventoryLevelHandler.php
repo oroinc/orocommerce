@@ -11,7 +11,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\FormBundle\Form\DataTransformer\DataChangesetTransformer;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
 use Oro\Bundle\WarehouseBundle\Form\DataTransformer\WarehouseInventoryLevelGridDataTransformer as LevelTransformer;
 
@@ -109,19 +108,16 @@ class WarehouseInventoryLevelHandler
      */
     protected function getWarehouseInventoryLevelObject(array $levelData)
     {
-        /** @var Warehouse $warehouse */
-        $warehouse = $levelData[LevelTransformer::WAREHOUSE_KEY];
         /** @var ProductUnitPrecision $precision */
         $precision = $levelData[LevelTransformer::PRECISION_KEY];
 
         $quantity = (float)$levelData[DataChangesetTransformer::DATA_KEY]['levelQuantity'];
         $quantity = $this->roundingService->round($quantity, $precision->getPrecision());
 
-        $level = $this->findWarehouseInventoryLevel($warehouse, $precision);
+        $level = $this->findWarehouseInventoryLevel($precision);
         if (!$level) {
             $level = new WarehouseInventoryLevel();
-            $level->setWarehouse($warehouse)
-                ->setProductUnitPrecision($precision);
+            $level->setProductUnitPrecision($precision);
         }
         $level->setQuantity($quantity);
 
@@ -129,13 +125,12 @@ class WarehouseInventoryLevelHandler
     }
 
     /**
-     * @param Warehouse $warehouse
      * @param ProductUnitPrecision $precision
      * @return WarehouseInventoryLevel|null
      */
-    protected function findWarehouseInventoryLevel(Warehouse $warehouse, ProductUnitPrecision $precision)
+    protected function findWarehouseInventoryLevel(ProductUnitPrecision $precision)
     {
         return $this->manager->getRepository('OroWarehouseBundle:WarehouseInventoryLevel')
-            ->findOneBy(['warehouse' => $warehouse, 'productUnitPrecision' => $precision]);
+            ->findOneBy(['productUnitPrecision' => $precision]);
     }
 }

@@ -10,12 +10,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 
 class WarehouseInventoryLevelGridDataTransformer implements DataTransformerInterface
 {
     const PRECISION_KEY = 'precision';
-    const WAREHOUSE_KEY = 'warehouse';
 
     /**
      * @var DoctrineHelper
@@ -58,32 +56,21 @@ class WarehouseInventoryLevelGridDataTransformer implements DataTransformerInter
             throw new UnexpectedTypeException($value, 'array');
         }
 
-        foreach ($value as $combinedId => $changeSetRow) {
-            list($warehouseId, $precisionId) = explode('_', $combinedId, 2);
-            $warehouse = $this->getWarehouse((int)$warehouseId);
+        foreach ($value as $precisionId => $changeSetRow) {
             $precision = $this->getPrecision((int)$precisionId);
 
-            if (!$warehouse || !$precision) {
-                unset($value[$combinedId]);
+            if (!$precision) {
+                unset($value[$precisionId]);
                 continue;
             }
 
-            $value[$combinedId] = array_merge(
+            $value[$precisionId] = array_merge(
                 $changeSetRow,
-                [self::WAREHOUSE_KEY => $warehouse, self::PRECISION_KEY => $precision]
+                [self::PRECISION_KEY => $precision]
             );
         }
 
         return $value;
-    }
-
-    /**
-     * @param int|string $id
-     * @return Warehouse|null
-     */
-    protected function getWarehouse($id)
-    {
-        return $this->doctrineHelper->getEntityReference('OroWarehouseProBundle:Warehouse', $id);
     }
 
     /**

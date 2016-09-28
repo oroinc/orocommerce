@@ -5,25 +5,21 @@ datagrids:
             type:         orm
             query:
                 select:
-#                    - CONCAT(warehouse.id, '_', precision.id) as combinedId
+                    - precision.id as combinedId
                     - IDENTITY(precision.unit) as unitCode
-#                    - warehouse.name as warehouseName
                     - IDENTITY(precision.unit) as productUnit
                     - level.quantity as levelQuantity
                 from:
-#                    - { table: %oro_warehouse.entity.warehouse.class%, alias: warehouse }
-                    - { table: %oro_warehouse.entity.warehouse_inventory_level.class%, alias: inventory_level }
+                    - { table: %oro_warehouse.entity.warehouse_inventory_level.class%, alias: level }
                 join:
-#                    inner:
-#                        - { join: %oro_product.entity.product_unit_precision.class%, alias: precision, conditionType: WITH, condition: "IDENTITY(precision.product) = :productId" }
                     left:
-                        - { join: %oro_product.entity.product_unit_precision.class%, alias: precision, conditionType: WITH, condition: "IDENTITY(precision.product) = :productId" }
-#                        - { join: %oro_warehouse.entity.warehouse_inventory_level.class%, alias: level, conditionType: WITH, condition: "level.warehouse = warehouse AND level.productUnitPrecision = precision" }
+                        - { join: %oro_product.entity.product_unit_precision.class%, alias: precision, conditionType: WITH, condition: "level.productUnitPrecision = precision" }
+                where:
+                    and:
+                        - IDENTITY(precision.product) = :productId
             bind_parameters:
                 - productId
         columns:
-#            warehouseName:
-#                label:         oro.warehouse.entity_label
             levelQuantity:
                 label:         oro.warehouse.warehouseinventorylevel.quantity.label
                 frontend_type: string # can't use decimal because of inappropriate formatter
@@ -35,8 +31,6 @@ datagrids:
                 template:      OroProductBundle:ProductUnit:Datagrid/unitFullPlural.html.twig
         sorters:
             columns:
-#                warehouseName:
-#                    data_name: warehouseName
                 levelQuantity:
                     data_name: levelQuantity
                 productUnit:
@@ -44,7 +38,7 @@ datagrids:
             default:
                 productUnit:   %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         properties:
-#            combinedId: ~
+            combinedId: ~
             unitCode: ~
         options:
             mode: client
@@ -72,7 +66,6 @@ datagrids:
                     - product.sku as sku
                     - productInventoryStatus.name as inventoryStatusName
                     - productInventoryStatus.id as inventoryStatusId
-#                    - warehouse.name as warehouseName
                     - inventory.quantity as quantity
                     - precisionUnit.code as unit
                     - productPrecision.precision as inventoryLevelPrecision
@@ -81,7 +74,6 @@ datagrids:
                     - { table: %oro_warehouse.entity.warehouse_inventory_level.class%, alias: inventory}
                 join:
                     left:
-#                        - { join: inventory.warehouse, alias: warehouse }
                         - { join: inventory.product, alias: product}
                         - { join: product.inventory_status, alias: productInventoryStatus}
                         - { join: inventory.productUnitPrecision, alias: productPrecision}
@@ -122,8 +114,6 @@ datagrids:
                         route_parameters_rename_map:
                             productId: id
                 choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
-#            warehouseName:
-#                label:              oro.warehouse.entity_label
             quantity:
                 label:           oro.warehouse.warehouseinventorylevel.quantity.label
                 frontend_type:   decimal
@@ -150,8 +140,6 @@ datagrids:
                     data_name:       productName
                 inventory_status:
                     data_name:       inventoryStatusName
-#                warehouseName:
-#                    data_name:       warehouseName
                 quantity:
                     data_name:       quantity
                 unit:
@@ -168,15 +156,6 @@ datagrids:
                     type:            enum
                     data_name:       inventoryStatusId
                     enum_code:       prod_inventory_status
-#                warehouseName:
-#                    type:               entity
-#                    frontend_type:      select
-#                    data_name:          warehouse.id
-#                    options:
-#                        field_type:     entity
-#                        field_options:
-#                            class:      %oro_warehouse.entity.warehouse.class%
-#                            property:   name
                 quantity:
                     data_name:       quantity
                     type:            number

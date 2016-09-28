@@ -88,11 +88,6 @@ oro:
             value.label: Price
             rule.label: Rule
             handling_fee_value.label: Handling Fee
-        warehouse:
-            use_system_configuration: Use System Configuration
-            system_configuration.label: '(system configuration)'
-            section:
-                shipping_origin: Shipping Origin
         product:
             section:
                 shipping_options: Shipping Options
