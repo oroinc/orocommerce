@@ -190,3 +190,10 @@ ShoppingListBundle
 UPSBundle:
 ---------
 - Added bundle that adds UPS shipping method with power of OroShippingBundle.
+
+WarehouseBundle
+---------------
+- added manageInventory field to Category entity and related admin pages with fallback support
+- added manageInventory field to Product entity and related admin pages with fallback support
+- added CategoryFallbackProvider with fallback id `category`
+- added ParentCategoryFallbackProvider with fallback id `parentCategory`

@@ -20,6 +20,7 @@ class ShippingRuleRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], static::generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
             LoadShippingRules::class,

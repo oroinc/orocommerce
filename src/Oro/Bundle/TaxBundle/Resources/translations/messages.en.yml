@@ -25,14 +25,14 @@ oro.tax:
 
     accounttaxcode:
         entity_label: 'Account Tax Code'
-        entity_plural_label: 'Account Tax Codes'
-        description: 'List of Account Tax Codes'
+        entity_plural_label: 'Customer Tax Codes'
+        description: 'List of Customer Tax Codes'
         accounts.label: 'Accounts'
         account_groups.label: 'Account Groups'
         id.label: 'ID'
         code.label: 'Code'
         description.label: 'Description'
-        account_group.view.label: 'Defined for Account Group'
+        account_group.view.label: 'Defined for Customer Group'
         account_groups.label: 'Account Groups'
 
     taxrule:

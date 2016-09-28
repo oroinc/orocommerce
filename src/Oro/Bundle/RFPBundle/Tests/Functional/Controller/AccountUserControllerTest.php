@@ -18,6 +18,7 @@ class AccountUserControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], static::generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
             'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',

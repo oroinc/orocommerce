@@ -489,14 +489,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      */
     public function getVariantFields()
     {
-        return $this->variantFields;
+        return $this->variantFields !== null ? $this->variantFields : [];
     }
 
     /**
-     * @param array $variantFields
+     * @param array|null $variantFields
      * @return Product
      */
-    public function setVariantFields(array $variantFields)
+    public function setVariantFields($variantFields)
     {
         $this->variantFields = $variantFields;
 
