@@ -88,6 +88,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             $this->getContainer()->get('oro_website_search.provider.index_data'),
             $this->getContainer()->get('oro_website_search.placeholder.visitor_replace')
         );
+        $this->indexer->setDriver($this->getContainer()->get('oro_website_search.engine.orm.driver'));
 
         $this->clearRestrictListeners($this->getRestrictEntityEventName());
     }

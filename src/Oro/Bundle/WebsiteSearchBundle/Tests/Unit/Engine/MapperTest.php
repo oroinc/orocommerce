@@ -52,7 +52,7 @@ class MapperTest extends \PHPUnit_Framework_TestCase
             'title' => 'Test item title',
         ];
 
-        $this->assertNull($this->mapper->mapSelectedData($query, $item));
+        $this->assertEquals([], $this->mapper->mapSelectedData($query, $item));
     }
 
     public function testMapSelectedDataEmptyItem()
