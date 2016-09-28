@@ -12,4 +12,4 @@ oro.account:
         content: 'There are currently account users from other accounts associated with this role. Once you confirm the change of an account these account users will no longer be associated with this role. Do you wish to proceed with the account change?'
 
     account_user:
-        delete_confirm: 'Are you sure you want to delete Account User?'
+        delete_confirm: 'Are you sure you want to delete Customer User?'

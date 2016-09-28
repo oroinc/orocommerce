@@ -98,7 +98,7 @@ services:
         class: 'Oro\Bundle\MenuBundle\Menu\Condition\LoggedInExpressionLanguageProvider'
         public: false
         arguments:
-            - "@oro_security.security_facade"
+            - "@oro_security.security_facade.link"
         tags:
             - { name: oro_menu.condition.expression_language_provider, alias: is_logged_in }
 
@@ -132,7 +132,7 @@ services:
         public: false
         arguments:
             - "@router"
-            - "@oro_security.security_facade"
+            - "@oro_security.security_facade.link"
         calls:
             - [ setCache, [ "@oro_menu.cache" ] ]
             - [ setHideAllForNotLoggedInUsers, [ false ] ]

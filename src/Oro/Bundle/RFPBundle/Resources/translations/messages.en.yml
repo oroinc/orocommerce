@@ -101,13 +101,13 @@ oro:
                         always_notify_sale_reps_of_account: 'Always'
                         if_no_sales_reps_assigned: 'If user has no sales reps assigned'
                     account_user_record:
-                        label: 'Notify the owner of the account user record'
+                        label: 'Notify the owner of the customer user record'
                         always_notify_owner: 'Always'
                         if_no_sales_reps_assigned: 'If user has no sales reps assigned'
                     account:
                         label: 'Notify the owner of the account'
                         always_notify_owner: 'Always'
-                        if_no_sales_reps_assigned: 'If account has no sales reps assigned'
+                        if_no_sales_reps_assigned: 'If customer has no sales reps assigned'
 
         message:
             request_status_saved: 'Request Status saved'
