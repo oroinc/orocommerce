@@ -42,4 +42,12 @@ class LocalizationIdPlaceholder implements WebsiteSearchPlaceholderInterface
 
         return (string) $localization->getId();
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function replace($string, $replaceValue)
+    {
+        return str_replace(self::NAME, $replaceValue, $string);
+    }
 }

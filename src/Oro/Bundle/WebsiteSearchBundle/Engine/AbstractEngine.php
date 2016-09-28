@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\WebsiteSearchBundle\Event\BeforeSearchEvent;
-use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver;
+use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolverInterface;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 abstract class AbstractEngine implements EngineV2Interface
 {
@@ -18,26 +19,34 @@ abstract class AbstractEngine implements EngineV2Interface
     private $eventDispatcher;
 
     /**
-     * @var QueryPlaceholderResolver
+     * @var QueryPlaceholderResolverInterface
      */
     private $queryPlaceholderResolver;
 
     /**
+     * @var DoctrineHelper
+     */
+    protected $doctrineHelper;
+
+    /**
      * @param EventDispatcherInterface $eventDispatcher
-     * @param QueryPlaceholderResolver $queryPlaceholderResolver
+     * @param QueryPlaceholderResolverInterface $queryPlaceholderResolver
+     * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
-        QueryPlaceholderResolver $queryPlaceholderResolver
+        QueryPlaceholderResolverInterface $queryPlaceholderResolver,
+        DoctrineHelper $doctrineHelper
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->queryPlaceholderResolver = $queryPlaceholderResolver;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
      * @param Query $query
      * @param array $context
-     * @return array
+     * @return Result
      */
     abstract protected function doSearch(Query $query, array $context = []);
 
@@ -50,10 +59,8 @@ abstract class AbstractEngine implements EngineV2Interface
         $this->eventDispatcher->dispatch(BeforeSearchEvent::EVENT_NAME, $event);
 
         $query = $event->getQuery();
-        $query = $this->queryPlaceholderResolver->replace($query, $context);
+        $query = $this->queryPlaceholderResolver->replace($query);
 
-        $result = $this->doSearch($query, $context);
-
-        return new Result($query, $result['results'], $result['records_count']);
+        return $this->doSearch($query, $context);
     }
 }

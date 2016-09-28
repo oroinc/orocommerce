@@ -8,17 +8,21 @@ use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\SearchBundle\Engine\Orm\BaseDriver;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
+use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractEngine;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Mapper;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
+
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class OrmEngine extends AbstractEngine
 {
     /** @var ManagerRegistry */
     protected $registry;
 
-    /** @var BaseDriver[] */
+    /** @var array */
     protected $drivers = [];
 
     /** @var Mapper */
@@ -33,19 +37,25 @@ class OrmEngine extends AbstractEngine
     /** @var OroEntityManager */
     protected $indexManager;
 
+    /** @var OptionsResolver */
+    private $optionsResolver;
+
     /**
      * {@inheritdoc}
      */
     protected function doSearch(Query $query, array $context = [])
     {
         $results = [];
-
         $searchResults = $this->getIndexRepository()->search($query);
 
         foreach ($searchResults as $searchResult) {
-            $item = $searchResult['item'];
+            if (!isset($searchResult['item'])) {
+                continue;
+            }
+            $item = $this->resolveItemKeys($searchResult['item']);
+
             $results[] = new Item(
-                $this->getRegistry()->getManagerForClass($item['entity']),
+                $this->doctrineHelper->getEntityManager($item['entity']),
                 $item['entity'],
                 $item['recordId'],
                 $item['title'],
@@ -55,10 +65,24 @@ class OrmEngine extends AbstractEngine
             );
         }
 
-        return [
-            'results'       => $results,
-            'records_count' => count($searchResults),
-        ];
+        return new Result($query, $results, count($searchResults));
+    }
+
+    /**
+     * @param array $item
+     * @return array
+     */
+    private function resolveItemKeys(array $item)
+    {
+        if (!$this->optionsResolver) {
+            $this->optionsResolver = new OptionsResolver();
+        }
+        $this->optionsResolver->setRequired(['entity', 'recordId', 'title']);
+        $this->optionsResolver->setDefined(array_keys($item));
+        $resolvedOptions =  $this->optionsResolver->resolve($item);
+        $this->optionsResolver->clear();
+
+        return $resolvedOptions;
     }
 
     /**
@@ -66,13 +90,11 @@ class OrmEngine extends AbstractEngine
      */
     protected function getIndexRepository()
     {
-        if ($this->indexRepository) {
-            return $this->indexRepository;
+        if (!$this->indexRepository) {
+            $this->indexRepository = $this->getIndexManager()->getRepository('OroWebsiteSearchBundle:Item');
+            $this->indexRepository->setDriversClasses($this->getDrivers());
+            $this->indexRepository->setRegistry($this->getRegistry());
         }
-
-        $this->indexRepository = $this->getIndexManager()->getRepository('OroWebsiteSearchBundle:Item');
-        $this->indexRepository->setDriversClasses($this->getDrivers());
-        $this->indexRepository->setRegistry($this->getRegistry());
 
         return $this->indexRepository;
     }
@@ -82,20 +104,24 @@ class OrmEngine extends AbstractEngine
      */
     protected function getIndexManager()
     {
-        if ($this->indexManager) {
-            return $this->indexManager;
+        if (!$this->indexManager) {
+            $this->indexManager = $this->getRegistry()->getManagerForClass('OroWebsiteSearchBundle:Item');
         }
-
-        $this->indexManager = $this->getRegistry()->getManagerForClass('OroWebsiteSearchBundle:Item');
 
         return $this->indexManager;
     }
 
     /**
-     * @param BaseDriver[] $drivers
+     * @param array $drivers
      */
     public function setDrivers(array $drivers)
     {
+        foreach ($drivers as $driver) {
+            if (!is_a($driver, BaseDriver::class, true)) {
+                throw new InvalidConfigurationException('Wrong driver class passed, please check configuration');
+            }
+        }
+
         $this->drivers = $drivers;
     }
 

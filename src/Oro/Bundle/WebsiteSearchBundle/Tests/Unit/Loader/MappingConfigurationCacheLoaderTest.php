@@ -209,7 +209,6 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit_Framework_TestCase
         $this->configurationCacheLoader->warmUpCache();
     }
 
-
     public function testWarmUpCacheDevMode()
     {
         $this->setCacheExists(false);
@@ -278,9 +277,9 @@ class MappingConfigurationCacheLoaderTest extends \PHPUnit_Framework_TestCase
         $this->configurationCacheLoader = new MappingConfigurationCacheLoader(
             $this->cacheProvider,
             $this->configurationLoader,
+            $this->resourceHashProvider,
             $debug
         );
-        $this->configurationCacheLoader->setHashProvider($this->resourceHashProvider);
     }
 
     /**

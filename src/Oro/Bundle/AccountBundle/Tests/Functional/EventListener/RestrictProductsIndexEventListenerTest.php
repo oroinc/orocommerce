@@ -9,31 +9,21 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 /**
  * @dbIsolationPerTest
  */
 class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
     protected function setUp()
     {
-        $this->initClient();
+        parent::setUp();
 
-        $this->addFrontendRequest();
-
-        $this->dispatcher = $this->getContainer()->get('event_dispatcher');
         $this->clearRestrictListeners($this->getRestrictEntityEventName());
 
         $this->dispatcher->addListener(
             $this->getRestrictEntityEventName(),
             [
-                $this->getContainer()->get('oro_account.event_listener.restricted_products_index'),
+                $this->getContainer()->get('oro_account.event_listener.restrict_products_index'),
                 'onRestrictIndexEntityEvent'
             ],
             -255
@@ -46,26 +36,30 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
 
     public function testRestrictIndexEntityEventListener()
     {
+        $configManager = $this->getContainer()->get('oro_config.manager');
+        $configManager->set('oro_account.product_visibility', 'visible');
+
         $indexer = $this->getContainer()->get('oro_website_search.indexer');
         $searchEngine = $this->getContainer()->get('oro_website_search.engine');
         $indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]);
 
         $query = new Query();
-        $query->from('oro_product_product_WEBSITE_ID');
+        $query->from('oro_product_WEBSITE_ID');
         $query->select('recordTitle');
-        $query->getCriteria()->orderBy(['recordTitle' => Query::ORDER_ASC]);
+        $query->getCriteria()->orderBy(['title_' . $this->getDefaultWebsiteId() => Query::ORDER_ASC]);
 
         $result = $searchEngine->search($query);
         $values = $result->getElements();
 
-        $this->assertEquals(7, $result->getRecordsCount());
+        $this->assertEquals(6, $result->getRecordsCount());
         $this->assertEquals('product.1', $values[0]->getRecordTitle());
-        $this->assertEquals('product.3', $values[1]->getRecordTitle());
-        $this->assertEquals('product.4', $values[2]->getRecordTitle());
-        $this->assertEquals('product.5', $values[3]->getRecordTitle());
-        $this->assertEquals('product.6', $values[4]->getRecordTitle());
-        $this->assertEquals('product.7', $values[5]->getRecordTitle());
-        $this->assertEquals('product.8', $values[6]->getRecordTitle());
+        $this->assertEquals('product.4', $values[1]->getRecordTitle());
+        $this->assertEquals('product.5', $values[2]->getRecordTitle());
+        $this->assertEquals('product.6', $values[3]->getRecordTitle());
+        $this->assertEquals('product.7', $values[4]->getRecordTitle());
+        $this->assertEquals('product.8', $values[5]->getRecordTitle());
+
+        $configManager->reset('oro_account.product_visibility');
     }
 
     /**

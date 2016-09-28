@@ -32,11 +32,6 @@ class ProductRepositoryTest extends WebTestCase
         );
     }
 
-    protected function tearDown()
-    {
-        unset($this->repository);
-    }
-
     public function testFindOneBySku()
     {
         $this->assertNull($this->getRepository()->findOneBySku(uniqid('_fake_sku_', true)));

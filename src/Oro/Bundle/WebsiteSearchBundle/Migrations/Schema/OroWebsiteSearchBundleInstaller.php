@@ -194,7 +194,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
             $schema->getTable('oro_website_search_item'),
             ['item_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            ['onUpdate' => null, 'onDelete' => null]
         );
     }
 }

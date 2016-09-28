@@ -45,15 +45,18 @@ class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
     /**
      * @param CacheProvider $cacheProvider
      * @param ConfigurationLoaderInterface $configurationProvider
+     * @param ResourcesHashProvider $hashProvider
      * @param bool $debug
      */
     public function __construct(
         CacheProvider $cacheProvider,
         ConfigurationLoaderInterface $configurationProvider,
+        ResourcesHashProvider $hashProvider,
         $debug
     ) {
         $this->configurationProvider = $configurationProvider;
         $this->cacheProvider = $cacheProvider;
+        $this->hashProvider = $hashProvider;
         $this->debug = (bool)$debug;
     }
 
@@ -81,7 +84,7 @@ class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
 
         $this->configuration = $this->configurationProvider->getConfiguration();
         $this->cacheProvider->saveMultiple([
-            self::CACHE_KEY_HASH => $this->getHash($this->getResources()),
+            self::CACHE_KEY_HASH => $this->hashProvider->getHash($this->getResources()),
             self::CACHE_KEY_CONFIGURATION => $this->configuration,
         ]);
     }
@@ -111,14 +114,6 @@ class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
     }
 
     /**
-     * @param ResourcesHashProvider $hashProvider
-     */
-    public function setHashProvider(ResourcesHashProvider $hashProvider)
-    {
-        $this->hashProvider = $hashProvider;
-    }
-
-    /**
      * @return bool
      */
     protected function isFresh()
@@ -135,27 +130,6 @@ class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
 
         $cachedHash = $this->cacheProvider->fetch(self::CACHE_KEY_HASH);
 
-        return $cachedHash === $this->getHash($this->getResources());
-    }
-
-    /**
-     * @param CumulativeResourceInfo[] $resources
-     * @return string
-     */
-    protected function getHash(array $resources)
-    {
-        return $this->getHashProvider()->getHash($resources);
-    }
-
-    /**
-     * @return ResourcesHashProvider
-     */
-    protected function getHashProvider()
-    {
-        if (!$this->hashProvider) {
-            $this->hashProvider = new ResourcesHashProvider();
-        }
-
-        return $this->hashProvider;
+        return $cachedHash === $this->hashProvider->getHash(($this->getResources()));
     }
 }
