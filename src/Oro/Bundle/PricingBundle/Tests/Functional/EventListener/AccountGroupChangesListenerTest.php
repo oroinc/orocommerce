@@ -22,7 +22,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader(), true);
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',

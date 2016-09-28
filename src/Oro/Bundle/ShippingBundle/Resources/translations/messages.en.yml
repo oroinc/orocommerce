@@ -88,6 +88,7 @@ oro:
             value.label: Price
             rule.label: Rule
             handling_fee_value.label: Handling Fee
+            serialized_data.label:   Serialized Data
         warehouse:
             use_system_configuration: Use System Configuration
             system_configuration.label: '(system configuration)'

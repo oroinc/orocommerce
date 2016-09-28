@@ -12,6 +12,11 @@ class PriceRuleExpression extends Constraint
     public $message = 'oro.pricing.validators.field_are_not_allowed.message';
 
     /**
+     * @var string
+     */
+    public $messageAs = 'oro.pricing.validators.field_are_not_allowed_as.message';
+
+    /**
      * @var bool
      */
     public $withRelations = false;
@@ -25,6 +30,11 @@ class PriceRuleExpression extends Constraint
      * @var array
      */
     public $allowedFields = [];
+
+    /**
+     * @var string
+     */
+    public $fieldLabel = null;
 
     /**
      * {@inheritdoc}

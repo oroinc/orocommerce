@@ -21,12 +21,11 @@ class ProductEntityListenerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient();
         $this->loadFixtures([
             LoadProductData::class,
             LoadPriceRuleLexemes::class
         ]);
-        $this->topic = Topics::RESOLVE_PRICE_RULES;
         $this->cleanQueueMessageTraces();
     }
 

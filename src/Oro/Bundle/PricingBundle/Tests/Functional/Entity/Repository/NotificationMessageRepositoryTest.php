@@ -19,7 +19,7 @@ class NotificationMessageRepositoryTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient();
         $this->loadFixtures([
             LoadNotificationMessages::class
         ]);

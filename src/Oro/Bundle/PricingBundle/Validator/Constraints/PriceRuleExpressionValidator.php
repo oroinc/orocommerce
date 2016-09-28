@@ -6,6 +6,7 @@ use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
 use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -27,18 +28,26 @@ class PriceRuleExpressionValidator extends ConstraintValidator
     protected $preprocessor;
 
     /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * @param ExpressionParser $parser
      * @param ExpressionPreprocessorInterface $preprocessor
      * @param PriceRuleFieldsProvider $priceRuleFieldsProvider
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         ExpressionParser $parser,
         ExpressionPreprocessorInterface $preprocessor,
-        PriceRuleFieldsProvider $priceRuleFieldsProvider
+        PriceRuleFieldsProvider $priceRuleFieldsProvider,
+        TranslatorInterface $translator
     ) {
         $this->parser = $parser;
         $this->priceRuleFieldsProvider = $priceRuleFieldsProvider;
         $this->preprocessor = $preprocessor;
+        $this->translator = $translator;
     }
 
     /**
@@ -68,16 +77,35 @@ class PriceRuleExpressionValidator extends ConstraintValidator
                 }
             }
             if (count($unsupportedFields) > 0) {
+                list($message, $parameters) = $this->getErrorData($constraint);
+
                 foreach ($unsupportedFields as $invalidField) {
-                    $this->context->addViolation(
-                        $constraint->message,
-                        ['%fieldName%' => $invalidField]
-                    );
+                    $this->context->addViolation($message, array_merge($parameters, [
+                        '%fieldName%' => $invalidField
+                    ]));
                 }
             }
         } catch (SyntaxError $ex) {
             $this->context->addViolation($ex->getMessage());
         }
+    }
+
+    /**
+     * @param PriceRuleExpression $constraint
+     * @return array
+     */
+    protected function getErrorData(Constraint $constraint)
+    {
+        if ($constraint->fieldLabel === null) {
+            $message = $constraint->message;
+            $params = [];
+        } else {
+            $inputName = $this->translator->trans($constraint->fieldLabel);
+            $message = $constraint->messageAs;
+            $params = ['%inputName%' => $inputName];
+        }
+
+        return [$message, $params];
     }
 
     /**

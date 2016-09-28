@@ -26,7 +26,7 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient();
         $this->loadFixtures([LoadPriceRuleLexemes::class]);
 
         $this->repository = $this->getContainer()

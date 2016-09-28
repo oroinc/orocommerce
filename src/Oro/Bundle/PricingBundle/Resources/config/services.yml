@@ -110,7 +110,7 @@ services:
     oro_pricing.provider.price_rule_fields_provider:
         class: 'Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider'
         arguments:
-            - '@oro_entity.entity_field_provider'
+            - '@oro_entity.entity_field_provider.link'
             - '@oro_entity.doctrine_helper'
 
     oro_pricing.provider.product_virtual_relation_provider.config:
@@ -865,6 +865,7 @@ services:
             - '@oro_pricing.expression.parser'
             - '@oro_pricing.expression.preprocessor'
             - '@oro_pricing.provider.price_rule_fields_provider'
+            - '@translator'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.price_rule_expression_validator }
 
@@ -882,6 +883,7 @@ services:
         arguments:
             - '@oro_pricing.expression.parser'
             - '@oro_pricing.provider.price_rule_fields_provider'
+            - '@translator'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.price_rule_relation_expressions_validator }
 
