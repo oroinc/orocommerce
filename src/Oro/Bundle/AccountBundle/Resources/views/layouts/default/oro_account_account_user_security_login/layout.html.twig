@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block _login_form_username_widget %}
-    {% set label_attr = layout_attr_defaults(attr, {
+    {% set label_attr = layout_attr_defaults(label_attr, {
         '~class': " label label--full"
     }) %}
     {% set attr = layout_attr_defaults(attr, {
@@ -41,7 +41,7 @@
 {% endblock %}
 
 {% block _login_form_password_widget %}
-    {% set label_attr = layout_attr_defaults(attr, {
+    {% set label_attr = layout_attr_defaults(label_attr, {
         '~class': " label label--full"
     }) %}
     {% set attr = layout_attr_defaults(attr, {

@@ -84,3 +84,10 @@ services:
             - '@oro_website.resolver.website_url_resolver'
         tags:
             - { name: twig.extension }
+
+    oro_website.provider.website_localization:
+        class: 'Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_locale.manager.localization'
+            - '@oro_entity.doctrine_helper'

@@ -1,6 +1,6 @@
 Oro\Bundle\TestBundle2\Entity\Page:
     alias: page_WEBSITE_ID
     fields:
-      -
-        name: title_LOCALIZATION_ID
-        type: text
+        title:
+            name: title_LOCALIZATION_ID
+            type: text
