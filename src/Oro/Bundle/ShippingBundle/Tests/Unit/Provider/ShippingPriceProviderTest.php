@@ -4,21 +4,21 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\FlatRatePricesAwareShippingMethod;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -70,35 +70,29 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($entityManager);
 
         $this->registry = $this->getMock(ShippingMethodRegistry::class);
+        $this->registry->expects($this->any())
+            ->method('getShippingMethod')
+            ->with(FlatRatePricesAwareShippingMethod::IDENTIFIER)
+            ->willReturn(new FlatRatePricesAwareShippingMethod());
+
         $this->shippingPriceProvider = new ShippingPriceProvider($doctrineHelper, $this->registry);
     }
 
     /**
      * @dataProvider getApplicableShippingRulesProvider
      *
-     * @param ShippingRule $shippingRule
-     * @param ShippingMethodInterface $shippingMethod
-     * @param ShippingContext $context
+     * @param array $shippingRules
+     * @param $expectedPrice
      */
-    public function testGetApplicableMethodsWithTypesData(
-        ShippingRule $shippingRule,
-        ShippingMethodInterface $shippingMethod,
-        ShippingContext $context
-    ) {
-        /** @var AbstractAddress $shippingAddress */
+    public function testGetApplicableMethodsWithTypesData(array $shippingRules, $expectedPrice)
+    {
+        $context = $this->createContext('USD', 'US');
         $shippingAddress = $context->getShippingAddress();
-
-        $this->registry->expects($this->any())
-            ->method('getShippingMethod')
-            ->with('flat_rate')
-            ->willReturn($shippingMethod)
-        ;
 
         $this->repository->expects($this->once())
             ->method('getEnabledOrderedRulesByCurrencyAndCountry')
-            ->with($context->getCurrency(), $shippingAddress->getCountry())
-            ->willReturn([$shippingRule])
-        ;
+            ->with($context->getCurrency(), $shippingAddress->getCountryIso2())
+            ->willReturn($shippingRules);
 
         $applicableMethodsWithTypesData = $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context);
 
@@ -115,7 +109,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
             $applicableMethodsWithTypesData['flat_rate']['types']['primary']['price']
         );
         $this->assertEquals(
-            Price::create(5, 'USD'),
+            Price::create($expectedPrice, 'USD'),
             $applicableMethodsWithTypesData['flat_rate']['types']['primary']['price']
         );
     }
@@ -123,29 +117,18 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getApplicableShippingRulesProvider
      *
-     * @param ShippingRule $shippingRule
-     * @param ShippingMethodInterface $shippingMethod
-     * @param ShippingContext $context
+     * @param array $shippingRules
+     * @param $expectedPrice
      */
-    public function testGetPrice(
-        ShippingRule $shippingRule,
-        ShippingMethodInterface $shippingMethod,
-        ShippingContext $context
-    ) {
-        /** @var AbstractAddress $shippingAddress */
+    public function testGetPrice(array $shippingRules, $expectedPrice)
+    {
+        $context = $this->createContext('USD', 'US');
         $shippingAddress = $context->getShippingAddress();
-
-        $this->registry->expects($this->any())
-            ->method('getShippingMethod')
-            ->with('flat_rate')
-            ->willReturn($shippingMethod)
-        ;
 
         $this->repository->expects($this->once())
             ->method('getEnabledOrderedRulesByCurrencyAndCountry')
-            ->with($context->getCurrency(), $shippingAddress->getCountry())
-            ->willReturn([$shippingRule])
-        ;
+            ->with($context->getCurrency(), $shippingAddress->getCountryIso2())
+            ->willReturn($shippingRules);
 
         $methodIdentifier = 'flat_rate';
         $typeIdentifier = 'primary';
@@ -157,7 +140,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertInstanceOf(Price::class, $price);
-        $this->assertEquals(Price::create(5, 'USD'), $price);
+        $this->assertEquals(Price::create($expectedPrice, 'USD'), $price);
     }
 
     /**
@@ -190,9 +173,10 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $data
+     * @param int $price
      * @return ShippingRule
      */
-    protected function createShippingRule(array $data)
+    protected function createShippingRule(array $data, $price)
     {
         $data['destinations'] = $this->createDestinations($data);
         $data['methodConfigs'] = [
@@ -205,7 +189,7 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
                             ->setEnabled(true)
                             ->setType(FlatRateShippingMethodType::IDENTIFIER)
                             ->setOptions([
-                                'price' => 12,
+                                'price' => $price,
                                 'handling_fee' => null,
                                 'type' => FlatRateShippingMethodType::PER_ITEM_TYPE,
                             ])
@@ -245,39 +229,6 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param Price $price
-     * @return ShippingMethodInterface
-     */
-    protected function createShippingMethodWithType(Price $price)
-    {
-        $shippingMethodType = $this->getMockBuilder(FlatRateShippingMethodType::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-        $shippingMethodType->expects($this->any())
-            ->method('calculatePrice')
-            ->willReturn($price)
-        ;
-        $shippingMethodType->expects($this->any())
-            ->method('getIdentifier')
-            ->willReturn('primary')
-        ;
-        $shippingMethodType->expects($this->any())
-            ->method('getOptions')
-            ->willReturn(
-                [
-                    FlatRateShippingMethodType::IDENTIFIER =>
-                        [
-                            FlatRateShippingMethodType::PRICE_OPTION => 1,
-                            FlatRateShippingMethodType::TYPE_OPTION  => FlatRateShippingMethodType::PER_ORDER_TYPE
-                        ]
-                ]
-            );
-
-        return $this->getEntity(FlatRatePricesAwareShippingMethod::class, ['type' => $shippingMethodType]);
-    }
-
-    /**
      * @param string $currency
      * @param string $country
      * @param string|null $region
@@ -291,11 +242,21 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
             'shippingAddress' => $this->getEntity(
                 Address::class,
                 [
-                'country' => $this->getEntity(Country::class, ['iso2Code' => $country]),
-                'region' => $region ? $this->getEntity(Region::class, ['code' => $region]) : null,
-                'postalCode' => $postalCode,
+                    'country' => $this->getEntity(Country::class, ['iso2Code' => $country]),
+                    'region' => $region ? $this->getEntity(Region::class, ['code' => $region]) : null,
+                    'postalCode' => $postalCode,
                 ]
-            )
+            ),
+            'lineItems' => [
+                $this->getEntity(
+                    ShippingLineItem::class,
+                    [
+                        'entityIdentifier' => 1,
+                        'quantity' => 1,
+                        'dimensions' => $this->getEntity(Dimensions::class),
+                    ]
+                )
+            ]
         ]);
 
         return $context;
@@ -308,13 +269,26 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'data' => [
-                'shippingRule' => $this->createShippingRule([
-                    'name' => 'ShippingRule.1',
-                    'conditions' => 'true',
-                    'currency' => 'USD',
-                ]),
-                'shippingMethod' => $this->createShippingMethodWithType(Price::create(5, 'USD')),
-                'context' => $this->createContext('USD', 'US'),
+                'shippingRule' => [
+                    $this->createShippingRule([
+                        'name' => 'ShippingRule.1',
+                        'currency' => 'USD',
+                    ], 12)
+                ],
+                'expectedPrice' => 12
+            ],
+            'several rules' => [
+                'shippingRule' => [
+                    $this->createShippingRule([
+                        'name' => 'ShippingRule.1',
+                        'currency' => 'USD',
+                    ], 12),
+                    $this->createShippingRule([
+                        'name' => 'ShippingRule.3',
+                        'currency' => 'USD',
+                    ], 10)
+                ],
+                'expectedPrice' => 12,
             ],
         ];
     }

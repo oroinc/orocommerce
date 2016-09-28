@@ -6,8 +6,6 @@ use Oro\Bundle\CheckoutBundle\Condition\ShippingMethodSupports;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -26,19 +24,8 @@ class ShippingMethodSupportsTest extends \PHPUnit_Framework_TestCase
     /** @var ShippingContextProviderFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $shippingContextProviderFactory;
 
-    /** @var ShippingRuleMethodConfig|\PHPUnit_Framework_MockObject_MockObject */
-    protected $shippingRuleMethodConfig;
-
     protected function setUp()
     {
-        $this->shippingRuleMethodConfig = $this->getEntity(
-            'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig',
-            [
-                'id'     => 1,
-                'method' => 'flat_rate'
-            ]
-        );
-
         $this->shippingPriceProvider = $this
             ->getMockBuilder(ShippingPriceProvider::class)
             ->disableOriginalConstructor()
@@ -100,11 +87,6 @@ class ShippingMethodSupportsTest extends \PHPUnit_Framework_TestCase
      */
     public function testEvaluate($methodPrice, $methodName, $typeName, $expected)
     {
-        $shippingRule = new ShippingRule();
-        $shippingRule->setName('TetsRule')
-            ->setPriority(10)
-            ->addMethodConfig($this->shippingRuleMethodConfig);
-
         $shippingContext = new ShippingContext();
         $this->shippingContextProviderFactory->expects(static::once())
             ->method('create')

@@ -19,7 +19,7 @@ class ShippingMethodRegistry implements ShippingMethodProviderInterface
 
     /**
      * @param string $name
-     * @return ShippingMethodInterface
+     * @return null|ShippingMethodInterface
      */
     public function getShippingMethod($name)
     {

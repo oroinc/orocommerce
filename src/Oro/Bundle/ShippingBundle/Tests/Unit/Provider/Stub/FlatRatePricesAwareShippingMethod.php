@@ -9,7 +9,6 @@ use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 
 class FlatRatePricesAwareShippingMethod extends FlatRateShippingMethod implements PricesAwareShippingMethodInterface
 {
-
     /**
      * @param ShippingContextInterface $context
      * @param array $methodOptions

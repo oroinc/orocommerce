@@ -3,17 +3,16 @@
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
 class ShippingRuleRepository extends EntityRepository
 {
     /**
      * @param string $currency
-     * @param Country $country
+     * @param string $countryIso2Code
      * @return ShippingRule[]
      */
-    public function getEnabledOrderedRulesByCurrencyAndCountry($currency, Country $country)
+    public function getEnabledOrderedRulesByCurrencyAndCountry($currency, $countryIso2Code)
     {
         return $this->createQueryBuilder('rule')
             ->addSelect('methodConfigs', 'typeConfigs')
@@ -29,7 +28,7 @@ class ShippingRuleRepository extends EntityRepository
             ->where('rule.currency = :currency')
             ->andWhere('rule.enabled = true')
             ->andWhere('nullDestinations.id is null or destinations.id is not null')
-            ->setParameter('country', $country)
+            ->setParameter('country', $countryIso2Code)
             ->setParameter('currency', $currency)
             ->orderBy('rule.priority')
             ->addOrderBy('rule.id')

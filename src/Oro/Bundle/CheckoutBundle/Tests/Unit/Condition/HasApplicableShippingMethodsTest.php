@@ -6,7 +6,6 @@ use Oro\Bundle\CheckoutBundle\Condition\HasApplicableShippingMethods;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -85,21 +84,15 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider evaluateProvider
-     * @param array $rules
      * @param array $methods
      * @param bool $expected
      */
-    public function testEvaluate($rules, $methods, $expected)
+    public function testEvaluate($methods, $expected)
     {
         $method = $this->getMock('Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface');
         $this->shippingMethodRegistry->expects($this->any())->method('getShippingMethod')->willReturn($method);
 
-
-        $this->shippingPriceProvider->expects($this->any())
-            ->method('getApplicableShippingRules')
-            ->willReturn($rules);
-
-        $this->shippingPriceProvider->expects($this->any())
+        $this->shippingPriceProvider->expects($this->once())
             ->method('getApplicableMethodsWithTypesData')
             ->willReturn($methods);
 
@@ -112,32 +105,16 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
      */
     public function evaluateProvider()
     {
-        $methodConfig = $this->getEntity(
-            'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig',
-            [
-                'id'     => 1,
-                'method' => 'flat_rate'
-            ]
-        );
-
-        $shippingRule = new ShippingRule();
-        $shippingRule->setName('TetsRule')
-            ->setPriority(10)
-            ->addMethodConfig($methodConfig);
-        
         return [
             'no_rules_no_methods' => [
-                'rules' => [],
                 'methods' => [],
                 'expected' => false,
             ],
             'with_rules_no_methods' => [
-                'rules' => [10 => $shippingRule],
                 'methods' => [],
                 'expected' => false,
             ],
             'with_rules_and_methods' => [
-                'rules' => [10 => $shippingRule],
                 'methods' => ['flat_rate'],
                 'expected' => true,
             ],

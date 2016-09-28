@@ -4,8 +4,6 @@ namespace Oro\Bundle\CheckoutBundle\Action;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
 class DefaultShippingMethodSetter
@@ -41,22 +39,14 @@ class DefaultShippingMethodSetter
             return;
         }
         $context = $this->contextProviderFactory->create($checkout);
-        $rules = $this->priceProvider->getApplicableShippingRules($context);
-        if (count($rules) === 0) {
+        $methodsData = $this->priceProvider->getApplicableMethodsWithTypesData($context);
+        if (count($methodsData) === 0) {
             return;
         }
-        /** @var ShippingRule $rule */
-        $rule = reset($rules);
-        /** @var ShippingRuleMethodConfig $config */
-        $config = $rule->getMethodConfigs()->first();
-
-        $checkout->setShippingMethod($config->getMethod());
-        $checkout->setShippingMethodType($config->getTypeConfigs()->first()->getType());
-        $cost = $this->priceProvider->getPrice(
-            $context,
-            $checkout->getShippingMethod(),
-            $checkout->getShippingMethodType()
-        );
-        $checkout->setShippingCost($cost);
+        $methodData = reset($methodsData);
+        $typeData = reset($methodData['types']);
+        $checkout->setShippingMethod($methodData['identifier']);
+        $checkout->setShippingMethodType($typeData['identifier']);
+        $checkout->setShippingCost($typeData['price']);
     }
 }

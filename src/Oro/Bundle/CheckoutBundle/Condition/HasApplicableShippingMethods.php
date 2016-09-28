@@ -4,7 +4,6 @@ namespace Oro\Bundle\CheckoutBundle\Condition;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
@@ -82,31 +81,16 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
      */
     protected function isConditionAllowed($context)
     {
-        $result = false;
         /** @var Checkout $entity */
         $entity = $this->resolveValue($context, $this->entity, false);
 
-        $rules = [];
         $methodsData = [];
-        if (null !==$entity) {
+        if (null !== $entity) {
             $shippingContext = $this->shippingContextProviderFactory->create($entity);
-            $rules = $this->shippingPriceProvider->getApplicableShippingRules($shippingContext);
             $methodsData = $this->shippingPriceProvider->getApplicableMethodsWithTypesData($shippingContext);
         }
-        if (0 !== count($rules) && 0 !== count($methodsData)) {
-            $result = true;
-            /** @var ShippingRule $rule */
-            foreach ($rules as $rule) {
-                foreach ($rule->getMethodConfigs() as $config) {
-                    $method = $this->shippingMethodRegistry->getShippingMethod($config->getMethod());
-                    if (null === $method) {
-                        $result = false;
-                    }
-                }
-            }
-        }
 
-        return $result;
+        return count($methodsData) !== 0;
     }
 
     /**

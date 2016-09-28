@@ -615,11 +615,11 @@ workflows:
                         service: oro_checkout.factory.shipping_context_provider_factory
                         method: create
                         method_parameters: [$checkout]
-                        attribute: $.result.shippingRuleContext
+                        attribute: $.result.shippingContext
                     - '@call_service_method':
                         service: oro_shipping.shipping_price.provider
                         method: getPrice
-                        method_parameters: [$.result.shippingRuleContext, $shipping_method, $shipping_method_type]
+                        method_parameters: [$.result.shippingContext, $shipping_method, $shipping_method_type]
                         attribute: $checkout.shippingCost
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout

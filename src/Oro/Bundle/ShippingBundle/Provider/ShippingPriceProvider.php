@@ -62,18 +62,18 @@ class ShippingPriceProvider
                     ];
                 }
 
-                $result[$methodConfig->getMethod()]['types'] += $this->getMethodTypesConfigs($context, $methodConfig);
+                // we don't use array_merge here, because some types can have numerical identifiers
+                foreach ($this->getMethodTypesConfigs($context, $methodConfig) as $typeIdentifier => $type) {
+                    if (!array_key_exists($typeIdentifier, $result[$methodConfig->getMethod()]['types'])) {
+                        $result[$methodConfig->getMethod()]['types'][$typeIdentifier] = $type;
+                    }
+                }
             }
         }
 
-        foreach ($result as $method => &$options) {
-            if (0 === count($options['types'])) {
-                unset($result[$method]);
-            }
-        }
-        unset($options);
-
-        return $result;
+        return array_filter($result, function ($options) {
+            return 0 !== count($options['types']);
+        });
     }
 
     /**
@@ -117,7 +117,7 @@ class ShippingPriceProvider
      * @param ShippingContextInterface $context
      * @return ShippingRule[]|array
      */
-    public function getApplicableShippingRules(ShippingContextInterface $context)
+    protected function getApplicableShippingRules(ShippingContextInterface $context)
     {
         $applicableRules = [];
         if ($context) {
@@ -212,9 +212,6 @@ class ShippingPriceProvider
      */
     protected function getSortedShippingRules(ShippingContextInterface $context)
     {
-        /** @var AbstractAddress $shippingAddress */
-        $shippingAddress = $context->getShippingAddress();
-
         /** @var ShippingRuleRepository $repository */
         $repository = $this->doctrineHelper
             ->getEntityManagerForClass('OroShippingBundle:ShippingRule')
@@ -222,7 +219,7 @@ class ShippingPriceProvider
 
         return $repository->getEnabledOrderedRulesByCurrencyAndCountry(
             $context->getCurrency(),
-            $shippingAddress->getCountry()
+            $context->getShippingAddress()->getCountryIso2()
         );
     }
 
@@ -314,7 +311,7 @@ class ShippingPriceProvider
      * @param ShippingRuleMethodConfig $methodConfig
      * @return \Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig[]|Collection
      */
-    public function getEnabledTypeConfigs($methodConfig)
+    protected function getEnabledTypeConfigs($methodConfig)
     {
         return $methodConfig->getTypeConfigs()->filter(function (ShippingRuleMethodTypeConfig $typeConfig) {
             return $typeConfig->isEnabled();

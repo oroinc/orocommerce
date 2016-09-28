@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
@@ -44,7 +43,7 @@ class ShippingRuleRepositoryTest extends WebTestCase
         $expectedShippingRule = $expectedShippingRules[0];
         $shippingRules = $this->repository->getEnabledOrderedRulesByCurrencyAndCountry(
             $currency,
-            $this->findCountry($country)
+            $country
         );
 
         static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getName()));
@@ -108,16 +107,5 @@ class ShippingRuleRepositoryTest extends WebTestCase
         return array_map(function ($ruleReference) {
             return $this->getReference($ruleReference);
         }, $rules);
-    }
-
-    /**
-     * @param string $isoCode
-     * @return Country
-     */
-    protected function findCountry($isoCode)
-    {
-        return static::getContainer()->get('doctrine')
-            ->getManagerForClass('OroAddressBundle:Country')
-            ->find('OroAddressBundle:Country', $isoCode);
     }
 }

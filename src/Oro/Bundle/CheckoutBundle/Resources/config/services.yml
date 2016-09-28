@@ -338,12 +338,6 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_checkout.entity.checkout.class%', event: preRemove }
 
-    oro_checkout.shipping_cost.calculator:
-        class: 'Oro\Bundle\CheckoutBundle\Provider\ShippingCostCalculationProvider'
-        arguments:
-          - '@oro_shipping.shipping_method.registry'
-          - '@oro_checkout.factory.shipping_context_provider_factory'
-
     oro_checkout.condition.has_applicable_shipping_methods:
         class: 'Oro\Bundle\CheckoutBundle\Condition\HasApplicableShippingMethods'
         arguments:

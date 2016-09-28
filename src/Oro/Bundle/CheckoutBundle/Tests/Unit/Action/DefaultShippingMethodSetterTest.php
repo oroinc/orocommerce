@@ -2,15 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Action;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -56,7 +52,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
         $this->contextProviderFactory->expects($this->never())
             ->method('create');
         $this->priceProvider->expects($this->never())
-            ->method('getApplicableShippingRules');
+            ->method('getApplicableMethodsWithTypesData');
         $this->priceProvider->expects($this->never())
             ->method('getPrice');
         $this->setter->setDefaultShippingMethod($checkout);
@@ -71,7 +67,7 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
             ->with($checkout)
             ->willReturn($context);
         $this->priceProvider->expects($this->once())
-            ->method('getApplicableShippingRules')
+            ->method('getApplicableMethodsWithTypesData')
             ->with($context)
             ->willReturn([]);
         $this->priceProvider->expects($this->never())
@@ -92,30 +88,23 @@ class DefaultShippingMethodSetterTest extends \PHPUnit_Framework_TestCase
         $method = 'custom_method';
         $methodType = 'custom_method_type';
 
-        $config = $this->getEntity(ShippingRuleMethodConfig::class, [
-            'method' => $method,
-            'typeConfigs' => new ArrayCollection(
-                [
-                    (new ShippingRuleMethodTypeConfig())
-                        ->setType($methodType)
-                ]
-            ),
-        ]);
-        $rule = $this->getEntity(ShippingRule::class, [
-            'methodConfigs' => new ArrayCollection([$config])
-        ]);
-
-        $this->priceProvider->expects($this->once())
-            ->method('getApplicableShippingRules')
-            ->with($context)
-            ->willReturn([$rule]);
         $price = Price::create(10, 'USD');
         $this->priceProvider->expects($this->once())
-            ->method('getPrice')
-            ->with($context, $method, $methodType)
-            ->willReturn($price);
-        $this->setter->setDefaultShippingMethod($checkout);
+            ->method('getApplicableMethodsWithTypesData')
+            ->with($context)
+            ->willReturn([
+                [
+                    'identifier' => $method,
+                    'types' => [
+                        [
+                            'identifier' => $methodType,
+                            'price' => $price,
+                        ]
+                    ],
+                ]
+            ]);
 
+        $this->setter->setDefaultShippingMethod($checkout);
         $this->assertEquals($method, $checkout->getShippingMethod());
         $this->assertEquals($methodType, $checkout->getShippingMethodType());
         $this->assertEquals($methodType, $checkout->getShippingMethodType());

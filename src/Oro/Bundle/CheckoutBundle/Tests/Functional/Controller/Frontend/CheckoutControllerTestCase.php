@@ -11,9 +11,6 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
@@ -173,19 +170,17 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     }
 
     /**
+     * @param Crawler $crawler
      * @param array $values
      * @return array
      */
-    protected function setShippingRuleFormData(array $values)
+    protected function setShippingFormData(Crawler $crawler, array $values)
     {
-        /** @var ShippingRule $shippingRule */
-        $shippingRule = $this->getReference('shipping_rule.8');
-        /** @var ShippingRuleMethodConfig $shippingRuleConfig */
-        $shippingRuleConfig = $shippingRule->getMethodConfigs()->first();
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method'] = $shippingRuleConfig->getMethod();
-        /** @var ShippingRuleMethodTypeConfig $type */
-        $type = $shippingRuleConfig->getTypeConfigs()->first();
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = $type->getType();
+        $input = $crawler->filter('input[name="shippingMethodType"]');
+        $method = $input->extract('data-shipping-method');
+        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method'] = reset($method);
+        $type = $input->extract('value');
+        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = reset($type);
         $values['_widgetContainer'] = 'ajax';
         $values['_wid'] = 'ajax_checkout';
 
