@@ -49,14 +49,18 @@ class BinaryNodeConverter implements QueryExpressionConverterInterface, Converte
     public function convert(NodeInterface $node, Expr $expr, array &$params, array $aliasMapping = [])
     {
         if ($node instanceof BinaryNode) {
+            $left = $this->converter->convert($node->getLeft(), $expr, $params, $aliasMapping);
+            $right = $this->converter->convert($node->getRight(), $expr, $params, $aliasMapping);
+
+            if ($node->getOperation() === '%') {
+                return new Expr\Func('MOD', [$left, $right]);
+            }
+
             if (!array_key_exists($node->getOperation(), self::$exprMap)) {
                 throw new \InvalidArgumentException(sprintf('Unsupported operation "%s"', $node->getOperation()));
             }
 
             $method = self::$exprMap[$node->getOperation()];
-            $left = $this->converter->convert($node->getLeft(), $expr, $params, $aliasMapping);
-            $right = $this->converter->convert($node->getRight(), $expr, $params, $aliasMapping);
-
             if ($method === 'in' && !$node->getRight() instanceof ValueNode) {
                 $method = 'isMemberOf';
             }

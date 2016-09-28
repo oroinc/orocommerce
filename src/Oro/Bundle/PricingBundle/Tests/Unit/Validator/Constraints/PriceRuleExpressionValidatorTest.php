@@ -114,6 +114,21 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $this->expressionValidator->validate($value, $constraint);
     }
 
+    public function testValidateDivisionByZero()
+    {
+        $value = 'product.msrp.value/0';
+
+        $this->fieldsProvider->method('getFields')->willReturn(['value']);
+
+        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->getMock(ExecutionContextInterface::class);
+        $context->expects($this->once())
+            ->method('addViolation')
+            ->with('oro.pricing.validators.division_by_zero.message');
+
+        $this->doTestValidation($value, $context);
+    }
+
     /**
      * @param string $value
      * @param ExecutionContextInterface $context

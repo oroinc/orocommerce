@@ -88,12 +88,22 @@ class ExpressionParser
      */
     public function getUsedLexemes($expression, $withResolvedContainer = false)
     {
-        $usedLexemes = [];
         $rootNode = $this->parse($expression);
         if (!$rootNode) {
-            return $usedLexemes;
+            return [];
         }
 
+        return $this->getUsedLexemesByNode($rootNode, $withResolvedContainer);
+    }
+
+    /**
+     * @param NodeInterface $rootNode
+     * @param bool $withResolvedContainer
+     * @return array
+     */
+    public function getUsedLexemesByNode(NodeInterface $rootNode, $withResolvedContainer = false)
+    {
+        $usedLexemes = [];
         foreach ($rootNode->getNodes() as $node) {
             if ($node instanceof NameNode) {
                 $this->updateUsedLexemesByNameNode($node, $withResolvedContainer, $usedLexemes);
@@ -102,7 +112,7 @@ class ExpressionParser
                 $this->updateUsedLexemesByRelationNode($node, $withResolvedContainer, $usedLexemes);
             }
         }
-        
+
         return $usedLexemes;
     }
 

@@ -74,6 +74,7 @@ class BinaryNodeConverterTest extends \PHPUnit_Framework_TestCase
             ['!=', 'a.b <> c.d'],
             ['in', 'a.b MEMBER OF c.d'],
             ['not in', 'NOT(a.b MEMBER OF c.d)'],
+            ['%', 'MOD(a.b, c.d)']
         ];
     }
 
@@ -121,9 +122,6 @@ class BinaryNodeConverterTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $converter = new BinaryNodeConverter();
         $converter->setConverter($mainConverter);
-
-        $mainConverter->expects($this->never())
-            ->method('convert');
 
         $node = new BinaryNode($left, $right, 'unknown');
         $converter->convert($node, $expr, $params, $aliasMapping);

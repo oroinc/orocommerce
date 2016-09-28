@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
+use Oro\Bundle\PricingBundle\Expression\BinaryNode;
 use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
+use Oro\Bundle\PricingBundle\Expression\NodeInterface;
 use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
+use Oro\Bundle\PricingBundle\Expression\ValueNode;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -62,29 +65,11 @@ class PriceRuleExpressionValidator extends ConstraintValidator
             return;
         }
         try {
-            $unsupportedFields = [];
             $value = $this->preprocessor->process($value);
-            $lexemesInfo = $this->parser->getUsedLexemes($value);
-            foreach ($lexemesInfo as $class => $fields) {
-                try {
-                    $supportedFields = $this->getSupportedFields($constraint, $class);
-                    $unsupportedFields = array_merge($unsupportedFields, array_diff($fields, $supportedFields));
-                } catch (\InvalidArgumentException $ex) {
-                    if (strpos($class, '::') !== false) {
-                        $relationInfo = explode('::', $class);
-                        $unsupportedFields[] = $relationInfo[1];
-                    }
-                }
-            }
-            if (count($unsupportedFields) > 0) {
-                list($message, $parameters) = $this->getErrorData($constraint);
+            $rootNode = $this->parser->parse($value);
 
-                foreach ($unsupportedFields as $invalidField) {
-                    $this->context->addViolation($message, array_merge($parameters, [
-                        '%fieldName%' => $invalidField
-                    ]));
-                }
-            }
+            $this->validateSupportedFields($rootNode, $constraint);
+            $this->validateDivisionByZero($rootNode, $constraint);
         } catch (SyntaxError $ex) {
             $this->context->addViolation($ex->getMessage());
         }
@@ -94,7 +79,7 @@ class PriceRuleExpressionValidator extends ConstraintValidator
      * @param PriceRuleExpression $constraint
      * @return array
      */
-    protected function getErrorData(Constraint $constraint)
+    protected function getErrorData(PriceRuleExpression $constraint)
     {
         if ($constraint->fieldLabel === null) {
             $message = $constraint->message;
@@ -127,5 +112,51 @@ class PriceRuleExpressionValidator extends ConstraintValidator
         $supportedFields[] = null;
 
         return $supportedFields;
+    }
+
+    /**
+     * @param NodeInterface $rootNode
+     * @param PriceRuleExpression $constraint
+     */
+    protected function validateSupportedFields(NodeInterface $rootNode, PriceRuleExpression $constraint)
+    {
+        $unsupportedFields = [];
+        $lexemesInfo = $this->parser->getUsedLexemesByNode($rootNode);
+        foreach ($lexemesInfo as $class => $fields) {
+            try {
+                $supportedFields = $this->getSupportedFields($constraint, $class);
+                $unsupportedFields = array_merge($unsupportedFields, array_diff($fields, $supportedFields));
+            } catch (\InvalidArgumentException $ex) {
+                if (strpos($class, '::') !== false) {
+                    $relationInfo = explode('::', $class);
+                    $unsupportedFields[] = $relationInfo[1];
+                }
+            }
+        }
+        if (count($unsupportedFields) > 0) {
+            list($message, $parameters) = $this->getErrorData($constraint);
+
+            foreach ($unsupportedFields as $invalidField) {
+                $this->context->addViolation($message, array_merge($parameters, [
+                    '%fieldName%' => $invalidField
+                ]));
+            }
+        }
+    }
+
+    /**
+     * @param NodeInterface $rootNode
+     * @param PriceRuleExpression $constraint
+     */
+    protected function validateDivisionByZero(NodeInterface $rootNode, PriceRuleExpression $constraint)
+    {
+        foreach ($rootNode->getNodes() as $node) {
+            if ($node instanceof BinaryNode) {
+                $right = $node->getRight();
+                if ($node->getOperation() === '/' && $right instanceof ValueNode && $right->getValue() == 0.0) {
+                    $this->context->addViolation($constraint->divisionByZeroMessage);
+                }
+            }
+        }
     }
 }

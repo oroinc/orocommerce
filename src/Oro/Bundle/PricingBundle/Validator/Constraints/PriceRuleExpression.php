@@ -9,12 +9,17 @@ class PriceRuleExpression extends Constraint
     /**
      * @var string
      */
-    public $message = 'oro.pricing.validators.field_are_not_allowed.message';
+    public $message = 'oro.pricing.validators.field_is_not_allowed.message';
 
     /**
      * @var string
      */
-    public $messageAs = 'oro.pricing.validators.field_are_not_allowed_as.message';
+    public $messageAs = 'oro.pricing.validators.field_is_not_allowed_as.message';
+
+    /**
+     * @var string
+     */
+    public $divisionByZeroMessage = 'oro.pricing.validators.division_by_zero.message';
 
     /**
      * @var bool
