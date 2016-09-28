@@ -27,7 +27,7 @@ class PriceAttributeProductPriceEntityListenerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient();
         $this->loadFixtures([
             LoadPriceAttributeProductPrices::class,
             LoadPriceRuleLexemes::class

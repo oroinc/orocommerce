@@ -23,7 +23,7 @@ class AccountGroupProductVisibilityRepositoryTest extends AbstractProductVisibil
     protected function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->registry = $this->getContainer()->get('doctrine');
         $this->repository = $this->registry->getRepository(
             'OroAccountBundle:Visibility\AccountGroupProductVisibility'

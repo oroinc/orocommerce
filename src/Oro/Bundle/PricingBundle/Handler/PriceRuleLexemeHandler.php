@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Handler;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
@@ -54,7 +55,9 @@ class PriceRuleLexemeHandler
 
         // Remove all lexemes for priceList if price list exist
         if ($priceList->getId()) {
-            $em->getRepository(PriceRuleLexeme::class)->deleteByPriceList($priceList);
+            /** @var PriceRuleLexemeRepository $repository */
+            $repository = $em->getRepository(PriceRuleLexeme::class);
+            $repository->deleteByPriceList($priceList);
         }
 
         //Anew add lexemes for priceList

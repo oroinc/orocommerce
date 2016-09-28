@@ -22,7 +22,7 @@ class PriceListCurrencyEntityListenerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient();
         $this->loadFixtures([
             LoadPriceRules::class
         ]);
