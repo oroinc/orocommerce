@@ -33,7 +33,6 @@ class UpdateMaterializedPathQuery extends ParametrizedMigrationQuery
     /**
      * @param LoggerInterface $logger
      * @param bool $dryRun
-     * @throws \Doctrine\DBAL\ConnectionException
      */
     protected function doExecute(LoggerInterface $logger, $dryRun = false)
     {
