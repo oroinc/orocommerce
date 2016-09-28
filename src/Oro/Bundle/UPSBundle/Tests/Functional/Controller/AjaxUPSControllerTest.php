@@ -4,6 +4,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
+use Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures\LoadShippingServices;
 
 /**
  * @dbIsolation
@@ -13,7 +14,7 @@ class AjaxUPSControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], static::generateBasicAuthHeader());
-        $this->loadFixtures(['Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures\LoadShippingServices']);
+        $this->loadFixtures([LoadShippingServices::class]);
     }
 
     /**
@@ -47,21 +48,21 @@ class AjaxUPSControllerTest extends WebTestCase
     {
         return [
             [
-                'country' => 'UU',
+                'country' => 'ZX',
                 'expectedServices' => [
                     'ups.shipping_service.1',
                     'ups.shipping_service.2',
                 ]
             ],
             [
-                'country' => 'CC',
+                'country' => 'ZY',
                 'expectedServices' => [
                     'ups.shipping_service.3',
                     'ups.shipping_service.4',
                 ]
             ],
             [
-                'country' => 'LL',
+                'country' => 'ZZ',
                 'expectedServices' => [
                     'ups.shipping_service.5',
                     'ups.shipping_service.6',

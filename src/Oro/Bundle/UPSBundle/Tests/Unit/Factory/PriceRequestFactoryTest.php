@@ -101,7 +101,7 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
                     ProductUnit::class,
                     ['code' => 'test1']
                 ),
-                'dimensions' => Dimensions::create(7, 7, 7, new LengthUnit('inch')),
+                'dimensions' => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
                 'weight' => Weight::create($productWeight, $this->getEntity(
                     WeightUnit::class,
                     ['code' => 'lbs']
@@ -132,7 +132,7 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
                     ProductUnit::class,
                     ['code' => 'test1']
                 ),
-                'dimensions' => Dimensions::create(7, 7, 7, new LengthUnit('inch')),
+                'dimensions' => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
                 'weight' => Weight::create($productWeight, $this->getEntity(
                     WeightUnit::class,
                     ['code' => 'kg']
@@ -216,7 +216,7 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
                     ProductUnit::class,
                     ['code' => 'test1']
                 ),
-                'dimensions' => Dimensions::create(7, 8, 9, new LengthUnit('inch')),
+                'dimensions' => Dimensions::create(7, 8, 9, (new LengthUnit())->setCode('inch')),
                 'weight' => Weight::create(2, $this->getEntity(
                     WeightUnit::class,
                     ['code' => 'kg']
@@ -330,6 +330,7 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
             ->setDimensionLength((string)$length)
             ->setDimensionWidth((string)$width)
             ->setDimensionHeight((string)$height)
+            ->setDimensionCode('IN')
             ->setWeight((string)$weight)
             ->setWeightCode($unitOfWeight);
 

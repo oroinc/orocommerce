@@ -158,12 +158,14 @@ class PriceRequestFactory
 
             $productDimensions = $productShippingOptions->getDimensions();
 
-            $dimensionUnit = $productDimensions->getUnit()->getCode();
-            $lineItemWeight = ($productShippingOptions->getWeight() instanceof Weight) ?
-                $productShippingOptions->getWeight()->getValue() :
-                0;
-            $weightUnit = $productShippingOptions->getWeight()->getUnit()->getCode();
-            if (((int)$lineItemWeight === 0) || ($dimensionUnit === '') || ($weightUnit === '')) {
+            $dimensionUnit = $productDimensions->getUnit() ? $productDimensions->getUnit()->getCode() : null;
+            $lineItemWeight = null;
+            $weightUnit = null;
+            if ($productShippingOptions->getWeight() instanceof Weight) {
+                $lineItemWeight = $productShippingOptions->getWeight()->getValue();
+                $weightUnit = $productShippingOptions->getWeight()->getUnit()->getCode();
+            }
+            if (!$lineItemWeight || !$dimensionUnit || !$weightUnit) {
                 return [];
             }
 
