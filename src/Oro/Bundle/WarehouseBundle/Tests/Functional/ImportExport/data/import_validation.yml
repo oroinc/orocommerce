@@ -5,11 +5,6 @@ invalid_product_inventory_statuses:
         - "Error in row #2. The specified Inventory Status has not been found in the system"
         - "Error in row #3. Multiple products found having different Inventory Status"
 
-invalid_warehouses:
-    fileName: invalid_warehouses.csv
-    contextErrors:
-        - "Error in row #1. The Warehouse field is required when Quantity is specified and the system contains multiple warehouses"
-
 invalid_product_units:
     fileName: invalid_product_units.csv
     contextErrors:
