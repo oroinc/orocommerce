@@ -1,23 +1,24 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Layout\Block\Type;
+namespace Oro\Bundle\CatalogBundle\Tests\Layout\Block\Type;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\ProductBundle\Layout\Block\Type\BreadcrumbsNavigationBlockType;
+use Oro\Bundle\CatalogBundle\Layout\Block\Type\CategoryBreadcrumbsType;
+use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
 use Oro\Component\Layout\Block\Type\Options;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
 
-class BreadcrumbsNavigationBlockTypeTest extends \PHPUnit_Framework_TestCase
+class CategoryBreadcrumbsTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var BreadcrumbsNavigationBlockType
+     * @var CategoryBreadcrumbsType
      */
     private $blockType;
 
     public function setUp()
     {
-        $this->blockType = new BreadcrumbsNavigationBlockType();
+        $this->blockType = new CategoryBreadcrumbsType();
     }
 
     public function testBuildView()
@@ -58,8 +59,33 @@ class BreadcrumbsNavigationBlockTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertSame([$parentParentCategory, $parentCategory], $blockView->vars['parentCategories']);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function testFinishViewNoCategory()
+    {
+        /** @var BlockView $blockView */
+        $blockView = $this->getMock(BlockView::class);
+        $blockView->vars['currentCategory'] = null;
+        $block = $this->getMock(BlockInterface::class);
+
+        $this->blockType->finishView($blockView, $block);
+
+        $this->assertSame([], $blockView->vars['parentCategories']);
+    }
+
     public function testGetName()
     {
-        $this->assertEquals('product_search_navigation', $this->blockType->getName());
+        $this->assertEquals(CategoryBreadcrumbsType::NAME, $this->blockType->getName());
+    }
+
+    public function testConfigureOptions()
+    {
+        $optionsResolver = $this->getMock(OptionsResolver::class);
+        $optionsResolver->expects($this->once())
+            ->method('setDefaults')
+            ->with(['currentCategory' => null]);
+
+        $this->blockType->configureOptions($optionsResolver);
     }
 }

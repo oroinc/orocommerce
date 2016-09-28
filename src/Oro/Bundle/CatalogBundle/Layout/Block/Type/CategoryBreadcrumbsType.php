@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Layout\Block\Type;
+namespace Oro\Bundle\CatalogBundle\Layout\Block\Type;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
@@ -10,8 +10,10 @@ use Oro\Component\Layout\BlockView;
 use Oro\Component\Layout\Block\Type\Options;
 use Oro\Component\Layout\Util\BlockUtils;
 
-class BreadcrumbsNavigationBlockType extends AbstractType
+class CategoryBreadcrumbsType extends AbstractType
 {
+    const NAME = 'category_breadcrumbs';
+
     /**
      * {@inheritdoc}
      */
@@ -27,7 +29,11 @@ class BreadcrumbsNavigationBlockType extends AbstractType
     {
         $currentCategory = $view->vars['currentCategory'];
 
-        $view->vars['parentCategories'] = $this->getParentCategories($currentCategory);
+        if ($currentCategory) {
+            $view->vars['parentCategories'] = $this->getParentCategories($currentCategory);
+        } else {
+            $view->vars['parentCategories'] = [];
+        }
     }
 
     /**
@@ -43,7 +49,7 @@ class BreadcrumbsNavigationBlockType extends AbstractType
      */
     public function getName()
     {
-        return 'product_search_navigation';
+        return self::NAME;
     }
 
     /**
