@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\AccountBundle\Visibility\Cache\Product;
 
-use Doctrine\Common\Util\ClassUtils;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 abstract class AbstractProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
@@ -31,12 +29,12 @@ abstract class AbstractProductResolvedCacheBuilder extends AbstractResolvedCache
      */
     protected function triggerProductReindexation(Product $product, Website $website)
     {
-        $event = new ReindexationTriggerEvent(
-            ClassUtils::getClass($product),
+        $event = new ReindexationRequestEvent(
+            Product::class,
             $website->getId(),
             [$product->getId()],
             false
         );
-        $this->eventDispatcher->dispatch(ReindexationTriggerEvent::EVENT_NAME, $event);
+        $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
     }
 }
