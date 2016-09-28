@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\VisitorReplacePlaceholder;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
-use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
-use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolverInterface;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderVisitor;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
+use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
+use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolverInterface;
 
 abstract class AbstractIndexer implements IndexerInterface
 {
@@ -29,8 +29,8 @@ abstract class AbstractIndexer implements IndexerInterface
     /** @var IndexDataProvider */
     protected $indexDataProvider;
 
-    /** @var VisitorReplacePlaceholder */
-    protected $visitorReplacePlaceholder;
+    /** @var PlaceholderVisitor */
+    protected $placeholderVisitor;
 
     /** @var int */
     private $batchSize = 100;
@@ -40,20 +40,20 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param WebsiteSearchMappingProvider $mappingProvider
      * @param EntityDependenciesResolverInterface $entityDependenciesResolver
      * @param IndexDataProvider $indexDataProvider
-     * @param VisitorReplacePlaceholder $visitorReplacePlaceholder
+     * @param PlaceholderVisitor $placeholderVisitor
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         WebsiteSearchMappingProvider $mappingProvider,
         EntityDependenciesResolverInterface $entityDependenciesResolver,
         IndexDataProvider $indexDataProvider,
-        VisitorReplacePlaceholder $visitorReplacePlaceholder
+        PlaceholderVisitor $placeholderVisitor
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->mappingProvider = $mappingProvider;
         $this->entityDependenciesResolver = $entityDependenciesResolver;
         $this->indexDataProvider = $indexDataProvider;
-        $this->visitorReplacePlaceholder = $visitorReplacePlaceholder;
+        $this->placeholderVisitor = $placeholderVisitor;
     }
 
     /**
@@ -124,8 +124,8 @@ abstract class AbstractIndexer implements IndexerInterface
     {
         $entityClasses = (array)$class;
         if ($entityClasses) {
-            foreach ($entityClasses as $class) {
-                $this->ensureEntityClassIsSupported($class);
+            foreach ($entityClasses as $entityClass) {
+                $this->ensureEntityClassIsSupported($entityClass);
             }
         } else {
             $entityClasses = $this->mappingProvider->getEntityClasses();
@@ -158,11 +158,7 @@ abstract class AbstractIndexer implements IndexerInterface
             $websiteContext = $this->indexDataProvider->collectContextForWebsite($websiteId, $context);
 
             foreach ($entitiesByClass as $entityClass => $entities) {
-                $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
-                $currentAlias = $this->visitorReplacePlaceholder->replace(
-                    $entityAlias,
-                    [WebsiteIdPlaceholder::NAME => $websiteContext[self::CONTEXT_WEBSITE_ID_KEY]]
-                );
+                $currentAlias = $this->getEntityAlias($entityClass, $websiteContext);
 
                 $ids = [];
                 foreach ($entities as $entity) {
@@ -200,10 +196,7 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     protected function reindexEntityClass($entityClass, array $context)
     {
-        $currentAlias = $this->visitorReplacePlaceholder->replace(
-            $this->mappingProvider->getEntityAlias($entityClass),
-            [WebsiteIdPlaceholder::NAME => $context[self::CONTEXT_WEBSITE_ID_KEY]]
-        );
+        $currentAlias = $this->getEntityAlias($entityClass, $context);
         $temporaryAlias = $currentAlias . '_' . uniqid('website_search', true);
 
         $entityRepository = $this->doctrineHelper->getEntityRepositoryForClass($entityClass);
@@ -306,5 +299,23 @@ abstract class AbstractIndexer implements IndexerInterface
         $queryBuilder->setParameter('entityIds', $entityIds);
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @param string $entityClass
+     * @param array $context
+     * @return string
+     */
+    protected function getEntityAlias($entityClass, array $context)
+    {
+        $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
+        if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
+            $entityAlias = $this->placeholderVisitor->replace(
+                $entityAlias,
+                [WebsiteIdPlaceholder::NAME => $context[self::CONTEXT_WEBSITE_ID_KEY]]
+            );
+        }
+
+        return $entityAlias;
     }
 }

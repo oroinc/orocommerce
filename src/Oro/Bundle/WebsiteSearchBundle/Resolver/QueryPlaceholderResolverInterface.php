@@ -8,7 +8,6 @@ interface QueryPlaceholderResolverInterface
 {
     /**
      * @param Query $query
-     * @return Query
      */
     public function replace(Query $query);
 }

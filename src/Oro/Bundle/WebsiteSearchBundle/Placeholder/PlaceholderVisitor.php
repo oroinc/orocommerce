@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
-class VisitorReplacePlaceholder
+class PlaceholderVisitor
 {
     /**
      * @var WebsiteSearchPlaceholderRegistry

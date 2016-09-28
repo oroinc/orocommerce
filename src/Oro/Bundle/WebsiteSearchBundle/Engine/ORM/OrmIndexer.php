@@ -1,14 +1,15 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Engine;
+namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM;
 
 use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
-use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
-use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\DriverAwareTrait;
 
 class OrmIndexer extends AbstractIndexer
 {
+    use DriverAwareTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -32,18 +33,10 @@ class OrmIndexer extends AbstractIndexer
         foreach ($sortedEntitiesData as $entityClass => $entityIds) {
             $entityAlias = $this->getEntityAlias($entityClass, $context);
 
-            $this->getItemRepository()->removeEntities($entityIds, $entityClass, $entityAlias);
+            $this->getDriver()->removeEntities($entityIds, $entityClass, $entityAlias);
         }
 
         return true;
-    }
-
-    /**
-     * @return WebsiteSearchIndexRepository
-     */
-    private function getItemRepository()
-    {
-        return $this->doctrineHelper->getEntityRepository(Item::class);
     }
 
     /**
@@ -54,23 +47,21 @@ class OrmIndexer extends AbstractIndexer
         array $entitiesData,
         $entityAliasTemp
     ) {
-        $em = $this->doctrineHelper->getEntityManager(Item::class);
         $items = [];
         foreach ($entitiesData as $entityId => $indexData) {
-            $item = new Item();
+            $item = $this->getDriver()->createItem();
             $item->setEntity($entityClass)
                 ->setRecordId($entityId)
                 ->setAlias($entityAliasTemp)
                 ->setTitle($this->getEntityTitle($indexData))
                 ->setChanged(false)
                 ->saveItemData($indexData);
-            $em->persist($item);
             $items[] = $item;
         }
-        $em->flush($items);
-        $em->clear(Item::class);
 
-        return count($entitiesData);
+        $this->getDriver()->saveItems($items);
+
+        return count($items);
     }
 
     /**
@@ -88,29 +79,8 @@ class OrmIndexer extends AbstractIndexer
      */
     protected function renameIndex($temporaryAlias, $currentAlias)
     {
-        /** @var WebsiteSearchIndexRepository $itemRepository */
-        $itemRepository = $this->doctrineHelper->getEntityRepository(Item::class);
-        $itemRepository->removeIndexByAlias($currentAlias);
-        $itemRepository->renameIndexAlias($temporaryAlias, $currentAlias);
-    }
-
-    /**
-     * @param string $entityClass
-     * @param array $context
-     * @return string
-     */
-    private function getEntityAlias($entityClass, array $context)
-    {
-        $entityAlias = null;
-        if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
-            $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
-            $entityAlias = $this->visitorReplacePlaceholder->replace(
-                $entityAlias,
-                [WebsiteIdPlaceholder::NAME => $context[self::CONTEXT_WEBSITE_ID_KEY]]
-            );
-        }
-
-        return $entityAlias;
+        $this->getDriver()->removeIndexByAlias($currentAlias);
+        $this->getDriver()->renameIndexAlias($temporaryAlias, $currentAlias);
     }
 
     /**
@@ -118,6 +88,6 @@ class OrmIndexer extends AbstractIndexer
      */
     public function resetIndex($class = null)
     {
-        $this->getItemRepository()->removeIndexByClass($class);
+        $this->getDriver()->removeIndexByClass($class);
     }
 }

@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Entity\Repository;
 
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Bundle\SearchBundle\Entity\Repository\SearchIndexRepository;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 
-class WebsiteSearchIndexRepository extends SearchIndexRepository
+class ItemRepository extends EntityRepository
 {
     /**
      * @param string $currentAlias

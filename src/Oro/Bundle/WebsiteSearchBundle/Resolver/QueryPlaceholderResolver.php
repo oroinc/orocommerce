@@ -32,8 +32,6 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
             $this->replaceInFrom($query, $placeholder);
             $this->replaceInCriteria($query, $placeholder);
         }
-
-        return $query;
     }
 
     /**

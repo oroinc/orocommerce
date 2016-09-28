@@ -39,12 +39,6 @@ class WebsiteSearchProductIndexerListener
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
-        $entityClass = $event->getEntityClass();
-
-        if (!is_a($entityClass, Product::class, true)) {
-            return;
-        }
-
         /** @var Product[] $products */
         $products = $event->getEntities();
 
@@ -64,20 +58,27 @@ class WebsiteSearchProductIndexerListener
 
             // Localized fields
             foreach ($localizations as $localization) {
-                $localizedFields = [
-                    'title' => $product->getName($localization),
-                    'description' => $product->getDescription($localization),
-                    'short_desc' => $product->getShortDescription($localization)
-                ];
+                $placeholders = [LocalizationIdPlaceholder::NAME => $localization->getId()];
+                $event->addPlaceholderField(
+                    $product->getId(),
+                    'title',
+                    $product->getName($localization),
+                    $placeholders
+                );
 
-                foreach ($localizedFields as $fieldName => $fieldValue) {
-                    $event->addPlaceholderField(
-                        $product->getId(),
-                        $fieldName,
-                        $fieldValue,
-                        [LocalizationIdPlaceholder::NAME => $localization->getId()]
-                    );
-                }
+                $event->addPlaceholderField(
+                    $product->getId(),
+                    'description',
+                    $product->getDescription($localization),
+                    $placeholders
+                );
+
+                $event->addPlaceholderField(
+                    $product->getId(),
+                    'short_desc',
+                    $product->getShortDescription($localization),
+                    $placeholders
+                );
             }
         }
     }

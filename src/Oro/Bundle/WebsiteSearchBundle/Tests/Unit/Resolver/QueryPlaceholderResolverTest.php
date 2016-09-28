@@ -68,16 +68,15 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturnOnConsecutiveCalls('oro_first_1', 'oro_second', 'oro_third_2');
 
-        $result = $this->placeholderResolver->replace($query);
+        $this->placeholderResolver->replace($query);
 
-        $this->assertInstanceOf(Query::class, $result);
         $this->assertEquals(
             [
                 'oro_first_1',
                 'oro_second',
                 'oro_third_2'
             ],
-            $result->getFrom()
+            $query->getFrom()
         );
     }
 
@@ -107,16 +106,15 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturnOnConsecutiveCalls('oro_first_1', 'oro_second', 'oro_third_NAME_ID');
 
-        $result = $this->placeholderResolver->replace($query);
+        $this->placeholderResolver->replace($query);
 
-        $this->assertInstanceOf(Query::class, $result);
         $this->assertEquals(
             [
                 'oro_first_1',
                 'oro_second',
                 'oro_third_NAME_ID'
             ],
-            $result->getFrom()
+            $query->getFrom()
         );
     }
 
@@ -136,14 +134,12 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
                 'NAME_ID' => $this->getPlaceholder('NAME_ID', '2')
             ]);
 
-        $result = $this->placeholderResolver->replace($query);
-
-        $this->assertInstanceOf(Query::class, $result);
+        $this->placeholderResolver->replace($query);
 
         $expectedExpr = new Comparison("field_name_2", "=", "value");
         $criteria->where($expectedExpr);
 
-        $this->assertEquals($criteria, $result->getCriteria());
+        $this->assertEquals($criteria, $query->getCriteria());
     }
 
     /**

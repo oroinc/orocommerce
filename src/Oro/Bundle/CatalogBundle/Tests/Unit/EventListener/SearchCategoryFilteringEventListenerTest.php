@@ -177,10 +177,12 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         $dataGrid->method('getDatasource')
             ->willReturn($datasource);
 
+        $dataGrid->method('getConfig')
+            ->willReturn($this->config);
+
         $datasource->method('getSearchQuery')
             ->willReturn($websiteSearchQuery);
 
-        $listener->setConfig($this->config);
         $listener->onBuildAfter($event);
     }
 
@@ -257,13 +259,15 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         $dataGrid->method('getDatasource')
             ->willReturn($datasource);
 
+        $dataGrid->method('getConfig')
+            ->willReturn($this->config);
+
         $websiteSearchQuery->method('getQuery')
             ->will($this->returnValue($query));
 
         $datasource->method('getSearchQuery')
             ->willReturn($websiteSearchQuery);
 
-        $listener->setConfig($this->config);
         $listener->onBuildAfter($event);
     }
 }
