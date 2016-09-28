@@ -38,7 +38,7 @@ class AccountProductVisibilityProvider
     /**
      * Returns fields to index with product.
      *
-     * @param array $products
+     * @param Product[] $products
      * @param int $websiteId
      * @return array
      */
@@ -66,7 +66,7 @@ class AccountProductVisibilityProvider
     }
 
     /**
-     * @param array $products
+     * @param Product[] $products
      * @param int $websiteId
      * @return array
      */
@@ -223,17 +223,20 @@ TERM;
     }
 
     /**
-     * @param array $products
+     * @param Product[] $products
      * @return QueryBuilder
      */
     private function createProductsQuery(array $products)
     {
+        foreach ($products as &$product) {
+            $product = $product->getId();
+        }
         $qb = $this->doctrineHelper->getEntityManagerForClass(Product::class)->createQueryBuilder();
 
         $qb
             ->select('product.id as productId')
             ->from(Product::class, 'product')
-            ->where($qb->expr()->in('product', $products))
+            ->where($qb->expr()->in('product.id', $products))
             ->addOrderBy('productId', Query::ORDER_ASC);
 
         return $qb;
