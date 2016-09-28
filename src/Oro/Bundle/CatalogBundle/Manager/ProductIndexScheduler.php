@@ -1,0 +1,49 @@
+<?php
+
+namespace Oro\Bundle\CatalogBundle\Manager;
+
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationTriggerEvent;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+/**
+ * Receives categories that has been changed and schedule
+ * reindex of products from this categories
+ */
+class ProductIndexScheduler
+{
+    /** @var DoctrineHelper */
+    private $doctrineHelper;
+
+    /** @var EventDispatcherInterface */
+    private $eventDispatcher;
+
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(DoctrineHelper $doctrineHelper, EventDispatcherInterface $eventDispatcher)
+    {
+        $this->doctrineHelper = $doctrineHelper;
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * @param Category[] $categories
+     * @param int $websiteId
+     */
+    public function scheduleProductsReindex($categories, $websiteId)
+    {
+        /** @var CategoryRepository $repository */
+        $repository = $this->doctrineHelper->getEntityRepository(Category::class);
+        $productIds = $repository->getProductIdsByCategories($categories);
+        if ($productIds) {
+            $event = new ReindexationTriggerEvent(Product::class, $websiteId, $productIds);
+            $this->eventDispatcher->dispatch(ReindexationTriggerEvent::EVENT_NAME, $event);
+        }
+    }
+}
