@@ -19,6 +19,15 @@ interface DriverInterface extends DatabaseDriverInterface
     public function search(Query $query);
 
     /**
+     * Get count of records without limit parameters in query
+     *
+     * @param \Oro\Bundle\SearchBundle\Query\Query $query
+     *
+     * @return integer
+     */
+    public function getRecordsCount(Query $query);
+
+    /**
      * @param EntityManagerInterface $entityManager
      */
     public function initialize(EntityManagerInterface $entityManager);

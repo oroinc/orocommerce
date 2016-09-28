@@ -13,7 +13,7 @@ class DriverDecorator implements DriverInterface
     private $doctrineHelper;
 
     /** @var DriverInterface[] */
-    private $drivers = [];
+    private $availableDrivers = [];
 
     /** @var DriverInterface */
     private $driver;
@@ -29,7 +29,7 @@ class DriverDecorator implements DriverInterface
     /** @param DriverInterface $driver */
     public function addDriver(DriverInterface $driver)
     {
-        $this->drivers[$driver->getName()] = $driver;
+        $this->availableDrivers[$driver->getName()] = $driver;
     }
 
     /**
@@ -40,7 +40,12 @@ class DriverDecorator implements DriverInterface
         if (!$this->driver) {
             $em = $this->doctrineHelper->getEntityManagerForClass(Item::class);
 
-            $this->driver = $this->drivers[$em->getConnection()->getDriver()->getName()];
+            $databasePlatform = $em->getConnection()->getDriver()->getName();
+            if (!array_key_exists($databasePlatform, $this->availableDrivers)) {
+                throw new \RuntimeException(sprintf('Missing driver for %s platform', $databasePlatform));
+            }
+
+            $this->driver = $this->availableDrivers[$databasePlatform];
             $this->driver->initialize($em);
         }
 
@@ -99,5 +104,11 @@ class DriverDecorator implements DriverInterface
     public function saveItems(array $items)
     {
         return $this->getDriver()->saveItems($items);
+    }
+
+    /** {@inheritdoc} */
+    public function getRecordsCount(Query $query)
+    {
+        return $this->getDriver()->getRecordsCount($query);
     }
 }

@@ -12,7 +12,7 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\ItemRepository;
 trait DriverTrait
 {
     /** @var EntityManagerInterface */
-    protected $entityManager;
+    private $entityManager;
 
     /** {@inheritdoc} */
     public function initialize(EntityManagerInterface $entityManager)
@@ -27,7 +27,7 @@ trait DriverTrait
      */
     protected function getRepository()
     {
-        return $this->entityManager->getRepository(Item::class);
+        return $this->getEntityManager()->getRepository(Item::class);
     }
 
     /**
@@ -80,11 +80,25 @@ trait DriverTrait
         array_walk(
             $items,
             function (Item $item) {
-                $this->entityManager->persist($item);
+                $this->getEntityManager()->persist($item);
             }
         );
 
-        $this->entityManager->flush($items);
-        $this->entityManager->clear(Item::class);
+        $this->getEntityManager()->flush($items);
+        $this->getEntityManager()->clear(Item::class);
+    }
+
+    /**
+     * @return EntityManagerInterface
+     */
+    protected function getEntityManager()
+    {
+        if (!$this->entityManager) {
+            throw new \RuntimeException(
+                'Initialization using DriverInterface::initialize required'
+            );
+        }
+
+        return $this->entityManager;
     }
 }
