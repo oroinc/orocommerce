@@ -3,62 +3,62 @@
 {% block oro_account_typed_address_widget %}
     {% spaceless %}
         <div class="grid">
-            <div class="grid__row">
-                <div class="grid__column grid__column--12">
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--12 grid__column--offset-y">
                     {{ form_row(form.primary, {'label' : 'oro.account.frontend.address.form.label.primary'|trans }) }}
                 </div>
             </div>
-            <div class="grid__row">
-                <div class="grid__column grid__column--6">
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
                     {{ form_row(form.label, {'label' : 'oro.account.frontend.address.form.label.address_label'|trans}) }}
                 </div>
-                <div class="grid__column grid__column--6">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
                     {{ form_row(form.namePrefix, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.name.prefix'|trans}}) }}
                 </div>
             </div>
-            <div class="grid__row">
-                <div class="grid__column grid__column--6">
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
                     {{ form_row(form.firstName, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.first_name'|trans}}) }}
                 </div>
-                <div class="grid__column grid__column--6">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
                     {{ form_row(form.middleName, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.middle_name'|trans}}) }}
                 </div>
             </div>
-            <div class="grid__row">
-                <div class="grid__column grid__column--6">
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
                     {{ form_row(form.lastName, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.last_name'|trans}}) }}
                 </div>
-                <div class="grid__column grid__column--6">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
                     {{ form_row(form.nameSuffix, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.name_suffix'|trans}}) }}
                 </div>
             </div>
-            <div class="grid__row">
-                <div class="grid__column grid__column--6">
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
                     {{ form_row(form.organization, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.organization'|trans}}) }}
                 </div>
-                <div class="grid__column grid__column--6">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
                     {{ form_row(form.phone, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.phone'|trans}}) }}
                 </div>
             </div>
-            <div class="grid__row">
-                <div class="grid__column grid__column--6">
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
                     {{ form_row(form.street, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.street'|trans}}) }}
                 </div>
-                <div class="grid__column grid__column--6">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
                     {{ form_row(form.street2, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.street2'|trans}}) }}
                 </div>
             </div>
-            <div class="grid__row">
-                <div class="grid__column grid__column--6">
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
                     {{ form_row(form.city, {'attr': {'placeholder': 'oro.account.frontend.address.form.placeholder.city'|trans}}) }}
                 </div>
-                <div class="grid__column grid__column--2">
+                <div class="grid__column grid__column--2 grid__column--offset-y">
                     {{ form_row(form.country) }}
                 </div>
-                <div class="grid__column grid__column--2">
+                <div class="grid__column grid__column--2 grid__column--offset-y">
                     {{ form_row(form.region) }}
                 </div>
-                <div class="grid__column grid__column--2">
+                <div class="grid__column grid__column--2 grid__column--offset-y">
                     <div class="grid__row grid__row--offset-s">
                         {{- form_label(form.postalCode) -}}
                     </div>
