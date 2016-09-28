@@ -22,7 +22,7 @@
     }
 }
 
-@include breakpoint('mobile') {
+@include breakpoint('mobile-portrait') {
     .grid {
         @for $i from 1 through $grid-count {
             &__column--#{$i} {
