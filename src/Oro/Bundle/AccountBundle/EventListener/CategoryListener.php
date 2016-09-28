@@ -4,6 +4,7 @@ namespace Oro\Bundle\AccountBundle\EventListener;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\PersistentCollection;
+
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Model\CategoryMessageHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;

@@ -24,7 +24,7 @@ class CategoryMaterializedPathModifier
 
     /**
      * @param Category $category
-     * @param array    $children
+     * @param array $children
      */
     public function updateMaterializedPathNested(Category $category, array $children = [])
     {
@@ -37,7 +37,7 @@ class CategoryMaterializedPathModifier
 
     /**
      * @param Category $category
-     * @param bool     $scheduleForInsert
+     * @param bool $scheduleForInsert
      */
     public function calculateMaterializedPath(Category $category, $scheduleForInsert = false)
     {

@@ -20,7 +20,6 @@ class OroCatalogBundle implements Migration
     /**
      * @param Schema $schema
      * @param QueryBag $queries
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addMaterializedPathField(Schema $schema, QueryBag $queries)
     {
