@@ -1,5 +1,7 @@
 {% spaceless %}
-    {% set configurations = record.getValue('configurations').toArray() %}
+    {% set methodConfigs = record.getValue('methodConfigs').toArray() %}
 
-    {{ configurations|join('</br>')|raw }}
+    {% for methodConfig in methodConfigs %}
+        {{ methodConfig.method }}
+    {% endfor %}
 {% endspaceless %}
