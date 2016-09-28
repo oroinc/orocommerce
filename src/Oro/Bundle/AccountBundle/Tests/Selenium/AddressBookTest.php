@@ -1,23 +1,22 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Selenium;
+namespace Oro\Bundle\AccountBundle\Tests\Selenium;
 
+use Oro\Bundle\AccountBundle\Tests\Selenium\Cache\AddressBookCache;
+use Oro\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAccountUser;
+use Oro\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAccountUserTestRole;
+use Oro\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAddress;
+use Oro\Bundle\AccountBundle\Tests\Selenium\Pages\AdminAccountAddressPages;
+use Oro\Bundle\AccountBundle\Tests\Selenium\Pages\AccountAdminPages;
+use Oro\Bundle\AccountBundle\Tests\Selenium\Pages\AddAddressPage;
+use Oro\Bundle\AccountBundle\Tests\Selenium\Pages\AddressBookTestPage;
 use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPage;
 use Oro\Bundle\TestFrameworkBundle\Test\Selenium2TestCase;
-
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Cache\AddressBookCache;
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAccountUser;
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAccountUserTestRole;
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAddress;
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages\AdminAccountAddressPages;
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages\AccountAdminPages;
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages\AddAddressPage;
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages\AddressBookTestPage;
 
 /**
  * Class AddressBookTest
  *
- * @package OroB2B\Bundle\AccountBundle\Tests\Selenium
+ * @package Oro\Bundle\AccountBundle\Tests\Selenium
  */
 class AddressBookTest extends Selenium2TestCase
 {

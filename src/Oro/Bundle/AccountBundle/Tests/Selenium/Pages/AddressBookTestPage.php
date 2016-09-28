@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages;
+namespace Oro\Bundle\AccountBundle\Tests\Selenium\Pages;
 
 use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPage;
 
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Helper\SeleniumTestHelper;
+use Oro\Bundle\AccountBundle\Tests\Selenium\Helper\SeleniumTestHelper;
 
 class AddressBookTestPage extends AbstractPage
 {

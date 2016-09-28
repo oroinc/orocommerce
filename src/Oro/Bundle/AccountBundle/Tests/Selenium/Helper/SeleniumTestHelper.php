@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Selenium\Helper;
+namespace Oro\Bundle\AccountBundle\Tests\Selenium\Helper;
 
 trait SeleniumTestHelper
 {

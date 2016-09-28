@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAddressBookUserData;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAddressBookUserData;
 
 /**
  * @dbIsolation
@@ -22,7 +22,6 @@ class AddressBookTest extends WebTestCase
 
     public function testAddressBookMenuItemHidden()
     {
-        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER4,
             LoadAddressBookUserData::ACCOUNT1_USER4
@@ -30,20 +29,20 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_frontend_account_user_profile')
+            $this->getUrl('oro_account_frontend_account_user_profile')
         );
         $this->assertFalse($this->isAddressBookMenuVisible($crawler));
 
+        $this->client->followRedirects();
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_frontend_account_user_address_index')
+            $this->getUrl('oro_account_frontend_account_user_address_index')
         );
         $this->assertEquals($this->client->getResponse()->getStatusCode(), Response::HTTP_FORBIDDEN);
     }
 
     public function testAccountAddressView()
     {
-        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER1,
             LoadAddressBookUserData::ACCOUNT1_USER1
@@ -51,7 +50,7 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_frontend_account_user_address_index')
+            $this->getUrl('oro_account_frontend_account_user_address_index')
         );
 
         $this->assertFalse($this->isAddUserAddressButtonVisible($crawler));
@@ -64,7 +63,6 @@ class AddressBookTest extends WebTestCase
 
     public function testAccountAndAccountUserAddressView()
     {
-        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER3,
             LoadAddressBookUserData::ACCOUNT1_USER3
@@ -72,7 +70,7 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_frontend_account_user_address_index')
+            $this->getUrl('oro_account_frontend_account_user_address_index')
         );
         $this->assertFalse($this->isAddUserAddressButtonVisible($crawler));
         $this->assertFalse($this->isAddAccountAddressButtonVisible($crawler));
@@ -84,7 +82,6 @@ class AddressBookTest extends WebTestCase
 
     public function testAccountUserAddressView()
     {
-        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER2,
             LoadAddressBookUserData::ACCOUNT1_USER2
@@ -92,7 +89,7 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_frontend_account_user_address_index')
+            $this->getUrl('oro_account_frontend_account_user_address_index')
         );
 
         $this->assertFalse($this->isAddUserAddressButtonVisible($crawler));
@@ -105,7 +102,6 @@ class AddressBookTest extends WebTestCase
 
     public function testAccountAddressCreateButton()
     {
-        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER6,
             LoadAddressBookUserData::ACCOUNT1_USER6
@@ -113,7 +109,7 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_frontend_account_user_address_index')
+            $this->getUrl('oro_account_frontend_account_user_address_index')
         );
 
         $this->assertFalse($this->isAddUserAddressButtonVisible($crawler));
@@ -126,7 +122,6 @@ class AddressBookTest extends WebTestCase
 
     public function testAccountUserAddressCreateButton()
     {
-        $this->markTestSkipped("Skipped until task BB-4263 gets resolved!");
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER7,
             LoadAddressBookUserData::ACCOUNT1_USER7
@@ -134,7 +129,7 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_frontend_account_user_address_index')
+            $this->getUrl('oro_account_frontend_account_user_address_index')
         );
 
         $this->assertFalse($this->isAccountAddressSectionVisible());

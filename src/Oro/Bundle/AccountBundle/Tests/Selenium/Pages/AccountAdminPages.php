@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages;
+namespace Oro\Bundle\AccountBundle\Tests\Selenium\Pages;
 
 use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPage;
 
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAccountUser;
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAccountUserTestRole;
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Helper\SeleniumTestHelper;
+use Oro\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAccountUser;
+use Oro\Bundle\AccountBundle\Tests\Selenium\Entity\SeleniumAccountUserTestRole;
+use Oro\Bundle\AccountBundle\Tests\Selenium\Helper\SeleniumTestHelper;
 
 class AccountAdminPages extends AbstractPage
 {
@@ -22,7 +22,7 @@ class AccountAdminPages extends AbstractPage
             $this->test->url('/admin/account/user/role/create');
             $this->waitPageToLoad();
             $this->waitForAjax();
-            $this->test->byName('orob2b_account_account_user_role[label]')->value($role->roleName);
+            $this->test->byName('oro_account_account_user_role[label]')->value($role->roleName);
             foreach ($role->permissions as $permissionEntity => $permissionActions) {
                 foreach ($permissionActions as $actionName => $actionTarget) {
                     $this->getPermissionElement($permissionEntity, $actionName)->click();
@@ -45,7 +45,7 @@ class AccountAdminPages extends AbstractPage
      */
     public function createAccountUsersWithRoles($users)
     {
-        $accountInputSelector = "//div[starts-with(@id, 'orob2b_account_account_user_account-uid')]"
+        $accountInputSelector = "//div[starts-with(@id, 'oro_account_account_user_account-uid')]"
             . "//div[contains(@class, 'input-widget')]";
         $roleSelector = "//label[contains(text(),'%s')]/preceding-sibling::input";
 
@@ -54,11 +54,11 @@ class AccountAdminPages extends AbstractPage
             $this->test->url('/admin/account/user/create');
             $this->waitPageToLoad();
             $this->waitForAjax();
-            $this->test->byName('orob2b_account_account_user[firstName]')->value($user->firstName);
-            $this->test->byName('orob2b_account_account_user[lastName]')->value($user->lastName);
-            $this->test->byName('orob2b_account_account_user[email]')->value($user->email);
-            $this->test->byName('orob2b_account_account_user[plainPassword][first]')->value($user->password);
-            $this->test->byName('orob2b_account_account_user[plainPassword][second]')->value($user->password);
+            $this->test->byName('oro_account_account_user[firstName]')->value($user->firstName);
+            $this->test->byName('oro_account_account_user[lastName]')->value($user->lastName);
+            $this->test->byName('oro_account_account_user[email]')->value($user->email);
+            $this->test->byName('oro_account_account_user[plainPassword][first]')->value($user->password);
+            $this->test->byName('oro_account_account_user[plainPassword][second]')->value($user->password);
 
             // select account
             $this->getElement($accountInputSelector)->click();

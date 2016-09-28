@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Selenium\Entity;
+namespace Oro\Bundle\AccountBundle\Tests\Selenium\Entity;
 
 class SeleniumAccountUserTestRole
 {

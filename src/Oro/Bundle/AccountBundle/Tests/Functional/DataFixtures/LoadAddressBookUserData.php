@@ -1,12 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\AccountUserManager;
+use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\Repository\RoleRepository;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
@@ -15,12 +20,6 @@ use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
-
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -71,46 +70,46 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
     protected $roles = [
         self::ROLE1_V_AC_AD => [
             [
-                'class' => 'orob2b_account.entity.account_address.class',
+                'class' => 'oro_account.entity.account_address.class',
                 'acls' => ['VIEW_LOCAL'],
             ],
         ],
         self::ROLE2_V_ACU_AD => [
             [
-                'class' => 'orob2b_account.entity.account_user_address.class',
+                'class' => 'oro_account.entity.account_user_address.class',
                 'acls' => ['VIEW_BASIC'],
             ],
         ],
         self::ROLE3_V_AC_AD_V_ACU_AD => [
             [
-                'class' => 'orob2b_account.entity.account_user_address.class',
+                'class' => 'oro_account.entity.account_user_address.class',
                 'acls' => ['VIEW_BASIC'],
             ],
             [
-                'class' => 'orob2b_account.entity.account_address.class',
+                'class' => 'oro_account.entity.account_address.class',
                 'acls' => ['VIEW_LOCAL'],
             ],
         ],
         self::ROLE4_NONE => [],
         self::ROLE5_VCED_AC_AD_VCED_AU_AD => [
             [
-                'class' => 'orob2b_account.entity.account_user_address.class',
+                'class' => 'oro_account.entity.account_user_address.class',
                 'acls' => ['VIEW_BASIC', 'EDIT_BASIC', 'CREATE_BASIC'],
             ],
             [
-                'class' => 'orob2b_account.entity.account_address.class',
+                'class' => 'oro_account.entity.account_address.class',
                 'acls' => ['VIEW_LOCAL'],
             ],
         ],
         self::ROLE6_VC_AC_AD => [
             [
-                'class' => 'orob2b_account.entity.account_address.class',
+                'class' => 'oro_account.entity.account_address.class',
                 'acls' => ['VIEW_LOCAL', 'CREATE_LOCAL'],
             ],
         ],
         self::ROLE7_VC_AU_AD => [
             [
-                'class' => 'orob2b_account.entity.account_user_address.class',
+                'class' => 'oro_account.entity.account_user_address.class',
                 'acls' => ['VIEW_BASIC', 'CREATE_BASIC'],
             ],
         ]
@@ -262,7 +261,7 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
     protected function loadAccountUsers(ObjectManager $manager)
     {
         /* @var $userManager AccountUserManager */
-        $userManager = $this->container->get('orob2b_account_user.manager');
+        $userManager = $this->container->get('oro_account_user.manager');
 
         $defaultUser = $this->getUser($manager);
         $organization = $defaultUser->getOrganization();

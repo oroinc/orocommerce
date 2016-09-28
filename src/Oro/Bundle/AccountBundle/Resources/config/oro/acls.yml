@@ -5,6 +5,30 @@ acls:
         class: OroAccountBundle:Account
         category: 'account_management'
 
+    oro_account_frontend_account_address_view:
+        type: entity
+        permission: VIEW
+        class: OroAccountBundle:AccountAddress
+        group_name: "commerce"
+
+    oro_account_frontend_account_address_remove:
+        type: entity
+        permission: DELETE
+        class: OroAccountBundle:AccountAddress
+        group_name: "commerce"
+
+    oro_account_frontend_account_user_address_view:
+        type: entity
+        permission: VIEW
+        class: OroAccountBundle:AccountUserAddress
+        group_name: "commerce"
+
+    oro_account_frontend_account_user_address_remove:
+        type: entity
+        permission: DELETE
+        class: OroAccountBundle:AccountUserAddress
+        group_name: "commerce"
+
     oro_account_account_user_delete:
         type: entity
         permission: DELETE

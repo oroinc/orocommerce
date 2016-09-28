@@ -57,7 +57,7 @@ layout:
             parentId: __user_addresses_datagrid_toolbar_button_container
             blockType: link
             options:
-                visible: '=data["acl"].isGranted("oro_account_frontend_account_address_create") && data["acl"].isGranted("oro_account_frontend_account_address_view")'
+                visible: '=data["acl"].isGranted("oro_account_frontend_account_user_address_create")'
                 route_name: oro_account_frontend_account_user_address_create
                 route_parameters:
                     entityId: '=data["entity"].getId()'

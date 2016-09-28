@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Selenium\Pages;
+namespace Oro\Bundle\AccountBundle\Tests\Selenium\Pages;
 
 use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPage;
 
-use OroB2B\Bundle\AccountBundle\Tests\Selenium\Helper\SeleniumTestHelper;
+use Oro\Bundle\AccountBundle\Tests\Selenium\Helper\SeleniumTestHelper;
 
 class AdminAccountAddressPages extends AbstractPage
 {
@@ -13,8 +13,8 @@ class AdminAccountAddressPages extends AbstractPage
     const ACCOUNT_USER_ADDRESS_URL = "/admin/account/user/view/%s";
     const ACCOUNT_ADDRESS_URL = "admin/account/view/%s";
 
-    const ACCOUNT_USER_ADDRESS_INPUT_PREFIX = "orob2b_account_account_user_typed_address";
-    const ACCOUNT_ADDRESS_INPUT_PREFIX = "orob2b_account_typed_address";
+    const ACCOUNT_USER_ADDRESS_INPUT_PREFIX = "oro_account_account_user_typed_address";
+    const ACCOUNT_ADDRESS_INPUT_PREFIX = "oro_account_typed_address";
 
     /**
      * @param int $accountId

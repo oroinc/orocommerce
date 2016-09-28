@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Selenium\Cache;
+namespace Oro\Bundle\AccountBundle\Tests\Selenium\Cache;
 
 class AddressBookCache
 {
