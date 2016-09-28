@@ -19,6 +19,7 @@ abstract class AbstractFallbackRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadPriceListFallbackSettings::class]);
         $this->doctrine = $this->getContainer()->get('doctrine');
     }

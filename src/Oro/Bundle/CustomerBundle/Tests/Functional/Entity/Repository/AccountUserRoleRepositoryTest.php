@@ -28,7 +28,7 @@ class AccountUserRoleRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->client->useHashNavigation(true);
         $this->repository = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroCustomerBundle:AccountUserRole');

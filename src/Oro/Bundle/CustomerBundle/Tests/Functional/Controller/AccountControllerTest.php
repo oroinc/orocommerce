@@ -21,7 +21,7 @@ class AccountControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
@@ -106,7 +106,7 @@ class AccountControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
-        $this->assertContains(self::UPDATED_NAME . ' - Accounts - Customers', $html);
+        $this->assertContains(self::UPDATED_NAME . ' - Customers - Customers', $html);
         $this->assertContains('Add attachment', $html);
         $this->assertContains('Add note', $html);
         $this->assertContains('Address Book', $html);
@@ -153,7 +153,7 @@ class AccountControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Account has been saved', $html);
+        $this->assertContains('Customer has been saved', $html);
         $this->assertViewPage($html, $name, $parent, $group, $internalRating);
         $this->assertContains($this->getReference(LoadUserData::USER1)->getFullName(), $result->getContent());
         $this->assertContains($this->getReference(LoadUserData::USER2)->getFullName(), $result->getContent());

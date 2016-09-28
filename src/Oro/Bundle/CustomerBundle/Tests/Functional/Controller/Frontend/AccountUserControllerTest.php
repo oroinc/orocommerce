@@ -37,6 +37,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
@@ -106,7 +107,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Account User has been saved', $crawler->html());
+        $this->assertContains('Customer User has been saved', $crawler->html());
     }
 
     /**
@@ -162,7 +163,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Account User has been saved', $crawler->html());
+        $this->assertContains('Customer User has been saved', $crawler->html());
 
         return $id;
     }

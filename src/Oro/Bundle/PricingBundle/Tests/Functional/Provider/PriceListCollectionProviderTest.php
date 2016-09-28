@@ -27,6 +27,7 @@ class PriceListCollectionProviderTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([]);
+        $this->client->useHashNavigation(true);
         $this->provider = $this->getContainer()->get('oro_pricing.provider.price_list_collection');
 
         $this->loadFixtures(

@@ -29,7 +29,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->configManager = $this->getContainer()->get('oro_config.manager');
         $this->isConfirmationRequired = $this->configManager->get('oro_account.confirmation_required');
         $this->sendPassword = $this->configManager->get('oro_account.send_password_in_welcome_email');

@@ -17,7 +17,7 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([
             'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
         ]);

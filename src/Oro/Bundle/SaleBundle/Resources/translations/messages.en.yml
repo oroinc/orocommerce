@@ -13,9 +13,9 @@ oro:
             valid_until.label: 'Valid Until'
             quote_products.label: 'Quote Products'
             request.label: 'Request'
-            account.label: 'Account'
+            account.label: 'Customer'
             website.label: 'Website'
-            account_user.label: 'Account User'
+            account_user.label: 'Customer User'
             locked.label: 'Locked'
             not_locked.label: 'Not Locked'
             expired.label: 'Expired'
@@ -168,8 +168,8 @@ oro:
             entity_label: Quote Address
             entity_plural_label: Quote Addresses
             id.label: ID
-            account_address.label: Account address
-            account_user_address.label: Account user address
+            account_address.label: Customer address
+            account_user_address.label: Customer user address
             label.label: Label
             first_name.label: First Name
             middle_name.label: Middle Name
@@ -214,11 +214,11 @@ oro:
 
         security:
             permission:
-                address_shipping_account_use_any: "[Quote] Use any shipping address from the account address book"
-                address_shipping_account_user_use_default: "[Quote] Use the default shipping address from the account user's address book"
-                address_shipping_account_user_use_any: "[Quote] Use any shipping address from the account user's address book"
+                address_shipping_account_use_any: "[Quote] Use any shipping address from the customer address book"
+                address_shipping_account_user_use_default: "[Quote] Use the default shipping address from the customer user's address book"
+                address_shipping_account_user_use_any: "[Quote] Use any shipping address from the customer user's address book"
                 address_shipping_allow_manual: "[Quote] Enter the shipping address manually"
-                payment_term_account_can_override: "[Quote] Override account payment term"
+                payment_term_account_can_override: "[Quote] Override customer payment term"
 
     frontend:
         sale:

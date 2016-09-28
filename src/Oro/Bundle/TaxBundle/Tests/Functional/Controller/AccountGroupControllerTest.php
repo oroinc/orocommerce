@@ -17,6 +17,7 @@ class AccountGroupControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -49,7 +50,7 @@ class AccountGroupControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Account group has been saved', $html);
+        $this->assertContains('Customer group has been saved', $html);
         $this->assertContains(self::ACCOUNT_GROUP_NAME, $html);
         $this->assertContains($accountTaxCode->getCode(), $html);
 

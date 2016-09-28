@@ -41,7 +41,7 @@ class SoftDeleteableFilterTest extends WebTestCase
     {
         parent::setUp();
         $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'
