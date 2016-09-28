@@ -32,6 +32,7 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->registry = $this->getContainer()->get('doctrine');
         $this->entityManager = $this->registry->getManager();
 
