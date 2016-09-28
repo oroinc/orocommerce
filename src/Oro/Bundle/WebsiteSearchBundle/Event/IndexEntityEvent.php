@@ -86,7 +86,7 @@ class IndexEntityEvent extends Event
      */
     public function addField($entityId, $fieldType, $fieldName, $value)
     {
-        return $this->addFieldInternal($entityId, $fieldType, $fieldName, $value);
+        return $this->processField($entityId, $fieldType, $fieldName, $value);
     }
 
     /**
@@ -98,7 +98,7 @@ class IndexEntityEvent extends Event
      */
     public function appendField($entityId, $fieldType, $fieldName, $value)
     {
-        return $this->addFieldInternal($entityId, $fieldType, $fieldName, $value, true);
+        return $this->processField($entityId, $fieldType, $fieldName, $value, true);
     }
 
     /**
@@ -110,6 +110,8 @@ class IndexEntityEvent extends Event
     }
 
     /**
+     * Add or append data to an existing field.
+     *
      * @param int              $entityId
      * @param string           $fieldType
      * @param string           $fieldName
@@ -117,7 +119,7 @@ class IndexEntityEvent extends Event
      * @param bool             $appendMode
      * @return $this
      */
-    private function addFieldInternal($entityId, $fieldType, $fieldName, $value, $appendMode = false)
+    private function processField($entityId, $fieldType, $fieldName, $value, $appendMode = false)
     {
         if (!isset($this->entityIds[$entityId])) {
             throw new \InvalidArgumentException(
