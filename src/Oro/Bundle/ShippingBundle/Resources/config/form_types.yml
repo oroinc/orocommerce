@@ -90,7 +90,7 @@ services:
     oro_shipping.form.type.flat_rate_rule_config:
         class: Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType
         arguments:
-            - '@oro_pricing.rounding.price_rounding_service'
+            - '@oro_currency.rounding.price_rounding_service'
         tags:
             - { name: form.type }
 

@@ -7,20 +7,27 @@ use Oro\Component\Layout\Block\OptionsResolver\OptionsResolver;
 use Oro\Component\Layout\Block\Type\AbstractType;
 use Oro\Component\Layout\BlockInterface;
 use Oro\Component\Layout\BlockView;
+use Oro\Component\Layout\Block\Type\Options;
+use Oro\Component\Layout\Util\BlockUtils;
 
 class BreadcrumbsNavigationBlockType extends AbstractType
 {
     /**
      * {@inheritdoc}
      */
-    public function buildView(BlockView $view, BlockInterface $block, array $options)
+    public function buildView(BlockView $view, BlockInterface $block, Options $options)
     {
-        $currentCategory = $options['currentCategory'];
+        BlockUtils::setViewVarsFromOptions($view, $options, ['currentCategory']);
+    }
 
-        $parentCategories = $this->getParentCategories($currentCategory);
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(BlockView $view, BlockInterface $block)
+    {
+        $currentCategory = $view->vars['currentCategory'];
 
-        $view->vars['currentCategory'] = $currentCategory;
-        $view->vars['parentCategories'] = $parentCategories;
+        $view->vars['parentCategories'] = $this->getParentCategories($currentCategory);
     }
 
     /**
@@ -28,9 +35,7 @@ class BreadcrumbsNavigationBlockType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'currentCategory' => null
-        ]);
+        $resolver->setDefaults(['currentCategory' => null]);
     }
 
     /**

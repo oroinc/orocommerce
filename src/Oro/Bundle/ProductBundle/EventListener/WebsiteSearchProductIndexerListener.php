@@ -3,32 +3,35 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
 class WebsiteSearchProductIndexerListener
 {
     /**
-     * @var ProductRepository
+     * @var DoctrineHelper
      */
-    private $productRepository;
+    private $doctrineHelper;
 
     /**
-     * @var LocalizationHelper
+     * @var WebsiteLocalizationProvider
      */
-    private $localizationHelper;
+    private $websiteLocalizationProvider;
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param LocalizationHelper $localizationHelper
+     * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
      */
-    public function __construct(DoctrineHelper $doctrineHelper, LocalizationHelper $localizationHelper)
-    {
-        $this->productRepository = $doctrineHelper->getEntityRepositoryForClass(Product::class);
-        $this->localizationHelper = $localizationHelper;
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
+    ) {
+        $this->doctrineHelper = $doctrineHelper;
+        $this->websiteLocalizationProvider = $websiteLocalizationProvider;
     }
 
     /**
@@ -38,77 +41,44 @@ class WebsiteSearchProductIndexerListener
     {
         $entityClass = $event->getEntityClass();
 
-        if ($entityClass !== Product::class) {
+        if (!is_a($entityClass, Product::class, true)) {
             return;
         }
 
-        $products = $this->productRepository->getProductsByIds($event->getEntityIds());
+        /** @var Product[] $products */
+        $products = $event->getEntities();
 
-        $localizations = $this->localizationHelper->getLocalizations();
+        $context = $event->getContext();
+
+        $websiteId = (array_key_exists(AbstractIndexer::CONTEXT_WEBSITE_ID_KEY, $context))
+            ? $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY]
+            : null;
+
+        $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 
         foreach ($products as $product) {
             // Non localized fields
-            $event->addField(
-                $product->getId(),
-                Query::TYPE_TEXT,
-                'sku',
-                $product->getSku()
-            );
-            $event->addField(
-                $product->getId(),
-                Query::TYPE_TEXT,
-                'status',
-                $product->getStatus()
-            );
-            $event->addField(
-                $product->getId(),
-                Query::TYPE_TEXT,
-                'inventory_status',
-                $product->getInventoryStatus()->getId()
-            );
+            $event->addField($product->getId(), 'sku', $product->getSku());
+            $event->addField($product->getId(), 'status', $product->getStatus());
+            $event->addField($product->getId(), 'inventory_status', $product->getInventoryStatus()->getId());
 
             // Localized fields
             foreach ($localizations as $localization) {
                 $localizedFields = [
                     'title' => $product->getName($localization),
-                    'description' => $this->stripTagsAndSpaces($product->getDescription($localization)),
-                    'short_desc' => $this->stripTagsAndSpaces($product->getShortDescription($localization)),
+                    'description' => $product->getDescription($localization),
+                    'short_desc' => $product->getShortDescription($localization)
                 ];
 
                 foreach ($localizedFields as $fieldName => $fieldValue) {
-                    $event->addField(
+                    $event->addPlaceholderField(
                         $product->getId(),
-                        Query::TYPE_TEXT,
-                        sprintf('%s_%s', $fieldName, $localization->getId()),
-                        $fieldValue
+                        $fieldName,
+                        $fieldValue,
+                        [LocalizationIdPlaceholder::NAME => $localization->getId()]
                     );
                 }
-
-                // All text field
-                $event->addField(
-                    $product->getId(),
-                    Query::TYPE_TEXT,
-                    sprintf('all_text_%s', $localization->getId()),
-                    implode(' ', $localizedFields)
-                );
             }
         }
-    }
-
-    /**
-     * @param string $text
-     * @return string
-     */
-    private function stripTagsAndSpaces($text)
-    {
-        $stripTagsWithExcessiveSpaces = html_entity_decode(
-            strip_tags(
-                str_replace('>', '> ', $text)
-            )
-        );
-
-        return trim(
-            preg_replace('/\s+/u', ' ', $stripTagsWithExcessiveSpaces)
-        );
     }
 }

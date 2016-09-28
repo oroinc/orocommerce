@@ -2,23 +2,14 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
+use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
 
-use Oro\Bundle\SearchBundle\Query\Query;
+use Symfony\Component\EventDispatcher\Event;
 
 class IndexEntityEvent extends Event
 {
     const NAME = 'oro_website_search.event.index_entity';
-    
-    /**
-     * @var array
-     */
-    private static $fieldTypes = [
-        Query::TYPE_DATETIME,
-        Query::TYPE_DECIMAL,
-        Query::TYPE_INTEGER,
-        Query::TYPE_TEXT
-    ];
 
     /**
      * @var string
@@ -26,9 +17,9 @@ class IndexEntityEvent extends Event
     private $entityClass;
 
     /**
-     * @var array
+     * @var object[]
      */
-    private $entityIds;
+    private $entities;
 
     /**
      * @var array
@@ -42,13 +33,13 @@ class IndexEntityEvent extends Event
 
     /**
      * @param string $entityClass
-     * @param array $entityIds
+     * @param object[] $entities
      * @param array $context
      */
-    public function __construct($entityClass, array $entityIds, array $context)
+    public function __construct($entityClass, array $entities, array $context)
     {
         $this->context = $context;
-        $this->entityIds = array_combine($entityIds, $entityIds);
+        $this->entities = $entities;
         $this->entityClass = $entityClass;
     }
 
@@ -63,10 +54,9 @@ class IndexEntityEvent extends Event
     /**
      * @return array
      */
-    public function getEntityIds()
+    public function getEntities()
     {
-        // @todo: check performance and optimize it
-        return array_values($this->entityIds);
+        return $this->entities;
     }
 
     /**
@@ -79,42 +69,30 @@ class IndexEntityEvent extends Event
 
     /**
      * @param int $entityId
-     * @param string $fieldType
      * @param string $fieldName
      * @param string|int|float $value
-     *
      * @return $this
-     * @throws \InvalidArgumentException
      */
-    public function addField($entityId, $fieldType, $fieldName, $value)
+    public function addField($entityId, $fieldName, $value)
     {
-        if (!isset($this->entityIds[$entityId])) {
-            throw new \InvalidArgumentException(
-                sprintf('There is no entity with id %s', $entityId)
-            );
-        }
-
-        $this->assertFieldType($fieldType);
-
-        $this->entitiesData[$entityId][$fieldType][$fieldName] = $value;
+        $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] = $value;
 
         return $this;
     }
 
     /**
-     * @param string $fieldType
-     * @throws \InvalidArgumentException
+     * @param int $entityId
+     * @param string $fieldName
+     * @param string|int|float
+     * @param array $placeholders
+     * @return $this
      */
-    private function assertFieldType($fieldType)
+    public function addPlaceholderField($entityId, $fieldName, $value, $placeholders)
     {
-        if (!in_array($fieldType, self::$fieldTypes, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Field type must be one of %s',
-                    implode(', ', self::$fieldTypes)
-                )
-            );
-        }
+        $this->entitiesData[$entityId][IndexDataProvider::PLACEHOLDER_VALUES_KEY][$fieldName][] =
+            new ValueWithPlaceholders($value, $placeholders);
+
+        return $this;
     }
 
     /**

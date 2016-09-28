@@ -12,5 +12,5 @@ use Oro\Bundle\SearchBundle\Entity\AbstractIndexText;
  */
 class IndexText extends AbstractIndexText
 {
-    const TABLE_NAME = 'oro_website_search_text';
+    
 }

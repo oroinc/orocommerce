@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 
 class OrmIndexer extends AbstractIndexer
 {
@@ -13,7 +14,7 @@ class OrmIndexer extends AbstractIndexer
      */
     public function delete($entities, array $context = [])
     {
-        $entities = $this->convertToArray($entities);
+        $entities = is_array($entities) ? $entities : [$entities];
 
         $sortedEntitiesData = [];
         foreach ($entities as $entity) {
@@ -42,22 +43,7 @@ class OrmIndexer extends AbstractIndexer
      */
     private function getItemRepository()
     {
-        $entityManager = $this->doctrineHelper->getEntityManagerForClass(Item::class);
-
-        return $entityManager->getRepository(Item::class);
-    }
-
-    /**
-     * @param object|array $entities
-     * @return array
-     */
-    private function convertToArray($entities)
-    {
-        if (!is_array($entities)) {
-            $entities = [$entities];
-        }
-
-        return $entities;
+        return $this->doctrineHelper->getEntityRepository(Item::class);
     }
 
     /**
@@ -118,7 +104,10 @@ class OrmIndexer extends AbstractIndexer
         $entityAlias = null;
         if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
             $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
-            $entityAlias = $this->applyPlaceholders($entityAlias, $context);
+            $entityAlias = $this->visitorReplacePlaceholder->replace(
+                $entityAlias,
+                [WebsiteIdPlaceholder::NAME => $context[self::CONTEXT_WEBSITE_ID_KEY]]
+            );
         }
 
         return $entityAlias;
@@ -127,28 +116,8 @@ class OrmIndexer extends AbstractIndexer
     /**
      * {@inheritdoc}
      */
-    public function resetIndex($class = null, array $context = [])
+    public function resetIndex($class = null)
     {
-        if (null === $class && !isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
-            $this->getItemRepository()->removeIndexByClass();
-
-            return;
-        }
-
-        $entityClasses = [$class];
-        if (null === $class) {
-            $entityClasses = $this->mappingProvider->getEntityClasses();
-        }
-
-        foreach ($entityClasses as $entityClass) {
-            $entityAlias = $this->getEntityAlias($entityClass, $context);
-
-            if (null !== $entityAlias) {
-                $this->getItemRepository()->removeIndexByAlias($entityAlias);
-            } else {
-                $this->getItemRepository()->removeIndexByClass($entityClass);
-            }
-
-        }
+        $this->getItemRepository()->removeIndexByClass($class);
     }
 }
