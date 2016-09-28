@@ -14,11 +14,6 @@ class PriceListVoter extends AbstractEntityVoter
     const ATTRIBUTE_DELETE = 'DELETE';
 
     /**
-     * @var array
-     */
-    protected $supportedAttributes = [self::ATTRIBUTE_DELETE];
-
-    /**
      * @var PriceList
      */
     protected $object;
@@ -30,14 +25,16 @@ class PriceListVoter extends AbstractEntityVoter
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param PriceListReferenceChecker $isReferentialChecker
+     * @param PriceListReferenceChecker $priceListReferenceChecker
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        PriceListReferenceChecker $isReferentialChecker
+        PriceListReferenceChecker $priceListReferenceChecker
     ) {
-        $this->priceListReferenceChecker = $isReferentialChecker;
         parent::__construct($doctrineHelper);
+
+        $this->supportedAttributes = [self::ATTRIBUTE_DELETE];
+        $this->priceListReferenceChecker = $priceListReferenceChecker;
     }
 
     /**

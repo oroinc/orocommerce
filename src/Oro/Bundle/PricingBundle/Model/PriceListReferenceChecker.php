@@ -15,7 +15,7 @@ class PriceListReferenceChecker
     protected $registry;
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $references = null;
 
@@ -37,7 +37,7 @@ class PriceListReferenceChecker
             $this->references = $this->getRepository()->getRelationIds();
         }
 
-        return in_array($object->getId(), $this->references);
+        return in_array($object->getId(), $this->references, true);
     }
 
     /**

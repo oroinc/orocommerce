@@ -27,10 +27,19 @@ class PriceRuleLexemeRepository extends EntityRepository
     public function getRelationIds()
     {
         $qb = $this->createQueryBuilder('referenceLexeme');
-        $qb->select('referenceLexeme.relationId')->distinct();
+        $qb
+            ->select('referenceLexeme.relationId')
+            ->distinct()
+            ->where($qb->expr()->eq('referenceLexeme.className', ':priceListClass'))
+            ->andWhere($qb->expr()->isNotNull('referenceLexeme.relationId'))
+            ->setParameter('priceListClass', PriceList::class);
         $result = $qb->getQuery()->getScalarResult();
-        return array_map(function ($value) {
-            return $value['relationId'];
-        }, $result);
+
+        return array_map(
+            function (array $value) {
+                return (int)$value['relationId'];
+            },
+            $result
+        );
     }
 }

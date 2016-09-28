@@ -57,6 +57,22 @@ class LoadPriceRuleLexemes extends AbstractFixture implements DependentFixtureIn
             'className' => PriceList::class,
             'fieldName' => 'assignedProducts',
             'reference_entity' => LoadPriceLists::PRICE_LIST_1
+        ],
+        [
+            'reference' => 'price_list_2_lexeme_2',
+            'priceList' => LoadPriceLists::PRICE_LIST_2,
+            'priceRule' => null,
+            'className' => PriceList::class,
+            'fieldName' => 'assignedProducts',
+            'reference_entity' => LoadPriceLists::PRICE_LIST_2
+        ],
+        [
+            'reference' => 'price_list_2_lexeme_2',
+            'priceList' => LoadPriceLists::PRICE_LIST_2,
+            'priceRule' => null,
+            'className' => PriceList::class,
+            'fieldName' => 'prices',
+            'reference_entity' => LoadPriceLists::PRICE_LIST_2
         ]
     ];
 

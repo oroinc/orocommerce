@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\PricingBundle\Model\PriceListReferenceChecker;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -19,11 +19,6 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
      */
     protected $repository;
 
-    /**
-     * @var PriceListReferenceChecker
-     */
-    protected $checker;
-
     protected function setUp()
     {
         $this->initClient();
@@ -36,9 +31,14 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
 
     public function testGetRelationIds()
     {
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference('price_attribute_price_list_1');
-        $this->assertContains($priceList->getId(), $this->repository->getRelationIds());
+        /** @var PriceList $priceList1 */
+        $priceList1 = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        /** @var PriceList $priceList2 */
+        $priceList2 = $this->getReference(LoadPriceLists::PRICE_LIST_2);
+        $relationIds = $this->repository->getRelationIds();
+        sort($relationIds);
+        $expected = [$priceList1->getId(), $priceList2->getId()];
+        $this->assertEquals($expected, $relationIds);
     }
 
     /**
