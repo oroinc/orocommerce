@@ -119,6 +119,8 @@ class OrmEngineTest extends AbstractSearchWebTestCase
 
         $this->listener = $this->setListener();
 
+        $driver = $this->getContainer()->get('oro_website_search.engine.orm.driver');
+
         $indexer = new OrmIndexer(
             $this->getContainer()->get('oro_entity.doctrine_helper'),
             $this->mappingProviderMock,
@@ -126,11 +128,12 @@ class OrmEngineTest extends AbstractSearchWebTestCase
             $this->getContainer()->get('oro_website_search.provider.index_data'),
             $this->getContainer()->get('oro_website_search.placeholder.visitor_replace')
         );
+        $indexer->setDriver($driver);
 
         $indexer->reindex(TestEntity::class, []);
 
         $this->ormEngine = $this->getContainer()->get('oro_website_search.engine');
-        $this->ormEngine->setMappingProvider($this->mappingProviderMock);
+        $this->ormEngine->setDriver($driver);
     }
 
     /**

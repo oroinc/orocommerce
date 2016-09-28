@@ -22,7 +22,7 @@ class Mapper
         $selectAliases = $query->getSelectAliases();
 
         if (empty($selects)) {
-            return null;
+            return [];
         }
 
         $result = [];
