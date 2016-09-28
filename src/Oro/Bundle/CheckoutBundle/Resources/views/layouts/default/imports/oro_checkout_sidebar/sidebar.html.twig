@@ -1,6 +1,7 @@
 {% block __oro_checkout_sidebar__checkout_sidebar_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " checkout-sidebar"}) %}
     <div {{ block('block_attributes') }}
+        data-layout="separate"
         data-role="checkout-sidebar"
         data-page-component-module="oroui/js/app/components/view-component"
         data-page-component-options="{{ {

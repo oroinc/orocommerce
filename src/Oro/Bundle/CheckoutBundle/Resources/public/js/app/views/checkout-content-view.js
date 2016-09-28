@@ -17,6 +17,7 @@ define(function(require) {
             mediator.on('checkout-content:updated', this._onContentUpdated, this);
             mediator.on('checkout-content:before-update', this._onBeforeContentUpdate, this);
             this.initTabs();
+            this.initLayout();
         },
 
         _onContentUpdated: function() {
