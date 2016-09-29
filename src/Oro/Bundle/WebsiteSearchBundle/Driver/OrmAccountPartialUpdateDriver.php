@@ -65,7 +65,7 @@ class OrmAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterfa
         $queryBuilder = $this->getIndexIntegerQueryBuilder('visibilityNew');
 
         $queryBuilder
-            ->select('visibilityNew.item_id', 'visibilityNew.field', 'visibilityNew.value')
+            ->select('IDENTITY(visibilityNew.item) as itemId', 'visibilityNew.field', 'visibilityNew.value')
             ->join('visibilityNew.item', 'item')
             ->join(
                 'item.integerFields',
@@ -82,7 +82,7 @@ class OrmAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterfa
             ->setParameter('visibilityNewField', $this->getVisibilityNewFieldName())
             ->setParameter('isVisibleByDefaultField', $this->getIsVisibleByDefaultFieldName());
 
-        $this->insertExecutor->execute(IndexInteger::class, ['item_id', 'field', 'value'], $queryBuilder);
+        $this->insertExecutor->execute(IndexInteger::class, ['item', 'field', 'value'], $queryBuilder);
     }
 
     /**
@@ -107,7 +107,7 @@ class OrmAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterfa
     {
         $itemQueryBuilder = $this->getItemQueryBuilder();
 
-        $queryBuilder = $this->getIndexIntegerQueryBuilder();
+        $queryBuilder = $this->getIndexIntegerQueryBuilder('indexInteger');
 
         $queryBuilder
             ->delete()

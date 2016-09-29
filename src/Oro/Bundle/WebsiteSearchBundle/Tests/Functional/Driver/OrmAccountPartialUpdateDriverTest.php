@@ -3,10 +3,13 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Driver;
 
 use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
+use Oro\Bundle\AccountBundle\Visibility\Provider\AccountProductVisibilityProvider;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Driver\OrmAccountPartialUpdateDriver;
 use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
@@ -16,10 +19,38 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepositor
  */
 class OrmAccountPartialUpdateDriverTest extends WebTestCase
 {
+    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_account.product_visibility';
+    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_account.category_visibility';
+
+    /** @var ConfigManager */
+    private $configManager;
+
+    /** @var OrmAccountPartialUpdateDriver */
+    private $driver;
+
     protected function setUp()
     {
         $this->initClient();
         $this->loadFixtures([LoadProductVisibilityData::class]);
+
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $accountProductVisibilityProvider = new AccountProductVisibilityProvider(
+            $this->getContainer()->get('oro_entity.doctrine_helper'),
+            $this->configManager,
+            $this->getContainer()->get('oro_account.provider.account_user_relations_provider')
+        );
+
+        $this->driver = new OrmAccountPartialUpdateDriver(
+            $this->getContainer()->get('oro_entity.doctrine_helper'),
+            $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor'),
+            $accountProductVisibilityProvider,
+            $this->getContainer()->get('oro_website_search.provider.search_mapping')
+        );
+
+        $this->indexer = new OrmIndexer();
 
         $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
     }
@@ -37,6 +68,15 @@ class OrmAccountPartialUpdateDriverTest extends WebTestCase
 
     public function testCreateAccountWithoutAccountGroupVisibility()
     {
+        $this->configManager
+            ->expects($this->exactly(2))
+            ->method('get')
+            ->withConsecutive(
+                [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
+                [self::CATEGORY_VISIBILITY_CONFIGURATION_PATH]
+            )
+            ->willReturnOnConsecutiveCalls(VisibilityInterface::HIDDEN, VisibilityInterface::HIDDEN);
+
         /** @var OrmIndexer $indexer */
         $indexer = $this->getContainer()->get('oro_website_search.indexer');
         $indexer->reindex(Product::class);
@@ -55,8 +95,7 @@ class OrmAccountPartialUpdateDriverTest extends WebTestCase
         $manager->persist($account);
         $manager->flush();
 
-        $driver = $this->getContainer()->get('oro_website_search.driver.orm_account_partial_update_driver');
-        $driver->createAccountWithoutAccountGroupVisibility($account);
+        $this->driver->createAccountWithoutAccountGroupVisibility($account);
 
         /*
         $this->assertProductHasFields(
