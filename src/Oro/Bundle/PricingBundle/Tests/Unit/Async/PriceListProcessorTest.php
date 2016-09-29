@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\PricingBundle\Async\PriceListProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -78,11 +78,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $manager = $this->getMock(ObjectManager::class);
-        $manager->method('getRepository')->willReturn($this->repository);
-
         $this->registry = $this->getMock(RegistryInterface::class);
-        $this->registry->method('getManagerForClass')->willReturn($manager);
 
         $this->priceRuleProcessor = new PriceListProcessor(
             $this->triggerFactory,
@@ -93,10 +89,25 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testProcessException()
+    public function testProcessInvalidArgumentException()
     {
         $data = ['test' => 1];
         $body = json_encode($data);
+
+        $em = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
@@ -125,10 +136,67 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->priceRuleProcessor->process($message, $session));
     }
 
+    public function testProcessException()
+    {
+        $exception = new \Exception('Some error');
+
+        $em = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        $message = $this->getMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willThrowException($exception);
+
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        $session = $this->getMock(SessionInterface::class);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with('Transaction aborted wit error: Some error.');
+
+        $this->triggerFactory->expects($this->never())
+            ->method('createFromArray');
+
+        $this->assertEquals(MessageProcessorInterface::REQUEUE, $this->priceRuleProcessor->process($message, $session));
+    }
+
     public function testProcess()
     {
         $data = ['test' => 1];
         $body = json_encode($data);
+
+        $em = $this->getMockBuilder(EntityManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($this->repository);
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
@@ -152,7 +220,9 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
         $cplId = 1;
         $cpl = $this->getMock(CombinedPriceList::class);
-        $cpl->method('getId')->willReturn($cplId);
+        $cpl->expects($this->once())
+            ->method('getId')
+            ->willReturn($cplId);
 
         $this->repository->method('getCombinedPriceListsByPriceList')
             ->with($priceList, true)

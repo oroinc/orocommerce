@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
@@ -77,6 +78,10 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
+        /** @var EntityManagerInterface $em */
+        $em = $this->registry->getManagerForClass(CombinedPriceList::class);
+        $em->beginTransaction();
+        
         try {
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
@@ -93,7 +98,9 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
             if ($builtCPLs) {
                 $this->dispatchEvent($builtCPLs);
             }
+            $em->commit();
         } catch (InvalidArgumentException $e) {
+            $em->rollback();
             $this->logger->error(
                 sprintf(
                     'Message is invalid: %s. Original message: "%s"',
@@ -103,6 +110,16 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
             );
 
             return self::REJECT;
+        } catch (\Exception $e) {
+            $em->rollback();
+            $this->logger->error(
+                sprintf(
+                    'Transaction aborted wit error: %s.',
+                    $e->getMessage()
+                )
+            );
+
+            return self::REQUEUE;
         }
 
         return self::ACK;

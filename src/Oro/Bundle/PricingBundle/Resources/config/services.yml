@@ -935,6 +935,7 @@ services:
             - '@logger'
             - '@oro_pricing.notification_message.messenger'
             - '@translator'
+            - '@doctrine'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
