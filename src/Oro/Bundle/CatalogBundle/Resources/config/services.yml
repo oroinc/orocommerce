@@ -143,3 +143,13 @@ services:
         public: false
         arguments:
             - '@oro_entity.extra_insert_entity_storage'
+
+    oro_catalog.entity_listener.category:
+        class: 'Oro\Bundle\CatalogBundle\Entity\EntityListener\CategoryEntityListener'
+        public: false
+        arguments:
+            - '@oro_catalog.manager.product_index_scheduler'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: preRemove }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: postPersist }
