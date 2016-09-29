@@ -13,6 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ShoppingListBundle\Model\ExtendLineItem;
+use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 
 /**
  * @ORM\Table(
@@ -33,6 +34,9 @@ use Oro\Bundle\ShoppingListBundle\Model\ExtendLineItem;
  *              "category"="shopping"
  *          },
  *          "ownership"={
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="user_owner_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="accountUser",
  *              "frontend_owner_column_name"="account_user_id",
@@ -52,7 +56,7 @@ class LineItem extends ExtendLineItem implements
     OrganizationAwareInterface,
     ProductLineItemInterface
 {
-    use OrganizationAwareTrait;
+    use AuditableUserAwareTrait;
 
     /**
      * @var integer

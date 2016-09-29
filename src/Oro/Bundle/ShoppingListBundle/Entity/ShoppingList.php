@@ -18,6 +18,7 @@ use Oro\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 
 /**
  * @ORM\Table(
@@ -48,6 +49,9 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *              }
  *          },
  *          "ownership"={
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="user_owner_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="accountUser",
  *              "frontend_owner_column_name"="account_user_id",
@@ -74,8 +78,8 @@ class ShoppingList extends ExtendShoppingList implements
     CheckoutSourceEntityInterface
 {
     use DatesAwareTrait;
-    use OrganizationAwareTrait;
     use FrontendAccountUserAwareTrait;
+    use AuditableUserAwareTrait;
 
     /**
      * @var int

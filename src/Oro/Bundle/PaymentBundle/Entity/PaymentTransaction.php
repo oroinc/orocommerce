@@ -17,6 +17,7 @@ use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 
 /**
  * @ORM\Table(
@@ -30,6 +31,9 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
  *       mode="hidden",
  *       defaultValues={
  *          "ownership"={
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="user_owner_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="frontendOwner",
  *              "frontend_owner_column_name"="frontend_owner_id",
@@ -44,6 +48,7 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterface
 {
     use DatesAwareTrait;
+    use AuditableUserAwareTrait;
 
     /**
      * @var int
