@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Expression;
 
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Expression\NameNode;
 use Oro\Bundle\PricingBundle\Expression\NodeInterface;
@@ -73,14 +74,10 @@ class NodeToQueryDesignerConverterTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
             'product price field' => [
-                new NameNode(ProductPrice::class, 'currency'),
+                new NameNode(PriceList::class, 'actual', 2),
                 [
-                    'columns' => [
-                        [
-                            'name' => sprintf('%1$s::product+%1$s::%2$s', ProductPrice::class, 'currency'),
-                            'table_identifier' => ProductPrice::class
-                        ]
-                    ]
+                    'columns' => [],
+                    'price_lists' => [2]
                 ]
             ]
         ];
@@ -101,6 +98,20 @@ class NodeToQueryDesignerConverterTest extends \PHPUnit_Framework_TestCase
                     'table_identifier' => $node->getRelationAlias()
                 ]
             ]
+        ];
+
+        $definition = new PriceListQueryDesigner();
+        $definition->setEntity(Product::class);
+        $definition->setDefinition(json_encode($expectedDefinition));
+        $this->assertEquals($definition, $this->converter->convert($node));
+    }
+
+    public function testConvertPrices()
+    {
+        $node = new RelationNode(PriceList::class, 'prices', 'currency', 42);
+        $expectedDefinition = [
+            'columns' => [],
+            'prices' => [42]
         ];
 
         $definition = new PriceListQueryDesigner();

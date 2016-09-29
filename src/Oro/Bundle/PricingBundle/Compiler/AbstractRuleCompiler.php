@@ -7,6 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
 use Oro\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter;
+use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Oro\Bundle\PricingBundle\Expression\QueryExpressionBuilder;
 use Oro\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter;
 
@@ -16,6 +17,11 @@ abstract class AbstractRuleCompiler
      * @var ExpressionParser
      */
     protected $expressionParser;
+
+    /**
+     * @var ExpressionPreprocessorInterface
+     */
+    protected $expressionPreprocessor;
 
     /**
      * @var NodeToQueryDesignerConverter
@@ -39,6 +45,7 @@ abstract class AbstractRuleCompiler
 
     /**
      * @param ExpressionParser $parser
+     * @param ExpressionPreprocessorInterface $preprocessor
      * @param NodeToQueryDesignerConverter $nodeConverter
      * @param PriceListExpressionQueryConverter $queryConverter
      * @param QueryExpressionBuilder $expressionBuilder
@@ -46,12 +53,14 @@ abstract class AbstractRuleCompiler
      */
     public function __construct(
         ExpressionParser $parser,
+        ExpressionPreprocessorInterface $preprocessor,
         NodeToQueryDesignerConverter $nodeConverter,
         PriceListExpressionQueryConverter $queryConverter,
         QueryExpressionBuilder $expressionBuilder,
         Cache $cache
     ) {
         $this->expressionParser = $parser;
+        $this->expressionPreprocessor = $preprocessor;
         $this->nodeConverter = $nodeConverter;
         $this->queryConverter = $queryConverter;
         $this->expressionBuilder = $expressionBuilder;
@@ -77,7 +86,7 @@ abstract class AbstractRuleCompiler
     {
         $select = [];
         foreach ($this->getOrderedFields() as $fieldName) {
-            $select[] = $fieldsMap[$fieldName];
+            $select[] = $fieldsMap[$fieldName] . ' ' . $fieldName;
         }
         $qb->select($select);
     }

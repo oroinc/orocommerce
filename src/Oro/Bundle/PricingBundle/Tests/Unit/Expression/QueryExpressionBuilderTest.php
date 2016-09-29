@@ -4,88 +4,81 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Expression;
 
 use Doctrine\ORM\Query\Expr;
 
-use Oro\Bundle\PricingBundle\Expression;
+use Oro\Bundle\PricingBundle\Expression\NodeInterface;
 use Oro\Bundle\PricingBundle\Expression\QueryExpressionBuilder;
+use Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
 
 class QueryExpressionBuilderTest extends \PHPUnit_Framework_TestCase
 {
+    public function testConvertUnsupportedNode()
+    {
+        $expr = new Expr();
+        $params = [];
+        $node = $this->getMock(NodeInterface::class);
+
+        $this->setExpectedException(\InvalidArgumentException::class);
+
+        $builder = new QueryExpressionBuilder();
+        $builder->convert($node, $expr, $params);
+    }
+
     public function testConvert()
     {
-        $node = new Expression\BinaryNode(
-            new Expression\BinaryNode(
-                new Expression\BinaryNode(
-                    new Expression\NameNode('pl', 'currency'),
-                    new Expression\ValueNode('USD'),
-                    '=='
-                ),
-                new Expression\BinaryNode(
-                    new Expression\BinaryNode(
-                        new Expression\NameNode('p', 'margin'),
-                        new Expression\ValueNode(10),
-                        '*'
-                    ),
-                    new Expression\BinaryNode(
-                        new Expression\BinaryNode(
-                            new Expression\ValueNode(130),
-                            new Expression\NameNode('c', 'minMargin'),
-                            '*'
-                        ),
-                        new Expression\BinaryNode(
-                            new Expression\ValueNode(1),
-                            new Expression\BinaryNode(
-                                new Expression\NameNode('pl', 'someAttr'),
-                                new Expression\NameNode('c', 'maxMargin'),
-                                '*'
-                            ),
-                            '-'
-                        ),
-                        '+'
-                    ),
-                    '>'
-                ),
-                'and'
-            ),
-            new Expression\BinaryNode(
-                new Expression\BinaryNode(
-                    new Expression\NameNode('c'),
-                    new Expression\UnaryNode(
-                        new Expression\NameNode('p', 'MSRP'),
-                        '-'
-                    ),
-                    '=='
-                ),
-                new Expression\UnaryNode(
-                    new Expression\BinaryNode(
-                        new Expression\RelationNode('p', 'MSRP', 'currency'),
-                        new Expression\ValueNode('U'),
-                        'matches'
-                    ),
-                    'not'
-                ),
-                'and'
-            ),
-            '||'
-        );
-
         $expr = new Expr();
-
-        $aliasMap = [
-            'pl' => 'mapPL',
-            'c' => 'mapC',
-            'p' => 'mapP',
-            'p::MSRP' => 'mapMSRP'
-        ];
-
-        $converter = new QueryExpressionBuilder();
         $params = [];
-        $actual = $converter->convert($node, $expr, $params, $aliasMap);
+        $aliasMapping = [];
+        $node = $this->getMock(NodeInterface::class);
 
-        $this->assertEquals(
-            '(mapPL.currency = :_vn0 AND mapP.margin * 10 ' .
-            '> (130 * mapC.minMargin) + (1 - (mapPL.someAttr * mapC.maxMargin))) ' .
-            'OR (mapC = (-mapP.MSRP) AND NOT(mapMSRP.currency LIKE :_vn1))',
-            (string)$actual
-        );
-        $this->assertEquals(['_vn0' => 'USD', '_vn1' => 'U'], $params);
+        $converter = $this->getMock(QueryExpressionConverterInterface::class);
+        $converter->expects($this->once())
+            ->method('convert')
+            ->with($node, $expr, $params, $aliasMapping)
+            ->willReturn('converted');
+
+        $builder = new QueryExpressionBuilder();
+        $builder->registerConverter($converter);
+        $this->assertEquals('converted', $builder->convert($node, $expr, $params, $aliasMapping));
+    }
+
+    public function testConvertZero()
+    {
+        $expr = new Expr();
+        $params = [];
+        $aliasMapping = [];
+        $node = $this->getMock(NodeInterface::class);
+
+        $converter = $this->getMock(QueryExpressionConverterInterface::class);
+        $converter->expects($this->once())
+            ->method('convert')
+            ->with($node, $expr, $params, $aliasMapping)
+            ->willReturn(0);
+
+        $builder = new QueryExpressionBuilder();
+        $builder->registerConverter($converter);
+        $this->assertSame(0, $builder->convert($node, $expr, $params, $aliasMapping));
+    }
+
+    public function testConvertSorting()
+    {
+        $expr = new Expr();
+        $params = [];
+        $aliasMapping = [];
+        $node = $this->getMock(NodeInterface::class);
+
+        $priorityConverter = $this->getMock(QueryExpressionConverterInterface::class);
+        $priorityConverter->expects($this->once())
+            ->method('convert')
+            ->with($node, $expr, $params, $aliasMapping)
+            ->willReturn('converted_priority');
+
+        $converter = $this->getMock(QueryExpressionConverterInterface::class);
+        $converter->expects($this->never())
+            ->method('convert')
+            ->with($node, $expr, $params, $aliasMapping);
+
+        $builder = new QueryExpressionBuilder();
+        $builder->registerConverter($converter);
+        $builder->registerConverter($priorityConverter, 10);
+        $this->assertEquals('converted_priority', $builder->convert($node, $expr, $params, $aliasMapping));
     }
 }
