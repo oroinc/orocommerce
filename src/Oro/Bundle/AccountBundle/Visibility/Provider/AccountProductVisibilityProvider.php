@@ -56,13 +56,7 @@ class AccountProductVisibilityProvider
             ->andWhere($qb->expr()->neq($visibilityTerm, $this->getCategoryConfigValue()))
             ->addOrderBy('accountId', Query::ORDER_ASC);
 
-        $accountVisibilities = $qb->getQuery()->getArrayResult();
-
-        foreach ($accountVisibilities as &$accountVisibility) {
-            $accountVisibility['is_visible_by_default'] = $this->getCategoryConfigValue();
-        }
-
-        return $accountVisibilities;
+        return $qb->getQuery()->getArrayResult();
     }
 
     /**
@@ -102,7 +96,13 @@ class AccountProductVisibilityProvider
                 BaseVisibilityResolved::VISIBILITY_HIDDEN
             ));
 
-        return $qb->getQuery()->getArrayResult();
+        $visibilities = $qb->getQuery()->getArrayResult();
+
+        foreach ($visibilities as &$visibility) {
+            $visibility['is_visible_by_default'] = $this->getCategoryConfigValue();
+        }
+
+        return $visibilities;
     }
 
     /**

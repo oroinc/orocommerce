@@ -66,12 +66,6 @@ class WebsiteSearchProductVisibilityIndexerListener
         );
 
         foreach ($accountVisibilities as $accountVisibility) {
-            $event->addField(
-                $accountVisibility['productId'],
-                self::FIELD_IS_VISIBLE_BY_DEFAULT,
-                $accountVisibility['is_visible_by_default']
-            );
-
             $event->addPlaceholderField(
                 $accountVisibility['productId'],
                 self::FIELD_VISIBILITY_ACCOUNT,
@@ -98,6 +92,12 @@ class WebsiteSearchProductVisibilityIndexerListener
                 $visibility['productId'],
                 self::FIELD_VISIBILITY_NEW,
                 $visibility['visibility_new']
+            );
+
+            $event->addField(
+                $visibility['productId'],
+                self::FIELD_IS_VISIBLE_BY_DEFAULT,
+                $visibility['is_visible_by_default']
             );
         }
     }
