@@ -62,15 +62,25 @@ class OrmAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterfa
      */
     public function createAccountWithoutAccountGroupVisibility(Account $account)
     {
-        $queryBuilder = $this->getIndexIntegerQueryBuilder();
+        $queryBuilder = $this->getIndexIntegerQueryBuilder('visibilityNew');
 
         $queryBuilder
-            ->select('indexInteger.item_id', 'indexInteger.field', 'indexInteger.value')
-            ->join('indexInteger.item', 'item')
-            ->where($queryBuilder->expr()->eq('indexInteger.field', ':fieldName'))
-            ->andWhere($queryBuilder->expr()->eq('item.entity', ':entityClass'))
+            ->select('visibilityNew.item_id', 'visibilityNew.field', 'visibilityNew.value')
+            ->join('visibilityNew.item', 'item')
+            ->join(
+                'item.integerFields',
+                'isVisibleByDefault',
+                OrmQuery\Expr\Join::WITH,
+                'isVisibleByDefault.field = :isVisibleByDefaultField'
+            )
+            ->where($queryBuilder->expr()->eq('visibilityNew.field', ':visibilityNewField'))
+            ->andWhere(
+                $queryBuilder->expr()->eq('item.entity', ':entityClass'),
+                $queryBuilder->expr()->neq('visibilityNew.value', 'isVisibleByDefault.value')
+            )
             ->setParameter('entityClass', Product::class)
-            ->setParameter('fieldName', $this->getVisibilityNewFieldName());
+            ->setParameter('visibilityNewField', $this->getVisibilityNewFieldName())
+            ->setParameter('isVisibleByDefaultField', $this->getIsVisibleByDefaultFieldName());
 
         $this->insertExecutor->execute(IndexInteger::class, ['item_id', 'field', 'value'], $queryBuilder);
     }
@@ -96,6 +106,7 @@ class OrmAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterfa
     public function deleteAccountVisibility(Account $account)
     {
         $itemQueryBuilder = $this->getItemQueryBuilder();
+
         $queryBuilder = $this->getIndexIntegerQueryBuilder();
 
         $queryBuilder
@@ -181,6 +192,14 @@ class OrmAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterfa
     }
 
     /**
+     * @return string
+     */
+    private function getIsVisibleByDefaultFieldName()
+    {
+        return 'is_visible_by_default';
+    }
+
+    /**
      * @param Account $account
      * @return string
      */
@@ -197,21 +216,23 @@ class OrmAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterfa
         $queryBuilder = $this->getEntityManager()->createQueryBuilder();
 
         $queryBuilder
+            ->select('searchItem')
             ->from(Item::class, 'searchItem')
-            ->where($queryBuilder->expr()->eq('item.entity', ':entityClass'))
+            ->where($queryBuilder->expr()->eq('searchItem.entity', ':entityClass'))
             ->setParameter('entityClass', Product::class);
 
         return $queryBuilder;
     }
 
     /**
+     * @param string $alias
      * @return \Doctrine\ORM\QueryBuilder
      */
-    private function getIndexIntegerQueryBuilder()
+    private function getIndexIntegerQueryBuilder($alias)
     {
         return $this->getEntityManager()
             ->createQueryBuilder()
-            ->from(IndexInteger::class, 'indexInteger');
+            ->from(IndexInteger::class, $alias);
     }
 
     /**
