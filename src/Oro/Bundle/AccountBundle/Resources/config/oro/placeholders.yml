@@ -1,0 +1,105 @@
+placeholders:
+    placeholders:
+        application_menu:
+            items:
+                frontend_menu:
+                    order: 100
+        user_menu:
+            items:
+                account_user_login:
+                    order: 50
+                account_menu_user:
+                    order: 50
+        dots_menu:
+            items:
+                account_dots_menu:
+                    order: 100
+        pin_tabs_list:
+            items:
+                account_pin_tabs_list:
+                    order: 100
+        pin_button:
+            items:
+                account_pin_button:
+                    order: 100
+        right_panel:
+            items:
+                frontend_sidebar:
+                    order: 200
+        left_panel:
+            items:
+                frontend_sidebar:
+                    order: 200
+
+        content_before:
+            items:
+                page_state_routes:
+                    order: 100
+
+        view_before_content_addition:
+            items:
+                entity_pagination_frontend_view:
+                    order: 100
+
+        update_before_content_addition:
+            items:
+                entity_pagination_frontend_edit:
+                    order: 100
+
+        view_navButtons_after:
+            items:
+                product_visibility_button:
+                    order: 100
+        change_history_block:
+            items:
+                frontend_change_history_link: ~
+
+        scripts_after:
+            items:
+                frontend_window_bundle_js:
+                    order: 200
+    items:
+        frontend_menu:
+            template: OroAccountBundle:Menu:frontendMenu.html.twig
+            applicable: "@oro_account.placeholder.filter->isFrontendApplicable()"
+        account_user_login:
+            template: OroAccountBundle:Menu:menuLogin.html.twig
+            applicable: "@oro_account.placeholder.filter->isLoginRequired()"
+        account_menu_user:
+            template: OroAccountBundle:Menu:menuProfile.html.twig
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
+        account_dots_menu:
+            template: OroAccountBundle:ApplicationMenu:dotsMenu.html.twig
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
+        account_pin_tabs_list:
+            template: OroAccountBundle:Menu:pinTabsList.html.twig
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
+        account_pin_button:
+            template: OroAccountBundle:ApplicationMenu:pinButton.html.twig
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
+        frontend_sidebar:
+            template: OroAccountBundle:Sidebar:sidebar.html.twig
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
+        page_state_routes:
+            template: OroAccountBundle:Pagestate:pagestate.html.twig
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
+        entity_pagination_frontend_view:
+            template: OroAccountBundle:EntityPagination:viewPagination.html.twig
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
+        entity_pagination_frontend_edit:
+            template: OroAccountBundle:EntityPagination:editPagination.html.twig
+            applicable: "@oro_account.placeholder.filter->isUserApplicable()"
+        product_visibility_button:
+            template: OroAccountBundle:ProductVisibility:button.html.twig
+            applicable:
+                - "@oro_ui.placeholder.filter->isInstanceOf($entity$, %oro_product.entity.product.class%)"
+                - "@oro_frontend.placeholder.filter->isBackendRoute()"
+        frontend_window_bundle_js:
+            template: OroAccountBundle:Windows:javascript.html.twig
+            applicable: "@oro_frontend.placeholder.filter->isFrontendRoute()"
+        frontend_change_history_link:
+            template: OroAccountBundle:DataAudit:change_history_link.html.twig
+            applicable:
+                - "@oro_dataaudit.placeholder.filter->isEntityAuditable($entity$, $audit_show_change_history$)"
+                - "@oro_account.placeholder.filter->isUserApplicable()"
+            acl: oro_account_dataaudit_history

@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -33,12 +34,12 @@ class CheckoutController extends Controller
      *
      * @Route(
      *     "/{id}",
-     *     name="orob2b_checkout_frontend_checkout",
+     *     name="oro_checkout_frontend_checkout",
      *     requirements={"id"="\d+"}
      * )
      * @Layout(vars={"workflowStepName", "workflowName"})
      * @Acl(
-     *      id="orob2b_checkout_frontend_checkout",
+     *      id="oro_checkout_frontend_checkout",
      *      type="entity",
      *      class="OroCheckoutBundle:Checkout",
      *      permission="ACCOUNT_EDIT",
@@ -125,7 +126,7 @@ class CheckoutController extends Controller
         if ($request->isXmlHttpRequest()) {
             return;
         }
-        $continueTransition = $this->get('orob2b_checkout.layout.data_provider.transition')
+        $continueTransition = $this->get('oro_checkout.layout.data_provider.transition')
             ->getContinueTransition($workflowItem);
         if (!$continueTransition) {
             return;
@@ -141,7 +142,7 @@ class CheckoutController extends Controller
         if (!$errors->isEmpty()) {
             return;
         }
-        $manager = $this->get('orob2b_checkout.data_provider.manager.checkout_line_items');
+        $manager = $this->get('oro_checkout.data_provider.manager.checkout_line_items');
         $orderLineItemsCount = $manager->getData($checkout, true)->count();
         if ($orderLineItemsCount && $orderLineItemsCount !== $manager->getData($checkout)->count()) {
             $this->get('session')->getFlashBag()
@@ -160,7 +161,7 @@ class CheckoutController extends Controller
     {
         $workflowItem = $this->getWorkflowItem($checkout);
         if ($request->isMethod(Request::METHOD_POST)) {
-            $continueTransition = $this->get('orob2b_checkout.layout.data_provider.transition')
+            $continueTransition = $this->get('oro_checkout.layout.data_provider.transition')
                 ->getContinueTransition($workflowItem);
             if ($continueTransition) {
                 $transitionForm = $this->getTransitionForm($continueTransition, $workflowItem);
@@ -169,6 +170,8 @@ class CheckoutController extends Controller
                     $transitionForm->submit($request);
                     if ($transitionForm->isValid()) {
                         $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
+                    } else {
+                        $this->handleFormErrors($transitionForm->getErrors());
                     }
                 } else {
                     $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
@@ -201,7 +204,7 @@ class CheckoutController extends Controller
      */
     protected function getTransitionForm(TransitionData $transitionData, WorkflowItem $workflowItem)
     {
-        return $this->get('orob2b_checkout.layout.data_provider.transition_form')
+        return $this->get('oro_checkout.layout.data_provider.transition_form')
             ->getTransitionForm($workflowItem, $transitionData);
     }
 
@@ -232,5 +235,13 @@ class CheckoutController extends Controller
         }
 
         return reset($items);
+    }
+
+    /**
+     * @param FormErrorIterator $errors
+     */
+    protected function handleFormErrors(FormErrorIterator $errors)
+    {
+        $this->get('oro_checkout.workflow_state.handler.checkout_error')->addFlashWorkflowStateWarning($errors);
     }
 }

@@ -28,9 +28,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\EntityListeners({"Oro\Bundle\SaleBundle\Entity\Listener\QuoteListener"})
  * @ORM\HasLifecycleCallbacks()
  * @Config(
- *      routeName="orob2b_sale_quote_index",
- *      routeView="orob2b_sale_quote_view",
- *      routeUpdate="orob2b_sale_quote_update",
+ *      routeName="oro_sale_quote_index",
+ *      routeView="oro_sale_quote_view",
+ *      routeUpdate="oro_sale_quote_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-list-alt"

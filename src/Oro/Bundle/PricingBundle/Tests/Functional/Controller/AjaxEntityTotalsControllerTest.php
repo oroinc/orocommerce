@@ -35,7 +35,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
             'entityId' => $shoppingList->getId()
         ];
 
-        $this->client->request('GET', $this->getUrl('orob2b_pricing_entity_totals', $params));
+        $this->client->request('GET', $this->getUrl('oro_pricing_entity_totals', $params));
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
@@ -55,7 +55,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_pricing_entity_totals'),
+            $this->getUrl('oro_pricing_entity_totals'),
             [],
             [],
             $this->generateNoHashNavigationHeader()
@@ -68,7 +68,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
     {
         $this->client->request(
             'POST',
-            $this->getUrl('orob2b_pricing_recalculate_entity_totals'),
+            $this->getUrl('oro_pricing_recalculate_entity_totals'),
             [],
             [],
             $this->generateNoHashNavigationHeader()

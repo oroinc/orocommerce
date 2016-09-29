@@ -1,14 +1,59 @@
-{% block _main_menu_container_widget %}
+{% block _header_row_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " main-menu"
+        'data-page-component-module': 'oromenu/default/js/components/header-row',
+        '~data-page-component-options': {
+            isMobile: isMobileVersion()
+        },
+        '~class': ' header-row'
     }) %}
-    <nav {{ block('block_attributes') }}>
-        <div class="container-fluid">
-            <ul class="main-menu__list">
-                {{ block_widget(block) }}
-            </ul>
+
+    {% if isMobileVersion() %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~data-sticky': {
+                isSticky: true,
+                autoWidth: true,
+                toggleClass: 'header-row--fixed',
+                placeholderId: 'sticky-header-row',
+            }
+        }) %}
+    {% endif %}
+
+    <div class="container-fluid">
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
         </div>
-    </nav>
+
+        <input type="radio" id="header-row-overlay" class="header-row-helper" name="dropdowns" checked="checked" hidden="hidden">
+        <label class="header-row-overlay hidden-on-desktop" for="header-row-overlay"></label>
+    </div>
+{% endblock %}
+
+{% block _header_row_links_widget %}
+    <input type="radio" id="header-row-links" class="header-row-helper" name="dropdowns" hidden="hidden">
+    <div class="header-row__container header-row__container--unstack">
+        <label class="header-row__trigger hidden-on-desktop" for="header-row-links">
+            <div class="nav-trigger">
+                <span class="nav-trigger__icon nav-trigger__icon--transparent nav-trigger__icon--large">
+                    <span class="cf-menu cf--gray cf--no-offset"></span>
+                </span>
+            </div>
+        </label>
+        <div class="header-row__toggle">
+            <div class="header-row__dropdown-mobile">
+                {{ block_widget(block) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _main_menu_container_widget %}
+    {% set attr =  layout_attr_defaults(attr, {
+        '~class': ' main-menu'
+    }) %}
+
+    <ul {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </ul>
 {% endblock %}
 
 {% block _main_menu_widget %}
@@ -23,27 +68,6 @@
             {% endif %}
         {%- endfor %}
     {% endspaceless %}
-{% endblock %}
-
-{% block _main_menu_widgets_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " main-menu__list main-menu__list--nested"
-    }) %}
-    <li><ul {{ block('block_attributes') }}>{{ block_widget(block) }}</ul></li>
-{% endblock %}
-
-{% block _main_menu_messages_widget_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " main-menu__item main-menu__item--nested"
-    }) %}
-    <li {{ block('block_attributes') }}>
-        <button class="messages-widget__trigger" data-oro-mpa-trigger>
-            <span class="badge badge_xs badge_circle badge_blue messages-widget__badge">3</span>
-            <span class="badge badge_md badge_circle badge_dark"><i class="cf-comment"></i></span>
-            <span class="messages-widget__title text-uppercase">Messages</span>
-            <i class="cf-down-open-mini"></i>
-        </button>
-    </li>
 {% endblock %}
 
 {% block rule_editor_widget %}

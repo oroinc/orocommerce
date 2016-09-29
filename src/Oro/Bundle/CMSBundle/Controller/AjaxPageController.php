@@ -16,10 +16,10 @@ class AjaxPageController extends Controller
     /**
      * @Route(
      *      "/page-move",
-     *      name="orob2b_cms_page_move"
+     *      name="oro_cms_page_move"
      * )
      * @Method({"PUT"})
-     * @AclAncestor("orob2b_cms_page_update")
+     * @AclAncestor("oro_cms_page_update")
      *
      * @param Request $request
      * @return JsonResponse
@@ -31,7 +31,7 @@ class AjaxPageController extends Controller
         $position = (int)$request->get('position');
 
         return new JsonResponse(
-            $this->get('orob2b_cms.page_tree_handler')->moveNode($nodeId, $parentId, $position)
+            $this->get('oro_cms.page_tree_handler')->moveNode($nodeId, $parentId, $position)
         );
     }
 }

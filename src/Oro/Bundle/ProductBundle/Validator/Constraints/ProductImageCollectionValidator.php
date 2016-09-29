@@ -14,7 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage as ProductImageEntity;
 
 class ProductImageCollectionValidator extends ConstraintValidator
 {
-    const ALIAS = 'orob2b_product_image_collection_validator';
+    const ALIAS = 'oro_product_image_collection_validator';
 
     /**
      * @var ImageTypeProvider

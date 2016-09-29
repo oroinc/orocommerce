@@ -14,7 +14,7 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 class QuickAddController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_product_frontend_quick_add")
+     * @Route("/", name="oro_product_frontend_quick_add")
      * @Layout
      *
      * @param Request $request
@@ -22,16 +22,16 @@ class QuickAddController extends Controller
      */
     public function addAction(Request $request)
     {
-        $response = $this->get('orob2b_product.form_handler.quick_add')->process(
+        $response = $this->get('oro_product.form_handler.quick_add')->process(
             $request,
-            'orob2b_product_frontend_quick_add'
+            'oro_product_frontend_quick_add'
         );
 
         return $response ?: [];
     }
 
     /**
-     * @Route("/import/", name="orob2b_product_frontend_quick_add_import")
+     * @Route("/import/", name="oro_product_frontend_quick_add_import")
      * @Layout(vars={"import_step"})
      *
      * @param Request $request
@@ -39,7 +39,7 @@ class QuickAddController extends Controller
      */
     public function importAction(Request $request)
     {
-        $collection = $this->get('orob2b_product.form_handler.quick_add')->processImport($request);
+        $collection = $this->get('oro_product.form_handler.quick_add')->processImport($request);
         return [
             'import_step' => $collection === null ? 'form' : 'result',
             'data' => [
@@ -50,7 +50,7 @@ class QuickAddController extends Controller
     }
 
     /**
-     * @Route("/copy-paste/", name="orob2b_product_frontend_quick_add_copy_paste")
+     * @Route("/copy-paste/", name="oro_product_frontend_quick_add_copy_paste")
      * @Layout(vars={"import_step"})
      *
      * @param Request $request
@@ -58,7 +58,7 @@ class QuickAddController extends Controller
      */
     public function copyPasteAction(Request $request)
     {
-        $collection = $this->get('orob2b_product.form_handler.quick_add')->processCopyPaste($request);
+        $collection = $this->get('oro_product.form_handler.quick_add')->processCopyPaste($request);
         return [
             'import_step' => $collection === null ? 'form' : 'result',
             'data' => [
@@ -68,21 +68,21 @@ class QuickAddController extends Controller
     }
 
     /**
-     * @Route("/validation/result/", name="orob2b_product_frontend_quick_add_validation_result")
+     * @Route("/validation/result/", name="oro_product_frontend_quick_add_validation_result")
      *
      * @param Request $request
      * @return JsonResponse
      */
     public function validationResultAction(Request $request)
     {
-        $response = $this->get('orob2b_product.form_handler.quick_add')->process(
+        $response = $this->get('oro_product.form_handler.quick_add')->process(
             $request,
-            'orob2b_product_frontend_quick_add'
+            'oro_product_frontend_quick_add'
         );
 
         if (!$response instanceof RedirectResponse) {
             return new JsonResponse([
-                'redirectUrl' => $this->generateUrl('orob2b_product_frontend_quick_add')
+                'redirectUrl' => $this->generateUrl('oro_product_frontend_quick_add')
             ]);
         }
 

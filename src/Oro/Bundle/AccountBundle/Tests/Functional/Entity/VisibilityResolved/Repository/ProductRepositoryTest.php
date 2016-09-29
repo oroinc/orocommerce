@@ -4,21 +4,19 @@ namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Re
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Query;
-
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\AccountBundle\Tests\Functional\Entity\Repository\ResolvedEntityRepositoryTestTrait;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository as ProductEntityRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -73,11 +71,13 @@ class ProductRepositoryTest extends WebTestCase
     public function testFindByPrimaryKey()
     {
         /** @var ProductVisibilityResolved $actualEntity */
-        $actualEntity = $this->repository->findOneBy([]);
-        if (!$actualEntity) {
-            $this->markTestSkipped('Can\'t test method because fixture was not loaded.');
-        }
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $entity = new ProductVisibilityResolved($website, $product);
+        $this->getResolvedVisibilityManager()->persist($entity);
+        $this->getResolvedVisibilityManager()->flush();
 
+        $actualEntity = $this->repository->findOneBy([]);
         $expectedEntity = $this->repository->findByPrimaryKey(
             $actualEntity->getProduct(),
             $actualEntity->getWebsite()
@@ -254,7 +254,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected function getProductRepository()
     {
-        $className = $this->getContainer()->getParameter('orob2b_product.entity.product.class');
+        $className = $this->getContainer()->getParameter('oro_product.entity.product.class');
 
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass($className)
@@ -292,7 +292,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected function getResolvedVisibilityManager()
     {
-        $className = $this->getContainer()->getParameter('orob2b_account.entity.product_visibility_resolved.class');
+        $className = $this->getContainer()->getParameter('oro_account.entity.product_visibility_resolved.class');
 
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass($className);
@@ -303,7 +303,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected function getCategoryRepository()
     {
-        $className = $this->getContainer()->getParameter('orob2b_catalog.entity.category.class');
+        $className = $this->getContainer()->getParameter('oro_catalog.entity.category.class');
 
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass($className)

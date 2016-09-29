@@ -10,12 +10,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
 
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 
 class QuantityType extends AbstractProductAwareType
 {
-    const NAME = 'orob2b_quantity';
+    const NAME = 'oro_quantity';
 
     /** @var RoundingServiceInterface */
     protected $roundingService;

@@ -4,9 +4,9 @@
 {% set pageTitle = 'oro.warehouse.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% if resource_granted('orob2b_warehouse_create') %}
+    {% if resource_granted('oro_warehouse_create') %}
         {{ UI.addButton({
-            'path': path('orob2b_warehouse_create'),
+            'path': path('oro_warehouse_create'),
             'entity_label': 'oro.warehouse.entity_label'|trans
         }) }}
     {% endif %}

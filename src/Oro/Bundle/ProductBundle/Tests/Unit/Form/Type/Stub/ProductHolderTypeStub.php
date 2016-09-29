@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class ProductHolderTypeStub extends AbstractType
 {
-    const NAME = 'orob2b_stub_product_holder';
+    const NAME = 'oro_stub_product_holder';
 
     /**
      * {@inheritdoc}

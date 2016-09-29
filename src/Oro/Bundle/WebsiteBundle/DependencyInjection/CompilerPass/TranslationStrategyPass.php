@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 class TranslationStrategyPass implements CompilerPassInterface
 {
     const STRATEGY_PROVIDER = 'oro_translation.strategy.provider';
-    const COMPOSITE_STRATEGY = 'orob2b_website.translation.strategy.composite_fallback_strategy';
+    const COMPOSITE_STRATEGY = 'oro_website.translation.strategy.composite_fallback_strategy';
 
     /**
      * {@inheritdoc}

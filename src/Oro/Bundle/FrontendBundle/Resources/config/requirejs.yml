@@ -1,4 +1,8 @@
 config:
+    shim:
+        'slick':
+            deps:
+                - 'jquery'
     paths:
         'orofrontend/js/app/components/widget-form-component': 'bundles/orofrontend/js/app/components/widget-form-component.js'
         'orofrontend/js/app/components/switchable-editable-view-component': 'bundles/orofrontend/js/app/components/switchable-editable-view-component.js'
@@ -23,6 +27,9 @@ config:
         'orofrontend/default/js/app/views/sticky-panel-view': 'orofrontend/default/js/app/views/sticky-panel-view.js'
 
         'orofrontend/js/app/elements-helper': 'bundles/orofrontend/js/app/elements-helper.js'
+
+        'slick': 'bundles/orofrontend/default/vendors/slick/slick.min.js'
+        'orofrontend/js/app/components/list-slider-component': 'bundles/orofrontend/js/app/components/list-slider-component.js'
         'orofrontend/default/js/components/rule-editor-component': 'orofrontend/default/js/components/rule-editor-component/rule-editor-component.js'
     appmodules:
         - orofrontend/js/app/modules/inline-editor-types-map-module

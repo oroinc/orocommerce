@@ -12,7 +12,7 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
 class TaxBaseExclusionType extends AbstractType
 {
-    const NAME = 'orob2b_tax_base_exclusion';
+    const NAME = 'oro_tax_base_exclusion';
 
     /**
      * @var string

@@ -34,7 +34,7 @@ class QuoteRepositoryTest extends WebTestCase
         /** @var Quote $quote */
         $quote = $this->getReference(LoadQuoteData::QUOTE1);
 
-        $quoteClass = $this->getContainer()->getParameter('orob2b_sale.entity.quote.class');
+        $quoteClass = $this->getContainer()->getParameter('oro_sale.entity.quote.class');
 
         /** @var EntityManager $em */
         $em = $this->getContainer()->get('doctrine')->getManagerForClass($quoteClass);
@@ -74,11 +74,11 @@ class QuoteRepositoryTest extends WebTestCase
         $query = reset($queries);
 
         $quoteProductMetadata = $em
-            ->getClassMetadata($this->getContainer()->getParameter('orob2b_sale.entity.quote_product.class'));
+            ->getClassMetadata($this->getContainer()->getParameter('oro_sale.entity.quote_product.class'));
         $this->assertContains(sprintf('LEFT JOIN %s', $quoteProductMetadata->getTableName()), $query);
 
         $quoteProductOfferMetadata = $em
-            ->getClassMetadata($this->getContainer()->getParameter('orob2b_sale.entity.quote_product_offer.class'));
+            ->getClassMetadata($this->getContainer()->getParameter('oro_sale.entity.quote_product_offer.class'));
         $this->assertContains(sprintf('LEFT JOIN %s', $quoteProductOfferMetadata->getTableName()), $query);
 
         $em->getConnection()->getConfiguration()->setSQLLogger($prevLogger);

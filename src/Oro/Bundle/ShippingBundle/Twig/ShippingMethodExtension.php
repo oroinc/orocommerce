@@ -6,7 +6,7 @@ use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 
 class ShippingMethodExtension extends \Twig_Extension
 {
-    const SHIPPING_METHOD_EXTENSION_NAME = 'orob2b_shipping_method';
+    const SHIPPING_METHOD_EXTENSION_NAME = 'oro_shipping_method';
 
     /**
      * @var ShippingMethodLabelFormatter

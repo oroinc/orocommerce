@@ -16,8 +16,8 @@ use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 class AjaxPriceListController extends Controller
 {
     /**
-     * @Route("/default/{id}", name="orob2b_pricing_price_list_default", requirements={"id"="\d+"})
-     * @AclAncestor("orob2b_pricing_price_list_update")
+     * @Route("/default/{id}", name="oro_pricing_price_list_default", requirements={"id"="\d+"})
+     * @AclAncestor("oro_pricing_price_list_update")
      *
      * @param PriceList $priceList
      * @return JsonResponse
@@ -54,9 +54,9 @@ class AjaxPriceListController extends Controller
 
     /**
      * @Route("/get-pricelist-currency-list/{id}",
-     *      name="orob2b_pricing_price_list_currency_list",
+     *      name="oro_pricing_price_list_currency_list",
      *      requirements={"id"="\d+"})
-     * @AclAncestor("orob2b_product_update")
+     * @AclAncestor("oro_product_update")
      *
      * @param PriceList $priceList
      * @return JsonResponse
@@ -77,7 +77,7 @@ class AjaxPriceListController extends Controller
     {
         return $this->container
             ->get('doctrine')
-            ->getRepository($this->container->getParameter('orob2b_pricing.entity.price_list.class'));
+            ->getRepository($this->container->getParameter('oro_pricing.entity.price_list.class'));
     }
 
     /**

@@ -28,7 +28,7 @@ class TaxBaseExclusionCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_tax_base_exclusion_collection', $this->formType->getName());
+        $this->assertEquals('oro_tax_base_exclusion_collection', $this->formType->getName());
     }
 
     public function testGetParent()
@@ -43,7 +43,7 @@ class TaxBaseExclusionCollectionTypeTest extends FormIntegrationTestCase
         $options = $resolver->resolve();
 
         $this->assertArrayHasKey('type', $options);
-        $this->assertEquals('orob2b_tax_base_exclusion', $options['type']);
+        $this->assertEquals('oro_tax_base_exclusion', $options['type']);
         $this->assertArrayHasKey('show_form_when_empty', $options);
         $this->assertFalse($options['show_form_when_empty']);
     }

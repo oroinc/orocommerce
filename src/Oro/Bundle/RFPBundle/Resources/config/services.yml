@@ -1,16 +1,16 @@
 parameters:
-    orob2b_rfp.entity.request.class: Oro\Bundle\RFPBundle\Entity\Request
-    orob2b_rfp.entity.request_product.class: Oro\Bundle\RFPBundle\Entity\RequestProduct
-    orob2b_rfp.entity.request_product_item.class: Oro\Bundle\RFPBundle\Entity\RequestProductItem
-    orob2b_rfp.entity.request.status.class: Oro\Bundle\RFPBundle\Entity\RequestStatus
+    oro_rfp.entity.request.class: Oro\Bundle\RFPBundle\Entity\Request
+    oro_rfp.entity.request_product.class: Oro\Bundle\RFPBundle\Entity\RequestProduct
+    oro_rfp.entity.request_product_item.class: Oro\Bundle\RFPBundle\Entity\RequestProductItem
+    oro_rfp.entity.request.status.class: Oro\Bundle\RFPBundle\Entity\RequestStatus
 
 services:
-    orob2b_rfp.datagrid.action_permission_provider:
+    oro_rfp.datagrid.action_permission_provider:
         class: 'Oro\Bundle\RFPBundle\Datagrid\ActionPermissionProvider'
         arguments:
             - "@oro_config.manager"
 
-    orob2b_rfp.mailer.processor:
+    oro_rfp.mailer.processor:
         class: 'Oro\Bundle\RFPBundle\Mailer\Processor'
         public: false
         arguments:
@@ -20,150 +20,150 @@ services:
             - "@oro_email.email_holder_helper"
             - "@oro_email.direct_mailer"
 
-    orob2b_rfp.mailer.request_representatives_notifier:
+    oro_rfp.mailer.request_representatives_notifier:
         class: 'Oro\Bundle\RFPBundle\Mailer\RequestRepresentativesNotifier'
         arguments:
-            - "@orob2b_rfp.mailer.processor"
+            - "@oro_rfp.mailer.processor"
             - "@oro_config.manager"
 
-    orob2b_rfp.processor.quick_add:
-        parent: orob2b_product.component_processor.data_storage_aware.processor
+    oro_rfp.processor.quick_add:
+        parent: oro_product.component_processor.data_storage_aware.processor
         calls:
-            - [setName, ['orob2b_rfp_quick_add_processor']]
-            - [setRedirectRouteName, ['orob2b_rfp_frontend_request_create']]
-            - [setAcl, ['orob2b_rfp_frontend_request_create']]
+            - [setName, ['oro_rfp_quick_add_processor']]
+            - [setRedirectRouteName, ['oro_rfp_frontend_request_create']]
+            - [setAcl, ['oro_rfp_frontend_request_create']]
             - [setScope, ['rfq']]
         tags:
-            - { name: orob2b_product.quick_add_processor }
+            - { name: oro_product.quick_add_processor }
 
-    orob2b_rfp.event_listener.product_select_db_query:
-        class: '%orob2b_product.event_listener.scoped_product_select_db_query.common_class%'
-        parent: orob2b_product.event_listener.abstract_product_select_db_query
+    oro_rfp.event_listener.product_select_db_query:
+        class: '%oro_product.event_listener.scoped_product_select_db_query.common_class%'
+        parent: oro_product.event_listener.abstract_product_select_db_query
         calls:
             - [setScope, ['rfp']]
-            - [setFrontendSystemConfigurationPath, ['oro_b2b_rfp.frontend_product_visibility']]
-            - [setBackendSystemConfigurationPath, ['oro_b2b_rfp.backend_product_visibility']]
+            - [setFrontendSystemConfigurationPath, ['oro_rfp.frontend_product_visibility']]
+            - [setBackendSystemConfigurationPath, ['oro_rfp.backend_product_visibility']]
         tags:
-            - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
 
-    orob2b_rfp.service.request_to_quote_data_storage:
+    oro_rfp.service.request_to_quote_data_storage:
         class: 'Oro\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage'
         arguments:
-            - "@orob2b_product.storage.product_data_storage"
+            - "@oro_product.storage.product_data_storage"
 
-    orob2b_rfp.service.request_update_handler:
+    oro_rfp.service.request_update_handler:
         class: 'Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler'
         parent: oro_form.model.update_handler
         scope: request
         calls:
-            - [setRepresentativesNotifier, ['@orob2b_rfp.mailer.request_representatives_notifier']]
+            - [setRepresentativesNotifier, ['@oro_rfp.mailer.request_representatives_notifier']]
 
-    orob2b_rfp.storage.offers_data_storage:
+    oro_rfp.storage.offers_data_storage:
         class: 'Oro\Bundle\RFPBundle\Storage\OffersDataStorage'
-        parent: orob2b_product.storage.session_data_storage
+        parent: oro_product.storage.session_data_storage
 
-    orob2b_rfp.storage.offers_form_storage:
+    oro_rfp.storage.offers_form_storage:
         class: 'Oro\Bundle\RFPBundle\Storage\OffersFormStorage'
         public: false
 
-    orob2b_rfp.factory.duplicator_factory:
+    oro_rfp.factory.duplicator_factory:
         class: 'Oro\Bundle\RFPBundle\Factory\DuplicatorFactory'
         calls:
-            - [setFilterFactory,  ["@orob2b_rfp.factory.duplicator_filter_factory"]]
-            - [setMatcherFactory,  ["@orob2b_rfp.factory.duplicator_matcher_factory"]]
+            - [setFilterFactory,  ["@oro_rfp.factory.duplicator_filter_factory"]]
+            - [setMatcherFactory,  ["@oro_rfp.factory.duplicator_matcher_factory"]]
 
-    orob2b_rfp.factory.duplicator_filter_factory:
+    oro_rfp.factory.duplicator_filter_factory:
         class: 'Oro\Component\Duplicator\Filter\FilterFactory'
 
-    orob2b_rfp.factory.duplicator_matcher_factory:
+    oro_rfp.factory.duplicator_matcher_factory:
         class: 'Oro\Component\Duplicator\Matcher\MatcherFactory'
 
-    orob2b_rfp.duplicator_filter_type.set_null:
+    oro_rfp.duplicator_filter_type.set_null:
         class: 'Oro\Component\Duplicator\ObjectType'
         arguments:
             - setNull
             - DeepCopy\Filter\SetNullFilter
         tags:
-            - { name: orob2b_rfp.duplicate.filter_type }
+            - { name: oro_rfp.duplicate.filter_type }
 
-    orob2b_rfp.duplicator_filter_type.keep:
+    oro_rfp.duplicator_filter_type.keep:
         class: 'Oro\Component\Duplicator\ObjectType'
         arguments:
             - keep
             - DeepCopy\Filter\KeepFilter
         tags:
-            - { name: orob2b_rfp.duplicate.filter_type }
+            - { name: oro_rfp.duplicate.filter_type }
 
-    orob2b_rfp.duplicator_filter_type.collection:
+    oro_rfp.duplicator_filter_type.collection:
         class: 'Oro\Component\Duplicator\ObjectType'
         arguments:
             - collection
             - DeepCopy\Filter\Doctrine\DoctrineCollectionFilter
         tags:
-            - { name: orob2b_rfp.duplicate.filter_type }
+            - { name: oro_rfp.duplicate.filter_type }
 
-    orob2b_rfp.duplicator_filter_type.empty_collection:
+    oro_rfp.duplicator_filter_type.empty_collection:
         class: 'Oro\Component\Duplicator\ObjectType'
         arguments:
             - emptyCollection
             - DeepCopy\Filter\Doctrine\DoctrineEmptyCollectionFilter
         tags:
-            - { name: orob2b_rfp.duplicate.filter_type }
+            - { name: oro_rfp.duplicate.filter_type }
 
-    orob2b_rfp.duplicator_filter_type.replace_value:
+    oro_rfp.duplicator_filter_type.replace_value:
         class: 'Oro\Component\Duplicator\ObjectType'
         arguments:
             - replaceValue
             - Oro\Component\Duplicator\Filter\ReplaceValueFilter
         tags:
-            - { name: orob2b_rfp.duplicate.filter_type }
+            - { name: oro_rfp.duplicate.filter_type }
 
-    orob2b_rfp.duplicator_filter_type.shallow_copy:
+    oro_rfp.duplicator_filter_type.shallow_copy:
         class: 'Oro\Component\Duplicator\ObjectType'
         arguments:
             - shallowCopy
             - Oro\Component\Duplicator\Filter\ShallowCopyFilter
         tags:
-            - { name: orob2b_rfp.duplicate.filter_type }
+            - { name: oro_rfp.duplicate.filter_type }
 
-    orob2b_rfp.duplicator_matcher_type.property:
+    oro_rfp.duplicator_matcher_type.property:
         class: 'Oro\Component\Duplicator\ObjectType'
         arguments:
             - property
             - DeepCopy\Matcher\PropertyMatcher
         tags:
-            - { name: orob2b_rfp.duplicate.matcher_type }
+            - { name: oro_rfp.duplicate.matcher_type }
 
-    orob2b_rfp.duplicator_mather_type.property_name:
+    oro_rfp.duplicator_mather_type.property_name:
         class: 'Oro\Component\Duplicator\ObjectType'
         arguments:
             - propertyName
             - DeepCopy\Matcher\PropertyNameMatcher
         tags:
-            - { name: orob2b_rfp.duplicate.matcher_type }
+            - { name: oro_rfp.duplicate.matcher_type }
 
-    orob2b_rfp.duplicator_matcher_type.property_type:
+    oro_rfp.duplicator_matcher_type.property_type:
         class: 'Oro\Component\Duplicator\ObjectType'
         arguments:
             - propertyType
             - DeepCopy\Matcher\PropertyTypeMatcher
         tags:
-            - { name: orob2b_rfp.duplicate.matcher_type }
+            - { name: oro_rfp.duplicate.matcher_type }
 
-    orob2b_rfp.layout.data_provider.request_form:
+    oro_rfp.layout.data_provider.request_form:
         class: 'Oro\Bundle\RFPBundle\Layout\DataProvider\RFPFormProvider'
         arguments:
             - '@form.factory'
         tags:
-            - { name: layout.data_provider, alias: orob2b_rfp_request_form }
+            - { name: layout.data_provider, alias: oro_rfp_request_form }
 
-    orob2b_rfp.request.manager:
+    oro_rfp.request.manager:
         class: 'Oro\Bundle\RFPBundle\Model\RequestManager'
         arguments:
             - '@oro_security.security_facade'
             - '@oro_entity.doctrine_helper'
 
-    orob2b_rfp.event_listener.account_view:
+    oro_rfp.event_listener.account_view:
         class: 'Oro\Bundle\RFPBundle\EventListener\AccountViewListener'
         public: true
         arguments:

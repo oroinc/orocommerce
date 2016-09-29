@@ -27,7 +27,7 @@ class RequestStatusControllerTest extends WebTestCase
      */
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_status_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_request_status_index'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -40,11 +40,11 @@ class RequestStatusControllerTest extends WebTestCase
      */
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_status_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_request_status_create'));
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_rfp_request_status[name]']      = self::OLD_NAME;
-        $form['orob2b_rfp_request_status[sortOrder]'] = '1000';
-        $form['orob2b_rfp_request_status[translations][defaultLocale][en][label]'] = self::OLD_LABEL;
+        $form['oro_rfp_request_status[name]']      = self::OLD_NAME;
+        $form['oro_rfp_request_status[sortOrder]'] = '1000';
+        $form['oro_rfp_request_status[translations][defaultLocale][en][label]'] = self::OLD_LABEL;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -71,12 +71,12 @@ class RequestStatusControllerTest extends WebTestCase
      */
     public function testUpdate($id)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_status_update', [
+        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_request_status_update', [
             'id' => $id
         ]));
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_rfp_request_status[translations][defaultLocale][en][label]'] = self::NEW_LABEL;
+        $form['oro_rfp_request_status[translations][defaultLocale][en][label]'] = self::NEW_LABEL;
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
         $result = $this->client->getResponse();
@@ -96,7 +96,7 @@ class RequestStatusControllerTest extends WebTestCase
      */
     public function testView($id)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_status_view', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_request_status_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
 

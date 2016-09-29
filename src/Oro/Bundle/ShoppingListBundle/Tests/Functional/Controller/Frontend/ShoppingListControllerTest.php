@@ -23,7 +23,7 @@ class ShoppingListControllerTest extends WebTestCase
 {
     const TEST_LABEL1 = 'Shopping list label 1';
     const TEST_LABEL2 = 'Shopping list label 2';
-    const RFP_PRODUCT_VISIBILITY_KEY = 'oro_b2b_rfp.frontend_product_visibility';
+    const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
 
     /** @var ConfigManager $configManager */
     protected $configManager;
@@ -55,7 +55,7 @@ class ShoppingListControllerTest extends WebTestCase
         // assert current shopping list
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shopping_list_frontend_view')
+            $this->getUrl('oro_shopping_list_frontend_view')
         );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains($currentShoppingList->getLabel(), $crawler->html());
@@ -69,18 +69,20 @@ class ShoppingListControllerTest extends WebTestCase
      * @param string $shoppingList
      * @param string $expectedLineItemPrice
      * @param bool $needToTestRequestQuote
+     * @param $expectedCreateOrderButtonVisible
      */
     public function testViewSelectedShoppingListWithLineItemPrice(
         $shoppingList,
         $expectedLineItemPrice,
-        $needToTestRequestQuote
+        $needToTestRequestQuote,
+        $expectedCreateOrderButtonVisible
     ) {
         // assert selected shopping list
         /** @var ShoppingList $shoppingList1 */
         $shoppingList1 = $this->getReference($shoppingList);
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shopping_list_frontend_view', ['id' => $shoppingList1->getId()])
+            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList1->getId()])
         );
 
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
@@ -95,7 +97,12 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->assertEquals((strpos($crawler->html(), 'Request Quote') !== false), $needToTestRequestQuote);
 
-        $this->assertContains('Create Order', $crawler->html());
+        if ($expectedCreateOrderButtonVisible) {
+            $this->assertContains('Create Order', $crawler->html());
+        } else {
+            $this->assertNotContains('Create Order', $crawler->html());
+        }
+
         $this->assertLineItemPriceEquals($expectedLineItemPrice, $crawler);
     }
 
@@ -108,17 +115,20 @@ class ShoppingListControllerTest extends WebTestCase
             'price defined' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
                 'expectedLineItemPrice' => '$13.10',
-                'needToTestRequestQuote' => true
+                'needToTestRequestQuote' => true,
+                'expectedCreateOrderButtonVisible' => true
             ],
             'no price for selected quantity' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_3,
                 'expectedLineItemPrice' => 'N/A',
-                'needToTestRequestQuote' => false
+                'needToTestRequestQuote' => false,
+                'expectedCreateOrderButtonVisible' => false
             ],
             'zero price' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_4,
                 'expectedLineItemPrice' => '$0.00',
-                'needToTestRequestQuote' => true
+                'needToTestRequestQuote' => true,
+                'expectedCreateOrderButtonVisible' => true
             ],
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
@@ -126,14 +136,15 @@ class ShoppingListControllerTest extends WebTestCase
                     'N/A',
                     '$0.00',
                 ],
-                'needToTestRequestQuote' => true
+                'needToTestRequestQuote' => true,
+                'expectedCreateOrderButtonVisible' => true
             ],
         ];
     }
 
     public function testQuickAdd()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_frontend_quick_add'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         /** @var Product $product */
@@ -145,7 +156,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         /** @var ShoppingList $currentShoppingList */
         $currentShoppingList = $this->getContainer()
-            ->get('orob2b_shopping_list.shopping_list.manager')
+            ->get('oro_shopping_list.shopping_list.manager')
             ->getForCurrentUser();
 
         $this->assertQuickAddFormSubmitted($crawler, $products);//add to current
@@ -165,8 +176,8 @@ class ShoppingListControllerTest extends WebTestCase
         array $products,
         $shippingListId = null
     ) {
-        $form = $crawler->filter('form[name="orob2b_product_quick_add"]')->form();
-        $processor = $this->getContainer()->get('orob2b_shopping_list.processor.quick_add');
+        $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
+        $processor = $this->getContainer()->get('oro_shopping_list.processor.quick_add');
 
         $this->client->followRedirects(true);
 
@@ -174,8 +185,8 @@ class ShoppingListControllerTest extends WebTestCase
             $form->getMethod(),
             $form->getUri(),
             [
-                'orob2b_product_quick_add' => [
-                    '_token' => $form['orob2b_product_quick_add[_token]']->getValue(),
+                'oro_product_quick_add' => [
+                    '_token' => $form['oro_product_quick_add[_token]']->getValue(),
                     'products' => $products,
                     'component' => $processor->getName(),
                     'additional' => $shippingListId

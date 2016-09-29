@@ -15,7 +15,7 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\AccountBundle\Event\AccountGroupEvent;
 
 /**
- * @NamePrefix("orob2b_api_account_")
+ * @NamePrefix("oro_api_account_")
  */
 class AccountGroupController extends RestController implements ClassResourceInterface
 {
@@ -25,7 +25,7 @@ class AccountGroupController extends RestController implements ClassResourceInte
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_account_group_delete",
+     *      id="oro_account_group_delete",
      *      type="entity",
      *      class="OroAccountBundle:AccountGroup",
      *      permission="DELETE"
@@ -53,7 +53,7 @@ class AccountGroupController extends RestController implements ClassResourceInte
      */
     public function getManager()
     {
-        return $this->get('orob2b_account.manager.group.api.attribute');
+        return $this->get('oro_account.manager.group.api.attribute');
     }
 
     /**

@@ -1,0 +1,182 @@
+layout:
+    imports:
+        - oro_account_menu
+        -
+            id: oro_line_items_grid
+            root: order_container
+            namespace: line_items
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroOrderBundle:layouts:default/oro_order_frontend_view/layout.html.twig'
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.account.menu.account_user.label'
+                - 'oro.frontend.order.entity_plural_label'
+                -
+                    label: 'oro.order.navigation.view'
+                    parameters:
+                        '%identifier%': '=data["order"].getIdentifier()'
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue:
+                label: 'oro.order.navigation.view'
+                parameters:
+                    '%identifier%': '=data["order"].getIdentifier()'
+        - '@setOption':
+            id: content
+            optionName: class_prefix
+            optionValue: 'account'
+        - '@addTree':
+            items:
+                order_view_page:
+                    blockType: container
+                order_container:
+                    blockType: container
+                order_body:
+                    blockType: container
+                order_body_column_left:
+                    blockType: container
+                    options:
+                        additional_block_prefixes: ['order_body_column']
+                order_body_column_right:
+                    blockType: container
+                    options:
+                        additional_block_prefixes: ['order_body_column']
+                order_after_line_items_grid:
+                    blockType: container
+                order_body_container:
+                    blockType: container
+                    options:
+                        additional_block_prefixes: ['order_body_block_container']
+                order_head_container:
+                    blockType: container
+                    options:
+                        additional_block_prefixes: ['order_head_block_container']
+                order_information_head:
+                    blockType: text
+                    options:
+                        text: 'oro.order.frontend.order_information.title'
+                order_list_link:
+                    blockType: link
+                    options:
+                        route_name: oro_order_frontend_index
+                        text: 'oro.order.frontend.order_list_link.text'
+                order_identifier:
+                    blockType: text
+                    options:
+                        text: '=data["order"].getIdentifier()'
+                        label: 'oro.order.identifier.label'
+                        additional_block_prefixes: ['order_body_column_element']
+                order_date:
+                    blockType: date
+                    options:
+                        date: '=data["order"].getCreatedAt()'
+                        dateType: 3
+                        label: 'oro.order.order_date.label'
+                        additional_block_prefixes: ['order_body_column_element']
+                order_subtotal:
+                    blockType: currency
+                    options:
+                        value: '=data["order"].getSubtotal()'
+                        currency: '=data["order"].getCurrency()'
+                        label: 'oro.order.subtotal.label'
+                        additional_block_prefixes: ['order_body_column_element']
+                order_billing_address:
+                    blockType: address
+                    options:
+                        address: '=data["order"].getBillingAddress()'
+                        label: 'oro.order.billing_address.label'
+                        additional_block_prefixes: ['order_body_column_element']
+                order_shipping_address:
+                    blockType: address
+                    options:
+                        address: '=data["order"].getShippingAddress()'
+                        label: 'oro.order.shipping_address.label'
+                        additional_block_prefixes: ['order_body_column_element']
+                order_po_number:
+                    blockType: text
+                    options:
+                        visible: '=data["order"].getPoNumber()!=null'
+                        label: 'oro.order.po_number.label'
+                        text: '=data["order"].getPoNumber()'
+                        additional_block_prefixes: ['order_body_column_element']
+                order_shipping_method:
+                    blockType: text
+                    options:
+                        text: '=data["oro_order_frontend_shipping_method_provider"].getData(data["order"])'
+                        label: 'oro.order.shipping_method.label'
+                        additional_block_prefixes: ['order_body_column_element']
+                order_payment_method:
+                    blockType: text
+                    options:
+                        text: '=data["oro_payment_methods_provider"].getPaymentMethods(data["order"])'
+                        label: 'oro.payment.methods.label'
+                        additional_block_prefixes: ['order_body_column_element']
+                order_payment_term:
+                    blockType: text
+                    options:
+                        visible: '=data["order"].getPaymentTerm()!=null'
+                        text: '=data["order"].getPaymentTerm().getLabel()'
+                        label: 'oro.order.payment_term.label'
+                        additional_block_prefixes: ['order_body_column_element']
+                order_payment_status:
+                    blockType: text
+                    options:
+                        text: '=data["oro_order_frontend_payment_status_provider"].getPaymentStatus(data["order"])'
+                        label: 'oro.payment.status.label'
+                        additional_block_prefixes: ['order_body_column_element']
+                order_customer_notes:
+                    blockType: text
+                    options:
+                        visible: '=data["order"].getCustomerNotes()!=null'
+                        text: '=data["order"].getCustomerNotes()'
+                        label: 'oro.order.customer_notes.frontend.label'
+                        additional_block_prefixes: ['order_body_column_element']
+                order_ship_until:
+                    blockType: date
+                    options:
+                        visible: '=data["order"].getShipUntil()!=null'
+                        date: '=data["order"].getShipUntil()'
+                        dateType: 3
+                        label: 'oro.order.ship_until.label'
+                        additional_block_prefixes: ['order_body_column_element']
+                order_po_number:
+                    blockType: text
+                    options:
+                        visible: '=data["order"].getPoNumber()!=null'
+                        text: '=data["order"].getPoNumber()'
+                        label: 'oro.order.po_number.label'
+                        additional_block_prefixes: ['order_body_column_element']
+                order_total:
+                    blockType: order_total
+                    options:
+                        total: '=data["totals"].total'
+                        subtotals: '=data["totals"].subtotals'
+            tree:
+                content:
+                    order_view_page:
+                        order_container:
+                            order_body:
+                                order_head_container:
+                                    order_information_head: ~
+                                order_body_container:
+                                    order_body_column_left:
+                                        order_date: ~
+                                        order_billing_address: ~
+                                        order_shipping_address: ~
+                                    order_body_column_right:
+                                        order_po_number: ~
+                                        order_shipping_method: ~
+                                        order_payment_method: ~
+                                        order_payment_term: ~
+                                        order_payment_status: ~
+                                        order_ship_until: ~
+                                        order_po_number: ~
+                                        order_customer_notes: ~
+                            order_after_line_items_grid:
+                                order_list_link: ~
+                                order_total: ~

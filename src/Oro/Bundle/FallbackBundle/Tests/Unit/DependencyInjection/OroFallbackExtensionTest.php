@@ -12,8 +12,8 @@ class OroFallbackExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroFallbackExtension());
 
         $expectedDefinitions = [
-            'orob2b_fallback.form.type.website_collection',
-            'orob2b_fallback.form.type.website_property',
+            'oro_fallback.form.type.website_collection',
+            'oro_fallback.form.type.website_property',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

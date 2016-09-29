@@ -6,7 +6,7 @@ use Oro\Bundle\CMSBundle\JsTree\PageTreeHandler;
 
 class PageExtension extends \Twig_Extension
 {
-    const NAME = 'orob2b_cms_page_extension';
+    const NAME = 'oro_cms_page_extension';
 
     /**
      * @var PageTreeHandler
@@ -35,7 +35,7 @@ class PageExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('orob2b_page_list', [$this, 'getPageList']),
+            new \Twig_SimpleFunction('oro_page_list', [$this, 'getPageList']),
         ];
     }
 

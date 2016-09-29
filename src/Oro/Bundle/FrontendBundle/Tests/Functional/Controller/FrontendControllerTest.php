@@ -9,13 +9,19 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class FrontendControllerTest extends WebTestCase
 {
-    const FRONTEND_THEME_CONFIG_KEY = 'oro_b2b_frontend.frontend_theme';
+    const FRONTEND_THEME_CONFIG_KEY = 'oro_frontend.frontend_theme';
     const DEFAULT_THEME = '';
 
     protected function setUp()
     {
         $this->initClient();
+
         $this->setTheme(self::DEFAULT_THEME);
+
+        $this->loadFixtures([
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData',
+        ]);
     }
 
     protected function tearDown()
@@ -23,15 +29,12 @@ class FrontendControllerTest extends WebTestCase
         $this->setTheme(self::DEFAULT_THEME);
     }
 
-    public function testRedirectToProduct()
+    public function testIndexPage()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
-        $crawler = $this->client->followRedirect();
+        $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
         $this->assertNotContains($this->getBackendPrefix(), $crawler->html());
-        $this->assertEquals(
-            $this->getUrl('orob2b_product_frontend_product_index'),
-            $this->client->getRequest()->getPathInfo()
-        );
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     public function testThemeSwitch()
@@ -42,9 +45,9 @@ class FrontendControllerTest extends WebTestCase
         $layoutTheme = 'default';
         $this->setTheme($layoutTheme);
 
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
-        $crawler = $this->client->followRedirect();
-        $this->assertEquals('Products', $crawler->filter('title')->html());
+        $this->client->request('GET', $this->getUrl('oro_frontend_root'));
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         // Check that backend theme was not affected
         $crawler = $this->client->request(
@@ -59,12 +62,9 @@ class FrontendControllerTest extends WebTestCase
         // Check that after selecting of layout there is an ability to switch to oro theme
         $this->setTheme(self::DEFAULT_THEME);
 
-        $this->client->request('GET', $this->getUrl('orob2b_frontend_root'));
-        $this->client->followRedirect();
-        $this->assertEquals(
-            $this->getUrl('orob2b_product_frontend_product_index'),
-            $this->client->getRequest()->getPathInfo()
-        );
+        $this->client->request('GET', $this->getUrl('oro_frontend_root'));
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     /**

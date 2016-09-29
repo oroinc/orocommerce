@@ -2,24 +2,24 @@ features:
     rfp:
         label: oro.rfp.feature.label
         description: oro.rfp.feature.description
-        toggle: oro_b2b_rfp.feature_enabled
+        toggle: oro_rfp.feature_enabled
         routes:
-            - 'orob2b_rfp_request_view'
-            - 'orob2b_rfp_request_info'
-            - 'orob2b_rfp_request_index'
-            - 'orob2b_rfp_request_update'
-            - 'orob2b_rfp_request_status_view'
-            - 'orob2b_rfp_request_status_info'
-            - 'orob2b_rfp_request_status_index'
-            - 'orob2b_rfp_request_status_create'
-            - 'orob2b_rfp_request_status_update'
-            - 'orob2b_rfp_request_create_order'
+            - 'oro_rfp_request_view'
+            - 'oro_rfp_request_info'
+            - 'oro_rfp_request_index'
+            - 'oro_rfp_request_update'
+            - 'oro_rfp_request_status_view'
+            - 'oro_rfp_request_status_info'
+            - 'oro_rfp_request_status_index'
+            - 'oro_rfp_request_status_create'
+            - 'oro_rfp_request_status_update'
+            - 'oro_rfp_request_create_order'
         operations:
-            - 'orob2b_rfp_change_status'
-            - 'orob2b_rfp_cancel'
-            - 'orob2b_rfp_create_quote'
-            - 'orob2b_rfp_resubmit'
-            - 'orob2b_rfp_delete'
+            - 'oro_rfp_change_status'
+            - 'oro_rfp_cancel'
+            - 'oro_rfp_create_quote'
+            - 'oro_rfp_resubmit'
+            - 'oro_rfp_delete'
         api_resources:
             - 'Oro\Bundle\RFPBundle\Entity\Request'
             - 'Oro\Bundle\RFPBundle\Entity\RequestStatus'
@@ -27,22 +27,22 @@ features:
             - 'Oro\Bundle\RFPBundle\Entity\RequestProductItem'
         configuration:
             - 'rfp_notifications'
-            - 'oro_b2b_rfp.default_request_status'
-            - 'oro_b2b_rfp.frontend_product_visibility'
-            - 'oro_b2b_rfp.backend_product_visibility'
+            - 'oro_rfp.default_request_status'
+            - 'oro_rfp.frontend_product_visibility'
+            - 'oro_rfp.backend_product_visibility'
 
     rfp_frontend:
         label: oro.rfp.frontend.feature.label
         description: oro.rfp.forntend.feature.description
-        toggle: oro_b2b_rfp.frontend_feature_enabled
+        toggle: oro_rfp.frontend_feature_enabled
         dependencies:
             - 'rfp'
         operations:
-            - 'orob2b_rfp_frontend_request_a_quote'
-            - 'orob2b_rfp_frontend_request_create'
-            - 'orob2b_rfp_frontend_request_edit'
+            - 'oro_rfp_frontend_request_a_quote'
+            - 'oro_rfp_frontend_request_create'
+            - 'oro_rfp_frontend_request_edit'
         routes:
-            - 'orob2b_rfp_frontend_request_view'
-            - 'orob2b_rfp_frontend_request_index'
-            - 'orob2b_rfp_frontend_request_create'
-            - 'orob2b_rfp_frontend_request_update'
+            - 'oro_rfp_frontend_request_view'
+            - 'oro_rfp_frontend_request_index'
+            - 'oro_rfp_frontend_request_create'
+            - 'oro_rfp_frontend_request_update'

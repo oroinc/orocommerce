@@ -8,17 +8,18 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\PaymentBundle\Model\LineItemOptionModel;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseInterface;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PayPalBundle\Provider\ExtractOptionsProvider;
 
 class PayflowExpressCheckout implements PaymentMethodInterface
 {
@@ -44,22 +45,28 @@ class PayflowExpressCheckout implements PaymentMethodInterface
     /** @var PayflowExpressCheckoutConfigInterface */
     protected $config;
 
+    /** @var ExtractOptionsProvider */
+    protected $optionsProvider;
+
     /**
      * @param Gateway $gateway
      * @param PayflowExpressCheckoutConfigInterface $config
      * @param RouterInterface $router
      * @param DoctrineHelper $doctrineHelper
+     * @param ExtractOptionsProvider $optionsProvider
      */
     public function __construct(
         Gateway $gateway,
         PayflowExpressCheckoutConfigInterface $config,
         RouterInterface $router,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        ExtractOptionsProvider $optionsProvider
     ) {
         $this->gateway = $gateway;
         $this->config = $config;
         $this->router = $router;
         $this->doctrineHelper = $doctrineHelper;
+        $this->optionsProvider = $optionsProvider;
     }
 
     /**
@@ -282,14 +289,14 @@ class PayflowExpressCheckout implements PaymentMethodInterface
                 Option\Amount::AMT => $paymentTransaction->getAmount(),
                 Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
                 Option\ReturnUrl::RETURNURL => $this->router->generate(
-                    'orob2b_payment_callback_return',
+                    'oro_payment_callback_return',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 ),
                 Option\CancelUrl::CANCELURL => $this->router->generate(
-                    'orob2b_payment_callback_error',
+                    'oro_payment_callback_error',
                     [
                         'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     ],
@@ -352,21 +359,27 @@ class PayflowExpressCheckout implements PaymentMethodInterface
         $propertyAccessor = $this->getPropertyAccessor();
 
         try {
-            /** @var OrderAddress $shippingAddress */
             $shippingAddress = $propertyAccessor->getValue($entity, 'shippingAddress');
         } catch (NoSuchPropertyException $e) {
             return [];
         }
 
+        if (!$shippingAddress instanceof AbstractAddress) {
+            return [];
+        }
+
+        $class = $this->doctrineHelper->getEntityClass($shippingAddress);
+        $addressOption = $this->optionsProvider->getShippingAddressOptions($class, $shippingAddress);
+
         return [
-            Option\ShippingAddress::SHIPTOFIRSTNAME => (string)$shippingAddress->getFirstName(),
-            Option\ShippingAddress::SHIPTOLASTNAME => (string)$shippingAddress->getLastName(),
-            Option\ShippingAddress::SHIPTOSTREET => (string)$shippingAddress->getStreet(),
-            Option\ShippingAddress::SHIPTOSTREET2 => (string)$shippingAddress->getStreet2(),
-            Option\ShippingAddress::SHIPTOCITY => (string)$shippingAddress->getCity(),
-            Option\ShippingAddress::SHIPTOSTATE => (string)$shippingAddress->getRegionCode(),
-            Option\ShippingAddress::SHIPTOZIP => (string)$shippingAddress->getPostalCode(),
-            Option\ShippingAddress::SHIPTOCOUNTRY => (string)$shippingAddress->getCountryIso2(),
+            Option\ShippingAddress::SHIPTOFIRSTNAME => $addressOption->getFirstName(),
+            Option\ShippingAddress::SHIPTOLASTNAME => $addressOption->getLastName(),
+            Option\ShippingAddress::SHIPTOSTREET => $addressOption->getStreet(),
+            Option\ShippingAddress::SHIPTOSTREET2 => $addressOption->getStreet2(),
+            Option\ShippingAddress::SHIPTOCITY => $addressOption->getCity(),
+            Option\ShippingAddress::SHIPTOSTATE => $addressOption->getRegionCode(),
+            Option\ShippingAddress::SHIPTOZIP => $addressOption->getPostalCode(),
+            Option\ShippingAddress::SHIPTOCOUNTRY => $addressOption->getCountryIso2()
         ];
     }
 
@@ -389,39 +402,19 @@ class PayflowExpressCheckout implements PaymentMethodInterface
             return [];
         }
 
-        $lineItems = $entity->getLineItems();
-
         $options = [];
-        foreach ($lineItems as $lineItem) {
-            if (!$lineItem instanceof OrderLineItem) {
-                continue;
-            }
+        $lineItemOptions = $this->optionsProvider->getLineItemPaymentOptions($entity);
 
-            $product = $lineItem->getProduct();
-
-            if (!$product) {
-                continue;
-            }
-
+        foreach ($lineItemOptions as $lineItemOption) {
             $options[] = [
-                Option\LineItems::NAME => $this->truncateString((string)$product->getDefaultName(), 36),
-                Option\LineItems::DESC => $this->truncateString((string)$product->getDefaultShortDescription(), 35),
-                Option\LineItems::COST => $lineItem->getValue(),
-                Option\LineItems::QTY => (int)$lineItem->getQuantity(),
+                Option\LineItems::NAME => $lineItemOption->getName(),
+                Option\LineItems::DESC => $lineItemOption->getDescription(),
+                Option\LineItems::COST => $lineItemOption->getCost(),
+                Option\LineItems::QTY => $lineItemOption->getQty()
             ];
         }
 
         return Option\LineItems::prepareOptions($options);
-    }
-
-    /**
-     * @param string $string
-     * @param int $length
-     * @return string
-     */
-    protected function truncateString($string, $length)
-    {
-        return substr($string, 0, $length);
     }
 
     /**

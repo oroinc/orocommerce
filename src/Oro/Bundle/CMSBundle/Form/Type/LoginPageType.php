@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class LoginPageType extends AbstractType
 {
-    const NAME = 'orob2b_cms_login_page';
+    const NAME = 'oro_cms_login_page';
 
     /**
      * {@inheritdoc}

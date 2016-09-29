@@ -13,7 +13,7 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
 class CategoryType extends AbstractType
 {
-    const NAME = 'orob2b_catalog_category';
+    const NAME = 'oro_catalog_category';
 
     /**
      * @var string

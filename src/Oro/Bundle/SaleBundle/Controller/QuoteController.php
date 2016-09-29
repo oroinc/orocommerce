@@ -25,10 +25,10 @@ use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 class QuoteController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_sale_quote_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_sale_quote_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_sale_quote_view",
+     *      id="oro_sale_quote_view",
      *      type="entity",
      *      class="OroSaleBundle:Quote",
      *      permission="VIEW"
@@ -46,24 +46,24 @@ class QuoteController extends Controller
     }
 
     /**
-     * @Route("/", name="orob2b_sale_quote_index")
+     * @Route("/", name="oro_sale_quote_index")
      * @Template
-     * @AclAncestor("orob2b_sale_quote_view")
+     * @AclAncestor("oro_sale_quote_view")
      *
      * @return array
      */
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_sale.entity.quote.class')
+            'entity_class' => $this->container->getParameter('oro_sale.entity.quote.class')
         ];
     }
 
     /**
-     * @Route("/create", name="orob2b_sale_quote_create")
+     * @Route("/create", name="oro_sale_quote_create")
      * @Template("OroSaleBundle:Quote:update.html.twig")
      * @Acl(
-     *     id="orob2b_sale_quote_create",
+     *     id="oro_sale_quote_create",
      *     type="entity",
      *     permission="CREATE",
      *     class="OroSaleBundle:Quote"
@@ -75,7 +75,7 @@ class QuoteController extends Controller
     public function createAction(Request $request)
     {
         $quote = new Quote();
-        $quote->setWebsite($this->get('orob2b_website.manager')->getDefaultWebsite());
+        $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
 
         if (!$request->get(ProductDataStorage::STORAGE_KEY, false)) {
             return $this->update($quote, $request);
@@ -83,20 +83,20 @@ class QuoteController extends Controller
 
         $this->createForm(QuoteType::NAME, $quote);
 
-        $quoteClass = $this->container->getParameter('orob2b_sale.entity.quote.class');
+        $quoteClass = $this->container->getParameter('oro_sale.entity.quote.class');
         $em = $this->get('doctrine')->getManagerForClass($quoteClass);
 
         $em->persist($quote);
         $em->flush();
 
-        return $this->redirectToRoute('orob2b_sale_quote_update', ['id' => $quote->getId()]);
+        return $this->redirectToRoute('oro_sale_quote_update', ['id' => $quote->getId()]);
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_sale_quote_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_sale_quote_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *     id="orob2b_sale_quote_update",
+     *     id="oro_sale_quote_update",
      *     type="entity",
      *     permission="EDIT",
      *     class="OroSaleBundle:Quote"
@@ -114,9 +114,9 @@ class QuoteController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_sale_quote_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_sale_quote_info", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_sale_quote_view")
+     * @AclAncestor("oro_sale_quote_view")
      *
      * @param Quote $quote
      * @return array
@@ -147,13 +147,13 @@ class QuoteController extends Controller
             $this->createForm(QuoteType::NAME, $quote),
             function (Quote $quote) {
                 return [
-                    'route'         => 'orob2b_sale_quote_update',
+                    'route'         => 'oro_sale_quote_update',
                     'parameters'    => ['id' => $quote->getId()]
                 ];
             },
             function (Quote $quote) {
                 return [
-                    'route'         => 'orob2b_sale_quote_view',
+                    'route'         => 'oro_sale_quote_view',
                     'parameters'    => ['id' => $quote->getId()]
                 ];
             },
@@ -176,7 +176,7 @@ class QuoteController extends Controller
      */
     protected function getQuoteProductPriceProvider()
     {
-        return $this->get('orob2b_sale.provider.quote_product_price');
+        return $this->get('oro_sale.provider.quote_product_price');
     }
 
     /**
@@ -184,7 +184,7 @@ class QuoteController extends Controller
      */
     protected function getQuoteAddressSecurityProvider()
     {
-        return $this->get('orob2b_sale.provider.quote_address_security');
+        return $this->get('oro_sale.provider.quote_address_security');
     }
 
     /**
@@ -192,6 +192,6 @@ class QuoteController extends Controller
      */
     protected function getQuoteHandler()
     {
-        return $this->get('orob2b_sale.service.quote_request_handler');
+        return $this->get('oro_sale.service.quote_request_handler');
     }
 }

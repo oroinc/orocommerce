@@ -16,8 +16,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
  */
 class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 {
-    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_b2b_account.product_visibility';
-    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_b2b_account.category_visibility';
+    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_account.product_visibility';
+    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_account.category_visibility';
 
     /**
      * @var ProductVisibilityQueryBuilderModifier
@@ -69,8 +69,9 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             $this->configManager,
             $this->tokenStorage,
             $this->websiteManager,
-            $this->getContainer()->get('orob2b_account.provider.account_user_relations_provider')
+            $this->getContainer()->get('oro_account.provider.account_user_relations_provider')
         );
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
     }
 
     /**
@@ -238,6 +239,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
     protected function getDefaultWebsite()
     {
-        return $this->getContainer()->get('orob2b_website.manager')->getDefaultWebsite();
+        return $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
     }
 }

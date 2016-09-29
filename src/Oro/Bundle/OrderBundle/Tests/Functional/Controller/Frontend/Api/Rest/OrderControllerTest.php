@@ -33,7 +33,7 @@ class OrderControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_frontend_delete_order', ['id' => $order->getId()])
+            $this->getUrl('oro_api_frontend_delete_order', ['id' => $order->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);

@@ -356,7 +356,7 @@ class QuoteTypeTest extends AbstractTest
             ->securityFacade
             ->expects($this->once())
             ->method('isGranted')
-            ->with('orob2b_quote_payment_term_account_can_override')
+            ->with('oro_quote_payment_term_account_can_override')
             ->willReturn(true);
         $accountPaymentTerm->expects($this->once())->method('getId')->willReturn(10);
         $accountGroupPaymentTerm->expects($this->once())->method('getId')->willReturn(100);
@@ -392,7 +392,7 @@ class QuoteTypeTest extends AbstractTest
             ->securityFacade
             ->expects($this->once())
             ->method('isGranted')
-            ->with('orob2b_quote_payment_term_account_can_override')
+            ->with('oro_quote_payment_term_account_can_override')
             ->willReturn(false);
         $this->paymentTermProvider->expects($this->never())->method('getAccountPaymentTerm');
         $this->paymentTermProvider->expects($this->never())->method('getAccountGroupPaymentTerm');

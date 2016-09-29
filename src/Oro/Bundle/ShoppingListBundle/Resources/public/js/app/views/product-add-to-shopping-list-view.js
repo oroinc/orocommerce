@@ -23,8 +23,8 @@ define(function(require) {
             },
             save_api_accessor: {
                 http_method: 'PUT',
-                route: 'orob2b_api_shopping_list_frontend_put_line_item',
-                form_name: 'orob2b_product_frontend_line_item'
+                route: 'oro_api_shopping_list_frontend_put_line_item',
+                form_name: 'oro_product_frontend_line_item'
             }
         },
 

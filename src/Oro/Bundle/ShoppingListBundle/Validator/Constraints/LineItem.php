@@ -21,6 +21,6 @@ class LineItem extends Constraint
      */
     public function validatedBy()
     {
-        return 'orob2b_shopping_list_line_item_validator';
+        return 'oro_shopping_list_line_item_validator';
     }
 }

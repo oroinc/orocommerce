@@ -10,12 +10,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class ProductAttributePriceType extends AbstractType implements DataMapperInterface
 {
-    const NAME = 'orob2b_pricing_product_attribute_price';
+    const NAME = 'oro_pricing_product_attribute_price';
     const PRICE = 'price';
 
     /**

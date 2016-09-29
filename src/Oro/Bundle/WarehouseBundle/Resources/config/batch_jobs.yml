@@ -9,7 +9,7 @@ connector:
                     title:     export
                     class:     Oro\Bundle\BatchBundle\Step\ItemStep
                     services:
-                        reader:    orob2b_warehouse.importexport.reader.inventory_level
+                        reader:    oro_warehouse.importexport.reader.inventory_level
                         processor: oro_importexport.processor.export_delegate
                         writer:    oro_importexport.writer.csv
                     parameters: ~

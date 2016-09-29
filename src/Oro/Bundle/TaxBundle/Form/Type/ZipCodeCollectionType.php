@@ -9,7 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 class ZipCodeCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_tax_zip_code_collection_type';
+    const NAME = 'oro_tax_zip_code_collection_type';
 
     /**
      * {@inheritdoc}
