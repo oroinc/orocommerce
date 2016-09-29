@@ -62,6 +62,9 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
         parent::tearDown();
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     public function testRestrictsVisibilityForJustProducts()
     {
         $query = new Query();

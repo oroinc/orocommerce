@@ -98,13 +98,7 @@ services:
         public: false
         arguments:
             - '@oro_website_search.query_factory.inner'
-            - '@event_dispatcher'
             - '@oro_website_search.engine'
-
-    oro_website_search.select_data.listener:
-        class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\ExampleSelectDataListener'
-        tags:
-            - { name: kernel.event_listener, event: oro_website_search.select_index_data, method: process }
 
     oro_website_search.product_visibility_restriction_listener:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\ProductVisibilityRestrictionListener'

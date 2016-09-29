@@ -163,7 +163,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         $websiteSearchQuery->method('getQuery')
             ->will($this->returnValue($query));
 
-        $expr = Criteria::expr()->eq('cat_id', $categoryId);
+        $expr = Criteria::expr()->eq('integer.cat_id', $categoryId);
 
         $websiteSearchQuery->expects($this->once())
             ->method('addWhere')
@@ -245,7 +245,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         $categories   = $subcategoryIds;
         $categories[] = $categoryId;
 
-        $expr = Criteria::expr()->contains('cat_id', $categories);
+        $expr = Criteria::expr()->in('integer.cat_id', $categories);
 
         $websiteSearchQuery->expects($this->once())
             ->method('addWhere')

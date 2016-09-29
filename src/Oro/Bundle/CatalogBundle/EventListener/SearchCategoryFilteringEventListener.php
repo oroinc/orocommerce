@@ -113,9 +113,9 @@ class SearchCategoryFilteringEventListener
     private function applyCategoryToQuery(SearchQueryInterface $query, $categoryId)
     {
         if (is_array($categoryId)) {
-            $expr = Criteria::expr()->contains('cat_id', $categoryId);
+            $expr = Criteria::expr()->in('integer.cat_id', $categoryId);
         } else {
-            $expr = Criteria::expr()->eq('cat_id', $categoryId);
+            $expr = Criteria::expr()->eq('integer.cat_id', $categoryId);
         }
 
         $query->addWhere($expr);
