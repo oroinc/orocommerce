@@ -103,8 +103,8 @@ class AccountProductVisibilityProviderTest extends WebTestCase
             $expectedAccountsVisibilities,
             $this->provider->getAccountVisibilitiesForProducts(
                 [
-                    $this->getReference('product.1')->getId(),
-                    $this->getReference('product.4')->getId()
+                    $this->getReference('product.1'),
+                    $this->getReference('product.4'),
                 ],
                 $this->getDefaultWebsiteId()
             )
@@ -159,8 +159,8 @@ class AccountProductVisibilityProviderTest extends WebTestCase
         $this->assertEquals(
             $expectedVisibilities,
             $this->provider->getNewUserAndAnonymousVisibilitiesForProducts([
-                $this->getReference('product.3')->getId(),
-                $this->getReference('product.5')->getId(),
+                $this->getReference('product.3'),
+                $this->getReference('product.5'),
             ], $this->getDefaultWebsiteId())
         );
     }

@@ -49,13 +49,13 @@ class AccountProductVisibilityProvider
     /**
      * Returns fields to index with product.
      *
-     * @param array $productIds
+     * @param Product[] $products
      * @param int $websiteId
      * @return array
      */
-    public function getAccountVisibilitiesForProducts(array $productIds, $websiteId)
+    public function getAccountVisibilitiesForProducts(array $products, $websiteId)
     {
-        $qb = $this->createProductsQuery($productIds);
+        $qb = $this->createProductsQuery($products);
 
         $qb //Dummy condition to join not related entity
             ->join(Account::class, 'account', Join::WITH, 'account.id <> 0');
@@ -77,13 +77,13 @@ class AccountProductVisibilityProvider
     }
 
     /**
-     * @param array $productIds
+     * @param Product[] $products
      * @param int $websiteId
      * @return array
      */
-    public function getNewUserAndAnonymousVisibilitiesForProducts(array $productIds, $websiteId)
+    public function getNewUserAndAnonymousVisibilitiesForProducts(array $products, $websiteId)
     {
-        $qb = $this->createProductsQuery($productIds);
+        $qb = $this->createProductsQuery($products);
 
         $productVisibilityTerm = $this->getProductVisibilityResolvedTermByWebsite(
             $qb,
@@ -277,17 +277,20 @@ TERM;
     }
 
     /**
-     * @param array $productIds
+     * @param Product[] $products
      * @return QueryBuilder
      */
-    private function createProductsQuery(array $productIds)
+    private function createProductsQuery(array $products)
     {
+        foreach ($products as &$product) {
+            $product = $product->getId();
+        }
         $qb = $this->doctrineHelper->getEntityManagerForClass(Product::class)->createQueryBuilder();
 
         $qb
             ->select('product.id as productId')
             ->from(Product::class, 'product')
-            ->where($qb->expr()->in('product.id', $productIds))
+            ->where($qb->expr()->in('product.id', $products))
             ->addOrderBy('productId', Query::ORDER_ASC);
 
         return $qb;

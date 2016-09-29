@@ -25,6 +25,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         visibility_new:
             name: visibility_new
             type: integer
+        visibility_account:
+            name: visibility_account_ACCOUNT_ID
+            type: integer
         status:
             name: status
             type: text
