@@ -329,14 +329,20 @@ datagrids:
                 sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
 
     frontend-product-search-grid:
+        options:
+            entityHint:        product
+            displayOptions:
+                selector: '.catalog__filter-controls__item_display-options'
+            requireJSModules:
+                - oroproduct/js/app/datagrid/frontend-product-display-options-builder
+                - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
         source:
             type: search
             search_index: website
             query:
                 select:
                     - text.sku as sku
-                    - text.name_LOCALIZATION_ID as name
-                    - text.all_text_LOCALIZATION_ID as all_text
+                    - text.title_LOCALIZATION_ID as name
                     - text.short_desc_LOCALIZATION_ID as shortDescription
                 from:
                     - oro_product_WEBSITE_ID
@@ -371,7 +377,7 @@ datagrids:
                     data_name: sku
                 name:
                     type:      string
-                    data_name: name_LOCALIZATION_ID
+                    data_name: title_LOCALIZATION_ID
         properties:
             id: ~
             view_link:
@@ -387,8 +393,3 @@ datagrids:
                 name:
                     data_name: name
                     type: string
-            default:
-                sku: DESC
-        options:
-            requireJSModules:
-                - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
