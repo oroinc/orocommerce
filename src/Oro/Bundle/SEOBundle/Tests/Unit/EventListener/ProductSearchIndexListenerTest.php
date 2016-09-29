@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
+use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SEOBundle\EventListener\ProductSearchIndexListener;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
-use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,73 +23,62 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
 
         $event->expects($this->at(0))
-            ->method('getEntityClass')
-            ->willReturn(Product::class);
-
-        $event->expects($this->at(1))
-            ->method('getEntityIds')
-            ->willReturn($entityIds);
-
-        $productRepository = $this->getMockBuilder(ProductRepository::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $productRepository->expects($this->once())
-            ->method('getProductsByIds')
-            ->with($entityIds)
+            ->method('getEntities')
             ->willReturn($entities);
 
-        $localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
+        $event->expects($this->at(1))
+            ->method('getContext')
+            ->willReturn([]);
+
+        $localizationProvider = $this->getMockBuilder(AbstractWebsiteLocalizationProvider::class)
             ->disableOriginalConstructor()->getMock();
 
-        $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $localizationHelper->expects($this->once())
-            ->method('getLocalizations')
+        $localizationProvider->expects($this->once())
+            ->method('getLocalizationsByWebsiteId')
             ->willReturn($localizations);
 
-        $doctrineHelper->expects($this->once())
-            ->method('getEntityRepositoryForClass')
-            ->willReturn($productRepository);
-
         $event->expects($this->at(2))
-            ->method('appendField')
+            ->method('appendToPlaceholderField')
             ->with(
                 1,
-                Query::TYPE_TEXT,
-                'all_text_1',
-                ' Polish metaTitle Polish meta description Polish meta keywords'
+                'all_text',
+                'Polish metaTitle Polish meta description Polish meta keywords',
+                LocalizationIdPlaceholder::NAME,
+                1
             );
 
         $event->expects($this->at(3))
-            ->method('appendField')
+            ->method('appendToPlaceholderField')
             ->with(
                 1,
-                Query::TYPE_TEXT,
-                'all_text_2',
-                ' English metaTitle English meta description English meta keywords'
+                'all_text',
+                'English metaTitle English meta description English meta keywords',
+                LocalizationIdPlaceholder::NAME,
+                2
             );
 
         $event->expects($this->at(4))
-            ->method('appendField')
+            ->method('appendToPlaceholderField')
             ->with(
                 2,
-                Query::TYPE_TEXT,
-                'all_text_1',
-                ' Polish metaTitle Polish meta description Polish meta keywords'
+                'all_text',
+                'Polish metaTitle Polish meta description Polish meta keywords',
+                LocalizationIdPlaceholder::NAME,
+                1
             );
 
         $event->expects($this->at(5))
-            ->method('appendField')
+            ->method('appendToPlaceholderField')
             ->with(
                 2,
-                Query::TYPE_TEXT,
-                'all_text_2',
-                ' English metaTitle English meta description English meta keywords'
+                'all_text',
+                'English metaTitle English meta description English meta keywords',
+                LocalizationIdPlaceholder::NAME,
+                2
             );
 
         $propertyAccessor = new PropertyAccessor();
-        $testable = new ProductSearchIndexListener($doctrineHelper, $localizationHelper, $propertyAccessor);
+        $testable         = new ProductSearchIndexListener($localizationProvider, $propertyAccessor);
         $testable->onWebsiteSearchIndex($event);
     }
 

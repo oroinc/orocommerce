@@ -28,11 +28,11 @@ class IndexEntityEvent extends Event
 
     /**
      * @param object[] $entities
-     * @param array $context
+     * @param array    $context
      */
     public function __construct(array $entities, array $context)
     {
-        $this->context = $context;
+        $this->context  = $context;
         $this->entities = $entities;
     }
 
@@ -54,33 +54,22 @@ class IndexEntityEvent extends Event
 
     /**
      * @param int              $entityId
-     * @param string           $fieldType
      * @param string           $fieldName
      * @param string|int|float $value
      * @return $this
      */
-    public function addField($entityId, $fieldType, $fieldName, $value)
+    public function addField($entityId, $fieldName, $value)
     {
-        return $this->processField($entityId, $fieldType, $fieldName, $value);
+        $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] = $value;
+
+        return $this;
     }
 
     /**
-     * @param int              $entityId
-     * @param string           $fieldType
-     * @param string           $fieldName
-     * @param string|int|float $value
-     * @return $this
-     */
-    public function appendField($entityId, $fieldType, $fieldName, $value)
-    {
-        return $this->processField($entityId, $fieldType, $fieldName, $value, true);
-    }
-
-    /**
-     * @param int $entityId
+     * @param int    $entityId
      * @param string $fieldName
      * @param string|int|float
-     * @param array $placeholders
+     * @param array  $placeholders
      * @return $this
      */
     public function addPlaceholderField($entityId, $fieldName, $value, $placeholders)
@@ -92,41 +81,64 @@ class IndexEntityEvent extends Event
     }
 
     /**
+     * @param string $entityId
+     * @param string $fieldName
+     * @param string $string
+     * @param string $placeholderKey
+     * @param string $placeholderValue
+     */
+    public function appendToPlaceholderField($entityId, $fieldName, $string, $placeholderKey, $placeholderValue)
+    {
+        $placeholderData = $this->getPlaceholderFieldValue($entityId, $fieldName);
+
+        if (null === $placeholderData) {
+            return;
+        }
+
+        $resultPlaceholderData = [];
+
+        foreach ($placeholderData as $valueWithPlaceholders) {
+            $placeholders = $valueWithPlaceholders->getPlaceholders();
+            $value        = $valueWithPlaceholders->getValue();
+            $isMatchin    = isset($placeholders[$placeholderKey]) &&
+                            $placeholderValue === $placeholders[$placeholderKey];
+            if (true === $isMatchin) {
+                $newValue                 = $value . ' ' . $string;
+                $newValueWithPlaceholders = new ValueWithPlaceholders($newValue, $placeholders);
+                $resultPlaceholderData[]  = $newValueWithPlaceholders;
+            } else {
+                $resultPlaceholderData[] = $valueWithPlaceholders;
+            }
+        }
+
+        $this->entitiesData[$entityId][IndexDataProvider::PLACEHOLDER_VALUES_KEY][$fieldName] = $resultPlaceholderData;
+    }
+
+    /**
+     * @param $entityId
+     * @param $fieldName
+     * @return string|object|null
+     */
+    public function getFieldValue($entityId, $fieldName)
+    {
+        return $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] ?? null;
+    }
+
+    /**
+     * @param $entityId
+     * @param $fieldName
+     * @return ValueWithPlaceholders[]|null
+     */
+    public function getPlaceholderFieldValue($entityId, $fieldName)
+    {
+        return $this->entitiesData[$entityId][IndexDataProvider::PLACEHOLDER_VALUES_KEY][$fieldName] ?? null;
+    }
+
+    /**
      * @return array
      */
     public function getEntitiesData()
     {
         return $this->entitiesData;
-    }
-
-    /**
-     * Add or append data to an existing field.
-     *
-     * @param int              $entityId
-     * @param string           $fieldType
-     * @param string           $fieldName
-     * @param string|int|float $value
-     * @param bool             $appendMode
-     * @return $this
-     */
-    private function processField($entityId, $fieldType, $fieldName, $value, $appendMode = false)
-    {
-        if (!isset(
-            $this->entitiesData[$entityId],
-            $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY],
-            $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName]
-        )) {
-            $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] = '';
-        }
-
-        if (false === $appendMode) {
-            $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] = $value;
-
-            return $this;
-        }
-
-        $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] .= $value;
-
-        return $this;
     }
 }

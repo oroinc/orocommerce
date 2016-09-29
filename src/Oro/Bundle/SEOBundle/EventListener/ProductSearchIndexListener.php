@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\SEOBundle\EventListener;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+
+use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class ProductSearchIndexListener
 {
@@ -19,28 +19,20 @@ class ProductSearchIndexListener
     private $propertyAccessor;
 
     /**
-     * @var ProductRepository
+     * @var AbstractWebsiteLocalizationProvider
      */
-    private $productRepository;
+    private $websiteLocalizationProvider;
 
     /**
-     * @var LocalizationHelper
-     */
-    private $localizationHelper;
-
-    /**
-     * @param DoctrineHelper     $doctrineHelper
-     * @param LocalizationHelper $localizationHelper
-     * @param PropertyAccessor   $propertyAccessor
+     * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
+     * @param PropertyAccessor                    $propertyAccessor
      */
     public function __construct(
-        DoctrineHelper $doctrineHelper,
-        LocalizationHelper $localizationHelper,
+        AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
         PropertyAccessor $propertyAccessor
     ) {
-        $this->productRepository  = $doctrineHelper->getEntityRepositoryForClass(Product::class);
-        $this->localizationHelper = $localizationHelper;
-        $this->propertyAccessor   = $propertyAccessor;
+        $this->websiteLocalizationProvider = $websiteLocalizationProvider;
+        $this->propertyAccessor            = $propertyAccessor;
     }
 
     /**
@@ -48,26 +40,26 @@ class ProductSearchIndexListener
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
-        $entityClass = $event->getEntityClass();
+        /** @var Product[] $products */
+        $products = $event->getEntities();
 
-        if ($entityClass !== Product::class) {
-            return;
-        }
+        $context = $event->getContext();
 
-        $products = $this->productRepository->getProductsByIds($event->getEntityIds());
+        $websiteId = (array_key_exists(AbstractIndexer::CONTEXT_WEBSITE_ID_KEY, $context))
+            ? $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY]
+            : null;
 
-        $localizations = $this->localizationHelper->getLocalizations();
+        $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 
         foreach ($products as $product) {
             // Localized fields
             foreach ($localizations as $localization) {
                 $metaStrings = $this->getMetaStringsFromProduct($product, $localization);
-                // All text field
-                $event->appendField(
+                $this->appendToPlaceholderField(
+                    $event,
                     $product->getId(),
-                    Query::TYPE_TEXT,
-                    sprintf('all_text_%s', $localization->getId()),
-                    ' ' . $metaStrings
+                    $localization,
+                    $metaStrings
                 );
             }
         }
@@ -100,5 +92,31 @@ class ProductSearchIndexListener
         $clean = preg_replace('/[[:cntrl:]]/', '', $string);
 
         return $clean;
+    }
+
+    /**
+     * @param IndexEntityEvent $event
+     * @param integer          $entityId
+     * @param Localization     $localization
+     * @param string           $metaStrings
+     * @param string           $fieldName
+     */
+    private function appendToPlaceholderField(
+        IndexEntityEvent $event,
+        $entityId,
+        Localization $localization,
+        $metaStrings,
+        $fieldName = 'all_text'
+    ) {
+        $placeholderKey   = LocalizationIdPlaceholder::NAME;
+        $placeholderValue = $localization->getId();
+
+        $event->appendToPlaceholderField(
+            $entityId,
+            $fieldName,
+            $metaStrings,
+            $placeholderKey,
+            $placeholderValue
+        );
     }
 }
