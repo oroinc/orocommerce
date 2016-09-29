@@ -288,7 +288,7 @@ TERM;
             ->select('product.id as productId')
             ->from(Product::class, 'product')
             ->where($qb->expr()->in('product', ':products'))
-            ->set('products', $products)
+            ->setParameter('products', $products)
             ->addOrderBy('productId', Query::ORDER_ASC);
 
         return $qb;
