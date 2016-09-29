@@ -6,7 +6,6 @@
 @import './shared/_helpers';
 @import './shared/_mixins';
 @import './components/commerce/partials/variables';
-@import './components/commerce/partials/mixins';
 
 //fonts
 @import './shared/_fonts';
@@ -17,7 +16,8 @@
 
 @import 'components/page-title';
 @import 'components/link';
-@import 'components/embedded-list/embedded-list';
-@import 'components/header/header';
+@import 'components/embedded-list';
+@import 'components/header';
+@import 'components/title';
 @import 'components/grid';
 @import 'components/editable';

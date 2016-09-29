@@ -2612,13 +2612,12 @@ input[type="search"] {
 .checkbox {
   position: relative;
   display: block;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 .radio label,
 .checkbox label {
   min-height: 20px;
-  padding-left: 20px;
   margin-bottom: 0;
   font-weight: normal;
   cursor: pointer;
