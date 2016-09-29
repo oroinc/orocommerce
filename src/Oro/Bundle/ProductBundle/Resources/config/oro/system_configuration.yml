@@ -104,7 +104,6 @@ system_configuration:
                     bottomleft: oro.product.system_configuration.fields.product_image_watermark_position.bottomleft.label
                     bottom: oro.product.system_configuration.fields.product_image_watermark_position.bottom.label
                     bottomright: oro.product.system_configuration.fields.product_image_watermark_position.bottomright.label
-
     tree:
         system_configuration:
             commerce:

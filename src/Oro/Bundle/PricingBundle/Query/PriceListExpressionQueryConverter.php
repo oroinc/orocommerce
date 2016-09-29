@@ -4,6 +4,9 @@ namespace Oro\Bundle\PricingBundle\Query;
 
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\GroupingOrmQueryConverter;
 
@@ -36,7 +39,106 @@ class PriceListExpressionQueryConverter extends GroupingOrmQueryConverter
         $this->qb = $this->doctrine->getManagerForClass($source->getEntity())->createQueryBuilder();
         $this->doConvert($source);
 
+        if (!empty($definition['price_lists'])) {
+            $this->joinPriceLists($definition['price_lists']);
+        }
+        if (!empty($definition['prices'])) {
+            $this->joinPriceListPrices($definition['prices']);
+        }
+
         return $this->qb;
+    }
+
+    /**
+     * @param array|int[] $priceLists
+     */
+    protected function joinPriceLists(array $priceLists)
+    {
+        $aliases = $this->qb->getRootAliases();
+        $rootAlias = reset($aliases);
+        foreach ($priceLists as $priceListId) {
+            $columnAlias = $this->getPriceListTableKeyByPriceListId($priceListId);
+            if (empty($this->tableAliasByColumn[$columnAlias])) {
+                $priceListToProductTableAlias = $this->generateTableAlias();
+
+                $priceListParameter = ':priceList' . $priceListId;
+                $assignedProductJoin = $this->qb->expr()->andX(
+                    $this->qb->expr()->eq($priceListToProductTableAlias . '.priceList', $priceListParameter),
+                    $this->qb->expr()->eq($priceListToProductTableAlias . '.product', $rootAlias)
+                );
+                $this->qb->setParameter($priceListParameter, $priceListId);
+                $this->addJoinStatement(
+                    self::LEFT_JOIN,
+                    PriceListToProduct::class,
+                    $priceListToProductTableAlias,
+                    self::CONDITIONAL_JOIN,
+                    $assignedProductJoin
+                );
+
+                $priceListTableAlias = $this->generateTableAlias();
+                $this->addJoinStatement(
+                    self::LEFT_JOIN,
+                    PriceList::class,
+                    $priceListTableAlias,
+                    self::CONDITIONAL_JOIN,
+                    $this->qb->expr()
+                        ->eq($priceListToProductTableAlias . '.priceList', $priceListTableAlias)
+                );
+                $this->tableAliasByColumn[$columnAlias] = $priceListTableAlias;
+            }
+        }
+    }
+
+    /**
+     * @param array|int[] $priceLists
+     */
+    protected function joinPriceListPrices(array $priceLists)
+    {
+        $this->joinPriceLists($priceLists);
+
+        $aliases = $this->qb->getRootAliases();
+        $rootAlias = reset($aliases);
+        foreach ($priceLists as $priceListId) {
+            $columnAlias = $this->getPriceTableKeyByPriceListId($priceListId);
+            if (empty($this->tableAliasByColumn[$columnAlias])) {
+                $priceListId = (int)$priceListId;
+                $priceListTableKey =  $this->getPriceListTableKeyByPriceListId($priceListId);
+                $priceListTableAlias = $this->tableAliasByColumn[$priceListTableKey];
+
+                $priceTableAlias = $this->generateTableAlias();
+                $joinCondition = $this->qb->expr()->andX(
+                    $this->qb->expr()->eq($priceTableAlias . '.product', $rootAlias),
+                    $this->qb->expr()->eq($priceTableAlias . '.priceList', $priceListTableAlias)
+                );
+
+                $this->addJoinStatement(
+                    self::LEFT_JOIN,
+                    ProductPrice::class,
+                    $priceTableAlias,
+                    self::CONDITIONAL_JOIN,
+                    $joinCondition
+                );
+                $this->tableAliasByColumn[$columnAlias] = $priceTableAlias;
+            }
+        }
+    }
+
+    /**
+     * @param int $priceListId
+     * @return string
+     */
+    protected function getPriceTableKeyByPriceListId($priceListId)
+    {
+        return PriceList::class . '::prices|' . $priceListId;
+    }
+
+    /**
+     * @param int $priceListId
+     * @return string
+     */
+    protected function getPriceListTableKeyByPriceListId($priceListId)
+    {
+        return PriceList::class . '|' . $priceListId;
     }
 
     /**
