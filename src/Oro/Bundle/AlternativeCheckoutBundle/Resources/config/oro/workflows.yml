@@ -35,11 +35,6 @@ workflows:
                 property_path: checkout.shippingMethod
             shipping_method_type:
                 property_path: checkout.shippingMethodType
-            shipping_rule_config:
-                type: entity
-                label: Shipping Rule Configuration
-                options:
-                    class: Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration
             request_approval_notes:
                 type: string
                 label: Notes
@@ -225,12 +220,8 @@ workflows:
                             options:
                                 constraints:
                                     - NotBlank: ~
-                        shipping_method_type: ~
-                        shipping_rule_config:
-                            form_type: 'Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType'
+                        shipping_method_type:
                             options:
-                                class: 'OroShippingBundle:ShippingRuleConfiguration'
-                                multiple: false
                                 constraints:
                                     - NotBlank: ~
 
@@ -486,14 +477,17 @@ workflows:
                         message: oro.checkout.workflow.condition.shipping_method_supports.message
                         parameters:
                             entity: $checkout
-                            shipping_rule_config: $shipping_rule_config
                 post_actions:
                     - '@call_service_method':
-                        service: oro_checkout.shipping_cost.calculator
-                        method: calculatePrice
-                        method_parameters: [$checkout, $shipping_rule_config]
+                        service: oro_checkout.factory.shipping_context_provider_factory
+                        method: create
+                        method_parameters: [$checkout]
+                        attribute: $.result.shippingRuleContext
+                    - '@call_service_method':
+                        service: oro_shipping.shipping_price.provider
+                        method: getPrice
+                        method_parameters: [$.result.shippingRuleContext, $shipping_method, $shipping_method_type]
                         attribute: $checkout.shippingCost
-
             place_order_definition:
                 preconditions:
                     '@or':

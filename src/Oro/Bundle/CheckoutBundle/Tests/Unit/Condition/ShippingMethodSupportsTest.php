@@ -2,15 +2,12 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Condition;
 
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Condition\ShippingMethodSupports;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Provider\ShippingContextProvider;
-use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
+use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShippingMethodSupportsTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,54 +18,37 @@ class ShippingMethodSupportsTest extends \PHPUnit_Framework_TestCase
     /** @var ShippingMethodSupports */
     protected $condition;
 
-    /** @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
-    protected $shippingMethodRegistry;
-
-    /** @var ShippingRulesProvider|\PHPUnit_Framework_MockObject_MockObject */
-    protected $shippingRulesProvider;
-
-    /** @var  ShippingRuleConfiguration */
-    protected $shippingRuleConfig;
+    /** @var ShippingPriceProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $shippingPriceProvider;
 
     /** @var ShippingContextProviderFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $shippingContextProviderFactory;
 
     protected function setUp()
     {
-        $this->shippingMethodRegistry = $this->getMock('Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry');
-
-        $this->shippingRulesProvider = $this
-            ->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider')
+        $this->shippingPriceProvider = $this
+            ->getMockBuilder(ShippingPriceProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->shippingContextProviderFactory = $this
-            ->getMockBuilder('Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory')
+            ->getMockBuilder(ShippingContextProviderFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->shippingContextProviderFactory->expects(static::any())
-            ->method('create')
-            ->willReturn(new ShippingContextProvider([]));
 
-        $this->shippingRuleConfig = $this->getEntity(
-            'Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration',
-            [
-                'id'     => 1,
-                'method' => 'flat_rate',
-                'type'   => 'flat_rate'
-            ]
-        );
-        
         $this->condition = new ShippingMethodSupports(
-            $this->shippingMethodRegistry,
-            $this->shippingRulesProvider,
+            $this->shippingPriceProvider,
             $this->shippingContextProviderFactory
         );
     }
 
     protected function tearDown()
     {
-        unset($this->condition, $this->shippingMethodRegistry);
+        unset(
+            $this->condition,
+            $this->shippingContextProviderFactory,
+            $this->shippingPriceProvider
+        );
     }
 
     public function testGetName()
@@ -93,46 +73,32 @@ class ShippingMethodSupportsTest extends \PHPUnit_Framework_TestCase
         static::assertInstanceOf(
             'Oro\Component\ConfigExpression\Condition\AbstractCondition',
             $this->condition->initialize([
-                'entity' => new Checkout(),
-                'shipping_rule_config' => $this->shippingRuleConfig
+                'entity' => new Checkout()
             ])
         );
     }
 
     /**
      * @dataProvider evaluateProvider
-     * @param string $rule
+     * @param string $methodPrice
      * @param string $methodName
      * @param string $typeName
      * @param bool $expected
      */
-    public function testEvaluate($rule, $methodName, $typeName, $expected)
+    public function testEvaluate($methodPrice, $methodName, $typeName, $expected)
     {
-        $shippingRule = new ShippingRule();
-        $shippingRule->setName('TetsRule')
-            ->setPriority(10)
-            ->addConfiguration($this->shippingRuleConfig);
-        
-        $rules = [
-            'no' => [],
-            'yes' => [10 => $shippingRule]
-        ];
-        
-        $method = $this->getMock('Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface');
-        $method->expects(static::any())
-            ->method('getShippingTypes')
-            ->willReturn(['per_order', 'per_item']);
-        $this->shippingMethodRegistry->expects(static::any())->method('getShippingMethod')->willReturn($method);
+        $shippingContext = new ShippingContext();
+        $this->shippingContextProviderFactory->expects(static::once())
+            ->method('create')
+            ->willReturn($shippingContext);
+        $this->shippingPriceProvider->expects(static::once())
+            ->method('getApplicableMethodsWithTypesData')
+            ->willReturn($methodPrice);
 
-
-        $this->shippingRulesProvider->expects(static::any())
-            ->method('getApplicableShippingRules')
-            ->willReturn($rules[$rule]);
         $checkout = new Checkout();
         $checkout->setShippingMethod($methodName)->setShippingMethodType($typeName);
         $this->condition->initialize([
-            'entity' => $checkout,
-            'shipping_rule_config' => $this->shippingRuleConfig
+            'entity' => $checkout
         ]);
         static::assertEquals($expected, $this->condition->evaluate([]));
     }
@@ -143,28 +109,58 @@ class ShippingMethodSupportsTest extends \PHPUnit_Framework_TestCase
     public function evaluateProvider()
     {
         return [
-            'no_rules' => [
-                'rules' => 'no',
-                'method' => 'flat_rate',
-                'type' => 'per_order',
-                'expected' => false,
+            'wrong_method'                        => [
+                'methodPrice' => [
+                    'wrong_method' => [
+                        'types' => [
+                            'flat_rate' => [
+                                'identifier' => 'per_order',
+                            ]
+                        ]
+                    ]
+                ],
+                'method'      => 'flat_rate',
+                'type'        => 'per_order',
+                'expected'    => false,
             ],
-            'not_correct_method' => [
-                'rules' => 'yes',
-                'method' => 'flat_rule',
-                'type' => 'per_order',
-                'expected' => false,
+            'not_types'              => [
+                'methodPrice' => [
+                    'flat_rate' => [
+                        'identifier' => 'flat_rate'
+                    ]
+                ],
+                'method'      => 'flat_rule',
+                'type'        => 'per_order',
+                'expected'    => false,
             ],
             'correct_method_not_correct_type' => [
-                'rules' => 'yes',
-                'method' => 'flat_rate',
-                'type' => null,
+                'methodPrice' => [
+                    'flat_rate' => [
+                        'identifier' => 'flat_rate',
+                        'types' => [
+                            'flat_rate' => [
+                                'identifier' => 'per_order',
+                            ]
+                        ]
+                    ]
+                ],
+                'method'   => 'flat_rate',
+                'type'     => null,
                 'expected' => false,
             ],
-            'correct_method_correct_type' => [
-                'rules' => 'yes',
-                'method' => 'flat_rate',
-                'type' => 'per_order',
+            'correct_method_correct_type'     => [
+                'methodPrice' => [
+                    'flat_rate' => [
+                        'identifier' => 'flat_rate',
+                        'types' => [
+                            'flat_rate' => [
+                                'identifier' => 'per_order',
+                            ]
+                        ]
+                    ]
+                ],
+                'method'   => 'flat_rate',
+                'type'     => 'per_order',
                 'expected' => true,
             ],
         ];
@@ -174,8 +170,7 @@ class ShippingMethodSupportsTest extends \PHPUnit_Framework_TestCase
     {
         $stdClass = new \stdClass();
         $this->condition->initialize([
-            'entity' => $stdClass,
-            'shipping_rule_config' => $this->shippingRuleConfig
+            'entity' => $stdClass
         ]);
         $result = $this->condition->toArray();
 
@@ -193,7 +188,7 @@ class ShippingMethodSupportsTest extends \PHPUnit_Framework_TestCase
     public function testCompile()
     {
         $toStringStub = new ToStringStub();
-        $options = ['entity' => $toStringStub, 'shipping_rule_config' => $this->shippingRuleConfig];
+        $options = ['entity' => $toStringStub];
 
         $this->condition->initialize($options);
         $result = $this->condition->compile('$factory');
