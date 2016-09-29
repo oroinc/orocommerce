@@ -90,12 +90,10 @@ class AccountProductVisibilityProviderTest extends WebTestCase
             [
                 'productId' => $this->getReference('product.1')->getId(),
                 'accountId' => $this->getReference('account.level_1')->getId(),
-                'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN
             ],
             [
                 'productId' => $this->getReference('product.4')->getId(),
                 'accountId' => $this->getReference('account.orphan')->getId(),
-                'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN
             ],
         ];
 
@@ -147,12 +145,14 @@ class AccountProductVisibilityProviderTest extends WebTestCase
             [
                 'productId' => $this->getReference('product.3')->getId(),
                 'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE
+                'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN
             ],
             [
                 'productId' => $this->getReference('product.5')->getId(),
                 'visibility_new' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
-                'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE
+                'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN
             ],
         ];
 

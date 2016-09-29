@@ -66,17 +66,14 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
                 [
                     'productId' => 1,
                     'accountId' => 1,
-                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE
                 ],
                 [
                     'productId' => 2,
                     'accountId' => 3,
-                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN
                 ],
                 [
                     'productId' => 3,
                     'accountId' => 2,
-                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE
                 ]
             ]);
 
@@ -88,17 +85,20 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
                 [
                     'productId' => 1,
                     'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
-                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE
+                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE
                 ],
                 [
                     'productId' => 2,
                     'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE
+                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN
                 ],
                 [
                     'productId' => 3,
                     'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_HIDDEN
+                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
+                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE
                 ]
             ]);
 
@@ -107,9 +107,9 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
         $expectedEntitiesData = [
             1 => [
                 IndexDataProvider::STANDARD_VALUES_KEY => [
-                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                     'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
-                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE
+                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                 ],
                 IndexDataProvider::PLACEHOLDER_VALUES_KEY => [
                     'visibility_account' => [
@@ -119,9 +119,9 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
             ],
             2 => [
                 IndexDataProvider::STANDARD_VALUES_KEY => [
-                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
                     'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE
+                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
                 ],
                 IndexDataProvider::PLACEHOLDER_VALUES_KEY => [
                     'visibility_account' => [
@@ -131,9 +131,9 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
             ],
             3 => [
                 IndexDataProvider::STANDARD_VALUES_KEY => [
-                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                     'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_HIDDEN
+                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
+                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                 ],
                 IndexDataProvider::PLACEHOLDER_VALUES_KEY => [
                     'visibility_account' => [
