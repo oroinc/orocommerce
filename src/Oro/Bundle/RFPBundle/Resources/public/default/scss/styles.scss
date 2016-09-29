@@ -1,6 +1,7 @@
 @import 'form.scss';
-@import 'components/rfp-form/rfp-form.scss';
-@import 'components/input-rfp/input-rfp.scss';
+@import 'components/request-form-outer/request-form-outer.scss';
+@import 'components/request-form/request-form.scss';
+@import 'components/request-form-input/request-form-input.scss';
 
 .account-rfp_request-assigned_users {
   ul {

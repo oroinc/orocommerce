@@ -28,7 +28,7 @@
 
 {% block __oro_rfp_frontend_request_edit__rfp_form_edit_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " rfp-form"
+        '~class': " request-form"
     }) %}
 
     <div{{ block('block_attributes') }}>
@@ -38,46 +38,46 @@
 
 {% block __oro_rfp_frontend_request_edit__rfp_form_fields_widget %}
     <div class="grid">
-        <div class="grid__row">
-            <div class="grid__column grid__column--6">
+        <div class="grid__row grid__row--offset-none">
+            <div class="grid__column grid__column--6 grid__column--offset-y">
                 {{ form_row(form.firstName) }}
             </div>
-            <div class="grid__column grid__column--6">
+            <div class="grid__column grid__column--6 grid__column--offset-y">
                 {{ form_row(form.lastName) }}
             </div>
         </div>
-        <div class="grid__row">
-            <div class="grid__column grid__column--6">
+        <div class="grid__row grid__row--offset-none">
+            <div class="grid__column grid__column--6 grid__column--offset-y">
                 {{ form_row(form.email)  }}
             </div>
-            <div class="grid__column grid__column--6">
+            <div class="grid__column grid__column--6 grid__column--offset-y">
                 {{ form_row(form.phone) }}
             </div>
         </div>
-        <div class="grid__row">
-            <div class="grid__column grid__column--6">
+        <div class="grid__row grid__row--offset-none">
+            <div class="grid__column grid__column--6 grid__column--offset-y">
                 {{ form_row(form.company) }}
             </div>
-            <div class="grid__column grid__column--6">
+            <div class="grid__column grid__column--6 grid__column--offset-y">
                 {{ form_row(form.role) }}
             </div>
         </div>
-        <div class="grid__row">
-            <div class="grid__column grid__column--12">
+        <div class="grid__row grid__row--offset-none">
+            <div class="grid__column grid__column--12 grid__column--offset-y">
                 {{ form_row(form.note, { 'attr': {'rows': 5} }) }}
             </div>
         </div>
-        <div class="grid__row">
-            <div class="grid__column grid__column--6">
+        <div class="grid__row grid__row--offset-none">
+            <div class="grid__column grid__column--6 grid__column--offset-y">
                 {{ form_row(form.poNumber) }}
             </div>
-            <div class="grid__column grid__column--6">
+            <div class="grid__column grid__column--6 grid__column--offset-y">
                 {{ form_row(form.shipUntil, { 'attr': {'class': 'input input--size-m'} }) }}
             </div>
         </div>
-        <div class="grid__row">
-            <div class="grid__column grid__column--6">
-                <div class="input-rfp">
+        <div class="grid__row grid__row--offset-none">
+            <div class="grid__column grid__column--6 grid__column--offset-y">
+                <div class="request-form-input">
                     {{ form_row(form.assignedAccountUsers) }}
                 </div>
             </div>
