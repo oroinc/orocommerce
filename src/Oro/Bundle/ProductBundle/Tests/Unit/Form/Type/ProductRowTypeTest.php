@@ -108,7 +108,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
                 function (Constraint $constraint) {
                     $className = $constraint->validatedBy();
 
-                    if ($className === 'orob2b_product_product_by_sku_validator') {
+                    if ($className === 'oro_product_product_by_sku_validator') {
                         $this->validators[$className] = $this->validator;
                     }
 

@@ -16,7 +16,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class FrontendAccountUserRegistrationType extends AbstractType
 {
-    const NAME = 'orob2b_account_frontend_account_user_register';
+    const NAME = 'oro_account_frontend_account_user_register';
 
     /**
      * @var ConfigManager
@@ -104,7 +104,7 @@ class FrontendAccountUserRegistrationType extends AbstractType
                 $accountUser = $event->getData();
 
                 if (!$accountUser->getOwner()) {
-                    $userId = $this->configManager->get('oro_b2b_account.default_account_owner');
+                    $userId = $this->configManager->get('oro_account.default_account_owner');
 
                     /** @var User $user */
                     $user = $this->userManager->getRepository()->find($userId);

@@ -16,6 +16,7 @@ class ProductControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']);
     }
 
@@ -23,7 +24,7 @@ class ProductControllerTest extends WebTestCase
     {
         $product = $this->getReference('product.1');
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $product->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
 
         $this->checkSeoSectionExistence($crawler);
     }
@@ -32,7 +33,7 @@ class ProductControllerTest extends WebTestCase
     {
         $product = $this->getReference('product.1');
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $product->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
 
         $this->checkSeoSectionExistence($crawler);
 
@@ -41,7 +42,7 @@ class ProductControllerTest extends WebTestCase
             $form->getPhpValues(),
             [
                 'input_action' => 'save_and_stay',
-                'orob2b_product_product' => [
+                'oro_product_product' => [
                     'metaTitles' => [
                         'values' => [
                             'default' => LoadProductMetaData::META_TITLES

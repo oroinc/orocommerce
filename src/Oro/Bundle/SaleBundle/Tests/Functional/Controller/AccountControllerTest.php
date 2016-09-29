@@ -18,6 +18,7 @@ class AccountControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], static::generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
             'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
@@ -30,7 +31,7 @@ class AccountControllerTest extends WebTestCase
         $quote = $this->getReference('sale.quote.3');
         /** @var Account $account */
         $account = $quote->getAccount();
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_view', ['id' => $account->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_view', ['id' => $account->getId()]));
         $gridAttr = $crawler->filter('[id^=grid-account-view-quote-grid]')
             ->first()->attr('data-page-component-options');
         $this->assertContains($quote->getOwner()->getFullName(), $gridAttr);

@@ -22,7 +22,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader(), true);
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
@@ -30,7 +30,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
             true
         );
         $this->messageProducer = $this->getContainer()->get('oro_message_queue.message_producer');
-        $this->getContainer()->get('orob2b_pricing.price_list_trigger_handler')->sendScheduledTriggers();
+        $this->getContainer()->get('oro_pricing.price_list_trigger_handler')->sendScheduledTriggers();
         $this->messageProducer->clear();
         $this->messageProducer->enable();
     }
@@ -47,7 +47,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_account_delete_account_group', ['id' => $group->getId()])
+            $this->getUrl('oro_api_account_delete_account_group', ['id' => $group->getId()])
         );
         $result = $this->client->getResponse();
 
@@ -65,7 +65,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
                 'deletedGroupReference' => 'account_group.group1',
                 'expectedMessages' => [
                     [
-                        'topic' => Topics::REBUILD_PRICE_LISTS,
+                        'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                         'message' => [
                             PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
                             PriceListRelationTrigger::ACCOUNT => 'account.level_1.3',
@@ -77,7 +77,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
                 'deletedGroupReference' => 'account_group.group2',
                 'expectedMessages' => [
                     [
-                        'topic' => Topics::REBUILD_PRICE_LISTS,
+                        'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                         'message' => [
                             PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
                             PriceListRelationTrigger::ACCOUNT => 'account.level_1.2',
@@ -123,13 +123,8 @@ class AccountGroupChangesListenerTest extends WebTestCase
 
 
         $actual = $this->messageProducer->getSentMessages();
-        $this->assertEquals(
-            $expectedMessages,
-            $actual,
-            "Expected messages in queue should equals actual",
-            $delta = 0.0,
-            $maxDepth = 10,
-            $canonicalize = true
-        );
+        foreach ($expectedMessages as $expectedMessage) {
+            $this->assertContains($expectedMessage, $actual);
+        }
     }
 }

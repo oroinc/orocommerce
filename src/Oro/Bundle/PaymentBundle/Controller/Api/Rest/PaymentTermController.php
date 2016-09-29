@@ -15,7 +15,7 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
  * @RouteResource("paymentterm")
- * @NamePrefix("orob2b_api_")
+ * @NamePrefix("oro_api_")
  */
 class PaymentTermController extends RestController implements ClassResourceInterface
 {
@@ -25,7 +25,7 @@ class PaymentTermController extends RestController implements ClassResourceInter
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_payment_term_delete",
+     *      id="oro_payment_term_delete",
      *      type="entity",
      *      class="OroPaymentBundle:PaymentTerm",
      *      permission="DELETE"
@@ -44,7 +44,7 @@ class PaymentTermController extends RestController implements ClassResourceInter
      */
     public function getManager()
     {
-        return $this->get('orob2b_payment.payment_term.manager.api');
+        return $this->get('oro_payment.payment_term.manager.api');
     }
 
     /**

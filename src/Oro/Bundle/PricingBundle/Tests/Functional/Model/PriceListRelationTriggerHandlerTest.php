@@ -43,7 +43,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
             ]
         );
 
-        $this->handler = $this->getContainer()->get('orob2b_pricing.price_list_relation_trigger_handler');
+        $this->handler = $this->getContainer()->get('oro_pricing.price_list_relation_trigger_handler');
         $this->messageProducer = $this->getContainer()->get('oro_message_queue.message_producer');
         $this->messageProducer->clear();
         $this->messageProducer->enable();
@@ -59,7 +59,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                     'message' => [
                         PriceListRelationTrigger::WEBSITE => $website->getId(),
                         PriceListRelationTrigger::ACCOUNT => null,
@@ -85,7 +85,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                     'message' => [
                         PriceListRelationTrigger::WEBSITE => $website->getId(),
                         PriceListRelationTrigger::ACCOUNT => $account->getId(),
@@ -106,7 +106,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                     'message' => [
                         PriceListRelationTrigger::WEBSITE => null,
                         PriceListRelationTrigger::ACCOUNT => null,
@@ -131,7 +131,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                     'message' => [
                         PriceListRelationTrigger::WEBSITE => $website->getId(),
                         PriceListRelationTrigger::ACCOUNT => null,
@@ -154,7 +154,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                     'message' => [
                         PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
                         PriceListRelationTrigger::ACCOUNT =>  $this->getReference('account.level_1.3')->getId(),
@@ -162,14 +162,14 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
                     ],
                 ],
                 [
-                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                     'message' => [
                         PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
                         PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference(LoadGroups::GROUP1)->getId(),
                     ],
                 ],
                 [
-                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                     'message' => [
                         PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
                     ],
@@ -187,7 +187,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                     'message' => [
                         PriceListRelationTrigger::WEBSITE => null,
                         PriceListRelationTrigger::ACCOUNT => null,
@@ -210,7 +210,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         $this->assertEquals(
             [
                 [
-                    'topic' => Topics::REBUILD_PRICE_LISTS,
+                    'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                     'message' => [
                         PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
                         PriceListRelationTrigger::ACCOUNT => $this->getReference('account.level_1.3')->getId(),

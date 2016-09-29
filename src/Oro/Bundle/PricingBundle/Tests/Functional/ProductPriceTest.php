@@ -16,6 +16,7 @@ class ProductPriceTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -57,8 +58,8 @@ class ProductPriceTest extends WebTestCase
             $this->getUrl(
                 'oro_action_widget_form',
                 [
-                    'operationName' => 'orob2b_pricing_add_product_price',
-                    'route' => 'orob2b_pricing_price_list_view',
+                    'operationName' => 'oro_pricing_add_product_price',
+                    'route' => 'oro_pricing_price_list_view',
                     'entityId' => $priceList->getId(),
                     'entityClass' => 'Oro\Bundle\PricingBundle\Entity\PriceList'
                 ]

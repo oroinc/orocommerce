@@ -20,7 +20,7 @@ class ProductTaxCodeTypeTest extends AbstractTaxCodeTypeTest
      */
     public function testGetName()
     {
-        $this->assertEquals('orob2b_tax_product_tax_code_type', $this->formType->getName());
+        $this->assertEquals('oro_tax_product_tax_code_type', $this->formType->getName());
     }
 
     /**

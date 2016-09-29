@@ -21,6 +21,7 @@ class DatabaseBuilderTest extends WebTestCase
     public function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(['Oro\Bundle\MenuBundle\Tests\Functional\DataFixtures\LoadMenuItemData']);
 
@@ -28,7 +29,7 @@ class DatabaseBuilderTest extends WebTestCase
 
         $this->builder = new DatabaseBuilder(
             $container->get('doctrine'),
-            $container->get('orob2b_menu.menu.factory')
+            $container->get('oro_menu.menu.factory')
         );
     }
 

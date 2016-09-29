@@ -15,6 +15,7 @@ class AjaxQuoteControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -39,7 +40,7 @@ class AjaxQuoteControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_quote_related_data'),
+            $this->getUrl('oro_quote_related_data'),
             [
                 QuoteType::NAME => [
                     'account' => $accountEntity->getId(),
@@ -85,7 +86,7 @@ class AjaxQuoteControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_quote_related_data'),
+            $this->getUrl('oro_quote_related_data'),
             [
                 QuoteType::NAME => [
                     'account' => $accountUser1->getAccount()->getId(),

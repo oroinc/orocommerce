@@ -17,18 +17,18 @@ use Oro\Bundle\ProductBundle\Model\ExtendProduct;
 
 /**
  * @ORM\Table(
- *      name="orob2b_product",
+ *      name="oro_product",
  *      indexes={
- *          @ORM\Index(name="idx_orob2b_product_sku", columns={"sku"}),
- *          @ORM\Index(name="idx_orob2b_product_created_at", columns={"created_at"}),
- *          @ORM\Index(name="idx_orob2b_product_updated_at", columns={"updated_at"})
+ *          @ORM\Index(name="idx_oro_product_sku", columns={"sku"}),
+ *          @ORM\Index(name="idx_oro_product_created_at", columns={"created_at"}),
+ *          @ORM\Index(name="idx_oro_product_updated_at", columns={"updated_at"})
  *      }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository")
  * @Config(
- *      routeName="orob2b_product_index",
- *      routeView="orob2b_product_view",
- *      routeUpdate="orob2b_product_update",
+ *      routeName="oro_product_index",
+ *      routeView="oro_product_view",
+ *      routeUpdate="oro_product_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
@@ -48,7 +48,7 @@ use Oro\Bundle\ProductBundle\Model\ExtendProduct;
  *              "group_name"=""
  *          },
  *          "form"={
- *              "form_type"="orob2b_product_select",
+ *              "form_type"="oro_product_select",
  *              "grid_name"="products-select-grid"
  *          }
  *      }
@@ -272,7 +272,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      *      orphanRemoval=true
      * )
      * @ORM\JoinTable(
-     *      name="orob2b_product_name",
+     *      name="oro_product_name",
      *      joinColumns={
      *          @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -304,7 +304,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      *      orphanRemoval=true
      * )
      * @ORM\JoinTable(
-     *      name="orob2b_product_description",
+     *      name="oro_product_description",
      *      joinColumns={
      *          @ORM\JoinColumn(name="description_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -354,7 +354,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      *      orphanRemoval=true
      * )
      * @ORM\JoinTable(
-     *      name="orob2b_product_short_desc",
+     *      name="oro_product_short_desc",
      *      joinColumns={
      *          @ORM\JoinColumn(name="short_description_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -489,14 +489,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
      */
     public function getVariantFields()
     {
-        return $this->variantFields;
+        return $this->variantFields !== null ? $this->variantFields : [];
     }
 
     /**
-     * @param array $variantFields
+     * @param array|null $variantFields
      * @return Product
      */
-    public function setVariantFields(array $variantFields)
+    public function setVariantFields($variantFields)
     {
         $this->variantFields = $variantFields;
 

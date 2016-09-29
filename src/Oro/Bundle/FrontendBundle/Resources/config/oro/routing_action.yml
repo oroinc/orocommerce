@@ -1,16 +1,16 @@
-orob2b_frontend_action_widget_form:
+oro_frontend_action_widget_form:
     path: /actionwidget/form/{operationName}
     defaults: { _controller: OroActionBundle:Widget:form }
     options:
         frontend: true
 
-orob2b_frontend_action_widget_buttons:
+oro_frontend_action_widget_buttons:
     path: /actionwidget/buttons
     defaults: { _controller: OroActionBundle:Widget:buttons }
     options:
         frontend: true
 
-orob2b_frontend_action_operation_execute:
+oro_frontend_action_operation_execute:
     path: /actionajax/operation/execute/{operationName}
     defaults: { _controller: OroActionBundle:Ajax:execute }
     options:

@@ -20,18 +20,19 @@ class AccountTaxCodeControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
     }
 
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_tax_account_tax_code_index'));
+        $this->client->request('GET', $this->getUrl('oro_tax_account_tax_code_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_account_tax_code_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_tax_account_tax_code_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -54,7 +55,7 @@ class AccountTaxCodeControllerTest extends WebTestCase
         $id = $result['id'];
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_account_tax_code_update', ['id' => $result['id']])
+            $this->getUrl('oro_tax_account_tax_code_update', ['id' => $result['id']])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -76,14 +77,14 @@ class AccountTaxCodeControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_account_tax_code_view', ['id' => $id])
+            $this->getUrl('oro_tax_account_tax_code_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(self::ACCOUNT_TAX_CODE_UPDATED . ' - View - Account Tax Codes - Taxes', $html);
+        $this->assertContains(self::ACCOUNT_TAX_CODE_UPDATED . ' - View - Customer Tax Codes - Taxes', $html);
 
         $this->assertViewPage(
             $html,
@@ -101,8 +102,8 @@ class AccountTaxCodeControllerTest extends WebTestCase
     {
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'orob2b_tax_account_tax_code_type[code]' => $code,
-                'orob2b_tax_account_tax_code_type[description]' => $description,
+                'oro_tax_account_tax_code_type[code]' => $code,
+                'oro_tax_account_tax_code_type[description]' => $description,
             ]
         );
 

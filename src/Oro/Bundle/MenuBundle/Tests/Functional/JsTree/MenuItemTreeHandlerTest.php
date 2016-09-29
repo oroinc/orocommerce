@@ -26,7 +26,7 @@ class MenuItemTreeHandlerTest extends AbstractTreeHandlerTestCase
      */
     protected function getHandlerId()
     {
-        return 'orob2b_menu.tree.menu_item_tree_handler';
+        return 'oro_menu.tree.menu_item_tree_handler';
     }
 
     /**

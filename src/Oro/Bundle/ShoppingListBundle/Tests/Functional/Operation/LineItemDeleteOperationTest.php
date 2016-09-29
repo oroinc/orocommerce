@@ -13,6 +13,7 @@ class LineItemDeleteOperationTest extends ActionTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -32,7 +33,7 @@ class LineItemDeleteOperationTest extends ActionTestCase
         $this->assertExecuteOperation(
             'DELETE',
             $lineItem->getId(),
-            $this->getContainer()->getParameter('orob2b_shopping_list.entity.line_item.class'),
+            $this->getContainer()->getParameter('oro_shopping_list.entity.line_item.class'),
             ['datagrid' => 'shopping-list-line-items-grid']
         );
 

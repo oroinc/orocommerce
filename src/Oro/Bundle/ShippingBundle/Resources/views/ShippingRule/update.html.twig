@@ -2,13 +2,13 @@
 
 {% oro_title_set({params : {"%id%": entity.id|default('N/A'|trans)} }) %}
 
-{% set formAction = entity.id ? path('orob2b_shipping_rule_update', { 'id': entity.id }) : path('orob2b_shipping_rule_create')  %}
+{% set formAction = entity.id ? path('oro_shipping_rule_update', { 'id': entity.id }) : path('oro_shipping_rule_create')  %}
 
 {% block pageHeader %}
     {% if entity.id %}
         {% set breadcrumbs = {
         'entity':      entity,
-        'indexPath':   path('orob2b_shipping_rule_index'),
+        'indexPath':   path('oro_shipping_rule_index'),
         'indexLabel': 'oro.shipping.shippingrule.entity_plural_label'|trans,
         'entityTitle': entity.name|slice(0, 50)
         } %}
@@ -17,7 +17,7 @@
         {% set breadcrumbs = {
             'indexLabel': 'Create',
             'entityTitle': 'Shipping Rule',
-            'indexPath': path('orob2b_shipping_rule_create')
+            'indexPath': path('oro_shipping_rule_create')
         } %}
         {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.shipping.shippingrule.entity_label'|trans}) %}
         {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
@@ -27,23 +27,41 @@
 {% block navButtons %}
     {{ parent() }}
 
-    {{ UI.cancelButton(path('orob2b_shipping_rule_index')) }}
-    {% if entity.id and resource_granted('orob2b_shipping_rule_update') or resource_granted('orob2b_shipping_rule_create') %}
+    {{ UI.cancelButton(path('oro_shipping_rule_index')) }}
+    {% if entity.id and resource_granted('oro_shipping_rule_update') or resource_granted('oro_shipping_rule_create') %}
         {% set html = '' %}
-        {% if resource_granted('orob2b_shipping_rule_view') %}
+        {% if resource_granted('oro_shipping_rule_view') %}
             {% set html = UI.saveAndCloseButton({
-                'route': 'orob2b_shipping_rule_view',
+                'route': 'oro_shipping_rule_view',
                 'params': {'id': '$id'}
             }) %}
         {% endif %}
         {% set html = html ~ UI.saveAndStayButton({
-            'route': 'orob2b_shipping_rule_update',
+            'route': 'oro_shipping_rule_update',
             'params': {'id': '$id'}
         }) %}
 
         {{ UI.dropdownSaveButton({'html': html}) }}
     {% endif %}
 {% endblock navButtons %}
+
+{% block oro_shipping_rule_add_method_widget %}
+    <div
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'oroshipping/js/app/views/shipping-rule-method-view',
+                methodSelectSelector: 'select.oro-shipping-rule-add-method-select',
+                buttonSelector: '.add-method',
+                updateFlag: constant('Oro\\Bundle\\ShippingBundle\\Form\\Handler\\ShippingRuleHandler::UPDATE_FLAG'),
+                methods: form.vars.methods
+            }|json_encode }}"
+    >
+        <div class="oro-shipping-rule-add-method-select">
+            {{ form_row(form.method, {'attr': {'class': 'oro-shipping-rule-add-method-select'}}) }}
+        </div>
+        <a class="btn add-method" href="javascript: void(0);"><i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+    </div>
+{% endblock %}
 
 {% block content_data %}
     {% set id = 'shipping-rule-edit' %}
@@ -69,7 +87,7 @@
             'subblocks': [
                 {
                     'data': [
-                        form_widget(form.destinations, {'attr': {'class': 'orob2b-shipping-destination-collection row-oro'}}),
+                        form_widget(form.destinations, {'attr': {'class': 'oro-shipping-rule-collection oro-shipping-rule-destinations-collection row-oro'}}),
                     ]
                 }
             ]
@@ -89,8 +107,9 @@
             'subblocks': [
                 {
                     'data': [
-                        form_widget(form.configurations),
-                        form_errors(form.configurations),
+                        form_widget(form.methodConfigs, {'attr': {'class': 'oro-shipping-rule-collection oro-shipping-rule-method-configs-collection row-oro'}}),
+                        form_errors(form.methodConfigs),
+                        block('oro_shipping_rule_add_method_widget')
                     ]
                 }
             ]

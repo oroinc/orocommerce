@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<project name="Oro B2B Project" basedir=".." default="help">
+<project name="OroCommerce Project" basedir=".." default="help">
 
     <target name="help" description="Print additional usage instructions.">
         <echo>Main targets:</echo>

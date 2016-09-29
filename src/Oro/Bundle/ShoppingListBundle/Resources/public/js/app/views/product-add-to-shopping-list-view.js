@@ -23,8 +23,8 @@ define(function(require) {
             },
             save_api_accessor: {
                 http_method: 'PUT',
-                route: 'orob2b_api_shopping_list_frontend_put_line_item',
-                form_name: 'orob2b_product_frontend_line_item'
+                route: 'oro_api_shopping_list_frontend_put_line_item',
+                form_name: 'oro_product_frontend_line_item'
             }
         },
 
@@ -216,7 +216,7 @@ define(function(require) {
                 }
 
                 if (lineItemId) {
-                    this.editLineItem = _.findWhere(shoppingList.line_items, {line_item_id: lineItemId});
+                    this.editLineItem = _.findWhere(shoppingList.line_items, {id: lineItemId});
                 } else if (setFirstLineItem) {
                     this.editLineItem = shoppingList.line_items[0] || null;
                 } else {
@@ -284,7 +284,7 @@ define(function(require) {
                 $button.data('intention', 'add');
             } else {
                 label =  _.__('oro.shoppinglist.actions.update_shopping_list', {
-                    shoppingList: this.editShoppingList.shopping_list_label
+                    shoppingList: this.editShoppingList.label
                 });
                 $button.data('intention', 'update');
             }
@@ -386,7 +386,7 @@ define(function(require) {
             mediator.execute('showLoading');
 
             var savePromise = this.saveApiAccessor.send({
-                id: this.editLineItem.line_item_id
+                id: this.editLineItem.id
             }, {
                 quantity: this.model.get('quantity'),
                 unit: this.model.get('unit')

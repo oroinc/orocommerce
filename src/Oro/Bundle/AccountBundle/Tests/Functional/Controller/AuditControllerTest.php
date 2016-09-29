@@ -35,11 +35,12 @@ class AuditControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
+        $this->client->useHashNavigation(true);
     }
 
     public function testAuditHistory()
     {
-        if (!$this->client->getContainer()->hasParameter('orob2b_account.entity.account_user.class')) {
+        if (!$this->client->getContainer()->hasParameter('oro_account.entity.account_user.class')) {
             $this->markTestSkipped('OroAccountBundle is not installed');
         }
 
@@ -87,24 +88,24 @@ class AuditControllerTest extends WebTestCase
 
     protected function createUser()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_create'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $form = $crawler->selectButton('Save')->form();
-        $form['orob2b_account_frontend_account_user[enabled]'] = $this->userData['enabled'];
-        $form['orob2b_account_frontend_account_user[plainPassword][first]'] = $this->userData['password'];
-        $form['orob2b_account_frontend_account_user[plainPassword][second]'] = $this->userData['password'];
-        $form['orob2b_account_frontend_account_user[firstName]'] = $this->userData['firstName'];
-        $form['orob2b_account_frontend_account_user[lastName]'] = $this->userData['lastName'];
-        $form['orob2b_account_frontend_account_user[email]'] = $this->userData['email'];
-        $form['orob2b_account_frontend_account_user[roles][0]']->tick();
+        $form['oro_account_frontend_account_user[enabled]'] = $this->userData['enabled'];
+        $form['oro_account_frontend_account_user[plainPassword][first]'] = $this->userData['password'];
+        $form['oro_account_frontend_account_user[plainPassword][second]'] = $this->userData['password'];
+        $form['oro_account_frontend_account_user[firstName]'] = $this->userData['firstName'];
+        $form['oro_account_frontend_account_user[lastName]'] = $this->userData['lastName'];
+        $form['oro_account_frontend_account_user[email]'] = $this->userData['email'];
+        $form['oro_account_frontend_account_user[roles][0]']->tick();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Account User has been saved', $crawler->html());
+        $this->assertContains('Customer User has been saved', $crawler->html());
     }
 
     /**

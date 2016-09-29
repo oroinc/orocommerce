@@ -15,7 +15,7 @@ use Oro\Bundle\FrontendBundle\Twig\FrontendAsseticTokenParser;
 class FrontendAsseticTokenParserTest extends \PHPUnit_Framework_TestCase
 {
     const ACTIVE_THEME = 'oro';
-    const TAG_NAME = 'orob2b_css';
+    const TAG_NAME = 'oro_css';
     const PARSER_OUTPUT = 'css/*.css';
 
     /**

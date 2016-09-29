@@ -1,0 +1,45 @@
+.main-menu {
+    display: flex;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+
+    vertical-align: middle;
+
+    border-bottom: 0;
+
+    &__item {
+        flex-grow: 1;
+    }
+
+    &__link {
+        display: block;
+
+        padding: 14px 0;
+
+        text-transform: uppercase;
+
+        color: $theme-middle-gray-color;
+    }
+}
+
+@include breakpoint('tablet') {
+    .main-menu {
+        display: block;
+
+        max-height: none;
+        padding: 10px 15px 0 15px;
+
+        &__item {
+            min-height: 0;
+        }
+
+        &__link {
+            padding: 5px 0;
+
+            text-align: left;
+        }
+    }
+}

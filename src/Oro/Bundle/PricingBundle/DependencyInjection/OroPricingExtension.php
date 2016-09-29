@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\Loader;
 
 class OroPricingExtension extends Extension
 {
-    const ALIAS = 'oro_b2b_pricing';
+    const ALIAS = 'oro_pricing';
 
     /**
      * {@inheritDoc}
@@ -26,6 +26,7 @@ class OroPricingExtension extends Extension
         $loader->load('importexport.yml');
         $loader->load('layout.yml');
         $loader->load('block_types.yml');
+        $loader->load('notification_message.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }

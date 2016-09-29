@@ -38,7 +38,7 @@ class AjaxProductUnitControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_product_frontend_ajaxproductunit_productunits', [
+            $this->getUrl('oro_product_frontend_ajaxproductunit_productunits', [
                 'id' => $product->getId(),
                 'short' => $isShort
             ])

@@ -6,10 +6,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(
- *      name="orob2b_price_product_combined",
+ *      name="oro_price_product_combined",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="orob2b_combined_price_uidx",
+ *              name="oro_combined_price_uidx",
  *              columns={"product_id", "combined_price_list_id", "quantity", "unit_code", "currency"}
  *          )
  *      }

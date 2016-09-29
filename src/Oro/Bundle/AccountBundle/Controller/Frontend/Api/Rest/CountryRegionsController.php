@@ -14,7 +14,7 @@ use Oro\Bundle\AddressBundle\Controller\Api\Rest\CountryRegionsController as Bas
 
 /**
  * @RouteResource("country/regions")
- * @NamePrefix("orob2b_api_frontend_country_")
+ * @NamePrefix("oro_api_frontend_country_")
  */
 class CountryRegionsController extends BaseController
 {

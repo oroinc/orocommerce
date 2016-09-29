@@ -23,7 +23,7 @@ class AccountAddressControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
@@ -35,7 +35,7 @@ class AccountAddressControllerTest extends WebTestCase
 
     public function testAccountView()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_account_view', ['id' => $this->account->getId()]));
+        $this->client->request('GET', $this->getUrl('oro_account_view', ['id' => $this->account->getId()]));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }
@@ -51,7 +51,7 @@ class AccountAddressControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_account_address_create',
+                'oro_account_address_create',
                 ['entityId' => $account->getId(), '_widgetContainer' => 'dialog']
             )
         );
@@ -71,7 +71,7 @@ class AccountAddressControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_account_get_account_address_primary', ['entityId' => $account->getId()]),
+            $this->getUrl('oro_api_account_get_account_address_primary', ['entityId' => $account->getId()]),
             [],
             [],
             $this->generateWsseAuthHeader()
@@ -107,7 +107,7 @@ class AccountAddressControllerTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_account_get_account_address_primary', ['entityId' => $id]),
+            $this->getUrl('oro_api_account_get_account_address_primary', ['entityId' => $id]),
             [],
             [],
             $this->generateWsseAuthHeader()
@@ -118,7 +118,7 @@ class AccountAddressControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_account_address_update',
+                'oro_account_address_update',
                 ['entityId' => $id, 'id' => $address['id'], '_widgetContainer' => 'dialog']
             )
         );
@@ -138,7 +138,7 @@ class AccountAddressControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_account_get_account_address_primary', ['entityId' => $id]),
+            $this->getUrl('oro_api_account_get_account_address_primary', ['entityId' => $id]),
             [],
             [],
             $this->generateWsseAuthHeader()
@@ -184,7 +184,7 @@ class AccountAddressControllerTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_api_account_get_account_address_primary',
+                'oro_api_account_get_account_address_primary',
                 ['entityId' => $accountId]
             ),
             [],
@@ -197,7 +197,7 @@ class AccountAddressControllerTest extends WebTestCase
         $this->client->request(
             'DELETE',
             $this->getUrl(
-                'orob2b_api_account_delete_account_address',
+                'oro_api_account_delete_account_address',
                 ['entityId' => $accountId, 'addressId' => $address['id']]
             ),
             [],
@@ -220,32 +220,32 @@ class AccountAddressControllerTest extends WebTestCase
         $formNode = $form->getNode();
         $formNode->setAttribute('action', $formNode->getAttribute('action') . '?_widgetContainer=dialog');
 
-        $form['orob2b_account_typed_address[street]'] = 'Street';
-        $form['orob2b_account_typed_address[city]'] = 'City';
-        $form['orob2b_account_typed_address[postalCode]'] = 'Zip code';
-        $form['orob2b_account_typed_address[types]'] = [AddressType::TYPE_BILLING];
-        $form['orob2b_account_typed_address[defaults][default]'] = [AddressType::TYPE_BILLING];
+        $form['oro_account_typed_address[street]'] = 'Street';
+        $form['oro_account_typed_address[city]'] = 'City';
+        $form['oro_account_typed_address[postalCode]'] = 'Zip code';
+        $form['oro_account_typed_address[types]'] = [AddressType::TYPE_BILLING];
+        $form['oro_account_typed_address[defaults][default]'] = [AddressType::TYPE_BILLING];
 
         $doc = new \DOMDocument("1.0");
         $doc->loadHTML(
-            '<select name="orob2b_account_typed_address[country]" id="orob2b_account_typed_address_country" ' .
+            '<select name="oro_account_typed_address[country]" id="oro_account_typed_address_country" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
             '<option value="AF">Afghanistan</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $form['orob2b_account_typed_address[country]'] = 'AF';
+        $form['oro_account_typed_address[country]'] = 'AF';
 
         $doc->loadHTML(
-            '<select name="orob2b_account_typed_address[region]" id="orob2b_account_typed_address_region" ' .
+            '<select name="oro_account_typed_address[region]" id="oro_account_typed_address_region" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
             '<option value="AF-BDS">Badakhshān</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $form['orob2b_account_typed_address[region]'] = 'AF-BDS';
+        $form['oro_account_typed_address[region]'] = 'AF-BDS';
 
         return $form;
     }
@@ -261,30 +261,30 @@ class AccountAddressControllerTest extends WebTestCase
         $formNode = $form->getNode();
         $formNode->setAttribute('action', $formNode->getAttribute('action') . '?_widgetContainer=dialog');
 
-        $form['orob2b_account_typed_address[types]'] = [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING];
-        $form['orob2b_account_typed_address[defaults][default]'] = [false, AddressType::TYPE_SHIPPING];
+        $form['oro_account_typed_address[types]'] = [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING];
+        $form['oro_account_typed_address[defaults][default]'] = [false, AddressType::TYPE_SHIPPING];
 
 
         $doc = new \DOMDocument("1.0");
         $doc->loadHTML(
-            '<select name="orob2b_account_typed_address[country]" id="orob2b_account_typed_address_country" ' .
+            '<select name="oro_account_typed_address[country]" id="oro_account_typed_address_country" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
             '<option value="ZW">Zimbabwe</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $form['orob2b_account_typed_address[country]'] = 'ZW';
+        $form['oro_account_typed_address[country]'] = 'ZW';
 
         $doc->loadHTML(
-            '<select name="orob2b_account_typed_address[region]" id="orob2b_account_typed_address_region" ' .
+            '<select name="oro_account_typed_address[region]" id="oro_account_typed_address_region" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
             '<option value="ZW-MA">Manicaland</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $form['orob2b_account_typed_address[region]'] = 'ZW-MA';
+        $form['oro_account_typed_address[region]'] = 'ZW-MA';
 
         return $form;
     }

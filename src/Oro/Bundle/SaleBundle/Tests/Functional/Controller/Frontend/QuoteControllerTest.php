@@ -22,7 +22,7 @@ class QuoteControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([
             'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteAddressData',
         ]);
@@ -38,7 +38,7 @@ class QuoteControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_frontend_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_frontend_index'));
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains('frontend-quotes-grid', $crawler->html());
@@ -220,7 +220,7 @@ class QuoteControllerTest extends WebTestCase
         $quote = $this->getReference($inputData['qid']);
 
         $crawler = $this->client->request('GET', $this->getUrl(
-            'orob2b_sale_quote_frontend_view',
+            'oro_sale_quote_frontend_view',
             ['id' => $quote->getId()]
         ));
 

@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 
 class PriceTypeSelectorType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_price_type';
+    const NAME = 'oro_pricing_price_type';
 
     /**
      * {@inheritdoc}

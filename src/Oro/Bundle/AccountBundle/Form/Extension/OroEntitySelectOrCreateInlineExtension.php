@@ -32,7 +32,7 @@ class OroEntitySelectOrCreateInlineExtension extends AbstractTypeExtension
     public function configureOptions(OptionsResolver $resolver)
     {
         if ($this->isFrontend()) {
-            $resolver->setDefault('grid_widget_route', 'orob2b_frontend_datagrid_widget');
+            $resolver->setDefault('grid_widget_route', 'oro_frontend_datagrid_widget');
         }
     }
 
@@ -45,7 +45,7 @@ class OroEntitySelectOrCreateInlineExtension extends AbstractTypeExtension
         if ($this->isFrontend() && isset($view->vars['configs']['route_name'])
             && $view->vars['configs']['route_name'] === 'oro_form_autocomplete_search'
         ) {
-            $view->vars['configs']['route_name'] = 'orob2b_frontend_autocomplete_search';
+            $view->vars['configs']['route_name'] = 'oro_frontend_autocomplete_search';
         }
     }
 

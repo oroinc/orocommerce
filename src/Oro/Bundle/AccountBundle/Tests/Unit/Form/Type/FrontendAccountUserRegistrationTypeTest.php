@@ -88,7 +88,7 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
     ) {
         $this->configManager->expects($this->any())
             ->method('get')
-            ->with('oro_b2b_account.default_account_owner')
+            ->with('oro_account.default_account_owner')
             ->willReturn(42);
 
         $repository = $this->assertUserRepositoryCall();

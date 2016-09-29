@@ -22,11 +22,11 @@ class AccountAddressController extends Controller
     /**
      * @Route(
      *     "/{entityId}/create",
-     *     name="orob2b_account_frontend_account_address_create",
+     *     name="oro_account_frontend_account_address_create",
      *     requirements={"entityId":"\d+"}
      * )
      * @Acl(
-     *      id="orob2b_account_frontend_account_address_create",
+     *      id="oro_account_frontend_account_address_create",
      *      type="entity",
      *      class="OroAccountBundle:AccountAddress",
      *      permission="CREATE",
@@ -48,11 +48,11 @@ class AccountAddressController extends Controller
     /**
      * @Route(
      *     "/{entityId}/update/{id}",
-     *     name="orob2b_account_frontend_account_address_update",
+     *     name="oro_account_frontend_account_address_update",
      *     requirements={"entityId":"\d+", "id":"\d+"}
      * )
      * @Acl(
-     *      id="orob2b_account_frontend_account_address_update",
+     *      id="oro_account_frontend_account_address_update",
      *      type="entity",
      *      class="OroAccountBundle:AccountAddress",
      *      permission="EDIT",
@@ -83,12 +83,12 @@ class AccountAddressController extends Controller
     {
         $this->prepareEntities($account, $accountAddress, $request);
 
-        $form = $this->get('orob2b_account.provider.frontend_account_address_form')
+        $form = $this->get('oro_account.provider.frontend_account_address_form')
             ->getAddressForm($accountAddress, $account)
             ->getForm();
 
         $manager = $this->getDoctrine()->getManagerForClass(
-            $this->container->getParameter('orob2b_account.entity.account_address.class')
+            $this->container->getParameter('oro_account.entity.account_address.class')
         );
 
         $handler = new AddressHandler($form, $request, $manager);
@@ -98,13 +98,13 @@ class AccountAddressController extends Controller
             $form,
             function (AccountAddress $accountAddress) use ($account) {
                 return [
-                    'route' => 'orob2b_account_frontend_account_address_update',
+                    'route' => 'oro_account_frontend_account_address_update',
                     'parameters' => ['id' => $accountAddress->getId(), 'entityId' => $account->getId()],
                 ];
             },
             function (AccountAddress $accountAddress) {
                 return [
-                    'route' => 'orob2b_account_frontend_account_user_address_index'
+                    'route' => 'oro_account_frontend_account_user_address_index'
                 ];
             },
             $this->get('translator')->trans('oro.account.controller.accountaddress.saved.message'),

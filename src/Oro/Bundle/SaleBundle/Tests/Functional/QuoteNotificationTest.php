@@ -18,6 +18,7 @@ class QuoteNotificationTest extends WebTestCase
         $this->markTestSkipped('Skipped due to issue with DOMDocument https://bugs.php.net/bug.php?id=52012');
 
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -36,7 +37,7 @@ class QuoteNotificationTest extends WebTestCase
             $this->getUrl(
                 'oro_action_widget_form',
                 [
-                    'operationName' => 'orob2b_sale_notify_customer_by_email',
+                    'operationName' => 'oro_sale_notify_customer_by_email',
                     'entityClass' => 'Oro\Bundle\SaleBundle\Entity\Quote',
                     'entityId' => $quote->getId()
                 ]

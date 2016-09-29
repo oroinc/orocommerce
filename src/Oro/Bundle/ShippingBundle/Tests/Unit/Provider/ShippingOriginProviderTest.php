@@ -95,7 +95,7 @@ class ShippingOriginProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->configManager->expects($this->any())
             ->method('get')
-            ->with('orob2b_shipping.shipping_origin')
+            ->with('oro_shipping.shipping_origin')
             ->willReturn([])
         ;
 

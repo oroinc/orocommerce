@@ -17,7 +17,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
- * @NamePrefix("orob2b_api_frontend_account_")
+ * @NamePrefix("oro_api_frontend_account_")
  * @RouteResource("accountuserrole")
  */
 class AccountUserRoleController extends RestController implements ClassResourceInterface
@@ -29,7 +29,7 @@ class AccountUserRoleController extends RestController implements ClassResourceI
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_account_frontend_account_user_role_delete_action",
+     *      id="oro_account_frontend_account_user_role_delete_action",
      *      type="entity",
      *      class="OroAccountBundle:AccountUserRole",
      *      permission="FRONTEND_ACCOUNT_ROLE_DELETE",
@@ -49,7 +49,7 @@ class AccountUserRoleController extends RestController implements ClassResourceI
      */
     public function getManager()
     {
-        return $this->get('orob2b_account.account_user_role.manager.api');
+        return $this->get('oro_account.account_user_role.manager.api');
     }
 
     /**

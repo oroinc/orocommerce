@@ -6,8 +6,8 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class Configuration implements ConfigurationInterface
 {
@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
 
-        $rootNode = $treeBuilder->root('orob2b_product');
+        $rootNode = $treeBuilder->root('oro_product');
 
         SettingsBuilder::append(
             $rootNode,

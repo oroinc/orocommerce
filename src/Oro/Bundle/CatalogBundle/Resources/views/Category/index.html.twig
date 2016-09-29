@@ -3,10 +3,10 @@
 {% set pageTitle = 'oro.catalog.category.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% if resource_granted('orob2b_catalog_category_create') %}
+    {% if resource_granted('oro_catalog_category_create') %}
         <div class="btn-group">
             {{ UI.addButton({
-                'path': path('orob2b_catalog_category_create', { 'id' : rootCategory.id }),
+                'path': path('oro_catalog_category_create', { 'id' : rootCategory.id }),
                 'entity_label': 'oro.catalog.category.entity_label'|trans
             }) }}
         </div>
@@ -22,10 +22,10 @@
                 <div class="left-panel scrollable-container">
                     <div class="category">
                         {% set treeOptions = {
-                            'data' : orob2b_category_list(),
-                            'updateAllowed' : resource_granted('orob2b_catalog_category_update'),
-                            'onSelectRoute' : 'orob2b_catalog_category_update',
-                            'onMoveRoute' : 'orob2b_catalog_category_move'
+                            'data' : oro_category_list(),
+                            'updateAllowed' : resource_granted('oro_catalog_category_update'),
+                            'onSelectRoute' : 'oro_catalog_category_update',
+                            'onMoveRoute' : 'oro_catalog_category_move'
                         } %}
                         <div
                             data-page-component-module="orocatalog/js/app/components/tree-manage-component"
@@ -34,7 +34,7 @@
                     </div>
                 </div>
                 <div class="content">
-                    {% if resource_granted('orob2b_catalog_category_create') and resource_granted('orob2b_catalog_category_update') %}
+                    {% if resource_granted('oro_catalog_category_create') and resource_granted('oro_catalog_category_update') %}
                         <div class="text-center">
                             {{ 'oro.catalog.template.select_existing_or_create_new'|trans }}
                         </div>

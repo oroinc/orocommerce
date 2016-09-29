@@ -1,5 +1,5 @@
 services:
-    orob2b_shipping.layout.block_type.shipping_methods:
+    oro_shipping.layout.block_type.shipping_methods:
         parent: oro_layout.block_type.abstract_configurable
         calls:
             -

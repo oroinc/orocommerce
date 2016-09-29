@@ -14,9 +14,9 @@ class QuoteAddressProvider extends OrderAddressProvider
     const ACCOUNT_USER_ADDRESS_DEFAULT = 'account_user_default';
     const ACCOUNT_USER_ADDRESS_ANY = 'account_user_any';
 
-    const ADDRESS_SHIPPING_ACCOUNT_USE_ANY = 'orob2b_quote_address_shipping_account_use_any';
-    const ADDRESS_SHIPPING_ACCOUNT_USER_USE_DEFAULT = 'orob2b_quote_address_shipping_account_user_use_default';
-    const ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY = 'orob2b_quote_address_shipping_account_user_use_any';
+    const ADDRESS_SHIPPING_ACCOUNT_USE_ANY = 'oro_quote_address_shipping_account_use_any';
+    const ADDRESS_SHIPPING_ACCOUNT_USER_USE_DEFAULT = 'oro_quote_address_shipping_account_user_use_default';
+    const ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY = 'oro_quote_address_shipping_account_user_use_any';
 
     /**
      * @var array

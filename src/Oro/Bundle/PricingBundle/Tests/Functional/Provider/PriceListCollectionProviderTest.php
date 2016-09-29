@@ -27,7 +27,8 @@ class PriceListCollectionProviderTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([]);
-        $this->provider = $this->getContainer()->get('orob2b_pricing.provider.price_list_collection');
+        $this->client->useHashNavigation(true);
+        $this->provider = $this->getContainer()->get('oro_pricing.provider.price_list_collection');
 
         $this->loadFixtures(
             [
@@ -355,7 +356,7 @@ class PriceListCollectionProviderTest extends WebTestCase
 
         $configManager = $this->getContainer()->get('oro_config.global');
         $configManager->set(
-            'oro_b2b_pricing.default_price_lists',
+            'oro_pricing.default_price_lists',
             [new PriceListConfig($priceList, 100, true)]
         );
         $configManager->flush();

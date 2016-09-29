@@ -1,0 +1,245 @@
+category_1:
+    all:
+        visibility: 1
+        source: 1
+        reference: category_1.visibility.all
+    groups:
+        account_group.group1:
+            visibility: -1
+            source: 1
+            reference: category_1.visibility.account_group.group1
+        account_group.group3:
+            visibility: 0
+            source: 2
+            reference: category_1.visibility.account_group.group3
+    accounts:
+        account.level_1:
+            visibility: 0
+            source: 2
+            reference: category_1.visibility.account.level_1
+        account.level_1.1:
+            visibility: -1
+            source: 1
+            reference: category_1.visibility.account.level_1.1
+        account.level_1.2:
+            visibility: 0
+            source: 2
+            reference: category_1.visibility.account.level_1.2
+        account.level_1.2.1:
+            visibility: 1
+            source: 1
+            reference: category_1.visibility.account.level_1.2.1
+        account.level_1.3.1.1:
+            visibility: 1
+            source: 1
+            reference: category_1.visibility.account.level_1.3.1.1
+        account.level_1.4:
+            visibility: 1
+            source: 1
+            reference: category_1.visibility.account.level_1.4
+category_1_2:
+    all:
+        visibility: 1
+        source: 2
+        reference: category_1_2.visibility.all
+    groups:
+        account_group.group1:
+            visibility: -1
+            source: 2
+            reference: category_1_2.visibility.account_group.group1
+        account_group.group2:
+            visibility: 1
+            source: 2
+            reference: category_1_2.visibility.account_group.group2
+    accounts:
+        account.level_1.1:
+            visibility: -1
+            source: 2
+            reference: category_1_2.visibility.account.level_1.1
+        account.level_1.2:
+            visibility: 0
+            source: 2
+            reference: category_1_2.visibility.account.level_1.2
+        account.level_1.2.1:
+            visibility: 1
+            source: 2
+            reference: category_1_2.visibility.account.level_1.2.1
+        account.level_1.3.1:
+            visibility: 1
+            source: 1
+            reference: category_1_2.visibility.account.level_1.3.1
+        account.level_1.3.1.1:
+            visibility: -1
+            source: 1
+            reference: category_1_2.visibility.account.level_1.3.1.1
+        account.level_1.4:
+            visibility: 1
+            source: 1
+            reference: category_1_2.visibility.account.level_1.4
+category_1_2_3:
+    all:
+        visibility: 1
+        source: 1
+        reference: category_1_2_3.visibility.all
+    groups:
+        account_group.group1:
+            visibility: -1
+            source: 2
+            reference: category_1_2_3.visibility.account_group.group1
+        account_group.group3:
+            visibility: -1
+            source: 1
+            reference: category_1_2_3.visibility.account_group.group3
+    accounts:
+        account.level_1.1:
+            visibility: -1
+            source: 2
+            reference: category_1_2_3.visibility.account.level_1.1
+        account.level_1.2.1:
+            visibility: 1
+            source: 2
+            reference: category_1_2_3.visibility.account.level_1.2.1
+        account.level_1.3.1.1:
+            visibility: -1
+            source: 2
+            reference: category_1_2_3.visibility.account.level_1.3.1.1
+category_1_2_3_4:
+    all:
+        visibility: 1
+        source: 2
+        reference: category_1_2_3_4.visibility.all
+    groups:
+        account_group.group1:
+            visibility: -1
+            source: 2
+            reference: category_1_2_3_4.visibility.account_group.group1
+        account_group.group3:
+            visibility: -1
+            source: 2
+            reference: category_1_2_3_4.visibility.account_group.group3
+    accounts:
+        account.level_1.1:
+            visibility: -1
+            source: 2
+            reference: category_1_2_3_4.visibility.account.level_1.1
+        account.level_1.2.1:
+            visibility: 1
+            source: 2
+            reference: category_1_2_3_4.visibility.account.level_1.2.1
+        account.level_1.3.1.1:
+            visibility: -1
+            source: 2
+            reference: category_1_2_3_4.visibility.account.level_1.3.1.1
+        account.level_1.4:
+            visibility: 1
+            source: 1
+            reference: category_1_2_3_4.visibility.account.level_1.4
+category_1_5:
+    all:
+       visibility: 1
+       source: 2
+       reference: category_1_5.visibility.all
+    groups:
+        account_group.group3:
+            visibility: 1
+            source: 2
+            reference: category_1_5.visibility.account_group.group3
+    accounts:
+        account.level_1.1:
+            visibility: 1
+            source: 1
+            reference: category_1_5.visibility.account.level_1.1
+        account.level_1.2:
+            visibility: 1
+            source: 1
+            reference: category_1_5.visibility.account.level_1.2
+        account.level_1.2.1.1:
+            visibility: 1
+            source: 2
+            reference: category_1_5.visibility.account.level_1.2.1.1
+        account.level_1.3.1.1:
+            visibility: 1
+            source: 2
+            reference: category_1_5.visibility.account.level_1.3.1.1
+        account.level_1.4:
+            visibility: 1
+            source: 1
+            reference: category_1_5.visibility.account.level_1.4
+category_1_5_6:
+    all:
+        visibility: -1
+        source: 1
+        reference: category_1_5_6.visibility.all
+    groups:
+        account_group.group1:
+            visibility: 1
+            source: 2
+            reference: category_1_5_6.visibility.account_group.group1
+        account_group.group2:
+            visibility: 1
+            source: 1
+            reference: category_1_5_6.visibility.account_group.group2
+        account_group.group3:
+            visibility: 0
+            source: 2
+            reference: category_1_5_6.visibility.account_group.group3
+    accounts:
+        account.level_1:
+            visibility: -1
+            source: 1
+            reference: category_1_5_6.visibility.account.level_1
+        account.level_1.1:
+            visibility: -1
+            source: 1
+            reference: category_1_5_6.visibility.account.level_1.1
+        account.level_1.2.1.1:
+            visibility: 1
+            source: 2
+            reference: category_1_5_6.visibility.account.level_1.2.1.1
+        account.level_1.3.1:
+            visibility: -1
+            source: 1
+            reference: category_1_5_6.visibility.account.level_1.3.1
+        account.level_1.3.1.1:
+            visibility: 1
+            source: 2
+            reference: category_1_5_6.visibility.account.level_1.3.1.1
+category_1_5_6_7:
+    all:
+        visibility: -1
+        source: 2
+        reference: category_1_5_6_7.visibility.all
+    groups:
+        account_group.group1:
+            visibility: 1
+            source: 2
+            reference: category_1_5_6_7.visibility.account_group.group1
+        account_group.group3:
+            visibility: 0
+            source: 2
+            reference: category_1_5_6_7.visibility.account_group.group3
+    accounts:
+        account.level_1:
+            visibility: -1
+            source: 1
+            reference: category_1_5_6_7.visibility.account.level_1
+        account.level_1.1:
+            visibility: 1
+            source: 1
+            reference: category_1_5_6_7.visibility.account.level_1.1
+        account.level_1.2.1:
+            visibility: -1
+            source: 1
+            reference: category_1_5_6_7.visibility.account.level_1.2.1
+        account.level_1.2.1.1:
+            visibility: 1
+            source: 2
+            reference: category_1_5_6_7.visibility.account.level_1.2.1.1
+        account.level_1.3.1:
+            visibility: -1
+            source: 1
+            reference: category_1_5_6_7.visibility.account.level_1.3.1
+        account.level_1.4:
+            visibility: 1
+            source: 1
+            reference: category_1_5_6_7.visibility.account.level_1.4

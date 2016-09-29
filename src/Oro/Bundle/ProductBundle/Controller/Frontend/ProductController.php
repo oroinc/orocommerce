@@ -17,26 +17,26 @@ class ProductController extends Controller
     /**
      * View list of products
      *
-     * @Route("/", name="orob2b_product_frontend_product_index")
+     * @Route("/", name="oro_product_frontend_product_index")
      * @Layout(vars={"entity_class"})
-     * @AclAncestor("orob2b_product_frontend_view")
+     * @AclAncestor("oro_product_frontend_view")
      *
      * @return array
      */
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_product.entity.product.class'),
+            'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
         ];
     }
 
     /**
      * View list of products
      *
-     * @Route("/view/{id}", name="orob2b_product_frontend_product_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_product_frontend_product_view", requirements={"id"="\d+"})
      * @Layout()
      * @Acl(
-     *      id="orob2b_product_frontend_view",
+     *      id="oro_product_frontend_view",
      *      type="entity",
      *      class="OroProductBundle:Product",
      *      permission="VIEW",
@@ -57,9 +57,9 @@ class ProductController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_product_frontend_product_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_product_frontend_product_info", requirements={"id"="\d+"})
      * @Template("OroProductBundle:Product\Frontend\widget:info.html.twig")
-     * @AclAncestor("orob2b_product_frontend_view")
+     * @AclAncestor("oro_product_frontend_view")
      *
      * @param Product $product
      *

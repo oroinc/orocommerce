@@ -20,7 +20,7 @@ class OpenOrdersControllerTest extends WebTestCase
 
     public function testOpenOrders()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_checkout_frontend_open_orders'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_checkout_frontend_open_orders'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -34,10 +34,10 @@ class OpenOrdersControllerTest extends WebTestCase
             ->getContainer()
             ->get('oro_config.manager');
 
-        $configManager->set('oro_b2b_checkout.frontend_open_orders_separate_page', true);
+        $configManager->set('oro_checkout.frontend_open_orders_separate_page', true);
         $configManager->flush();
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -56,10 +56,10 @@ class OpenOrdersControllerTest extends WebTestCase
             ->getContainer()
             ->get('oro_config.manager');
 
-        $configManager->set('oro_b2b_checkout.frontend_open_orders_separate_page', false);
+        $configManager->set('oro_checkout.frontend_open_orders_separate_page', false);
         $configManager->flush();
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_frontend_index'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);

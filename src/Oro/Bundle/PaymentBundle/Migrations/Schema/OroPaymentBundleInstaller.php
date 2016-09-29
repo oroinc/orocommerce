@@ -14,11 +14,11 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
     /**
      * Table name for PaymentTerm
      */
-    const TABLE_NAME                          = 'orob2b_payment_term';
-    const PAYMENT_TERM_TO_ACCOUNT_TABLE       = 'orob2b_payment_term_to_account';
-    const PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE = 'orob2b_payment_term_to_acc_grp';
-    const ACCOUNT_TABLE                       = 'orob2b_account';
-    const ACCOUNT_GROUP_TABLE                 = 'orob2b_account_group';
+    const TABLE_NAME                          = 'oro_payment_term';
+    const PAYMENT_TERM_TO_ACCOUNT_TABLE       = 'oro_payment_term_to_account';
+    const PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE = 'oro_payment_term_to_acc_grp';
+    const ACCOUNT_TABLE                       = 'oro_account';
+    const ACCOUNT_GROUP_TABLE                 = 'oro_account_group';
 
     /**
      * @var NoteExtension
@@ -105,7 +105,7 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     protected function createOroPaymentTransactionTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_payment_transaction');
+        $table = $schema->createTable('oro_payment_transaction');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('entity_class', 'string', ['length' => 255]);
         $table->addColumn('entity_identifier', 'integer', []);
@@ -127,7 +127,7 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['access_identifier', 'access_token'], 'orob2b_pay_trans_access_uidx');
+        $table->addUniqueIndex(['access_identifier', 'access_token'], 'oro_pay_trans_access_uidx');
         $table->addIndex(['source_payment_transaction']);
     }
 
@@ -172,21 +172,21 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
-     * Add orob2b_payment_transaction foreign keys.
+     * Add oro_payment_transaction foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroPaymentTransactionForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_payment_transaction');
+        $table = $schema->getTable('oro_payment_transaction');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_payment_transaction'),
+            $schema->getTable('oro_payment_transaction'),
             ['source_payment_transaction'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable('oro_account_user'),
             ['frontend_owner_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
@@ -200,18 +200,18 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
     }
 
     /**
-     * Create orob2b_payment_status
+     * Create oro_payment_status
      *
      * @param Schema $schema
      */
     protected function createOroPaymentStatusTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_payment_status');
+        $table = $schema->createTable('oro_payment_status');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('entity_class', 'string', ['length' => 255]);
         $table->addColumn('entity_identifier', 'integer', []);
         $table->addColumn('payment_status', 'string', ['length' => 255]);
-        $table->addUniqueIndex(['entity_class', 'entity_identifier'], 'orob2b_payment_status_unique');
+        $table->addUniqueIndex(['entity_class', 'entity_identifier'], 'oro_payment_status_unique');
         $table->setPrimaryKey(['id']);
     }
 }

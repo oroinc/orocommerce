@@ -24,23 +24,29 @@ trait MessageQueueTrait
     }
 
     /**
+     * @param string|array $topic
      * @return array
      */
-    protected function getQueueMessageTraces()
+    protected function getQueueMessageTraces($topic = null)
     {
         $this->sendScheduledMessages();
 
-        return array_filter(
-            $this->getMessageProducer()->getSentMessages(),
-            function (array $trace) {
-                return $this->topic === $trace['topic'];
-            }
-        );
+        $messages = $this->getMessageProducer()->getSentMessages();
+        if ($topic) {
+            return array_values(array_filter(
+                $messages,
+                function (array $trace) use ($topic) {
+                    return in_array($trace['topic'], (array)$topic, true);
+                }
+            ));
+        } else {
+            return $messages;
+        }
     }
 
     protected function sendScheduledMessages()
     {
-        self::getContainer()->get('orob2b_pricing.price_list_trigger_handler')
+        self::getContainer()->get('oro_pricing.price_list_trigger_handler')
             ->sendScheduledTriggers();
     }
 

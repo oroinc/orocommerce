@@ -18,6 +18,7 @@ use Oro\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -103,7 +104,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
                             $this->configProvider,
                         ],
                         [
-                            'orob2b_account.owner.frontend_ownership_metadata_provider.cache',
+                            'oro_account.owner.frontend_ownership_metadata_provider.cache',
                             ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
                             $this->cache,
                         ],

@@ -21,6 +21,7 @@ class PageSlugListenerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('OroCMSBundle:Page');
     }
 
@@ -37,7 +38,7 @@ class PageSlugListenerTest extends WebTestCase
         $pageId = $page->getId();
         $currentSlug = $page->getCurrentSlug();
 
-        $expectedRouteName = 'orob2b_cms_frontend_page_view';
+        $expectedRouteName = 'oro_cms_frontend_page_view';
         $expectedRouteParameters = ['id' => $pageId];
 
         $this->assertEquals($expectedRouteName, $currentSlug->getRouteName());
@@ -76,7 +77,7 @@ class PageSlugListenerTest extends WebTestCase
 
         $this->entityManager->flush($page);
 
-        $expectedRouteName = 'orob2b_cms_frontend_page_view';
+        $expectedRouteName = 'oro_cms_frontend_page_view';
         $expectedRouteParameters = ['id' => $pageId];
 
         foreach ($page->getSlugs() as $slug) {

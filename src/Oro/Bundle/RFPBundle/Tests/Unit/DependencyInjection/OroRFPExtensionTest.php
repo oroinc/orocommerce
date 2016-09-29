@@ -17,17 +17,17 @@ class OroRFPExtensionTest extends ExtensionTestCase
         $this->loadExtension($extension);
 
         $expectedDefinitions = [
-            'orob2b_rfp.form.type.extension.frontend_request_data_storage',
+            'oro_rfp.form.type.extension.frontend_request_data_storage',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
         $expectedParameters = [
-            'orob2b_rfp.entity.request.class',
-            'orob2b_rfp.entity.request.status.class',
+            'oro_rfp.entity.request.class',
+            'oro_rfp.entity.request.status.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
 
-        $this->assertEquals('oro_b2b_rfp', $extension->getAlias());
+        $this->assertEquals('oro_rfp', $extension->getAlias());
 
         $this->assertExtensionConfigsLoaded([OroRFPExtension::ALIAS]);
     }

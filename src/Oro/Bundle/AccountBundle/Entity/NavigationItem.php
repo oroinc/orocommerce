@@ -12,8 +12,8 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  *
  * @ORM\Entity(repositoryClass="Oro\Bundle\NavigationBundle\Entity\Repository\NavigationItemRepository")
  * @ORM\HasLifecycleCallbacks
- * @ORM\Table(name="orob2b_acc_navigation_item",
- *      indexes={@ORM\Index(name="oro_b2b_sorted_items_idx", columns={"account_user_id", "position"})})
+ * @ORM\Table(name="oro_acc_navigation_item",
+ *      indexes={@ORM\Index(name="oro_sorted_items_idx", columns={"account_user_id", "position"})})
  */
 class NavigationItem extends AbstractNavigationItem
 {

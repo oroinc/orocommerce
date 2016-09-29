@@ -67,7 +67,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
     public function testGetName()
     {
         $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals('orob2b_tax_jurisdiction_type', $this->formType->getName());
+        $this->assertEquals('oro_tax_jurisdiction_type', $this->formType->getName());
     }
 
     public function testBuildForm()

@@ -9,7 +9,7 @@ use Oro\Bundle\NavigationBundle\Controller\Api\NavigationItemController as BaseN
 
 /**
  * @RouteResource("navigationitems")
- * @NamePrefix("orob2b_api_frontend_")
+ * @NamePrefix("oro_api_frontend_")
  */
 class NavigationItemController extends BaseNavigationItemController
 {
@@ -18,7 +18,7 @@ class NavigationItemController extends BaseNavigationItemController
      */
     protected function getPinbarTabClass()
     {
-        return $this->getParameter('orob2b_account.entity.pinbar_tab.class');
+        return $this->getParameter('oro_account.entity.pinbar_tab.class');
     }
 
     /**
@@ -26,6 +26,6 @@ class NavigationItemController extends BaseNavigationItemController
      */
     protected function getUserClass()
     {
-        return $this->getParameter('orob2b_account.entity.account_user.class');
+        return $this->getParameter('oro_account.entity.account_user.class');
     }
 }

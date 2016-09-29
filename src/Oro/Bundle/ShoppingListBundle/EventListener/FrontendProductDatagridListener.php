@@ -139,7 +139,7 @@ class FrontendProductDatagridListener
             $shoppingListId = $lineItem->getShoppingList()->getId();
             $productId = $lineItem->getProduct()->getId();
             $groupedUnits[$productId][$shoppingListId][] = [
-                'line_item_id' => $lineItem->getId(),
+                'id' => $lineItem->getId(),
                 'unit' => $lineItem->getProductUnitCode(),
                 'quantity' => $lineItem->getQuantity()
             ];
@@ -154,8 +154,8 @@ class FrontendProductDatagridListener
             /* Active shopping list goes first*/
             if (isset($productGroupedUnits[$activeShoppingListId])) {
                 $productShoppingLists[$productId][] = [
-                    'shopping_list_id' => $activeShoppingListId,
-                    'shopping_list_label' => $shoppingListLabels[$activeShoppingListId],
+                    'id' => $activeShoppingListId,
+                    'label' => $shoppingListLabels[$activeShoppingListId],
                     'is_current' => true,
                     'line_items' => $groupedUnits[$productId][$activeShoppingListId],
                 ];
@@ -164,8 +164,8 @@ class FrontendProductDatagridListener
 
             foreach ($productGroupedUnits as $shoppingListId => $lineItems) {
                 $productShoppingLists[$productId][] = [
-                    'shopping_list_id' => $shoppingListId,
-                    'shopping_list_label' => $shoppingListLabels[$shoppingListId],
+                    'id' => $shoppingListId,
+                    'label' => $shoppingListLabels[$shoppingListId],
                     'is_current' => false,
                     'line_items' => $lineItems,
                 ];

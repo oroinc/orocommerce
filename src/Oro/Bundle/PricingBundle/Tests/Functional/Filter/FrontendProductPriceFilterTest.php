@@ -27,6 +27,7 @@ class FrontendProductPriceFilterTest extends WebTestCase
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
@@ -43,7 +44,7 @@ class FrontendProductPriceFilterTest extends WebTestCase
         $this->filter = new FrontendProductPriceFilter(
             $this->getContainer()->get('form.factory'),
             $this->getContainer()->get('oro_filter.filter_utility'),
-            $this->getContainer()->get('orob2b_product.formatter.product_unit_label'),
+            $this->getContainer()->get('oro_product.formatter.product_unit_label'),
             $handler
         );
         $this->filter->init(

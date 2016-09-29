@@ -42,7 +42,7 @@ class PageControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_cms_frontend_page_view', ['id' => $page->getId()])
+            $this->getUrl('oro_cms_frontend_page_view', ['id' => $page->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);

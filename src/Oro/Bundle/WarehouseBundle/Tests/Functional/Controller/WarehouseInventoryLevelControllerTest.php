@@ -19,6 +19,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([
             'Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels'
         ]);
@@ -26,7 +27,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
 
     public function testIndexAction()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_warehouse_inventory_level_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_warehouse_inventory_level_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('warehouse-inventory-grid', $crawler->html());
@@ -38,7 +39,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
         $product = $this->getReference('product.1');
 
         // open product view page
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $product->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $inventoryButton = $crawler->filterXPath('//a[@title="Inventory"]');
@@ -75,7 +76,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
         }
 
         $form = $crawler->selectButton('Save')->form();
-        $form['orob2b_warehouse_inventory_level_grid'] = json_encode($changeSet);
+        $form['oro_warehouse_inventory_level_grid'] = json_encode($changeSet);
         $this->client->submit($form);
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 

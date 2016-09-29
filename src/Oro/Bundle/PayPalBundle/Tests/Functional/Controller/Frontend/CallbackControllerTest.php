@@ -16,6 +16,7 @@ class CallbackControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(['Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData']);
     }
@@ -38,7 +39,7 @@ class CallbackControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             $this->getUrl(
-                'orob2b_payment_callback_notify',
+                'oro_payment_callback_notify',
                 [
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => $paymentTransaction->getAccessToken(),
@@ -96,7 +97,7 @@ class CallbackControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             $this->getUrl(
-                'orob2b_payment_callback_notify',
+                'oro_payment_callback_notify',
                 [
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => $paymentTransaction->getAccessToken(),
@@ -122,7 +123,7 @@ class CallbackControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             $this->getUrl(
-                'orob2b_payment_callback_notify',
+                'oro_payment_callback_notify',
                 [
                     'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
                     'accessToken' => $paymentTransaction->getAccessToken(),
