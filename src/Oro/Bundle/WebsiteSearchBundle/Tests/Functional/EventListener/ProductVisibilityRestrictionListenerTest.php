@@ -32,11 +32,6 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
      */
     private static $testValue;
 
-    public static function setUpBeforeClass()
-    {
-        self::markTestSkipped('BB-4191');
-    }
-
     protected function setUp()
     {
         parent::setUp();
@@ -79,15 +74,7 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
         $foundCustomExpression = false;
 
         if ($where instanceof CompositeExpression) {
-            foreach ($where->getExpressionList() as $expr) {
-                if (($expr->getField() === 'sku') && ($expr->getValue()->getValue() === null)) {
-                    $foundSkuExpression = true;
-                }
-
-                if (($expr->getField() === 'name') && ($expr->getValue()->getValue() === self::$testValue)) {
-                    $foundCustomExpression = true;
-                }
-            }
+            list($foundSkuExpression, $foundCustomExpression) = $this->checkCompositeExpression($where);
         }
 
         if ($where instanceof Comparison) {
@@ -114,15 +101,7 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
         $foundCustomExpression = false;
 
         if ($where instanceof CompositeExpression) {
-            foreach ($where->getExpressionList() as $expr) {
-                if (($expr->getField() === 'sku') && ($expr->getValue()->getValue() === null)) {
-                    $foundSkuExpression = true;
-                }
-
-                if (($expr->getField() === 'name') && ($expr->getValue()->getValue() === self::$testValue)) {
-                    $foundCustomExpression = true;
-                }
-            }
+            list($foundSkuExpression, $foundCustomExpression) = $this->checkCompositeExpression($where);
         }
 
         $this->assertTrue($foundSkuExpression, 'Sku is null expression not found.');
@@ -147,13 +126,7 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
             foreach ($where->getExpressionList() as $mainExpr) {
                 if ($mainExpr instanceof CompositeExpression) {
                     foreach ($mainExpr->getExpressionList() as $expr) {
-                        if (($expr->getField() === 'sku') && ($expr->getValue()->getValue() === null)) {
-                            $foundSkuExpression = true;
-                        }
-
-                        if (($expr->getField() === 'name') && ($expr->getValue()->getValue() === self::$testValue)) {
-                            $foundCustomExpression = true;
-                        }
+                        list($foundSkuExpression, $foundCustomExpression) = $this->checkCompositeExpression($expr);
                     }
                 }
             }
@@ -161,5 +134,26 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
 
         $this->assertTrue($foundSkuExpression, 'Sku is null expression not found.');
         $this->assertTrue($foundCustomExpression, 'Custom expression from listener not found.');
+    }
+
+    /**
+     * @param $where
+     * @return array
+     */
+    protected function checkCompositeExpression($where)
+    {
+        $foundSkuExpression= false;
+        $foundCustomExpression = false;
+
+        foreach ($where->getExpressionList() as $expr) {
+            if (($expr->getField() === 'sku') && ($expr->getValue()->getValue() === null)) {
+                $foundSkuExpression = true;
+            }
+
+            if (($expr->getField() === 'name') && ($expr->getValue()->getValue() === self::$testValue)) {
+                $foundCustomExpression = true;
+            }
+        }
+        return [$foundSkuExpression, $foundCustomExpression];
     }
 }
