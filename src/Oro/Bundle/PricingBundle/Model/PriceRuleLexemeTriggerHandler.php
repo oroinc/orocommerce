@@ -6,6 +6,7 @@ use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -37,22 +38,16 @@ class PriceRuleLexemeTriggerHandler
      * @param string $className
      * @param array $updatedFields
      * @param null|int $relationId
-     * @return array|\Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme[]
+     * @return array|PriceRuleLexeme[]
      */
     public function findEntityLexemes($className, array $updatedFields = [], $relationId = null)
     {
-        $criteria = ['className' => $className];
-        if ($updatedFields) {
-            $criteria['fieldName'] = $updatedFields;
-        }
-        if ($relationId) {
-            $criteria['relationId'] = $relationId;
-        }
-        $lexemes = $this->registry->getManagerForClass(PriceRuleLexeme::class)
-            ->getRepository(PriceRuleLexeme::class)
-            ->findBy($criteria);
+        /** @var PriceRuleLexemeRepository $repository */
+        $repository = $this->registry
+            ->getManagerForClass(PriceRuleLexeme::class)
+            ->getRepository(PriceRuleLexeme::class);
 
-        return $lexemes;
+        return $repository->findEntityLexemes($className, $updatedFields, $relationId);
     }
 
     /**

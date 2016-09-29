@@ -14,7 +14,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Testing\QueryTracker;
 
 /**
  * @dbIsolation
@@ -65,19 +64,14 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
                 100
             )
         );
-
-        $queryTracker = new QueryTracker($em);
-        $queryTracker->start();
         $em->flush();
 
         // assert that needed productPriceRelationCreated
         $plToProductRelations = $em->getRepository('OroPricingBundle:PriceListToProduct')->findBy([
             'product' => $this->getReference(LoadProductData::PRODUCT_5),
-            'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1)
+            'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1),
         ]);
         $this->assertCount(1, $plToProductRelations);
-
-        $queryTracker->stop();
     }
 
     public function testOnUpdateChangeTriggerCreated()
@@ -119,13 +113,13 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         // new relation should be created when new product specified
         $this->assertCount(1, $repository->findBy([
             'product' => $this->getReference(LoadProductData::PRODUCT_2),
-            'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1)
+            'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1),
         ]));
 
         // new relation should be created when new price list specified
         $this->assertCount(1, $repository->findBy([
             'product' => $this->getReference(LoadProductData::PRODUCT_2),
-            'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_5)
+            'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_5),
         ]));
 
         $this->assertCount(2, $repository->findBy([]));

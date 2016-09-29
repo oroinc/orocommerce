@@ -47,20 +47,19 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider criteriaDataProvider
      *
-     * @param array $criteria
      * @param string $className
      * @param array $updatedFields
      * @param null|int $relationId
      */
-    public function testFindEntityLexemes(array $criteria, $className, array $updatedFields = [], $relationId = null)
+    public function testFindEntityLexemes($className, array $updatedFields = [], $relationId = null)
     {
         $lexemes = [new PriceRuleLexeme()];
         $repo = $this->getMockBuilder(PriceRuleLexemeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->once())
-            ->method('findBy')
-            ->with($criteria)
+            ->method('findEntityLexemes')
+            ->with($className, $updatedFields, $relationId)
             ->willReturn($lexemes);
 
         $em = $this->getMock(EntityManagerInterface::class);
@@ -83,22 +82,18 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                ['className' => 'TestClass'],
                 'TestClass'
             ],
             [
-                ['className' => 'TestClass', 'fieldName' => ['test']],
                 'TestClass',
                 ['test']
             ],
             [
-                ['className' => 'TestClass', 'relationId' => 1],
                 'TestClass',
                 [],
                 1
             ],
             [
-                ['className' => 'TestClass', 'fieldName' => ['test'], 'relationId' => 1],
                 'TestClass',
                 ['test'],
                 1

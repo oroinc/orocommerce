@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 
 class PriceRuleLexemeRepository extends EntityRepository
 {
@@ -41,5 +42,33 @@ class PriceRuleLexemeRepository extends EntityRepository
             },
             $result
         );
+    }
+
+    /**
+     * @param string $className
+     * @param array $updatedFields
+     * @param null|int $relationId
+     * @return array|PriceRuleLexeme[]
+     */
+    public function findEntityLexemes($className, array $updatedFields = [], $relationId = null)
+    {
+        $qb = $this->createQueryBuilder('lexeme');
+
+        $whereExpr = $qb->expr()->andX(
+            $qb->expr()->eq('lexeme.className', ':className')
+        );
+        $qb->setParameter('className', $className);
+        if ($updatedFields) {
+            $whereExpr->add($qb->expr()->in('lexeme.fieldName', ':updatedFields'));
+            $qb->setParameter('updatedFields', $updatedFields);
+        }
+        if ($relationId) {
+            $whereExpr->add($qb->expr()->eq('lexeme.relationId', ':relationId'));
+            $qb->setParameter('relationId', $relationId);
+        }
+
+        $qb->where($whereExpr);
+
+        return $qb->getQuery()->getResult();
     }
 }
