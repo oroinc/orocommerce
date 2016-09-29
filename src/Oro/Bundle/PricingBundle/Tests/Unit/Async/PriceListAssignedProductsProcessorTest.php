@@ -2,7 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Async\NotificationMessages;
 use Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
@@ -19,7 +20,6 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
@@ -53,7 +53,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $registry;
 
@@ -78,7 +78,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->translator = $this->getMock(TranslatorInterface::class);
 
-        $this->registry = $this->getMock(RegistryInterface::class);
+        $this->registry = $this->getMock(ManagerRegistry::class);
 
         $this->processor = new PriceListAssignedProductsProcessor(
             $this->triggerFactory,
@@ -95,9 +95,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 1];
         $body = json_encode($data);
 
-        $em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $em = $this->getMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -142,9 +140,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $exception = new \Exception('Some error');
 
-        $em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $em = $this->getMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -188,9 +184,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
         $body = json_encode($data);
         $exception = new \Exception('Some error');
 
-        $em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $em = $this->getMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');
@@ -263,9 +257,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 1];
         $body = json_encode($data);
 
-        $em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $em = $this->getMock(EntityManagerInterface::class);
 
         $em->expects($this->once())
             ->method('beginTransaction');

@@ -15,7 +15,7 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class PriceListAssignedProductsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
@@ -46,7 +46,7 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
     protected $translator;
 
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -56,7 +56,7 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
      * @param LoggerInterface $logger
      * @param Messenger $messenger
      * @param TranslatorInterface $translator
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      */
     public function __construct(
         PriceListTriggerFactory $triggerFactory,
@@ -64,7 +64,7 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
         LoggerInterface $logger,
         Messenger $messenger,
         TranslatorInterface $translator,
-        RegistryInterface $registry
+        ManagerRegistry $registry
     ) {
         $this->logger = $logger;
         $this->assignmentBuilder = $assignmentBuilder;

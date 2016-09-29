@@ -17,7 +17,6 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberInterface
@@ -54,14 +53,14 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
     /**
      * @param PriceListTriggerFactory $triggerFactory
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param CombinedProductPriceResolver $priceResolver
      * @param EventDispatcherInterface $dispatcher
      * @param LoggerInterface $logger
      */
     public function __construct(
         PriceListTriggerFactory $triggerFactory,
-        RegistryInterface $registry,
+        ManagerRegistry $registry,
         CombinedProductPriceResolver $priceResolver,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $logger
@@ -113,10 +112,8 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
         } catch (\Exception $e) {
             $em->rollback();
             $this->logger->error(
-                sprintf(
-                    'Transaction aborted wit error: %s.',
-                    $e->getMessage()
-                )
+                'Unexpected exception occurred during Combined Price Lists build',
+                ['exception' => $e]
             );
 
             return self::REQUEUE;
