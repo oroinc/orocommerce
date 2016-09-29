@@ -172,6 +172,6 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSubscribedTopics()
     {
-        $this->assertEquals([Topics::PRICE_LIST_CHANGE], $this->priceRuleProcessor->getSubscribedTopics());
+        $this->assertEquals([Topics::RESOLVE_COMBINED_PRICES], $this->priceRuleProcessor->getSubscribedTopics());
     }
 }
