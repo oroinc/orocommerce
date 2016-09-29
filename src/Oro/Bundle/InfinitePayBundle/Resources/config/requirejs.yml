@@ -1,0 +1,4 @@
+config:
+    paths:
+        'oroinfinitepay/js/app/components/payment-user-input-component': 'bundles/oroinfinitepay/js/app/components/payment-user-input-component.js'
+        'oroinfinitepay/js/app/components/payment-method-component': 'bundles/oroinfinitepay/js/app/components/payment-method-component.js'

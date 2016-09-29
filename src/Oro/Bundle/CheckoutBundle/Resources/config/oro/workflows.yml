@@ -53,6 +53,8 @@ workflows:
                 type: string
             edit_order_link:
                 type: string
+            user_input:
+                type: array
             payment_in_progress:
                 type: bool
             payment_validate:
@@ -341,7 +343,6 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
-
             finish_checkout:
                 step_to: order_created
                 transition_definition: finish_checkout_definition
@@ -701,6 +702,7 @@ workflows:
                                 entity: $checkout
                                 state: $.result.currentCheckoutState
                                 token: $state_token
+                                user_input: $user_input
                     - '@call_service_method':
                         service: oro_checkout.factory.payment_context_factory
                         method: create

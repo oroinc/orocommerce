@@ -1,0 +1,12 @@
+{% block _payment_methods_infinite_pay_widget %}
+    {{ form_widget(
+    view.options.formView,
+    {class_prefix: class_prefix, paymentMethod: currentPaymentMethod, options: view.options})
+    }}
+    {% if currentPaymentMethod is defined %}
+        <div class="hidden"
+             data-page-component-module="oropayment/js/app/components/payment-method-component"
+             data-page-component-options="{{ {paymentMethod: currentPaymentMethod}|json_encode }}">
+        </div>
+    {% endif %}
+{% endblock %}

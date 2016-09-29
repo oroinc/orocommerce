@@ -1,0 +1,40 @@
+services:
+    oro_infinite_pay.action_mappers.request.reservation:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Mapper\ReservationRequestMapper'
+        arguments:
+            - '@oro_infinite_pay.provider.client_data'
+            - '@oro_infinite_pay.provider.debtor_data'
+            - '@oro_infinite_pay.provider.order_total'
+            - '@oro_infinite_pay.provider.article_list'
+
+    oro_infinite_pay.action_mappers.response.reservation:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Mapper\ReservationResponseMapper'
+
+
+    oro_infinite_pay.action_mappers.request.capture:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Mapper\CaptureRequestMapper'
+        arguments:
+            - '@oro_infinite_pay.provider.client_data'
+            - '@oro_infinite_pay.provider.order_total'
+
+    oro_infinite_pay.action_mappers.response.capture:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Mapper\CaptureResponseMapper'
+
+
+    oro_infinite_pay.action_mappers.request.activate:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Mapper\ActivationRequestMapper'
+        arguments:
+            - '@oro_infinite_pay.provider.client_data'
+            - '@oro_infinite_pay.provider.order_total'
+            - '@oro_infinite_pay.provider.invoice_data'
+
+    oro_infinite_pay.action_mappers.response.activate:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Mapper\ActivationResponseMapper'
+
+    oro_infinite_pay.action_mappers.request.apply_transaction:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Mapper\ApplyTransactionRequestMapper'
+        arguments:
+            - '@oro_infinite_pay.provider.client_data'
+
+    oro_infinite_pay.action_mappers.response.apply_transaction:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Mapper\ApplyTransactionResponseMapper'
