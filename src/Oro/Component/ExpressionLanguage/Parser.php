@@ -402,9 +402,6 @@ class Parser
 
                 $arguments = new Node\ArgumentsNode();
                 if ($this->stream->current->test(Token::PUNCTUATION_TYPE, '(')) {
-                    foreach ($this->parseArguments()->nodes as $n) {
-                        $arguments->addElement($n);
-                    }
                     $methodName = strtolower($token->value);
                     if (!array_key_exists($methodName, $this->methods)) {
                         throw new SyntaxError(sprintf(
@@ -413,6 +410,11 @@ class Parser
                             implode(', ', $this->methods)
                         ), $token->cursor);
                     }
+                    $argumentNodes = $this->parseArguments()->nodes;
+                    if (count($argumentNodes) !== 1) {
+                        throw new SyntaxError('Method should have exactly one argument', $token->cursor);
+                    }
+                    $arguments = reset($argumentNodes);
                     $type = $this->methods[$methodName];
                 } else {
                     $type = CustomNode\GetAttrNode::PROPERTY_CALL;

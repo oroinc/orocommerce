@@ -11,13 +11,39 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException \Symfony\Component\ExpressionLanguage\SyntaxError
-     * @expectedExceptionMessage Array calls on a method call is not allowed around position 10.
+     * @expectedExceptionMessage Array calls on a method call is not allowed around position 11.
      */
     public function testParseWithInvalidName()
     {
         $lexer = new Lexer();
         $parser = new Parser([]);
-        $parser->parse($lexer->tokenize('foo.any()[3]'));
+        $parser->parse($lexer->tokenize('foo.any(1)[3]'));
+    }
+
+    /**
+     * @dataProvider parseOneArgumentRequiredDataProvider
+     *
+     * @expectedException \Symfony\Component\ExpressionLanguage\SyntaxError
+     * @expectedExceptionMessage Method should have exactly one argument around position 5.
+     *
+     * @param string $expression
+     */
+    public function testParseOneArgumentRequired($expression)
+    {
+        $lexer = new Lexer();
+        $parser = new Parser([]);
+        $parser->parse($lexer->tokenize($expression));
+    }
+
+    /**
+     * @return array
+     */
+    public function parseOneArgumentRequiredDataProvider()
+    {
+        return [
+            ['foo.any()'],
+            ['foo.any(2, 4)'],
+        ];
     }
 
     /**
@@ -97,20 +123,20 @@ class ParserTest extends \PHPUnit_Framework_TestCase
                 new CustomNode\GetAttrNode(
                     new Node\NameNode('foo'),
                     new Node\ConstantNode('all'),
-                    new Node\ArgumentsNode(),
+                    new Node\ConstantNode(true),
                     CustomNode\GetAttrNode::ALL_CALL
                 ),
-                'foo.all()',
+                'foo.all(true)',
                 ['foo'],
             ],
             [
                 new CustomNode\GetAttrNode(
                     new Node\NameNode('foo'),
                     new Node\ConstantNode('any'),
-                    new Node\ArgumentsNode(),
+                    new Node\ConstantNode(true),
                     CustomNode\GetAttrNode::ANY_CALL
                 ),
-                'foo.any()',
+                'foo.any(true)',
                 ['foo'],
             ],
             [
@@ -140,12 +166,14 @@ class ParserTest extends \PHPUnit_Framework_TestCase
                     $this->createGetAttrNode(
                         new Node\NameNode('foo'),
                         'any',
+                        new Node\ConstantNode(true),
                         CustomNode\GetAttrNode::ANY_CALL
                     ),
                     'all',
+                    new Node\ConstantNode(true),
                     CustomNode\GetAttrNode::ALL_CALL
                 ),
-                'foo.any().all()',
+                'foo.any(true).all(true)',
                 ['foo'],
             ],
             [
@@ -184,8 +212,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
             new Node\ConstantNode(10)
         ));
 
-        $arguments = new Node\ArgumentsNode();
-        $arguments->addElement(new CustomNode\BinaryNode(
+        $arguments = new CustomNode\BinaryNode(
             '>',
             new CustomNode\GetAttrNode(
                 new Node\NameNode('value'),
@@ -194,7 +221,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
                 CustomNode\GetAttrNode::PROPERTY_CALL
             ),
             new Node\ConstantNode(10)
-        ));
+        );
 
         $right = new CustomNode\GetAttrNode(
             new CustomNode\GetAttrNode(
@@ -208,17 +235,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase
             CustomNode\GetAttrNode::ALL_CALL
         );
 
-        $binaryArguments = new Node\ArgumentsNode();
-        $binaryArguments->addElement(new CustomNode\BinaryNode(
-            'and',
-            $left,
-            $right
-        ));
-
         $node = new CustomNode\GetAttrNode(
             new Node\NameNode('items'),
             new Node\ConstantNode('any'),
-            $binaryArguments,
+            new CustomNode\BinaryNode('and', $left, $right),
             CustomNode\GetAttrNode::ANY_CALL
         );
 
@@ -232,13 +252,14 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param Node\Node $node
-     * @param $item
-     * @param $type
+     * @param mixed $item
+     * @param Node\Node $arguments
+     * @param int $type
      * @return CustomNode\GetAttrNode
      */
-    private function createGetAttrNode(Node\Node $node, $item, $type)
+    private function createGetAttrNode(Node\Node $node, $item, Node\Node $arguments, $type)
     {
-        return new CustomNode\GetAttrNode($node, new Node\ConstantNode($item), new Node\ArgumentsNode(), $type);
+        return new CustomNode\GetAttrNode($node, new Node\ConstantNode($item), $arguments, $type);
     }
 
     /**

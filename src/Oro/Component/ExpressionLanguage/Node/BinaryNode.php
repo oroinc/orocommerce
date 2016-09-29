@@ -2,6 +2,7 @@
 
 namespace Oro\Component\ExpressionLanguage\Node;
 
+use Symfony\Component\ExpressionLanguage\Compiler;
 use Symfony\Component\ExpressionLanguage\Node\BinaryNode as SymfonyBinaryNode;
 
 class BinaryNode extends SymfonyBinaryNode
@@ -17,14 +18,38 @@ class BinaryNode extends SymfonyBinaryNode
     ];
 
     /**
+     * {@inheritdoc}
+     */
+    public function compile(Compiler $compiler)
+    {
+        $operator = $this->attributes['operator'];
+
+        $equalSigns = [
+            '=' => '===',
+            '!=' => '!==',
+        ];
+
+        if (array_key_exists($operator, $equalSigns)) {
+            $compiler
+                ->raw('(')
+                ->compile($this->nodes['left'])
+                ->raw(' ')
+                ->raw($equalSigns[$operator])
+                ->raw(' ')
+                ->compile($this->nodes['right'])
+                ->raw(')');
+        } else {
+            parent::compile($compiler);
+        }
+    }
+
+    /**
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      *
      * Copy of \Symfony\Component\ExpressionLanguage\Node\BinaryNode::evaluate with "=" and without "==", "===", "!=="
      *
-     * @param $functions
-     * @param $values
-     * @return float|int|string
+     * {@inheritdoc}
      */
     public function evaluate($functions, $values)
     {
