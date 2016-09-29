@@ -25,7 +25,7 @@ Feature: Applying shipping rules
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then There is no shipping method available for this order
 
-  Scenario: "SHIPPING 2D" > Different countries for Shipping Rule #1 and Order. *Priority - Major*
+  Scenario: "SHIPPING 2D" > DIFFERENT COUNTRIES FOR SHIPPING RULE #1 AND ORDER. PRIORITY - MAJOR
     Given Admin User edited "Shipping Rule 1" with next data:
       | Enabled  | true    |
       | Currency | EUR     |
@@ -35,11 +35,10 @@ Feature: Applying shipping rules
 
   Scenario: "SHIPPING 2E" > LIST OF COUNTRIES FOR SHIPPING RULE #2 CONTAINS COUNTRY FOR ORDER. PRIORITY - MAJOR
     Given Admin User Created "Shipping Rule 2" with next data:
-      | Currency      | EUR       |
       | Enabled       | true      |
+      | Currency      | EUR       |
       | Country       | Ukraine   |
       | Country2      | Germany   |
-      | Congif Enable | true      |
       | Price         | 2.5       |
       | Type          | Per Order |
       | HandlingFee   | 1.5       |
@@ -47,7 +46,7 @@ Feature: Applying shipping rules
     Then Shipping Type "Flat Rate: €4.00" is shown for Buyer selection
     And  the order total is recalculated to "€14.00"
 
-  Scenario: "Shipping 2F" > List of ZIP codes for Shipping Rule #3 contains ZIP Code for Order. Priority - Major
+  Scenario: "Shipping 2F" > LIST OF ZIP CODES FOR SHIPPING RULE #3 CONTAINS ZIP CODE FOR ORDER. PRIORITY - MAJOR
     Given Admin User created "Shipping Rule 3" with next data:
       | Enabled       | true              |
       | Country       | Ukraine           |
@@ -56,7 +55,6 @@ Feature: Applying shipping rules
       | Sort Order    | 1                 |
       | ZIP           | 10115,10116,10117 |
       | ZIP2          | 10115,10116,10117 |
-      | Congif Enable | true              |
       | Price         | 3                 |
       | Type          | Per Order         |
       | HandlingFee   | 1.5               |
@@ -84,7 +82,6 @@ Feature: Applying shipping rules
       | Sort Order    | 0                 |
       | ZIP           | 10115,10116,10117 |
       | ZIP2          | 10115,10116,10117 |
-      | Congif Enable | true              |
       | Type          | Per Item          |
       | Price         | 1.5               |
       | HandlingFee   | 1.5               |
@@ -97,7 +94,6 @@ Feature: Applying shipping rules
       | Enabled       | true      |
       | Currency      | EUR       |
       | Sort Order    | -1        |
-      | Congif Enable | true      |
       | Type          | Per Order |
       | Price         | 5         |
       | HandlingFee   | 1.5       |

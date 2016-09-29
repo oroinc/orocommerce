@@ -1,0 +1,25 @@
+Oro\Bundle\UPSBundle\Entity\UPSTransport:
+    properties:
+        baseUrl:
+            - NotBlank: ~
+        apiUser:
+            - NotBlank: ~
+        apiPassword:
+            - NotBlank: ~
+        apiKey:
+            - NotBlank: ~
+        shippingAccountName:
+            - NotBlank: ~
+        shippingAccountNumber:
+            - NotBlank: ~
+        pickupType:
+            - NotBlank: ~
+        unitOfWeight:
+            - NotBlank: ~
+        country:
+            - NotBlank: ~
+            - Valid: ~
+        applicableShippingServices:
+            - NotBlank:
+                message: 'oro.ups.transport.shipping_service.blank'
+            - Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingService: ~

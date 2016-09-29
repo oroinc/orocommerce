@@ -1,0 +1,7 @@
+type,description,code
+UC,UPS Express,07
+UC,UPS Standard,11
+UC,UPS Worldwide Expedited,08
+UC,UPS Worldwide Express Plus,54
+UC,UPS Worldwide Saver,65
+AC,UPS Worldwide Express Freight,96
