@@ -40,12 +40,13 @@ class PlaceholderExpressionVisitorTest extends \PHPUnit_Framework_TestCase
         $expr = new Comparison("field_name_NAME_ID", "=", "value");
 
         $this->placeholder->expects($this->once())
-            ->method('getPlaceholder')
-            ->willReturn('NAME_ID');
-
-        $this->placeholder->expects($this->once())
             ->method('getValue')
             ->willReturn('1');
+
+        $this->placeholder->expects($this->once())
+            ->method('replace')
+            ->with("field_name_NAME_ID", '1')
+            ->willReturn('field_name_1');
 
         $result = $this->visitor->walkComparison($expr);
 
@@ -65,7 +66,7 @@ class PlaceholderExpressionVisitorTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->placeholder->expects($this->exactly(2))
-            ->method('getPlaceholder');
+            ->method('replace');
 
         $this->placeholder->expects($this->exactly(2))
             ->method('getValue');

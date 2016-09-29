@@ -373,9 +373,9 @@ services:
         class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_locale.helper.localization'
+            - '@oro_website.provider.website_localization'
         tags:
-            - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
 
     oro_product.event_listener.restrict_index_products:
         class: 'Oro\Bundle\ProductBundle\EventListener\RestrictIndexProductsEventListener'

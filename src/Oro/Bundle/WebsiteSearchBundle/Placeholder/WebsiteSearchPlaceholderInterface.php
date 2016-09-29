@@ -18,4 +18,13 @@ interface WebsiteSearchPlaceholderInterface
      * @return string
      */
     public function getValue();
+
+    /**
+     * Returns string with replaced placeholder key on needed value
+     *
+     * @param string $string
+     * @param string $replaceValue
+     * @return string
+     */
+    public function replace($string, $replaceValue);
 }

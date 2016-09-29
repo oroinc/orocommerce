@@ -4,9 +4,9 @@ namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SearchBundle\Event\BeforeSearchEvent;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\WebsiteSearchBundle\Event\BeforeSearchEvent;
 
 class ProductVisibilityRestrictionListener
 {

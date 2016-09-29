@@ -39,6 +39,7 @@ class MappingConfiguration implements ConfigurationInterface
                     ->end()
                     ->arrayNode('fields')
                         ->defaultValue([])
+                        ->useAttributeAsKey('field')
                         ->prototype('array')
                             ->children()
                                 ->scalarNode('name')->end()

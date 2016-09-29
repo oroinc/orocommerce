@@ -3,23 +3,16 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Event;
 
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
-use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
 
 class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetEntityName()
-    {
-        $event = new IndexEntityEvent('EntityName', [], []);
-
-        $this->assertEquals('EntityName', $event->getEntityClass());
-    }
-
     public function testGetEntityIds()
     {
-        $entityIds = [1, 2, 3];
-        $event = new IndexEntityEvent('', $entityIds, []);
+        $entities = [new \stdClass(), new \stdClass()];
+        $event = new IndexEntityEvent($entities, []);
 
-        $this->assertEquals($entityIds, $event->getEntityIds());
+        $this->assertEquals($entities, $event->getEntities());
     }
 
     public function testGetContext()
@@ -28,70 +21,44 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
             'someKey' => 'someValue'
         ];
 
-        $event = new IndexEntityEvent('', [], $context);
+        $event = new IndexEntityEvent([], $context);
 
         $this->assertEquals($context, $event->getContext());
     }
 
     public function testGetEntitiesDataWhenNothingWasAdded()
     {
-        $event = new IndexEntityEvent('', [], []);
+        $event = new IndexEntityEvent([], []);
 
         $this->assertEquals([], $event->getEntitiesData());
     }
 
     public function testGetEntityDataWhenFieldsAreAdded()
     {
-        $event = new IndexEntityEvent('', [1, 2], []);
+        $event = new IndexEntityEvent([1, 2], []);
 
-        $event->addField(1, Query::TYPE_TEXT, 'title', 'Product title');
-        $event->addField(1, Query::TYPE_TEXT, 'description', 'Product description');
-        $event->addField(1, Query::TYPE_DECIMAL, 'price', 100.00);
-        $event->addField(1, Query::TYPE_INTEGER, 'categoryId', 3);
-        $event->addField(2, Query::TYPE_TEXT, 'title', 'Another product title');
+        $event->addField(1, 'title', 'Product title');
+        $event->addField(1, 'description', 'Product description');
+        $event->addField(1, 'price', 100.00);
+        $event->addField(1, 'categoryId', 3);
+        $event->addField(2, 'title', 'Another product title');
 
         $expectedData = [
             1 => [
-                Query::TYPE_TEXT => [
+                IndexDataProvider::STANDARD_VALUES_KEY => [
                     'title' => 'Product title',
-                    'description' => 'Product description'
-                ],
-                Query::TYPE_DECIMAL => [
-                    'price' => 100.00
-                ],
-                Query::TYPE_INTEGER => [
+                    'description' => 'Product description',
+                    'price' => 100.00,
                     'categoryId' => 3
                 ]
             ],
             2 => [
-                Query::TYPE_TEXT => [
+                IndexDataProvider::STANDARD_VALUES_KEY => [
                     'title' => 'Another product title'
                 ]
             ]
         ];
 
         $this->assertEquals($expectedData, $event->getEntitiesData());
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Field type must be one of datetime, decimal, integer, text
-     */
-    public function testAddFieldWithWrongFieldType()
-    {
-        $event = new IndexEntityEvent('', [1], []);
-
-        $event->addField(1, 'wrongType', 'title', 'Product title');
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage There is no entity with id 999
-     */
-    public function testAddFieldWithWrongEntityId()
-    {
-        $event = new IndexEntityEvent('', [1], []);
-
-        $event->addField(999, 'wrongType', 'title', 'Product title');
     }
 }

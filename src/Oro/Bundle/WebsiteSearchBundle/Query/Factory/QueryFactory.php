@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Query\Factory;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-use Oro\Bundle\SearchBundle\Datagrid\Datasource\YamlToSearchQueryConverter;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
+use Oro\Bundle\SearchBundle\Datagrid\Datasource\YamlToSearchQueryConverter;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
@@ -19,21 +17,15 @@ class QueryFactory implements QueryFactoryInterface
     /** @var QueryFactory */
     protected $parent;
 
-    /** @var EventDispatcherInterface */
-    protected $dispatcher;
-
     /**
      * @param QueryFactoryInterface $parentQueryFactory
-     * @param EventDispatcherInterface $eventDispatcher
      * @param EngineV2Interface $engine
      */
     public function __construct(
         QueryFactoryInterface $parentQueryFactory,
-        EventDispatcherInterface $eventDispatcher,
         EngineV2Interface $engine
     ) {
         $this->parent     = $parentQueryFactory;
-        $this->dispatcher = $eventDispatcher;
         $this->engine     = $engine;
     }
 
@@ -48,7 +40,6 @@ class QueryFactory implements QueryFactoryInterface
 
         $query = new WebsiteSearchQuery(
             $this->engine,
-            $this->dispatcher,
             new Query()
         );
 
