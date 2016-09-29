@@ -5,7 +5,6 @@ namespace Oro\Bundle\AccountBundle\EventListener;
 use Oro\Bundle\AccountBundle\Visibility\Provider\AccountProductVisibilityProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 
@@ -17,9 +16,11 @@ class WebsiteSearchProductVisibilityIndexerListener
 
     const FIELD_VISIBILITY_NEW = 'visibility_new';
 
-    const FIELD_VISIBILITY_ACCOUNT = 'visibility_account_%s';
+    const FIELD_VISIBILITY_ACCOUNT = 'visibility_account';
 
     const FIELD_IS_VISIBLE_BY_DEFAULT = 'is_visible_by_default';
+
+    const PLACEHOLDER_ACCOUNT_ID = 'ACCOUNT_ID';
 
     /**
      * @var DoctrineHelper
@@ -71,10 +72,13 @@ class WebsiteSearchProductVisibilityIndexerListener
                 $accountVisibility['is_visible_by_default']
             );
 
-            $event->addField(
+            $event->addPlaceholderField(
                 $accountVisibility['productId'],
-                sprintf(self::FIELD_VISIBILITY_ACCOUNT, $accountVisibility['accountId']),
-                self::ACCOUNT_VISIBILITY_VALUE
+                self::FIELD_VISIBILITY_ACCOUNT,
+                self::ACCOUNT_VISIBILITY_VALUE,
+                [
+                    self::PLACEHOLDER_ACCOUNT_ID => $accountVisibility['accountId']
+                ]
             );
         }
 
