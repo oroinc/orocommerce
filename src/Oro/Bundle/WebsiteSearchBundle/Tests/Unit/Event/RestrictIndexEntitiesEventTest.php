@@ -30,11 +30,7 @@ class RestrictIndexEntitiesEventTest extends \PHPUnit_Framework_TestCase
 
     public function testQueryBuilderAccessors()
     {
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMock(EntityManagerInterface::class);
-        $qb = new QueryBuilder($em);
-        $this->event->setQueryBuilder($qb);
-        $this->assertSame($qb, $this->event->getQueryBuilder());
+        $this->assertSame($this->qb, $this->event->getQueryBuilder());
     }
 
     public function testGetContext()

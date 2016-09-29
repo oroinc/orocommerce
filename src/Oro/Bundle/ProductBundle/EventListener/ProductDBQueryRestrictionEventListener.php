@@ -98,7 +98,9 @@ class ProductDBQueryRestrictionEventListener
     protected function isConditionsAcceptable()
     {
         if (!$this->backendSystemConfigurationPath && !$this->frontendSystemConfigurationPath) {
-            throw new \LogicException('SystemConfigurationPath not configured for ProductDBQueryRestrictionEventListener');
+            throw new \LogicException(
+                'SystemConfigurationPath not configured for ProductDBQueryRestrictionEventListener'
+            );
         }
 
         return true;

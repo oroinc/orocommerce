@@ -15,9 +15,7 @@ class RestrictIndexProductsEventListenerTest extends AbstractSearchWebTestCase
 {
     protected function setUp()
     {
-        $this->initClient();
-
-        $this->addFrontendRequest();
+        parent::setUp();
 
         $this->loadFixtures([LoadProductData::class]);
     }
@@ -29,7 +27,7 @@ class RestrictIndexProductsEventListenerTest extends AbstractSearchWebTestCase
         $indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]);
 
         $query = new Query();
-        $query->from('oro_product_product_WEBSITE_ID');
+        $query->from('oro_product_WEBSITE_ID');
         $query->select('recordTitle');
         $query->getCriteria()->orderBy(['title_' . $this->getDefaultLocalizationId() => Query::ORDER_ASC]);
 

@@ -9,11 +9,5 @@ use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\OroWebsiteSearchExtension
 
 class OroWebsiteSearchBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getContainerExtension()
-    {
-        return new OroWebsiteSearchExtension();
-    }
+
 }

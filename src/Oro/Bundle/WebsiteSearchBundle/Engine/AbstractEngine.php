@@ -2,42 +2,45 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
+use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\WebsiteSearchBundle\Event\BeforeSearchEvent;
-use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver;
+use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolverInterface;
+
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 abstract class AbstractEngine implements EngineV2Interface
 {
-    /**
-     * @var EventDispatcherInterface
-     */
+    /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
-    /**
-     * @var QueryPlaceholderResolver
-     */
+    /** @var QueryPlaceholderResolverInterface */
     private $queryPlaceholderResolver;
+
+    /** @var AbstractSearchMappingProvider */
+    protected $mappingProvider;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
-     * @param QueryPlaceholderResolver $queryPlaceholderResolver
+     * @param QueryPlaceholderResolverInterface $queryPlaceholderResolver
+     * @param AbstractSearchMappingProvider $mappingProvider
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
-        QueryPlaceholderResolver $queryPlaceholderResolver
+        QueryPlaceholderResolverInterface $queryPlaceholderResolver,
+        AbstractSearchMappingProvider $mappingProvider
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->queryPlaceholderResolver = $queryPlaceholderResolver;
+        $this->mappingProvider = $mappingProvider;
     }
 
     /**
      * @param Query $query
      * @param array $context
-     * @return array
+     * @return Result
      */
     abstract protected function doSearch(Query $query, array $context = []);
 
@@ -50,10 +53,9 @@ abstract class AbstractEngine implements EngineV2Interface
         $this->eventDispatcher->dispatch(BeforeSearchEvent::EVENT_NAME, $event);
 
         $query = $event->getQuery();
-        $query = $this->queryPlaceholderResolver->replace($query, $context);
 
-        $result = $this->doSearch($query, $context);
+        $this->queryPlaceholderResolver->replace($query);
 
-        return new Result($query, $result['results'], $result['records_count']);
+        return $this->doSearch($query, $context);
     }
 }

@@ -2,33 +2,19 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
+use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
 
-use Oro\Bundle\SearchBundle\Query\Query;
+use Symfony\Component\EventDispatcher\Event;
 
 class IndexEntityEvent extends Event
 {
     const NAME = 'oro_website_search.event.index_entity';
 
     /**
-     * @var array
+     * @var object[]
      */
-    private static $fieldTypes = [
-        Query::TYPE_DATETIME,
-        Query::TYPE_DECIMAL,
-        Query::TYPE_INTEGER,
-        Query::TYPE_TEXT
-    ];
-
-    /**
-     * @var string
-     */
-    private $entityClass;
-
-    /**
-     * @var array
-     */
-    private $entityIds;
+    private $entities;
 
     /**
      * @var array
@@ -41,32 +27,21 @@ class IndexEntityEvent extends Event
     private $entitiesData = [];
 
     /**
-     * @param string $entityClass
-     * @param array  $entityIds
-     * @param array  $context
+     * @param object[] $entities
+     * @param array $context
      */
-    public function __construct($entityClass, array $entityIds, array $context)
+    public function __construct(array $entities, array $context)
     {
-        $this->context     = $context;
-        $this->entityIds   = array_combine($entityIds, $entityIds);
-        $this->entityClass = $entityClass;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEntityClass()
-    {
-        return $this->entityClass;
+        $this->context = $context;
+        $this->entities = $entities;
     }
 
     /**
      * @return array
      */
-    public function getEntityIds()
+    public function getEntities()
     {
-        // @todo: check performance and optimize it
-        return array_values($this->entityIds);
+        return $this->entities;
     }
 
     /**
@@ -102,6 +77,21 @@ class IndexEntityEvent extends Event
     }
 
     /**
+     * @param int $entityId
+     * @param string $fieldName
+     * @param string|int|float
+     * @param array $placeholders
+     * @return $this
+     */
+    public function addPlaceholderField($entityId, $fieldName, $value, $placeholders)
+    {
+        $this->entitiesData[$entityId][IndexDataProvider::PLACEHOLDER_VALUES_KEY][$fieldName][] =
+            new ValueWithPlaceholders($value, $placeholders);
+
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function getEntitiesData()
@@ -121,46 +111,22 @@ class IndexEntityEvent extends Event
      */
     private function processField($entityId, $fieldType, $fieldName, $value, $appendMode = false)
     {
-        if (!isset($this->entityIds[$entityId])) {
-            throw new \InvalidArgumentException(
-                sprintf('There is no entity with id %s', $entityId)
-            );
-        }
-
-        $this->assertFieldType($fieldType);
-
         if (!isset(
             $this->entitiesData[$entityId],
-            $this->entitiesData[$entityId][$fieldType],
-            $this->entitiesData[$entityId][$fieldType][$fieldName]
+            $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY],
+            $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName]
         )) {
-            $this->entitiesData[$entityId][$fieldType][$fieldName] = '';
+            $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] = '';
         }
 
         if (false === $appendMode) {
-            $this->entitiesData[$entityId][$fieldType][$fieldName] = $value;
+            $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] = $value;
 
             return $this;
         }
 
-        $this->entitiesData[$entityId][$fieldType][$fieldName] .= $value;
+        $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] .= $value;
 
         return $this;
-    }
-
-    /**
-     * @param string $fieldType
-     * @throws \InvalidArgumentException
-     */
-    private function assertFieldType($fieldType)
-    {
-        if (!in_array($fieldType, self::$fieldTypes, true)) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Field type must be one of %s',
-                    implode(', ', self::$fieldTypes)
-                )
-            );
-        }
     }
 }
