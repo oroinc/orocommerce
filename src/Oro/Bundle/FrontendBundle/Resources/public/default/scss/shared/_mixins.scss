@@ -160,27 +160,3 @@
     font-weight: 400;
   }
 }
-
-@mixin flexbox() {
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
-  display: flex;
-}
-
-@mixin flex($values) {
-  -webkit-box-flex: $values;
-  -moz-box-flex:  $values;
-  -webkit-flex:  $values;
-  -ms-flex:  $values;
-  flex:  $values;
-}
-
-@mixin flex-direction($values) {
-  -webkit-box-direction: $values;
-  -moz-box-direction:  $values;
-  -webkit-flex-direction:  $values;
-  -ms-flex-direction:  $values;
-  flex-direction:  $values;
-}

@@ -22,10 +22,10 @@
 .main {
     margin: 0 auto 70px;
 
-    @include flexbox();
+    display: flex;
 
-    @include breakpoint('tablet') {
-        @include flex-direction(column);
+    @include breakpoint('tablet-small') {
+        flex-direction: column;
     }
 
     &_home {

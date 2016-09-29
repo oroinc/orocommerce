@@ -5,8 +5,35 @@
     border-radius: 3px;
     background: $theme-lightest-gray-color;
 
-    @include breakpoint('tablet') {
+    @include breakpoint('tablet-small') {
         padding: 0;
+
+        border-top: $theme-lighter-gray-color 1px solid;
+        border-bottom: $theme-lighter-gray-color 1px solid;
+
+        .icon-minus,
+        .icon-plus {
+            position: absolute;
+            right: 13px;
+            top: 15px;
+
+            font-size: 12px;
+        }
+        
+        .icon-minus {
+            opacity: 0;
+        }
+
+        .expanded {
+            .icon-plus {
+                opacity: 0;
+
+            }
+
+            .icon-minus {
+                opacity: 1;
+            }
+        }
     }
 
     &__section:not(:first-child) {
@@ -14,20 +41,29 @@
     }
 
     &__title {
+        position: relative;
+        
         margin-bottom: 9px;
 
         font-size: 15px;
         font-weight: 400;
         text-transform: uppercase;
 
-        @include breakpoint('tablet') {
+        @include breakpoint('tablet-small') {
+            padding: 14px 10px;
+            margin: 0;
+
             font-size: 14px;
-            padding: 12px 10px;
         }
     }
 
     &__list {
         @include list-normalize();
+
+        @include breakpoint('tablet-small') {
+            padding-left: 13px;
+            padding-right: 13px;
+        }
     }
 
     &__item {
@@ -35,6 +71,13 @@
 
         margin: 5px 0 0;
         padding: 0 0 0 18px;
+
+        @include breakpoint('tablet-small') {
+            padding: 13px 0;
+            margin: 0;
+            
+            border-top: $theme-lighter-gray-color 1px solid;
+        }
 
         &--current {
             &:before {
@@ -48,10 +91,18 @@
                 background: $theme-orange-color;
 
                 @include after();
+
+                @include breakpoint('tablet-small') {
+                    content: none;
+                }
             }
 
             .account-menu__link {
                 font-weight: 700;
+
+                @include breakpoint('tablet-small') {
+                    color: inherit;
+                }
             }
         }
     }
@@ -60,6 +111,10 @@
         display: block;
 
         color: $base-font-color;
+
+        @include breakpoint('tablet-small') {
+            color: $theme-middle-gray-color;
+        }
     }
 
     &__badge {
