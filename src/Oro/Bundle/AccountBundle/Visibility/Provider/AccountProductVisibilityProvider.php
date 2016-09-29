@@ -228,15 +228,13 @@ TERM;
      */
     private function createProductsQuery(array $products)
     {
-        foreach ($products as &$product) {
-            $product = $product->getId();
-        }
         $qb = $this->doctrineHelper->getEntityManagerForClass(Product::class)->createQueryBuilder();
 
         $qb
             ->select('product.id as productId')
             ->from(Product::class, 'product')
-            ->where($qb->expr()->in('product.id', $products))
+            ->where($qb->expr()->in('product', ':products'))
+            ->set('products', $products)
             ->addOrderBy('productId', Query::ORDER_ASC);
 
         return $qb;
