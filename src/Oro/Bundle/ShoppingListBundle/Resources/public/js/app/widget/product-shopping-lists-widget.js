@@ -39,21 +39,21 @@ define(function(require) {
             lineItem: '[data-role="line-item"]',
             lineItemEdit: '[data-role="line-item-edit"]',
             lineItemView: '[data-role="line-item-view"]',
-            popupPanelForm: '[data-role="popup-panel-form"]',
-            popupPanelShoppingList: '[data-role="popup-panel-shopping-list"]',
-            popupPanelQty: '[data-role="popup-panel-qty"]',
-            popupPanelUnit: '[data-role="popup-panel-unit"]',
-            popupPanelAccept: '[data-role="popup-panel-accept"]',
-            popupPanelReset: '[data-role="popup-panel-reset"]'
+            addForm: '[data-role="add-form"]',
+            addFormShoppingList: '[data-role="add-form-shopping-list"]',
+            addFormQty: '[data-role="add-form-qty"]',
+            addFormUnit: '[data-role="add-form-unit"]',
+            addFormAccept: '[data-role="add-form-accept"]',
+            addFormReset: '[data-role="add-form-reset"]'
         },
 
         elementsEvents: {
             edit: ['click', 'edit'],
             decline: ['click', 'decline'],
-            popupPanelShoppingList: ['change', 'onPopupPanelShoppingListChange'],
-            popupPanelUnit: ['change', 'onPopupPanelUnitChange'],
-            popupPanelAccept: ['click', 'onPopupPanelAccept'],
-            popupPanelReset: ['click', 'onPopupPanelReset']
+            addFormShoppingList: ['change', 'onAddFormShoppingListChange'],
+            addFormUnit: ['change', 'onAddFormUnitChange'],
+            addFormAccept: ['click', 'onAddFormAccept'],
+            addFormReset: ['click', 'onAddFormReset']
         },
 
         modelAttr: {
@@ -85,7 +85,6 @@ define(function(require) {
 
             mediator.on('frontend:item:delete',  this.onLineItemDelete, this);
             mediator.on('product:quantity-unit:update', this.onLineItemUpdate, this);
-            mediator.on('popup-panel-form:reset', this.onPopupPanelReset, this);
 
             ProductShoppingListsWidget.__super__.initialize.apply(this, arguments);
         },
@@ -105,6 +104,7 @@ define(function(require) {
 
         dispose: function() {
             this.disposeElements();
+            mediator.off(null, null, this);
             ProductShoppingListsWidget.__super__.dispose.apply(this, arguments);
         },
 
@@ -166,43 +166,43 @@ define(function(require) {
             }
         },
 
-        onPopupPanelReset: function() {
-            var $form = this.getElement('popupPanelForm');
+        onAddFormReset: function() {
+            var $form = this.getElement('addForm');
 
             $form[0].reset();
             $form.find('select').inputWidget('refresh');
         },
 
-        onPopupPanelShoppingListChange: function(e) {
-            var $popupPanelQty = this.getElement('popupPanelQty');
+        onAddFormShoppingListChange: function(e) {
+            var $addFormQty = this.getElement('addFormQty');
             var selectedShoppingList = this.getSelectedShoppingList();
 
-            $popupPanelQty.val(1);
+            $addFormQty.val(1);
             
             if (selectedShoppingList && selectedShoppingList.line_items) {
-                $popupPanelQty.val(selectedShoppingList.line_items[0].quantity);
+                $addFormQty.val(selectedShoppingList.line_items[0].quantity);
                 this.setSelectedUnit(selectedShoppingList.line_items[0].unit);
             }
         },
 
-        onPopupPanelUnitChange: function(e) {
-            var $popupPanelQty = this.getElement('popupPanelQty');
+        onAddFormUnitChange: function(e) {
+            var $addFormQty = this.getElement('addFormQty');
             var selectedShoppingList = this.getSelectedShoppingList();
             var selectedUnit = this.getSelectedUnit();
 
-            $popupPanelQty.val(1);
+            $addFormQty.val(1);
 
             if (selectedShoppingList && selectedShoppingList.line_items) {
                 var selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
 
                 if(selectedLineItem && selectedLineItem.quantity) {
-                    $popupPanelQty.val(selectedLineItem.quantity);
+                    $addFormQty.val(selectedLineItem.quantity);
                 }
             }
         },
 
-        onPopupPanelAccept: function() {
-            var $popupPanelQty = this.getElement('popupPanelQty');
+        onAddFormAccept: function() {
+            var $addFormQty = this.getElement('addFormQty');
             var selectedShoppingList = this.getSelectedShoppingList();
             var selectedUnit = this.getSelectedUnit();
 
@@ -214,12 +214,12 @@ define(function(require) {
                 var selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
 
                 if (selectedLineItem) {
-                    this.updateLineItem(selectedLineItem, selectedShoppingList.id, parseInt($popupPanelQty.val(), 10));
+                    this.updateLineItem(selectedLineItem, selectedShoppingList.id, parseInt($addFormQty.val(), 10));
                 } else {
-                    this.saveLineItem(selectedShoppingList.id, this.getSelectedUnit(), parseInt($popupPanelQty.val(), 10));
+                    this.saveLineItem(selectedShoppingList.id, this.getSelectedUnit(), parseInt($addFormQty.val(), 10));
                 }
             } else {
-                this.saveLineItem(selectedShoppingList.id, this.getSelectedUnit(), parseInt($popupPanelQty.val(), 10));
+                this.saveLineItem(selectedShoppingList.id, this.getSelectedUnit(), parseInt($addFormQty.val(), 10));
             }
         },
 
@@ -262,7 +262,7 @@ define(function(require) {
 
         saveLineItem: function(shoppingListId, lineItemUnit, newQty) {
             var urlOptions = {};
-            var formData = this.getElement('popupPanelForm').serialize();
+            var formData = this.getElement('addForm').serialize();
             
             if (this.model) {
                 urlOptions.productId = this.model.get('id');
@@ -352,7 +352,7 @@ define(function(require) {
         },
 
         getSelectedShoppingListId: function() {
-            return parseInt(this.getElement('popupPanelShoppingList').val(), 10) || 0;
+            return parseInt(this.getElement('addFormShoppingList').val(), 10) || 0;
         },
 
         getSelectedShoppingList: function() {
@@ -368,11 +368,11 @@ define(function(require) {
         },
 
         getSelectedUnit: function() {
-            return this.getElement('popupPanelUnit').val();
+            return this.getElement('addFormUnit').val();
         },
 
         setSelectedUnit: function(unit) {
-            this.getElement('popupPanelUnit').val(unit).inputWidget('refresh');
+            this.getElement('addFormUnit').val(unit).inputWidget('refresh');
         },
 
         edit: function(e) {

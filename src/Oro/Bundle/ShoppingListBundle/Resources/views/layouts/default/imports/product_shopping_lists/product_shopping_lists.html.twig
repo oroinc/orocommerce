@@ -241,9 +241,9 @@
             </tbody>
         </table>
         <div class="shopping-lists-popup__footer">
-            <form method="post" class="shopping-lists-popup__item" data-role="popup-panel-form">
+            <form method="post" class="shopping-lists-popup__item" data-role="add-form">
                 <div class="shopping-lists-popup__list">
-                    <select class="oro-select2 oro-select2--size-s" name="list" data-role="popup-panel-shopping-list">
+                    <select class="oro-select2 oro-select2--size-s" name="list" data-role="add-form-shopping-list">
                         <option value="0">{{ 'oro.shoppinglist.actions.choose_list'|trans }}</option>
                         <% if (!_.isEmpty(shoppingListsCollection)) { %>
                         <% _.each(shoppingListsCollection, function(list) { %>
@@ -262,10 +262,10 @@
                                        min="1" 
                                        value="1"
                                        name="oro_product_frontend_line_item[quantity]"
-                                       data-role="popup-panel-qty">
+                                       data-role="add-form-qty">
                             </li>
                             <li class="shopping-lists-modify__select">
-                                <select class="oro-select2 oro-select2--size-s" name="oro_product_frontend_line_item[unit]" data-role="popup-panel-unit">
+                                <select class="oro-select2 oro-select2--size-s" name="oro_product_frontend_line_item[unit]" data-role="add-form-unit">
                                     <% _.each(productUnits, function(unit) { %>
                                     <option value="<%= unit %>"><%= unit %></option>
                                     <% }); %>
@@ -276,7 +276,7 @@
                                     <button class="shopping-lists-modify__button badge badge_sm badge_orange badge_circled-corners"
                                             type="button"
                                             title="{{ 'Accept'|trans }}"
-                                            data-role="popup-panel-accept">
+                                            data-role="add-form-accept">
                                             <i class="shopping-lists-modify__icon cf-check"></i>
                                     </button>
                                 </span>
@@ -284,7 +284,7 @@
                                     <button class="shopping-lists-modify__button badge badge_sm badge_l-dark badge_circled-corners"
                                             type="reset"
                                             title="{{ 'Decline'|trans }}"
-                                            data-role="popup-panel-reset">
+                                            data-role="add-form-reset">
                                             <i class="shopping-lists-modify__icon cf-clear"></i>
                                     </button>
                                 </span>
