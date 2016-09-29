@@ -286,13 +286,14 @@ class PriceListToAccountRepositoryTest extends WebTestCase
     {
         /** @var Account $account */
         $account = $this->getReference('account.level_1_1');
-        /** @var Website $website */
-        $website = $this->getReference('US');
+
         /** @var AccountWebsiteDTO[] $result */
         $result = $this->getRepository()->getAccountWebsitePairsByAccount($account);
-        $this->assertCount(1, $result);
+        $this->assertCount(2, $result);
         $this->assertEquals($result[0]->getAccount()->getId(), $account->getId());
-        $this->assertEquals($result[0]->getWebsite()->getId(), $website->getId());
+        $this->assertEquals($result[0]->getWebsite()->getId(), $this->getReference('US')->getId());
+        $this->assertEquals($result[1]->getAccount()->getId(), $account->getId());
+        $this->assertEquals($result[1]->getWebsite()->getId(), $this->getReference('Canada')->getId());
     }
 
     public function testDelete()
@@ -301,10 +302,10 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         $account = $this->getReference('account.level_1_1');
         /** @var Website $website */
         $website = $this->getReference('US');
-        $this->assertCount(7, $this->getRepository()->findAll());
+        $this->assertCount(8, $this->getRepository()->findAll());
         $this->assertCount(2, $this->getRepository()->findBy(['account' => $account, 'website' => $website]));
         $this->getRepository()->delete($account, $website);
-        $this->assertCount(5, $this->getRepository()->findAll());
+        $this->assertCount(6, $this->getRepository()->findAll());
         $this->assertCount(0, $this->getRepository()->findBy(['account' => $account, 'website' => $website]));
     }
 

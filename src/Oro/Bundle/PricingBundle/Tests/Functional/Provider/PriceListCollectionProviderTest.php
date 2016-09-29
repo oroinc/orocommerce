@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Provider;
 
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -296,29 +295,17 @@ class PriceListCollectionProviderTest extends WebTestCase
     /**
      * @dataProvider getPriceListsByAccountForAccountWithoutGroupDataProvider
      *
-     * @param int $fallbackValue
+     * @param string $website
      * @param array $expectedPriceLists
      */
-    public function testGetPriceListsByAccountForAccountWithoutGroup($fallbackValue, array $expectedPriceLists)
+    public function testGetPriceListsByAccountForAccountWithoutGroup($website, array $expectedPriceLists)
     {
         /** @var Account $account */
         $account = $this->getReference('account.level_1_1');
         $this->assertNull($account->getGroup());
 
         /** @var Website $website */
-        $website = $this->getReference('US');
-
-        // set appropriate fallback settings
-        /** @var PriceListAccountFallback $fallback */
-        $fallback = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(PriceListAccountFallback::class)
-            ->getRepository(PriceListAccountFallback::class)
-            ->findOneBy([
-                'account' => $account,
-                'website' => $website
-            ]);
-
-        $fallback->setFallback($fallbackValue);
+        $website = $this->getReference($website);
 
         $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
         $result = $this->provider->getPriceListsByAccount($account, $website);
@@ -332,13 +319,9 @@ class PriceListCollectionProviderTest extends WebTestCase
     {
         return [
             'current account only' => [
-                'fallbackValue' => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
+                'websiteReference' => 'Canada',
                 'expectedPriceLists' => [
                     /** From account */
-                    [
-                        'priceList' => 'price_list_2',
-                        'mergeAllowed' => false,
-                    ],
                     [
                         'priceList' => 'price_list_1',
                         'mergeAllowed' => true,
@@ -347,7 +330,7 @@ class PriceListCollectionProviderTest extends WebTestCase
                 ]
             ],
             'account group fallback' => [
-                'fallbackValue' => PriceListAccountFallback::ACCOUNT_GROUP,
+                'websiteReference' => 'US',
                 'expectedPriceLists' => [
                     /** From account */
                     [
@@ -404,7 +387,6 @@ class PriceListCollectionProviderTest extends WebTestCase
         }
 
         return $result;
-
     }
 
     protected function setPriceListToConfig()

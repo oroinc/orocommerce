@@ -29,7 +29,7 @@ class LoadPriceListFallbackSettings extends AbstractFixture implements Dependent
                 'account.level_1.2' => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
             ],
             LoadWebsiteData::WEBSITE2 => [
-                'account.level_1_1' => PriceListAccountFallback::ACCOUNT_GROUP,
+                'account.level_1_1' => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
                 'account.level_1.3' => PriceListAccountFallback::ACCOUNT_GROUP,
                 'account.level_1.2' => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
             ],
