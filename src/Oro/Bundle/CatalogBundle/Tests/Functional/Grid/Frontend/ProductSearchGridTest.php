@@ -4,13 +4,14 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\Grid\Frontend;
 
 use Oro\Bundle\DataGridBundle\Extension\Sorter\AbstractSorterExtension;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
  */
-class ProductSearchGridTest extends WebTestCase
+class ProductSearchGridTest extends FrontendWebTestCase
 {
     /**
      * @var Client
@@ -21,20 +22,23 @@ class ProductSearchGridTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW),
+            true
         );
+        $this->setCurrentWebsite('default');
 
         $this->loadFixtures(
             [
                 'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData'
             ]
         );
+
+        // TODO: trigger immediate reindexation event instead
+        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 
     public function testSorters()
     {
-        $this->markTestSkipped('Enable after real V2 search engine is implemented');
-
         $products = $this->getDatagridData(
             'frontend-product-search-grid',
             [],
@@ -68,11 +72,10 @@ class ProductSearchGridTest extends WebTestCase
      * @param array  $data
      * @param string $column
      * @param string $orderDirection
-     * @param bool   $stringSorting
      */
-    protected function checkSorting(array $data, $column, $orderDirection, $stringSorting = false)
+    protected function checkSorting(array $data, $column, $orderDirection)
     {
-        $this->markTestSkipped('Enable after real V2 search engine is implemented');
+        $this->assertNotEmpty($data);
 
         foreach ($data as $row) {
             $actualValue = $row[$column];
@@ -90,8 +93,6 @@ class ProductSearchGridTest extends WebTestCase
 
     public function testFilters()
     {
-        $this->markTestSkipped('Enable after real V2 search engine is implemented');
-
         $data = $this->getDatagridData(
             'frontend-product-search-grid'
         );
@@ -183,8 +184,6 @@ class ProductSearchGridTest extends WebTestCase
      */
     protected function getDatagridData($gridName, array $filters = [], array $sorters = [], array $pager = [])
     {
-        $this->markTestSkipped('Enable after real V2 search engine is implemented');
-
         $gridParameters = ['gridName' => $gridName];
 
         $result = [];
@@ -199,6 +198,7 @@ class ProductSearchGridTest extends WebTestCase
         }
 
         $response = $this->client->requestFrontendGrid($gridParameters, $result);
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
 
         return json_decode($response->getContent(), true)['data'];
     }
