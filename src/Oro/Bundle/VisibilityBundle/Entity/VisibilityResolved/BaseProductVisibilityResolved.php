@@ -7,7 +7,6 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @method BaseProductVisibilityResolved setSourceProductVisibility(VisibilityInterface $sourceProductVisibility = null)
@@ -47,21 +46,13 @@ abstract class BaseProductVisibilityResolved extends BaseVisibilityResolved
     protected $category;
 
     /**
-     * @param Website $website
+     * @param Scope $scope
      * @param Product $product
      */
-    public function __construct(Website $website, Product $product)
+    public function __construct(Scope $scope, Product $product)
     {
-        $this->website = $website;
+        $this->scope = $scope;
         $this->product = $product;
-    }
-
-    /**
-     * @return Website
-     */
-    public function getWebsite()
-    {
-        return $this->website;
     }
 
     /**

@@ -7,11 +7,13 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -37,10 +39,9 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
-            'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+            LoadGroups::class,
+            LoadAccounts::class,
+            LoadCategoryProductData::class,
         ];
     }
 
@@ -88,22 +89,6 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         $this->createAccountGroupVisibilities($manager, $product, $data['groups']);
 
         $this->createAccountVisibilities($manager, $product, $data['accounts']);
-    }
-
-    /**
-     * @param string $websiteName
-     * @return Website
-     */
-    protected function getWebsite($websiteName)
-    {
-        if ($websiteName === 'Default') {
-            return $this->container
-                ->get('doctrine')
-                ->getManagerForClass('OroWebsiteBundle:Website')
-                ->getRepository('OroWebsiteBundle:Website')->findOneBy(['name' => $websiteName]);
-        }
-
-        return $this->getReference($websiteName);
     }
 
     /**
@@ -155,8 +140,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
             $accountProductVisibility = new AccountProductVisibility();
             $accountProductVisibility->setProduct($product)
                 ->setAccount($account)
-                ->setVisibility($accountData['visibility'])
-            ;
+                ->setVisibility($accountData['visibility']);
 
             $scopeManager = $this->container->get('oro_scope.scope_manager');
             $scope = $scopeManager->findOrCreate('account_product_visibility', $accountProductVisibility);

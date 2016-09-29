@@ -95,9 +95,12 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         if ($category) {
             $visibility = $this->getCategoryVisibility($category);
         } else {
-            $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\ProductVisibility')
-                ->getRepository('OroVisibilityBundle:Visibility\ProductVisibility')
-                ->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor, $product);
+            $scopes = $this->scopeManager->findRelatedScopes('product_visibility');
+            foreach ($scopes as $scope) {
+                $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\ProductVisibility')
+                    ->getRepository('OroVisibilityBundle:Visibility\ProductVisibility')
+                    ->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor, $scope, $product);
+            }
             $visibility = ProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         }
 

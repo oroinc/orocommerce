@@ -16,18 +16,7 @@ class ScopeRepository extends EntityRepository
      */
     public function findByCriteria(array $criteria)
     {
-        $qb = $this->createQueryBuilder('scope');
-        foreach ($criteria as $field => $value) {
-            if ($value === null) {
-                $qb->andWhere($qb->expr()->isNull('scope.' . $field));
-            } else {
-                if ($value === self::IS_NOT_NULL) {
-                    $qb->andWhere($qb->expr()->isNotNull('scope.' . $field));
-                } else {
-                    $qb->andWhere($qb->expr()->eq('scope.' . $field, $value));
-                }
-            }
-        }
+        $qb = $this->getQbByCriteria($criteria);
 
         return new BufferedQueryResultIterator($qb);
     }
@@ -38,19 +27,33 @@ class ScopeRepository extends EntityRepository
      */
     public function findOneByCriteria(array $criteria)
     {
+        $qb = $this->getQbByCriteria($criteria);
+        $qb->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param array $criteria
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    protected function getQbByCriteria(array $criteria)
+    {
         $qb = $this->createQueryBuilder('scope');
         foreach ($criteria as $field => $value) {
             if ($value === null) {
                 $qb->andWhere($qb->expr()->isNull('scope.' . $field));
-            }
-            if ($value === self::IS_NOT_NULL) {
-                $qb->andWhere($qb->expr()->isNotNull('scope.' . $field));
             } else {
-                $qb->andWhere($qb->expr()->eq('scope.' . $field, $value));
+                if ($value === self::IS_NOT_NULL) {
+                    $qb->andWhere($qb->expr()->isNotNull('scope.' . $field));
+                } else {
+                    $paramName = 'param_' . $field;
+                    $qb->andWhere($qb->expr()->eq('scope.' . $field, ':'.$paramName));
+                    $qb->setParameter($paramName, $value);
+                }
             }
         }
-        $qb->setMaxResults(1);
 
-        return $qb->getQuery()->getSingleResult();
+        return $qb;
     }
 }

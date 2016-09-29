@@ -26,7 +26,6 @@ class ProductRepository extends AbstractVisibilityRepository
      */
     public function insertByCategory(InsertFromSelectQueryExecutor $executor, Scope $scope)
     {
-        var_dump("insertByCategory");
         $qb = $this->getEntityManager()
             ->getRepository('OroCatalogBundle:Category')
             ->createQueryBuilder('category');

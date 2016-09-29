@@ -4,11 +4,11 @@ namespace Oro\Bundle\VisibilityBundle\Model;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 
 class ProductVisibilityQueryBuilderModifier
 {
@@ -83,7 +83,7 @@ class ProductVisibilityQueryBuilderModifier
     {
         $scope = $this->scopeManager->find('product_visibility');
         if (!$scope) {
-            return '0';
+            $scope = 0;
         }
         $queryBuilder->leftJoin(
             'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved',
@@ -113,7 +113,7 @@ class ProductVisibilityQueryBuilderModifier
     ) {
         $scope = $this->scopeManager->find('account_group_product_visibility');
         if (!$scope) {
-            return '0';
+            $scope = 0;
         }
         $queryBuilder->leftJoin(
             'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
@@ -144,7 +144,7 @@ class ProductVisibilityQueryBuilderModifier
     {
         $scope = $this->scopeManager->find('account_product_visibility');
         if (!$scope) {
-            return '0';
+            $scope = 0;
         }
         $queryBuilder->leftJoin(
             'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',

@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CacheBuilder;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class VisibilityCacheBuildCommand extends ContainerAwareCommand
 {
@@ -21,12 +19,12 @@ class VisibilityCacheBuildCommand extends ContainerAwareCommand
     {
         $this
             ->setName(self::NAME)
-            ->addOption(
-                'website_id',
-                'w',
-                InputOption::VALUE_OPTIONAL,
-                'Website id for calculation cache'
-            )
+//            ->addOption(
+//                'website_id',
+//                'w',
+//                InputOption::VALUE_OPTIONAL,
+//                'Website id for calculation cache'
+//            )
             ->setDescription('Calculate product visibility cache.');
     }
 
@@ -39,26 +37,23 @@ class VisibilityCacheBuildCommand extends ContainerAwareCommand
         $cacheBuilder = $this->getContainer()->get('oro_account.visibility.cache.cache_builder');
 
         /** @var Website|null $website */
-        $website = null;
-        $forWebsiteStr = 'for all websites';
-        if (null !== $input->getOption('website_id')) {
-            $website = $this->getContainer()
-                ->get('doctrine')
-                ->getManagerForClass('OroWebsiteBundle:Website')
-                ->getRepository('OroWebsiteBundle:Website')
-                ->find((int)$input->getOption('website_id'));
-            if (!$website instanceof Website) {
-                $output->writeln('<error>Website id is not valid</error>');
-
-                return;
-            }
-            $forWebsiteStr = sprintf('for website "%s"', $website->getName());
-        }
-        $output->writeln(
-            sprintf('<info>Start the process of building the cache %s</info>', $forWebsiteStr)
-        );
-
-        $cacheBuilder->buildCache($website);
+//        $website = null;
+//        $forWebsiteStr = 'for all websites';
+//        if (null !== $input->getOption('website_id')) {
+//            $website = $this->getContainer()
+//                ->get('doctrine')
+//                ->getManagerForClass('OroWebsiteBundle:Website')
+//                ->getRepository('OroWebsiteBundle:Website')
+//                ->find((int)$input->getOption('website_id'));
+//            if (!$website instanceof Website) {
+//                $output->writeln('<error>Website id is not valid</error>');
+//
+//                return;
+//            }
+//            $forWebsiteStr = sprintf('for website "%s"', $website->getName());
+//        }
+        $output->writeln('<info>Start the process of building the cache</info>');
+        $cacheBuilder->buildCache();
         $output->writeln('<info>The cache is updated successfully</info>');
     }
 }

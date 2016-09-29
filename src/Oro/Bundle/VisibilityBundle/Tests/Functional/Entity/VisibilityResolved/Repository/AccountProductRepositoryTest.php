@@ -7,6 +7,7 @@ use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
@@ -26,14 +27,22 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
-        $where = ['account' => $account, 'product' => $product, 'website' => $website];
+        $scope = $this->scopeManager->findOrCreate(
+            'account_scope_visibility',
+            ['account' => $account, 'website' => $website]
+        );
+        $where = ['product' => $product, 'scope' => $scope];
         $this->assertFalse($repository->hasEntity($where));
+
+        $where['account'] = $account;
+
         $this->assertInsert(
             $this->entityManager,
             $repository,
             $where,
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-            BaseProductVisibilityResolved::SOURCE_CATEGORY
+            BaseProductVisibilityResolved::SOURCE_CATEGORY,
+            $scope
         );
         $this->assertUpdate(
             $this->entityManager,
@@ -50,7 +59,11 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
-        $resolvedVisibility = new AccountProductVisibilityResolved($website, $product, $account);
+        $scope = $this->scopeManager->findOrCreate(
+            'account_product_visibility',
+            ['account' => $account, 'website' => $website]
+        );
+        $resolvedVisibility = new AccountProductVisibilityResolved($scope, $product);
         $this->entityManager->persist($resolvedVisibility);
         $this->entityManager->flush($resolvedVisibility);
 
@@ -133,7 +146,7 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
      * @param AccountProductVisibilityResolved[] $visibilities
      * @param Product $product
      * @param Account $account
-     * @param Website $website
+     * @param Scope $scope
      *
      * @return AccountProductVisibilityResolved|null
      */
@@ -141,12 +154,12 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         $visibilities,
         Product $product,
         $account,
-        Website $website
+        Scope $scope
     ) {
         foreach ($visibilities as $visibility) {
             if ($visibility->getProduct()->getId() == $product->getId()
                 && $visibility->getAccount()->getId() == $account->getId()
-                && $visibility->getWebsite()->getId() == $website->getId()
+                && $visibility->getScope()->getId() == $scope->getId()
             ) {
                 return $visibility;
             }
@@ -162,8 +175,7 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
     {
         foreach ($sourceVisibilities as $visibility) {
             if ($resolveVisibility->getProduct()->getId() == $visibility->getProduct()->getId()
-                && $resolveVisibility->getAccount()->getId() == $visibility->getAccount()->getId()
-                && $resolveVisibility->getWebsite()->getId() == $visibility->getWebsite()->getId()
+                && $resolveVisibility->getScope()->getId() == $visibility->getScope()->getId()
             ) {
                 return $visibility;
             }

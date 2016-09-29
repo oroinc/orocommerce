@@ -3,16 +3,15 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
@@ -27,14 +26,20 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $accountGroup = $this->getReference(LoadGroups::GROUP1);
-        $where = ['accountGroup' => $accountGroup, 'product' => $product, 'website' => $website];
+        $scope = $this->scopeManager->findOrCreate(
+            'account_group_product_visibility',
+            ['accountGroup' => $accountGroup, 'website' => $website]
+        );
+        $where = ['product' => $product, 'scope' => $scope];
         $this->assertFalse($repository->hasEntity($where));
+        $where = ['accountGroup' => $accountGroup, 'product' => $product, 'scope' => $scope];
         $this->assertInsert(
             $this->entityManager,
             $repository,
             $where,
             BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-            BaseProductVisibilityResolved::SOURCE_STATIC
+            BaseProductVisibilityResolved::SOURCE_STATIC,
+            $scope->getId()
         );
         $this->assertUpdate(
             $this->entityManager,
@@ -59,11 +64,9 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
                 'expectedData' => [
                     [
                         'product' => LoadProductData::PRODUCT_7,
-                        'website' => LoadWebsiteData::WEBSITE1,
                     ],
                     [
                         'product' => LoadProductData::PRODUCT_8,
-                        'website' => LoadWebsiteData::WEBSITE1,
                     ],
                 ],
             ],
@@ -99,6 +102,9 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
         return ['expected_rows' => [6]];
     }
 
+    /**
+     * @return array
+     */
     public function clearTableDataProvider()
     {
         return ['expected_rows' => [8]];
@@ -118,7 +124,7 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
      * @param AccountGroupProductVisibilityResolved[] $visibilities
      * @param Product $product
      * @param AccountGroup $accountGroup
-     * @param Website $website
+     * @param Scope $scope
      *
      * @return AccountGroupProductVisibilityResolved|null
      */
@@ -126,12 +132,12 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
         $visibilities,
         Product $product,
         $accountGroup,
-        Website $website
+        Scope $scope
     ) {
         foreach ($visibilities as $visibility) {
             if ($visibility->getProduct()->getId() == $product->getId()
                 && $visibility->getAccountGroup()->getId() == $accountGroup->getId()
-                && $visibility->getWebsite()->getId() == $website->getId()
+                && $visibility->getScope()->getId() == $scope->getId()
             ) {
                 return $visibility;
             }
@@ -150,7 +156,7 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
         foreach ($sourceVisibilities as $visibility) {
             if ($resolveVisibility->getProduct()->getId() == $visibility->getProduct()->getId()
                 && $resolveVisibility->getAccountGroup()->getId() == $visibility->getAccountGroup()->getId()
-                && $resolveVisibility->getWebsite()->getId() == $visibility->getWebsite()->getId()
+                && $resolveVisibility->getScope()->getId() == $visibility->getScope()->getId()
             ) {
                 return $visibility;
             }
@@ -186,9 +192,8 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
     public function findByPrimaryKey($visibilityResolved)
     {
         return $this->getRepository()->findByPrimaryKey(
-            $visibilityResolved->getAccountGroup(),
             $visibilityResolved->getProduct(),
-            $visibilityResolved->getWebsite()
+            $visibilityResolved->getScope()
         );
     }
 }

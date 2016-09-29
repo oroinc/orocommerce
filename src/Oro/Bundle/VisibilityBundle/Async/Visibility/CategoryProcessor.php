@@ -4,14 +4,15 @@ namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\CatalogBundle\Model\CategoryMessageFactory;
+use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CacheBuilder;
-use Oro\Bundle\CatalogBundle\Model\CategoryMessageFactory;
-use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -46,24 +47,32 @@ class CategoryProcessor implements MessageProcessorInterface
     protected $cacheBuilder;
 
     /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
+    /**
      * @param ManagerRegistry $registry
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      * @param LoggerInterface $logger
      * @param CategoryMessageFactory $messageFactory
      * @param CacheBuilder $cacheBuilder
+     * @param ScopeManager $scopeManager
      */
     public function __construct(
         ManagerRegistry $registry,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
         LoggerInterface $logger,
         CategoryMessageFactory $messageFactory,
-        CacheBuilder $cacheBuilder
+        CacheBuilder $cacheBuilder,
+        ScopeManager $scopeManager
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
         $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
+        $this->scopeManager = $scopeManager;
     }
 
     /**
@@ -113,9 +122,12 @@ class CategoryProcessor implements MessageProcessorInterface
 
     protected function setToDefaultProductVisibilityWithoutCategory()
     {
-        $this->registry->getManagerForClass(ProductVisibility::class)
-            ->getRepository(ProductVisibility::class)
-            ->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor);
+        $scopes = $this->scopeManager->findRelatedScopes('product_visibility');
+        $repository = $this->registry->getManagerForClass(ProductVisibility::class)
+            ->getRepository(ProductVisibility::class);
+        foreach ($scopes as $scope) {
+            $repository->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor, $scope);
+        }
     }
 
     protected function setToDefaultAccountGroupProductVisibilityWithoutCategory()

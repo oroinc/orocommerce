@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\Visibility\Repository;
 
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository;
 
 /**
  * @dbIsolation
@@ -47,12 +48,14 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
         $category = $this->getReference($categoryName);
         $this->deleteCategory($category);
         $queryHelper = $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
-        $this->repository->setToDefaultWithoutCategory($queryHelper);
-        $actual = $this->getProductsByVisibilities();
-
-        $this->assertSameSize($expected, $actual);
-        foreach ($actual as $value) {
-            $this->assertContains($value, $expected);
+        $scopes = $this->getContainer()->get('oro_scope.scope_manager')->findRelatedScopes('product_visibility');
+        foreach ($scopes as $scope) {
+            $this->repository->setToDefaultWithoutCategory($queryHelper, $scope);
+            $actual = $this->getProductsByVisibilities($scope);
+            $this->assertSameSize($expected, $actual);
+            foreach ($actual as $value) {
+                $this->assertContains($value, $expected);
+            }
         }
     }
 
@@ -67,38 +70,34 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
                 'expected' => [
                     [
                         'product' => 'product.1',
-                        'website' => 'Default',
                         'visibility' => ProductVisibility::CONFIG
                     ],
-
                     [
                         'product' => 'product.2',
-                        'website' => 'Default',
                         'visibility' => ProductVisibility::VISIBLE
                     ],
                     [
                         'product' => 'product.3',
-                        'website' => 'Default',
                         'visibility' => ProductVisibility::VISIBLE
                     ],
                     [
                         'product' => 'product.4',
-                        'website' => 'Default',
                         'visibility' => ProductVisibility::HIDDEN
                     ],
                     [
                         'product' => 'product.5',
-                        'website' => 'Default',
+                        'visibility' => ProductVisibility::CONFIG
+                    ],
+                    [
+                        'product' => 'product.6',
                         'visibility' => ProductVisibility::CONFIG
                     ],
                     [
                         'product' => 'product.7',
-                        'website' => 'Default',
                         'visibility' => ProductVisibility::CONFIG
                     ],
                     [
                         'product' => 'product.8',
-                        'website' => 'Default',
                         'visibility' => ProductVisibility::CONFIG
                     ],
                 ]
@@ -107,31 +106,21 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
     }
 
     /**
+     * @param Scope $scope
      * @return array
      */
-    protected function getProductsByVisibilities()
+    protected function getProductsByVisibilities(Scope $scope)
     {
-        $website = $this->getDefaultWebsite();
+        $visibilities = $this->repository->findBy(['scope' => $scope]);
+
         return array_map(
             function (ProductVisibility $visibility) {
                 return [
                     'product' => $visibility->getProduct()->getSku(),
-                    'website' => $visibility->getWebsite()->getName(),
                     'visibility' => $visibility->getVisibility()
                 ];
             },
-            $this->repository->findBy(['website' => $website])
+            $visibilities
         );
-    }
-
-    /**
-     * @return \Oro\Bundle\WebsiteBundle\Entity\Website
-     */
-    protected function getDefaultWebsite()
-    {
-        return $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroWebsiteBundle:Website')
-            ->getDefaultWebsite();
     }
 }

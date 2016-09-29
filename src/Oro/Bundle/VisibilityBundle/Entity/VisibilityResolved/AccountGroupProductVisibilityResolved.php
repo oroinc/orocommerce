@@ -34,14 +34,14 @@ class AccountGroupProductVisibilityResolved extends BaseProductVisibilityResolve
     protected $sourceProductVisibility;
 
     /**
-     * @param Website $website
+     * @param Website $scope
      * @param Product $product
      * @param AccountGroup $accountGroup
      */
-    public function __construct(Website $website, Product $product, AccountGroup $accountGroup)
+    public function __construct(Website $scope, Product $product, AccountGroup $accountGroup)
     {
         $this->accountGroup = $accountGroup;
-        parent::__construct($website, $product);
+        parent::__construct($scope, $product);
     }
 
     /**

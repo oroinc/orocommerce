@@ -45,14 +45,6 @@ class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
     protected $product;
 
     /**
-     * @var Website
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $website;
-
-    /**
      * @var Scope
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")

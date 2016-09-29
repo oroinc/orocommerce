@@ -7,18 +7,16 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageFactory;
-use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\AccountBundle\Tests\Functional\MessageQueueTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageFactory;
+use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -27,9 +25,6 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 class ProductVisibilityListenerTest extends WebTestCase
 {
     use MessageQueueTrait;
-
-    /** @var  Website */
-    protected $website;
 
     /** @var  Product */
     protected $product;
@@ -56,7 +51,6 @@ class ProductVisibilityListenerTest extends WebTestCase
         ]);
 
         $this->registry = $this->client->getContainer()->get('doctrine');
-        $this->website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->accountGroup = $this->getReference(LoadGroups::GROUP1);
         $this->account = $this->getReference('account.level_1');
@@ -76,7 +70,6 @@ class ProductVisibilityListenerTest extends WebTestCase
     {
         // Create new product visibility entity
         $visibility = new ProductVisibility();
-        $visibility->setWebsite($this->website);
         $visibility->setProduct($this->product);
         $visibility->setVisibility(ProductVisibility::HIDDEN);
 
@@ -139,7 +132,6 @@ class ProductVisibilityListenerTest extends WebTestCase
     {
         // Create new account group product visibility entity
         $visibility = new AccountGroupProductVisibility();
-        $visibility->setWebsite($this->website);
         $visibility->setProduct($this->product);
         $visibility->setAccountGroup($this->accountGroup);
         $visibility->setVisibility(ProductVisibility::HIDDEN);
@@ -198,7 +190,6 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeAccountProductVisibilityToHidden()
     {
         $visibility = new AccountProductVisibility();
-        $visibility->setWebsite($this->website);
         $visibility->setProduct($this->product);
         $visibility->setAccount($this->account);
         $visibility->setVisibility(ProductVisibility::HIDDEN);

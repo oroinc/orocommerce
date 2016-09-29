@@ -4,11 +4,6 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\VisibilityResolved
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
-use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\AccountBundle\Tests\Functional\Entity\Repository\ResolvedEntityRepositoryTestTrait;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -16,7 +11,13 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository as ProductEntityRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -44,11 +45,18 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected $website;
 
+    /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
     protected function setUp()
     {
         $this->initClient();
 
         $this->website = $this->getWebsiteRepository()->getDefaultWebsite();
+
+        $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
 
         $this->entityManager = $this->getResolvedVisibilityManager();
         $this->repository = $this->entityManager
@@ -59,10 +67,11 @@ class ProductRepositoryTest extends WebTestCase
 
     public function testClearTableByWebsite()
     {
-        $defaultWebsiteProductVisibilitiesCount = count($this->repository->findBy(['website' => $this->website]));
+        $scope = $this->scopeManager->findOrCreate('product_visibility', ['website' => $this->website]);
+        $defaultWebsiteProductVisibilitiesCount = count($this->repository->findBy(['scope' => $scope]));
 
-        $deleted = $this->repository->clearTable($this->website);
-        $actual = $this->repository->findBy(['website' => $this->website]);
+        $deleted = $this->repository->clearTable($scope);
+        $actual = $this->repository->findBy(['scope' => $scope]);
 
         $this->assertEmpty($actual);
         $this->assertSame($defaultWebsiteProductVisibilitiesCount, $deleted);
@@ -73,14 +82,15 @@ class ProductRepositoryTest extends WebTestCase
         /** @var ProductVisibilityResolved $actualEntity */
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $entity = new ProductVisibilityResolved($website, $product);
+        $scope = $this->scopeManager->findOrCreate('product_visibility', ['website' => $website]);
+        $entity = new ProductVisibilityResolved($scope, $product);
         $this->getResolvedVisibilityManager()->persist($entity);
         $this->getResolvedVisibilityManager()->flush();
 
         $actualEntity = $this->repository->findOneBy([]);
         $expectedEntity = $this->repository->findByPrimaryKey(
             $actualEntity->getProduct(),
-            $actualEntity->getWebsite()
+            $actualEntity->getScope()
         );
 
         $this->assertEquals(spl_object_hash($expectedEntity), spl_object_hash($actualEntity));
@@ -109,8 +119,10 @@ class ProductRepositoryTest extends WebTestCase
     {
         $this->repository->clearTable();
 
-        $this->repository->insertByCategory($this->getInsertFromSelectExecutor());
-
+        $scopes = $this->scopeManager->findRelatedScopes('product_visibility');
+        foreach ($scopes as $scope) {
+            $this->repository->insertByCategory($this->getInsertFromSelectExecutor(), $scope);
+        }
         $actual = $this->getActualArray();
 
         $this->assertCount(24, $actual);
@@ -268,7 +280,7 @@ class ProductRepositoryTest extends WebTestCase
     {
         return $this->repository->createQueryBuilder('pvr')
             ->select(
-                'IDENTITY(pvr.website) as website',
+                'IDENTITY(pvr.scope) as scope',
                 'IDENTITY(pvr.product) as product',
                 'IDENTITY(pvr.sourceProductVisibility) as sourceProductVisibility',
                 'pvr.visibility as visibility',

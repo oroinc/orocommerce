@@ -4,7 +4,6 @@ namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
 
 /**
@@ -21,19 +20,22 @@ trait ResolvedEntityRepositoryTestTrait
      * @param array $where
      * @param int $visibility
      * @param int $source
+     * @param $scope
      */
     protected function assertInsert(
         EntityManager $manager,
         EntityRepository $repository,
         array $where,
         $visibility,
-        $source
+        $source,
+        $scope
     ) {
         $insert = [
             'sourceProductVisibility' => null,
             'visibility' => $visibility,
             'source' => $source,
             'category' => null,
+            'scope' => $scope
         ];
         $repository->insertEntity(array_merge($where, $insert));
         $this->assertTrue($repository->hasEntity($where));

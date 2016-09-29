@@ -5,8 +5,8 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity(
@@ -36,14 +36,13 @@ class AccountProductVisibilityResolved extends BaseProductVisibilityResolved
     protected $sourceProductVisibility;
 
     /**
-     * @param Website $website
+     * @param Scope $scope
      * @param Product $product
-     * @param Account $account
      */
-    public function __construct(Website $website, Product $product, Account $account)
+    public function __construct(Scope $scope, Product $product)
     {
-        $this->account = $account;
-        parent::__construct($website, $product);
+        $this->account = $scope->getAccount();
+        parent::__construct($scope, $product);
     }
 
     /**

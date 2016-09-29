@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
 
 /**
  * @dbIsolation
@@ -37,9 +37,8 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
         }
 
         $expectedEntity = $this->repository->findByPrimaryKey(
-            $actualEntity->getAccountGroup(),
             $actualEntity->getProduct(),
-            $actualEntity->getWebsite()
+            $actualEntity->getScope()
         );
 
         $this->assertEquals(spl_object_hash($expectedEntity), spl_object_hash($actualEntity));
