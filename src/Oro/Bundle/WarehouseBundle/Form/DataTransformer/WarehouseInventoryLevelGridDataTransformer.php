@@ -60,7 +60,6 @@ class WarehouseInventoryLevelGridDataTransformer implements DataTransformerInter
             $precision = $this->getPrecision((int)$precisionId);
 
             if (!$precision) {
-                unset($value[$precisionId]);
                 continue;
             }
 
