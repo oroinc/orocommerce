@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Resolver;
 
-use Oro\Bundle\WebsiteSearchBundle\Engine\EntityDependenciesResolver;
+use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolver;
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 

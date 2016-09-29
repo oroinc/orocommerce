@@ -33,11 +33,6 @@ class IndexationRequestListener implements OptionalListenerInterface
     protected $changedEntities = [];
 
     /**
-     * @var SearchMappingProvider
-     */
-    protected $mappingProvider;
-
-    /**
      * @var EventDispatcherInterface
      */
     protected $dispatcher;

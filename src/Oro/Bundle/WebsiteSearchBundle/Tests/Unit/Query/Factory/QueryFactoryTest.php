@@ -15,9 +15,6 @@ class QueryFactoryTest extends \PHPUnit_Framework_TestCase
     /** @var QueryFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $queryFactory;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockBuilder */
-    protected $eventDispatcher;
-
     /** @var EngineV2Interface|\PHPUnit_Framework_MockObject_MockBuilder */
     protected $engine;
 
@@ -27,7 +24,6 @@ class QueryFactoryTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->queryFactory    = $this->getMock(QueryFactoryInterface::class);
-        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
         $this->engine          = $this->getMock(EngineV2Interface::class);
         $this->grid            = $this->getMock(DatagridInterface::class);
     }
@@ -54,7 +50,7 @@ class QueryFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('create')
             ->with($this->grid, $configForBackendSearch);
 
-        $factory = new QueryFactory($this->queryFactory, $this->eventDispatcher, $this->engine);
+        $factory = new QueryFactory($this->queryFactory, $this->engine);
 
         $factory->create($this->grid, $configForBackendSearch);
 

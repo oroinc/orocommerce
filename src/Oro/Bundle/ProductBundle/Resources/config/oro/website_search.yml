@@ -1,27 +1,36 @@
 Oro\Bundle\ProductBundle\Entity\Product:
-    alias: oro_product_product_WEBSITE_ID
+    alias: oro_product_WEBSITE_ID
     fields:
-        -
+        title:
             name: title_LOCALIZATION_ID
             type: text
-        -
+        sku:
             name: sku
             type: text
-        -
+        description:
             name: description_LOCALIZATION_ID
             type: text
-        -
+        short_desc:
             name: short_desc_LOCALIZATION_ID
             type: text
-        -
+        minimum_price:
             name: minimum_price
             type: decimal
-        -
+        is_visible_by_default:
             name: is_visible_by_default
             type: integer
-        -
+        visibility_anonymous:
             name: visibility_anonymous
             type: integer
-        -
+        visibility_new:
             name: visibility_new
             type: integer
+        status:
+            name: status
+            type: text
+        inventory_status:
+            name: status
+            type: text
+        all_text:
+            name: all_text_LOCALIZATION_ID
+            type: text
