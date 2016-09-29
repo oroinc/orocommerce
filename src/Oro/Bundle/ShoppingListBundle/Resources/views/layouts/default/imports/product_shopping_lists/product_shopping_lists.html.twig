@@ -43,7 +43,7 @@
                         {count: lineItem.quantity},
                         lineItem.quantity
                     ),
-                    shoppingList: currentShoppingList.shopping_list_label
+                    shoppingList: currentShoppingList.label
             }) %></span>
         </div>
         <div class="shopping-lists__ui-row">
@@ -53,7 +53,7 @@
                             title="{{ 'Edit'|trans }}"
                             class="actions-row__button"
                             data-role="edit-line-item"
-                            data-line-item-id="<%= lineItem.line_item_id %>"
+                            data-line-item-id="<%= lineItem.id %>"
                     >
                         <i class="actions-row__icon cf-pencil"></i>
                     </button>
@@ -85,6 +85,7 @@
             createOnEvent: 'click',
             options: {
                 template: utils.underscoreRaw('<%#' ~ shoppingListsTemplate ~ '#%>'),
+                shoppingLists: shoppingLists,
                 quantityComponentOptions: {
                     dataKey: constant('Oro\\Bundle\\ProductBundle\\Form\\Type\\FrontendLineItemType::NAME'),
                     enable: resource_granted('oro_shopping_list_frontend_update'),
@@ -99,7 +100,7 @@
 {% block __product_shopping_lists__shopping_lists_popup_template_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import 'OroFrontendBundle:layouts/default:utils.html.twig' as utils %}
-    <div>
+    <div class="shopping-lists-outer">
         <table class="shopping-lists-popup">
             <thead class="shopping-lists-popup__headline">
             <tr class="shopping-lists-popup__item">
@@ -111,7 +112,7 @@
             <% _.each(shoppingLists, function(list) { %>
             <tr class="shopping-lists-popup__item">
                 <td class="shopping-lists-popup__list">
-                    <a class="shopping-lists-popup__link" href="#"><%= list.shopping_list_label %></a>
+                    <a class="shopping-lists-popup__link" href="#"><%= list.label %></a>
                 </td>
                 <td class="shopping-lists-popup__quantity">
                     <% var ListLineItems = list.line_items; %>
@@ -132,7 +133,7 @@
                                     },
                                     save_api_accessor: {
                                         default_route_parameters: {
-                                            id: '<%=lineItem.line_item_id %>'
+                                            id: '<%=lineItem.id %>'
                                         },
                                         route: 'oro_api_shopping_list_frontend_put_line_item'
                                     },
@@ -140,8 +141,8 @@
                                         showErrorsHandler: 'oroshoppinglist/js/shopping-list-item-errors-handler'
                                     },
                                     triggerData: {
-                                        lineItemId: '<%= lineItem.line_item_id %>',
-                                        shoppingListId: '<%= list.shopping_list_id %>'
+                                        lineItemId: '<%= lineItem.id %>',
+                                        shoppingListId: '<%= list.id %>'
                                     }
                                 }
                             })) }}>
@@ -170,10 +171,10 @@
                                                             options: {
                                                                 route: 'oro_api_shopping_list_frontend_delete_line_item',
                                                                 routeParams: {
-                                                                    id: '<%= lineItem.line_item_id %>'
+                                                                    id: '<%= lineItem.id %>'
                                                                 },
                                                                 triggerData: {
-                                                                    lineItemId: '<%= lineItem.line_item_id %>'
+                                                                    lineItemId: '<%= lineItem.id %>'
                                                                 },
                                                                 confirmMessage: 'oro.frontend.shoppinglist.messages.line_item_delete_confirm'|trans,
                                                                 sucsessMessage: 'oro.frontend.shoppinglist.messages.line_item_deleted'|trans,
@@ -190,8 +191,9 @@
                                 <ul class="shopping-lists-modify hidden"
                                     data-role="line-item-edit">
                                     <li class="shopping-lists-modify__text">
-                                        <input class="shopping-lists-modify__input input input_xs"
+                                        <input class="shopping-lists-modify__input input"
                                                type="number"
+                                               min="1"
                                                value="<%= lineItem.quantity %>"
                                                name="quantity"
                                                data-role="field__quantity"
@@ -238,6 +240,61 @@
             <% }); %>
             </tbody>
         </table>
+        <div class="shopping-lists-popup__footer">
+            <form method="post" class="shopping-lists-popup__item" data-role="add-form">
+                <div class="shopping-lists-popup__list">
+                    <select class="oro-select2 oro-select2--size-s" name="list" data-role="add-form-shopping-list">
+                        <option value="0">{{ 'oro.shoppinglist.actions.choose_list'|trans }}</option>
+                        <% if (!_.isEmpty(shoppingListsCollection)) { %>
+                        <% _.each(shoppingListsCollection, function(list) { %>
+                        <option value="<%= list.id %>"><%= list.label %></option>
+                        <% }); %>
+                        <% } %>
+                    </select>
+                </div>
+                <div class="shopping-lists-popup__quantity">
+                    <div class="shopping-lists-units">
+                        <ul class="shopping-lists-modify"
+                            data-role="line-item-edit">
+                            <li class="shopping-lists-modify__text">
+                                <input class="shopping-lists-modify__input input"
+                                       type="number"
+                                       min="1" 
+                                       value="1"
+                                       name="oro_product_frontend_line_item[quantity]"
+                                       data-role="add-form-qty">
+                            </li>
+                            <li class="shopping-lists-modify__select">
+                                <select class="oro-select2 oro-select2--size-s" name="oro_product_frontend_line_item[unit]" data-role="add-form-unit">
+                                    <% _.each(productUnits, function(unit) { %>
+                                    <option value="<%= unit %>"><%= unit %></option>
+                                    <% }); %>
+                                </select>
+                            </li>
+                            <li class="shopping-lists-modify__badges">
+                                <span class="shopping-lists-modify__edit">
+                                    <button class="shopping-lists-modify__button badge badge_sm badge_orange badge_circled-corners"
+                                            type="button"
+                                            title="{{ 'Accept'|trans }}"
+                                            data-role="add-form-accept">
+                                            <i class="shopping-lists-modify__icon cf-check"></i>
+                                    </button>
+                                </span>
+                                <span class="shopping-lists-modify__edit">
+                                    <button class="shopping-lists-modify__button badge badge_sm badge_l-dark badge_circled-corners"
+                                            type="reset"
+                                            title="{{ 'Decline'|trans }}"
+                                            data-role="add-form-reset">
+                                            <i class="shopping-lists-modify__icon cf-clear"></i>
+                                    </button>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <input type="hidden" name="oro_product_frontend_line_item[_token]" value="{{ csrf_token('oro_product_frontend_line_item') }}">
+            </form>
+        </div>
         <div class="widget-actions">
             <button class="btn theme-btn btn-orange" type="reset">{{ 'Close'|trans }}</button>
         </div>

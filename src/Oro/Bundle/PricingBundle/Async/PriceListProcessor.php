@@ -93,7 +93,6 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
             if ($builtCPLs) {
                 $this->dispatchEvent($builtCPLs);
             }
-
         } catch (InvalidArgumentException $e) {
             $this->logger->error(
                 sprintf(
@@ -137,6 +136,6 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::PRICE_LIST_CHANGE];
+        return [Topics::RESOLVE_COMBINED_PRICES];
     }
 }

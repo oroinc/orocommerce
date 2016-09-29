@@ -65,7 +65,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
                 'deletedGroupReference' => 'account_group.group1',
                 'expectedMessages' => [
                     [
-                        'topic' => Topics::REBUILD_PRICE_LISTS,
+                        'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                         'message' => [
                             PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
                             PriceListRelationTrigger::ACCOUNT => 'account.level_1.3',
@@ -77,7 +77,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
                 'deletedGroupReference' => 'account_group.group2',
                 'expectedMessages' => [
                     [
-                        'topic' => Topics::REBUILD_PRICE_LISTS,
+                        'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                         'message' => [
                             PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
                             PriceListRelationTrigger::ACCOUNT => 'account.level_1.2',

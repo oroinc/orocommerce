@@ -1,12 +1,11 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
+namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -20,14 +19,14 @@ class ShippingRuleRepositoryTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], static::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
             LoadShippingRules::class,
         ]);
 
-        $this->repository = $this->getContainer()->get('doctrine')->getRepository('OroShippingBundle:ShippingRule');
+        $this->repository = static::getContainer()->get('doctrine')->getRepository('OroShippingBundle:ShippingRule');
     }
 
     /**
@@ -40,17 +39,37 @@ class ShippingRuleRepositoryTest extends WebTestCase
     public function testGetOrderedRulesByCurrency($currency, $country, array $expectedRules)
     {
         /** @var ShippingRule[]|array $expectedShippingRule */
-        $expectedShippingRule = $this->getEntitiesByReferences($expectedRules);
+        $expectedShippingRules = $this->getEntitiesByReferences($expectedRules);
         /** @var ShippingRule $expectedShippingRule */
-        $expectedShippingRule = $expectedShippingRule[0];
+        $expectedShippingRule = $expectedShippingRules[0];
         $shippingRules = $this->repository->getEnabledOrderedRulesByCurrencyAndCountry(
             $currency,
-            $this->findCountry($country)
+            $country
         );
 
-        $this->assertTrue(false !== strpos(serialize($shippingRules), $expectedShippingRule->getName()));
-        $this->assertTrue(false !== strpos(serialize($shippingRules), $expectedShippingRule->getCurrency()));
-        $this->assertTrue(false !== strpos(serialize($shippingRules), $expectedShippingRule->getConditions()));
+        static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getName()));
+        static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getCurrency()));
+        static::assertNotFalse(strpos(serialize($shippingRules), $expectedShippingRule->getConditions()));
+    }
+
+    public function testGetRulesWithoutShippingMethods()
+    {
+        $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();
+        $enabledRulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods(true);
+
+        static::assertCount(2, $rulesWithoutShippingMethods);
+        static::assertCount(1, $enabledRulesWithoutShippingMethods);
+    }
+
+    public function testDisableRulesWithoutShippingMethods()
+    {
+        $this->repository->disableRulesWithoutShippingMethods();
+
+        $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();
+        $enabledRulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods(true);
+
+        static::assertCount(2, $rulesWithoutShippingMethods);
+        static::assertCount(0, $enabledRulesWithoutShippingMethods);
     }
 
     /**
@@ -89,16 +108,5 @@ class ShippingRuleRepositoryTest extends WebTestCase
         return array_map(function ($ruleReference) {
             return $this->getReference($ruleReference);
         }, $rules);
-    }
-
-    /**
-     * @param string $isoCode
-     * @return Country
-     */
-    protected function findCountry($isoCode)
-    {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAddressBundle:Country')
-            ->find('OroAddressBundle:Country', $isoCode);
     }
 }
