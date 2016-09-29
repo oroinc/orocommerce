@@ -22,10 +22,10 @@ elements:
         ZIP: 'oro_shipping_rule[destinations][0][postalCode]'
         ZIP1: 'oro_shipping_rule[destinations][1][postalCode]'
         ZIP2: 'oro_shipping_rule[destinations][2][postalCode]'
-        Congif Enable: 'oro_shipping_rule[configurations][0][enabled]'
-        Price: 'oro_shipping_rule[configurations][0][value]'
-        HandlingFee: 'oro_shipping_rule[configurations][0][handlingFeeValue]'
-        Type:  'oro_shipping_rule[configurations][0][processingType]'
+        Config Enable: 'oro_shipping_rule[methodConfigs][0][typeConfigs][0][enabled]'
+        Price: 'oro_shipping_rule[methodConfigs][0][typeConfigs][0][options][price]'
+        HandlingFee: 'oro_shipping_rule[methodConfigs][0][typeConfigs][0][options][handling_fee]'
+        Type:  'oro_shipping_rule[methodConfigs][0][typeConfigs][0][options][type]'
 
   Address:
     selector: 'div#container'

@@ -3,10 +3,13 @@ shipping_rule.1:
     priority: 0
     conditions: 'true'
     currency: 'EUR'
-    configurations:
+    methodConfigs:
          -
-            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER'
-            value: 10
+            typeConfigs:
+                -
+                    options:
+                        type: 'per_order'
+                        price: 10
     destinations:
         -
             postalCode: '12345'
@@ -17,10 +20,13 @@ shipping_rule.2:
     priority: 1
     conditions: 'true'
     currency: 'EUR'
-    configurations:
+    methodConfigs:
          -
-            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
-            value: 10
+            typeConfigs:
+                -
+                    options:
+                        type: 'per_item'
+                        price: 10
     destinations:
         -
             country: 'US'
@@ -32,10 +38,13 @@ shipping_rule.3:
     priority: 2
     conditions: 'true'
     currency: 'EUR'
-    configurations:
+    methodConfigs:
          -
-            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER'
-            value: 10
+            typeConfigs:
+                -
+                    options:
+                        type: 'per_item'
+                        price: 10
     destinations:
         -
             country: 'US'
@@ -47,10 +56,13 @@ shipping_rule.4:
     priority: 2
     conditions: 'true'
     currency: 'EUR'
-    configurations:
+    methodConfigs:
          -
-            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
-            value: 10
+            typeConfigs:
+                -
+                    options:
+                        type: 'per_item'
+                        price: 10
     destinations:
         -
             postalCode: '12345, 12346'
@@ -61,19 +73,25 @@ shipping_rule.5:
     priority: 2
     conditions: 'true'
     currency: 'EUR'
-    configurations:
+    methodConfigs:
          -
-            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
-            value: 10
+            typeConfigs:
+                -
+                    options:
+                        type: 'per_item'
+                        price: 10
 shipping_rule.6:
     enabled: true
     priority: 2
     conditions: 'true'
     currency: 'EUR'
-    configurations:
+    methodConfigs:
          -
-            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
-            value: 10
+            typeConfigs:
+                -
+                    options:
+                        type: 'per_item'
+                        price: 10
     destinations:
         -
             country: 'FR'
@@ -82,10 +100,13 @@ shipping_rule.7:
     priority: 3
     conditions: 'true'
     currency: 'USD'
-    configurations:
+    methodConfigs:
          -
-            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ITEM'
-            value: 10
+            typeConfigs:
+                -
+                    options:
+                        type: 'per_item'
+                        price: 10
     destinations:
         -
             postalCode: '12346'
@@ -96,7 +117,20 @@ shipping_rule.8:
     priority: 0
     conditions: 'true'
     currency: 'USD'
-    configurations:
+    methodConfigs:
          -
-            processingType: 'FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER'
-            value: 10
+            typeConfigs:
+                -
+                    options:
+                        type: 'per_order'
+                        price: 10
+shipping_rule.9:
+    enabled: true
+    priority: 0
+    conditions: 'true'
+    currency: 'UAH'
+shipping_rule.10:
+    enabled: false
+    priority: 0
+    conditions: 'true'
+    currency: 'UAH'
