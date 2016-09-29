@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Form;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
+use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
-use Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Form;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @dbIsolation
  */
 class ShippingRuleControllerTest extends WebTestCase
@@ -39,7 +39,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->assertEquals($this->getUrl('oro_shipping_rule_create'), $href);
 
         $response = $this->client->requestGrid([
-            'gridName'                         => 'shipping-rule-grid',
+            'gridName' => 'shipping-rule-grid',
             'shipping-rule-grid[_sort_by][id]' => 'ASC',
         ]);
 
@@ -51,16 +51,16 @@ class ShippingRuleControllerTest extends WebTestCase
         $shippingRule = $this->getReference('shipping_rule.1');
 
         $expectedData = [
-            'data'    => [
+            'data' => [
                 [
-                    'id'             => $shippingRule->getId(),
-                    'name'           => $shippingRule->getName(),
-                    'enabled'        => $shippingRule->isEnabled(),
-                    'priority'       => $shippingRule->getPriority(),
-                    'currency'       => $shippingRule->getCurrency(),
-                    'conditions'     => $shippingRule->getConditions(),
-                    'configurations' => implode('</br>', $shippingRule->getConfigurations()->getValues()),
-                    'destinations'   => implode('</br>', $shippingRule->getDestinations()->getValues()),
+                    'id' => $shippingRule->getId(),
+                    'name' => $shippingRule->getName(),
+                    'enabled' => $shippingRule->isEnabled(),
+                    'priority' => $shippingRule->getPriority(),
+                    'currency' => $shippingRule->getCurrency(),
+                    'conditions' => $shippingRule->getConditions(),
+                    'methodConfigs' => implode('</br>', $shippingRule->getMethodConfigs()->getValues()),
+                    'destinations' => implode('</br>', $shippingRule->getDestinations()->getValues()),
                 ],
             ],
             'columns' => [
@@ -70,7 +70,7 @@ class ShippingRuleControllerTest extends WebTestCase
                 'priority',
                 'currency',
                 'conditions',
-                'configurations',
+                'methodConfigs',
                 'destinations',
                 'delete_link',
                 'disable_link',
@@ -97,7 +97,6 @@ class ShippingRuleControllerTest extends WebTestCase
                 $this->assertEquals($value, $data[$i][$key]);
             }
         }
-
     }
 
     public function testIndexWithoutCreate()
@@ -137,13 +136,21 @@ class ShippingRuleControllerTest extends WebTestCase
                 'region' => 'FR-75'
             ]
         ];
-        $formValues['oro_shipping_rule']['configurations'] = [
+        $formValues['oro_shipping_rule']['methodConfigs'] = [
             [
-                'enabled' => true,
-                'method' => FlatRateShippingMethod::NAME,
-                'type' => FlatRateShippingMethod::NAME,
-                'value' => 12,
-                'processingType' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
+                'method' => FlatRateShippingMethod::IDENTIFIER,
+                'options' => [],
+                'typeConfigs' => [
+                    [
+                        'enabled' => '1',
+                        'type' => FlatRateShippingMethodType::IDENTIFIER,
+                        'options' => [
+                            FlatRateShippingMethodType::PRICE_OPTION => 12,
+                            FlatRateShippingMethodType::HANDLING_FEE_OPTION => null,
+                            FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ITEM_TYPE,
+                        ],
+                    ]
+                ]
             ]
         ];
 
@@ -183,9 +190,8 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->assertContains($shippingRule->getCurrency(), $html);
         $destination = $shippingRule->getDestinations();
         $this->assertContains((string)$destination[0], $html);
-        $configurations = $shippingRule->getConfigurations();
-        $this->assertContains($configurations[0]->getType(), $html);
-        $this->assertContains($configurations[0]->getMethod(), $html);
+        $methodConfigs = $shippingRule->getMethodConfigs();
+        $this->assertContains($methodConfigs[0]->getMethod(), $html);
     }
 
     /**
@@ -222,13 +228,21 @@ class ShippingRuleControllerTest extends WebTestCase
                 'region' => 'TH-83'
             ]
         ];
-        $formValues['oro_shipping_rule']['configurations'] = [
+        $formValues['oro_shipping_rule']['methodConfigs'] = [
             [
-                'enabled' => true,
-                'method' => FlatRateShippingMethod::NAME,
-                'type' => FlatRateShippingMethod::NAME,
-                'value' => 12,
-                'processingType' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
+                'method' => FlatRateShippingMethod::IDENTIFIER,
+                'options' => [],
+                'typeConfigs' => [
+                    [
+                        'enabled' => '1',
+                        'type' => FlatRateShippingMethodType::IDENTIFIER,
+                        'options' => [
+                            FlatRateShippingMethodType::PRICE_OPTION => 24,
+                            FlatRateShippingMethodType::HANDLING_FEE_OPTION => null,
+                            FlatRateShippingMethodType::TYPE_OPTION => FlatRateShippingMethodType::PER_ORDER_TYPE,
+                        ],
+                    ]
+                ]
             ]
         ];
 
@@ -246,10 +260,12 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->assertEquals('TH', $destination[0]->getCountry()->getIso2Code());
         $this->assertEquals('TH-83', $destination[0]->getRegion()->getCombinedCode());
         $this->assertEquals('54321', $destination[0]->getPostalCode());
-        $configurations = $shippingRule->getConfigurations();
-        $this->assertEquals(FlatRateShippingMethod::NAME, $configurations[0]->getMethod());
-        $this->assertEquals(FlatRateShippingMethod::NAME, $configurations[0]->getType());
-        $this->assertEquals(12, $configurations[0]->getValue());
+        $methodConfigs = $shippingRule->getMethodConfigs();
+        $this->assertEquals(FlatRateShippingMethod::IDENTIFIER, $methodConfigs[0]->getMethod());
+        $this->assertEquals(
+            24,
+            $methodConfigs[0]->getTypeConfigs()[0]->getOptions()[FlatRateShippingMethodType::PRICE_OPTION]
+        );
         $this->assertFalse($shippingRule->isEnabled());
 
         return $shippingRule;
@@ -286,8 +302,8 @@ class ShippingRuleControllerTest extends WebTestCase
         $this->assertContains($shippingRule->getCurrency(), $html);
         $destination = $shippingRule->getDestinations();
         $this->assertContains((string)$destination[0], $html);
-        $configurations = $shippingRule->getConfigurations();
-        $this->assertContains($configurations[0]->getMethod(), $html);
+        $methodConfigs = $shippingRule->getMethodConfigs();
+        $this->assertContains($methodConfigs[0]->getMethod(), $html);
     }
 
     /**
@@ -331,10 +347,10 @@ class ShippingRuleControllerTest extends WebTestCase
         $url = $this->getUrl(
             'oro_status_shipping_rule_massaction',
             [
-                'gridName'   => 'shipping-rule-grid',
+                'gridName' => 'shipping-rule-grid',
                 'actionName' => 'disable',
-                'inset'      => 1,
-                'values'     => sprintf(
+                'inset' => 1,
+                'values' => sprintf(
                     '%s,%s',
                     $shippingRule1->getId(),
                     $shippingRule2->getId()
@@ -365,10 +381,10 @@ class ShippingRuleControllerTest extends WebTestCase
         $url = $this->getUrl(
             'oro_status_shipping_rule_massaction',
             [
-                'gridName'   => 'shipping-rule-grid',
+                'gridName' => 'shipping-rule-grid',
                 'actionName' => 'enable',
-                'inset'      => 1,
-                'values'     => sprintf(
+                'inset' => 1,
+                'values' => sprintf(
                     '%s,%s',
                     $shippingRule1->getId(),
                     $shippingRule2->getId()
@@ -387,7 +403,6 @@ class ShippingRuleControllerTest extends WebTestCase
             $this->getShippingRuleByName($shippingRule2->getName())->isEnabled()
         );
     }
-
 
     public function testShippingRuleEditWOPermission()
     {
@@ -424,20 +439,20 @@ class ShippingRuleControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
 
         $form['oro_shipping_rule[enabled]'] = !$shippingRule->isEnabled();
-        $form['oro_shipping_rule[name]'] = $shippingRule->getName() . ' new name';
+        $form['oro_shipping_rule[name]'] = $shippingRule->getName().' new name';
         $form['oro_shipping_rule[priority]'] = $shippingRule->getPriority() + 1;
         $form['oro_shipping_rule[currency]'] = $shippingRule->getCurrency() === 'USD' ? 'EUR' : 'USD';
         $form['oro_shipping_rule[stopProcessing]'] = !$shippingRule->isStopProcessing();
-        $form['oro_shipping_rule[conditions]'] = $shippingRule->getConditions() . ' new data';
+        $form['oro_shipping_rule[conditions]'] = $shippingRule->getConditions().' new data';
         $form['oro_shipping_rule[destinations][0][postalCode]'] = '11111';
-        $form['oro_shipping_rule[configurations][0][enabled]'] = '1';
+        $form['oro_shipping_rule[methodConfigs][0][typeConfigs][0][options][price]'] = 12;
+        $form['oro_shipping_rule[methodConfigs][0][typeConfigs][0][enabled]'] = true;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains('Shipping rule has been saved', $crawler->html());
-
     }
 
     public function testDeleteButtonNotVisible()
