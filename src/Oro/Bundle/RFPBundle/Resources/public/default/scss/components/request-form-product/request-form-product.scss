@@ -1,0 +1,38 @@
+.request-form-product {
+    display: table;
+
+    width: 100%;
+
+    &__inner {
+        display: table-row;
+    }
+
+    &__cell {
+        display: table-cell;
+
+        padding: 12px 0;
+
+        border-top: 1px solid get-color('additional', 'light');
+    }
+
+    &__cell--quantity,
+    &__cell--amount {
+        width: 160px;
+    }
+
+    &__cell--target {
+        width: 190px;
+    }
+
+    &__cell--actions {
+        width: 60px;
+
+        text-align: center;
+
+        color: get-color('additional', 'middle');
+    }
+
+    &__cell--actions .actions-row {
+        font-size: 16px;
+    }
+}
