@@ -19,6 +19,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
 
         $container = $this->getContainer();
 

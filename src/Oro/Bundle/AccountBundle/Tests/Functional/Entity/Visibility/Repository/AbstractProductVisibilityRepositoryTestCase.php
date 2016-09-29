@@ -3,9 +3,9 @@
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
 {
@@ -35,7 +35,7 @@ abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
         /** @var Category $category */
         $category = $this->getReference($categoryName);
         $this->deleteCategory($category);
-
+        $this->repository->setToDefaultWithoutCategory();
         foreach ($deletedCategoryProducts as $deletedCategoryProduct) {
             $this->assertNotContains($deletedCategoryProduct, $this->getProductsByVisibilities());
         }

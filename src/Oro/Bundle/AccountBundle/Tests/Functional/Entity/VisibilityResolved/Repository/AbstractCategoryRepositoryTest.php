@@ -3,12 +3,10 @@
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\ORM\EntityRepository;
-
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 
 abstract class AbstractCategoryRepositoryTest extends WebTestCase
 {
@@ -22,12 +20,13 @@ abstract class AbstractCategoryRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([
             'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData'
         ]);
 
         $this->repository = $this->getRepository();
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
     }
 
     /**

@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class ShippingMethodsCompilerPass implements CompilerPassInterface
 {
-    const TAG = 'oro_shipping_method';
+    const TAG = 'oro_shipping_method_provider';
     const SERVICE = 'oro_shipping.shipping_method.registry';
 
     /**
@@ -16,41 +16,30 @@ class ShippingMethodsCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition($this->getService())) {
+        if (!$container->hasDefinition(static::SERVICE)) {
             return;
         }
 
-        $taggedServices = $container->findTaggedServiceIds(
-            $this->getTag()
-        );
+        $taggedServices = $container->findTaggedServiceIds(static::TAG);
         if (!$taggedServices) {
             return;
         }
 
-        $definition = $container->getDefinition(
-            $this->getService()
-        );
+        $providers = new \SplPriorityQueue();
+
+        $definition = $container->getDefinition(static::SERVICE);
         foreach ($taggedServices as $id => $tags) {
-            $definition->addMethodCall(
-                'addShippingMethod',
-                [new Reference($id)]
-            );
+            foreach ($tags as $tag) {
+                $priority = 0;
+                if (array_key_exists('priority', $tag)) {
+                    $priority = $tag['priority'];
+                }
+                $providers->insert(new Reference($id), $priority);
+            }
         }
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getTag()
-    {
-        return self::TAG;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getService()
-    {
-        return self::SERVICE;
+        foreach ($providers as $provider) {
+            $definition->addMethodCall('addProvider', [$provider]);
+        }
     }
 }

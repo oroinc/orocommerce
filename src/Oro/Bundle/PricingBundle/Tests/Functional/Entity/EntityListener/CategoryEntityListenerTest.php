@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
+use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -26,6 +27,7 @@ class CategoryEntityListenerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([
             LoadCategoryPriceRuleLexemes::class,
             LoadPriceLists::class,

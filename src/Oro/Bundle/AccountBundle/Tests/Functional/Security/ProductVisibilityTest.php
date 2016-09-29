@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Security;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -20,12 +20,13 @@ class ProductVisibilityTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([
             'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
             'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
         ]);
-
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
     }
 
     /**
