@@ -16,7 +16,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  *          )
  *      }
  * )
- * @ORM\EntityListeners({ "Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListProductEntityListener" })
  */
 class PriceListToProduct
 {

@@ -1,4 +1,4 @@
-ROLE_SALES_MANAGER:
+ROLE_SALES_ASSISTANT:
     permissions:
         entity|Oro\Bundle\RFPBundle\Entity\RequestStatus: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
         entity|Oro\Bundle\RFPBundle\Entity\Request: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]

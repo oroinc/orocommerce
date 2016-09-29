@@ -66,8 +66,10 @@
 {% endblock %}
 
 {% block __oro_checkout_sidebar__enter_shipping_method_information_widget %}
-    {% if checkout.shippingMethod %}
-        <div>{{ get_shipping_method_label(checkout.shippingMethod)|trans }}</div>
+
+    {% set shippingMethodLabel = get_shipping_method_label(checkout.shippingMethod) %}
+    {% if shippingMethodLabel %}
+        <div>{{ shippingMethodLabel|trans }}</div>
     {% endif %}
     {% if checkout.shippingMethodType %}
         <div>{{ get_shipping_method_type_label(checkout.shippingMethod, checkout.shippingMethodType)|trans }}</div>

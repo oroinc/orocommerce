@@ -20,6 +20,7 @@ class AccountTaxCodeControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
     }
 
     public function testIndex()
@@ -83,7 +84,7 @@ class AccountTaxCodeControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(self::ACCOUNT_TAX_CODE_UPDATED . ' - View - Account Tax Codes - Taxes', $html);
+        $this->assertContains(self::ACCOUNT_TAX_CODE_UPDATED . ' - View - Customer Tax Codes - Taxes', $html);
 
         $this->assertViewPage(
             $html,

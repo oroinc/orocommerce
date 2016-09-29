@@ -83,6 +83,19 @@ class RuleCacheTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->ruleCache->fetch($id));
     }
 
+    public function testFetchIncorrectData()
+    {
+        $id = 'test';
+        $this->cache->expects($this->once())
+            ->method('contains')
+            ->with($id)
+            ->willReturn(true);
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->willReturn(['unknown' => 'data']);
+        $this->assertFalse($this->ruleCache->fetch($id));
+    }
+
     public function testContains()
     {
         $id = 'test';
