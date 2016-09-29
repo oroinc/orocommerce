@@ -111,14 +111,17 @@ class ClassMigration
     {
         try {
             $preparedFrom = str_replace('\\', '\\\\', $from);
-            $id = $defaultConnection->fetchColumn(
+            $aclCheck = $defaultConnection->fetchColumn(
                 "SELECT id FROM acl_classes WHERE class_type LIKE '%$preparedFrom%' LIMIT 1"
+            );
+            $configCheck = $defaultConnection->fetchColumn(
+                "SELECT id FROM oro_entity_config WHERE class_name LIKE '%$preparedFrom%' LIMIT 1"
             );
         } catch (\Exception $e) {
             return false;
         }
 
-        return !empty($id);
+        return $aclCheck || $configCheck;
     }
 
     /**

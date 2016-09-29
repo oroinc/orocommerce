@@ -7,8 +7,6 @@ use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 /**
  * Change namespace in all loaded migrations, fixtures and entity config data
  * It can't be done in migrations because cache warmup requires existing entities in entity config, see BAP-11101
- *
- * TODO: remove this warmer after stable release
  */
 class UpdateNamespacesWarmer implements CacheWarmerInterface
 {
