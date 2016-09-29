@@ -2,99 +2,116 @@
 
 namespace Oro\Bundle\CheckoutBundle\Bundle\Tests\Unit\Factory;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
-use Oro\Bundle\ShippingBundle\Provider\ShippingContextProvider;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\LocaleBundle\Model\AddressInterface;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var  Checkout|\PHPUnit_Framework_MockObject_MockObject */
-    protected $checkout;
-
     /** @var ShippingContextProviderFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $factory;
 
     /** @var  ShoppingList|\PHPUnit_Framework_MockObject_MockObject */
     protected $shoppingList;
 
+    /** @var  CheckoutLineItemsManager|\PHPUnit_Framework_MockObject_MockObject */
+    protected $checkoutLineItemsManager;
+
+    /** @var  TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $totalProcessorProvider;
+
+    /** @var  ShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject */
+    protected $shippingContextFactory;
+
     protected function setUp()
     {
-        $this->checkout = $this->getMockBuilder('Oro\Bundle\CheckoutBundle\Entity\Checkout')
+        $this->shoppingList = $this->getMockBuilder(ShoppingList::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->shoppingList = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')
+        $this->checkoutLineItemsManager = $this->getMockBuilder(CheckoutLineItemsManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->factory = new ShippingContextProviderFactory($this->checkout);
+        $this->totalProcessorProvider = $this->getMockBuilder(TotalProcessorProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->shippingContextFactory = $this->getMockBuilder(ShippingContextFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->factory = new ShippingContextProviderFactory(
+            $this->checkoutLineItemsManager,
+            $this->totalProcessorProvider,
+            $this->shippingContextFactory
+        );
     }
 
     protected function tearDown()
     {
-        unset($this->factory, $this->checkout);
+        unset(
+            $this->factory,
+            $this->checkout,
+            $this->shoppingList,
+            $this->checkoutLineItemsManager,
+            $this->totalProcessorProvider,
+            $this->shippingContextFactory
+        );
     }
 
 
     public function testCreate()
     {
-        $context = [
-            'checkout'       => $this->checkout,
-            'billingAddress' => 'address1',
-            'shippingAddress' => 'address2',
-            'currency'       => 'USD',
-            'line_items'     => 'some line items'
-        ];
-        $this->checkout
-            ->expects($this->once())
-            ->method('getBillingAddress')
-            ->willReturn($context['billingAddress']);
-        $this->checkout
-            ->expects($this->once())
-            ->method('getShippingAddress')
-            ->willReturn($context['shippingAddress']);
-        $this->checkout
-            ->expects($this->once())
-            ->method('getCurrency')
-            ->willReturn($context['currency']);
-        $this->checkout
-            ->expects($this->once())
-            ->method('getSourceEntity')
-            ->willReturn($this->shoppingList);
-        $this->shoppingList
-            ->expects($this->once())
-            ->method('getLineItems')
-            ->willReturn(
-                $context['line_items']
-            );
-        $this->assertEquals(new ShippingContextProvider($context), $this->factory->create($this->checkout));
-    }
+        /** @var AddressInterface $address */
+        $address = $this->getMock(OrderAddress::class);
+        $currency = 'USD';
+        $paymentMethod = 'SomePaymentMethod';
+        $amount = 100;
 
-    public function testCreateWithoutSourceEntity()
-    {
-        $context = [
-            'checkout'       => $this->checkout,
-            'billingAddress' => 'address1',
-            'shippingAddress' => 'address2',
-            'currency'       => 'EUR',
-        ];
-        $this->checkout
-            ->expects($this->once())
-            ->method('getBillingAddress')
-            ->willReturn($context['billingAddress']);
-        $this->checkout
-            ->expects($this->once())
-            ->method('getShippingAddress')
-            ->willReturn($context['shippingAddress']);
-        $this->checkout
-            ->expects($this->once())
-            ->method('getCurrency')
-            ->willReturn($context['currency']);
-        $this->checkout
-            ->expects($this->once())
-            ->method('getSourceEntity')
-            ->willReturn(null);
-        $this->assertEquals(new ShippingContextProvider($context), $this->factory->create($this->checkout));
+        $subtotal = (new Subtotal())
+            ->setAmount($amount)
+            ->setCurrency($currency);
+
+        $checkout = (new Checkout())
+            ->setBillingAddress($address)
+            ->setShippingAddress($address)
+            ->setCurrency($currency)
+            ->setPaymentMethod($paymentMethod);
+
+        $context = new ShippingContext();
+        $context->setBillingAddress($address);
+        $context->setShippingAddress($address);
+        $context->setCurrency($currency);
+        $context->setPaymentMethod($paymentMethod);
+        $context->setSubtotal(Price::create($amount, $currency));
+
+        $this->checkoutLineItemsManager
+            ->expects(static::once())
+            ->method('getData')
+            ->willReturn(new ArrayCollection());
+
+        $this->shippingContextFactory
+            ->expects(static::once())
+            ->method('create')
+            ->willReturn(new ShippingContext());
+
+
+        $this->totalProcessorProvider
+            ->expects(static::once())
+            ->method('getTotal')
+            ->with($checkout)
+            ->willReturn($subtotal);
+
+        static::assertEquals($context, $this->factory->create($checkout));
     }
 }
