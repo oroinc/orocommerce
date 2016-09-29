@@ -144,9 +144,19 @@ services:
 
     oro_payment.provider.address_extractor:
         class: 'Oro\Bundle\PaymentBundle\Provider\AddressExtractor'
-        public: false
+        public: true
         arguments:
             - '@property_accessor'
+
+    oro_payment.provider.abstract_extractor:
+        class: 'Oro\Bundle\PaymentBundle\Provider\AbstractPropertyExtractor'
+        abstract: true
+        arguments:
+            - '@property_accessor'
+
+    oro_payment.provider.account_user_extractor:
+        class: 'Oro\Bundle\PaymentBundle\Provider\AccountUserExtractor'
+        parent: oro_payment.provider.abstract_extractor
 
     oro_payment.provider.payment_context:
         class: 'Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider'

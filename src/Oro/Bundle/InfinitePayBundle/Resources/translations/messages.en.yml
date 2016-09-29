@@ -1,0 +1,29 @@
+oro:
+    admin:
+        infinite_pay.label: 'Infinite Pay'
+    customer:
+        vat_id.label: 'VAT Id'
+        system_configuration:
+            groups:
+                infinite_pay.title: 'Infinite Pay'
+                display_options.title: 'Display Options'
+                advanced_options.title: 'Advanded Options'
+                credentials.title: 'Credentials'
+
+            fields:
+                label: 'Enabled'
+                auto_capture.label: 'Auto Capture'
+                auto_activate.label: 'Auto Activation'
+                debug_mode.label: 'Debug Mode'
+                client_ref.label: 'Client Reference'
+                username_token.label: 'Username Token'
+                username.label: 'Username'
+                password.label: 'Password'
+                secret.label: 'Secret (for security code)'
+                invoice_due_period.label: 'Invoice Due Period (in days)'
+                invoice_shipping_duration.label: 'Shipping Duration (in days)'
+            methods:
+                debtor_data.label:  'Debtor Data'
+    payment:
+        admin:
+            infinite_pay.label: 'Infinite Pay'

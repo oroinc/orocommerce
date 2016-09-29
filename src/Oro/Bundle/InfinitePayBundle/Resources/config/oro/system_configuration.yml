@@ -1,0 +1,152 @@
+system_configuration:
+    groups:
+        infinite_pay:
+            title: oro.infinite_pay.system_configuration.groups.infinite_pay.title
+        credentials:
+            title: oro.infinite_pay.system_configuration.groups.credentials.title
+        display:
+            title: oro.infinite_pay.system_configuration.groups.display_options.title
+        advanced_options:
+            title: oro.infinite_pay.system_configuration.groups.advanced_options.title
+
+
+    fields:
+        oro_infinite_pay.infinite_pay_label:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: oro.payment.system_configuration.fields.label.label
+                tooltip: tooltip: oro.payment.system_configuration.fields.label.tooltip
+
+        oro_infinite_pay.infinite_pay_label_short:
+            data_type: string
+            type: text
+            priority: 90
+            options:
+                label: oro.payment.system_configuration.fields.short_label.label
+                tooltip: oro.payment.system_configuration.fields.short_label.tooltip
+
+        oro_infinite_pay.infinite_pay_enabled:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: oro.payment.system_configuration.fields.enabled.label
+                required: false
+
+        oro_infinite_pay.infinite_pay_sort_order:
+            data_type: string
+            type: text
+            priority: 70
+            options:
+                label: oro.payment.system_configuration.fields.sort_order.label
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+
+        oro_infinite_pay.infinite_pay_client_ref:
+            data_type: string
+            type: text
+            priority: 60
+            options:
+                label: oro.infinite_pay.system_configuration.fields.client_ref.label
+
+        oro_infinite_pay.infinite_pay_username_token:
+            data_type: string
+            type: text
+            priority: 60
+            options:
+                label: oro.infinite_pay.system_configuration.fields.username_token.label
+
+        oro_infinite_pay.infinite_pay_username:
+            data_type: string
+            type: text
+            priority: 60
+            options:
+                label: oro.infinite_pay.system_configuration.fields.username.label
+
+        oro_infinite_pay.infinite_pay_password:
+            data_type: string
+            type: oro_paypal_paypal_password_type
+            priority: 60
+            options:
+                label: oro.infinite_pay.system_configuration.fields.password.label
+
+        oro_infinite_pay.infinite_pay_secret:
+            data_type: string
+            type: oro_paypal_paypal_password_type
+            priority: 60
+            options:
+                label: oro.infinite_pay.system_configuration.fields.secret.label
+
+        oro_infinite_pay.infinite_pay_auto_capture:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 60
+            options:
+                label: oro.infinite_pay.system_configuration.fields.auto_capture.label
+                required: false
+
+        oro_infinite_pay.infinite_pay_auto_activate:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 60
+            options:
+                label: oro.infinite_pay.system_configuration.fields.auto_activate.label
+                required: false
+
+        oro_infinite_pay.infinite_pay_debug_mode:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 60
+            options:
+                label: oro.infinite_pay.system_configuration.fields.debug_mode.label
+                required: false
+
+        oro_infinite_pay.invoice_due_period:
+            data_type: integer
+            type: integer
+            priority: 60
+            options:
+                label: oro.infinite_pay.system_configuration.fields.invoice_due_period.label
+
+        oro_infinite_pay.invoice_shipping_duration:
+            data_type: integer
+            type: integer
+            priority: 60
+            options:
+                label: oro.infinite_pay.system_configuration.fields.invoice_shipping_duration.label
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    payment:
+                        children:
+                            infinite_pay:
+                                priority: 90
+                                children:
+                                    display:
+                                        priority: 100
+                                        children:
+                                            - oro_infinite_pay.infinite_pay_enabled
+                                            - oro_infinite_pay.infinite_pay_label
+                                            - oro_infinite_pay.infinite_pay_label_short
+                                            - oro_infinite_pay.infinite_pay_client_ref
+                                            - oro_infinite_pay.infinite_pay_sort_order
+                                    credentials:
+                                        priority: 100
+                                        children:
+                                            - oro_infinite_pay.infinite_pay_client_ref
+                                            - oro_infinite_pay.infinite_pay_username_token
+                                            - oro_infinite_pay.infinite_pay_username
+                                            - oro_infinite_pay.infinite_pay_password
+                                            - oro_infinite_pay.infinite_pay_secret
+                                    advanced_options:
+                                        priority: 100
+                                        children:
+                                            - oro_infinite_pay.invoice_due_period
+                                            - oro_infinite_pay.invoice_shipping_duration
+                                            - oro_infinite_pay.infinite_pay_auto_capture
+                                            - oro_infinite_pay.infinite_pay_auto_activate
+                                            - oro_infinite_pay.infinite_pay_debug_mode

@@ -95,6 +95,17 @@ define(function(require) {
         },
 
         /**
+         * @param {Event} event
+         */
+        onSubmit: function(event) {
+            var paymentMethod = this.getPaymentMethodElement().val();
+            var eventData = {stopped: false, data: {paymentMethod: paymentMethod}};
+            mediator.trigger('checkout:payment:before-form-serialization', eventData);
+
+            PaymentTransitionButtonComponent.__super__.onSubmit.call(this, event);
+        },
+
+        /**
          * @returns {jQuery|HTMLElement}
          */
         getContent: function() {

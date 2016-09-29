@@ -1,0 +1,66 @@
+services:
+    oro_infinite_pay.provider.invoice_data:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Provider\InvoiceDataProvider'
+        arguments:
+            - '@oro_infinite_pay.config'
+            - '@oro_infinite_pay.method.provider.invoice_number_generator'
+
+    oro_infinite_pay.provider.client_data:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Provider\ClientDataProvider'
+        arguments:
+            - '@oro_infinite_pay.config'
+
+    oro_infinite_pay.provider.request:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Provider\RequestProvider'
+        arguments:
+            - '@request_stack'
+
+    oro_infinite_pay.provider.company_data:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Provider\CompanyDataProvider'
+        arguments:
+            - '@oro_infinite_pay.property_accessor.customer'
+
+    oro_infinite_pay.provider.invoice_totals:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Provider\InvoiceTotalsProvider'
+        arguments:
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+
+    oro_infinite_pay.provider.debtor_data:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Provider\DebtorDataProvider'
+        arguments:
+            - '@oro_infinite_pay.provider.company_data'
+            - '@oro_infinite_pay.provider.request'
+            - '@oro_payment.provider.address_extractor'
+
+    oro_infinite_pay.provider.order_total:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Provider\OrderTotalProvider'
+        arguments:
+            - '@oro_infinite_pay.provider.invoice_totals'
+
+    oro_infinite_pay.provider.article_list:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Provider\ArticleListProvider'
+        arguments:
+            - '@oro_infinite_pay.provider.invoice_totals'
+
+    oro_infinite_pay.method_provider.order:
+        class: 'Oro\Bundle\InfinitePayBundle\Method\Provider\CheckoutOrderProvider'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_payment.provider.address_extractor'
+
+    oro_infinite_pay.provider.payment_transaction:
+        class: 'Oro\Bundle\InfinitePayBundle\Method\Provider\PaymentTransactionProvider'
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@security.token_storage'
+            - '@event_dispatcher'
+            - '%oro_payment.entity.payment_transaction.class%'
+        calls:
+            - ['setLogger', ['@logger']]
+
+    oro_infinte_pay.provider.payment_automation:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Provider\AutomationProvider'
+        arguments:
+            - '@oro_infinite_pay.config'
+            - '@oro_infinite_pay.provider.invoice_data'
+

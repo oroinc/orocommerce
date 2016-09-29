@@ -18,11 +18,11 @@ interface PaymentMethodInterface
     const PURCHASE = 'purchase';
 
     /**
-     * @param string $action
+     * @param string $actionName
      * @param PaymentTransaction $paymentTransaction
      * @return array
      */
-    public function execute($action, PaymentTransaction $paymentTransaction);
+    public function execute($actionName, PaymentTransaction $paymentTransaction);
 
     /**
      * @return string

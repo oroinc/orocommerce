@@ -2,8 +2,8 @@
     <div class="hidden">
         <fieldset class="grid__row grid__row--offset-none">
             {{ form_widget(form.payment_method) }}
+            {{ form_widget(form.user_input) }}
         </fieldset>
-
         {% if form.payment_save_for_later is defined %}
             <div data-page-component-module="orocheckout/js/app/components/payment-save-for-later-component">
                 {{ form_widget(form.payment_save_for_later) }}
@@ -15,7 +15,7 @@
                 {{ form_widget(form.payment_validate) }}
             </div>
         {% endif %}
-        {%  if  form.state_token is defined %}
+        {% if  form.state_token is defined %}
             {{ form_row(form.state_token) }}
         {% endif %}
     </div>

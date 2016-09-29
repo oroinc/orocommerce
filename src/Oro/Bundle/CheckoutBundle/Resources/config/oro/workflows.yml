@@ -52,6 +52,8 @@ workflows:
                 type: string
             edit_order_link:
                 type: string
+            user_input:
+                type: array
             payment_in_progress:
                 type: bool
             payment_validate:
@@ -266,6 +268,13 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
+                        user_input:
+                            form_type: collection
+                            options:
+                                data: $user_input
+                                entry_type: text
+                                prototype: true
+                                allow_add: true
 
             back_to_billing_address:
                 step_to: enter_billing_address
@@ -328,7 +337,6 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
-
             finish_checkout:
                 step_to: order_created
                 transition_definition: finish_checkout_definition
@@ -684,6 +692,7 @@ workflows:
                                 entity: $checkout
                                 state: $.result.currentCheckoutState
                                 token: $state_token
+                                user_input: $user_input
                     - '@call_service_method':
                         service: oro_checkout.factory.payment_context_factory
                         method: create
@@ -750,6 +759,7 @@ workflows:
                                     saveForLaterUse: $payment_save_for_later
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
+                                    userInput: $user_input
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.actualCheckoutState
@@ -945,6 +955,7 @@ workflows:
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
                                     failedShippingAddressUrl: $.result.failedShippingAddressUrl
+                                    additionalOptions: $user_input
                             - '@assign_value': [$payment_in_progress, true]
                     - '@redirect':
                         conditions:

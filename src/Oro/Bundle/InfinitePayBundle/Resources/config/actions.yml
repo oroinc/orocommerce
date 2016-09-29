@@ -1,0 +1,46 @@
+services:
+    oro_infinite_pay.registry.payment_actions:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Registry\ActionRegistry'
+
+    oro_infinite_pay.actions.abstract:
+        abstract: true
+        arguments:
+            - '@oro_infinite_pay.soap.gateway'
+            - '@oro_infinite_pay.config'
+
+    oro_infinite_pay.actions.reserve:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Reserve'
+        parent: oro_infinite_pay.actions.abstract
+        tags:
+            - { name: payment_action, type: purchase }
+        calls:
+            - [setRequestMapper, ['@oro_infinite_pay.action_mappers.request.reservation']]
+            - [setResponseMapper, ['@oro_infinite_pay.action_mappers.response.reservation']]
+            - [setAutomationProvider, ['@oro_infinte_pay.provider.payment_automation']]
+
+    oro_infinite_pay.actions.capture:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Capture'
+        parent: oro_infinite_pay.actions.abstract
+        tags:
+            - { name: payment_action, type: capture }
+        calls:
+            - [setRequestMapper, ['@oro_infinite_pay.action_mappers.request.capture']]
+            - [setResponseMapper, ['@oro_infinite_pay.action_mappers.response.capture']]
+
+    oro_infinite_pay.actions.active:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\Activate'
+        parent: oro_infinite_pay.actions.abstract
+        tags:
+            - { name: payment_action, type: activate }
+        calls:
+            - [setRequestMapper, ['@oro_infinite_pay.action_mappers.request.activate']]
+            - [setResponseMapper, ['@oro_infinite_pay.action_mappers.response.activate']]
+
+    oro_infinite_pay.actions.apply_transaction:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\ApplyTransaction'
+        parent: oro_infinite_pay.actions.abstract
+        tags:
+            - { name: payment_action, type: apply_transaction }
+        calls:
+            - [setRequestMapper, ['@oro_infinite_pay.action_mappers.request.apply_transaction']]
+            - [setResponseMapper, ['@oro_infinite_pay.action_mappers.response.apply_transaction']]

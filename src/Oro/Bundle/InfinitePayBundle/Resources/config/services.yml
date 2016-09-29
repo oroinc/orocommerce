@@ -1,0 +1,47 @@
+services:
+    oro_infinite_pay.soap_client_wrapper:
+        class: 'Oro\Bundle\InfinitePayBundle\Service\InfinitePay\ApiWrapper'
+        arguments:
+            - '@oro_infinite_pay.config'
+            - '@oro_infinite_pay.soap_client_logger'
+
+    oro_infinite_pay.soap_client_logger:
+        class: 'Oro\Bundle\InfinitePayBundle\Service\InfinitePay\Logger\InfinitePayAPILogger'
+        arguments:
+            - '@logger'
+
+    oro_infinite_pay.config:
+        class: 'Oro\Bundle\InfinitePayBundle\Configuration\InfinitePayConfig'
+        public: false
+        arguments:
+            - '@oro_config.global'
+
+    oro_infinite_pay.soap.gateway:
+        class: 'Oro\Bundle\InfinitePayBundle\Gateway\SoapGateway'
+        arguments:
+            - '@oro_infinite_pay.soap_client_wrapper'
+
+    oro_infinite_pay.method.infinite_pay:
+        class: 'Oro\Bundle\InfinitePayBundle\Method\InfinitePay'
+        arguments:
+            - '@oro_infinite_pay.config'
+            - '@oro_infinite_pay.registry.payment_actions'
+            - '@oro_infinite_pay.method_provider.order'
+        tags:
+            - { name: 'oro_payment.payment_method' }
+
+    oro_infinite_pay.method_view.infinite_pay:
+        class: 'Oro\Bundle\InfinitePayBundle\Method\View\InfinitePayView'
+        arguments:
+            - '@oro_infinite_pay.config'
+            - '@form.factory'
+        tags:
+            - { name: 'oro_payment.payment_method_view' }
+
+    oro_infinite_pay.method.provider.invoice_number_generator:
+        class: 'Oro\Bundle\InfinitePayBundle\Method\Provider\InvoiceNumberGenerator'
+
+    oro_infinite_pay.property_accessor.customer:
+        class: 'Oro\Bundle\InfinitePayBundle\Action\PropertyAccessor\CustomerPropertyAccessor'
+        arguments:
+            - '@property_accessor'

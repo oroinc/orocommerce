@@ -1,0 +1,7 @@
+services:
+    oro_infinite_pay.form.type.debtor_data:
+        class: 'Oro\Bundle\InfinitePayBundle\Form\Type\DebtorDataType'
+        arguments:
+            - '@oro_infinite_pay.config'
+        tags:
+            - { name: form.type, alias: oro_infinite_pay_debtor_data }

@@ -1,0 +1,9 @@
+services:
+    oro_infinite_pay.event_listener.config.infinite_pay_encrypt:
+        class: 'Oro\Bundle\InfinitePayBundle\EventListener\Config\InfinitePayConfigurationEncryptListener'
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.get.oro_infinite_pay.infinite_pay_secret, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.get.oro_infinite_pay.infinite_pay_password, method: loadConfig }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
