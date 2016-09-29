@@ -97,63 +97,54 @@ class ProductSearchGridTest extends FrontendWebTestCase
             'frontend-product-search-grid'
         );
 
-        $firstRow = array_shift($data);
-        $countWithoutFilters = count($data);
+        $indexes = array_keys($data);
+        $lastRow = $data[end($indexes)];
 
         $filteredData = $this->getDatagridData(
             'frontend-product-search-grid',
             [
-                '[sku][value]' => $firstRow['sku'],
+                '[sku][value]' => $lastRow['sku'],
                 '[sku][type]' => '1',
-                '[name][value]' => $firstRow['name'],
+                '[name][value]' => $lastRow['name'],
                 '[name][type]' => '1',
             ]
         );
 
-        $this->assertTrue($countWithoutFilters > count($filteredData));
+        $this->assertCount(1, $filteredData);
 
-        $firstFilteredRow = array_shift($filteredData);
+        $filteredRow = array_shift($filteredData);
 
-        $this->assertEquals($firstRow['sku'], $firstFilteredRow['sku']);
-        $this->assertEquals($firstRow['name'], $firstFilteredRow['name']);
+        $this->assertEquals($lastRow['sku'], $filteredRow['sku']);
+        $this->assertEquals($lastRow['name'], $filteredRow['name']);
     }
 
     public function testAllTextFilter()
     {
-        $this->markTestSkipped('Enable after real V2 search engine is implemented');
-
         $data = $this->getDatagridData(
             'frontend-product-search-grid'
         );
 
-        $firstRow = array_shift($data);
-        $allTextValue = substr($firstRow['name'], 1, -1);
-
-        $this->assertNotEmpty($allTextValue);
+        $indexes = array_keys($data);
+        $lastRow = $data[end($indexes)];
+        $allTextValue = substr($lastRow['shortDescription'], 0, 12);
 
         $filteredData = $this->getDatagridData(
             'frontend-product-search-grid',
             [
-                '[sku][all_text]' => $allTextValue,
-                '[sku][type]' => '1'
+                '[all_text][value]' => $allTextValue,
+                '[all_text][type]' => '1'
             ]
         );
 
-        $found = false;
+        $this->assertCount(1, $filteredData);
 
-        foreach ($filteredData as $row) {
-            if ($row['name'] == $firstRow['name']) {
-                $found = true;
-            }
-        }
+        $filteredRow = array_shift($filteredData);
 
-        $this->assertTrue($found);
+        $this->assertStringStartsWith($allTextValue, $filteredRow['shortDescription']);
     }
 
     public function testPagination()
     {
-        $this->markTestSkipped('Enable after real V2 search engine is implemented');
-
         $first2Rows = $this->getDatagridData('frontend-product-search-grid', [], [], [
             '[_page]'     => 1,
             '[_per_page]' => 2,

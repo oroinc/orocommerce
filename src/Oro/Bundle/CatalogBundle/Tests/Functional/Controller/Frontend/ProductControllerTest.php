@@ -39,7 +39,7 @@ class ProductControllerTest extends WebTestCase
      */
     public function testView($includeSubcategories, $expected)
     {
-        $this->markTestSkipped('Enable after real V2 search engine is implemented');
+        $this->markTestSkipped('TODO: Remove skip after category filtering will be implemented');
 
         /** @var Category $secondLevelCategory */
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
@@ -107,7 +107,7 @@ class ProductControllerTest extends WebTestCase
      */
     public function testControllerActionWithCategoryId()
     {
-        $this->markTestSkipped('Enable after real V2 search engine is implemented');
+        $this->markTestSkipped('TODO: Remove skip after category filtering will be implemented');
 
         /** @var Category $secondLevelCategory */
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
@@ -133,7 +133,7 @@ class ProductControllerTest extends WebTestCase
      */
     public function testNavigationBar($category, array $expectedParts)
     {
-        $this->markTestSkipped('Enable after real V2 search engine is implemented');
+        $this->markTestSkipped('TODO: Remove skip after category filtering will be implemented');
 
         $category = $this->getReference($category);
 
