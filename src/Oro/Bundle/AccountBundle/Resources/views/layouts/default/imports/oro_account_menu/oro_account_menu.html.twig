@@ -3,9 +3,19 @@
         '~class': ' account-menu'
     }) %}
     <div {{ block('block_attributes') }}>
-        <div class="account-menu__section">
-            <h3 class="account-menu__title">{{ 'oro.account.frontend.menu.account_user_profile.label'|trans }}</h3>
-            {{ block_widget(block) }}
+        <div class="collapse-view expanded"
+             data-page-component-module="oroui/js/app/components/jquery-widget-component"
+             data-page-component-options="{{ {
+                 widgetModule: 'oroui/js/widget/collapse-widget',
+                 storageKey: id
+             }|json_encode() }}"
+        >
+            <div class="account-menu__section">
+                <h3 class="account-menu__title" data-collapse-trigger>{{ 'oro.account.frontend.menu.account_user_profile.label'|trans }}</h3>
+                <div class="collapse-view__container" data-collapse-container>
+                    {{ block_widget(block) }}
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

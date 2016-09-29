@@ -1,56 +1,62 @@
 .wrapper {
-  &.sales-mode {
-    padding-top: 11px;
+    &.sales-mode {
+        padding-top: 11px;
 
-    transition: transform .2s linear;
+        transition: transform .2s linear;
 
-    @media (max-width: $screen-md) {
-      padding-top: 0;
+        @media (max-width: $screen-md) {
+            padding-top: 0;
 
-      transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+        }
     }
-  }
 }
 
 //Bootstrap override
 .container-fluid,
 .main {
-  max-width: 1400px;
-  margin: 0 auto;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .main {
-  margin: 0 auto 70px;
+    margin: 0 auto 70px;
 
-  &_home {
-    max-width: 100%;
-  }
+    @include flexbox();
 
-  @include clearfix();
-
-  @media (max-width: $screen-sm) {
-    margin-bottom: 0;
-  }
-
-  &.sticky-nav {
-    @media (max-width: $screen-md) {
-      padding-top: 5rem;
+    @include breakpoint('tablet') {
+        @include flex-direction(column);
     }
-  }
+
+    &_home {
+        max-width: 100%;
+    }
+
+    @include clearfix();
+
+    @media (max-width: $screen-sm) {
+        margin-bottom: 0;
+    }
+
+    &.sticky-nav {
+        @media (max-width: $screen-md) {
+            padding-top: 5rem;
+        }
+    }
 }
 
 //Links
 a {
-  color: $base-link-color;
-
-  &.red {
-    &:hover, &:focus, &:active {
-      color: $theme-red-color;
-    }
-  }
-
-  &:hover {
     color: $base-link-color;
-    text-decoration: underline;
-  }
+
+    &.red {
+        &:hover, &:focus, &:active {
+            color: $theme-red-color;
+        }
+    }
+
+    &:hover {
+        color: $base-link-color;
+        text-decoration: underline;
+    }
 }
