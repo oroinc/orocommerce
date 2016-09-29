@@ -92,8 +92,8 @@ define([
             var words = this.splitString(normalized.string, ' ');
             var groups = this.getGroups(words);
 
-            var logicIsValid = _.last(groups.logicWords) !== _.last(words) && _.every(groups.logic, function(item) {
-                    return _this.contains(this.options.grouping, item);
+            var logicIsValid = _.last(groups.logicWords) !== _.last(words) && _.every(groups.logicWords, function(item) {
+                    return _this.contains(_this.options.grouping, item);
                 });
 
             var dataWordsAreValid = _.every(groups.dataWords, function(item) {
