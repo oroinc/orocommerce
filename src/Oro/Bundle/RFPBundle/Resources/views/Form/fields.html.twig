@@ -30,8 +30,8 @@
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
 
-    <div class="rfq-form-items">
-        <h2 class="rfq-form-items__title">{{ 'oro.rfp.frontend.request.title.label'|trans }}</h2>
+    <div class="request-form-items">
+        <h2 class="request-form-items__title">{{ 'oro.rfp.frontend.request.title.label'|trans }}</h2>
         <div class="row-oro">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}>
