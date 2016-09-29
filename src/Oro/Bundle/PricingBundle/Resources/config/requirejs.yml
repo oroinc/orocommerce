@@ -20,6 +20,9 @@ config:
         'oropricing/js/app/views/line-item-product-prices-view': 'bundles/oropricing/js/app/views/line-item-product-prices-view.js'
         'oropricing/js/app/views/product-prices-editable-view': 'bundles/oropricing/js/app/views/product-prices-editable-view.js'
         'oropricing/js/app/views/price-list-schedule-view': 'bundles/oropricing/js/app/views/price-list-schedule-view.js'
+        'oropricing/js/app/views/abstract-switcher': 'bundles/oropricing/js/app/views/abstract-switcher.js'
+        'oropricing/js/app/views/quantity-switcher': 'bundles/oropricing/js/app/views/quantity-switcher.js'
+        'oropricing/js/app/views/expression-field-switcher': 'bundles/oropricing/js/app/views/expression-field-switcher.js'
 
         'oro/filter/product-price-filter': 'bundles/oropricing/js/filter/product-price-filter.js'
         'oro/filter/frontend-product-price-filter': 'bundles/oropricing/js/filter/frontend-product-price-filter.js'

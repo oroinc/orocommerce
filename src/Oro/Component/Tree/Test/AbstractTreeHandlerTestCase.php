@@ -15,6 +15,7 @@ abstract class AbstractTreeHandlerTestCase extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures((array)$this->getFixtures());
 

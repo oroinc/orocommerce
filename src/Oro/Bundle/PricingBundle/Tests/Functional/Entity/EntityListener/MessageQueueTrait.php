@@ -24,18 +24,24 @@ trait MessageQueueTrait
     }
 
     /**
+     * @param string|array $topic
      * @return array
      */
-    protected function getQueueMessageTraces()
+    protected function getQueueMessageTraces($topic = null)
     {
         $this->sendScheduledMessages();
 
-        return array_filter(
-            $this->getMessageProducer()->getSentMessages(),
-            function (array $trace) {
-                return $this->topic === $trace['topic'];
-            }
-        );
+        $messages = $this->getMessageProducer()->getSentMessages();
+        if ($topic) {
+            return array_values(array_filter(
+                $messages,
+                function (array $trace) use ($topic) {
+                    return in_array($trace['topic'], (array)$topic, true);
+                }
+            ));
+        } else {
+            return $messages;
+        }
     }
 
     protected function sendScheduledMessages()

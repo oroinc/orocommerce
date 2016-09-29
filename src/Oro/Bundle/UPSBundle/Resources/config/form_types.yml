@@ -1,0 +1,16 @@
+services:
+    oro_ups.form.type.transport_settings:
+        class: 'Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType'
+        arguments:
+            - "@oro_ups.provider.transport"
+            - '@oro_shipping.shipping_origin.provider'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: form.type, alias: oro_ups_transport_settings_type }
+
+    oro_ups.form.type.shipping_method_config_options:
+        class: Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType
+        arguments:
+            - '@oro_currency.rounding.price_rounding_service'
+        tags:
+            - { name: form.type }

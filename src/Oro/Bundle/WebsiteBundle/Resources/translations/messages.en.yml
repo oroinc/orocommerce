@@ -19,7 +19,7 @@ oro:
             groups:
                 webistes.title: Websites
                 routing.title: Routing
-                general.label: General
+                general.title: General
             fields:
                 url.label: URL
                 secure_url.label: Secure URL

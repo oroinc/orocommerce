@@ -1,18 +1,18 @@
 oro.account:
-    entity_label: 'Account'
-    entity_plural_label: 'Accounts'
+    entity_label: 'Customer'
+    entity_plural_label: 'Customers'
     name.label: 'Name'
     group.label: 'Group'
     internal_rating.label: 'Internal rating'
     children.label: 'Subsidiaries'
     id.label: 'Id'
-    parent.label: 'Parent Account'
+    parent.label: 'Parent Customer'
     organization.label: 'Organization'
     has_group.label: 'Has group'
     users.label: 'Users'
     addresses.label: 'Addresses'
-    form.choose: 'Choose an account...'
-    form.choose_parent: 'Choose parent account...'
+    form.choose: 'Choose an customer...'
+    form.choose_parent: 'Choose parent customer...'
     address_book.label: 'Address Book'
     owner.label: 'Owner'
     sales_representatives.label: 'Assigned Sales Representatives'
@@ -34,6 +34,8 @@ oro.account:
             create.label: 'Create'
             save.label: 'Save'
             cancel.label: 'Cancel'
+        label:
+            required: 'Required Fields'
 
     address:
         add: 'Add Address'
@@ -41,16 +43,16 @@ oro.account:
         save: 'Save'
 
     accountgroup:
-        entity_label: 'Account Group'
-        entity_plural_label: 'Account Groups'
+        entity_label: 'Customer Group'
+        entity_plural_label: 'Customer Groups'
         name.label: 'Name'
         id.label: 'Id'
-        accounts.label: 'Accounts'
-        form.choose: 'Choose an account group...'
+        accounts.label: 'Customers'
+        form.choose: 'Choose an customer group...'
 
     accountuser:
-        entity_label:                'Account User'
-        entity_plural_label:         'Account Users'
+        entity_label:                'Customer User'
+        entity_plural_label:         'Customer Users'
         id.label:                    'ID'
         first_name.label:            'First Name'
         middle_name.label:           'Middle Name'
@@ -78,11 +80,11 @@ oro.account:
         name_suffix.label:           'Name Suffix'
         password_changed_at.label:   'Password Changed At'
         password_requested_at.label: 'Password Requested At'
-        account.label:               'Account'
+        account.label:               'Customer'
         organization.label:          'Organization'
         organizations.label:         'Organizations'
         has_role.label:              'Has Role'
-        form.choose:                 'Choose an account user...'
+        form.choose:                 'Choose an customer user...'
         addresses.label:             'Addresses'
         address_book.label:          'Address Book'
         owner.label:                 'Owner'
@@ -125,18 +127,18 @@ oro.account:
                     roles.label: 'Roles'
 
     accountuserrole:
-        entity_label:                    'Account User Role'
-        entity_plural_label:             'Account User Roles'
+        entity_label:                    'Customer User Role'
+        entity_plural_label:             'Customer User Roles'
         id.label:                        'ID'
         label.label:                     'Label'
         role.label:                      'Role'
         websites.label:                  'Websites'
-        account.label:                   'Account'
+        account.label:                   'Customer'
         organization.label:              'Organization'
         type.label:                      'Type'
         type.predefined.label:           'Predefined'
         type.customizable.label:         'Customizable'
-        account_users.label:             'Account Users'
+        account_users.label:             'Customer Users'
         frontend.edit-predifined-role.message:   'Predefined roles cannot be edited directly. We copied all the original data so that you can save it as a new user role for your organization. All users will be moved from the original role to this new role after you click on "Save".'
         self_managed:
             label:                  'Self Managed'
@@ -150,9 +152,9 @@ oro.account:
     accountuseraddress:
         city.label:                 City
         country.label:              Country
-        entity_description:         Represent account user's address
-        entity_label:               Account User Address
-        entity_plural_label:        Account User Addresses
+        entity_description:         Represent customer user's address
+        entity_label:               Customer User Address
+        entity_plural_label:        Customer User Addresses
         first_name.label:           First Name
         id.label:                   Id
         label.label:                Label
@@ -186,12 +188,12 @@ oro.account:
             disable: 'Disable'
             confirm: 'Confirm'
             send_confirmation: 'Resend Confirmation Email'
-            create: 'Create Account User'
+            create: 'Create Customer User'
             edit: 'Edit'
             delete: 'Delete'
 
         account_user_role:
-            create: 'Create Account User Role'
+            create: 'Create Customer User Role'
             edit: 'Edit'
             delete: 'Delete'
             create_label: 'Create'
@@ -202,7 +204,7 @@ oro.account:
         general: 'General Information'
         addresses: 'Addresses'
         accountgroup:
-            accounts: 'Accounts'
+            accounts: 'Customers'
         accountuserrole:
             users: 'Users'
             entity: 'Entity'
@@ -214,9 +216,9 @@ oro.account:
         entity_plural_label: Addresses
         city.label:          City
         country.label:       Country
-        entity_description:  Represent account's address
-        entity_label:        Account Address
-        entity_plural_label: Account Addresses
+        entity_description:  Represent customer's address
+        entity_label:        Customer Address
+        entity_plural_label: Customer Addresses
         first_name.label:    First name
         id.label:            Id
         label.label:         Label
@@ -246,11 +248,11 @@ oro.account:
         region_code.label:       State ISO code
 
     accountusersettings:
-        entity_label:           Account User Settings
-        entity_plural_label:    Account User Settings
+        entity_label:           Customer User Settings
+        entity_plural_label:    Customer User Settings
         currency.label:         Currency
         id.label:               ID
-        account_user.label:     Account User
+        account_user.label:     Customer User
         website.label:          Website
         localization.label:     Localization
 
@@ -259,24 +261,24 @@ oro.account:
         to_all:
             label: Visibility to All
         accountcategoryvisibility:
-            entity_label: Visibility to Accounts
-            entity_plural_label: Account Category Visibilities
+            entity_label: Visibility to Customer
+            entity_plural_label: Customer Category Visibilities
             id.label: ID
-            account.label: Account
+            account.label: Customer
             category.label: Category
             visibility.label: Visibility
             choice:
-                account_group: Account Group
+                account_group: Customer Group
                 category: Visibility to All
                 parent_category: Parent Category
                 hidden: Hidden
                 visible: Visible
 
         accountgroupcategoryvisibility:
-            entity_label: Visibility to Account Groups
-            entity_plural_label: Account Group Category Visibilities
+            entity_label: Visibility to Customer Groups
+            entity_plural_label: Customer Group Category Visibilities
             id.label: ID
-            account_group.label: Account Group
+            account_group.label: Customer Group
             category.label: Category
             visibility.label: Visibility
             choice:
@@ -298,25 +300,25 @@ oro.account:
                 hidden: Hidden
 
         accountproductvisibility:
-            entity_label: Visibility to Accounts
-            entity_plural_label: Account Product Visibilities
+            entity_label: Visibility to Customer
+            entity_plural_label: Customer Product Visibilities
             id.label: ID
-            account.label: Account
+            account.label: Customer
             product.label: Product
             visibility.label: Visibility
             website.label: Website
             choice:
-                account_group: Account Group
+                account_group: Customer Group
                 current_product: Current Product
                 category: Category
                 hidden: Hidden
                 visible: Visible
 
         accountgroupproductvisibility:
-            entity_label: Visibility to Account Groups
-            entity_plural_label: Account Group Product Visibilities
+            entity_label: Visibility to Customer Groups
+            entity_plural_label: Customer Group Product Visibilities
             id.label: ID
-            account_group.label: Account Group
+            account_group.label: Customer Group
             product.label: Product
             visibility.label: Visibility
             website.label: Website
@@ -341,7 +343,7 @@ oro.account:
 
     catalog:
         visibility:
-            label: Default Visibility to Accounts
+            label: Default Visibility to Customer
             form_label: Visibility
             catalog_configuration_label: Categories
             visible.label: Visible
@@ -352,20 +354,20 @@ oro.account:
 
     menu:
         customers_tab.label: 'Customers'
-        account_list.description: 'List of Accounts'
-        account_group_list.description: 'List of Account Groups'
-        shortcut_account_list.description: 'List of Accounts'
-        shortcut_account_group_list.description: 'List of Account Groupss'
-        account_users.description: 'List of account users'
-        shortcut_new_account_user.label: 'Create new account user'
-        shortcut_new_account_user.description: 'Create new account user instance'
-        shortcut_list_account_users.label: 'Show account users'
-        shortcut_list_account_users.description: 'View list of account users'
-        account_user_roles.description: 'List of account user roles'
-        shortcut_new_account_user_role.label: 'Create new account user role'
-        shortcut_new_account_user_role.description: 'Create new account user role instance'
-        shortcut_list_account_user_roles.label: 'Show account user roles'
-        shortcut_list_account_user_roles.description: 'View list of account user roles'
+        account_list.description: 'List of Customers'
+        account_group_list.description: 'List of Customer Groups'
+        shortcut_account_list.description: 'List of Customer'
+        shortcut_account_group_list.description: 'List of Customer Groupss'
+        account_users.description: 'List of customer users'
+        shortcut_new_account_user.label: 'Create new customer user'
+        shortcut_new_account_user.description: 'Create new customer user instance'
+        shortcut_list_account_users.label: 'Show customer users'
+        shortcut_list_account_users.description: 'View list of customer users'
+        account_user_roles.description: 'List of customer user roles'
+        shortcut_new_account_user_role.label: 'Create new customer user role'
+        shortcut_new_account_user_role.description: 'Create new customer user role instance'
+        shortcut_list_account_user_roles.label: 'Show customer user roles'
+        shortcut_list_account_user_roles.description: 'View list of customer user roles'
 
         account_user.label: My Account
         account_user_profile.label: My Profile
@@ -379,45 +381,45 @@ oro.account:
 
     controller:
         account:
-            saved.message: 'Account has been saved'
+            saved.message: 'Customer has been saved'
         accountgroup:
-            saved.message: 'Account group has been saved'
+            saved.message: 'Customer group has been saved'
         accountuser:
             registered.message: 'Registration successful'
             registered_with_confirmation.message: 'Please check your email to complete registration'
             confirmed.message: 'Confirmation successful'
-            already_confirmed.message: 'Account already confirmed'
-            confirmation_error.message: 'Account not fount or incorrect confirmation token'
-            saved.message:     'Account User has been saved'
-            enabled.message:   'Account User has been enabled'
-            disabled.message:  'Account User has been disabled'
-            confirmed.message:  'Account User has been confirmed'
-            not_found.message: 'Account User not found'
-            profile_updated.message: 'Account User profile updated'
+            already_confirmed.message: 'Customer already confirmed'
+            confirmation_error.message: 'Customer not fount or incorrect confirmation token'
+            saved.message:     'Customer User has been saved'
+            enabled.message:   'Customer User has been enabled'
+            disabled.message:  'Customer User has been disabled'
+            confirmed.message:  'Customer User has been confirmed'
+            not_found.message: 'Customer User not found'
+            profile_updated.message: 'Customer User profile updated'
             token_not_found.message: 'The user with "confirmation token" does not exist for value "%token%"'
             confirmation_sent.message: 'Confirmation email has been sent'
             welcome_failed.message: 'Welcome email sending failed'
         accountuseraddress:
-            saved.message: 'Account User Address has been saved'
+            saved.message: 'Customer User Address has been saved'
         accountaddress:
-            saved.message: 'Account Address has been saved'
+            saved.message: 'Customer Address has been saved'
         accountuserrole:
-            saved.message:     'Account User Role has been saved'
+            saved.message:     'Customer User Role has been saved'
 
     message:
         password_mismatch: "The entered passwords don't match"
 
     system_configuration:
         groups:
-            account.title: 'Account'
-            account_users.title: 'Account Users'
-            account_users_registration.title: 'Account Users Registration'
+            account.title: 'Customer'
+            account_users.title: 'Customer Users'
+            account_users_registration.title: 'Customer Users Registration'
             visibility:
                 title: 'Visibility'
-                product.title: 'Product Visibility to Accounts'
-                category.title: 'Category Visibility to Accounts'
+                product.title: 'Product Visibility to Customers'
+                category.title: 'Category Visibility to Customers'
         fields:
-            default_account_owner.label: 'Default Account Owner'
+            default_account_owner.label: 'Default Customer Owner'
             registration_allowed.label: 'Registration Allowed'
             confirmation_required.label: 'Confirmation Required'
             send_password_in_welcome_email.label: 'Send plain text password in welcome emails'
@@ -425,10 +427,10 @@ oro.account:
     security:
         permissions: 'Action Permissions'
         permission:
-            register_account_user: 'Register Account User'
+            register_account_user: 'Register Customer User'
         access-level:
-            BASIC: 'Account User'
-            LOCAL: 'Account'
+            BASIC: 'Customer User'
+            LOCAL: 'Customer'
             DEEP: 'Not supported'
             GLOBAL: 'Not supported'
             SYSTEM: 'Full'
@@ -442,7 +444,7 @@ oro.account:
             title:
                 create: 'Create'
                 edit: 'Edit'
-                subject: 'Address Account User'
+                subject: 'Address Customer User'
             page_title.edit: 'Edit Address'
             page_title.create: 'Create Address'
             form:
@@ -475,9 +477,9 @@ oro.account:
                 SYSTEM: 'System'
                 NONE: 'None'
         account_user:
-            role.entity_plural_label: Account User Roles
-            entity_plural_label: Account Users
-            profile.label: Account Information
+            role.entity_plural_label: Customer User Roles
+            entity_plural_label: Customer Users
+            profile.label: Customer Information
             address.label: Address Book
             full_name.label: Name
             email.label: Email Address
@@ -489,17 +491,17 @@ oro.account:
             account_user_addresses: 'My Addresses'
             create.label: 'Add Company Address'
         title:
-            account_user_role.create: Create Account User Role
-            account_user_role.edit: Edit Account User Role
-            account_user.view: 'Account User - %identifier%'
-            account_user.edit: 'Edit Account User'
-            account_user.create: 'Create Account User'
-            account_user.profile: 'Account information'
+            account_user_role.create: 'Create Customer User Role'
+            account_user_role.edit: 'Edit Customer User Role'
+            account_user.view: 'Customer User - %identifier%'
+            account_user.edit: 'Edit Customer User'
+            account_user.create: 'Create Customer User'
+            account_user.profile: 'Customer information'
 
             page:
                 account_user_role.create: Create Role
                 account_user_role.edit: Edit Role
-                account_user.edit: 'Edit Account User - %identifier%'
+                account_user.edit: 'Edit Customer User - %identifier%'
         sections:
             account_user_role:
                 label: Role Title
@@ -509,7 +511,7 @@ oro.account:
             account_user.my_profile: 'My profile'
             account_user.address_book: 'Address book'
 
-        account_user_link.text: '< Back to Account User List'
+        account_user_link.text: '< Back to Customer User List'
         action:
             back.label: "< Back"
             back_to_login.label: "Already have an account? Log in >"
@@ -528,5 +530,5 @@ oro.account:
         choice.default_text: 'Default %type_name%'
 
     dataaudit:
-        administrator: Administrator
-        module_label: Audit history for Account User
+        administrator: 'Administrator'
+        module_label: 'Audit history for Customer User'
