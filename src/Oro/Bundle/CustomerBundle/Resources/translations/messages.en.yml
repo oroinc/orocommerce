@@ -35,6 +35,8 @@ oro.customer:
             create.label: 'Create'
             save.label: 'Save'
             cancel.label: 'Cancel'
+        label:
+            required: 'Required Fields'
 
     address:
         add: 'Add Address'
