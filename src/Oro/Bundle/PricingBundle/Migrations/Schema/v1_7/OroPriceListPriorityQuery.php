@@ -1,13 +1,30 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_6;
+namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_7;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * @param ContainerInterface $container
+     */
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -35,6 +52,44 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
         $this->updatePriceListAccountGroupPriorities($logger, $dryRun);
         $this->updatePriceListAccountPriorities($logger, $dryRun);
         $this->updatePriceListWebsitePriorities($logger, $dryRun);
+        $this->updatePriceListConfigPriority($logger, $dryRun);
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @param bool $dryRun
+     */
+    protected function updatePriceListConfigPriority(LoggerInterface $logger, $dryRun = false)
+    {
+        /** @var ConfigManager */
+        $configManager = $this->container->get('oro_config.global');
+
+        $defaultPriceLists =  $configManager->get('oro_pricing.default_price_lists');
+
+        usort(
+            $defaultPriceLists,
+            function ($a, $b) {
+                return ($a['priority'] < $b['priority']) ? -1 : 1;
+            }
+        );
+
+        $priorities = [];
+        foreach ($defaultPriceLists as $priceList) {
+            $priorities[] = $priceList['priority'];
+        }
+
+        $priceLists = [];
+        foreach ($defaultPriceLists as $defaultPriceList) {
+            $priceList = $this->container->get('doctrine')
+                ->getManagerForClass(PriceList::class)
+                ->getRepository(PriceList::class)
+                ->find($defaultPriceList['priceList']);
+
+            $priceLists[] = new PriceListConfig($priceList, array_pop($priorities), $defaultPriceList['mergeAllowed']);
+        }
+
+        $configManager->set('oro_pricing.default_price_lists', $priceLists);
+        $configManager->flush();
     }
 
     /**
