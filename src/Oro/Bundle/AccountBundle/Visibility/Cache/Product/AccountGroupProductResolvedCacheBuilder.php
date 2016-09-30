@@ -14,7 +14,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements
+class AccountGroupProductResolvedCacheBuilder extends AbstractProductResolvedCacheBuilder implements
     ProductCaseCacheBuilderInterface
 {
     /**
@@ -78,6 +78,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         }
 
         $this->executeDbQuery($er, $insert, $delete, $update, $where);
+        $this->triggerProductReindexation($product, $website);
     }
 
     /**

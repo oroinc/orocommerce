@@ -26,16 +26,8 @@ class WebsiteSearchIndexRepositoryTest extends AbstractSearchWebTestCase
 {
     protected function setUp()
     {
-        $this->initClient();
-        if ($this->getContainer()->getParameter('oro_search.engine') !== 'orm') {
-            $this->markTestSkipped('Should be tested only with ORM search engine');
-        }
+        parent::setUp();
         $this->loadFixtures([LoadItemData::class]);
-    }
-
-    protected function tearDown()
-    {
-        $this->clearIndexTextTable();
     }
 
     /**

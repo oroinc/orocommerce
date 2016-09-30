@@ -7,7 +7,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderExpressionVisitor;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry;
 
-class QueryPlaceholderResolver
+class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
 {
     /**
      * @var WebsiteSearchPlaceholderRegistry
@@ -23,18 +23,38 @@ class QueryPlaceholderResolver
     }
 
     /**
-     * @param Query $query
-     * @param array $context
-     * @return Query
+     * {@inheritdoc}
      */
-    public function replace(Query $query, array $context)
+    public function replace(Query $query)
     {
         foreach ($this->placeholderRegistry->getPlaceholders() as $placeholder) {
+            $this->replaceInSelect($query, $placeholder);
             $this->replaceInFrom($query, $placeholder);
             $this->replaceInCriteria($query, $placeholder);
         }
 
         return $query;
+    }
+
+    /**
+     * @param Query $query
+     * @param WebsiteSearchPlaceholderInterface $placeholder
+     */
+    private function replaceInSelect(Query $query, WebsiteSearchPlaceholderInterface $placeholder)
+    {
+        $selects = $query->getSelect();
+        $selectAliases = $query->getSelectAliases();
+        $newSelects = [];
+        foreach ($query->getSelect() as $select) {
+            $newSelect = str_replace($placeholder->getPlaceholder(), $placeholder->getValue(), $select);
+            if (isset($selectAliases[$select])) {
+                $newSelect .= ' as ' . $selectAliases[$select];
+            }
+
+            $newSelects[] = $newSelect;
+        }
+
+        $query->select($newSelects);
     }
 
     /**
@@ -50,7 +70,7 @@ class QueryPlaceholderResolver
         // This check required because getFrom can return false
         if ($from) {
             foreach ($from as $alias) {
-                $newEntities[] = str_replace($placeholder->getPlaceholder(), $placeholder->getValue(), $alias);
+                $newEntities[] = $placeholder->replace($alias, $placeholder->getValue());
             }
         }
 

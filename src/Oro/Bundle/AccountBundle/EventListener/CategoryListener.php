@@ -4,14 +4,14 @@ namespace Oro\Bundle\AccountBundle\EventListener;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\PersistentCollection;
+
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Model\CategoryMessageHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
 
 class CategoryListener
 {
-    const FIELD_PRODUCTS = 'products';
-
     /**
      * @var CategoryMessageHandler
      */
@@ -42,7 +42,7 @@ class CategoryListener
         $collections = $unitOfWork->getScheduledCollectionUpdates();
         foreach ($collections as $collection) {
             if ($collection instanceof PersistentCollection
-                && $collection->getMapping()['fieldName'] === self::FIELD_PRODUCTS
+                && $collection->getMapping()['fieldName'] === Category::FIELD_PRODUCTS
                 && $collection->isDirty() && $collection->isInitialized()
             ) {
                 /** @var Product $product */

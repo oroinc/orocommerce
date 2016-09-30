@@ -32,7 +32,7 @@ class WebsiteSearchPlaceholderRegistry
     }
 
     /**
-     * @return array
+     * @return WebsiteSearchPlaceholderInterface[]
      */
     public function getPlaceholders()
     {
