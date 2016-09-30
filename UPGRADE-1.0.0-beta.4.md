@@ -76,7 +76,7 @@ OrderBundle:
 - Removed `Oro\Bundle\OrderBundle\Twig\OrderExtension` constructor first argument `Doctrine\Common\Persistence\ManagerRegistry`
 
 PricingBundle:
---------------
+-------------
 
 - Removed `getWebsiteIdsByAccountGroup` method from `PriceListToAccountGroupRepository`
 - Removed method `getAccountWebsitePairsByAccountGroup` from `PriceListToAccountRepository`
