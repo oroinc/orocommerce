@@ -3,7 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\EntityBundle\ORM\PDOExceptionHelper;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
@@ -52,24 +54,32 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     protected $combinedPriceListRepository;
 
     /**
+     * @var PDOExceptionHelper
+     */
+    protected $pdoExceptionHelper;
+
+    /**
      * @param PriceListTriggerFactory $triggerFactory
      * @param ManagerRegistry $registry
      * @param CombinedProductPriceResolver $priceResolver
      * @param EventDispatcherInterface $dispatcher
      * @param LoggerInterface $logger
+     * @param PDOExceptionHelper $pdoExceptionHelper
      */
     public function __construct(
         PriceListTriggerFactory $triggerFactory,
         ManagerRegistry $registry,
         CombinedProductPriceResolver $priceResolver,
         EventDispatcherInterface $dispatcher,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        PDOExceptionHelper $pdoExceptionHelper
     ) {
         $this->triggerFactory = $triggerFactory;
         $this->registry = $registry;
         $this->priceResolver = $priceResolver;
         $this->dispatcher = $dispatcher;
         $this->logger = $logger;
+        $this->pdoExceptionHelper = $pdoExceptionHelper;
     }
 
     /**
@@ -116,7 +126,11 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
                 ['exception' => $e]
             );
 
-            return self::REQUEUE;
+            if ($e instanceof DriverException && $this->pdoExceptionHelper->isDeadlock($e)) {
+                return self::REQUEUE;
+            } else {
+                return self::REJECT;
+            }
         }
 
         return self::ACK;

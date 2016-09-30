@@ -3,7 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Driver\PDOException;
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\EntityBundle\ORM\PDOExceptionHelper;
 use Oro\Bundle\PricingBundle\Async\PriceListProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -47,11 +49,6 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
     protected $logger;
 
     /**
-     * @var PriceListProcessor
-     */
-    protected $priceRuleProcessor;
-
-    /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $registry;
@@ -60,6 +57,16 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
      * @var CombinedPriceListRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $repository;
+
+    /**
+     * @var PDOExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $pdoExceptionHelper;
+
+    /**
+     * @var PriceListProcessor
+     */
+    protected $priceRuleProcessor;
 
     protected function setUp()
     {
@@ -80,12 +87,17 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getMock(ManagerRegistry::class);
 
+        $this->pdoExceptionHelper = $this->getMockBuilder(PDOExceptionHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->priceRuleProcessor = new PriceListProcessor(
             $this->triggerFactory,
             $this->registry,
             $this->priceResolver,
             $this->eventDispatcher,
-            $this->logger
+            $this->logger,
+            $this->pdoExceptionHelper
         );
     }
 
@@ -134,9 +146,12 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->priceRuleProcessor->process($message, $session));
     }
 
-    public function testProcessException()
+    public function testProcessDeadlock()
     {
-        $exception = new \Exception('Some error');
+        /** @var PDOException $exception */
+        $exception = $this->getMockBuilder(PDOException::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $em = $this->getMock(EntityManagerInterface::class);
 
@@ -167,7 +182,50 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->triggerFactory->expects($this->never())
             ->method('createFromArray');
 
+        $this->pdoExceptionHelper->expects($this->once())
+            ->method('isDeadlock')
+            ->willReturn(true);
+
         $this->assertEquals(MessageProcessorInterface::REQUEUE, $this->priceRuleProcessor->process($message, $session));
+    }
+
+    public function testProcessException()
+    {
+        $exception = new \Exception('Some error');
+
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        $message = $this->getMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->will($this->throwException($exception));
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with('Unexpected exception occurred during Combined Price Lists build', ['exception' => $exception]);
+
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        $session = $this->getMock(SessionInterface::class);
+
+        $this->pdoExceptionHelper->expects($this->never())
+            ->method('isDeadlock');
+
+        $this->assertEquals(
+            MessageProcessorInterface::REJECT,
+            $this->priceRuleProcessor->process($message, $session)
+        );
     }
 
     public function testProcess()
