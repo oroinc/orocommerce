@@ -5,37 +5,6 @@
     border-radius: 3px;
     background: $theme-lightest-gray-color;
 
-    @include breakpoint('tablet-small') {
-        padding: 0;
-
-        border-top: $theme-lighter-gray-color 1px solid;
-        border-bottom: $theme-lighter-gray-color 1px solid;
-
-        .icon-minus,
-        .icon-plus {
-            position: absolute;
-            right: 13px;
-            top: 15px;
-
-            font-size: 12px;
-        }
-        
-        .icon-minus {
-            opacity: 0;
-        }
-
-        .expanded {
-            .icon-plus {
-                opacity: 0;
-
-            }
-
-            .icon-minus {
-                opacity: 1;
-            }
-        }
-    }
-
     &__section:not(:first-child) {
         margin-top: 18px;
     }
@@ -120,6 +89,49 @@
     &__badge {
         i {
             vertical-align: middle;
+        }
+    }
+
+    @include breakpoint('desktop') {
+        .icon-minus,
+        .icon-plus {
+            opacity: 0;
+        }
+
+        .collapse-view__container {
+            display: block !important;
+        }
+    }
+
+    @include breakpoint('tablet-small') {
+        padding: 0;
+        margin: 35px -15px 0;
+
+        border-top: $theme-lighter-gray-color 1px solid;
+        border-bottom: $theme-lighter-gray-color 1px solid;
+
+        .icon-minus,
+        .icon-plus {
+            position: absolute;
+            right: 13px;
+            top: 15px;
+
+            font-size: 12px;
+        }
+
+        .icon-minus {
+            opacity: 0;
+        }
+
+        .expanded {
+            .icon-plus {
+                opacity: 0;
+
+            }
+
+            .icon-minus {
+                opacity: 1;
+            }
         }
     }
 }
