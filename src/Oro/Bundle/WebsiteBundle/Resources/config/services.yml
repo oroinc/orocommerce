@@ -84,3 +84,14 @@ services:
             - '@oro_website.resolver.website_url_resolver'
         tags:
             - { name: twig.extension }
+
+    oro_website.website_scope_provider:
+        class: 'Oro\Bundle\WebsiteBundle\Provider\ScopeProvider'
+        public: false
+        arguments:
+            - "@oro_website.manager"
+        tags:
+            - {name: oro_scope.provider, scopeType: category_visibility, priority: 30}
+            - {name: oro_scope.provider, scopeType: product_visibility, priority: 30}
+            - {name: oro_scope.provider, scopeType: account_group_product_visibility, priority: 30}
+            - {name: oro_scope.provider, scopeType: account_product_visibility, priority: 30}
