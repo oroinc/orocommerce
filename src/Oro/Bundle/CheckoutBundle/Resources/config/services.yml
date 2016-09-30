@@ -279,6 +279,15 @@ services:
         tags:
             - { name: checkout.workflow_state.mapper }
 
+    oro_checkout.workflow_state.mapper.shipping_method_diff:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodDiffMapper'
+        arguments:
+            - '@oro_shipping.shipping_price.provider'
+            - '@oro_checkout.factory.shipping_context_provider_factory'
+        public: false
+        tags:
+            - { name: checkout.workflow_state.mapper }
+
     oro_checkout.workflow_state.action.get_checkout_state:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Action\GetCheckoutStateAction'
         arguments:

@@ -368,6 +368,7 @@ workflows:
                 actions:
                     - '@assign_value': [$billing_address_has_shipping, true]
                     - '@assign_value': [$payment_method, null]
+                    - '@assign_value': [$shipping_method, null]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.actualCheckoutState
@@ -940,10 +941,6 @@ workflows:
                     '@and':
                         - '@not_empty': [$order]
                         - '@equal': [$payment_in_progress, true]
-                        - '@shipping_method_supports':
-                              message: oro.checkout.workflow.condition.shipping_method_supports.message
-                              parameters:
-                                  entity: $checkout
                 actions:
                     # Save billing address if required
                     - '@assign_constant_value': [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
@@ -1087,6 +1084,7 @@ workflows:
                     '@not_equal': [$payment_in_progress, true]
                 actions:
                     - '@assign_value': [$payment_method, null]
+                    - '@assign_value': [$shipping_method, null]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.actualCheckoutState
@@ -1099,6 +1097,7 @@ workflows:
             unblock_and_recalculate_definition:
                 actions:
                     - '@assign_value': [$payment_method, null]
+                    - '@assign_value': [$shipping_method, null]
                     - '@assign_value': [$payment_in_progress, false]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
