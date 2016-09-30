@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Component\ExpressionLanguage\Tests;
+namespace Oro\Component\ExpressionLanguage\Tests\Unit;
 
 use Oro\Component\ExpressionLanguage\Lexer;
 use Oro\Component\ExpressionLanguage\Node as CustomNode;
