@@ -31,7 +31,8 @@ class AccountControllerTest extends WebTestCase
         $quote = $this->getReference('sale.quote.3');
         /** @var Account $account */
         $account = $quote->getAccount();
-        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_view', ['id' => $account->getId()]));
+        $urlCustomerAccountView = $this->getUrl('oro_customer_account_view', ['id' => $account->getId()]);
+        $crawler = $this->client->request('GET', $urlCustomerAccountView);
         $gridAttr = $crawler->filter('[id^=grid-account-view-quote-grid]')
             ->first()->attr('data-page-component-options');
         $this->assertContains($quote->getOwner()->getFullName(), $gridAttr);
