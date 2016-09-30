@@ -10,6 +10,9 @@ use Symfony\Component\ExpressionLanguage\TokenStream;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ *
+ * Copy of \Symfony\Component\ExpressionLanguage\Parser with
+ * denied methods calls, special "all" and "any" methods for collections with expression as argument
  */
 class Parser
 {
