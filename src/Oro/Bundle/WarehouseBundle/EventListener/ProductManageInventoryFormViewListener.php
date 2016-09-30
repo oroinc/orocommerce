@@ -91,7 +91,6 @@ class ProductManageInventoryFormViewListener
         }
     }
 
-
     /**
      * @return null|Product
      */

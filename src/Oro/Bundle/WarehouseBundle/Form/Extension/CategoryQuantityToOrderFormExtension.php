@@ -31,18 +31,17 @@ class CategoryQuantityToOrderFormExtension extends AbstractTypeExtension
             [
                 'label' => 'oro.warehouse.fields.category.minimum_quantity_to_order.label',
                 'value_options' => [
-                    'constraints' => new Integer()
-                ]
+                    'constraints' => new Integer(),
+                ],
             ]
-        );
-        $builder->add(
+        )->add(
             AddQuantityToOrderFields::FIELD_MAXIMUM_QUANTITY_TO_ORDER,
             EntityFieldFallbackValueType::NAME,
             [
                 'label' => 'oro.warehouse.fields.category.maximum_quantity_to_order.label',
                 'value_options' => [
-                    'constraints' => new Integer()
-                ]
+                    'constraints' => new Integer(),
+                ],
             ]
         );
     }

@@ -29,15 +29,15 @@ class ProductQuantityToOrderFormExtension extends AbstractTypeExtension
     {
         $product = $builder->getData();
         // set category as default fallback
-        if (!$product->getMinimumQuantityToOrder()) {
+        if (!$product->getMinimumQuantityToOrder() || !$product->getMaximumQuantityToOrder()) {
             $entityFallback = new EntityFieldFallbackValue();
             $entityFallback->setFallback(CategoryFallbackProvider::FALLBACK_ID);
-            $product->setMinimumQuantityToOrder($entityFallback);
-        }
-        if (!$product->getMaximumQuantityToOrder()) {
-            $entityFallback = new EntityFieldFallbackValue();
-            $entityFallback->setFallback(CategoryFallbackProvider::FALLBACK_ID);
-            $product->setMaximumQuantityToOrder($entityFallback);
+            if (!$product->getMinimumQuantityToOrder()) {
+                $product->setMinimumQuantityToOrder($entityFallback);
+            }
+            if (!$product->getMaximumQuantityToOrder()) {
+                $product->setMaximumQuantityToOrder($entityFallback);
+            }
         }
 
         $builder->add(
@@ -49,8 +49,7 @@ class ProductQuantityToOrderFormExtension extends AbstractTypeExtension
                     'constraints' => new Integer(),
                 ],
             ]
-        );
-        $builder->add(
+        )->add(
             AddQuantityToOrderFields::FIELD_MAXIMUM_QUANTITY_TO_ORDER,
             EntityFieldFallbackValueType::NAME,
             [
