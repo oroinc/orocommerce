@@ -290,10 +290,25 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         /** @var AccountWebsiteDTO[] $result */
         $result = $this->getRepository()->getAccountWebsitePairsByAccount($account);
         $this->assertCount(2, $result);
-        $this->assertEquals($result[0]->getAccount()->getId(), $account->getId());
-        $this->assertEquals($result[0]->getWebsite()->getId(), $this->getReference('US')->getId());
-        $this->assertEquals($result[1]->getAccount()->getId(), $account->getId());
-        $this->assertEquals($result[1]->getWebsite()->getId(), $this->getReference('Canada')->getId());
+
+        $expected = [
+            $account->getId() => [
+                $this->getReference('US')->getId(),
+                $this->getReference('Canada')->getId()
+            ]
+        ];
+
+        $actual = [];
+        foreach ($result as $item) {
+            $actual[$item->getAccount()->getId()][] = $item->getWebsite()->getId();
+        }
+
+        foreach ($actual as $accountId => $websites) {
+            $this->assertEquals($account->getId(), $accountId);
+            foreach ($websites as $website) {
+                $this->assertContains($website, $expected[$accountId]);
+            }
+        }
     }
 
     public function testDelete()
