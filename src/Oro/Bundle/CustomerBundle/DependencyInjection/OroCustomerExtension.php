@@ -20,7 +20,6 @@ class OroCustomerExtension extends Extension implements PrependExtensionInterfac
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-//        echo '0099099';
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
