@@ -18,6 +18,7 @@ oro:
             account_user.label: 'Submitted By'
             account.label: 'Account'
             organization.label: 'Organization'
+            owner.label: 'Owner'
             po_number.label: 'PO Number'
             ship_until.label: 'Do Not Ship Later Than'
             request_products.label: 'Request Products'

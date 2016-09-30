@@ -6,7 +6,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 use Oro\Bundle\AccountBundle\Event\RecordOwnerDataListener;
-use Oro\Bundle\OrganizationBundle\Tests\Unit\Fixture\Entity\User;
+use Oro\Bundle\AccountBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\OrganizationBundle\Tests\Unit\Fixture\Entity\Entity;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 

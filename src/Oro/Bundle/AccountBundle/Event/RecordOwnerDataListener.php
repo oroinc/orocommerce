@@ -10,11 +10,11 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityConfigBundle\DependencyInjection\Utils\ServiceLink;
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class RecordOwnerDataListener
 {
     const OWNER_TYPE_USER = 'FRONTEND_USER';
-    const OWNER_TYPE_ORGANIZATION = 'FRONTEND_ORGANIZATION';
 
     /** @var ServiceLink */
     protected $securityContextLink;
@@ -57,11 +57,11 @@ class RecordOwnerDataListener
             $ownerFieldName = $config->get('frontend_owner_field_name');
             // set default owner for organization and user owning entities
             if ($frontendOwnerType
-                && in_array($frontendOwnerType, [self::OWNER_TYPE_ORGANIZATION, self::OWNER_TYPE_USER])
-                && null === $accessor->getValue($entity, $ownerFieldName)
+                && $frontendOwnerType == self::OWNER_TYPE_USER
+                && !$accessor->getValue($entity, $ownerFieldName)
             ) {
                 $owner = null;
-                if (self::OWNER_TYPE_USER == $frontendOwnerType) {
+                if ($user instanceof AccountUser) {
                     $owner = $user;
                 }
                 $accessor->setValue(
