@@ -158,7 +158,7 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
      * @param array $types
      * @param bool $dryRun
      */
-    protected function saveData(LoggerInterface $logger, $sql, $params, $types, $dryRun)
+    protected function saveData(LoggerInterface $logger, $sql, array $params, array $types, $dryRun)
     {
         $this->logQuery($logger, $sql, $params, $types);
 
@@ -173,7 +173,7 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
      * @param string|null $secondLevel
      * @return array
      */
-    protected function collectPriorities($oldPriorities, $firstLevel, $secondLevel = null)
+    protected function collectPriorities(array $oldPriorities, $firstLevel, $secondLevel = null)
     {
         $priorities = [];
 
@@ -193,7 +193,6 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
             } else {
                 $priorities[$firstLevelValue][] = $value['priority'];
             }
-
         }
 
         return $priorities;
