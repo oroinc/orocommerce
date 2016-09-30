@@ -76,7 +76,7 @@ class SystemConfigListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnFormPreSetData()
     {
         $id = 1;
-        $key = 'oro_account___default_account_owner';
+        $key = 'oro_customer___default_account_owner';
 
         $user = $this->getMockBuilder($this->userClass)
             ->disableOriginalConstructor()
@@ -106,7 +106,7 @@ class SystemConfigListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnSettingsSaveBefore()
     {
         $id = 1;
-        $key = 'oro_account___default_account_owner';
+        $key = 'oro_customer___default_account_owner';
 
         $user = $this->getMockBuilder($this->userClass)
             ->disableOriginalConstructor()
