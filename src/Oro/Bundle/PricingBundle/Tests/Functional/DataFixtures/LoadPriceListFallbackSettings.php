@@ -6,34 +6,40 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadPriceListFallbackSettings extends AbstractFixture implements DependentFixtureInterface
 {
+    /**
+     * @var array
+     */
     protected $fallbackSettings = [
         'account' => [
-            'US' => [
+            LoadWebsiteData::WEBSITE1 => [
                 'account.level_1_1' => PriceListAccountFallback::ACCOUNT_GROUP,
                 'account.level_1.3' => PriceListAccountFallback::ACCOUNT_GROUP,
                 'account.level_1.2' => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
             ],
-            'Canada' => [
-                'account.level_1_1' => PriceListAccountFallback::ACCOUNT_GROUP,
+            LoadWebsiteData::WEBSITE2 => [
+                'account.level_1_1' => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
                 'account.level_1.3' => PriceListAccountFallback::ACCOUNT_GROUP,
                 'account.level_1.2' => PriceListAccountFallback::CURRENT_ACCOUNT_ONLY,
             ],
         ],
         'accountGroup' => [
-            'US' => [
+            LoadWebsiteData::WEBSITE1 => [
                 'account_group.group1' => PriceListAccountGroupFallback::WEBSITE,
                 'account_group.group2' => PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
             ],
-            'Canada' => [
+            LoadWebsiteData::WEBSITE2 => [
                 'account_group.group1' => PriceListAccountGroupFallback::WEBSITE,
                 'account_group.group2' => PriceListAccountGroupFallback::CURRENT_ACCOUNT_GROUP_ONLY,
             ],
@@ -50,9 +56,9 @@ class LoadPriceListFallbackSettings extends AbstractFixture implements Dependent
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
+            LoadWebsiteData::class,
+            LoadAccounts::class,
+            LoadGroups::class,
         ];
     }
 

@@ -113,6 +113,13 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                 ]
             ],
             'priceListsToAccounts' => [
+                'account.level_1_1' => [ // No group
+                    [
+                        'priceList' => 'price_list_1',
+                        'priority' => 100,
+                        'mergeAllowed' => true,
+                    ]
+                ],
                 'account.level_1.1.1' => [
                     [
                         'priceList' => 'price_list_5',
