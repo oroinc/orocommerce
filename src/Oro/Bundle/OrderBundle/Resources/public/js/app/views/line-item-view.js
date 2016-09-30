@@ -22,7 +22,9 @@ define(function(require) {
                 productSelector: '.order-line-item-type-product [data-name="field__product"]',
                 quantitySelector: '.order-line-item-quantity input',
                 unitSelector: '.order-line-item-quantity select',
-                productSku: '.order-line-item-sku .order-line-item-type-product'
+                productSku: '.order-line-item-sku .order-line-item-type-product',
+                productType: '.order-line-item-type-product',
+                freeFormType: '.order-line-item-type-free-form'
             },
             freeFormUnits: null
         },
@@ -45,13 +47,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        initialize: function() {
-            this.options = $.extend(true, {
-                selectors: {
-                    productType: '.order-line-item-type-product',
-                    freeFormType: '.order-line-item-type-free-form'
-                }
-            }, this.options);
+        initialize: function(options) {
+            this.options = $.extend(true, {}, this.options, options || {});
 
             LineItemView.__super__.initialize.apply(this, arguments);
 
@@ -184,7 +181,7 @@ define(function(require) {
             }
 
             if (this.fieldsByName.hasOwnProperty('priceValue')) {
-                this.fieldsByName.priceValue.val(null).addClass('matched-price');
+                this.fieldsByName.priceValue.val(0).addClass('matched-price');
             }
         },
 
