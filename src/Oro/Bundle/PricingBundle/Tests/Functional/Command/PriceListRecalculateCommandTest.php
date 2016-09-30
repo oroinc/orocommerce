@@ -96,7 +96,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'account.level_1_1' => [
                 'expected_message' => 'Start processing',
                 'params' => [],
-                'expectedCount' => 6,
+                'expectedCount' => 14,
                 'website' => [],
                 'accountGroup' => [],
                 'account' => ['account.level_1_1']
