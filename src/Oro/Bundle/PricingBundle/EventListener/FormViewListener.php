@@ -121,7 +121,7 @@ class FormViewListener
     {
         return $this->doctrineHelper->getEntityRepository('OroPricingBundle:PriceAttributePriceList');
     }
-    
+
     /**
      * @return EntityRepository
      */
@@ -137,7 +137,7 @@ class FormViewListener
     protected function addProductPricesBlock(ScrollData $scrollData, $html)
     {
         $blockLabel = $this->translator->trans('oro.pricing.productprice.entity_plural_label');
-        $blockId = $scrollData->addBlock($blockLabel);
+        $blockId = $scrollData->addBlock($blockLabel, 10);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);
     }

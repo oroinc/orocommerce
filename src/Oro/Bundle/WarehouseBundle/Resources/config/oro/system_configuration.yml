@@ -35,6 +35,7 @@ system_configuration:
         oro_warehouse.minimum_quantity_to_order:
             data_type: integer
             type: integer
+            priority: 10
             options:
                 label: oro.warehouse.system_configuration.fields.minimum_quantity_to_order.label
                 constraints:
@@ -42,6 +43,7 @@ system_configuration:
         oro_warehouse.maximum_quantity_to_order:
             data_type: integer
             type: integer
+            priority: 5
             options:
                 label: oro.warehouse.system_configuration.fields.maximum_quantity_to_order.label
                 constraints:

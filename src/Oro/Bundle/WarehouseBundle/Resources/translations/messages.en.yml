@@ -88,10 +88,18 @@ oro:
                 maximum_quantity_to_order.label: Maximum Quantity To Order
 
         manage_inventory:
-            label: Manage Inventory
+            label: Managed Inventory
             choice:
                 'true': Yes
                 'false': No
+
+        fields:
+            product:
+                minimum_quantity_to_order.label: Minimum Quantity To Order
+                maximum_quantity_to_order.label: Maximum Quantity To Order
+            category:
+                minimum_quantity_to_order.label: Minimum Quantity To Order
+                maximum_quantity_to_order.label: Maximum Quantity To Order
 
     order:
         orderlineitem:

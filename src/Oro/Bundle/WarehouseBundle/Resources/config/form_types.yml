@@ -55,3 +55,13 @@ services:
         class: Oro\Bundle\WarehouseBundle\Form\Extension\CategoryManageInventoryFormExtension
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }
+
+    oro_warehouse.form.type.extension.category_quantity_to_order_type_extension:
+        class: Oro\Bundle\WarehouseBundle\Form\Extension\CategoryQuantityToOrderFormExtension
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }
+
+    oro_warehouse.form.type.extension.product_quantity_to_order_type_extension:
+        class: Oro\Bundle\WarehouseBundle\Form\Extension\ProductQuantityToOrderFormExtension
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }

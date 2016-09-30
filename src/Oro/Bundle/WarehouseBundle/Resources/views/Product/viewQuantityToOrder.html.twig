@@ -1,0 +1,6 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set minimumQuantity = oro_entity_fallback_value(entity, 'minimumQuantityToOrder') %}
+{% set maximumQuantity = oro_entity_fallback_value(entity, 'maximumQuantityToOrder') %}
+{{ UI.renderHtmlProperty('oro.warehouse.fields.product.minimum_quantity_to_order.label'|trans, minimumQuantity) }}
+{{ UI.renderHtmlProperty('oro.warehouse.fields.product.maximum_quantity_to_order.label'|trans, maximumQuantity) }}

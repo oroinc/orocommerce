@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
-class ProductManageInventoryFormViewListener
+class ProductQuantityToOrderFormViewListener
 {
     /**
      * @var RequestStack
@@ -53,11 +53,11 @@ class ProductManageInventoryFormViewListener
         }
 
         $template = $event->getEnvironment()->render(
-            'OroWarehouseBundle:Product:manageInventory.html.twig',
+            'OroWarehouseBundle:Product:viewQuantityToOrder.html.twig',
             ['entity' => $product]
         );
 
-        $this->addInventoryToBlock($event->getScrollData(), $template);
+        $this->addToInventoryBlock($event->getScrollData(), $template);
     }
 
     /**
@@ -66,18 +66,18 @@ class ProductManageInventoryFormViewListener
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroWarehouseBundle:Product:manageInventoryFormWidget.html.twig',
+            'OroWarehouseBundle:Product:editQuantityToOrder.html.twig',
             ['form' => $event->getFormView()]
         );
 
-        $this->addInventoryToBlock($event->getScrollData(), $template);
+        $this->addToInventoryBlock($event->getScrollData(), $template);
     }
 
     /**
      * @param ScrollData $scrollData
      * @param string $template
      */
-    protected function addInventoryToBlock(ScrollData $scrollData, $template)
+    protected function addToInventoryBlock(ScrollData $scrollData, $template)
     {
         $inventoryBlockLabel = $this->translator->trans('oro.product.sections.inventory');
 
@@ -90,7 +90,6 @@ class ProductManageInventoryFormViewListener
             }
         }
     }
-
 
     /**
      * @return null|Product
