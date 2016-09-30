@@ -63,38 +63,42 @@
 }
 
 @include breakpoint('desktop') {
-    .icon-minus,
-    .icon-plus {
-        opacity: 0;
-    }
+    .account-menu {
+        .icon-minus,
+        .icon-plus {
+            opacity: 0;
+        }
 
-    .collapse-view__container {
-        display: block !important;
+        .collapse-view__container {
+            display: block !important;
+        }
     }
 }
 
 @include breakpoint('tablet') {
-    .icon-minus,
-    .icon-plus {
-        position: absolute;
-        right: 0;
-        top: 4px;
-
-        font-size: 12px;
-    }
-
-    .icon-minus {
-        opacity: 0;
-    }
-
-    .expanded {
+    .account-menu {
+        .icon-minus,
         .icon-plus {
-            opacity: 0;
+            position: absolute;
+            right: 0;
+            top: 4px;
 
+            font-size: 12px;
         }
 
         .icon-minus {
-            opacity: 1;
+            opacity: 0;
+        }
+
+        .expanded {
+            .icon-plus {
+                opacity: 0;
+
+            }
+
+            .icon-minus {
+                opacity: 1;
+            }
         }
     }
 }
