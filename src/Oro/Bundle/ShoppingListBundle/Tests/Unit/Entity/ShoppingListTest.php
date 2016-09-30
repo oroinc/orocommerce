@@ -71,4 +71,17 @@ class ShoppingListTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($shoppingList, $shoppingList->getSourceDocument());
         $this->assertEquals('TEST', $shoppingList->getSourceDocumentIdentifier());
     }
+
+    public function testJsonSerialize()
+    {
+        $shoppingList = $this->getEntity(
+            'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList',
+            [
+                'id' => 1,
+                'label' => 'TEST'
+            ]
+        );
+
+        $this->assertEquals('{"id":1,"label":"TEST","is_current":false}', json_encode($shoppingList));
+    }
 }
