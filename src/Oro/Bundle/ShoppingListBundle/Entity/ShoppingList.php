@@ -75,7 +75,8 @@ class ShoppingList extends ExtendShoppingList implements
     LineItemsNotPricedAwareInterface,
     AccountOwnerAwareInterface,
     WebsiteAwareInterface,
-    CheckoutSourceEntityInterface
+    CheckoutSourceEntityInterface,
+    \JsonSerializable
 {
     use DatesAwareTrait;
     use FrontendAccountUserAwareTrait;
@@ -431,5 +432,17 @@ class ShoppingList extends ExtendShoppingList implements
     public function setIsAllowedRFP($isAllowedRFP)
     {
         $this->isAllowedRFP = $isAllowedRFP;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'label' => $this->getLabel(),
+            'is_current' => $this->isCurrent(),
+        ];
     }
 }
