@@ -131,12 +131,12 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => [
                     [
-                        'shopping_list_id' => 1,
-                        'shopping_list_label' => 'ShoppingList 1',
+                        'id' => 1,
+                        'label' => 'ShoppingList 1',
                         'is_current' => true,
                         'line_items' => [
-                            ['line_item_id' => 1, 'unit' => 'code1', 'quantity' => 42],
-                            ['line_item_id' => 2, 'unit' => 'code2', 'quantity' => 100],
+                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
+                            ['id' => 2, 'unit' => 'code2', 'quantity' => 100],
                         ]
                     ]
                 ]
@@ -151,20 +151,20 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => [
                     [
-                        'shopping_list_id' => 1,
-                        'shopping_list_label' => 'ShoppingList 1',
+                        'id' => 1,
+                        'label' => 'ShoppingList 1',
                         'is_current' => true,
                         'line_items' => [
-                            ['line_item_id' => 1, 'unit' => 'code1', 'quantity' => 42],
-                            ['line_item_id' => 2,'unit' => 'code2', 'quantity' => 100],
+                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
+                            ['id' => 2,'unit' => 'code2', 'quantity' => 100],
                         ]
                     ],
                     [
-                        'shopping_list_id' => 2,
-                        'shopping_list_label' => 'ShoppingList 2',
+                        'id' => 2,
+                        'label' => 'ShoppingList 2',
                         'is_current' => false,
                         'line_items' => [
-                            ['line_item_id' => 3, 'unit' => 'code3', 'quantity' => 30],
+                            ['id' => 3, 'unit' => 'code3', 'quantity' => 30],
                         ]
                     ]
                 ]
