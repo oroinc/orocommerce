@@ -46,6 +46,7 @@ class ProductVisibilitySearchQueryModifier
         if ($accountUser) {
             $accountField = $this->completeFieldName(
                 sprintf(
+                    '%s_%s',
                     WebsiteSearchProductVisibilityIndexerListener::FIELD_VISIBILITY_ACCOUNT,
                     $accountUser->getId()
                 )
