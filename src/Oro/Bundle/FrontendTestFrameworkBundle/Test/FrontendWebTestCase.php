@@ -4,6 +4,7 @@ namespace Oro\Bundle\FrontendTestFrameworkBundle\Test;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\Stub\WebsiteManagerStub;
 
 class FrontendWebTestCase extends WebTestCase
 {
@@ -52,15 +53,8 @@ class FrontendWebTestCase extends WebTestCase
             }
             $website = $this->getReference($websiteReference);
         }
-        $managerMock = $this->getMockBuilder(WebsiteManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $managerMock->expects($this->any())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
-        $managerMock->expects($this->any())
-            ->method('getDefaultWebsite')
-            ->willReturn($defaultWebsite);
-        $this->client->getContainer()->set('oro_website.manager', $managerMock);
+
+        $managerStub = new WebsiteManagerStub($website, $defaultWebsite);
+        $this->client->getContainer()->set('oro_website.manager', $managerStub);
     }
 }
