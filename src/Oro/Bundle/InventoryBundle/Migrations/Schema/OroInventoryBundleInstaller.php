@@ -12,7 +12,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
-    const INVENTORY_LEVEL_TABLE_NAME = 'oro_inventory_lev';
+    const INVENTORY_LEVEL_TABLE_NAME = 'oro_inventory_level';
 
     /** @var ExtendExtension */
     protected $extendExtension;
