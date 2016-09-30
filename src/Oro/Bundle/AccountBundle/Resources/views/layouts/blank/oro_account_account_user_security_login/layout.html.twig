@@ -6,7 +6,7 @@
 
 {% block _login_form_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' login-form'
+        '~class': ' authorization-form'
     }) %}
 
     <form id="form-login" {{ block('block_attributes') }}
@@ -45,7 +45,7 @@
 
 {% endblock %}
 
-{% block _login_form_remenber_item_widget %}
+{% block _login_form_remember_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' grid__row'
     }) %}

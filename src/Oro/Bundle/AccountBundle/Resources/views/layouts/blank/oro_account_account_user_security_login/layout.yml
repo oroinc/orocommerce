@@ -16,7 +16,7 @@ layout:
                         class_prefix: 'create-account-container'
                 login_form:
                     blockType: container
-                login_form_remenber_item:
+                login_form_remember_item:
                     blockType: container
                 login_form_submit_item:
                     blockType: container
@@ -83,12 +83,16 @@ layout:
                     options:
                         route_name: oro_account_frontend_account_user_reset_request
                         text: oro.account.accountuser.profile.forgot_password
+                        attr:
+                            class: link
                 login_form_register:
                     blockType: link
                     options:
                         visible: '=data["registrationAllowed"]==true'
                         route_name: oro_account_frontend_account_user_register
                         text: oro.account.accountuser.profile.create_an_account
+                        attr:
+                            class: link
             tree:
                 body:
                     login_page_wrapper:
@@ -98,7 +102,7 @@ layout:
                                 login_form_notifications: ~
                                 login_form_username: ~
                                 login_form_password: ~
-                                login_form_remenber_item:
+                                login_form_remember_item:
                                     login_form_remember: ~
                                 login_form_submit_item:
                                     login_form_submit: ~
