@@ -4,10 +4,10 @@ namespace Oro\Bundle\ProductBundle\ImportExport\Strategy;
 
 use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class ProductStrategy extends LocalizedFallbackValueAwareStrategy
 {
@@ -27,6 +27,16 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     protected $variantLinkClass;
 
     /**
+     * @var string
+     */
+    protected $unitPrecisionClass;
+
+    /**
+     * @var Product
+     */
+    protected $product;
+
+    /**
      * @param SecurityFacade $securityFacade
      */
     public function setSecurityFacade($securityFacade)
@@ -40,6 +50,14 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     public function setVariantLinkClass($variantLinkClass)
     {
         $this->variantLinkClass = $variantLinkClass;
+    }
+
+    /**
+     * @param string $unitPrecisionClass
+     */
+    public function setUnitPrecisionClass($unitPrecisionClass)
+    {
+        $this->unitPrecisionClass = $unitPrecisionClass;
     }
 
     /**
@@ -59,7 +77,35 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
         $this->eventDispatcher->dispatch(ProductStrategyEvent::PROCESS_BEFORE, $event);
 
-        return parent::beforeProcessEntity($entity);
+        $processedEntity = parent::beforeProcessEntity($entity);
+        if ($processedEntity instanceof Product) {
+            $this->product = $processedEntity;
+        }
+        return $processedEntity;
+    }
+
+    /**
+     * @param object           $entity
+     * @param bool             $isFullData
+     * @param bool             $isPersistNew
+     * @param mixed|array|null $itemData
+     * @param array            $searchContext
+     * @param bool             $entityIsRelation
+     *
+     * @return null|object
+     */
+    protected function processEntity(
+        $entity,
+        $isFullData = false,
+        $isPersistNew = false,
+        $itemData = null,
+        array $searchContext = [],
+        $entityIsRelation = false
+    ) {
+        /*if ($entity instanceof $this->unitPrecisionClass) {
+            $this->product = $entity->getProduct();
+        }*/
+        return parent::processEntity($entity, $isFullData, $isPersistNew, $itemData, $searchContext, $entityIsRelation);
     }
 
     /**
@@ -109,6 +155,9 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
      */
     protected function findEntityByIdentityValues($entityName, array $identityValues)
     {
+        if (is_a($entityName, $this->unitPrecisionClass, true)) {
+            $identityValues['product'] = clone $this->product;
+        }
         if (is_a($entityName, $this->variantLinkClass, true)) {
             $newIdentityValues = [];
             foreach ($identityValues as $entityFieldName => $entity) {

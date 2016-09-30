@@ -20,6 +20,7 @@ services:
         calls:
             - [setSecurityFacade, ['@oro_security.security_facade']]
             - [setVariantLinkClass, ['%oro_product.entity.product_variant_link.class%']]
+            - [setUnitPrecisionClass, ['%oro_product.entity.product_unit_precision.class%']]
 
     oro_product.importexport.normalizer.product:
         class: 'Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer'
@@ -96,3 +97,9 @@ services:
             - [setDataConverter, ['@oro_product.importexport.inventory_status_converter']]
         tags:
             - { name: oro_importexport.processor, type: export_template, entity: '%oro_product.entity.product.class%', alias: oro_product.inventory_status_only_template }
+
+    # Writer
+    oro_pricing.importexport.writer.product_price:
+        class: 'Oro\Bundle\ProductBundle\ImportExport\Writer\ProductWriter'
+        public: false
+        parent: oro_integration.writer.persistent_batch_writer
