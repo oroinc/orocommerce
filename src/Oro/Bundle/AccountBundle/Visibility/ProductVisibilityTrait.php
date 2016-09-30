@@ -129,7 +129,8 @@ trait ProductVisibilityTrait
      */
     protected function getRootAlias(QueryBuilder $queryBuilder)
     {
-        return reset($queryBuilder->getRootAliases());
+        $aliases = $queryBuilder->getRootAliases();
+        return reset($aliases);
     }
 
     /**
