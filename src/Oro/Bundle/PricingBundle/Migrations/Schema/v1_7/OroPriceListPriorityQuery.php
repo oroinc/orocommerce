@@ -52,19 +52,18 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
         $this->updatePriceListAccountGroupPriorities($logger, $dryRun);
         $this->updatePriceListAccountPriorities($logger, $dryRun);
         $this->updatePriceListWebsitePriorities($logger, $dryRun);
-        $this->updatePriceListConfigPriority($logger, $dryRun);
+        $this->updatePriceListConfigPriority($dryRun);
     }
 
     /**
-     * @param LoggerInterface $logger
      * @param bool $dryRun
      */
-    protected function updatePriceListConfigPriority(LoggerInterface $logger, $dryRun = false)
+    protected function updatePriceListConfigPriority($dryRun = false)
     {
         /** @var ConfigManager */
         $configManager = $this->container->get('oro_config.global');
 
-        $defaultPriceLists =  $configManager->get('oro_pricing.default_price_lists');
+        $defaultPriceLists = $configManager->get('oro_pricing.default_price_lists');
 
         usort(
             $defaultPriceLists,
@@ -88,8 +87,11 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
             $priceLists[] = new PriceListConfig($priceList, array_pop($priorities), $defaultPriceList['mergeAllowed']);
         }
 
-        $configManager->set('oro_pricing.default_price_lists', $priceLists);
-        $configManager->flush();
+        if (!$dryRun) {
+            $configManager->set('oro_pricing.default_price_lists', $priceLists);
+            $configManager->flush();
+        }
+
     }
 
     /**
