@@ -1,5 +1,5 @@
 parameters:
-    oro_account.entity.account.class: Oro\Bundle\CustomerBundle\Entity\Account
+    oro_customer.entity.account.class: Oro\Bundle\CustomerBundle\Entity\Account
     oro_account.entity.account_address.class: Oro\Bundle\CustomerBundle\Entity\AccountAddress
     oro_account.entity.account_group.class: Oro\Bundle\CustomerBundle\Entity\AccountGroup
     oro_account.entity.account_user.class: Oro\Bundle\CustomerBundle\Entity\AccountUser
@@ -81,14 +81,14 @@ services:
     oro_account.account_tree_handler:
         class: 'Oro\Bundle\CustomerBundle\JsTree\AccountTreeHandler'
         arguments:
-            - '%oro_account.entity.account.class%'
+            - '%oro_customer.entity.account.class%'
             - "@doctrine"
 
     oro_account.manager.account.api.attribute:
         class:  'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - '%oro_account.entity.account.class%'
+            - '%oro_customer.entity.account.class%'
             - "@doctrine.orm.entity_manager"
 
     oro_account.manager.group.api.attribute:
@@ -107,24 +107,24 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_account_group, acl_resource: oro_account_group_view }
 
-    oro_account.form.autocomplete.account.search_handler:
+    oro_customer_account.form.autocomplete.account.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - '%oro_account.entity.account.class%'
+            - '%oro_customer.entity.account.class%'
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_account, acl_resource: oro_account_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_customer_account, acl_resource: oro_customer_account_view }
 
     oro_account.form.autocomplete.account_parent.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler
         class: 'Oro\Bundle\CustomerBundle\Autocomplete\ParentAccountSearchHandler'
         arguments:
-            - '%oro_account.entity.account.class%'
+            - '%oro_customer.entity.account.class%'
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_account_parent, acl_resource: oro_account_view }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_account_parent, acl_resource: oro_customer_account_view }
 
     oro_account.form.autocomplete.account_user_account.search_handler:
         public: false

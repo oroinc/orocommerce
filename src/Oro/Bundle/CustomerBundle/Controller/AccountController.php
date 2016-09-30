@@ -16,24 +16,24 @@ use Oro\Bundle\CustomerBundle\Form\Type\AccountType;
 class AccountController extends Controller
 {
     /**
-     * @Route("/", name="oro_account_index")
+     * @Route("/", name="oro_customer_account_index")
      * @Template
-     * @AclAncestor("oro_account_view")
+     * @AclAncestor("oro_customer_account_view")
      *
      * @return array
      */
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_account.entity.account.class')
+            'entity_class' => $this->container->getParameter('oro_customer.entity.account.class')
         ];
     }
 
     /**
-     * @Route("/view/{id}", name="oro_account_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_customer_account_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="oro_account_view",
+     *      id="oro_customer_account_view",
      *      type="entity",
      *      class="OroCustomerBundle:Account",
      *      permission="VIEW"
@@ -50,10 +50,10 @@ class AccountController extends Controller
     }
 
     /**
-     * @Route("/create", name="oro_account_create")
+     * @Route("/create", name="oro_customer_account_create")
      * @Template("OroCustomerBundle:Account:update.html.twig")
      * @Acl(
-     *      id="oro_account_create",
+     *      id="oro_customer_create",
      *      type="entity",
      *      class="OroCustomerBundle:Account",
      *      permission="CREATE"
@@ -67,10 +67,10 @@ class AccountController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="oro_account_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_customer_account_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="oro_account_update",
+     *      id="oro_customer_account_update",
      *      type="entity",
      *      class="OroCustomerBundle:Account",
      *      permission="EDIT"
@@ -95,13 +95,13 @@ class AccountController extends Controller
             $this->createForm(AccountType::NAME, $account),
             function (Account $account) {
                 return [
-                    'route' => 'oro_account_update',
+                    'route' => 'oro_customer_account_update',
                     'parameters' => ['id' => $account->getId()],
                 ];
             },
             function (Account $account) {
                 return [
-                    'route' => 'oro_account_view',
+                    'route' => 'oro_customer_account_view',
                     'parameters' => ['id' => $account->getId()],
                 ];
             },
@@ -110,9 +110,9 @@ class AccountController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="oro_account_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_customer_account_info", requirements={"id"="\d+"})
      * @Template("OroCustomerBundle:Account/widget:info.html.twig")
-     * @AclAncestor("oro_account_view")
+     * @AclAncestor("oro_customer_account_view")
      *
      * @param Account $account
      * @return array

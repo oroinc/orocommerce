@@ -31,7 +31,7 @@ class AccountAddressController extends RestController implements ClassResourceIn
      *      description="Get account address",
      *      resource=true
      * )
-     * @AclAncestor("oro_account_view")
+     * @AclAncestor("oro_customer_account_view")
      * @return Response
      */
     public function getAction($entityId, $addressId)
@@ -57,7 +57,7 @@ class AccountAddressController extends RestController implements ClassResourceIn
      *      description="Get all addresses items",
      *      resource=true
      * )
-     * @AclAncestor("oro_account_view")
+     * @AclAncestor("oro_customer_account_view")
      * @param int $entityId
      *
      * @return JsonResponse
@@ -116,7 +116,7 @@ class AccountAddressController extends RestController implements ClassResourceIn
      *      description="Get account address by type",
      *      resource=true
      * )
-     * @AclAncestor("oro_account_view")
+     * @AclAncestor("oro_customer_account_view")
      * @return Response
      */
     public function getByTypeAction($entityId, $typeName)
@@ -144,7 +144,7 @@ class AccountAddressController extends RestController implements ClassResourceIn
      *      description="Get account primary address",
      *      resource=true
      * )
-     * @AclAncestor("oro_account_view")
+     * @AclAncestor("oro_customer_account_view")
      * @return Response
      */
     public function getPrimaryAction($entityId)

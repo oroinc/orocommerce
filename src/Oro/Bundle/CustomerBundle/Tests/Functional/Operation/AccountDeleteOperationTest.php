@@ -26,6 +26,10 @@ class AccountDeleteOperationTest extends ActionTestCase
         /** @var Account $account */
         $account = $this->getReference('account.orphan');
 
-        $this->assertDeleteOperation($account->getId(), 'oro_account.entity.account.class', 'oro_account_index');
+        $this->assertDeleteOperation(
+            $account->getId(),
+            'oro_customer.entity.account.class',
+            'oro_customer_account_index'
+        );
     }
 }

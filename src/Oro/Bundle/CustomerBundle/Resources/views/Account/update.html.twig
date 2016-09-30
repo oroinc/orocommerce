@@ -1,15 +1,15 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 
-{% set formAction = entity.id ? path('oro_account_update', {id: entity.id}) : path('oro_account_create') %}
+{% set formAction = entity.id ? path('oro_customer_account_update', {id: entity.id}) : path('oro_customer_account_create') %}
 
 {% oro_title_set({params : {"%accountName%": entity.name|default('N/A'|trans), '%entityName%': 'oro.customer.account.entity_label'|trans} }) %}
 
 {% block navButtons %}
     {{ parent() }}
 
-    {{ UI.cancelButton(path('oro_account_index')) }}
+    {{ UI.cancelButton(path('oro_customer_account_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('oro_account_update') %}
+    {% if entity.id or resource_granted('oro_customer_account_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -19,7 +19,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('oro_account_index'),
+            'indexPath':   path('oro_customer_account_index'),
             'indexLabel': 'oro.customer.account.entity_plural_label'|trans,
             'entityTitle': entity.name|default('N/A'|trans)
         } %}

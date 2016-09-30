@@ -1,5 +1,5 @@
 services:
-    oro_account.form.type.account:
+    oro_customer_account.form.type.account:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountType'
         arguments:
           - '@event_dispatcher'
@@ -12,14 +12,14 @@ services:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountGroupType'
         calls:
             - [setDataClass, ['%oro_account.entity.account_group.class%']]
-            - [setAccountClass, ['%oro_account.entity.account.class%']]
+            - [setAccountClass, ['%oro_customer.entity.account.class%']]
         tags:
             - { name: form.type, alias: oro_account_group_type }
 
-    oro_account.form.type.account_select:
+    oro_customer_account.form.type.account_select:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType'
         tags:
-            - { name: form.type, alias: oro_account_select }
+            - { name: form.type, alias: oro_customer_account_select }
 
     oro_account.form.type.account_group_select:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountGroupSelectType'
@@ -246,5 +246,5 @@ services:
         tags:
             - { name: form.type, alias: oro_account_entity_visibility_type }
         calls:
-            - [setAccountClass,['%oro_account.entity.account.class%']]
+            - [setAccountClass,['%oro_customer.entity.account.class%']]
             - [setAccountGroupClass,['%oro_account.entity.account_group.class%']]

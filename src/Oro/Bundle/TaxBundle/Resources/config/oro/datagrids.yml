@@ -400,7 +400,7 @@ datagrids:
         properties:
             view_link:
                 type:   url
-                route: oro_account_view
+                route: oro_customer_account_view
                 params: [ id ]
         actions:
             view:
@@ -408,7 +408,7 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  oro_account_view
+                acl_resource:  oro_customer_account_view
                 rowAction:     true
 
     tax-product-grid:

@@ -22,7 +22,7 @@
             {% if entity.parent %}
                 {% if is_granted('VIEW', entity.parent) %}
                     {% set parentData %}
-                        <a href="{{ path('oro_account_view', {id: entity.parent.id}) }}">
+                        <a href="{{ path('oro_customer_account_view', {id: entity.parent.id}) }}">
                             {{ entity.parent.name }}
                         </a>
                     {% endset %}

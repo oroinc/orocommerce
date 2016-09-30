@@ -82,7 +82,7 @@ services:
         arguments:
             - '@doctrine'
             - '@request_stack'
-            - '%oro_account.entity.account.class%'
+            - '%oro_customer.entity.account.class%'
             - '%oro_account.entity.account_user.class%'
 
     oro_order.request_handler.frontend_order_data_handler:

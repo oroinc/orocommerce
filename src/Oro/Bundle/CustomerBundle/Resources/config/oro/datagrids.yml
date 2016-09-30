@@ -16,7 +16,7 @@ datagrids:
             access_level_route: oro_account_frontend_acl_access_levels
 
     account-accounts-select-grid:
-        acl_resource: oro_account_view
+        acl_resource: oro_customer_account_view
         options:
             entityHint:        account
         source:
@@ -30,7 +30,7 @@ datagrids:
                     - internalRating.name as internal_rating_name
                     - internalRating.id as internal_rating_id
                 from:
-                    - { table: %oro_account.entity.account.class%, alias: account }
+                    - { table: %oro_customer.entity.account.class%, alias: account }
                 join:
                     left:
                         - { join: account.group, alias: account_group }
@@ -87,7 +87,7 @@ datagrids:
         properties:
             view_link:
                 type:   url
-                route:  oro_account_view
+                route:  oro_customer_account_view
                 params: [ id ]
         actions:
             view:
@@ -95,7 +95,7 @@ datagrids:
                 label:        oro.grid.action.view
                 link:         view_link
                 icon:         eye-open
-                acl_resource: oro_account_view
+                acl_resource: oro_customer_account_view
                 rowAction:    true
 
     account-groups-select-grid:
@@ -166,7 +166,7 @@ datagrids:
                 acl_resource:  oro_account_group_delete
 
     account-group-accounts-grid-basic:
-        acl_resource: oro_account_view
+        acl_resource: oro_customer_account_view
         source:
             type: orm
             query:
@@ -175,7 +175,7 @@ datagrids:
                     - account.name
                     - parent.name as parent_name
                 from:
-                    - { table: %oro_account.entity.account.class%, alias: account }
+                    - { table: %oro_customer.entity.account.class%, alias: account }
                 join:
                     left:
                         - { join: account.parent, alias: parent }
@@ -183,7 +183,7 @@ datagrids:
             id: ~
             view_link:
                 type:   url
-                route:  oro_account_view
+                route:  oro_customer_account_view
                 params: [ id ]
         sorters:
             columns:
@@ -205,7 +205,7 @@ datagrids:
                 label:        oro.grid.action.view
                 link:         view_link
                 icon:         eye-open
-                acl_resource: oro_account_view
+                acl_resource: oro_customer_account_view
         options:
             entityHint: account
 
@@ -881,7 +881,7 @@ datagrids:
                     - account.name
                     - visibilityAlias
                 from:
-                    - { table: %oro_account.entity.account.class%, alias: account }
+                    - { table: %oro_customer.entity.account.class%, alias: account }
                 join:
                     left:
                         - { join: %oro_account.entity.account_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.account = account AND visibilityAlias.category = :target_entity_id' }
@@ -981,7 +981,7 @@ datagrids:
                     - account.name
                     - visibilityAlias
                 from:
-                    - { table: %oro_account.entity.account.class%, alias: account }
+                    - { table: %oro_customer.entity.account.class%, alias: account }
                 join:
                     left:
                         - { join: %oro_account.entity.account_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.account = account AND visibilityAlias.product = :target_entity_id  AND visibilityAlias.website = :website_id' }

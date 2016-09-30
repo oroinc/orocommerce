@@ -9,7 +9,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 
 class AccountSelectType extends AbstractType
 {
-    const NAME = 'oro_account_select';
+    const NAME = 'oro_customer_account_select';
 
     /**
      * {@inheritdoc}
@@ -18,8 +18,8 @@ class AccountSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'oro_account',
-                'create_form_route' => 'oro_account_create',
+                'autocomplete_alias' => 'oro_customer_account',
+                'create_form_route' => 'oro_customer_account_create',
                 'configs' => [
                     'placeholder' => 'oro.customer.account.form.choose',
                 ],

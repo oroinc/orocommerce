@@ -97,7 +97,7 @@ class AccountUserController extends Controller
         $account = null;
         if ($accountId) {
             $account = $doctrineHelper->getEntityReference(
-                $this->getParameter('oro_account.entity.account.class'),
+                $this->getParameter('oro_customer.entity.account.class'),
                 $accountId
             );
         }

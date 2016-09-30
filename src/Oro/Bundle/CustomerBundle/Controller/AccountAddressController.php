@@ -20,7 +20,7 @@ class AccountAddressController extends Controller
     /**
      * @Route("/address-book/{id}", name="oro_account_address_book", requirements={"id"="\d+"})
      * @Template("OroCustomerBundle:Address/widget:addressBook.html.twig")
-     * @AclAncestor("oro_account_view")
+     * @AclAncestor("oro_customer_account_view")
      *
      * @param Account $account
      * @return array
@@ -29,7 +29,7 @@ class AccountAddressController extends Controller
     {
         return [
             'entity' => $account,
-            'address_edit_acl_resource' => 'oro_account_update',
+            'address_edit_acl_resource' => 'oro_customer_account_update',
             'options' => $this->getAddressBookOptions($account)
         ];
     }
@@ -41,7 +41,7 @@ class AccountAddressController extends Controller
      *      requirements={"entityId"="\d+"}
      * )
      * @Template("OroCustomerBundle:Address/widget:update.html.twig")
-     * @AclAncestor("oro_account_create")
+     * @AclAncestor("oro_customer_account_create")
      * @ParamConverter("account", options={"id" = "entityId"})
      *
      * @param Account $account
@@ -59,7 +59,7 @@ class AccountAddressController extends Controller
      *      requirements={"entityId"="\d+","id"="\d+"},defaults={"id"=0}
      * )
      * @Template("OroCustomerBundle:Address/widget:update.html.twig")
-     * @AclAncestor("oro_account_update")
+     * @AclAncestor("oro_customer_account_update")
      * @ParamConverter("account", options={"id" = "entityId"})
      *
      * @param Account        $account

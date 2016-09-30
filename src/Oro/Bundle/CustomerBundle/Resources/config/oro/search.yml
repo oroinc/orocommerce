@@ -1,9 +1,9 @@
 search:
     Oro\Bundle\CustomerBundle\Entity\Account:
-        alias:                          oro_account
+        alias:                          oro_customer_account
         title_fields:                   [name]
         route:
-            name:                       oro_account_view
+            name:                       oro_customer_account_view
             parameters:
                 id:                     id
         search_template:                OroCustomerBundle:Account:searchResult.html.twig

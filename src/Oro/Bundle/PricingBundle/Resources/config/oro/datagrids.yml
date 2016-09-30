@@ -177,7 +177,7 @@ datagrids:
                 label: oro.customer.account.parent.label
         properties:
             view_link:
-                route:  oro_account_view
+                route:  oro_customer_account_view
         sorters:
             columns:
                 groupName:
@@ -199,7 +199,7 @@ datagrids:
                     data_name: parent.name
         actions:
             view:
-                acl_resource: oro_account_view
+                acl_resource: oro_customer_account_view
 
     price-list-account-groups-grid:
         extends:                base-price-list-relations-grid
@@ -277,7 +277,7 @@ datagrids:
                     - accountGroup.name as groupName
                     - parent.name as parentName
                 from:
-                    - { table: %oro_account.entity.account.class%, alias: relatedEntity }
+                    - { table: %oro_customer.entity.account.class%, alias: relatedEntity }
                 join:
                     left:
                         - { join: %oro_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.accounts' }

@@ -35,7 +35,7 @@ class AccountControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -68,7 +68,7 @@ class AccountControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_view', ['id' => $id])
+            $this->getUrl('oro_customer_account_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -170,7 +170,7 @@ class AccountControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_view', ['id' => $id])
+            $this->getUrl('oro_customer_account_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();

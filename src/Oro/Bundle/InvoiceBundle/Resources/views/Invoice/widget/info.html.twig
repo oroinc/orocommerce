@@ -9,7 +9,7 @@
             {{ UI.renderProperty('oro.invoice.currency.label'|trans, entity.currency) }}
 
             {% if resource_granted('VIEW', entity.account) %}
-                {% set accountView = UI.renderUrl(path('oro_account_view', {'id': entity.account.id}), entity.account|oro_format_name|default('oro.ui.empty'|trans)) %}
+                {% set accountView = UI.renderUrl(path('oro_customer_account_view', {'id': entity.account.id}), entity.account|oro_format_name|default('oro.ui.empty'|trans)) %}
             {% else %}
                 {% set accountView = entity.account|oro_format_name|trim %}
             {% endif %}

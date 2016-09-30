@@ -27,7 +27,7 @@ class AccountControllerTest extends AbstractPriceListsByEntityTestCase
      */
     public function getUpdateUrl($id = null)
     {
-        return $this->getUrl('oro_account_update', ['id' => $id ?: $this->account->getId()]);
+        return $this->getUrl('oro_customer_account_update', ['id' => $id ?: $this->account->getId()]);
     }
 
     /**
@@ -35,7 +35,7 @@ class AccountControllerTest extends AbstractPriceListsByEntityTestCase
      */
     public function getCreateUrl()
     {
-        return $this->getUrl('oro_account_create');
+        return $this->getUrl('oro_customer_account_create');
     }
 
     /**
@@ -43,7 +43,7 @@ class AccountControllerTest extends AbstractPriceListsByEntityTestCase
      */
     public function getViewUrl()
     {
-        return $this->getUrl('oro_account_view', ['id' => $this->account->getId()]);
+        return $this->getUrl('oro_customer_account_view', ['id' => $this->account->getId()]);
     }
 
     /**

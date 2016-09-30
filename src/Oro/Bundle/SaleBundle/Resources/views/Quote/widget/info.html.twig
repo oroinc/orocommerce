@@ -9,7 +9,7 @@
                 {{ UI.renderHtmlProperty('oro.sale.quote.account_user.label'|trans, UI.entityViewLink(entity.accountUser, entity.accountUser.fullName, 'oro_account_account_user_view')) }}
             {% endif %}
             {% if entity.account %}
-                {{ UI.renderHtmlProperty('oro.sale.quote.account.label'|trans, UI.entityViewLink(entity.account, entity.account.name, 'oro_account_view')) }}
+                {{ UI.renderHtmlProperty('oro.sale.quote.account.label'|trans, UI.entityViewLink(entity.account, entity.account.name, 'oro_customer_account_view')) }}
             {% endif %}
 
             {{ UI.renderProperty('oro.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}

@@ -22,7 +22,7 @@ class OwnerTreeListenerPass implements CompilerPassInterface
         $listenerDefinition->addMethodCall(
             'addSupportedClass',
             [
-                $container->getParameter('oro_account.entity.account.class'),
+                $container->getParameter('oro_customer.entity.account.class'),
                 ['parent', 'organization']
             ]
         );

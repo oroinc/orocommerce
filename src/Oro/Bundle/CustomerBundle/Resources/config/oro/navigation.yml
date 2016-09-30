@@ -62,14 +62,14 @@ navigation:
             # @todo: renaming of navigation keys will be finished in BB-2679
             customer_list:
                 label:           'oro.customer.account.entity_plural_label'
-                route:           'oro_account_index'
+                route:           'oro_customer_account_index'
                 extras:
                     position:    10
                     routes:
-                        - 'oro_account_index'
-                        - 'oro_account_view'
-                        - 'oro_account_create'
-                        - 'oro_account_update'
+                        - 'oro_customer_account_index'
+                        - 'oro_customer_account_view'
+                        - 'oro_customer_account_create'
+                        - 'oro_customer_account_update'
                     description: 'oro.customer.menu.account_list.description'
 
             account_group_list:
@@ -86,7 +86,7 @@ navigation:
 
             shortcut_account_list:
                 label:           'oro.customer.account.entity_plural_label'
-                route:           'oro_account_index'
+                route:           'oro_customer_account_index'
                 extras:
                     description: 'oro.customer.menu.shortcut_account_list.description'
 
@@ -213,10 +213,10 @@ navigation:
     titles:
         oro_account_pinbar_help: 'How To Use Pinbar'
 
-        oro_account_index: ~
-        oro_account_view:  '%%title%%'
-        oro_account_update: %%accountName%% - oro.ui.edit
-        oro_account_create: oro.ui.create_entity
+        oro_customer_account_index: ~
+        oro_customer_account_view:  '%%title%%'
+        oro_customer_account_update: %%accountName%% - oro.ui.edit
+        oro_customer_account_create: oro.ui.create_entity
 
         oro_account_group_index: ~
         oro_account_group_view:  '%%title%%'

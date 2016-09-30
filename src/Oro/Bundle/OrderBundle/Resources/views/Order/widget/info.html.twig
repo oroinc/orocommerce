@@ -27,7 +27,7 @@
             {{ UI.renderProperty('oro.order.subtotal.label'|trans, order.subtotal|oro_format_currency({'currency': order.currency})) }}
 
             {% if resource_granted('VIEW', order.account) %}
-                {% set accountView = UI.renderUrl(path('oro_account_view', {'id': order.account.id}), order.account|oro_format_name|default('oro.ui.empty'|trans)) %}
+                {% set accountView = UI.renderUrl(path('oro_customer_account_view', {'id': order.account.id}), order.account|oro_format_name|default('oro.ui.empty'|trans)) %}
             {% else %}
                 {% set accountView = order.account|oro_format_name|trim %}
             {% endif %}

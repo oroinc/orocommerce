@@ -34,7 +34,7 @@ class AccountControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('account-accounts-grid', $crawler->html());
@@ -45,7 +45,7 @@ class AccountControllerTest extends WebTestCase
      */
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -76,7 +76,7 @@ class AccountControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_update', ['id' => $id])
+            $this->getUrl('oro_customer_account_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -100,7 +100,7 @@ class AccountControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_view', ['id' => $id])
+            $this->getUrl('oro_customer_account_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();

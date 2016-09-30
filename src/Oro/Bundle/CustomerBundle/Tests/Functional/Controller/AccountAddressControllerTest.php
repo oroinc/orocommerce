@@ -35,7 +35,7 @@ class AccountAddressControllerTest extends WebTestCase
 
     public function testAccountView()
     {
-        $this->client->request('GET', $this->getUrl('oro_account_view', ['id' => $this->account->getId()]));
+        $this->client->request('GET', $this->getUrl('oro_customer_account_view', ['id' => $this->account->getId()]));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }

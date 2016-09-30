@@ -6,7 +6,7 @@
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
-        'indexPath': path('oro_account_index'),
+        'indexPath': path('oro_customer_account_index'),
         'indexLabel': 'oro.customer.account.entity_plural_label'|trans,
         'entityTitle': entity.name|default('N/A'|trans)
     } %}
@@ -18,7 +18,7 @@
     {% set accountInfo %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'url': path('oro_account_info', {id: entity.id}),
+            'url': path('oro_customer_account_info', {id: entity.id}),
             'alias': 'account-info-widget'
         }) }}
     {% endset %}
