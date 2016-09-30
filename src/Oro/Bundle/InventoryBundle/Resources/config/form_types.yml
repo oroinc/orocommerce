@@ -1,0 +1,18 @@
+services:
+    oro_inventory.form.type.inventoty_level_grid:
+        class: 'Oro\Bundle\InventoryBundle\Form\Type\InventoryLevelGridType'
+        arguments:
+            - '@form.factory'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: form.type, alias: oro_inventory_level_grid }
+
+    oro_inventory.form.type.extension.inventory_status_export:
+        class: Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTypeExtension
+        tags:
+            - { name: form.type_extension, alias: oro_importexport_export }
+
+    oro_inventory.form.type.extension.inventory_level_export_template:
+        class: Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTemplateTypeExtension
+        tags:
+            - { name: form.type_extension, alias: oro_importexport_export_template }

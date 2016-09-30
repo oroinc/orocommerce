@@ -1,0 +1,118 @@
+services:
+    #Converter
+    oro_inventory.importexport.inventory_level_converter:
+        parent: oro_importexport.data_converter.configurable
+        class: 'Oro\Bundle\InventoryBundle\ImportExport\DataConverter\InventoryLevelDataConverter'
+
+    #Export processor
+    oro_inventory.importexport.processor.export_detailed_inventory_levels:
+        parent: oro_importexport.processor.export_abstract
+        public: false
+        calls:
+             - [setDataConverter, ["@oro_inventory.importexport.inventory_level_converter"]]
+             - [setSerializer, ['@oro_inventory.importexport.serializer.inventory_level']]
+        tags:
+            - { name: oro_importexport.processor, type: export, entity: %oro_inventory.entity.inventory_level.class%, alias: oro_inventory.detailed_inventory_levels }
+
+    # Strategy
+    oro_inventory.importexport.strategy.inventory_level:
+        class: 'Oro\Bundle\InventoryBundle\ImportExport\Strategy\InventoryLevelStrategy'
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_importexport.strategy.import.helper'
+            - '@oro_importexport.field.field_helper'
+            - '@oro_importexport.field.database_helper'
+        calls:
+             - [setInventoryLevelStrategyHelper, ["@oro_inventory.importexport.strategy_helper.inventory_statuses"]]
+
+    #Serializer
+    oro_inventory.importexport.serializer.inventory_level:
+        class: 'Oro\Bundle\ImportExportBundle\Serializer\Serializer'
+        arguments:
+          - ['@oro_inventory.importexport.normalizer.inventory_level']
+          - ['@oro_importexport.serializer.dummy_encoder']
+
+    oro_inventory.importexport.normalizer.inventory_level:
+        class: 'Oro\Bundle\InventoryBundle\ImportExport\Serializer\InventoryLevelNormalizer'
+        public: false
+        parent: oro_importexport.serializer.configurable_entity_normalizer
+        arguments:
+#            - '@oro_importexport.field.field_helper'
+            - '@oro_product.formatter.product_unit_label'
+            - '@oro_product.service.quantity_rounding'
+        calls:
+            - [setDispatcher, ['@event_dispatcher']]
+
+    # Import processor
+    oro_inventory.importexport.processor.import.inventory_level:
+        parent: oro_importexport.processor.import_abstract
+        public: false
+        calls:
+            - [setDataConverter, ['@oro_inventory.importexport.inventory_level_converter']]
+            - [setStrategy, ['@oro_inventory.importexport.strategy.inventory_level']]
+            - [setSerializer, ['@oro_inventory.importexport.serializer.inventory_level']]
+        tags:
+            - { name: oro_importexport.processor, type: import, entity: '%oro_inventory.entity.inventory_level.class%', alias: oro_inventory.inventory_level }
+            - { name: oro_importexport.processor, type: import_validation, entity: '%oro_inventory.entity.inventory_level.class%', alias: oro_inventory.inventory_level }
+
+    # Export template
+    oro_inventory.importexport.processor.export_template.inventory_level:
+        public: false
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, ['@oro_inventory.importexport.inventory_level_converter']]
+            - [setSerializer, ['@oro_inventory.importexport.serializer.inventory_level']]
+        tags:
+            - { name: oro_importexport.processor, type: export_template, entity: '%oro_inventory.entity.inventory_level.class%', alias: oro_inventory.detailed_inventory_levels_template }
+
+    # Template Fixture
+    oro_inventory.importexport.template_fixture.inventory_level:
+        class: 'Oro\Bundle\InventoryBundle\ImportExport\TemplateFixture\InventoryLevelFixture'
+        public: false
+        tags:
+            - { name: oro_importexport.template_fixture }
+
+    # Inventory level Reader
+    oro_inventory.importexport.reader.inventory_level:
+        public: false
+        parent: oro_importexport.reader.entity
+        class: 'Oro\Bundle\InventoryBundle\ImportExport\Reader\InventoryLevelReader'
+
+    #Strategy Helpers
+    oro_inventory.importexport.strategy_helper.inventory_level:
+        class: 'Oro\Bundle\InventoryBundle\ImportExport\Strategy\InventoryLevelStrategyHelper'
+        public: false
+        arguments:
+            - "@oro_importexport.field.database_helper"
+            - "@translator"
+
+    oro_inventory.importexport.strategy_helper.product_unit:
+        class: 'Oro\Bundle\InventoryBundle\ImportExport\Strategy\ProductUnitStrategyHelper'
+        public: false
+        arguments:
+            - "@oro_importexport.field.database_helper"
+            - "@translator"
+            - "@oro_inventory.transformer.inventory_product_unit"
+        calls:
+             - [setSuccessor, ["@oro_inventory.importexport.strategy_helper.inventory_level"]]
+
+    oro_inventory.importexport.strategy_helper.inventory_statuses:
+        class: 'Oro\Bundle\InventoryBundle\ImportExport\Strategy\InventoryStatusesStrategyHelper'
+        arguments:
+            - "@oro_importexport.field.database_helper"
+            - "@translator"
+        calls:
+             - [setSuccessor, ["@oro_inventory.importexport.strategy_helper.product_unit"]]
+
+    #Transformer
+    oro_inventory.transformer.inventory_product_unit:
+        class: 'Oro\Bundle\InventoryBundle\Model\Data\ProductUnitTransformer'
+        arguments:
+            - "@oro_product.provider.product_units_provider"
+
+    #Listeners
+    oro_inventory.event_listener.inventory_level_import:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\InventoryLevelsImportListener'
+        arguments: ["@oro_inventory.importexport.strategy.inventory_level"]
+        tags:
+            - { name: kernel.event_listener, event: akeneo_batch.step_execution_completed, method: onBatchStepCompleted }
