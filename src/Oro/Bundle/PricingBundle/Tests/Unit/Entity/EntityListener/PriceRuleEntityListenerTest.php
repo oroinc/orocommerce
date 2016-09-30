@@ -1,8 +1,9 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EventListener;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\Common\Cache\Cache;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\EntityListener\PriceRuleEntityListener;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -35,7 +36,10 @@ class PriceRuleEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->priceRuleChangeTriggerHandler = $this->getMockBuilder(PriceListTriggerHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->listener = new PriceRuleEntityListener($this->cache, $this->priceRuleChangeTriggerHandler);
+        $this->listener = new PriceRuleEntityListener(
+            $this->cache,
+            $this->priceRuleChangeTriggerHandler
+        );
     }
 
     public function testPreUpdate()
@@ -47,9 +51,13 @@ class PriceRuleEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('delete')
             ->with('pr_42');
         $this->priceRuleChangeTriggerHandler->expects($this->once())
-            ->method('addTriggersForPriceList')
-            ->with(Topics::CALCULATE_RULE, $priceList);
-        $this->listener->preUpdate($priceRule);
+            ->method('addTriggerForPriceList')
+            ->with(Topics::RESOLVE_PRICE_RULES, $priceList);
+
+        $event = $this->getMockBuilder(PreUpdateEventArgs::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->listener->preUpdate($priceRule, $event);
     }
 
     public function testPreRemove()
@@ -61,8 +69,25 @@ class PriceRuleEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('delete')
             ->with('pr_2');
         $this->priceRuleChangeTriggerHandler->expects($this->once())
-            ->method('addTriggersForPriceList')
-            ->with(Topics::CALCULATE_RULE, $priceList);
+            ->method('addTriggerForPriceList')
+            ->with(Topics::RESOLVE_PRICE_RULES, $priceList);
+
         $this->listener->preRemove($priceRule);
+    }
+
+    public function testPostPersist()
+    {
+        $priceList = new PriceList();
+        $priceList->setActual(true);
+
+        /** @var PriceRule $priceRule */
+        $priceRule = $this->getEntity(PriceRule::class, ['id' => 42, 'priceList' => $priceList]);
+
+        $this->priceRuleChangeTriggerHandler->expects($this->once())
+            ->method('addTriggerForPriceList')
+            ->with(Topics::RESOLVE_PRICE_RULES, $priceList);
+
+        $this->listener->postPersist($priceRule);
+        $this->assertFalse($priceList->isActual());
     }
 }

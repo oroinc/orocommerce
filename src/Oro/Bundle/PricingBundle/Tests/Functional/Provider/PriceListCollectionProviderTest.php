@@ -4,6 +4,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Provider;
 
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
@@ -32,8 +34,8 @@ class PriceListCollectionProviderTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
+                LoadPriceListFallbackSettings::class,
+                LoadPriceListRelations::class,
             ]
         );
     }
@@ -259,40 +261,6 @@ class PriceListCollectionProviderTest extends WebTestCase
     public function testGetPriceListsByAccountDataProvider()
     {
         return [
-            'account.level_1_1 US' => [
-                'accountReference' => 'account.level_1_1',
-                'websiteReference' => 'US',
-                'expectedPriceListNames' => [
-                    /** From account */
-                    [
-                        'priceList' => 'price_list_2',
-                        'mergeAllowed' => false,
-                    ],
-                    [
-                        'priceList' => 'price_list_1',
-                        'mergeAllowed' => true,
-                    ],
-                    /** End From account */
-                    /** From group */
-                    /** End From Group */
-                    /** From Website */
-                    [
-                        'priceList' => 'price_list_3',
-                        'mergeAllowed' => false,
-                    ],
-                    [
-                        'priceList' => 'price_list_1',
-                        'mergeAllowed' => true,
-                    ],
-                    /** End From Website */
-                    /** From config */
-                    [
-                        'priceList' => self::DEFAULT_PRICE_LIST,
-                        'mergeAllowed' => true,
-                    ],
-                    /** End From config */
-                ],
-            ],
             'account.orphan Canada' => [
                 'accountReference' => 'account.orphan',
                 'websiteReference' => 'Canada',
@@ -325,6 +293,79 @@ class PriceListCollectionProviderTest extends WebTestCase
     }
 
     /**
+     * @dataProvider getPriceListsByAccountForAccountWithoutGroupDataProvider
+     *
+     * @param string $website
+     * @param array $expectedPriceLists
+     */
+    public function testGetPriceListsByAccountForAccountWithoutGroup($website, array $expectedPriceLists)
+    {
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1_1');
+        $this->assertNull($account->getGroup());
+
+        /** @var Website $website */
+        $website = $this->getReference($website);
+
+        $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
+        $result = $this->provider->getPriceListsByAccount($account, $website);
+        $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
+    }
+
+    /**
+     * @return array
+     */
+    public function getPriceListsByAccountForAccountWithoutGroupDataProvider()
+    {
+        return [
+            'current account only' => [
+                'websiteReference' => 'Canada',
+                'expectedPriceLists' => [
+                    /** From account */
+                    [
+                        'priceList' => 'price_list_1',
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From account */
+                ]
+            ],
+            'account group fallback' => [
+                'websiteReference' => 'US',
+                'expectedPriceLists' => [
+                    /** From account */
+                    [
+                        'priceList' => 'price_list_2',
+                        'mergeAllowed' => false,
+                    ],
+                    [
+                        'priceList' => 'price_list_1',
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From account */
+                    /** From group */
+                    /** End From Group */
+                    /** From Website */
+                    [
+                        'priceList' => 'price_list_3',
+                        'mergeAllowed' => false,
+                    ],
+                    [
+                        'priceList' => 'price_list_1',
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From Website */
+                    /** From config */
+                    [
+                        'priceList' => self::DEFAULT_PRICE_LIST,
+                        'mergeAllowed' => true,
+                    ],
+                    /** End From config */
+                ]
+            ]
+        ];
+    }
+
+    /**
      * @param array $expectedPriceLists
      * @return array
      */
@@ -346,7 +387,6 @@ class PriceListCollectionProviderTest extends WebTestCase
         }
 
         return $result;
-
     }
 
     protected function setPriceListToConfig()
