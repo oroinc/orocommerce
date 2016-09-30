@@ -691,11 +691,10 @@ services:
 
     oro_account.event_listener.category_listener:
         class: 'Oro\Bundle\AccountBundle\EventListener\CategoryListener'
-        public: false
         arguments:
             - '@oro_product.model.product_message_handler'
         tags:
-            - { name: doctrine.event_listener, event: onFlush }
+            - {name: kernel.event_listener, event: oro_catalog.event.products_change_relation, method: onProductsChangeRelation }
 
     oro_account.provider.frontend_account_user_registration_form:
         class: 'Oro\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRegistrationFormProvider'

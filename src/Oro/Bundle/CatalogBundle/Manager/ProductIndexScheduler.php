@@ -41,6 +41,15 @@ class ProductIndexScheduler
         /** @var CategoryRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(Category::class);
         $productIds = $repository->getProductIdsByCategories($categories);
+        $this->triggerReindexationRequestEvent($productIds, $websiteId);
+    }
+
+    /**
+     * @param array $productIds
+     * @param int|null $websiteId
+     */
+    public function triggerReindexationRequestEvent(array $productIds, $websiteId = null)
+    {
         if ($productIds) {
             $event = new ReindexationRequestEvent(Product::class, $websiteId, $productIds);
             $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);

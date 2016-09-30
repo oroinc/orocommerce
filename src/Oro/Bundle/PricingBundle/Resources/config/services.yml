@@ -574,13 +574,12 @@ services:
 
     oro_pricing.event_listener.category:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\CategoryEntityListener'
-        public: false
         arguments:
             - '@oro_pricing.price_list_trigger_handler'
             - '@oro_pricing.provider.price_rule_fields_provider'
             - '@doctrine'
         tags:
-            - { name: doctrine.event_listener, event: onFlush }
+            - {name: kernel.event_listener, event: oro_catalog.event.products_change_relation, method: onProductsChangeRelation }
 
     oro_pricing.entity_listener.product:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\ProductEntityListener'
