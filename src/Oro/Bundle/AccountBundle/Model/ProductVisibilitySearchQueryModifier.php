@@ -3,14 +3,14 @@
 namespace Oro\Bundle\AccountBundle\Model;
 
 use Doctrine\Common\Collections\Expr\CompositeExpression;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
-use Oro\Bundle\SearchBundle\Query\Query;
+
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\AccountBundle\EventListener\WebsiteSearchProductVisibilityIndexerListener;
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
+use Oro\Bundle\SearchBundle\Query\Query;
 
 class ProductVisibilitySearchQueryModifier
 {
@@ -20,28 +20,11 @@ class ProductVisibilitySearchQueryModifier
     protected $tokenStorage;
 
     /**
-     * @var AccountUserRelationsProvider
+     * @param TokenStorageInterface $tokenStorage
      */
-    protected $relationsProvider;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
-
-    /**
-     * @param TokenStorageInterface        $tokenStorage
-     * @param AccountUserRelationsProvider $relationsProvider
-     * @param ConfigManager                $configManager
-     */
-    public function __construct(
-        TokenStorageInterface $tokenStorage,
-        AccountUserRelationsProvider $relationsProvider,
-        ConfigManager $configManager
-    ) {
+    public function __construct(TokenStorageInterface $tokenStorage)
+    {
         $this->tokenStorage = $tokenStorage;
-        $this->relationsProvider = $relationsProvider;
-        $this->configManager = $configManager;
     }
 
     /**
@@ -49,60 +32,60 @@ class ProductVisibilitySearchQueryModifier
      */
     public function modify(Query $query)
     {
-        $accountUser = $this->getAccountUser();
-        $accountGroup = $this->relationsProvider->getAccountGroup($accountUser);
-
-        $query->getCriteria()->andWhere(
-            $this->createProductVisibilityExpression($accountUser, $accountGroup)
-        );
+        $query->getCriteria()->andWhere($this->createProductVisibilityExpression());
     }
 
     /**
-     * @param AccountUser|null $accountUser
-     * @param AccountGroup|null $accountGroup
      * @return CompositeExpression
      */
-    protected function createProductVisibilityExpression(
-        AccountUser $accountUser = null,
-        AccountGroup $accountGroup = null
-    ) {
-        list($defaultField, $accountField) = $this->getVisibilityFields($accountUser, $accountGroup);
-
+    protected function createProductVisibilityExpression()
+    {
         $exprBuilder = Criteria::expr();
-        $expression = $exprBuilder->orX(
-            $exprBuilder->andX(
-                $exprBuilder->eq($defaultField, 1),
-                $exprBuilder->isNull($accountField)
-            ),
-            $exprBuilder->andX(
-                $exprBuilder->eq($defaultField, 0),
-                $exprBuilder->eq($accountField, 1)
-            )
-        );
+        $accountUser = $this->getAccountUser();
+
+        if ($accountUser) {
+            $accountField = $this->completeFieldName(
+                sprintf(
+                    '%s_%s',
+                    WebsiteSearchProductVisibilityIndexerListener::FIELD_VISIBILITY_ACCOUNT,
+                    $accountUser->getId()
+                )
+            );
+            $defaultField = $this->completeFieldName(
+                WebsiteSearchProductVisibilityIndexerListener::FIELD_IS_VISIBLE_BY_DEFAULT
+            );
+
+            $expression = $exprBuilder->orX(
+                $exprBuilder->andX(
+                    $exprBuilder->eq($defaultField, BaseVisibilityResolved::VISIBILITY_VISIBLE),
+                    $exprBuilder->isNull($accountField)
+                ),
+                $exprBuilder->andX(
+                    $exprBuilder->eq($defaultField, BaseVisibilityResolved::VISIBILITY_HIDDEN),
+                    $exprBuilder->eq(
+                        $accountField,
+                        WebsiteSearchProductVisibilityIndexerListener::ACCOUNT_VISIBILITY_VALUE
+                    )
+                )
+            );
+        } else {
+            $field = $this->completeFieldName(
+                WebsiteSearchProductVisibilityIndexerListener::FIELD_VISIBILITY_ANONYMOUS
+            );
+            $expression = $exprBuilder->eq($field, BaseVisibilityResolved::VISIBILITY_VISIBLE);
+        }
+
 
         return $expression;
     }
 
     /**
-     * @param AccountUser $accountUser
-     * @param AccountGroup $accountGroup
+     * @param $name
      * @return string
      */
-    protected function getVisibilityFields(
-        AccountUser $accountUser = null,
-        AccountGroup $accountGroup = null
-    ) {
-        $accountField = 'visibility_anonymous';
-        if ($accountGroup instanceof AccountGroup &&
-            $accountGroup->getId() !== (int)$this->configManager->get('oro_account.anonymous_account_group')
-        ) {
-            $accountField = sprintf('visibility_account_%s', $accountUser->getId());
-        }
-
-        return [
-            Criteria::implodeFieldTypeName(Query::TYPE_INTEGER, $accountField),
-            Criteria::implodeFieldTypeName(Query::TYPE_INTEGER, 'is_visible_by_default'),
-        ];
+    protected function completeFieldName($name)
+    {
+        return Criteria::implodeFieldTypeName(Query::TYPE_INTEGER, $name);
     }
 
     /**

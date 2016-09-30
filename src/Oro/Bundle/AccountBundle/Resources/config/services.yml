@@ -574,9 +574,8 @@ services:
         class: 'Oro\Bundle\AccountBundle\Model\ProductVisibilitySearchQueryModifier'
         public: false
         arguments:
-            - "@security.token_storage"
-            - "@oro_account.provider.account_user_relations_provider"
-            - "@oro_config.global"
+            - '@security.token_storage'
+            - '@oro_config.global'
 
     oro_account.visibility.cache.product.cache_builder.abstract:
         class: 'Oro\Bundle\AccountBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder'
