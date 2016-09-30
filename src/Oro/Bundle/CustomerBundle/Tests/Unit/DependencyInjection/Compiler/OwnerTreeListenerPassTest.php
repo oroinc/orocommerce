@@ -34,7 +34,7 @@ class OwnerTreeListenerPassTest extends \PHPUnit_Framework_TestCase
             ->willReturnMap(
                 [
                     ['oro_customer.entity.account.class', 'Entity\Account'],
-                    ['oro_account.entity.account_user.class', 'Entity\AccountUser'],
+                    ['oro_customer.entity.account_user.class', 'Entity\AccountUser'],
                 ]
             );
 

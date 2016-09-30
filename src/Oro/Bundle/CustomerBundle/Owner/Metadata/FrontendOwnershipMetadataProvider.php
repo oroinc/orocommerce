@@ -169,7 +169,7 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     {
         if (!$this->cache) {
             $this->cache = $this->getContainer()
-                ->get('oro_account.owner.frontend_ownership_metadata_provider.cache');
+                ->get('oro_customer.owner.frontend_ownership_metadata_provider.cache');
         }
 
         return $this->cache;

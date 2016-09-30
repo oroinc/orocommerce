@@ -43,7 +43,7 @@ class AccountUserProfileController extends Controller
     public function updateAction(Request $request)
     {
         $accountUser = $this->getUser();
-        $form = $this->get('oro_account.provider.frontend_account_user_form')
+        $form = $this->get('oro_customer.provider.frontend_account_user_form')
             ->getProfileForm($accountUser)
             ->getForm();
         $handler = new FrontendAccountUserHandler(

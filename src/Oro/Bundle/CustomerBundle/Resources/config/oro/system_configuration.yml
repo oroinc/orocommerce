@@ -16,7 +16,7 @@ system_configuration:
             title: oro.customer.system_configuration.groups.visibility.title
             icon: 'icon-eye-open'
     fields:
-        oro_account.default_account_owner:
+        oro_customer.default_account_owner:
             ui_only: true
             data_type: string
             type: oro_user_select
@@ -25,7 +25,7 @@ system_configuration:
                 label: oro.customer.system_configuration.fields.default_account_owner.label
                 tooltip: oro.customer.system_configuration.fields.default_account_owner.tooltip
                 required: true
-        oro_account.registration_allowed:
+        oro_customer.registration_allowed:
             data_type: boolean
             type: oro_config_checkbox
             priority: 100
@@ -33,7 +33,7 @@ system_configuration:
                 label: oro.customer.system_configuration.fields.registration_allowed.label
                 tooltip: oro.customer.system_configuration.fields.registration_allowed.tooltip
                 required: false
-        oro_account.confirmation_required:
+        oro_customer.confirmation_required:
             data_type: boolean
             type: oro_config_checkbox
             priority: 90
@@ -41,7 +41,7 @@ system_configuration:
                 label: oro.customer.system_configuration.fields.confirmation_required.label
                 tooltip: oro.customer.system_configuration.fields.confirmation_required.tooltip
                 required: false
-        oro_account.send_password_in_welcome_email:
+        oro_customer.send_password_in_welcome_email:
             data_type: boolean
             type: oro_config_checkbox
             priority: 80
@@ -49,7 +49,7 @@ system_configuration:
                 label: oro.customer.system_configuration.fields.send_password_in_welcome_email.label
                 tooltip: oro.customer.system_configuration.fields.send_password_in_welcome_email.tooltip
                 required: false
-        oro_account.category_visibility:
+        oro_customer.category_visibility:
             data_type: string
             type: oro_account_catalog_default_visibility
             priority: 10
@@ -58,7 +58,7 @@ system_configuration:
                 required: true
                 constraints:
                     - NotBlank: ~
-        oro_account.product_visibility:
+        oro_customer.product_visibility:
             data_type: string
             type: oro_account_catalog_default_visibility
             priority: 10
@@ -79,16 +79,16 @@ system_configuration:
                                 children:
                                     account_users_registration:
                                         children:
-                                            - oro_account.default_account_owner
-                                            - oro_account.registration_allowed
-                                            - oro_account.confirmation_required
-                                            - oro_account.send_password_in_welcome_email
+                                            - oro_customer.default_account_owner
+                                            - oro_customer.registration_allowed
+                                            - oro_customer.confirmation_required
+                                            - oro_customer.send_password_in_welcome_email
                             visibility:
                                 priority: 200
                                 children:
                                     account_product_visibility:
                                         children:
-                                            - oro_account.product_visibility
+                                            - oro_customer.product_visibility
                                     account_category_visibility:
                                         children:
-                                            - oro_account.category_visibility
+                                            - oro_customer.category_visibility

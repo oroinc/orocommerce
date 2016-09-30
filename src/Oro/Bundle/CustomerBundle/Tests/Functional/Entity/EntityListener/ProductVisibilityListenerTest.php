@@ -48,7 +48,7 @@ class ProductVisibilityListenerTest extends WebTestCase
      */
     public function setUp()
     {
-        $this->topic = 'oro_account.visibility.resolve_product_visibility';
+        $this->topic = 'oro_customer.visibility.resolve_product_visibility';
         $this->initClient();
 
         $this->loadFixtures([
@@ -69,7 +69,7 @@ class ProductVisibilityListenerTest extends WebTestCase
      */
     protected function getMessageHandler()
     {
-        return $this->getContainer()->get('oro_account.product_visibility_message_handler');
+        return $this->getContainer()->get('oro_customer.product_visibility_message_handler');
     }
 
     public function testChangeProductVisibilityToHidden()

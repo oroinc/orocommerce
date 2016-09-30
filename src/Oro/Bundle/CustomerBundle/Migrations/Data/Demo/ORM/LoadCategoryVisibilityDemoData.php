@@ -82,7 +82,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
 
         fclose($handler);
         $manager->flush();
-        $this->container->get('oro_account.visibility.cache.product.category.cache_builder')->buildCache();
+        $this->container->get('oro_customer.visibility.cache.product.category.cache_builder')->buildCache();
     }
 
     /**

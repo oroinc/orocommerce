@@ -121,7 +121,7 @@ class AccountController extends Controller
     {
         return [
             'entity' => $account,
-            'treeData' => $this->get('oro_account.account_tree_handler')->createTree($account),
+            'treeData' => $this->get('oro_customer.account_tree_handler')->createTree($account),
         ];
     }
 }

@@ -18,6 +18,6 @@ class FrontendWindowsStateController extends WindowsStateController
      */
     protected function getWindowsStatesManager()
     {
-        return $this->get('oro_account.manager.windows_state');
+        return $this->get('oro_customer.manager.windows_state');
     }
 }

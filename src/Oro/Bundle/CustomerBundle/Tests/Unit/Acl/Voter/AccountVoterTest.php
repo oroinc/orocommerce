@@ -56,7 +56,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $services = [
-            'oro_account.security.account_user_provider' => $this->securityProvider,
+            'oro_customer.security.account_user_provider' => $this->securityProvider,
             'oro_security.security_facade' => $this->securityFacade,
         ];
 

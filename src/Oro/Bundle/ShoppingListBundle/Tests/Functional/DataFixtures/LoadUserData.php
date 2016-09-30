@@ -41,7 +41,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_BASIC'],
             ],
             [
-                'class' => 'oro_account.entity.account_user.class',
+                'class' => 'oro_customer.entity.account_user.class',
                 'acls'  => [],
             ],
         ],

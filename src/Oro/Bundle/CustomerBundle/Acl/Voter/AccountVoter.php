@@ -229,6 +229,6 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
      */
     protected function getSecurityProvider()
     {
-        return $this->getContainer()->get('oro_account.security.account_user_provider');
+        return $this->getContainer()->get('oro_customer.security.account_user_provider');
     }
 }

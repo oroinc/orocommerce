@@ -30,7 +30,7 @@ class AccountUserAddressController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_account.entity.account_user_address.class'),
+            'entity_class' => $this->container->getParameter('oro_customer.entity.account_user_address.class'),
             'account_user_address_count' => $this->getUser()->getAddresses()->count(),
             'account_address_count' => $this->getUser()->getAccount()->getAddresses()->count(),
             'data' => [
@@ -102,14 +102,14 @@ class AccountUserAddressController extends Controller
     {
         $this->prepareEntities($accountUser, $accountAddress, $request);
 
-        $form = $this->get('oro_account.provider.fronted_account_user_address_form')
+        $form = $this->get('oro_customer.provider.fronted_account_user_address_form')
             ->getAddressForm($accountAddress, $accountUser)
             ->getForm();
 
         $currentUser = $this->getUser();
 
         $manager = $this->getDoctrine()->getManagerForClass(
-            $this->container->getParameter('oro_account.entity.account_user_address.class')
+            $this->container->getParameter('oro_customer.entity.account_user_address.class')
         );
 
         $handler = new AddressHandler($form, $request, $manager);

@@ -148,7 +148,7 @@ class AccountUserRelationsProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->configManager->expects($this->once())
             ->method('get')
-            ->with('oro_account.anonymous_account_group')
+            ->with('oro_customer.anonymous_account_group')
             ->willReturn(10);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')

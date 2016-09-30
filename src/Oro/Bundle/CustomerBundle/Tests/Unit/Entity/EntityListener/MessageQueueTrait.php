@@ -38,7 +38,7 @@ trait MessageQueueTrait
 
     protected function sendScheduledMessages()
     {
-        self::getContainer()->get('oro_account.visibility_message_handler')
+        self::getContainer()->get('oro_customer.visibility_message_handler')
             ->sendScheduledMessages();
     }
 

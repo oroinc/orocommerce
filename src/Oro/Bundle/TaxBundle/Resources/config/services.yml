@@ -56,7 +56,7 @@ services:
             - "@oro_entity.doctrine_helper"
             - "@request_stack"
             - '%oro_tax.entity.account_tax_code.class%'
-            - '%oro_account.entity.account_group.class%'
+            - '%oro_customer.entity.account_group.class%'
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEdit }
@@ -110,7 +110,7 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.account_tax_code.class%'
-            - '%oro_account.entity.account_group.class%'
+            - '%oro_customer.entity.account_group.class%'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-select-grid, method: onBuildBefore }
 
@@ -119,7 +119,7 @@ services:
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.account_tax_code.class%'
-            - '%oro_account.entity.account_group.class%'
+            - '%oro_customer.entity.account_group.class%'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-select-grid, method: onBuildBefore }
 

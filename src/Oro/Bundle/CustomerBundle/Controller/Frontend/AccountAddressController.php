@@ -83,12 +83,12 @@ class AccountAddressController extends Controller
     {
         $this->prepareEntities($account, $accountAddress, $request);
 
-        $form = $this->get('oro_account.provider.frontend_account_address_form')
+        $form = $this->get('oro_customer.provider.frontend_account_address_form')
             ->getAddressForm($accountAddress, $account)
             ->getForm();
 
         $manager = $this->getDoctrine()->getManagerForClass(
-            $this->container->getParameter('oro_account.entity.account_address.class')
+            $this->container->getParameter('oro_customer.entity.account_address.class')
         );
 
         $handler = new AddressHandler($form, $request, $manager);

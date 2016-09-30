@@ -76,7 +76,7 @@ class FrontendAccountUserRegistrationFormProvider extends AbstractFormProvider
     {
         $accountUser = new AccountUser();
 
-        $defaultOwnerId = $this->configManager->get('oro_account.default_account_owner');
+        $defaultOwnerId = $this->configManager->get('oro_customer.default_account_owner');
         if (!$defaultOwnerId) {
             throw new \RuntimeException('Application Owner is empty');
         }

@@ -104,7 +104,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
                             $this->configProvider,
                         ],
                         [
-                            'oro_account.owner.frontend_ownership_metadata_provider.cache',
+                            'oro_customer.owner.frontend_ownership_metadata_provider.cache',
                             ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
                             $this->cache,
                         ],

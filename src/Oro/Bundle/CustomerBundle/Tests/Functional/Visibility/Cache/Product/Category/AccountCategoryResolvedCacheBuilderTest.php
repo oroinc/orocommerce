@@ -42,12 +42,12 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
             $container->get('oro_entity.orm.insert_from_select_query_executor')
         );
         $this->builder->setCacheClass(
-            $container->getParameter('oro_account.entity.account_category_visibility_resolved.class')
+            $container->getParameter('oro_customer.entity.account_category_visibility_resolved.class')
         );
 
         $subtreeBuilder = new VisibilityChangeAccountSubtreeCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_account.visibility.resolver.category_visibility_resolver'),
+            $container->get('oro_customer.visibility.resolver.category_visibility_resolver'),
             $container->get('oro_config.manager')
         );
 

@@ -192,7 +192,7 @@ datagrids:
                     options:
                         field_type: entity
                         field_options:
-                            class:    %oro_account.entity.account_group.class%
+                            class:    %oro_customer.entity.account_group.class%
                             property: name
                 parentName:
                     type:      string
@@ -298,7 +298,7 @@ datagrids:
                     options:
                         field_type: entity
                         field_options:
-                            class:    %oro_account.entity.account_group.class%
+                            class:    %oro_customer.entity.account_group.class%
                             property: name
                 parentName:
                     type:       string
@@ -320,7 +320,7 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: %oro_account.entity.account_group.class%, alias: relatedEntity }
+                    - { table: %oro_customer.entity.account_group.class%, alias: relatedEntity }
                 join:
                     left:
                         - { join: %oro_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.accountGroups' }

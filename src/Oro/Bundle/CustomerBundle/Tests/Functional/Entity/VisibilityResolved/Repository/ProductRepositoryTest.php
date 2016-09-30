@@ -292,7 +292,7 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected function getResolvedVisibilityManager()
     {
-        $className = $this->getContainer()->getParameter('oro_account.entity.product_visibility_resolved.class');
+        $className = $this->getContainer()->getParameter('oro_customer.entity.product_visibility_resolved.class');
 
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass($className);

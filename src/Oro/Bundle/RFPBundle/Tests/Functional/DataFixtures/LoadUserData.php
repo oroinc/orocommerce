@@ -43,7 +43,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC'],
             ],
             [
-                'class' => 'oro_account.entity.account_user.class',
+                'class' => 'oro_customer.entity.account_user.class',
                 'acls'  => [],
             ],
         ],
@@ -53,7 +53,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'oro_account.entity.account_user.class',
+                'class' => 'oro_customer.entity.account_user.class',
                 'acls'  => ['VIEW_LOCAL'],
             ],
         ],
@@ -63,7 +63,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_BASIC'],
             ],
             [
-                'class' => 'oro_account.entity.account_user.class',
+                'class' => 'oro_customer.entity.account_user.class',
                 'acls'  => ['VIEW_LOCAL'],
             ],
         ],

@@ -33,7 +33,7 @@ class SignInProviderTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->requestStack = $this->getContainer()->get('request_stack');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
-        $this->dataProvider = $this->getContainer()->get('oro_account.provider.sign_in');
+        $this->dataProvider = $this->getContainer()->get('oro_customer.provider.sign_in');
     }
 
     public function testGetLastName()

@@ -18,6 +18,6 @@ class WidgetController extends BaseController
      */
     protected function getWidgetClass()
     {
-        return $this->getParameter('oro_account.entity.widget.class');
+        return $this->getParameter('oro_customer.entity.widget.class');
     }
 }

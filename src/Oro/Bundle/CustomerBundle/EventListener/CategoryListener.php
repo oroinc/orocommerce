@@ -48,7 +48,7 @@ class CategoryListener
                 /** @var Product $product */
                 foreach (array_merge($collection->getInsertDiff(), $collection->getDeleteDiff()) as $product) {
                     $this->productMessageHandler->addProductMessageToSchedule(
-                        'oro_account.visibility.change_product_category',
+                        'oro_customer.visibility.change_product_category',
                         $product
                     );
                 }

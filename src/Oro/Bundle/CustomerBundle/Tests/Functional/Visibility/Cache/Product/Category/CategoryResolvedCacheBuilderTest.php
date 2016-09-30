@@ -37,12 +37,12 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
             $container->get('oro_entity.orm.insert_from_select_query_executor')
         );
         $this->builder->setCacheClass(
-            $container->getParameter('oro_account.entity.category_visibility_resolved.class')
+            $container->getParameter('oro_customer.entity.category_visibility_resolved.class')
         );
 
         $subtreeBuilder = new VisibilityChangeCategorySubtreeCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_account.visibility.resolver.category_visibility_resolver'),
+            $container->get('oro_customer.visibility.resolver.category_visibility_resolver'),
             $container->get('oro_config.manager')
         );
 
@@ -50,7 +50,7 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
 
         $positionChangeBuilder = new PositionChangeCategorySubtreeCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_account.visibility.resolver.category_visibility_resolver'),
+            $container->get('oro_customer.visibility.resolver.category_visibility_resolver'),
             $container->get('oro_config.manager')
         );
 

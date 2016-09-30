@@ -44,7 +44,7 @@ class AccountUserController extends RestController implements ClassResourceInter
      */
     public function getManager()
     {
-        return $this->get('oro_account.account_user.manager.api');
+        return $this->get('oro_customer.account_user.manager.api');
     }
 
     /**
@@ -68,6 +68,6 @@ class AccountUserController extends RestController implements ClassResourceInter
      */
     protected function getDeleteHandler()
     {
-        return $this->get('oro_account.account_delete_handler');
+        return $this->get('oro_customer.account_delete_handler');
     }
 }

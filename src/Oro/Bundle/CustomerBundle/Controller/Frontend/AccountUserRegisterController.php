@@ -41,7 +41,7 @@ class AccountUserRegisterController extends Controller
      */
     protected function isRegistrationAllowed()
     {
-        return (bool) $this->get('oro_config.manager')->get('oro_account.registration_allowed');
+        return (bool) $this->get('oro_config.manager')->get('oro_customer.registration_allowed');
     }
 
     /**
@@ -50,7 +50,7 @@ class AccountUserRegisterController extends Controller
      */
     protected function handleForm(Request $request)
     {
-        $form = $this->get('oro_account.provider.frontend_account_user_registration_form')
+        $form = $this->get('oro_customer.provider.frontend_account_user_registration_form')
             ->getRegisterForm()
             ->getForm();
         $userManager = $this->get('oro_account_user.manager');

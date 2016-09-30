@@ -28,7 +28,7 @@ class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->visibilityListener = new ProductVisibilityListener($this->visibilityChangeMessageHandler);
 
-        $this->visibilityListener->setTopic('oro_account.visibility.resolve_product_visibility');
+        $this->visibilityListener->setTopic('oro_customer.visibility.resolve_product_visibility');
     }
 
     public function testPostPersist()
@@ -38,7 +38,7 @@ class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->visibilityChangeMessageHandler->expects($this->once())
             ->method('addVisibilityMessageToSchedule')
-            ->with('oro_account.visibility.resolve_product_visibility', $visibility);
+            ->with('oro_customer.visibility.resolve_product_visibility', $visibility);
         $this->visibilityListener->postPersist($visibility);
     }
 
@@ -49,7 +49,7 @@ class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->visibilityChangeMessageHandler->expects($this->once())
             ->method('addVisibilityMessageToSchedule')
-            ->with('oro_account.visibility.resolve_product_visibility', $visibility);
+            ->with('oro_customer.visibility.resolve_product_visibility', $visibility);
 
         $this->visibilityListener->preUpdate($visibility);
     }
@@ -61,7 +61,7 @@ class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->visibilityChangeMessageHandler->expects($this->once())
             ->method('addVisibilityMessageToSchedule')
-            ->with('oro_account.visibility.resolve_product_visibility', $visibility);
+            ->with('oro_customer.visibility.resolve_product_visibility', $visibility);
 
         $this->visibilityListener->preRemove($visibility);
     }

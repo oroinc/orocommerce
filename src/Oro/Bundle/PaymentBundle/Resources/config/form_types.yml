@@ -6,7 +6,7 @@ services:
             - { name: form.type, alias: oro_payment_term }
         calls:
             - [setAccountClass, ['%oro_customer.entity.account.class%']]
-            - [setAccountGroupClass, ['%oro_account.entity.account_group.class%']]
+            - [setAccountGroupClass, ['%oro_customer.entity.account_group.class%']]
 
     oro_payment.form.type.payment_term_select:
         class: 'Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType'

@@ -55,7 +55,7 @@ class AccountUserRelationsProvider
                 return $account->getGroup();
             }
         } else {
-            $anonymousGroupId = $this->configManager->get('oro_account.anonymous_account_group');
+            $anonymousGroupId = $this->configManager->get('oro_customer.anonymous_account_group');
 
             if ($anonymousGroupId) {
                 return $this->doctrineHelper->getEntityReference(

@@ -26,12 +26,12 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
      */
     public function testVisibilityChange($categoryReference, array $visibility, array $expectedData)
     {
-        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_customer.visibility.cache.cache_builder')->buildCache();
 
         /** @var Registry $registry */
         $registry = $this->getContainer()->get('doctrine');
         /** @var CategoryResolvedCacheBuilder $builder */
-        $builder = $this->getContainer()->get('oro_account.visibility.cache.cache_builder');
+        $builder = $this->getContainer()->get('oro_customer.visibility.cache.cache_builder');
 
         $categoryVisibility = $this->getVisibilityEntity($categoryReference, $visibility);
         $originalVisibility = $categoryVisibility->getVisibility();

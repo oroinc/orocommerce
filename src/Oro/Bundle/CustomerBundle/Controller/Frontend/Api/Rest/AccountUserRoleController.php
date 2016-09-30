@@ -49,7 +49,7 @@ class AccountUserRoleController extends RestController implements ClassResourceI
      */
     public function getManager()
     {
-        return $this->get('oro_account.account_user_role.manager.api');
+        return $this->get('oro_customer.account_user_role.manager.api');
     }
 
     /**

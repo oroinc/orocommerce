@@ -12,7 +12,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ProductVisibilityTest extends WebTestCase
 {
-    const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_account.product_visibility';
+    const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_customer.product_visibility';
 
     /**
      * {@inheritdoc}
@@ -26,7 +26,7 @@ class ProductVisibilityTest extends WebTestCase
             'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
             'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
         ]);
-        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_customer.visibility.cache.cache_builder')->buildCache();
     }
 
     /**

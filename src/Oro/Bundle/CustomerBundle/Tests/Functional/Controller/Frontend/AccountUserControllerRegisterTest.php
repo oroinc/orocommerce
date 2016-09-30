@@ -31,8 +31,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->initClient();
         $this->client->useHashNavigation(true);
         $this->configManager = $this->getContainer()->get('oro_config.manager');
-        $this->isConfirmationRequired = $this->configManager->get('oro_account.confirmation_required');
-        $this->sendPassword = $this->configManager->get('oro_account.send_password_in_welcome_email');
+        $this->isConfirmationRequired = $this->configManager->get('oro_customer.confirmation_required');
+        $this->sendPassword = $this->configManager->get('oro_customer.send_password_in_welcome_email');
     }
 
     protected function tearDown()
@@ -40,8 +40,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
         parent::tearDown();
 
         $configManager = $this->getContainer()->get('oro_config.manager');
-        $configManager->set('oro_account.confirmation_required', $this->isConfirmationRequired);
-        $configManager->set('oro_account.send_password_in_welcome_email', $this->sendPassword);
+        $configManager->set('oro_customer.confirmation_required', $this->isConfirmationRequired);
+        $configManager->set('oro_customer.send_password_in_welcome_email', $this->sendPassword);
         $configManager->flush();
     }
 
@@ -84,8 +84,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
      */
     public function testRegisterWithoutConfirmation($email, $withPassword)
     {
-        $this->configManager->set('oro_account.confirmation_required', false);
-        $this->configManager->set('oro_account.send_password_in_welcome_email', $withPassword);
+        $this->configManager->set('oro_customer.confirmation_required', false);
+        $this->configManager->set('oro_customer.send_password_in_welcome_email', $withPassword);
         $this->configManager->flush();
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_register'));
@@ -147,7 +147,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
     public function testRegisterWithConfirmation()
     {
-        $this->configManager->set('oro_account.confirmation_required', true);
+        $this->configManager->set('oro_customer.confirmation_required', true);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_register'));
         $result = $this->client->getResponse();

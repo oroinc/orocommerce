@@ -172,7 +172,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     protected function getCategoryVisibilityConfigValue()
     {
-        return ($this->configManager->get('oro_account.category_visibility') === CategoryVisibility::HIDDEN)
+        return ($this->configManager->get('oro_customer.category_visibility') === CategoryVisibility::HIDDEN)
             ? BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN
             : BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE;
     }

@@ -48,7 +48,7 @@ class AccountUserController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_account.entity.account_user.class')
+            'entity_class' => $this->container->getParameter('oro_customer.entity.account_user.class')
         ];
     }
 
@@ -87,7 +87,7 @@ class AccountUserController extends Controller
 
         if ($accountUserId) {
             $accountUser = $doctrineHelper->getEntityReference(
-                $this->getParameter('oro_account.entity.account_user.class'),
+                $this->getParameter('oro_customer.entity.account_user.class'),
                 $accountUserId
             );
         } else {

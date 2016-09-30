@@ -55,16 +55,16 @@ services:
             - '@oro_security.security_facade'
             - '@doctrine'
             - '@oro_security.acl_helper'
-            - '%oro_account.entity.account_address.class%'
-            - '%oro_account.entity.account_user_address.class%'
+            - '%oro_customer.entity.account_address.class%'
+            - '%oro_customer.entity.account_user_address.class%'
 
     oro_order.order.provider.order_address_security:
         class: 'Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider'
         arguments:
             - '@oro_security.security_facade'
             - '@oro_order.order.provider.order_address'
-            - '%oro_account.entity.account_address.class%'
-            - '%oro_account.entity.account_user_address.class%'
+            - '%oro_customer.entity.account_address.class%'
+            - '%oro_customer.entity.account_user_address.class%'
 
     oro_order.manager.order_address:
         class: 'Oro\Bundle\OrderBundle\Manager\OrderAddressManager'
@@ -74,8 +74,8 @@ services:
             - '@doctrine'
             - '%oro_order.entity.order_address.class%'
         calls:
-            - [addEntity, ['a', '%oro_account.entity.account_address.class%']]
-            - [addEntity, ['au', '%oro_account.entity.account_user_address.class%']]
+            - [addEntity, ['a', '%oro_customer.entity.account_address.class%']]
+            - [addEntity, ['au', '%oro_customer.entity.account_user_address.class%']]
 
     oro_order.request_handler.order_request_handler:
         class: 'Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler'
@@ -83,7 +83,7 @@ services:
             - '@doctrine'
             - '@request_stack'
             - '%oro_customer.entity.account.class%'
-            - '%oro_account.entity.account_user.class%'
+            - '%oro_customer.entity.account_user.class%'
 
     oro_order.request_handler.frontend_order_data_handler:
         class: 'Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler'

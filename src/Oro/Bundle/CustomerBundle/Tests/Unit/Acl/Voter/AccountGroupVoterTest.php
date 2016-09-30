@@ -54,7 +54,7 @@ class AccountGroupVoterTest extends \PHPUnit_Framework_TestCase
 
         $configManager->expects($this->any())
             ->method('get')
-            ->with('oro_account.anonymous_account_group')
+            ->with('oro_customer.anonymous_account_group')
             ->willReturn(self::DEFAULT_GROUP_ID);
 
         $this->voter = new AccountGroupVoter($doctrineHelper);

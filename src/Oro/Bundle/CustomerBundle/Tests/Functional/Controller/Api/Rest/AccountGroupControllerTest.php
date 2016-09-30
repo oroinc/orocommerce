@@ -39,7 +39,7 @@ class AccountGroupControllerTest extends WebTestCase
     {
         $id = $this->getContainer()
             ->get('oro_config.global')
-            ->get('oro_account.anonymous_account_group');
+            ->get('oro_customer.anonymous_account_group');
 
         $this->client->request(
             'DELETE',

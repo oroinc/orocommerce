@@ -16,6 +16,6 @@ class PagestateController extends BasePagestateController
      */
     protected function getPageStateClass()
     {
-        return $this->getParameter('oro_account.entity.page_state.class');
+        return $this->getParameter('oro_customer.entity.page_state.class');
     }
 }

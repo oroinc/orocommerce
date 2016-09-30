@@ -13,13 +13,14 @@ use Oro\Component\DependencyInjection\ExtendedContainerBuilder;
 
 class OroCustomerExtension extends Extension implements PrependExtensionInterface
 {
-    const ALIAS = 'oro_account';
+    const ALIAS = 'oro_customer';
 
     /**
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
+//        echo '0099099';
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 

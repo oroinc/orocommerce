@@ -53,7 +53,7 @@ class AccountGroupController extends RestController implements ClassResourceInte
      */
     public function getManager()
     {
-        return $this->get('oro_account.manager.group.api.attribute');
+        return $this->get('oro_customer.manager.group.api.attribute');
     }
 
     /**

@@ -64,7 +64,7 @@ class CategoryListenerTest extends WebTestCase
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
         $messages = $this->messageProducer->getSentMessages();
         $expectedMessages[] = [
-            'topic' => 'oro_account.visibility.change_product_category',
+            'topic' => 'oro_customer.visibility.change_product_category',
             'message' => ['id' => $product->getId()],
         ];
         $this->assertEquals(
@@ -84,7 +84,7 @@ class CategoryListenerTest extends WebTestCase
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
         $messages = $this->messageProducer->getSentMessages();
         $expectedMessages[] = [
-            'topic' => 'oro_account.visibility.change_product_category',
+            'topic' => 'oro_customer.visibility.change_product_category',
             'message' => ['id' => $product->getId()],
         ];
         $this->assertEquals(
@@ -97,7 +97,7 @@ class CategoryListenerTest extends WebTestCase
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
         $messages = $this->messageProducer->getSentMessages();
         $expectedMessages[] = [
-            'topic' => 'oro_account.visibility.change_product_category',
+            'topic' => 'oro_customer.visibility.change_product_category',
             'message' => ['id' => $product->getId()],
         ];
         $this->assertEquals(

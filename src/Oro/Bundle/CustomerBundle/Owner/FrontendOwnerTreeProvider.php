@@ -39,7 +39,7 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
     public function getCache()
     {
         if (!$this->cache) {
-            $this->cache = $this->getContainer()->get('oro_account.owner.frontend_ownership_tree_provider.cache');
+            $this->cache = $this->getContainer()->get('oro_customer.owner.frontend_ownership_tree_provider.cache');
         }
 
         return $this->cache;
@@ -52,7 +52,7 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
     {
         if (!$this->ownershipMetadataProvider) {
             $this->ownershipMetadataProvider = $this->getContainer()
-                ->get('oro_account.owner.frontend_ownership_metadata_provider');
+                ->get('oro_customer.owner.frontend_ownership_metadata_provider');
         }
 
         return $this->ownershipMetadataProvider;

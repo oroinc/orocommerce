@@ -28,7 +28,7 @@ class AccountGroupController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_account.entity.account_group.class')
+            'entity_class' => $this->container->getParameter('oro_customer.entity.account_group.class')
         ];
     }
 
