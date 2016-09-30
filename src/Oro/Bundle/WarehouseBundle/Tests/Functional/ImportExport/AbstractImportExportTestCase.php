@@ -36,7 +36,7 @@ abstract class AbstractImportExportTestCase extends WebTestCase
      */
     public function inventoryStatusDataProvider()
     {
-        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . $this->getImportStatusFile();
+        $filePath = $this->getFilePath() . $this->getImportStatusFile();
 
         return Yaml::parse(file_get_contents($filePath));
     }
@@ -46,9 +46,18 @@ abstract class AbstractImportExportTestCase extends WebTestCase
      */
     public function inventoryLevelsDataProvider()
     {
-        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . $this->getImportLevelFile();
+        $filePath = $this->getFilePath() . $this->getImportLevelFile();
 
         return Yaml::parse(file_get_contents($filePath));
+    }
+
+    /**
+     * Return bundle relative path where test data is found
+     * @return string
+     */
+    protected function getFilePath()
+    {
+        return __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR;
     }
 
     /**
