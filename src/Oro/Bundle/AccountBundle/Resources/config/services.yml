@@ -989,3 +989,12 @@ services:
             - '@oro_account.visibility.provider.account_product_visibility_provider'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
+
+    oro_account.entity.entity_listener.account_listener:
+        class: 'Oro\Bundle\AccountBundle\Entity\EntityListener\AccountListener'
+        public: false
+        arguments:
+            - '@oro_website_search.driver.orm_account_partial_update_driver'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_account.entity.account.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_account.entity.account.class%', event: preRemove }
