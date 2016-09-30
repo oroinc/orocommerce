@@ -8,7 +8,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\AccountBundle\EventListener\WebsiteSearchProductVisibilityIndexerListener;
+use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 
@@ -47,12 +47,12 @@ class ProductVisibilitySearchQueryModifier
             $accountField = $this->completeFieldName(
                 sprintf(
                     '%s_%s',
-                    WebsiteSearchProductVisibilityIndexerListener::FIELD_VISIBILITY_ACCOUNT,
+                    ProductVisibilityIndexer::FIELD_VISIBILITY_ACCOUNT,
                     $accountUser->getId()
                 )
             );
             $defaultField = $this->completeFieldName(
-                WebsiteSearchProductVisibilityIndexerListener::FIELD_IS_VISIBLE_BY_DEFAULT
+                ProductVisibilityIndexer::FIELD_IS_VISIBLE_BY_DEFAULT
             );
 
             $expression = $exprBuilder->orX(
@@ -64,13 +64,13 @@ class ProductVisibilitySearchQueryModifier
                     $exprBuilder->eq($defaultField, BaseVisibilityResolved::VISIBILITY_HIDDEN),
                     $exprBuilder->eq(
                         $accountField,
-                        WebsiteSearchProductVisibilityIndexerListener::ACCOUNT_VISIBILITY_VALUE
+                        ProductVisibilityIndexer::ACCOUNT_VISIBILITY_VALUE
                     )
                 )
             );
         } else {
             $field = $this->completeFieldName(
-                WebsiteSearchProductVisibilityIndexerListener::FIELD_VISIBILITY_ANONYMOUS
+                ProductVisibilityIndexer::FIELD_VISIBILITY_ANONYMOUS
             );
             $expression = $exprBuilder->eq($field, BaseVisibilityResolved::VISIBILITY_VISIBLE);
         }
