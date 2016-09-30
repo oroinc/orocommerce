@@ -17,22 +17,10 @@
         font-size: 15px;
         font-weight: 400;
         text-transform: uppercase;
-
-        @include breakpoint('tablet-small') {
-            padding: 14px 10px;
-            margin: 0;
-
-            font-size: 14px;
-        }
     }
 
     &__list {
         @include list-normalize();
-
-        @include breakpoint('tablet-small') {
-            padding-left: 13px;
-            padding-right: 13px;
-        }
     }
 
     &__item {
@@ -40,13 +28,6 @@
 
         margin: 5px 0 0;
         padding: 0 0 0 18px;
-
-        @include breakpoint('tablet-small') {
-            padding: 13px 0;
-            margin: 0;
-
-            border-top: $theme-lighter-gray-color 1px solid;
-        }
 
         &--current {
             &:before {
@@ -60,18 +41,10 @@
                 background: $theme-orange-color;
 
                 @include after();
-
-                @include breakpoint('tablet-small') {
-                    content: none;
-                }
             }
 
             .account-menu__link {
                 font-weight: 700;
-
-                @include breakpoint('tablet-small') {
-                    color: inherit;
-                }
             }
         }
     }
@@ -80,15 +53,48 @@
         display: block;
 
         color: $base-font-color;
-
-        @include breakpoint('tablet-small') {
-            color: $theme-middle-gray-color;
-        }
     }
 
     &__badge {
         i {
             vertical-align: middle;
+        }
+    }
+}
+
+@include breakpoint('desktop') {
+    .icon-minus,
+    .icon-plus {
+        opacity: 0;
+    }
+
+    .collapse-view__container {
+        display: block !important;
+    }
+}
+
+@include breakpoint('tablet') {
+    .icon-minus,
+    .icon-plus {
+        position: absolute;
+        right: 0;
+        top: 4px;
+
+        font-size: 12px;
+    }
+
+    .icon-minus {
+        opacity: 0;
+    }
+
+    .expanded {
+        .icon-plus {
+            opacity: 0;
+
+        }
+
+        .icon-minus {
+            opacity: 1;
         }
     }
 }
@@ -101,28 +107,43 @@
         border-top: $theme-lighter-gray-color 1px solid;
         border-bottom: $theme-lighter-gray-color 1px solid;
 
+        &__title {
+            padding: 14px 13px;
+            margin: 0;
+
+            font-size: 14px;
+        }
+
+        &__list {
+            padding-left: 13px;
+            padding-right: 13px;
+        }
+
+        &__item {
+            padding: 13px 0;
+            margin: 0;
+
+            border-top: $theme-lighter-gray-color 1px solid;
+
+            &--current {
+                &:before {
+                    content: none;
+                }
+
+                .account-menu__link {
+                    color: inherit;
+                }
+            }
+        }
+
+        &__link {
+            color: $theme-middle-gray-color;
+        }
+
         .icon-minus,
         .icon-plus {
-            position: absolute;
             right: 13px;
             top: 15px;
-
-            font-size: 12px;
-        }
-
-        .icon-minus {
-            opacity: 0;
-        }
-
-        .expanded {
-            .icon-plus {
-                opacity: 0;
-
-            }
-
-            .icon-minus {
-                opacity: 1;
-            }
         }
     }
 }
