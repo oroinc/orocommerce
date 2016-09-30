@@ -92,8 +92,8 @@ define([
             var words = this.splitString(normalized.string, ' ');
             var groups = this.getGroups(words);
 
-            var logicIsValid = _.last(groups.logicWords) !== _.last(words) && _.every(groups.logic, function(item) {
-                    return _this.contains(this.options.grouping, item);
+            var logicIsValid = _.last(groups.logicWords) !== _.last(words) && _.every(groups.logicWords, function(item) {
+                    return _this.contains(_this.options.grouping, item);
                 });
 
             var dataWordsAreValid = _.every(groups.dataWords, function(item) {
@@ -381,30 +381,30 @@ define([
          *
          * @param src
          * @param baseName
-         * @param baseArr
+         * @param baseData
          * @returns {Array}
          */
-        getStrings: function(src, baseName, baseArr) {
-            var self = this;
+        getStrings: function(src, baseName, baseData) {
+            var _this = this;
             var arr = [];
 
-            _.each(src, function(item, name) {
-                var subName = baseName ? baseName + '.' + item : item;
+            if (_.isArray(src) && !baseName) {
+                arr = _.union(arr, src);
+            } else {
+                _.each(src, function(item, name) {
+                    var subName = baseName ? baseName + '.' + name : name;
 
-                if (_.isArray(item)) {
-                    arr = _.union(arr, self.getStrings(item, name, baseArr || src));
-                } else if (_.isObject(item)) {
                     if (item.type === 'array') {
-                        arr.push(baseName ? baseName + '.' + name : name);
+                        arr.push(subName);
+                    } else if (_.isObject(item) && !_.isArray(item)) {
+                        arr = _.union(arr, _this.getStrings(item, name, baseData || src));
+                    } else if (!_.isUndefined(baseData) && _.isObject(baseData[name])) {
+                        arr = _.union(arr, _this.getStrings(baseData[name], subName, baseData || src))
                     } else {
-                        arr = _.union(arr, self.getStrings(_.keys(item), name, baseArr || src));
+                        arr.push(subName);
                     }
-                } else if (baseArr && _.isArray(baseArr[item])) {
-                    arr = _.union(arr, self.getStrings(baseArr[item], subName, baseArr || src));
-                } else if (_.isString(item)) {
-                    arr.push(subName);
-                }
-            });
+                });
+            }
 
             return _.compact(arr);
         },
