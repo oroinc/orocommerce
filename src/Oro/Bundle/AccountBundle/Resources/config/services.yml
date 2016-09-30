@@ -974,6 +974,7 @@ services:
 
     oro_account.visibility.provider.account_product_visibility_provider:
         class: Oro\Bundle\AccountBundle\Visibility\Provider\AccountProductVisibilityProvider
+        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_config.global'
