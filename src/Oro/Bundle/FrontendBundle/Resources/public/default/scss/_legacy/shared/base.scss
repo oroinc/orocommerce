@@ -24,10 +24,6 @@
 
   display: flex;
 
-  @include breakpoint('tablet-small') {
-    flex-direction: column;
-  }
-
   &_home {
     max-width: 100%;
   }
@@ -42,6 +38,12 @@
     @media (max-width: $screen-md) {
       padding-top: 5rem;
     }
+  }
+}
+
+@include breakpoint('tablet-small') {
+  .main {
+    flex-direction: column;
   }
 }
 

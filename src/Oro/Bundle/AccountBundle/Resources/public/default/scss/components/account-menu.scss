@@ -11,7 +11,7 @@
 
     &__title {
         position: relative;
-        
+
         margin-bottom: 9px;
 
         font-size: 15px;
@@ -44,7 +44,7 @@
         @include breakpoint('tablet-small') {
             padding: 13px 0;
             margin: 0;
-            
+
             border-top: $theme-lighter-gray-color 1px solid;
         }
 
@@ -91,19 +91,10 @@
             vertical-align: middle;
         }
     }
+}
 
-    @include breakpoint('desktop') {
-        .icon-minus,
-        .icon-plus {
-            opacity: 0;
-        }
-
-        .collapse-view__container {
-            display: block !important;
-        }
-    }
-
-    @include breakpoint('tablet-small') {
+@include breakpoint('tablet-small') {
+    .account-menu {
         padding: 0;
         margin: 35px -15px 0;
 

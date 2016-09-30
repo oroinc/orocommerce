@@ -313,11 +313,6 @@
 
   padding-left: 15px;
 
-  @include breakpoint('tablet-small') {
-    width: 100%;
-    padding: 0 15px;
-  }
-
   &_left {
     order: 1;
   }
@@ -325,6 +320,13 @@
   &_right {
     width: $base-sidebar-width - 4rem;
     order: 2;
+  }
+}
+
+@include breakpoint('tablet-small') {
+  .sidebar {
+    width: 100%;
+    padding: 0 15px;
   }
 }
 
