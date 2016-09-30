@@ -39,7 +39,6 @@ class WebsiteSearchCategoryIndexerListener
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->websiteLocalizationProvider = $websiteLocalizationProvider;
-        $this->repository = $this->doctrineHelper->getEntityRepository(Category::class);
     }
 
     /**
@@ -63,11 +62,13 @@ class WebsiteSearchCategoryIndexerListener
             : null;
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
+        $categoryMap = $this->getRepository()->getCategoryMapByProducts($products);
 
         foreach ($products as $product) {
-            // Category fields
-            $category = $this->repository->findOneByProduct($product);
-            if ($category) {
+            /** @var Category $category */
+            $category = &$categoryMap[$product->getId()];
+            if (!empty($category)) {
+                // Non localized fields
                 $event->addField($product->getId(), 'category_id', $category->getId());
                 $event->addField($product->getId(), 'category_path', $category->getMaterializedPath());
 
@@ -76,7 +77,7 @@ class WebsiteSearchCategoryIndexerListener
                     $localizedFields = [
                         'category_title' => $category->getTitle($localization),
                         'category_description' => $category->getLongDescription($localization),
-                        'category_short_desc' => $category->getShortDescription($localization),
+                        'category_short_desc' => $category->getShortDescription($localization)
                     ];
 
                     foreach ($localizedFields as $fieldName => $fieldValue) {
@@ -90,5 +91,17 @@ class WebsiteSearchCategoryIndexerListener
                 }
             }
         }
+    }
+
+    /**
+     * @return CategoryRepository
+     */
+    protected function getRepository()
+    {
+        if (!$this->repository) {
+            $this->repository = $this->doctrineHelper->getEntityRepository(Category::class);
+        }
+
+        return $this->repository;
     }
 }

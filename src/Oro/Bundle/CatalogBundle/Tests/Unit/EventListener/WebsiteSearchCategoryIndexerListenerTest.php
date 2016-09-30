@@ -60,11 +60,6 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
-            ->with(BaseCategory::class)
-            ->willReturn($this->repository);
-
         $this->websiteLocalizationProvider = $this->getMockBuilder(AbstractWebsiteLocalizationProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -94,16 +89,18 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
     /**
      * @param Localization $defaultLocale
      * @param Localization $customLocale
+     * @param Product $product
      * @return array
      */
-    private function prepareProductAndCategory($defaultLocale, $customLocale)
+    private function prepareCategory($defaultLocale, $customLocale, Product $product)
     {
-        $product = new Product();
-        $category = new Category();
-        $reflection = new PropertyReflection(Category::class, 'id');
-        $reflection->setAccessible(true);
-        $reflection->setValue($category, 555);
-        $category->setMaterializedPath('1_555');
+        $category = $this->getEntity(
+            Category::class,
+            [
+                'id' => 555,
+                'materializedPath' => '1_555'
+            ]
+        );
 
         $category->addTitle($this->prepareLocalizedValue($defaultLocale, self::NAME_DEFAULT_LOCALE, null))
             ->addTitle($this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null))
@@ -125,7 +122,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
             )
             ->addProduct($product);
 
-        return [$product, $category];
+        return $category;
     }
 
     public function testOnWebsiteSearchIndexProductClass()
@@ -144,15 +141,18 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
                 $customLocale
             ]);
 
-        /**
-         * @var Product $product
-         * @var Category $category
-         */
-        list($product, $category) = $this->prepareProductAndCategory($defaultLocale, $customLocale);
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(BaseCategory::class)
+            ->willReturn($this->repository);
+
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 1]);
+        $category = $this->prepareCategory($defaultLocale, $customLocale, $product);
         $this->repository
             ->expects($this->once())
-            ->method('findOneByProduct')
-            ->willReturn($category);
+            ->method('getCategoryMapByProducts')
+            ->willReturn([$product->getId() => $category]);
 
         $event = new IndexEntityEvent(Product::class, [$product], []);
 

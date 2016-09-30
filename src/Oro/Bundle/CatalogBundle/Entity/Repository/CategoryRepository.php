@@ -176,4 +176,38 @@ class CategoryRepository extends NestedTreeRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @param Product[] $products
+     * @return array
+     */
+    public function getCategoryMapByProducts(array $products)
+    {
+        $builder = $this->createQueryBuilder('category')
+            ->join(Product::class, 'product', 'WITH', 'product MEMBER OF category.products')
+            ->andWhere('product IN (:products)')
+            ->setParameter('products', $products);
+
+        $relationBuilder = clone $builder;
+        $relationBuilder->select('product.id as product_id, category.id as category_id');
+
+        $categories = $builder->getQuery()->getResult();
+        $relations = $relationBuilder->getQuery()->getArrayResult();
+
+        // Create product to category map, [product_id => Category, ...]
+        $categoryMap = [];
+        foreach ($relations as $relation) {
+            array_walk(
+                $categories,
+                function ($category) use (&$categoryMap, $relation) {
+                    /** @var Category $category */
+                    if ($category->getId() === $relation['category_id']) {
+                        $categoryMap[$relation['product_id']] = $category;
+                    }
+                }
+            );
+        }
+
+        return $categoryMap;
+    }
 }

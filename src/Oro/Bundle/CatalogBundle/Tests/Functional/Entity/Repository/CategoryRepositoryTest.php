@@ -5,10 +5,12 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\Entity\Repository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\PersistentCollection;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -32,7 +34,8 @@ class CategoryRepositoryTest extends WebTestCase
         $this->repository = $this->registry->getRepository('OroCatalogBundle:Category');
         $this->loadFixtures(
             [
-                'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
+                LoadCategoryData::class,
+                LoadCategoryProductData::class,
             ]
         );
     }
@@ -90,6 +93,19 @@ class CategoryRepositoryTest extends WebTestCase
         $this->assertEquals($expectedTitle, $actualCategory->getDefaultTitle()->getString());
 
         $this->assertNull($this->repository->findOneByDefaultTitle('Not existing category'));
+    }
+    
+    public function testGetCategoryMapByProducts()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $expectedMap = [$product->getId() => $category];
+
+        $actualCategory = $this->repository->getCategoryMapByProducts([$product]);
+        $this->assertInstanceOf(Category::class, reset($actualCategory));
+        $this->assertEquals($expectedMap, $actualCategory);
+
+        $this->assertEmpty($this->repository->getCategoryMapByProducts([]));
     }
 
     /**
