@@ -170,3 +170,11 @@ services:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
             - { name: doctrine.event_listener, event: postFlush }
+
+    oro_website_search.driver.orm_account_partial_update_driver:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Driver\OrmAccountPartialUpdateDriver'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@oro_account.visibility.provider.account_product_visibility_provider'
+            - '@oro_website_search.provider.search_mapping'
