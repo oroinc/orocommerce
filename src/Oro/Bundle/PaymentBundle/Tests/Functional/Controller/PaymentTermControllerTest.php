@@ -22,6 +22,7 @@ class PaymentTermControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(['Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData']);
     }
 

@@ -31,7 +31,7 @@ services:
         public: false
         arguments:
             - '@translator'
-            - '@oro_pricing.rounding.price_rounding_service'
+            - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.user_currency_manager'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 20 }
@@ -41,7 +41,7 @@ services:
         public: false
         arguments:
             - '@translator'
-            - '@oro_pricing.rounding.price_rounding_service'
+            - '@oro_currency.rounding.price_rounding_service'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
             - '@oro_security.security_facade'
             - '@oro_pricing.user_currency_manager'
@@ -174,11 +174,6 @@ services:
         public: false
         arguments:
             - '@oro_entity.entity_class_name_provider'
-
-    oro_order.layout.block_type_extension.block_prefixes:
-        class: 'Oro\Bundle\OrderBundle\Layout\Block\Extension\BlockPrefixExtension'
-        tags:
-            - { name: layout.block_type_extension, alias: block }
 
     oro_order.order.listener.total_calculate_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'

@@ -27,6 +27,7 @@ class AccountGroupControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->entityManager = $this->getContainer()
             ->get('doctrine')
             ->getManagerForClass('OroAccountBundle:AccountGroup');
@@ -103,7 +104,7 @@ class AccountGroupControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
-        $this->assertContains(self::UPDATED_NAME . ' - Account Groups - Customers', $html);
+        $this->assertContains(self::UPDATED_NAME . ' - Customer Groups - Customers', $html);
         $this->assertContains(self::ADD_NOTE_BUTTON, $html);
         $this->assertViewPage($html, self::UPDATED_NAME);
     }
@@ -147,7 +148,7 @@ class AccountGroupControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Account group has been saved', $html);
+        $this->assertContains('Customer group has been saved', $html);
         $this->assertViewPage($html, $name);
 
         foreach ($appendAccounts as $account) {

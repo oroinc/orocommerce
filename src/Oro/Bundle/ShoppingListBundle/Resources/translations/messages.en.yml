@@ -2,14 +2,14 @@ oro:
     shoppinglist:
         entity_label: Shopping List
         entity_plural_label: Shopping Lists
-        entity_description: Shows content of shopping lists of the account users.
+        entity_description: Shows content of shopping lists of the customer users.
         id.label: ID
         label:
             label: Label
             edit.tooltip: Edit Shoppping List Label
         notes.label: Notes
         account.label: Account
-        account_user.label: Account User
+        account_user.label: Customer User
         organization.label: Organization
         line_items.label: Line Items
         current.label: Current
@@ -39,6 +39,7 @@ oro:
 
         actions:
             set_current: Set as current
+            choose_list: Choose list
             view: view shopping list
             add_to_shopping_list: Add to {{ shoppingList }}
             remove_from_shopping_list: Remove From {{ shoppingList }}
@@ -50,7 +51,7 @@ oro:
         menu:
             sales_tab.label: Sales
             shopping_list.description: Shopping Lists
-            shortcut_shopping_list.description: Shows content of shopping lists of the account users
+            shortcut_shopping_list.description: Shows content of shopping lists of the customer users
 
         acl:
             shoppinglist_add_product.label: Add Product To Shopping List
@@ -81,7 +82,7 @@ oro:
             shopping_list.label: Shopping List
             unit.label: Unit
             organization.label: Organization
-            account_user.label: Account User
+            account_user.label: Customer User
             add_line_item: Add Line Item
             edit_line_item: Edit Line Item
             create_new_shopping_list: Create New Shopping List

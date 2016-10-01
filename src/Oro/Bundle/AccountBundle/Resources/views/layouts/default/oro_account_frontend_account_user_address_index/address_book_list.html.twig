@@ -1,12 +1,12 @@
 {% block _account_address_book_addresses_list_head_widget %}
-    {% set attr = layout_attr_defaults(attr, {'~class': ' oro-grid__row'}) %}
+    {% set attr = layout_attr_defaults(attr, {'~class': ' grid__row'}) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _account_address_book_addresses_list_title_widget %}
-    {% set attr = layout_attr_defaults(attr, {'~class': ' oro-grid__column oro-grid__column-half'}) %}
+    {% set attr = layout_attr_defaults(attr, {'~class': ' grid__column grid__column-half'}) %}
     <div {{ block('block_attributes') }}>
         <h2 class="user-page-title">
             <span class="badge badge_sm badge_circle badge_orange badge_has-inline-sibling">

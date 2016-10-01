@@ -136,7 +136,7 @@ class PriceListRelationTriggerHandler
     public function sendScheduledTriggers()
     {
         foreach ($this->scheduledTriggers as $triggerArray) {
-            $this->producer->send(Topics::REBUILD_PRICE_LISTS, $triggerArray);
+            $this->producer->send(Topics::REBUILD_COMBINED_PRICE_LISTS, $triggerArray);
         }
         $this->scheduledTriggers = [];
     }
@@ -157,6 +157,6 @@ class PriceListRelationTriggerHandler
     {
         $trigger = $this->triggerFactory->create();
         $trigger->setForce(true);
-        $this->producer->send(Topics::REBUILD_PRICE_LISTS, $trigger->toArray());
+        $this->producer->send(Topics::REBUILD_COMBINED_PRICE_LISTS, $trigger->toArray());
     }
 }
