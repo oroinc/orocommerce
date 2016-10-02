@@ -1,9 +1,16 @@
 services:
     oro_frontend_navigation.menu_update_provider.frontend:
-        class: Oro\Bundle\FrontendNavigationBundle\Provider\MenuUpdateProvider
+        class: 'Oro\Bundle\NavigationBundle\Provider\MenuUpdateProvider'
         arguments:
-            - '@oro_security.security_facade'
             - '@oro_entity.doctrine_helper'
-            - '@oro_website.manager'
+        calls:
+            - [ setEntityClass, [ 'Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate' ]]
         tags:
             - { name: oro_navigation.menu_update_provider, area: frontend }
+
+    oro_frontend_navigation.ownership_provider.account:
+        class: 'Oro\Bundle\FrontendNavigationBundle\Provider\AccountOwnershipProvider'
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: oro_navigation.ownership_provider, area: frontend, priority: 150 }

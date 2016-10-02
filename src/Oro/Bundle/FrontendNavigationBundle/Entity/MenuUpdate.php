@@ -49,9 +49,6 @@ class MenuUpdate extends ExtendMenuUpdate implements
     MenuUpdateInterface
 {
     use MenuUpdateTrait;
-    
-    const OWNERSHIP_ACCOUNT         = 3;
-    const OWNERSHIP_ACCOUNT_USER    = 4;
 
     /**
      * @var string
@@ -59,14 +56,6 @@ class MenuUpdate extends ExtendMenuUpdate implements
      * @ORM\Column(name="`condition`", type="string", length=512, nullable=true)
      */
     protected $condition;
-
-    /**
-     * @var Website
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")")
-     */
-    protected $website;
 
     /**
      * {@inheritdoc}
@@ -86,7 +75,6 @@ class MenuUpdate extends ExtendMenuUpdate implements
         $extras = [
             'image'     => $this->getImage(),
             'condition' => $this->getCondition(),
-            'website'   => $this->getWebsite(),
             'existsInNavigationYml' => $this->isExistsInNavigationYml()
         ];
 
@@ -112,25 +100,6 @@ class MenuUpdate extends ExtendMenuUpdate implements
     public function setCondition($condition)
     {
         $this->condition = $condition;
-
-        return $this;
-    }
-
-    /**
-     * @return Website
-     */
-    public function getWebsite()
-    {
-        return $this->website;
-    }
-
-    /**
-     * @param Website $website
-     * @return MenuUpdate
-     */
-    public function setWebsite(Website $website)
-    {
-        $this->website = $website;
 
         return $this;
     }
