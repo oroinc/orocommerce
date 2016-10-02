@@ -14,7 +14,7 @@ services:
             - [setDataClass, ['%oro_customer.entity.account_group.class%']]
             - [setAccountClass, ['%oro_customer.entity.account.class%']]
         tags:
-            - { name: form.type, alias: oro_account_group_type }
+            - { name: form.type, alias: oro_customer_account_group_type }
 
     oro_customer_account.form.type.account_select:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType'
@@ -24,7 +24,7 @@ services:
     oro_customer.form.type.account_group_select:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountGroupSelectType'
         tags:
-            - { name: form.type, alias: oro_account_group_select }
+            - { name: form.type, alias: oro_customer_account_group_select }
 
     oro_customer.form.type.parent_select:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\ParentAccountSelectType'

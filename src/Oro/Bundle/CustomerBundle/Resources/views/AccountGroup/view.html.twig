@@ -8,7 +8,7 @@
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
-        'indexPath': path('oro_account_group_index'),
+        'indexPath': path('oro_customer_account_group_index'),
         'indexLabel': 'oro.customer.accountgroup.entity_plural_label'|trans,
         'entityTitle': entity.name|default('N/A'|trans)
     } %}
@@ -22,7 +22,7 @@
     {% if resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
             'dataUrl': path('oro_api_account_delete_account_group', {'id': entity.id}),
-            'dataRedirect': path('oro_account_group_index'),
+            'dataRedirect': path('oro_customer_account_group_index'),
             'aCss': 'no-hash remove-button',
             'dataId': entity.id,
             'id': 'btn-remove-attribute',
@@ -35,7 +35,7 @@
     {% set accountGroupInfo %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'url': path('oro_account_group_info', {id: entity.id}),
+            'url': path('oro_customer_account_group_info', {id: entity.id}),
             'alias': 'account-group-info-widget'
         }) }}
     {% endset %}

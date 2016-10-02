@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AccountGroupType extends AbstractType
 {
-    const NAME = 'oro_account_group_type';
+    const NAME = 'oro_customer_account_group_type';
 
     /**
      * @var string

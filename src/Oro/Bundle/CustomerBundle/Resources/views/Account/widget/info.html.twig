@@ -9,7 +9,7 @@
             {% if entity.group %}
                 {% if is_granted('VIEW', entity.group) %}
                     {% set groupData %}
-                    <a href="{{ path('oro_account_group_view', {id: entity.group.id}) }}">
+                    <a href="{{ path('oro_customer_account_group_view', {id: entity.group.id}) }}">
                         {{ entity.group.name }}
                     </a>
                     {% endset %}

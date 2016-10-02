@@ -42,7 +42,7 @@ class AccountGroupControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_group_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_group_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('account-groups-grid', $crawler->html());
@@ -50,7 +50,7 @@ class AccountGroupControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_group_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_group_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -72,7 +72,7 @@ class AccountGroupControllerTest extends WebTestCase
         $id = $this->getGroupId(self::NAME);
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_group_update', ['id' => $id])
+            $this->getUrl('oro_customer_account_group_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -98,7 +98,7 @@ class AccountGroupControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_group_view', ['id' => $id])
+            $this->getUrl('oro_customer_account_group_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -135,9 +135,9 @@ class AccountGroupControllerTest extends WebTestCase
         );
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'oro_account_group_type[name]' => $name,
-                'oro_account_group_type[appendAccounts]' => implode(',', $appendAccountIds),
-                'oro_account_group_type[removeAccounts]' => implode(',', $removeAccountIds)
+                'oro_customer_account_group_type[name]' => $name,
+                'oro_customer_account_group_type[appendAccounts]' => implode(',', $appendAccountIds),
+                'oro_customer_account_group_type[removeAccounts]' => implode(',', $removeAccountIds)
             ]
         );
 

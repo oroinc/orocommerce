@@ -99,7 +99,7 @@ datagrids:
                 rowAction:    true
 
     account-groups-select-grid:
-        acl_resource: oro_account_group_view
+        acl_resource: oro_customer_account_group_view
         options:
             entityHint:        account group
         source:
@@ -134,11 +134,11 @@ datagrids:
         properties:
             view_link:
                 type:   url
-                route:  oro_account_group_view
+                route:  oro_customer_account_group_view
                 params: [ id ]
             update_link:
                 type:   url
-                route:  oro_account_group_update
+                route:  oro_customer_account_group_update
                 params: [ id ]
             delete_link:
                 type:   url
@@ -150,20 +150,20 @@ datagrids:
                 label:        oro.grid.action.view
                 link:         view_link
                 icon:         eye-open
-                acl_resource: oro_account_group_view
+                acl_resource: oro_customer_account_group_view
                 rowAction:    true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
                 icon:          edit
-                acl_resource:  oro_account_group_update
+                acl_resource:  oro_customer_account_group_update
             delete:
                 type:          delete
                 label:         oro.grid.action.delete
                 link:          delete_link
                 icon:          trash
-                acl_resource:  oro_account_group_delete
+                acl_resource:  oro_customer_account_group_delete
 
     account-group-accounts-grid-basic:
         acl_resource: oro_customer_account_view

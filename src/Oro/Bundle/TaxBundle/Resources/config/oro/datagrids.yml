@@ -374,7 +374,7 @@ datagrids:
         properties:
             view_link:
                 type:   url
-                route: oro_account_group_view
+                route: oro_customer_account_group_view
                 params: [ id ]
         actions:
             view:

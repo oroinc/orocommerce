@@ -25,7 +25,7 @@ search:
         alias:                          oro_account_group
         title_fields:                   [name]
         route:
-            name:                       oro_account_group_view
+            name:                       oro_customer_account_group_view
             parameters:
                 id:                     id
         search_template:                OroCustomerBundle:AccountGroup:searchResult.html.twig

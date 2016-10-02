@@ -43,7 +43,7 @@ class AccountGroupControllerTest extends AbstractPriceListsByEntityTestCase
      */
     public function getViewUrl()
     {
-        return $this->getUrl('oro_account_group_view', ['id' => $this->accountGroup->getId()]);
+        return $this->getUrl('oro_customer_account_group_view', ['id' => $this->accountGroup->getId()]);
     }
 
     /**

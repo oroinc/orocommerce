@@ -72,7 +72,7 @@ class AccountGroupControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_group_view', ['id' => $id])
+            $this->getUrl('oro_customer_account_group_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();

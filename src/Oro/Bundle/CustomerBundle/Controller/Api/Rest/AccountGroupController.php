@@ -25,7 +25,7 @@ class AccountGroupController extends RestController implements ClassResourceInte
      *      resource=true
      * )
      * @Acl(
-     *      id="oro_account_group_delete",
+     *      id="oro_customer_account_group_delete",
      *      type="entity",
      *      class="OroCustomerBundle:AccountGroup",
      *      permission="DELETE"

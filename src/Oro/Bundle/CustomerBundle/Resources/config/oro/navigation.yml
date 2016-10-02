@@ -74,14 +74,14 @@ navigation:
 
             account_group_list:
                 label:           'oro.customer.accountgroup.entity_plural_label'
-                route:           'oro_account_group_index'
+                route:           'oro_customer_account_group_index'
                 extras:
                     position:    20
                     routes:
-                        - 'oro_account_group_index'
-                        - 'oro_account_group_view'
-                        - 'oro_account_group_create'
-                        - 'oro_account_group_update'
+                        - 'oro_customer_account_group_index'
+                        - 'oro_customer_account_group_view'
+                        - 'oro_customer_account_group_create'
+                        - 'oro_customer_account_group_update'
                     description: 'oro.customer.menu.account_group_list.description'
 
             shortcut_account_list:
@@ -92,7 +92,7 @@ navigation:
 
             shortcut_account_group_list:
                 label:           'oro.customer.accountgroup.entity_plural_label'
-                route:           'oro_account_group_index'
+                route:           'oro_customer_account_group_index'
                 extras:
                     description: 'oro.customer.menu.shortcut_account_list.description'
 
@@ -218,10 +218,10 @@ navigation:
         oro_customer_account_update: %%accountName%% - oro.ui.edit
         oro_customer_account_create: oro.ui.create_entity
 
-        oro_account_group_index: ~
-        oro_account_group_view:  '%%title%%'
-        oro_account_group_update: %%accountGroupName%% - oro.ui.edit
-        oro_account_group_create: oro.ui.create_entity
+        oro_customer_account_group_index: ~
+        oro_customer_account_group_view:  '%%title%%'
+        oro_customer_account_group_update: %%accountGroupName%% - oro.ui.edit
+        oro_customer_account_group_create: oro.ui.create_entity
 
         oro_account_account_user_index:   ~
         oro_account_account_user_view:    '%%email%%'

@@ -19,9 +19,9 @@ use Oro\Bundle\CustomerBundle\Form\Handler\AccountGroupHandler;
 class AccountGroupController extends Controller
 {
     /**
-     * @Route("/", name="oro_account_group_index")
+     * @Route("/", name="oro_customer_account_group_index")
      * @Template
-     * @AclAncestor("oro_account_group_view")
+     * @AclAncestor("oro_customer_account_group_view")
      *
      * @return array
      */
@@ -33,10 +33,10 @@ class AccountGroupController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="oro_account_group_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_customer_account_group_view", requirements={"id"="\d+"})
      *
      * @Acl(
-     *      id="oro_account_group_view",
+     *      id="oro_customer_account_group_view",
      *      type="entity",
      *      class="OroCustomerBundle:AccountGroup",
      *      permission="VIEW"
@@ -54,10 +54,10 @@ class AccountGroupController extends Controller
     }
 
     /**
-     * @Route("/create", name="oro_account_group_create")
+     * @Route("/create", name="oro_customer_account_group_create")
      * @Template("OroCustomerBundle:AccountGroup:update.html.twig")
      * @Acl(
-     *      id="oro_account_group_create",
+     *      id="oro_customer_account_group_create",
      *      type="entity",
      *      class="OroCustomerBundle:AccountGroup",
      *      permission="CREATE"
@@ -71,10 +71,10 @@ class AccountGroupController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="oro_account_group_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_customer_account_group_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="oro_account_group_update",
+     *      id="oro_customer_account_group_update",
      *      type="entity",
      *      class="OroCustomerBundle:AccountGroup",
      *      permission="EDIT"
@@ -107,13 +107,13 @@ class AccountGroupController extends Controller
             $form,
             function (AccountGroup $group) {
                 return [
-                    'route' => 'oro_account_group_update',
+                    'route' => 'oro_customer_account_group_update',
                     'parameters' => ['id' => $group->getId()]
                 ];
             },
             function (AccountGroup $group) {
                 return [
-                    'route' => 'oro_account_group_view',
+                    'route' => 'oro_customer_account_group_view',
                     'parameters' => ['id' => $group->getId()]
                 ];
             },
@@ -123,9 +123,9 @@ class AccountGroupController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="oro_account_group_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_customer_account_group_info", requirements={"id"="\d+"})
      * @Template("OroCustomerBundle:AccountGroup/widget:info.html.twig")
-     * @AclAncestor("oro_account_group_view")
+     * @AclAncestor("oro_customer_account_group_view")
      *
      * @param AccountGroup $group
      * @return array
