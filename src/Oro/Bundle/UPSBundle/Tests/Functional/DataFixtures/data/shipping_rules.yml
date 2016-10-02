@@ -1,0 +1,11 @@
+ups.shipping_rule.1:
+    enabled: true
+    priority: 2
+    conditions: 'true'
+    currency: 'USD'
+
+ups.shipping_rule.2:
+    enabled: true
+    priority: 0
+    conditions: 'true'
+    currency: 'USD'

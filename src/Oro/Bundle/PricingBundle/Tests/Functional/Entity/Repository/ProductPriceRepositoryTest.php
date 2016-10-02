@@ -36,7 +36,6 @@ class ProductPriceRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
