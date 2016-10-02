@@ -35,7 +35,7 @@ databaseBefore:
     'Oro\Bundle\TaxBundle\Entity\AccountTaxCode':
         account_tax_code.TAX3:
             code: { property_value: 'TAX3' }
-            description: { property_value: 'TAX3 account tax code description' }
+            description: { property_value: 'TAX3 customer tax code description' }
             accounts:
                 property_value:
                     - { reference: account.TAX3 }

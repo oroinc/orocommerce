@@ -22,7 +22,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader(), true);
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
@@ -65,7 +65,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
                 'deletedGroupReference' => 'account_group.group1',
                 'expectedMessages' => [
                     [
-                        'topic' => Topics::REBUILD_PRICE_LISTS,
+                        'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                         'message' => [
                             PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
                             PriceListRelationTrigger::ACCOUNT => 'account.level_1.3',
@@ -77,7 +77,7 @@ class AccountGroupChangesListenerTest extends WebTestCase
                 'deletedGroupReference' => 'account_group.group2',
                 'expectedMessages' => [
                     [
-                        'topic' => Topics::REBUILD_PRICE_LISTS,
+                        'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
                         'message' => [
                             PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
                             PriceListRelationTrigger::ACCOUNT => 'account.level_1.2',

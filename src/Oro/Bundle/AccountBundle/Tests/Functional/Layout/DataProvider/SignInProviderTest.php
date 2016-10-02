@@ -30,7 +30,7 @@ class SignInProviderTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->requestStack = $this->getContainer()->get('request_stack');
         $this->tokenManager = $this->getContainer()->get('security.csrf.token_manager');
         $this->dataProvider = $this->getContainer()->get('oro_account.provider.sign_in');
