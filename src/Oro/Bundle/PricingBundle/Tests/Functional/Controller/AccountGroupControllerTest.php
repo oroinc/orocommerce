@@ -27,7 +27,7 @@ class AccountGroupControllerTest extends AbstractPriceListsByEntityTestCase
      */
     public function getUpdateUrl($id = null)
     {
-        return $this->getUrl('oro_account_group_update', ['id' => $id ?: $this->accountGroup->getId()]);
+        return $this->getUrl('oro_customer_account_group_update', ['id' => $id ?: $this->accountGroup->getId()]);
     }
 
     /**
