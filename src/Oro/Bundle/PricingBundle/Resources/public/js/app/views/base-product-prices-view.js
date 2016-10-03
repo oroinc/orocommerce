@@ -33,8 +33,8 @@ define(function(require) {
 
         modelEvents: {
             'prices setPrices': ['change', 'setPrices'],
-            'quantity setPrice': ['change', 'setPrice'],
-            'unit setPrice': ['change', 'setPrice'],
+            'quantity setPrice': ['change', 'onQuantityChange'],
+            'unit setPrice': ['change', 'onUnitChange'],
             'price updateUI': ['change', 'updateUI']
         },
 
@@ -124,26 +124,35 @@ define(function(require) {
             this.setPrice();
         },
 
-        setPrice: function(e) {
-            if (e && e.originalEvent) {
+        onQuantityChange: function(options) {
+            if (options.manually) {
                 this.changeQuantity = false;
             }
-            this.setPriceValue(this.findPrice());
+            this.setPrice();
+        },
+
+        onUnitChange: function(options) {
+            this.setPrice(true);
+        },
+
+        setPrice: function(changeQuantity) {
+            this.setPriceValue(this.findPrice(changeQuantity));
         },
 
         setPriceValue: function(price) {
             this.model.set('price', price);
         },
 
-        findPrice: function() {
+        findPrice: function(changeQuantity) {
             var quantity = this.model.get('quantity');
             var unit = this.model.get('unit');
+            var changeQuantity = changeQuantity && this.changeQuantity;
 
-            var foundKey = unit + ' ' + quantity + ' ' + (this.changeQuantity ? 1 : 0);
-            var price = this.foundPrice[foundKey] || null;
+            var foundKey = unit + ' ' + quantity + ' ' + (changeQuantity ? 1 : 0);
+            var price = null;
 
             if (!price) {
-                if (this.changeQuantity) {
+                if (changeQuantity) {
                     price = _.last(this.prices[unit]) || null;//sorted by quantity, get smallest
                 } else {
                     price = _.find(this.prices[unit], function(price) {
@@ -154,7 +163,7 @@ define(function(require) {
                 this.foundPrice[foundKey] = price;
             }
 
-            if (this.changeQuantity) {
+            if (changeQuantity) {
                 var setQuantity = price ? price.quantity : this.options.defaultQuantity;
                 if (quantity.toString() !== setQuantity.toString()) {
                     this.model.set('quantity', setQuantity);

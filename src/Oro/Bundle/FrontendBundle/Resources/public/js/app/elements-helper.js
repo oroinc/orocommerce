@@ -102,7 +102,7 @@ define(function(require) {
                 callback = _.bind(this[callback], this);
             }
             this.model.on(event + ':' + key, function(model, attribute, options) {
-                callback(options.event || null, model, key);
+                callback(options || {});
             }, this);
         },
 
@@ -159,6 +159,7 @@ define(function(require) {
 
         setModelValueFromElement: function(e, modelKey, elementKey) {
             var $element = this.getElement(elementKey);
+            var element = $element.get(0);
             if (!$element.length) {
                 return false;
             }
@@ -168,10 +169,12 @@ define(function(require) {
             }
 
             var validator = $element.closest('form').validate();
-            if (!validator || validator.element($element.get(0))) {
-                this.model.set(modelKey, value, {
+            if (!validator || validator.element(element)) {
+                var options = {
                     event: e
-                });
+                };
+                options.manually = Boolean(e && e.originalEvent && e.currentTarget === element);
+                this.model.set(modelKey, value, options);
             }
         },
 
