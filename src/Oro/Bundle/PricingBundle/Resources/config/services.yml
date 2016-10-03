@@ -593,7 +593,6 @@ services:
     oro_pricing.event_listener.category:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\CategoryEntityListener'
         parent: oro_pricing.entity_listener.abstract_rule_listener
-        public: false
         tags:
             - {name: kernel.event_listener, event: oro_catalog.event.products_change_relation, method: onProductsChangeRelation }
 
