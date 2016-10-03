@@ -3,9 +3,10 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -14,10 +15,7 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
  */
 class AccountGroupChangesListenerTest extends WebTestCase
 {
-    /**
-     * @var MessageCollector
-     */
-    protected $messageProducer;
+    use MessageQueueExtension;
 
     protected function setUp()
     {
@@ -25,105 +23,64 @@ class AccountGroupChangesListenerTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
+                LoadPriceListRelations::class
             ],
             true
         );
-        $this->messageProducer = $this->getContainer()->get('oro_message_queue.message_producer');
-        $this->getContainer()->get('oro_pricing.price_list_trigger_handler')->sendScheduledTriggers();
-        $this->messageProducer->clear();
-        $this->messageProducer->enable();
     }
 
     /**
-     * @dataProvider deleteGroupDataProvider
-     * @param string $deletedGroupReference
-     * @param array $expectedMessages
+     * @param AccountGroup $group
      */
-    public function testDeleteGroup($deletedGroupReference, array $expectedMessages)
+    protected function sendDeleteAccountGroupRequest(AccountGroup $group)
     {
-        /** @var AccountGroup $group */
-        $group = $this->getReference($deletedGroupReference);
-
         $this->client->request(
             'DELETE',
             $this->getUrl('oro_api_account_delete_account_group', ['id' => $group->getId()])
         );
-        $result = $this->client->getResponse();
 
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
-        $this->checkQueueMessages($expectedMessages);
+        $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), 204);
     }
 
     /**
-     * @return array
+     * @todo: fix test name
      */
-    public function deleteGroupDataProvider()
+    public function testDeleteGroup1()
     {
-        return [
-            [
-                'deletedGroupReference' => 'account_group.group1',
-                'expectedMessages' => [
-                    [
-                        'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
-                        'message' => [
-                            PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                            PriceListRelationTrigger::ACCOUNT => 'account.level_1.3',
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'deletedGroupReference' => 'account_group.group2',
-                'expectedMessages' => [
-                    [
-                        'topic' => Topics::REBUILD_COMBINED_PRICE_LISTS,
-                        'message' => [
-                            PriceListRelationTrigger::WEBSITE => LoadWebsiteData::WEBSITE1,
-                            PriceListRelationTrigger::ACCOUNT => 'account.level_1.2',
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'deletedGroupReference' => 'account_group.group3',
-                'expectedMessages' => [],
-            ],
-        ];
-    }
+        $this->sendDeleteAccountGroupRequest($this->getReference('account_group.group1'));
 
-    /**
-     * @param array $expectedMessages
-     */
-    protected function checkQueueMessages($expectedMessages)
-    {
-        $expectedMessages = array_map(
-            function ($data) {
-                $message = [];
-                if (!empty($data['message'][PriceListRelationTrigger::ACCOUNT])) {
-                    $message[PriceListRelationTrigger::ACCOUNT] = $this->getReference(
-                        $data['message'][PriceListRelationTrigger::ACCOUNT]
-                    )->getId();
-                }
-                if (!empty($data['message'][PriceListRelationTrigger::ACCOUNT_GROUP])) {
-                    $message[PriceListRelationTrigger::ACCOUNT_GROUP] = $this->getReference(
-                        $data['message'][PriceListRelationTrigger::ACCOUNT_GROUP]
-                    )->getId();
-                }
-                if (!empty($data['message'][PriceListRelationTrigger::WEBSITE])) {
-                    $message[PriceListRelationTrigger::WEBSITE] = $this->getReference(
-                        $data['message'][PriceListRelationTrigger::WEBSITE]
-                    )->getId();
-                }
-                $data['message'] = $message;
-                return $data;
-            },
-            $expectedMessages
+        self::assertMessageSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            [
+                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                PriceListRelationTrigger::ACCOUNT => $this->getReference('account.level_1.3')->getId()
+            ]
         );
+    }
 
-        $actual = $this->messageProducer->getSentMessages();
-        foreach ($expectedMessages as $expectedMessage) {
-            $this->assertContains($expectedMessage, $actual);
-        }
+    /**
+     * @todo: fix test name
+     */
+    public function testDeleteGroup2()
+    {
+        $this->sendDeleteAccountGroupRequest($this->getReference('account_group.group2'));
+
+        self::assertMessageSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
+            [
+                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                PriceListRelationTrigger::ACCOUNT => $this->getReference('account.level_1.2')->getId()
+            ]
+        );
+    }
+
+    /**
+     * @todo: fix test name
+     */
+    public function testDeleteGroup3()
+    {
+        $this->sendDeleteAccountGroupRequest($this->getReference('account_group.group3'));
+
+        self::assertEmptyMessages(Topics::REBUILD_COMBINED_PRICE_LISTS);
     }
 }
