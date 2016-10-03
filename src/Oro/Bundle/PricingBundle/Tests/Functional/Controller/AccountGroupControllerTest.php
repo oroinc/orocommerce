@@ -35,7 +35,7 @@ class AccountGroupControllerTest extends AbstractPriceListsByEntityTestCase
      */
     public function getCreateUrl()
     {
-        return $this->getUrl('oro_account_group_create');
+        return $this->getUrl('oro_customer_account_group_create');
     }
 
     /**

@@ -135,9 +135,9 @@ class AccountGroupControllerTest extends WebTestCase
         );
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'oro_customer_account_group_type[name]' => $name,
-                'oro_customer_account_group_type[appendAccounts]' => implode(',', $appendAccountIds),
-                'oro_customer_account_group_type[removeAccounts]' => implode(',', $removeAccountIds)
+                'oro_account_group_type[name]' => $name,
+                'oro_account_group_type[appendAccounts]' => implode(',', $appendAccountIds),
+                'oro_account_group_type[removeAccounts]' => implode(',', $removeAccountIds)
             ]
         );
 

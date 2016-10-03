@@ -29,7 +29,7 @@ class AccountGroupControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_group_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_group_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
