@@ -20,7 +20,7 @@ abstract class CategoryCacheTestCase extends WebTestCase
         $this->loadFixtures([
             LoadProductVisibilityFallbackCategoryData::class
         ]);
-        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
     }
 
     /**

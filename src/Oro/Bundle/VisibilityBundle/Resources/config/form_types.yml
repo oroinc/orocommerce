@@ -1,44 +1,44 @@
 services:
-    oro_account.form.event_listener.category.post_set_data:
+    oro_visibility.form.event_listener.category.post_set_data:
         class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener'
-        parent: oro_account.form.event_listener.abstract_visibility
+        parent: oro_visibility.form.event_listener.abstract_visibility
 
-    oro_account.form.event_listener.abstract_visibility:
+    oro_visibility.form.event_listener.abstract_visibility:
         class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\AbstractVisibilityListener'
         abstract: true
         arguments:
             - '@doctrine'
 
-    oro_account.form.event_listener.abstract_visibility_post_submit:
+    oro_visibility.form.event_listener.abstract_visibility_post_submit:
         class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\AbstractPostSubmitVisibilityListener'
-        parent: oro_account.form.event_listener.abstract_visibility
+        parent: oro_visibility.form.event_listener.abstract_visibility
 
-    oro_account.form.extension.category_type:
+    oro_visibility.form.extension.category_type:
         class: 'Oro\Bundle\VisibilityBundle\Form\Extension\CategoryFormExtension'
         tags:
             - { name: form.type_extension, alias: oro_catalog_category }
         calls:
-            - [setVisibilityToAllClass, ['%oro_account.entity.category_visibility.class%']]
-            - [setVisibilityToAccountGroupClass,['%oro_account.entity.account_group_category_visibility.class%']]
-            - [setVisibilityToAccountClass,['%oro_account.entity.account_category_visibility.class%']]
+            - [setVisibilityToAllClass, ['%oro_visibility.entity.category_visibility.class%']]
+            - [setVisibilityToAccountGroupClass,['%oro_visibility.entity.account_group_category_visibility.class%']]
+            - [setVisibilityToAccountClass,['%oro_visibility.entity.account_category_visibility.class%']]
 
-    oro_account.form.type.catalog_visibility:
+    oro_visibility.form.type.catalog_visibility:
         class: 'Oro\Bundle\VisibilityBundle\Form\Type\CatalogVisibilityType'
         tags:
-            - { name: form.type, alias: oro_account_catalog_default_visibility }
+            - { name: form.type, alias: oro_visibility_catalog_default_visibility }
 
-    oro_account.form.type.product_visibility:
+    oro_visibility.form.type.product_visibility:
         class: 'Oro\Bundle\VisibilityBundle\Form\Type\ProductVisibilityType'
         tags:
-            - { name: form.type, alias: oro_account_product_default_visibility }
+            - { name: form.type, alias: oro_visibility_product_default_visibility }
 
-    oro_account.form.type.entity_visibility_type:
+    oro_visibility.form.type.entity_visibility_type:
         class: 'Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType'
         arguments:
-            - '@oro_account.form.event_listener.category.post_set_data'
-            - '@oro_account.provider.visibility_choices'
+            - '@oro_visibility.form.event_listener.category.post_set_data'
+            - '@oro_visibility.provider.visibility_choices'
         tags:
-            - { name: form.type, alias: oro_account_entity_visibility_type }
+            - { name: form.type, alias: oro_visibility_entity_visibility_type }
         calls:
             - [setAccountClass,['%oro_account.entity.account.class%']]
             - [setAccountGroupClass,['%oro_account.entity.account_group.class%']]

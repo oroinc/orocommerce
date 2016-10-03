@@ -83,26 +83,26 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
 
         // Add same message twice
         $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
-            'oro_account.visibility.resolve_product_visibility',
+            'oro_visibility.visibility.resolve_product_visibility',
             $productVisibility
         );
         $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
-            'oro_account.visibility.resolve_product_visibility',
+            'oro_visibility.visibility.resolve_product_visibility',
             $productVisibility
         );
 
         // Add another messages
         $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
-            'oro_account.visibility.resolve_product_visibility',
+            'oro_visibility.visibility.resolve_product_visibility',
             $accountProductVisibility
         );
         $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
-            'oro_account.visibility.resolve_product_visibility',
+            'oro_visibility.visibility.resolve_product_visibility',
             $accountGroupProductVisibility
         );
 
         $this->assertAttributeEquals(
-            ['oro_account.visibility.resolve_product_visibility' => [
+            ['oro_visibility.visibility.resolve_product_visibility' => [
                 'Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility:42' => [
                     VisibilityMessageFactory::ID => 42,
                     VisibilityMessageFactory::ENTITY_CLASS_NAME =>
@@ -141,10 +141,10 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with('oro_account.visibility.resolve_product_visibility', $message);
+            ->with('oro_visibility.visibility.resolve_product_visibility', $message);
 
         $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
-            'oro_account.visibility.resolve_product_visibility',
+            'oro_visibility.visibility.resolve_product_visibility',
             $productVisibility
         );
 

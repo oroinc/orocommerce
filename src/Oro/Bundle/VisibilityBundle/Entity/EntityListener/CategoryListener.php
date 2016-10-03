@@ -31,7 +31,7 @@ class CategoryListener
     {
         if ($event->hasChangedField(self::FIELD_PARENT_CATEGORY)) {
             $this->categoryMessageHandler->addCategoryMessageToSchedule(
-                'oro_account.visibility.category_position_change',
+                'oro_visibility.visibility.category_position_change',
                 $category
             );
         }
@@ -39,6 +39,6 @@ class CategoryListener
 
     public function postRemove()
     {
-        $this->categoryMessageHandler->addCategoryMessageToSchedule('oro_account.visibility.category_remove');
+        $this->categoryMessageHandler->addCategoryMessageToSchedule('oro_visibility.visibility.category_remove');
     }
 }

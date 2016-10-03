@@ -103,11 +103,11 @@ class ProductVisibilityController extends Controller
                 'options' => [
                     'targetEntityField' => 'product',
                     'allClass' => $this
-                        ->getParameter('oro_account.entity.product_visibility.class'),
+                        ->getParameter('oro_visibility.entity.product_visibility.class'),
                     'accountGroupClass' => $this
-                        ->getParameter('oro_account.entity.account_group_product_visibility.class'),
+                        ->getParameter('oro_visibility.entity.account_group_product_visibility.class'),
                     'accountClass' => $this
-                        ->getParameter('oro_account.entity.account_product_visibility.class'),
+                        ->getParameter('oro_visibility.entity.account_product_visibility.class'),
                 ]
             ]
         );

@@ -58,7 +58,7 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
             $container->get('oro_entity.orm.insert_from_select_query_executor')
         );
         $builder->setCacheClass(
-            $container->getParameter('oro_account.entity.product_visibility_resolved.class')
+            $container->getParameter('oro_visibility.entity.product_visibility_resolved.class')
         );
 
         return $builder;
