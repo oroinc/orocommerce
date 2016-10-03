@@ -8,7 +8,7 @@ use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\AccountBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
-use Oro\Bundle\EntityBundle\ORM\PDOExceptionHelper;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -45,9 +45,9 @@ class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
     protected $productMessageHandler;
 
     /**
-     * @var PDOExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $pdoExceptionHelper;
+    protected $databaseExceptionHelper;
 
     /**
      * @var CategoryVisibilityProcessor
@@ -63,7 +63,7 @@ class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
         $this->productMessageHandler = $this->getMockBuilder(ProductMessageHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->pdoExceptionHelper = $this->getMockBuilder(PDOExceptionHelper::class)
+        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->categoryVisibilityProcessor = new CategoryVisibilityProcessor(
@@ -71,7 +71,7 @@ class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
             $this->messageFactory,
             $this->logger,
             $this->cacheBuilder,
-            $this->pdoExceptionHelper,
+            $this->databaseExceptionHelper,
             $this->productMessageHandler
         );
 

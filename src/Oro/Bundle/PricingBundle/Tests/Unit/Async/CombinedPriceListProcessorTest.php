@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\EntityBundle\ORM\PDOExceptionHelper;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor;
 use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
@@ -80,9 +80,9 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
     protected $triggerFactory;
 
     /**
-     * @var PDOExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $pdoExceptionHelper;
+    protected $databaseExceptionHelper;
 
     /**
      * @var CombinedPriceListProcessor
@@ -123,7 +123,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getMock(ManagerRegistry::class);
 
-        $this->pdoExceptionHelper = $this->getMockBuilder(PDOExceptionHelper::class)
+        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -137,7 +137,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             $this->logger,
             $this->triggerFactory,
             $this->registry,
-            $this->pdoExceptionHelper
+            $this->databaseExceptionHelper
         );
     }
 

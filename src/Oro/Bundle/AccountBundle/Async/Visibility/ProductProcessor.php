@@ -7,7 +7,7 @@ use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
-use Oro\Bundle\EntityBundle\ORM\PDOExceptionHelper;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Model\ProductMessageFactory;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
@@ -45,29 +45,29 @@ class ProductProcessor implements MessageProcessorInterface
     protected $resolvedVisibilityClassName = '';
     
     /**
-     * @var PDOExceptionHelper
+     * @var DatabaseExceptionHelper
      */
-    protected $pdoExceptionHelper;
+    protected $databaseExceptionHelper;
 
     /**
      * @param ManagerRegistry $registry
      * @param ProductMessageFactory $messageFactory
      * @param LoggerInterface $logger
      * @param CacheBuilderInterface $cacheBuilder
-     * @param PDOExceptionHelper $pdoExceptionHelper
+     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
         ManagerRegistry $registry,
         ProductMessageFactory $messageFactory,
         LoggerInterface $logger,
         CacheBuilderInterface $cacheBuilder,
-        PDOExceptionHelper $pdoExceptionHelper
+        DatabaseExceptionHelper $databaseExceptionHelper
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
         $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
-        $this->pdoExceptionHelper = $pdoExceptionHelper;
+        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
     /**
@@ -102,7 +102,7 @@ class ProductProcessor implements MessageProcessorInterface
                 ['exception' => $e]
             );
 
-            if ($e instanceof DriverException && $this->pdoExceptionHelper->isDeadlock($e)) {
+            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
                 return self::REQUEUE;
             } else {
                 return self::REJECT;

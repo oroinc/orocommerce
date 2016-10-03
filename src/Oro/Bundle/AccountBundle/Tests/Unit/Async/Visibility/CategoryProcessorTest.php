@@ -18,7 +18,7 @@ use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\CatalogBundle\Model\CategoryMessageFactory;
 use Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
-use Oro\Bundle\EntityBundle\ORM\PDOExceptionHelper;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -54,9 +54,9 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
     protected $cacheBuilder;
 
     /**
-     * @var PDOExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $pdoExceptionHelper;
+    protected $databaseExceptionHelper;
 
     /**
      * @var CategoryProcessor
@@ -74,7 +74,7 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->cacheBuilder = $this->getMock(CacheBuilder::class);
-        $this->pdoExceptionHelper = $this->getMockBuilder(PDOExceptionHelper::class)
+        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->categoryProcessor = new CategoryProcessor(
@@ -83,7 +83,7 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
             $this->logger,
             $this->messageFactory,
             $this->cacheBuilder,
-            $this->pdoExceptionHelper
+            $this->databaseExceptionHelper
         );
     }
 
@@ -237,7 +237,7 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->getMock(SessionInterface::class);
 
-        $this->pdoExceptionHelper->expects($this->once())
+        $this->databaseExceptionHelper->expects($this->once())
             ->method('isDeadlock')
             ->willReturn(true);
 
@@ -277,7 +277,7 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->getMock(SessionInterface::class);
 
-        $this->pdoExceptionHelper->expects($this->never())
+        $this->databaseExceptionHelper->expects($this->never())
             ->method('isDeadlock');
 
         $this->assertEquals(

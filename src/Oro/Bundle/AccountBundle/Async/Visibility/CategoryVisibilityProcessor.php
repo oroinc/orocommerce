@@ -5,7 +5,7 @@ namespace Oro\Bundle\AccountBundle\Async\Visibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\AccountBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
-use Oro\Bundle\EntityBundle\ORM\PDOExceptionHelper;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -22,7 +22,7 @@ class CategoryVisibilityProcessor extends AbstractVisibilityProcessor
      * @param MessageFactoryInterface $messageFactory
      * @param LoggerInterface $logger
      * @param CacheBuilderInterface $cacheBuilder
-     * @param PDOExceptionHelper $pdoExceptionHelper
+     * @param DatabaseExceptionHelper $databaseExceptionHelper
      * @param ProductMessageHandler $productMessageHandler
      */
     public function __construct(
@@ -30,10 +30,10 @@ class CategoryVisibilityProcessor extends AbstractVisibilityProcessor
         MessageFactoryInterface $messageFactory,
         LoggerInterface $logger,
         CacheBuilderInterface $cacheBuilder,
-        PDOExceptionHelper $pdoExceptionHelper,
+        DatabaseExceptionHelper $databaseExceptionHelper,
         ProductMessageHandler $productMessageHandler
     ) {
-        parent::__construct($registry, $messageFactory, $logger, $cacheBuilder, $pdoExceptionHelper);
+        parent::__construct($registry, $messageFactory, $logger, $cacheBuilder, $databaseExceptionHelper);
         $this->productMessageHandler = $productMessageHandler;
     }
 

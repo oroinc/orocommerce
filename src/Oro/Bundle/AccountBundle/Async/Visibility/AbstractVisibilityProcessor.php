@@ -9,7 +9,7 @@ use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\AccountBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
-use Oro\Bundle\EntityBundle\ORM\PDOExceptionHelper;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -39,9 +39,9 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
     protected $logger;
 
     /**
-     * @var PDOExceptionHelper
+     * @var DatabaseExceptionHelper
      */
-    protected $pdoExceptionHelper;
+    protected $databaseExceptionHelper;
     
     /**
      * @var string
@@ -53,20 +53,20 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
      * @param MessageFactoryInterface $messageFactory
      * @param LoggerInterface $logger
      * @param CacheBuilderInterface $cacheBuilder
-     * @param PDOExceptionHelper $pdoExceptionHelper
+     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
         ManagerRegistry $registry,
         MessageFactoryInterface $messageFactory,
         LoggerInterface $logger,
         CacheBuilderInterface $cacheBuilder,
-        PDOExceptionHelper $pdoExceptionHelper
+        DatabaseExceptionHelper $databaseExceptionHelper
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
         $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
-        $this->pdoExceptionHelper = $pdoExceptionHelper;
+        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
     /**
@@ -105,7 +105,7 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
                 ['exception' => $e]
             );
 
-            if ($e instanceof DriverException && $this->pdoExceptionHelper->isDeadlock($e)) {
+            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
                 return self::REQUEUE;
             } else {
                 return self::REJECT;

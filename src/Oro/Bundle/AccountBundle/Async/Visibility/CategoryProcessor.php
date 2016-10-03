@@ -13,7 +13,7 @@ use Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
 use Oro\Bundle\CatalogBundle\Model\CategoryMessageFactory;
 use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-use Oro\Bundle\EntityBundle\ORM\PDOExceptionHelper;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -48,9 +48,9 @@ class CategoryProcessor implements MessageProcessorInterface
     protected $cacheBuilder;
     
     /**
-     * @var PDOExceptionHelper
+     * @var DatabaseExceptionHelper
      */
-    protected $pdoExceptionHelper;
+    protected $databaseExceptionHelper;
 
     /**
      * @param ManagerRegistry $registry
@@ -58,7 +58,7 @@ class CategoryProcessor implements MessageProcessorInterface
      * @param LoggerInterface $logger
      * @param CategoryMessageFactory $messageFactory
      * @param CacheBuilder $cacheBuilder
-     * @param PDOExceptionHelper $pdoExceptionHelper
+     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
         ManagerRegistry $registry,
@@ -66,14 +66,14 @@ class CategoryProcessor implements MessageProcessorInterface
         LoggerInterface $logger,
         CategoryMessageFactory $messageFactory,
         CacheBuilder $cacheBuilder,
-        PDOExceptionHelper $pdoExceptionHelper
+        DatabaseExceptionHelper $databaseExceptionHelper
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
         $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
-        $this->pdoExceptionHelper = $pdoExceptionHelper;
+        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
     /**
@@ -113,7 +113,7 @@ class CategoryProcessor implements MessageProcessorInterface
                 ['exception' => $e]
             );
 
-            if ($e instanceof DriverException && $this->pdoExceptionHelper->isDeadlock($e)) {
+            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
                 return self::REQUEUE;
             } else {
                 return self::REJECT;

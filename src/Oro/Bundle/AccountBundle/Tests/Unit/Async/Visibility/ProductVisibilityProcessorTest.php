@@ -11,7 +11,7 @@ use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\AccountBundle\Model\ProductVisibilityMessageFactory;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
-use Oro\Bundle\EntityBundle\ORM\PDOExceptionHelper;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -40,9 +40,9 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
     protected $logger;
 
     /**
-     * @var PDOExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $pdoExceptionHelper;
+    protected $databaseExceptionHelper;
 
     /**
      * @var ProductVisibilityProcessor
@@ -57,7 +57,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->cacheBuilder = $this->getMock(CacheBuilderInterface::class);
         $this->logger = $this->getMock(LoggerInterface::class);
-        $this->pdoExceptionHelper = $this->getMockBuilder(PDOExceptionHelper::class)
+        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -66,7 +66,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
             $this->messageFactory,
             $this->logger,
             $this->cacheBuilder,
-            $this->pdoExceptionHelper
+            $this->databaseExceptionHelper
         );
 
         $this->visibilityProcessor->setResolvedVisibilityClassName(ProductVisibilityResolved::class);
@@ -177,7 +177,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
             ->with($visibilityEntity)
             ->willThrowException($exception);
 
-        $this->pdoExceptionHelper->expects($this->once())
+        $this->databaseExceptionHelper->expects($this->once())
             ->method('isDeadlock')
             ->willReturn(true);
 
@@ -220,7 +220,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->getMock(SessionInterface::class);
 
-        $this->pdoExceptionHelper->expects($this->never())
+        $this->databaseExceptionHelper->expects($this->never())
             ->method('isDeadlock');
 
         $this->assertEquals(

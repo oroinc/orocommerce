@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\EntityBundle\ORM\PDOExceptionHelper;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
@@ -69,9 +69,9 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     protected $registry;
 
     /**
-     * @var PDOExceptionHelper
+     * @var DatabaseExceptionHelper
      */
-    protected $pdoExceptionHelper;
+    protected $databaseExceptionHelper;
 
     /**
      * @param CombinedPriceListsBuilder $commonPriceListsBuilder
@@ -82,7 +82,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
      * @param LoggerInterface $logger
      * @param PriceListRelationTriggerFactory $triggerFactory
      * @param ManagerRegistry $registry
-     * @param PDOExceptionHelper $pdoExceptionHelper
+     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
         CombinedPriceListsBuilder $commonPriceListsBuilder,
@@ -93,7 +93,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         LoggerInterface $logger,
         PriceListRelationTriggerFactory $triggerFactory,
         ManagerRegistry $registry,
-        PDOExceptionHelper $pdoExceptionHelper
+        DatabaseExceptionHelper $databaseExceptionHelper
     ) {
         $this->commonPriceListsBuilder = $commonPriceListsBuilder;
         $this->websitePriceListsBuilder = $websitePriceListsBuilder;
@@ -103,7 +103,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         $this->logger = $logger;
         $this->triggerFactory = $triggerFactory;
         $this->registry = $registry;
-        $this->pdoExceptionHelper = $pdoExceptionHelper;
+        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
     /**
@@ -140,7 +140,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
                 ['exception' => $e]
             );
 
-            if ($e instanceof DriverException && $this->pdoExceptionHelper->isDeadlock($e)) {
+            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
                 return self::REQUEUE;
             } else {
                 return self::REJECT;

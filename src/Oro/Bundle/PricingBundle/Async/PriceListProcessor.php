@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\EntityBundle\ORM\PDOExceptionHelper;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
@@ -54,9 +54,9 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
     protected $combinedPriceListRepository;
 
     /**
-     * @var PDOExceptionHelper
+     * @var DatabaseExceptionHelper
      */
-    protected $pdoExceptionHelper;
+    protected $databaseExceptionHelper;
 
     /**
      * @param PriceListTriggerFactory $triggerFactory
@@ -64,7 +64,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
      * @param CombinedProductPriceResolver $priceResolver
      * @param EventDispatcherInterface $dispatcher
      * @param LoggerInterface $logger
-     * @param PDOExceptionHelper $pdoExceptionHelper
+     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
         PriceListTriggerFactory $triggerFactory,
@@ -72,14 +72,14 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
         CombinedProductPriceResolver $priceResolver,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $logger,
-        PDOExceptionHelper $pdoExceptionHelper
+        DatabaseExceptionHelper $databaseExceptionHelper
     ) {
         $this->triggerFactory = $triggerFactory;
         $this->registry = $registry;
         $this->priceResolver = $priceResolver;
         $this->dispatcher = $dispatcher;
         $this->logger = $logger;
-        $this->pdoExceptionHelper = $pdoExceptionHelper;
+        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
     /**
@@ -126,7 +126,7 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
                 ['exception' => $e]
             );
 
-            if ($e instanceof DriverException && $this->pdoExceptionHelper->isDeadlock($e)) {
+            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
                 return self::REQUEUE;
             } else {
                 return self::REJECT;

@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\PDOException;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\EntityBundle\ORM\PDOExceptionHelper;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Async\PriceListProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -59,9 +59,9 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
     protected $repository;
 
     /**
-     * @var PDOExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $pdoExceptionHelper;
+    protected $databaseExceptionHelper;
 
     /**
      * @var PriceListProcessor
@@ -87,7 +87,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getMock(ManagerRegistry::class);
 
-        $this->pdoExceptionHelper = $this->getMockBuilder(PDOExceptionHelper::class)
+        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -97,7 +97,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
             $this->priceResolver,
             $this->eventDispatcher,
             $this->logger,
-            $this->pdoExceptionHelper
+            $this->databaseExceptionHelper
         );
     }
 
@@ -182,7 +182,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->triggerFactory->expects($this->never())
             ->method('createFromArray');
 
-        $this->pdoExceptionHelper->expects($this->once())
+        $this->databaseExceptionHelper->expects($this->once())
             ->method('isDeadlock')
             ->willReturn(true);
 
@@ -219,7 +219,7 @@ class PriceListProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->getMock(SessionInterface::class);
 
-        $this->pdoExceptionHelper->expects($this->never())
+        $this->databaseExceptionHelper->expects($this->never())
             ->method('isDeadlock');
 
         $this->assertEquals(
