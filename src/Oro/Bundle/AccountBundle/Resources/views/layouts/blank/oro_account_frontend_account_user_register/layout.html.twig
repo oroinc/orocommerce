@@ -1,4 +1,8 @@
 {% block _registration_page_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' register-form'
+    }) %}
+
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -30,4 +34,12 @@
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block _registration_back_btn_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' link'
+    }) %}
+
+    {{ block_widget(block, {attr: attr}) }}
 {% endblock %}

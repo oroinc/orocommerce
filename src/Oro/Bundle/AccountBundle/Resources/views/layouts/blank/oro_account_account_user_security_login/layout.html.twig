@@ -6,7 +6,7 @@
 
 {% block _login_form_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' authorization-form'
+        '~class': ' login-form'
     }) %}
 
     <form id="form-login" {{ block('block_attributes') }}
@@ -84,6 +84,22 @@
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block _login_form_forgot_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' link'
+    }) %}
+
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block _login_form_register_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' link'
+    }) %}
+
+    {{ block_widget(block, {attr: attr}) }}
 {% endblock %}
 
 {% block _login_form_username_widget %}

@@ -83,16 +83,12 @@ layout:
                     options:
                         route_name: oro_account_frontend_account_user_reset_request
                         text: oro.account.accountuser.profile.forgot_password
-                        attr:
-                            class: link
                 login_form_register:
                     blockType: link
                     options:
                         visible: '=data["registrationAllowed"]==true'
                         route_name: oro_account_frontend_account_user_register
                         text: oro.account.accountuser.profile.create_an_account
-                        attr:
-                            class: link
             tree:
                 body:
                     login_page_wrapper:

@@ -1,6 +1,6 @@
 {% block _registration_page_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_half-cols create-account_pos-absolute_vert-centered"
+        class: attr.class|default('') ~ " register-form {{ class_prefix }} {{ class_prefix }}_half-cols create-account_pos-absolute_vert-centered"
     }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}

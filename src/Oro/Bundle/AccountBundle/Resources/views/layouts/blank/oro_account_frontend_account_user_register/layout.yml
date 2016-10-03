@@ -12,9 +12,6 @@ layout:
                     blockType: centered_container
                 registration_page:
                     blockType: container
-                    options:
-                        attr:
-                            class: 'authorization-form'
                 registration_form:
                     blockType: container
                 registration_form_label:
@@ -33,8 +30,6 @@ layout:
                     blockType: form_fields
                     options:
                         form: '=data["oro_account_frontend_account_user_register"].getRegisterForm()'
-                        attr:
-                            class: 'ololololo'
                 registration_form_submit_wrap:
                     blockType: container
                 registration_form_submit:
@@ -55,8 +50,6 @@ layout:
                     options:
                         route_name: oro_account_account_user_security_login
                         text: oro.account.frontend.action.back_to_login.label
-                        attr:
-                            class: link
             tree:
                 body:
                     registration_page_wrapper:

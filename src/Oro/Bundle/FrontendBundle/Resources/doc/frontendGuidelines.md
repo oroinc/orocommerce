@@ -543,9 +543,28 @@ $element-line-height: 1.2;
 
 ### Use @extend directive
 
-**use @extend only selector that is a single class**.
+**Use @extend only selector that is a single class**.
+
+1. Helper class include after variables.
+2. Helper class has maximum **5** rules.
+3. Helper class has abstract name and overall design style.
 
 ##### Examples:
+```scss
+$default-size: 400px !default;
+$default-offset: 10px auto !default;
+$default-inner-offset: 15px !default;
+$default-background: #dadada !default;
+
+%dialog {
+    width: $default-size;
+    margin: $default-offset;
+    padding: $default-inner-offset;
+
+    background: $default-background;
+}
+```
+
 ```scss
 .modal {
     @extend %dialog;
