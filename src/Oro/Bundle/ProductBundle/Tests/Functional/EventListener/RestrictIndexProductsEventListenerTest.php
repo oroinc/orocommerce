@@ -15,9 +15,17 @@ class RestrictIndexProductsEventListenerTest extends AbstractSearchWebTestCase
 {
     protected function setUp()
     {
-        $this->initClient();
+        parent::setUp();
 
-        $this->addFrontendRequest();
+        $this->clearRestrictListeners('oro_website_search.event.restrict_index_entity.product');
+
+        $this->dispatcher->addListener(
+            'oro_website_search.event.restrict_index_entity.product',
+            [
+                $this->getContainer()->get('oro_product.event_listener.restrict_index_products'),
+                'onRestrictIndexEntityEvent'
+            ]
+        );
 
         $this->loadFixtures([LoadProductData::class]);
     }
