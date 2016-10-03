@@ -9,7 +9,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\FrontendNavigationBundle\Model\ExtendMenuUpdate;
 use Oro\Bundle\NavigationBundle\Entity\MenuUpdateInterface;
 use Oro\Bundle\NavigationBundle\Entity\MenuUpdateTrait;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\FrontendNavigationBundle\Entity\Repository\MenuUpdateRepository")
@@ -45,8 +44,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      }
  * )
  */
-class MenuUpdate extends ExtendMenuUpdate implements
-    MenuUpdateInterface
+class MenuUpdate extends ExtendMenuUpdate implements MenuUpdateInterface
 {
     use MenuUpdateTrait;
 
@@ -73,7 +71,7 @@ class MenuUpdate extends ExtendMenuUpdate implements
     public function getExtras()
     {
         $extras = [
-            'image'     => $this->getImage(),
+            'image' => $this->getImage(),
             'condition' => $this->getCondition(),
             'existsInNavigationYml' => $this->isExistsInNavigationYml()
         ];

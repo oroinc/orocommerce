@@ -17,7 +17,6 @@ class MenuUpdateTest extends \PHPUnit_Framework_TestCase
     {
         $properties = [
             ['condition', 'condition'],
-            ['website', new Website()],
         ];
 
         $this->assertPropertyAccessors(new MenuUpdate(), $properties);
@@ -25,7 +24,6 @@ class MenuUpdateTest extends \PHPUnit_Framework_TestCase
 
     public function testGetExtras()
     {
-        $website = new Website();
         $image = new File();
         $priority = 10;
 
@@ -33,13 +31,11 @@ class MenuUpdateTest extends \PHPUnit_Framework_TestCase
         $update
             ->setImage($image)
             ->setCondition('test condition')
-            ->setWebsite($website)
             ->setPriority($priority);
 
         $expected = [
             'image' => $image,
             'condition' => 'test condition',
-            'website' => $website,
             'existsInNavigationYml' => false,
             'position' => $priority
         ];
