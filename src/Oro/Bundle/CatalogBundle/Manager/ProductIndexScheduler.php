@@ -36,7 +36,7 @@ class ProductIndexScheduler
      * @param Category[] $categories
      * @param int|null $websiteId
      */
-    public function scheduleProductsReindex($categories, $websiteId = null)
+    public function scheduleProductsReindex(array $categories, $websiteId = null)
     {
         /** @var CategoryRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(Category::class);
