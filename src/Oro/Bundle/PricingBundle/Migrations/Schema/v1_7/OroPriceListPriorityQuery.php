@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_7;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -52,46 +50,63 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
         $this->updatePriceListAccountGroupPriorities($logger, $dryRun);
         $this->updatePriceListAccountPriorities($logger, $dryRun);
         $this->updatePriceListWebsitePriorities($logger, $dryRun);
-        $this->updatePriceListConfigPriority($dryRun);
+        $this->updatePriceListConfigPriority($logger, $dryRun);
     }
 
     /**
+     * @param LoggerInterface $logger
      * @param bool $dryRun
+     * @throws \Doctrine\DBAL\DBALException
      */
-    protected function updatePriceListConfigPriority($dryRun = false)
+    protected function updatePriceListConfigPriority(LoggerInterface $logger, $dryRun = false)
     {
-        /** @var ConfigManager */
-        $configManager = $this->container->get('oro_config.global');
+        $selectQuery = "SELECT array_value FROM oro_config_value WHERE name = ? AND section = ? LIMIT 1";
+        $selectQueryParameters = ['default_price_lists', 'oro_pricing'];
+        $selectQueryTypes = ['name' => 'string', 'section' => 'string'];
 
-        $defaultPriceLists = $configManager->get('oro_pricing.default_price_lists');
+        $this->logQuery($logger, $selectQuery, $selectQueryParameters, $selectQueryTypes);
+        $result = $this->connection->fetchColumn($selectQuery, $selectQueryParameters, 0, $selectQueryTypes);
 
-        usort(
-            $defaultPriceLists,
-            function ($a, $b) {
-                return ($a['priority'] < $b['priority']) ? -1 : 1;
+        $arrayType = Type::getType(Type::TARRAY);
+        $platform = $this->connection->getDatabasePlatform();
+
+        var_dump($result);
+        $defaultPriceLists = $arrayType->convertToPHPValue($result, $platform);
+
+        // Change priority only if already existing several default price lists
+        if (count($defaultPriceLists) > 1) {
+            usort(
+                $defaultPriceLists,
+                function ($a, $b) {
+                    return ($a['priority'] < $b['priority']) ? -1 : 1;
+                }
+            );
+
+            $priorities = [];
+            foreach ($defaultPriceLists as $priceList) {
+                $priorities[] = $priceList['priority'];
             }
-        );
 
-        $priorities = [];
-        foreach ($defaultPriceLists as $priceList) {
-            $priorities[] = $priceList['priority'];
+            $priceLists = [];
+            foreach ($defaultPriceLists as $defaultPriceList) {
+                $priceLists[] = [
+                    'priceList' => $defaultPriceList['priceList'],
+                    'priority' => array_pop($priorities),
+                    'mergeAllowed' => $defaultPriceList['mergeAllowed']
+                ];
+            }
+
+            $priceListsArrayValue = $arrayType->convertToDatabaseValue($priceLists, $platform);
+
+            $updateQuery = "UPDATE oro_config_value SET array_value = ?";
+            $updateQueryParameters = [$priceListsArrayValue];
+            $updateQueryTypes = ['oro_config_value' => 'string'];
+
+            $this->logQuery($logger, $updateQuery, $updateQueryParameters, $updateQueryTypes);
+            if (!$dryRun) {
+                $this->connection->executeUpdate($updateQuery, $updateQueryParameters, $updateQueryTypes);
+            }
         }
-
-        $priceLists = [];
-        foreach ($defaultPriceLists as $defaultPriceList) {
-            $priceList = $this->container->get('doctrine')
-                ->getManagerForClass(PriceList::class)
-                ->getRepository(PriceList::class)
-                ->find($defaultPriceList['priceList']);
-
-            $priceLists[] = new PriceListConfig($priceList, array_pop($priorities), $defaultPriceList['mergeAllowed']);
-        }
-
-        if (!$dryRun) {
-            $configManager->set('oro_pricing.default_price_lists', $priceLists);
-            $configManager->flush();
-        }
-
     }
 
     /**
