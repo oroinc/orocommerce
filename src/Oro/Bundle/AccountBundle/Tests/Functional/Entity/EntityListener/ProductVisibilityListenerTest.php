@@ -3,14 +3,13 @@
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
+use Oro\Bundle\AccountBundle\Model\ProductVisibilityMessageFactory;
 use Oro\Bundle\AccountBundle\Model\VisibilityMessageHandler;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\AccountBundle\Tests\Functional\MessageQueueTrait;
@@ -48,7 +47,6 @@ class ProductVisibilityListenerTest extends WebTestCase
      */
     public function setUp()
     {
-        $this->topic = 'oro_account.visibility.resolve_product_visibility';
         $this->initClient();
 
         $this->loadFixtures([
@@ -61,7 +59,7 @@ class ProductVisibilityListenerTest extends WebTestCase
         $this->accountGroup = $this->getReference(LoadGroups::GROUP1);
         $this->account = $this->getReference('account.level_1');
 
-        $this->cleanQueueMessageTraces();
+        $this->cleanScheduledMessages();
     }
 
     /**
@@ -84,9 +82,17 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->persist($visibility);
         $entityManager->flush();
 
-        $actual = $this->getActualScheduledEntityIds(ProductVisibility::class);
-        $this->assertCount(1, $actual);
-        $this->assertContains($visibility->getId(), $actual);
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_account.visibility.resolve_product_visibility',
+            [
+                ProductVisibilityMessageFactory::ID => $visibility->getId(),
+                ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => ProductVisibility::class,
+                ProductVisibilityMessageFactory::PRODUCT_ID => $visibility->getProduct()->getId(),
+                ProductVisibilityMessageFactory::WEBSITE_ID => $visibility->getWebsite()->getId(),
+            ]
+        );
     }
 
     public function testChangeProductVisibilityToVisible()
@@ -99,9 +105,17 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForProductVisibility();
         $entityManager->flush();
 
-        $actual = $this->getActualScheduledEntityIds(ProductVisibility::class);
-        $this->assertCount(1, $actual);
-        $this->assertContains($visibility->getId(), $actual);
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_account.visibility.resolve_product_visibility',
+            [
+                ProductVisibilityMessageFactory::ID => $visibility->getId(),
+                ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => ProductVisibility::class,
+                ProductVisibilityMessageFactory::PRODUCT_ID => $visibility->getProduct()->getId(),
+                ProductVisibilityMessageFactory::WEBSITE_ID => $visibility->getWebsite()->getId(),
+            ]
+        );
     }
 
     public function testChangeProductVisibilityToConfig()
@@ -114,9 +128,17 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForProductVisibility();
         $entityManager->flush();
 
-        $actual = $this->getActualScheduledEntityIds(ProductVisibility::class);
-        $this->assertCount(1, $actual);
-        $this->assertContains($visibility->getId(), $actual);
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_account.visibility.resolve_product_visibility',
+            [
+                ProductVisibilityMessageFactory::ID => $visibility->getId(),
+                ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => ProductVisibility::class,
+                ProductVisibilityMessageFactory::PRODUCT_ID => $visibility->getProduct()->getId(),
+                ProductVisibilityMessageFactory::WEBSITE_ID => $visibility->getWebsite()->getId(),
+            ]
+        );
     }
 
     public function testChangeProductVisibilityToCategory()
@@ -130,9 +152,17 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForProductVisibility();
         $entityManager->flush();
 
-        $actual = $this->getActualScheduledEntityIds(ProductVisibility::class);
-        $this->assertCount(1, $actual);
-        $this->assertContains($visibilityId, $actual);
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_account.visibility.resolve_product_visibility',
+            [
+                ProductVisibilityMessageFactory::ID => $visibilityId,
+                ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => ProductVisibility::class,
+                ProductVisibilityMessageFactory::PRODUCT_ID => $visibility->getProduct()->getId(),
+                ProductVisibilityMessageFactory::WEBSITE_ID => $visibility->getWebsite()->getId(),
+            ]
+        );
     }
 
     public function testChangeAccountGroupProductVisibilityToHidden()
@@ -148,9 +178,18 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->persist($visibility);
         $entityManager->flush();
 
-        $actual = $this->getActualScheduledEntityIds(AccountGroupProductVisibility::class);
-        $this->assertCount(1, $actual);
-        $this->assertContains($visibility->getId(), $actual);
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_account.visibility.resolve_product_visibility',
+            [
+                ProductVisibilityMessageFactory::ID => $visibility->getId(),
+                ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupProductVisibility::class,
+                ProductVisibilityMessageFactory::PRODUCT_ID => $visibility->getProduct()->getId(),
+                ProductVisibilityMessageFactory::WEBSITE_ID => $visibility->getWebsite()->getId(),
+                ProductVisibilityMessageFactory::ACCOUNT_GROUP_ID => $visibility->getAccountGroup()->getId(),
+            ]
+        );
     }
 
     public function testChangeAccountGroupProductVisibilityToVisible()
@@ -162,9 +201,18 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForAccountGroupProductVisibility();
         $entityManager->flush();
 
-        $actual = $this->getActualScheduledEntityIds(AccountGroupProductVisibility::class);
-        $this->assertCount(1, $actual);
-        $this->assertContains($visibility->getId(), $actual);
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_account.visibility.resolve_product_visibility',
+            [
+                ProductVisibilityMessageFactory::ID => $visibility->getId(),
+                ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupProductVisibility::class,
+                ProductVisibilityMessageFactory::PRODUCT_ID => $visibility->getProduct()->getId(),
+                ProductVisibilityMessageFactory::WEBSITE_ID => $visibility->getWebsite()->getId(),
+                ProductVisibilityMessageFactory::ACCOUNT_GROUP_ID => $visibility->getAccountGroup()->getId(),
+            ]
+        );
     }
 
     public function testChangeAccountGroupProductVisibilityToCategory()
@@ -176,9 +224,18 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForAccountGroupProductVisibility();
         $entityManager->flush();
 
-        $actual = $this->getActualScheduledEntityIds(AccountGroupProductVisibility::class);
-        $this->assertCount(1, $actual);
-        $this->assertContains($visibility->getId(), $actual);
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_account.visibility.resolve_product_visibility',
+            [
+                ProductVisibilityMessageFactory::ID => $visibility->getId(),
+                ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupProductVisibility::class,
+                ProductVisibilityMessageFactory::PRODUCT_ID => $visibility->getProduct()->getId(),
+                ProductVisibilityMessageFactory::WEBSITE_ID => $visibility->getWebsite()->getId(),
+                ProductVisibilityMessageFactory::ACCOUNT_GROUP_ID => $visibility->getAccountGroup()->getId(),
+            ]
+        );
     }
 
     public function testChangeAccountGroupProductVisibilityToCurrentProduct()
@@ -190,8 +247,9 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForAccountGroupProductVisibility();
         $entityManager->flush();
 
-        $actual = $this->getActualScheduledEntityIds(AccountGroupProductVisibility::class);
-        $this->assertEmpty($actual);
+        $this->sendScheduledMessages();
+
+        self::assertEmptyMessages('oro_account.visibility.resolve_product_visibility');
     }
 
 
@@ -207,9 +265,18 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager->persist($visibility);
         $entityManager->flush();
 
-        $actual = $this->getActualScheduledEntityIds(AccountProductVisibility::class);
-        $this->assertCount(1, $actual);
-        $this->assertContains($visibility->getId(), $actual);
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_account.visibility.resolve_product_visibility',
+            [
+                ProductVisibilityMessageFactory::ID => $visibility->getId(),
+                ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountProductVisibility::class,
+                ProductVisibilityMessageFactory::PRODUCT_ID => $visibility->getProduct()->getId(),
+                ProductVisibilityMessageFactory::WEBSITE_ID => $visibility->getWebsite()->getId(),
+                ProductVisibilityMessageFactory::ACCOUNT_ID => $visibility->getAccount()->getId(),
+            ]
+        );
     }
 
     public function testChangeAccountProductVisibilityToVisible()
@@ -221,9 +288,18 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForAccountProductVisibility();
         $entityManager->flush();
 
-        $actual = $this->getActualScheduledEntityIds(AccountProductVisibility::class);
-        $this->assertCount(1, $actual);
-        $this->assertContains($visibility->getId(), $actual);
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_account.visibility.resolve_product_visibility',
+            [
+                ProductVisibilityMessageFactory::ID => $visibility->getId(),
+                ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountProductVisibility::class,
+                ProductVisibilityMessageFactory::PRODUCT_ID => $visibility->getProduct()->getId(),
+                ProductVisibilityMessageFactory::WEBSITE_ID => $visibility->getWebsite()->getId(),
+                ProductVisibilityMessageFactory::ACCOUNT_ID => $visibility->getAccount()->getId(),
+            ]
+        );
     }
 
     public function testChangeAccountProductVisibilityToCategory()
@@ -235,9 +311,18 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForAccountProductVisibility();
         $entityManager->flush();
 
-        $actual = $this->getActualScheduledEntityIds(AccountProductVisibility::class);
-        $this->assertCount(1, $actual);
-        $this->assertContains($visibility->getId(), $actual);
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            'oro_account.visibility.resolve_product_visibility',
+            [
+                ProductVisibilityMessageFactory::ID => $visibility->getId(),
+                ProductVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountProductVisibility::class,
+                ProductVisibilityMessageFactory::PRODUCT_ID => $visibility->getProduct()->getId(),
+                ProductVisibilityMessageFactory::WEBSITE_ID => $visibility->getWebsite()->getId(),
+                ProductVisibilityMessageFactory::ACCOUNT_ID => $visibility->getAccount()->getId(),
+            ]
+        );
     }
 
     public function testChangeAccountProductVisibilityToAccountGroup()
@@ -249,8 +334,9 @@ class ProductVisibilityListenerTest extends WebTestCase
         $entityManager = $this->getManagerForAccountProductVisibility();
         $entityManager->flush();
 
-        $actual = $this->getActualScheduledEntityIds(AccountProductVisibility::class);
-        $this->assertEmpty($actual);
+        $this->sendScheduledMessages();
+
+        self::assertEmptyMessages('oro_account.visibility.resolve_product_visibility');
     }
     
     /**
@@ -275,23 +361,5 @@ class ProductVisibilityListenerTest extends WebTestCase
     protected function getManagerForAccountProductVisibility()
     {
         return $this->registry->getManagerForClass('OroAccountBundle:Visibility\AccountProductVisibility');
-    }
-
-    /**
-     * @param string $visibilityClass
-     * @return array
-     */
-    protected function getActualScheduledEntityIds($visibilityClass)
-    {
-        $result = [];
-
-        foreach ($this->getQueueMessageTraces() as $item) {
-            $result[$item['message'][VisibilityMessageFactory::ENTITY_CLASS_NAME]][]
-                = $item['message'][VisibilityMessageFactory::ID];
-        }
-
-        return isset($result[ClassUtils::getRealClass($visibilityClass)])
-            ? $result[ClassUtils::getRealClass($visibilityClass)]
-            : [];
     }
 }
