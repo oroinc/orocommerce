@@ -9,7 +9,7 @@ services:
             - '%oro_frontend_navigation.entity.menu_update.class%'
 
     oro_frontend_navigation.ownership_provider.global:
-        class: Oro\Bundle\NavigationBundle\Model\GlobalOwnershipProvider
+        class: Oro\Bundle\NavigationBundle\Menu\Provider\GlobalOwnershipProvider
         arguments:
             - '@oro_frontend_navigation.repository.menu_update'
         tags:

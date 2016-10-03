@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate;
 use Oro\Bundle\FrontendNavigationBundle\Provider\AccountOwnershipProvider;
-use Oro\Bundle\NavigationBundle\Model\GlobalOwnershipProvider;
+use Oro\Bundle\NavigationBundle\Menu\Provider\GlobalOwnershipProvider;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadMenuUpdateData extends AbstractFixture implements

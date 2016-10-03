@@ -5,7 +5,7 @@ namespace Oro\Bundle\FrontendNavigationBundle\Provider;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Bundle\NavigationBundle\Model\AbstractOwnershipProvider;
+use Oro\Bundle\NavigationBundle\Menu\Provider\AbstractOwnershipProvider;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class AccountOwnershipProvider extends AbstractOwnershipProvider
