@@ -1,4 +1,0 @@
-ROLE_CATALOG_MANAGER:
-    permissions:
-#        entity|Oro\Bundle\WarehouseProBundle\Entity\Warehouse: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM, ASSIGN_SYSTEM]
-        entity|Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel: [VIEW_SYSTEM, EDIT_SYSTEM]

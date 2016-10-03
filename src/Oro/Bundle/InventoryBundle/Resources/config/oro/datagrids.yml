@@ -1,0 +1,180 @@
+datagrids:
+    inventory-level-grid:
+        acl_resource: oro_product_inventory_update
+        source:
+            type:         orm
+            query:
+                select:
+                    - precision.id as combinedId
+                    - IDENTITY(precision.unit) as unitCode
+                    - IDENTITY(precision.unit) as productUnit
+                    - level.quantity as levelQuantity
+                from:
+                    - { table: %oro_inventory.entity.inventory_level.class%, alias: level }
+                join:
+                    left:
+                        - { join: %oro_product.entity.product_unit_precision.class%, alias: precision, conditionType: WITH, condition: "level.productUnitPrecision = precision" }
+                where:
+                    and:
+                        - IDENTITY(precision.product) = :productId
+            bind_parameters:
+                - productId
+        columns:
+            levelQuantity:
+                label:         oro.inventory.inventorylevel.quantity.label
+                frontend_type: string # can't use decimal because of inappropriate formatter
+                editable:      true
+            productUnit:
+                label:         oro.product.productunit.entity_label
+                type:          twig
+                frontend_type: html
+                template:      OroProductBundle:ProductUnit:Datagrid/unitFullPlural.html.twig
+        sorters:
+            columns:
+                levelQuantity:
+                    data_name: levelQuantity
+                productUnit:
+                    data_name: productUnit
+            default:
+                productUnit:   %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        properties:
+            combinedId: ~
+            unitCode: ~
+        options:
+            mode: client
+            toolbarOptions:
+                hide: true
+                pagination:
+                    onePage: true
+            cellSelection:
+                dataField: combinedId
+                columnName:
+                    - levelQuantity
+                selector: '#inventory-level-quantities'
+            requireJSModules:
+                - oroinventory/js/datagrid/builder/level-quantity-builder
+
+    inventory-grid:
+        extended_entity_name: %oro_inventory.entity.inventory_level.class%
+        acl_resource: oro_product_inventory_view
+        source:
+            type: orm
+            query:
+                select:
+                    - inventory.id
+                    - product.id as productId
+                    - product.sku as sku
+                    - productInventoryStatus.name as inventoryStatusName
+                    - productInventoryStatus.id as inventoryStatusId
+                    - inventory.quantity as quantity
+                    - precisionUnit.code as unit
+                    - productPrecision.precision as inventoryLevelPrecision
+                    - IDENTITY(productPrecision.unit) as unitCode
+                from:
+                    - { table: %oro_inventory.entity.inventory_level.class%, alias: inventory}
+                join:
+                    left:
+                        - { join: inventory.product, alias: product}
+                        - { join: product.inventory_status, alias: productInventoryStatus}
+                        - { join: inventory.productUnitPrecision, alias: productPrecision}
+                        - { join: productPrecision.unit, alias: precisionUnit}
+        properties:
+            id: ~
+            productId: ~
+            inventoryLevelPrecision: ~
+            productName:
+                type: localized_value
+                data_name: product.names
+            delete_link:
+                type: url
+                route: oro_api_inventory_delete_inventory_level
+                params: [ id ]
+        inline_editing:
+            enable: true
+        save_api_accessor:
+            default_route_parameters:
+                className: Oro_Bundle_InventoryBundle_Entity_InventoryLevel
+        columns:
+            sku:
+                label:           oro.product.sku.label
+            productName:
+                label:           oro.product.names.label
+            inventory_status:
+                label:         oro.product.inventory_status.label
+                type:          twig
+                frontend_type: html
+                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                inline_editing:
+                    enable: true
+                    editor:
+                        view: oroform/js/app/views/editor/select-editor-view
+                    save_api_accessor:
+                        default_route_parameters:
+                            className: Oro_Bundle_ProductBundle_Entity_Product
+                        route_parameters_rename_map:
+                            productId: id
+                choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+            quantity:
+                label:           oro.inventory.inventorylevel.quantity.label
+                frontend_type:   decimal
+                align:           right
+                inline_editing:
+                    enable: true
+                    editor:
+                        view: oroinventory/js/app/views/decimals-number-editor-view
+                        view_options:
+                            decimalsField: inventoryLevelPrecision
+                    validation_rules:
+                        DecimalsNumber:
+                            decimalsField: inventoryLevelPrecision
+            unit:
+                label:           oro.product.productunitprecision.unit.label
+                type:            twig
+                frontend_type:   html
+                template:        OroProductBundle:ProductUnit:Datagrid/unitFullPlural.html.twig
+        sorters:
+            columns:
+                sku:
+                    data_name:       sku
+                productName:
+                    data_name:       productName
+                inventory_status:
+                    data_name:       inventoryStatusName
+                quantity:
+                    data_name:       quantity
+                unit:
+                    data_name:       unit
+        filters:
+            columns:
+                sku:
+                    data_name:       sku
+                    type:            string
+                productName:
+                    data_name:       productName
+                    type:            string
+                inventory_status:
+                    type:            enum
+                    data_name:       inventoryStatusId
+                    enum_code:       prod_inventory_status
+                quantity:
+                    data_name:       quantity
+                    type:            number
+                unit:
+                    data_name:       unit
+                    type:            choice
+                    data_name:       precisionUnit
+                    options:
+                        field_options:
+                            choices: "@oro_product.provider.product_units_provider->getAvailableProductUnits"
+                            multiple: true
+        actions:
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  oro_inventory_level_delete
+                mass_action:   true
+        options:
+            requireJSModules:
+                - oroinventory/js/datagrid/builder/inventory-status-builder
