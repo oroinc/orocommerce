@@ -5,9 +5,10 @@ namespace Oro\Bundle\WebsiteSearchBundle\Driver;
 use Doctrine\ORM\Query as OrmQuery;
 
 use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\EventListener\WebsiteSearchProductVisibilityIndexerListener;
-use Oro\Bundle\AccountBundle\Visibility\Provider\AccountProductVisibilityProvider;
+use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
+use Oro\Bundle\AccountBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -16,6 +17,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\VisitorReplacePlaceholder;
 
 class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
 {
@@ -32,31 +34,29 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
     private $insertExecutor;
 
     /**
-     * @var AccountProductVisibilityProvider
+     * @var ProductVisibilityProvider
      */
-    private $accountProductVisibilityProvider;
+    private $productVisibilityProvider;
 
     /**
-     * @var AbstractSearchMappingProvider
-     */
-    private $mappingProvider;
-
-    /**
+     * @param VisitorReplacePlaceholder $visitorReplacePlaceholder
+     * @param AbstractSearchMappingProvider $mappingProvider
      * @param DoctrineHelper $doctrineHelper
      * @param InsertFromSelectQueryExecutor $insertExecutor
-     * @param AccountProductVisibilityProvider $accountProductVisibilityProvider
-     * @param AbstractSearchMappingProvider $mappingProvider
+     * @param ProductVisibilityProvider $productVisibilityProvider
      */
     public function __construct(
+        VisitorReplacePlaceholder $visitorReplacePlaceholder,
+        AbstractSearchMappingProvider $mappingProvider,
         DoctrineHelper $doctrineHelper,
         InsertFromSelectQueryExecutor $insertExecutor,
-        AccountProductVisibilityProvider $accountProductVisibilityProvider,
-        AbstractSearchMappingProvider $mappingProvider
+        ProductVisibilityProvider $productVisibilityProvider
     ) {
+        parent::__construct($visitorReplacePlaceholder, $mappingProvider);
+
         $this->doctrineHelper = $doctrineHelper;
         $this->insertExecutor = $insertExecutor;
-        $this->accountProductVisibilityProvider = $accountProductVisibilityProvider;
-        $this->mappingProvider = $mappingProvider;
+        $this->productVisibilityProvider = $productVisibilityProvider;
     }
 
     /**
@@ -66,12 +66,10 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
     {
         $queryBuilder = $this->getIndexIntegerQueryBuilder('visibilityNew');
 
-        $accountVisibilityFieldName = 'visibility_account_' . $account->getId();
-
         $queryBuilder
             ->select(
                 'IDENTITY(visibilityNew.item) as itemId',
-                'CONCAT(\'visibility_account_\', :accountId)',
+                sprintf("'%s'", $this->getAccountVisibilityFieldName($account)),
                 'visibilityNew.value'
             )
             ->join('visibilityNew.item', 'item')
@@ -81,17 +79,14 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
                 OrmQuery\Expr\Join::WITH,
                 'isVisibleByDefault.field = :isVisibleByDefaultField'
             )
-            ->where($queryBuilder->expr()->eq('visibilityNew.field', ':visibilityNewField'))
             ->andWhere(
+                $queryBuilder->expr()->eq('visibilityNew.field', ':visibilityNewField'),
                 $queryBuilder->expr()->eq('item.entity', ':entityClass'),
                 $queryBuilder->expr()->neq('visibilityNew.value', 'isVisibleByDefault.value')
             )
             ->setParameter('entityClass', Product::class)
-            ->setParameter('accountId', $account->getId())
             ->setParameter('visibilityNewField', $this->getVisibilityNewFieldName())
             ->setParameter('isVisibleByDefaultField', $this->getIsVisibleByDefaultFieldName());
-
-        $result = $queryBuilder->getQuery()->getResult();
 
         $this->insertExecutor->execute(IndexInteger::class, ['item', 'field', 'value'], $queryBuilder);
     }
@@ -150,7 +145,7 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
     private function updateAccountVisibilityForWebsite(Account $account, Website $website)
     {
         $queryBuilder = $this
-            ->accountProductVisibilityProvider
+            ->productVisibilityProvider
             ->getAccountProductsVisibilitiesByWebsiteQueryBuilder(
                 $account,
                 $website
@@ -187,50 +182,21 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
      */
     protected function insertAccountVisibilityData(Account $account, Website $website, array $productIds)
     {
-        //TODO: Refactor to use chained placeholder after 4035 fixes will be applied
-        $entityAlias = $this->mappingProvider->getEntityAlias(Product::class);
-        $entityAlias = str_replace('WEBSITE_ID', $website->getId(), $entityAlias);
-
         $queryBuilder = $this->getItemQueryBuilder();
         $queryBuilder
             ->select(
                 'searchItem.id',
-                '\'' . $this->getAccountVisibilityFieldName($account) . '\'',
-                '\'' . WebsiteSearchProductVisibilityIndexerListener::ACCOUNT_VISIBILITY_VALUE . '\''
+                sprintf("'%s'", $this->getAccountVisibilityFieldName($account)),
+                (string)ProductVisibilityIndexer::ACCOUNT_VISIBILITY_VALUE
             )
             ->andWhere($queryBuilder->expr()->eq('searchItem.entity', ':entityClass'))
             ->andWhere($queryBuilder->expr()->eq('searchItem.alias', ':entityAlias'))
             ->andWhere($queryBuilder->expr()->in('searchItem.recordId', ':productIds'))
             ->setParameter('entityClass', Product::class)
-            ->setParameter('entityAlias', $entityAlias)
+            ->setParameter('entityAlias', $this->getProductAliasByWebsite($website))
             ->setParameter('productIds', $productIds);
 
         $this->insertExecutor->execute(IndexInteger::class, ['item', 'field', 'value'], $queryBuilder);
-    }
-
-    /**
-     * @return string
-     */
-    private function getVisibilityNewFieldName()
-    {
-        return 'visibility_new';
-    }
-
-    /**
-     * @return string
-     */
-    private function getIsVisibleByDefaultFieldName()
-    {
-        return 'is_visible_by_default';
-    }
-
-    /**
-     * @param Account $account
-     * @return string
-     */
-    private function getAccountVisibilityFieldName(Account $account)
-    {
-        return sprintf('visibility_account_%s', $account->getId());
     }
 
     /**
@@ -261,10 +227,15 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
     }
 
     /**
-     * @return \Doctrine\ORM\EntityManager|null
+     * @return \Doctrine\ORM\EntityManager
      */
     private function getEntityManager()
     {
-        return $this->doctrineHelper->getEntityManagerForClass(Item::class);
+        try {
+            $manager = $this->doctrineHelper->getEntityManagerForClass(Item::class);
+        } catch (NotManageableEntityException $exception) {
+        }
+
+        return $manager;
     }
 }

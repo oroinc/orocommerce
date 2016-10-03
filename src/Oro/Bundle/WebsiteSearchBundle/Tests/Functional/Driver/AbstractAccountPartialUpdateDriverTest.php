@@ -4,20 +4,18 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Driver;
 
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\AccountBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
 use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\AccountBundle\EventListener\WebsiteSearchProductVisibilityIndexerListener;
+use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
-use Oro\Bundle\AccountBundle\Visibility\Provider\AccountProductVisibilityProvider;
+use Oro\Bundle\AccountBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Driver\AccountPartialUpdateDriverInterface;
 use Oro\Bundle\WebsiteSearchBundle\Driver\OrmAccountPartialUpdateDriver;
-use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
-use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
-use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 
 /**
@@ -44,25 +42,20 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
             ->disableOriginalConstructor()
             ->getMock();
 
-        $accountProductVisibilityProvider = new AccountProductVisibilityProvider(
+        $productVisibilityProvider = new ProductVisibilityProvider(
             $this->getContainer()->get('oro_entity.doctrine_helper'),
             $this->configManager
         );
 
-        $accountProductVisibilityProvider
-            ->setProductVisibilitySystemConfigurationPath('oro_account.product_visibility');
-        $accountProductVisibilityProvider
-            ->setCategoryVisibilitySystemConfigurationPath('oro_account.category_visibility');
+        $productVisibilityProvider->setProductVisibilitySystemConfigurationPath('oro_account.product_visibility');
+        $productVisibilityProvider->setCategoryVisibilitySystemConfigurationPath('oro_account.category_visibility');
 
-        $this->driver = $this->createDriver($accountProductVisibilityProvider);
+        $this->driver = $this->createDriver($productVisibilityProvider);
         $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
 
         $eventName = 'oro_website_search.event.index_entity';
-
-        $listener = new WebsiteSearchProductVisibilityIndexerListener(
-            $this->getContainer()->get('oro_entity.doctrine_helper'),
-            $accountProductVisibilityProvider
-        );
+        $productVisibilityIndexer = new ProductVisibilityIndexer($productVisibilityProvider);
+        $listener = new WebsiteSearchProductVisibilityIndexerListener($productVisibilityIndexer);
 
         $this->dispatcher->removeListener($eventName, [
             $this->getContainer()->get('oro_account.event_listener.website_search_product_visibility_indexer_listener'),
@@ -80,38 +73,49 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
     }
 
     /**
+     * @param ProductVisibilityProvider $productVisibilityProvider
      * @return AccountPartialUpdateDriverInterface
      */
-    abstract protected function createDriver(AccountProductVisibilityProvider $accountProductVisibilityProvider);
+    abstract protected function createDriver(ProductVisibilityProvider $productVisibilityProvider);
 
     /**
-     * @param string $accountReference
-     * @return array
+     * @param Account $account
+     * @return string
      */
-    private function prepareExpectedAccountField($accountReference)
+    private function getVisibilityAccountFieldName(Account $account)
     {
-        return [
-            'field' => 'visibility_account_' . $this->getReference($accountReference)->getId(),
-        ];
+        return 'integer.visibility_account_' . $account->getId();
+    }
+
+    /**
+     * @param Account $account
+     * @return \Oro\Bundle\SearchBundle\Query\Result
+     */
+    private function searchVisibilitiesForAccount(Account $account)
+    {
+        $query = new Query();
+        $query
+            ->from('oro_product_' . $this->getDefaultWebsiteId())
+            ->getCriteria()
+            ->andWhere(Criteria::expr()->eq($this->getVisibilityAccountFieldName($account), 1))
+            ->orderBy(['sku' => Criteria::ASC]);
+
+        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
+
+        return $searchEngine->search($query);
+    }
+
+    private function reindexProducts()
+    {
+        $indexer = $this->getContainer()->get('oro_website_search.indexer');
+        $indexer->reindex(Product::class);
     }
 
     public function testCreateAccountWithoutAccountGroupVisibility()
     {
-        $this->configManager
-            ->expects($this->exactly(6))
-            ->method('get')
-            ->withConsecutive(
-                [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
-                [self::CATEGORY_VISIBILITY_CONFIGURATION_PATH],
-                ['oro_account.anonymous_account_group'],
-                ['oro_account.anonymous_account_group'],
-                ['oro_account.anonymous_account_group']
-            )
-            ->willReturnOnConsecutiveCalls(VisibilityInterface::HIDDEN, VisibilityInterface::HIDDEN, 1, 1, 1, 1);
+        $this->configureSystemVisibilities(VisibilityInterface::HIDDEN, VisibilityInterface::HIDDEN);
 
-        /** @var OrmIndexer $indexer */
-        $indexer = $this->getContainer()->get('oro_website_search.indexer');
-        $indexer->reindex(Product::class);
+        $this->reindexProducts();
 
         /** @var Account $accountLevel1 */
         $accountLevel1 = $this->getReference('account.level_1');
@@ -127,81 +131,31 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
         $manager->persist($account);
         $manager->flush();
 
-        $visibilityAccountFieldName = 'integer.visibility_account_' . $account->getId();
-        $query = new Query();
-        $query
-            ->from('oro_product_' . $this->getDefaultWebsiteId())
-            ->getCriteria()
-            ->andWhere(Criteria::expr()->eq($visibilityAccountFieldName, 1))
-            ->orderBy(['sku' => Criteria::ASC]);
-
-        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
-
-        $results = $searchEngine->search($query);
-        $this->assertEquals(0, $results->getRecordsCount());
+        $searchResult = $this->searchVisibilitiesForAccount($account);
+        $this->assertEquals(0, $searchResult->getRecordsCount());
 
         $this->driver->createAccountWithoutAccountGroupVisibility($account);
 
-        $results = $searchEngine->search($query);
-        $values = $results->getElements();
-        $this->assertEquals(2, $results->getRecordsCount());
+        $searchResult = $this->searchVisibilitiesForAccount($account);
+        $values = $searchResult->getElements();
+
+        $this->assertEquals(2, $searchResult->getRecordsCount());
         $this->assertEquals('product.2', $values[0]->getRecordTitle());
         $this->assertEquals('product.3', $values[1]->getRecordTitle());
-
-        //--Debugging
-        $doctrine = $this->getContainer()->get('doctrine');
-        /** @var WebsiteSearchIndexRepository $itemRepository */
-        $repository = $doctrine
-            ->getManagerForClass(IndexInteger::class)
-            ->getRepository(IndexInteger::class);
-
-        $fieldsVis = $repository->findBy([
-            'field' => 'visibility_account_' . $account->getId(),
-        ]);
-
-        // Duplicated values in integer fields!!!
-        // Test once more cause the bug is not reproduced
-        $fieldsNew = $repository->findBy([
-            'field' => 'visibility_new',
-            'value' => 1
-        ]);
     }
 
     public function testUpdateAccountVisibility()
     {
-        $this->configManager
-            ->expects($this->exactly(6))
-            ->method('get')
-            ->withConsecutive(
-                [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
-                [self::CATEGORY_VISIBILITY_CONFIGURATION_PATH],
-                ['oro_account.anonymous_account_group'],
-                ['oro_account.anonymous_account_group'],
-                ['oro_account.anonymous_account_group']
-            )
-            ->willReturnOnConsecutiveCalls(VisibilityInterface::VISIBLE, VisibilityInterface::VISIBLE, 1, 1, 1, 1);
+        $this->configureSystemVisibilities(VisibilityInterface::VISIBLE, VisibilityInterface::VISIBLE);
 
-        /** @var OrmIndexer $indexer */
-        $indexer = $this->getContainer()->get('oro_website_search.indexer');
-        $indexer->reindex(Product::class);
+        $this->reindexProducts();
 
-        $accountUser = $this->getReference('account.level_1');
+        $account = $this->getReference('account.level_1');
 
-        $visibilityAccountFieldName = 'integer.visibility_account_' . $accountUser->getId();
+        $searchResult = $this->searchVisibilitiesForAccount($account);
+        $values = $searchResult->getElements();
 
-        $query = new Query();
-        $query
-            ->from('oro_product_' . $this->getDefaultWebsiteId())
-            ->getCriteria()
-            ->andWhere(Criteria::expr()->eq($visibilityAccountFieldName, 1))
-            ->orderBy(['sku' => Criteria::ASC]);
-
-        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
-
-        $results = $searchEngine->search($query);
-        $values = $results->getElements();
-
-        $this->assertEquals(2, $results->getRecordsCount());
+        $this->assertEquals(2, $searchResult->getRecordsCount());
         $this->assertEquals('product.2', $values[0]->getRecordTitle());
         $this->assertEquals('product.3', $values[1]->getRecordTitle());
 
@@ -210,12 +164,14 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
             ->get('doctrine')
             ->getManagerForClass(AccountProductVisibility::class);
 
+        /** @var AccountProductVisibilityRepository $visibilityRepository */
         $visibilityRepository = $visibilityManager->getRepository(AccountProductVisibility::class);
 
+        /** @var AccountProductVisibility $productVisibility */
         $productVisibility = $visibilityRepository->findOneBy([
             'website' => $this->getDefaultWebsiteId(),
             'product' => $this->getReference('product.2'),
-            'account' => $accountUser
+            'account' => $account
         ]);
 
         $productVisibility->setVisibility(VisibilityInterface::VISIBLE);
@@ -224,32 +180,25 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
 
         $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
 
-        $this->driver->updateAccountVisibility($accountUser);
+        $this->driver->updateAccountVisibility($account);
 
-        $productVisibility = $visibilityRepository->findOneBy([
-            'website' => $this->getDefaultWebsiteId(),
-            'product' => $this->getReference('product.2'),
-            'account' => $accountUser
-        ]);
+        $searchResult = $this->searchVisibilitiesForAccount($account);
+        $values = $searchResult->getElements();
 
-        $query = new Query();
-        $query
-            ->from('oro_product_' . $this->getDefaultWebsiteId())
-            ->getCriteria()
-            ->andWhere(Criteria::expr()->eq($visibilityAccountFieldName, 1))
-            ->orderBy(['sku' => Criteria::ASC]);
-
-        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
-
-        $results = $searchEngine->search($query);
-        $values = $results->getElements();
-
-        $this->assertEquals(1, $results->getRecordsCount());
+        $this->assertEquals(1, $searchResult->getRecordsCount());
         $this->assertEquals('product.3', $values[0]->getRecordTitle());
     }
 
-    public function testDeleteAccountVisibility()
+    /**
+     * @param string $productSystemVisibility
+     * @param string $categorySystemVisibility
+     */
+    private function configureSystemVisibilities($productSystemVisibility, $categorySystemVisibility)
     {
+        $anonymousGroupId = $this->getContainer()
+            ->get('oro_config.global')
+            ->get('oro_account.anonymous_account_group');
+
         $this->configManager
             ->expects($this->exactly(6))
             ->method('get')
@@ -260,107 +209,35 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
                 ['oro_account.anonymous_account_group'],
                 ['oro_account.anonymous_account_group']
             )
-            ->willReturnOnConsecutiveCalls(VisibilityInterface::VISIBLE, VisibilityInterface::VISIBLE, 1, 1, 1, 1);
+            ->willReturnOnConsecutiveCalls(
+                $productSystemVisibility,
+                $categorySystemVisibility,
+                $anonymousGroupId,
+                $anonymousGroupId,
+                $anonymousGroupId,
+                $anonymousGroupId
+            );
+    }
 
-        /** @var OrmIndexer $indexer */
-        $indexer = $this->getContainer()->get('oro_website_search.indexer');
+    public function testDeleteAccountVisibility()
+    {
+        $this->configureSystemVisibilities(VisibilityInterface::VISIBLE, VisibilityInterface::VISIBLE);
 
-        $indexer->reindex(Product::class);
+        $this->reindexProducts();
 
-        $accountUser = $this->getReference('account.level_1');
-        $visibilityAccountFieldName = 'integer.visibility_account_' . $accountUser->getId();
+        $account = $this->getReference('account.level_1');
 
-        $query = new Query();
-        $query
-            ->from('oro_product_' . $this->getDefaultWebsiteId())
-            ->getCriteria()
-            ->andWhere(Criteria::expr()->eq($visibilityAccountFieldName, 1))
-            ->orderBy(['sku' => Criteria::ASC]);
+        $searchResult = $this->searchVisibilitiesForAccount($account);
+        $values = $searchResult->getElements();
 
-        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
-
-        $results = $searchEngine->search($query);
-        $values = $results->getElements();
-
-        $this->assertEquals(2, $results->getRecordsCount());
+        $this->assertEquals(2, $searchResult->getRecordsCount());
         $this->assertEquals('product.2', $values[0]->getRecordTitle());
         $this->assertEquals('product.3', $values[1]->getRecordTitle());
 
-        $this->driver->deleteAccountVisibility($accountUser);
+        $this->driver->deleteAccountVisibility($account);
 
-        $results = $searchEngine->search($query);
-        $this->assertEquals(0, $results->getRecordsCount());
-    }
+        $searchResult = $this->searchVisibilitiesForAccount($account);
 
-    /**
-     * @param int $productId
-     * @param array $expectedFields
-     * @param string $fieldPattern
-     */
-    private function assertProductHasFields($productId, array $expectedFields, $fieldPattern)
-    {
-        $doctrine = $this->getContainer()->get('doctrine');
-        /** @var WebsiteSearchIndexRepository $itemRepository */
-        $itemRepository = $doctrine
-            ->getManagerForClass(Item::class)
-            ->getRepository(Item::class);
-
-        $queryBuilder = $itemRepository->createQueryBuilder('item');
-        $accountFields = $queryBuilder
-            ->select('integerFields.field', 'integerFields.value')
-            ->join('item.integerFields', 'integerFields')
-            ->andWhere($queryBuilder->expr()->eq('item.entity', ':entityClass'))
-            ->andWhere($queryBuilder->expr()->like('integerFields.field', ':fieldPattern'))
-            ->andWhere($queryBuilder->expr()->eq('item.recordId', ':productId'))
-            ->orderBy('integerFields.field', 'ASC')
-            ->setParameters([
-                'entityClass' => Product::class,
-                'productId' => $productId,
-                'fieldPattern' => $fieldPattern
-            ])
-            ->getQuery()
-            ->getScalarResult();
-
-        $existingFields = [];
-        foreach ($accountFields as $accountField) {
-            $existingFields[$accountField['field']] = $accountField['value'];
-        }
-
-        $this->assertEquals($expectedFields, $existingFields);
-    }
-
-    /**
-     * Asserts that product has in index expected fields for account visibility.
-     * Note that index contains account visibility field for accounts which visibility differs
-     * from visibility defined by system category visibility configuration option.
-     *
-     * @param int $productId
-     * @param array $expectedFields
-     */
-    private function assertProductIndexedAccountVisibilities($productId, array $expectedFields)
-    {
-        $doctrine = $this->getContainer()->get('doctrine');
-        /** @var WebsiteSearchIndexRepository $itemRepository */
-        $itemRepository = $doctrine
-            ->getManagerForClass(Item::class)
-            ->getRepository(Item::class);
-
-        $queryBuilder = $itemRepository->createQueryBuilder('item');
-        $accountFields = $queryBuilder
-            ->select('integerFields.field')
-            ->join('item.integerFields', 'integerFields')
-            ->andWhere($queryBuilder->expr()->eq('item.entity', ':entityClass'))
-            ->andWhere($queryBuilder->expr()->like('integerFields.field', ':fieldPattern'))
-            ->andWhere($queryBuilder->expr()->eq('item.recordId', ':productId'))
-            ->orderBy('integerFields.field', 'ASC')
-            ->setParameters([
-                'entityClass' => Product::class,
-                'productId' => $productId,
-                'fieldPattern' => 'visibility_account_%'
-            ])
-            ->getQuery()
-            ->getScalarResult();
-
-        $this->assertEquals($expectedFields, $accountFields);
+        $this->assertEquals(0, $searchResult->getRecordsCount());
     }
 }
