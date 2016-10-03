@@ -69,8 +69,7 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
 
         $arrayType = Type::getType(Type::TARRAY);
         $platform = $this->connection->getDatabasePlatform();
-
-        var_dump($result);
+        
         $defaultPriceLists = $arrayType->convertToPHPValue($result, $platform);
 
         // Change priority only if already existing several default price lists
