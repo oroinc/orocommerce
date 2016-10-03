@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle;
 
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
-use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\RfpProductCheckerPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ComponentProcessorPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\DefaultProductUnitProvidersCompilerPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductDataStorageSessionBagPass;
@@ -46,7 +45,6 @@ class OroProductBundle extends Bundle
                     'shortDescription' => 'shortDescriptions'
                 ],
             ]))
-            ->addCompilerPass(new RfpProductCheckerPass())
         ;
     }
 }
