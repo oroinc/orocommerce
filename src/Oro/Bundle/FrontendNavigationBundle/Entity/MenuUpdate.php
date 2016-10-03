@@ -44,7 +44,8 @@ use Oro\Bundle\NavigationBundle\Entity\MenuUpdateTrait;
  *      }
  * )
  */
-class MenuUpdate extends ExtendMenuUpdate implements MenuUpdateInterface
+class MenuUpdate extends ExtendMenuUpdate implements
+    MenuUpdateInterface
 {
     use MenuUpdateTrait;
 
