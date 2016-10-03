@@ -37,7 +37,6 @@ services:
             - '@oro_website.manager'
         tags:
             - { name: oro_action.action, alias: assign_current_website }
-            - { name: oro_workflow.action, alias: assign_current_website }
 
     oro_website.translation.strategy.composite_fallback_strategy:
         class: 'Oro\Bundle\WebsiteBundle\Translation\Strategy\CompositeFallbackStrategy'

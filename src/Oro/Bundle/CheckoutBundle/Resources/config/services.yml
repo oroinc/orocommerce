@@ -63,7 +63,7 @@ services:
             - '@oro_action.context_accessor'
             - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
-            - { name: oro_workflow.action, alias: get_order_line_items }
+            - { name: oro_action.action, alias: get_order_line_items }
 
     oro_checkout.layout.data_provider.shipping_context:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\CheckoutShippingContextProvider'
@@ -95,7 +95,7 @@ services:
         arguments:
             - '@request_stack'
         tags:
-            - { name: oro_workflow.condition, alias: check_request }
+            - { name: oro_action.condition, alias: check_request }
 
     oro_checkout.twig.line_items:
         class: 'Oro\Bundle\CheckoutBundle\Twig\LineItemsExtension'
@@ -180,7 +180,7 @@ services:
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
-            - { name: oro_workflow.condition, alias: order_line_item_has_count }
+            - { name: oro_action.condition, alias: order_line_item_has_count }
 
     oro_checkout.layout.provider.open_orders_separate_page_config:
         class: 'Oro\Bundle\CheckoutBundle\Layout\DataProvider\OpenOrdersSeparatePageConfigProvider'
@@ -285,7 +285,7 @@ services:
             - '@oro_action.context_accessor'
             - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
         tags:
-            - { name: oro_workflow.action, alias: get_checkout_state }
+            - { name: oro_action.action, alias: get_checkout_state }
 
     oro_checkout.workflow_state.action.save_checkout_state:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Action\SaveCheckoutStateAction'
@@ -293,7 +293,7 @@ services:
             - '@oro_action.context_accessor'
             - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
         tags:
-            - { name: oro_workflow.action, alias: save_checkout_state }
+            - { name: oro_action.action, alias: save_checkout_state }
 
     oro_checkout.workflow_state.action.delete_checkout_state:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Action\DeleteCheckoutStateAction'
@@ -301,7 +301,7 @@ services:
             - '@oro_action.context_accessor'
             - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
         tags:
-            - { name: oro_workflow.action, alias: delete_checkout_state }
+            - { name: oro_action.action, alias: delete_checkout_state }
 
     oro_checkout.workflow_state.action.generate_checkout_state_snapshot:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Action\GenerateCheckoutStateSnapshotAction'
@@ -309,14 +309,13 @@ services:
             - '@oro_action.context_accessor'
             - '@oro_checkout.workflow_state.manager.checkout_state_diff'
         tags:
-            - { name: oro_workflow.action, alias: generate_checkout_state_snapshot }
+            - { name: oro_action.action, alias: generate_checkout_state_snapshot }
 
     oro_checkout.workflow_state.condition.check_checkout_states:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Condition\CheckCheckoutStates'
         arguments:
             - '@oro_checkout.workflow_state.manager.checkout_state_diff'
         tags:
-            - { name: oro_workflow.condition, alias: check_checkout_states }
             - { name: oro_action.condition, alias: check_checkout_states }
 
     oro_checkout.workflow_state.handler.checkout_error:
@@ -345,7 +344,6 @@ services:
             - '@oro_shipping.shipping_price.provider'
             - '@oro_checkout.factory.shipping_context_provider_factory'
         tags:
-            - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
 
     oro_checkout.condition.shipping_method_supports:
@@ -354,7 +352,6 @@ services:
             - '@oro_shipping.shipping_price.provider'
             - '@oro_checkout.factory.shipping_context_provider_factory'
         tags:
-            - { name: oro_workflow.condition, alias: 'shipping_method_supports' }
             - { name: oro_action.condition, alias: 'shipping_method_supports' }
 
     oro_checkout.provider.checkout_totals:

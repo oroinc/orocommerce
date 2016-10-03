@@ -7,4 +7,3 @@ services:
           - [setDuplicatorFactory, ['@oro_rfp.factory.duplicator_factory']]
         tags:
             - { name: oro_action.action, alias: duplicate }
-            - { name: oro_workflow.action, alias: duplicate }
