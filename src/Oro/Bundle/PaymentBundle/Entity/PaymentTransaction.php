@@ -17,7 +17,7 @@ use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
+use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
  * @ORM\Table(
@@ -48,7 +48,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterface
 {
     use DatesAwareTrait;
-    use AuditableUserAwareTrait;
+    use UserAwareTrait;
 
     /**
      * @var int
@@ -170,14 +170,6 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $frontendOwner;
-
-    /**
-     * @var OrganizationInterface
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $organization;
 
     public function __construct()
     {
@@ -535,26 +527,6 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
     public function setFrontendOwner(AccountUser $frontendOwner = null)
     {
         $this->frontendOwner = $frontendOwner;
-
-        return $this;
-    }
-
-    /**
-     * Get organization
-     *
-     * @return OrganizationInterface
-     */
-    public function getOrganization()
-    {
-        return $this->organization;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setOrganization(OrganizationInterface $organization = null)
-    {
-        $this->organization = $organization;
 
         return $this;
     }
