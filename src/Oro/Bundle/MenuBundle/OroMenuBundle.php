@@ -34,7 +34,7 @@ class OroMenuBundle extends Bundle
         $container
             ->addCompilerPass(new ConditionExpressionLanguageProvidersCompilerPass())
             ->addCompilerPass(new DefaultFallbackExtensionPass([
-                MenuItem::class => ['title' => 'titles'],
+                'Oro\Bundle\MenuBundle\Entity\MenuItem' => ['title' => 'titles'],
             ]));
     }
 }
