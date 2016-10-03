@@ -60,9 +60,15 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
      */
     protected function updatePriceListConfigPriority(LoggerInterface $logger, $dryRun = false)
     {
-        $selectQuery = "SELECT array_value FROM oro_config_value WHERE name = ? AND section = ? LIMIT 1";
-        $selectQueryParameters = ['default_price_lists', 'oro_pricing'];
-        $selectQueryTypes = ['name' => 'string', 'section' => 'string'];
+        $selectQuery = "SELECT array_value FROM oro_config_value WHERE name = :name AND section = :section LIMIT 1";
+        $selectQueryParameters = [
+            'name' => 'default_price_lists',
+            'section' => 'oro_pricing'
+        ];
+        $selectQueryTypes = [
+            'name' => 'string',
+            'section' => 'string'
+        ];
 
         $this->logQuery($logger, $selectQuery, $selectQueryParameters, $selectQueryTypes);
         $result = $this->connection->fetchColumn($selectQuery, $selectQueryParameters, 0, $selectQueryTypes);
@@ -97,9 +103,18 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
 
             $priceListsArrayValue = $arrayType->convertToDatabaseValue($priceLists, $platform);
 
-            $updateQuery = "UPDATE oro_config_value SET array_value = ?";
-            $updateQueryParameters = [$priceListsArrayValue];
-            $updateQueryTypes = ['oro_config_value' => 'string'];
+            $updateQuery = "UPDATE oro_config_value SET array_value = :array_value"
+                ." WHERE name = :name AND section = :section LIMIT 1";
+            $updateQueryParameters = [
+                'array_value' => $priceListsArrayValue,
+                'name' => 'default_price_lists',
+                'section' => 'oro_pricing'
+            ];
+            $updateQueryTypes = [
+                'array_value' => 'string',
+                'name' => 'string',
+                'section' => 'string'
+            ];
 
             $this->logQuery($logger, $updateQuery, $updateQueryParameters, $updateQueryTypes);
             if (!$dryRun) {
