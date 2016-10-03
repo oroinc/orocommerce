@@ -46,7 +46,7 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
      */
     protected function updatePriceListConfigPriority(LoggerInterface $logger, $dryRun = false)
     {
-        $selectQuery = "SELECT array_value FROM oro_config_value WHERE name = :name AND section = :section LIMIT 1";
+        $selectQuery = 'SELECT id, array_value FROM oro_config_value WHERE name = :name AND section = :section LIMIT 1';
         $selectQueryParameters = [
             'name' => 'default_price_lists',
             'section' => 'oro_pricing'
@@ -57,12 +57,12 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
         ];
 
         $this->logQuery($logger, $selectQuery, $selectQueryParameters, $selectQueryTypes);
-        $result = $this->connection->fetchColumn($selectQuery, $selectQueryParameters, 0, $selectQueryTypes);
+        $result = $this->connection->fetchAssoc($selectQuery, $selectQueryParameters, $selectQueryTypes);
 
         $arrayType = Type::getType(Type::TARRAY);
         $platform = $this->connection->getDatabasePlatform();
         
-        $defaultPriceLists = $arrayType->convertToPHPValue($result, $platform);
+        $defaultPriceLists = $arrayType->convertToPHPValue($result['array_value'], $platform);
 
         // Change priority only if already existing several default price lists
         if (count($defaultPriceLists) > 1) {
@@ -73,33 +73,22 @@ class OroPriceListPriorityQuery extends ParametrizedMigrationQuery
                 }
             );
 
-            $priorities = [];
-            foreach ($defaultPriceLists as $priceList) {
-                $priorities[] = $priceList['priority'];
+            $priceListsCount = count($defaultPriceLists);
+            for ($i = 0; $i < (int)($priceListsCount/2); $i++) {
+                $swapIdx = $priceListsCount - 1 - $i;
+                $oldValue = $defaultPriceLists[$i]['priority'];
+                $defaultPriceLists[$i]['priority'] = $defaultPriceLists[$swapIdx]['priority'];
+                $defaultPriceLists[$swapIdx]['priority'] = $oldValue;
             }
 
-            $priceLists = [];
-            foreach ($defaultPriceLists as $defaultPriceList) {
-                $priceLists[] = [
-                    'priceList' => $defaultPriceList['priceList'],
-                    'priority' => array_pop($priorities),
-                    'mergeAllowed' => $defaultPriceList['mergeAllowed']
-                ];
-            }
-
-            $priceListsArrayValue = $arrayType->convertToDatabaseValue($priceLists, $platform);
-
-            $updateQuery = "UPDATE oro_config_value SET array_value = :array_value"
-                ." WHERE name = :name AND section = :section LIMIT 1";
+            $updateQuery = 'UPDATE oro_config_value SET array_value = :array_value WHERE id = :id';
             $updateQueryParameters = [
-                'array_value' => $priceListsArrayValue,
-                'name' => 'default_price_lists',
-                'section' => 'oro_pricing'
+                'array_value' => $defaultPriceLists,
+                'id' => $result['id']
             ];
             $updateQueryTypes = [
-                'array_value' => 'string',
-                'name' => 'string',
-                'section' => 'string'
+                'array_value' => 'array',
+                'id' => 'integer'
             ];
 
             $this->logQuery($logger, $updateQuery, $updateQueryParameters, $updateQueryTypes);
