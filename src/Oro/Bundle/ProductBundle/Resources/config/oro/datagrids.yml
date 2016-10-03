@@ -329,14 +329,20 @@ datagrids:
                 sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
 
     frontend-product-search-grid:
+        options:
+            entityHint:        product
+            displayOptions:
+                selector: '.catalog__filter-controls__item_display-options'
+            requireJSModules:
+                - oroproduct/js/app/datagrid/frontend-product-display-options-builder
+                - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
         source:
             type: search
             search_index: website
             query:
                 select:
                     - text.sku as sku
-                    - text.name_LOCALIZATION_ID as name
-                    - text.all_text_LOCALIZATION_ID as all_text
+                    - text.title_LOCALIZATION_ID as name
                     - text.short_desc_LOCALIZATION_ID as shortDescription
                 from:
                     - oro_product_WEBSITE_ID
@@ -345,21 +351,8 @@ datagrids:
                 label:         oro.product.sku.label
             name:
                 label:         oro.product.names.label
-            inventoryStatus:
-                label:         oro.product.inventory_status.label
-                type:          twig
-                frontend_type: html
-                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
-            status:
-                label:         orobproduct.status.label
-                frontend_type: select
-                choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
-            createdAt:
-                label:         oro.ui.created_at
-                frontend_type: datetime
-            updatedAt:
-                label:         oro.ui.updated_at
-                frontend_type: datetime
+            shortDescription:
+                label:         oro.product.short_descriptions.label
         filters:
             columns:
                 all_text:
@@ -371,7 +364,7 @@ datagrids:
                     data_name: sku
                 name:
                     type:      string
-                    data_name: name_LOCALIZATION_ID
+                    data_name: title_LOCALIZATION_ID
         properties:
             id: ~
             view_link:
@@ -385,10 +378,5 @@ datagrids:
                     data_name: sku
                     type: string
                 name:
-                    data_name: name
+                    data_name: title_LOCALIZATION_ID
                     type: string
-            default:
-                sku: DESC
-        options:
-            requireJSModules:
-                - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder

@@ -4,5 +4,6 @@ config:
         'oroshipping/js/app/views/product-shipping-options-view': 'bundles/oroshipping/js/app/views/product-shipping-options-view.js'
         'oroshipping/js/app/views/product-shipping-freight-classes-component': 'bundles/oroshipping/js/app/components/product-shipping-freight-classes-component.js'
         'oroshipping/js/validator/unique-product-unit-shipping-options': 'bundles/oroshipping/js/validator/unique-product-unit-shipping-options.js'
+        'oroshipping/js/app/views/shipping-rule-method-view': 'bundles/oroshipping/js/app/views/shipping-rule-method-view.js'
     appmodules:
         - oroshipping/js/app/modules/validator-constraints-module

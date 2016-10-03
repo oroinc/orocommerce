@@ -17,11 +17,8 @@
 {% block _product_search_navigation_widget %}
     <div class="catalog-navigation-bar" data-page-component-module="oroproduct/js/app/components/breadcrumbs-navigation-block">
         <span class="path-info">
-            {% for parentCategory in parentCategories %}{{ parentCategory.defaultTitle }} &gt;{% endfor %}
-            {{ currentCategory.defaultTitle }}
+            {{ block('container_widget') }}
         </span>
         <span class="filters-info"></span>
-        {#<span class="pagination-info"></span>#}
-        {#<span class="sorting-info"></span>#}
     </div>
 {% endblock %}

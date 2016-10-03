@@ -26,13 +26,13 @@ class ShippingMethodLabelFormatter
      */
     public function formatShippingMethodLabel($shippingMethodName)
     {
-        try {
-            $shippingMethod = $this->shippingMethodRegistry->getShippingMethod($shippingMethodName);
+        $shippingMethod = $this->shippingMethodRegistry->getShippingMethod($shippingMethodName);
 
-            return $label = $shippingMethod->getLabel();
-        } catch (\InvalidArgumentException $e) {
+        if (!$shippingMethod || !$shippingMethod->isGrouped()) {
             return '';
         }
+
+        return $shippingMethod->getLabel();
     }
 
     /**
@@ -42,12 +42,35 @@ class ShippingMethodLabelFormatter
      */
     public function formatShippingMethodTypeLabel($shippingMethodName, $shippingTypeName)
     {
-        try {
-            $shippingMethod = $this->shippingMethodRegistry->getShippingMethod($shippingMethodName);
+        $shippingMethod = $this->shippingMethodRegistry->getShippingMethod($shippingMethodName);
 
-            return $label = $shippingMethod->getShippingTypeLabel($shippingTypeName);
-        } catch (\InvalidArgumentException $e) {
+        if (!$shippingMethod) {
             return '';
         }
+
+        $shippingMethodType = $shippingMethod->getType($shippingTypeName);
+
+        if (!$shippingMethodType) {
+            return '';
+        }
+
+        return $shippingMethodType->getLabel();
+    }
+
+    /**
+     * @param $shippingMethodName
+     * @param $shippingTypeName
+     * @return string
+     */
+    public function formatShippingMethodWithType($shippingMethodName, $shippingTypeName)
+    {
+        $methodLabel = $this->formatShippingMethodLabel($shippingMethodName);
+
+        $methodTypeLabel = $this->formatShippingMethodTypeLabel(
+            $shippingMethodName,
+            $shippingTypeName
+        );
+
+        return implode(', ', array_filter([$methodLabel, $methodTypeLabel]));
     }
 }
