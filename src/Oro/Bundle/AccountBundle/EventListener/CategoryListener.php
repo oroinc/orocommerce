@@ -47,10 +47,14 @@ class CategoryListener
             ) {
                 /** @var Product $product */
                 foreach (array_merge($collection->getInsertDiff(), $collection->getDeleteDiff()) as $product) {
-                    $this->productMessageHandler->addProductMessageToSchedule(
-                        'oro_account.visibility.change_product_category',
-                        $product
-                    );
+                    // Message should be send only for already existing products
+                    // New products has own queue message for visibility calculation
+                    if ($product->getId()) {
+                        $this->productMessageHandler->addProductMessageToSchedule(
+                            'oro_account.visibility.change_product_category',
+                            $product
+                        );
+                    }
                 }
             }
         }

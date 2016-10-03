@@ -105,4 +105,26 @@ class CategoryListenerTest extends WebTestCase
             $messages
         );
     }
+
+    public function testCreateProduct()
+    {
+        $em = $this->getContainer()->get('doctrine')->getManager();
+
+        $product = new Product();
+        $product->setSku('TestSKU02');
+
+        $em->persist($product);
+
+        /** @var $category Category */
+        $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+        $em->refresh($category);
+
+        $category->addProduct($product);
+        $em->flush();
+
+        $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
+        $messages = $this->messageProducer->getSentMessages();
+
+        $this->assertEmpty($messages);
+    }
 }
