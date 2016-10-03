@@ -140,12 +140,33 @@ oro:
                 allowed_statuses.title: 'Allowed Statuses'
                 product_unit.title: 'Product Unit'
                 default_product_unit.title: 'Primary Unit'
+                product_images.title: 'Product Images'
+                product_image_watermark.title: 'Product Image Watermark'
             fields:
                 unit_rounding_type.label: 'Unit Rounding Type'
                 general_frontend_inventory_statuses_visibility.label: 'Visible Inventory Statuses'
                 default_unit.label: 'Default Primary Unit'
                 default_unit_precision.label: 'Default Primary Unit Precision'
-
+                product_image_watermark_file.label: 'File'
+                product_image_watermark_size:
+                    label: 'Size'
+                    tooltip: 'Watermark image size relative to product image size (in percents)'
+                product_image_watermark_position:
+                    label: 'Position'
+                    topleft.label: 'Top Left'
+                    top.label: 'Top'
+                    topright.label: 'Top Right'
+                    left.label: 'Left'
+                    center.label: 'Center'
+                    right.label: 'Right'
+                    bottomleft.label: 'Bottom Left'
+                    bottom.label: 'Bottom'
+                    bottomright.label: 'Bottom Right'
+            notice:
+                product_image_watermark: >
+                   The updated product image watermark settings will be used for the newly uploaded images only.
+                   In order to update the existing images please run the following command:
+                   <code>php app/console product:image:resize-all --force</code>
         grid:
             action:
                 duplicate: Duplicate
