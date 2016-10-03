@@ -177,7 +177,7 @@ define(function(require) {
 
         resetData: function() {
             if (this.fieldsByName.hasOwnProperty('quantity')) {
-                this.fieldsByName.quantity.val(1);
+                this.model.set('quantity', 1);
             }
 
             if (this.fieldsByName.hasOwnProperty('priceValue')) {
