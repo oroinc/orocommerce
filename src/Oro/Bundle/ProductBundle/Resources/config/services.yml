@@ -304,6 +304,13 @@ services:
         arguments:
             - '%oro_product.entity.product.class%'
 
+    oro_product.repository.product_image:
+        class: 'Doctrine\ORM\EntityRepository'
+        public: false
+        factory:  ["@oro_entity.doctrine_helper", getEntityRepository]
+        arguments:
+            - '%oro_product.entity.product_image.class%'
+
     oro_product.model.builder.quick_add_row_collection:
         class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
         public: false
@@ -317,22 +324,13 @@ services:
             - '@request_stack'
             - '@session'
 
-    oro_product.event_listener.frontend_products_datagrid:
-        class: 'Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener'
-        arguments:
-            - '@oro_product.datagrid_theme_helper'
-            - '@doctrine'
-            - '@oro_attachment.manager'
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
-
     oro_product.event_listener.frontend_product_search_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener'
         arguments:
             - '@oro_product.datagrid_theme_helper'
             - '@doctrine'
             - '@oro_attachment.manager'
+            - '@liip_imagine.cache.manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
@@ -393,6 +391,48 @@ services:
             - "@oro_product.product.manager"
         tags:
             - { name: layout.data_provider, alias: featured_products }
+
+    oro_product.event_listener.product_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductListener'
+        public: false
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product.class%', event: postUpdate }
+
+    oro_product.event_listener.product_image_resize_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener'
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product_image.resize, method: resizeProductImage }
+
+    oro.product.event_listener.product_images_configuration_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductImagesConfigurationListener'
+        arguments:
+            - '@session'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+
+    oro.product.provider.watermark_image_filter:
+        class: 'Oro\Bundle\ProductBundle\Provider\WatermarkImageFilterProvider'
+        arguments:
+            - '@oro_config.global'
+            - '@oro_entity.doctrine_helper'
+            - '%oro_attachment.attachments_dir%'
+        tags:
+            - { name: layout.image_filter.provider }
+
+    oro.product.message_processor.image_resize:
+        class: 'Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor'
+        arguments:
+            - '@oro_product.repository.product_image'
+            - '@oro_layout.loader.image_filter'
+            - '@oro_layout.provider.image_type'
+            - '@oro_attachment.image_resizer'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
 
     oro_product.model.product_message_factory:
         class: 'Oro\Bundle\ProductBundle\Model\ProductMessageFactory'
