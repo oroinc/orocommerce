@@ -11,7 +11,7 @@ use Oro\Bundle\InventoryBundle\Model\ExtendInventoryLevel;
 
 /**
  * @ORM\Table(
- *     name="oro_inventory_lev",
+ *     name="oro_inventory_level",
  *     uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="uidx_oro_inventory_lev",

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\InventoryBundle\ImportExport\Strategy;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
