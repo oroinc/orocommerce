@@ -39,8 +39,6 @@ layout:
                         action: submit
                         text: oro.account.accountuser.profile.create_an_account
                         style: auto
-                        attr:
-                            class: button
                 registration_form_end:
                     blockType: form_end
                     options:

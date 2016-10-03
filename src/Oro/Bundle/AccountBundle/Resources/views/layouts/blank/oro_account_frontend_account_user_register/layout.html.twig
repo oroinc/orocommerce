@@ -36,6 +36,14 @@
     </div>
 {% endblock %}
 
+{% block _registration_form_submit_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' button'
+    }) %}
+
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
 {% block _registration_back_btn_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' link'
