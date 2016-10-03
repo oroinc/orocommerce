@@ -694,7 +694,7 @@ services:
         arguments:
             - '@oro_product.model.product_message_handler'
         tags:
-            - {name: kernel.event_listener, event: oro_catalog.event.products_change_relation, method: onProductsChangeRelation }
+            - { name: kernel.event_listener, event: oro_catalog.event.products_change_relation, method: onProductsChangeRelation, priority: 100 }
 
     oro_account.provider.frontend_account_user_registration_form:
         class: 'Oro\Bundle\AccountBundle\Layout\DataProvider\FrontendAccountUserRegistrationFormProvider'
@@ -954,6 +954,7 @@ services:
             - '@oro_product.model.product_message_factory'
             - '@logger'
             - '@oro_account.visibility.cache.product.cache_builder'
+            - '@event_dispatcher'
         calls:
             - [setResolvedVisibilityClassName, ['%oro_account.entity.account_product_visibility_resolved.class%']]
         tags:

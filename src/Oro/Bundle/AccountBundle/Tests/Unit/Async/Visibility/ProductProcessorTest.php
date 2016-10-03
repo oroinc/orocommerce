@@ -5,6 +5,7 @@ namespace Oro\Bundle\AccountBundle\Tests\Unit\Async\Visibility;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AccountBundle\Async\Visibility\ProductProcessor;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use Oro\Bundle\CatalogBundle\Event\AfterProductRecalculateVisibility;
 use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -14,6 +15,7 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductProcessorTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,6 +40,11 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
     protected $logger;
 
     /**
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $eventDispatcher;
+
+    /**
      * @var ProductProcessor
      */
     protected $visibilityProcessor;
@@ -50,12 +57,14 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->cacheBuilder = $this->getMock(ProductCaseCacheBuilderInterface::class);
         $this->logger = $this->getMock(LoggerInterface::class);
+        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
 
         $this->visibilityProcessor = new ProductProcessor(
             $this->registry,
             $this->messageFactory,
             $this->logger,
-            $this->cacheBuilder
+            $this->cacheBuilder,
+            $this->eventDispatcher
         );
 
         $this->visibilityProcessor->setResolvedVisibilityClassName(ProductVisibilityResolved::class);
@@ -84,13 +93,13 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(ProductVisibilityResolved::class)
             ->willReturn($em);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
         $message = $this->getMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
         $session = $this->getMock(SessionInterface::class);
 
         $product = new Product();
@@ -103,6 +112,13 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
         $this->cacheBuilder->expects($this->once())
             ->method('productCategoryChanged')
             ->with($product);
+
+        $event = new AfterProductRecalculateVisibility($product);
+
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(AfterProductRecalculateVisibility::NAME, $event);
+
         $this->assertEquals(
             MessageProcessorInterface::ACK,
             $this->visibilityProcessor->process($message, $session)
@@ -126,7 +142,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(ProductVisibilityResolved::class)
             ->willReturn($em);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
         $message = $this->getMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -136,7 +152,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('error')
             ->with('Transaction aborted wit error: Some error.');
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
         $session = $this->getMock(SessionInterface::class);
 
         $this->assertEquals(
@@ -166,7 +182,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getProductFromMessage')
             ->will($this->throwException(new InvalidArgumentException('Wrong message')));
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
         $message = $this->getMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -176,7 +192,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('error')
             ->with('Message is invalid: Wrong message. Original message: "[]"');
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
         $session = $this->getMock(SessionInterface::class);
 
         $this->assertEquals(

@@ -167,4 +167,4 @@ services:
         arguments:
             - '@oro_catalog.manager.product_index_scheduler'
         tags:
-            - {name: kernel.event_listener, event: oro_catalog.event.products_change_relation, method: onProductsChangeRelation }
+            - {name: kernel.event_listener, event: oro_catalog.event.after_product_recalculate_visibility, method: afterProductRecalculateVisibility }

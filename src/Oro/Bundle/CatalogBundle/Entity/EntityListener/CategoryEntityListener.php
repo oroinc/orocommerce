@@ -5,6 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Entity\EntityListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Event\AfterProductRecalculateVisibility;
 use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 
@@ -49,16 +50,11 @@ class CategoryEntityListener
     }
 
     /**
-     * @param ProductsChangeRelationEvent $event
+     * @param AfterProductRecalculateVisibility $event
      */
-    public function onProductsChangeRelation(ProductsChangeRelationEvent $event)
+    public function afterProductRecalculateVisibility(AfterProductRecalculateVisibility $event)
     {
-        $products = $event->getProducts();
-        $productIds = [];
-        foreach ($products as $product) {
-            $id = $product->getId();
-            $productIds[$id] = $id;
-        }
-        $this->productIndexScheduler->triggerReindexationRequestEvent($productIds);
+        $product = $event->getProduct();
+        $this->productIndexScheduler->triggerReindexationRequestEvent([$product->getId()]);
     }
 }
