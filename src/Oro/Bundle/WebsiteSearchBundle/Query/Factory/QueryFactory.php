@@ -25,17 +25,17 @@ class QueryFactory implements QueryFactoryInterface
         QueryFactoryInterface $parentQueryFactory,
         EngineV2Interface $engine
     ) {
-        $this->parent     = $parentQueryFactory;
-        $this->engine     = $engine;
+        $this->parent = $parentQueryFactory;
+        $this->engine = $engine;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function create(DatagridInterface $grid, array $config)
+    public function create(array $config = [])
     {
         if (!isset($config['search_index']) || $config['search_index'] !== 'website') {
-            return $this->parent->create($grid, $config);
+            return $this->parent->create($config);
         }
 
         $query = new WebsiteSearchQuery(
@@ -56,7 +56,11 @@ class QueryFactory implements QueryFactoryInterface
     {
         $builder = new YamlToSearchQueryConverter();
 
-        $queryConfig = ['query' => $config['query']];
+        $queryConfig = [];
+        if (isset($config['query'])) {
+            $queryConfig = ['query' => $config['query']];
+        }
+
         $builder->process($query, $queryConfig);
     }
 }
