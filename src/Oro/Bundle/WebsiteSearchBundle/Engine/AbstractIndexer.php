@@ -272,7 +272,8 @@ abstract class AbstractIndexer implements IndexerInterface
         }
 
         $entityConfig = $this->mappingProvider->getEntityConfig($entityClass);
-        $entitiesData = $this->indexDataProvider->getEntitiesData($entityClass,
+        $entitiesData = $this->indexDataProvider->getEntitiesData(
+            $entityClass,
             $restrictedEntities,
             $context,
             $entityConfig
