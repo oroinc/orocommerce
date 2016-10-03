@@ -9,7 +9,6 @@ use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\AccountBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -27,23 +26,15 @@ class AccountProductVisibilityProvider
     private $doctrineHelper;
 
     /**
-     * @var AccountUserRelationsProvider
-     */
-    private $relationsProvider;
-
-    /**
      * @param DoctrineHelper $doctrineHelper
      * @param ConfigManager $configManager
-     * @param AccountUserRelationsProvider $relationsProvider
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        ConfigManager $configManager,
-        AccountUserRelationsProvider $relationsProvider
+        ConfigManager $configManager
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->configManager = $configManager;
-        $this->relationsProvider = $relationsProvider;
     }
 
     /**
@@ -132,7 +123,7 @@ class AccountProductVisibilityProvider
             $this->getAccountProductVisibilityResolvedTermByWebsite($queryBuilder, $account, $website)
         ];
 
-        $accountGroup = $this->relationsProvider->getAccountGroup($account);
+        $accountGroup = $account->getGroup();
         if ($accountGroup) {
             $visibilities[] = $this->getAccountGroupProductVisibilityResolvedTermByWebsite(
                 $queryBuilder,

@@ -17,8 +17,10 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 
-class OrmAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterface
+class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
 {
+    const PRODUCT_SELECT_FOR_UPDATE_BATCH_SIZE = 100000;
+
     /**
      * @var DoctrineHelper
      */
@@ -64,8 +66,14 @@ class OrmAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterfa
     {
         $queryBuilder = $this->getIndexIntegerQueryBuilder('visibilityNew');
 
+        $accountVisibilityFieldName = 'visibility_account_' . $account->getId();
+
         $queryBuilder
-            ->select('IDENTITY(visibilityNew.item) as itemId', 'visibilityNew.field', 'visibilityNew.value')
+            ->select(
+                'IDENTITY(visibilityNew.item) as itemId',
+                'CONCAT(\'visibility_account_\', :accountId)',
+                'visibilityNew.value'
+            )
             ->join('visibilityNew.item', 'item')
             ->join(
                 'item.integerFields',
@@ -79,8 +87,11 @@ class OrmAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterfa
                 $queryBuilder->expr()->neq('visibilityNew.value', 'isVisibleByDefault.value')
             )
             ->setParameter('entityClass', Product::class)
+            ->setParameter('accountId', $account->getId())
             ->setParameter('visibilityNewField', $this->getVisibilityNewFieldName())
             ->setParameter('isVisibleByDefaultField', $this->getIsVisibleByDefaultFieldName());
+
+        $result = $queryBuilder->getQuery()->getResult();
 
         $this->insertExecutor->execute(IndexInteger::class, ['item', 'field', 'value'], $queryBuilder);
     }
@@ -90,13 +101,26 @@ class OrmAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterfa
      */
     public function updateAccountVisibility(Account $account)
     {
-        $this->deleteAccountVisibility($account);
+        $connection = $this
+            ->doctrineHelper
+            ->getEntityManagerForClass(Item::class);
 
-        /** @var WebsiteRepository $websiteRepository */
-        $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
-        $websites = $websiteRepository->getAllWebsites();
-        foreach ($websites as $website) {
-            $this->updateAccountVisibilityForWebsite($account, $website);
+        $connection->beginTransaction();
+
+        try {
+            $this->deleteAccountVisibility($account);
+
+            /** @var WebsiteRepository $websiteRepository */
+            $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
+            $websites = $websiteRepository->getAllWebsites();
+            foreach ($websites as $website) {
+                $this->updateAccountVisibilityForWebsite($account, $website);
+            }
+
+            $connection->commit();
+        } catch (\Exception $exception) {
+            $connection->rollback();
+            throw $exception;
         }
     }
 
@@ -132,9 +156,12 @@ class OrmAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterfa
                 $website
             );
 
+        $queryBuilder->select('product.id');
+
+        $batchSize = self::PRODUCT_SELECT_FOR_UPDATE_BATCH_SIZE;
         $iterator = new BufferedQueryResultIterator($queryBuilder);
         $iterator->setHydrationMode(OrmQuery::HYDRATE_ARRAY);
-        $batchSize = BufferedQueryResultIterator::DEFAULT_BUFFER_SIZE;
+        $iterator->setBufferSize($batchSize);
 
         $productIds = [];
         $rows = 0;
@@ -158,29 +185,27 @@ class OrmAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterfa
      * @param Website $website
      * @param array $productIds
      */
-    private function insertAccountVisibilityData(Account $account, Website $website, array $productIds)
+    protected function insertAccountVisibilityData(Account $account, Website $website, array $productIds)
     {
-        $queryBuilder = $this->getItemQueryBuilder();
-        $queryBuilder
-            ->select(
-                'id',
-                '"' . $this->getAccountVisibilityFieldName($account) . '"',
-                WebsiteSearchProductVisibilityIndexerListener::ACCOUNT_VISIBILITY_VALUE
-            )
-            ->andWhere($queryBuilder->expr()->eq('entity', ':entityClass'))
-            ->andWhere($queryBuilder->expr()->eq('alias', ':entityAlias'))
-            ->andWhere($queryBuilder->expr()->in('recordId', ':recordIds'));
-
         //TODO: Refactor to use chained placeholder after 4035 fixes will be applied
         $entityAlias = $this->mappingProvider->getEntityAlias(Product::class);
         $entityAlias = str_replace('WEBSITE_ID', $website->getId(), $entityAlias);
 
+        $queryBuilder = $this->getItemQueryBuilder();
         $queryBuilder
+            ->select(
+                'searchItem.id',
+                '\'' . $this->getAccountVisibilityFieldName($account) . '\'',
+                '\'' . WebsiteSearchProductVisibilityIndexerListener::ACCOUNT_VISIBILITY_VALUE . '\''
+            )
+            ->andWhere($queryBuilder->expr()->eq('searchItem.entity', ':entityClass'))
+            ->andWhere($queryBuilder->expr()->eq('searchItem.alias', ':entityAlias'))
+            ->andWhere($queryBuilder->expr()->in('searchItem.recordId', ':productIds'))
             ->setParameter('entityClass', Product::class)
-            ->setParameter('alias', $entityAlias)
-            ->setParameter('recordIds', $productIds);
+            ->setParameter('entityAlias', $entityAlias)
+            ->setParameter('productIds', $productIds);
 
-        $this->insertExecutor->execute(IndexInteger::class, ['item_id', 'field', 'value'], $queryBuilder);
+        $this->insertExecutor->execute(IndexInteger::class, ['item', 'field', 'value'], $queryBuilder);
     }
 
     /**
