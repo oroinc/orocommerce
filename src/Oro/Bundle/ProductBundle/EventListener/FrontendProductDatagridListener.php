@@ -5,14 +5,11 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\EventDispatcher\Event;
 
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
@@ -156,9 +153,9 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param OrmResultAfter|SearchResultAfter|Event $event
+     * @param SearchResultAfter $event
      */
-    public function onResultAfter(Event $event)
+    public function onResultAfter(SearchResultAfter $event)
     {
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
@@ -175,11 +172,11 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param OrmResultAfter|SearchResultAfter|Event $event
+     * @param SearchResultAfter $event
      * @param array $productIds
      * @param ResultRecord[] $records
      */
-    protected function addProductImages(Event $event, array $productIds, array $records)
+    protected function addProductImages(SearchResultAfter $event, array $productIds, array $records)
     {
         $gridName = $event->getDatagrid()->getName();
         $theme = $this->themeHelper->getTheme($gridName);

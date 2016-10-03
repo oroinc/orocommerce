@@ -324,23 +324,13 @@ services:
             - '@request_stack'
             - '@session'
 
-    oro_product.event_listener.frontend_products_datagrid:
-        class: 'Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener'
-        arguments:
-            - '@oro_product.datagrid_theme_helper'
-            - '@doctrine'
-            - '@oro_attachment.manager'
-            - '@liip_imagine.cache.manager'
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
-
     oro_product.event_listener.frontend_product_search_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener'
         arguments:
             - '@oro_product.datagrid_theme_helper'
             - '@doctrine'
             - '@oro_attachment.manager'
+            - '@liip_imagine.cache.manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
