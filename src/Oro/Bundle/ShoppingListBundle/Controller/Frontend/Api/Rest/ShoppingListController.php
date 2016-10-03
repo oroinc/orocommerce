@@ -2,15 +2,19 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-use FOS\RestBundle\Routing\ClassResourceInterface;
+use FOS\RestBundle\Controller\Annotations\Put;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
+use FOS\RestBundle\Routing\ClassResourceInterface;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
@@ -19,6 +23,37 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
  */
 class ShoppingListController extends RestController implements ClassResourceInterface
 {
+    /**
+     * @Put("/shoppinglists/current/{id}")
+     *
+     * @ApiDoc(
+     *      description="Set Shopping List current",
+     *      resource=true
+     * )
+     * @AclAncestor("orob2b_shopping_list_frontend_update")
+     *
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function setCurrentAction($id)
+    {
+        /** @var ShoppingListManager $manager */
+        $manager = $this->get('orob2b_shopping_list.shopping_list.manager');
+
+        $shoppingList = $this->getDoctrine()
+            ->getManagerForClass('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')
+            ->getRepository('OroShoppingListBundle:ShoppingList')
+            ->find($id);
+        if ($shoppingList === null) {
+            throw $this->createNotFoundException('Can\'t find shopping list with id ' . $id);
+        }
+
+        $manager->setCurrent($this->getUser(), $shoppingList);
+
+        return new JsonResponse(null, Response::HTTP_OK);
+    }
+
     /**
      * @ApiDoc(
      *      description="Delete Shopping List",
