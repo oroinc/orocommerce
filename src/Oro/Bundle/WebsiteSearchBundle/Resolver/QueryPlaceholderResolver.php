@@ -32,8 +32,6 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
             $this->replaceInFrom($query, $placeholder);
             $this->replaceInCriteria($query, $placeholder);
         }
-
-        return $query;
     }
 
     /**
@@ -42,7 +40,6 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
      */
     private function replaceInSelect(Query $query, WebsiteSearchPlaceholderInterface $placeholder)
     {
-        $selects = $query->getSelect();
         $selectAliases = $query->getSelectAliases();
         $newSelects = [];
         foreach ($query->getSelect() as $select) {
@@ -89,6 +86,16 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
         if ($whereExpr) {
             $visitor = new PlaceholderExpressionVisitor($placeholder);
             $criteria->where($visitor->dispatch($whereExpr));
+        }
+
+        $orderings = $criteria->getOrderings();
+        if ($orderings) {
+            foreach ($orderings as $field => $ordering) {
+                unset($orderings[$field]);
+                $alteredField = $placeholder->replace($field, $placeholder->getValue());
+                $orderings[$alteredField] = $ordering;
+            }
+            $criteria->orderBy($orderings);
         }
     }
 }

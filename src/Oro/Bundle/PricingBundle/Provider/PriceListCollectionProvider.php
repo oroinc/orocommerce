@@ -121,20 +121,23 @@ class PriceListCollectionProvider
         $priceListCollection = $this->getPriceListSequenceMembers(
             $repo->getPriceLists($account, $website)
         );
-        if ($account->getGroup()) {
-            $fallbackEntity = $this->registry
-                ->getRepository('OroPricingBundle:PriceListAccountFallback')
-                ->findOneBy(['account' => $account, 'website' => $website]);
-            if (!$fallbackEntity || $fallbackEntity->getFallback() === PriceListAccountFallback::ACCOUNT_GROUP) {
-                return array_merge(
-                    $priceListCollection,
-                    $this->getPriceListsByAccountGroup($account->getGroup(), $website)
-                );
-            }
+
+        $fallbackEntity = $this->registry
+            ->getRepository('OroPricingBundle:PriceListAccountFallback')
+            ->findOneBy(['account' => $account, 'website' => $website]);
+
+        if ($this->isFallbackToCurrentAccountOnly($fallbackEntity)) {
+            $priceLists = $priceListCollection;
+        } elseif ($account->getGroup() && $this->isFallbackToAccountGroup($fallbackEntity)) {
+            $priceLists = array_merge(
+                $priceListCollection,
+                $this->getPriceListsByAccountGroup($account->getGroup(), $website)
+            );
         } else {
-            return array_merge($priceListCollection, $this->getPriceListsByWebsite($website));
+            $priceLists = array_merge($priceListCollection, $this->getPriceListsByWebsite($website));
         }
-        return $priceListCollection;
+
+        return $priceLists;
     }
 
     /**
@@ -162,5 +165,23 @@ class PriceListCollectionProvider
             );
         }
         return $priceListCollection;
+    }
+
+    /**
+     * @param PriceListAccountFallback|null $fallbackEntity
+     * @return bool
+     */
+    protected function isFallbackToCurrentAccountOnly(PriceListAccountFallback $fallbackEntity = null)
+    {
+        return $fallbackEntity && $fallbackEntity->getFallback() === PriceListAccountFallback::CURRENT_ACCOUNT_ONLY;
+    }
+
+    /**
+     * @param PriceListAccountFallback|null $fallbackEntity
+     * @return bool
+     */
+    protected function isFallbackToAccountGroup(PriceListAccountFallback $fallbackEntity = null)
+    {
+        return !$fallbackEntity || $fallbackEntity->getFallback() === PriceListAccountFallback::ACCOUNT_GROUP;
     }
 }

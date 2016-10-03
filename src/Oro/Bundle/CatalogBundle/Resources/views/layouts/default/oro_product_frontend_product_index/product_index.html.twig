@@ -1,0 +1,4 @@
+{% block _category_breadcrumbs_widget %}
+    {% for parentCategory in parentCategories %}{{ parentCategory.defaultTitle }} &gt;{% endfor %}
+    {{ currentCategory.defaultTitle }}
+{% endblock %}

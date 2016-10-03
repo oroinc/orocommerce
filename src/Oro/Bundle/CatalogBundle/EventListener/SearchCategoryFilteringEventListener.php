@@ -7,7 +7,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
-use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
@@ -24,9 +23,6 @@ class SearchCategoryFilteringEventListener
 
     /** @var ManagerRegistry */
     private $doctrine;
-
-    /** @var DatagridConfiguration */
-    private $config;
 
     /**
      * @param RequestProductHandler $requestProductHandler
@@ -55,9 +51,9 @@ class SearchCategoryFilteringEventListener
             return;
         }
 
-        $this->config = $event->getConfig();
-        $this->config->offsetSetByPath(self::CATEGORY_ID_CONFIG_PATH, $categoryId);
-        $this->config->offsetSetByPath(self::INCLUDE_CAT_CONFIG_PATH, $isIncludeSubcategories);
+        $config = $event->getConfig();
+        $config->offsetSetByPath(self::CATEGORY_ID_CONFIG_PATH, $categoryId);
+        $config->offsetSetByPath(self::INCLUDE_CAT_CONFIG_PATH, $isIncludeSubcategories);
     }
 
     /**
@@ -67,12 +63,14 @@ class SearchCategoryFilteringEventListener
     {
         $datasource = $event->getDatagrid()->getDatasource();
 
-        if (!$datasource instanceof SearchDatasource || null === $this->config) {
+        if (!$datasource instanceof SearchDatasource) {
             return;
         }
 
-        $categoryId           = $this->config->offsetGetByPath(self::CATEGORY_ID_CONFIG_PATH);
-        $includeSubcategories = $this->config->offsetGetByPath(self::INCLUDE_CAT_CONFIG_PATH);
+        $config = $event->getDatagrid()->getConfig();
+
+        $categoryId           = $config->offsetGetByPath(self::CATEGORY_ID_CONFIG_PATH);
+        $includeSubcategories = $config->offsetGetByPath(self::INCLUDE_CAT_CONFIG_PATH);
 
         if (!$categoryId) {
             return;
@@ -85,17 +83,6 @@ class SearchCategoryFilteringEventListener
 
         $categoryIds = $this->getSubcategories($categoryId);
         $this->applyCategoryToQuery($datasource->getSearchQuery(), $categoryIds);
-    }
-
-    /**
-     * @param DatagridConfiguration $config
-     * @return $this
-     */
-    public function setConfig($config)
-    {
-        $this->config = $config;
-
-        return $this;
     }
 
     /**
@@ -126,9 +113,9 @@ class SearchCategoryFilteringEventListener
     private function applyCategoryToQuery(SearchQueryInterface $query, $categoryId)
     {
         if (is_array($categoryId)) {
-            $expr = Criteria::expr()->contains('cat_id', $categoryId);
+            $expr = Criteria::expr()->in('integer.cat_id', $categoryId);
         } else {
-            $expr = Criteria::expr()->eq('cat_id', $categoryId);
+            $expr = Criteria::expr()->eq('integer.cat_id', $categoryId);
         }
 
         $query->addWhere($expr);

@@ -2,14 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
-use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression;
 use Oro\Bundle\PricingBundle\Expression\ExpressionLanguageConverter;
 use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
+use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression;
 use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,6 +18,11 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
      * @var ExpressionParser
      */
     protected $parser;
+
+    /**
+     * @var ExpressionPreprocessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $preprocessor;
 
     /**
      * @var PriceRuleFieldsProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -28,15 +34,27 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected $expressionValidator;
 
+    /**
+     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $translator;
+
     protected function setUp()
     {
         $this->fieldsProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->preprocessor = $this->getMock(ExpressionPreprocessorInterface::class);
         $expressionConverter = new ExpressionLanguageConverter($this->fieldsProvider);
         $this->parser = new ExpressionParser($expressionConverter);
         $this->parser->addNameMapping('product', Product::class);
-        $this->expressionValidator = new PriceRuleExpressionValidator($this->parser, $this->fieldsProvider);
+        $this->translator = $this->getMock(TranslatorInterface::class);
+        $this->expressionValidator = new PriceRuleExpressionValidator(
+            $this->parser,
+            $this->preprocessor,
+            $this->fieldsProvider,
+            $this->translator
+        );
     }
 
     /**
@@ -71,16 +89,58 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $this->doTestValidation($value, $context);
     }
 
+    public function testValidateAdditionalField()
+    {
+        $constraint = new PriceRuleExpression();
+        $constraint->allowedFields = [
+            Product::class => ['additionalField']
+        ];
+        $constraint->fieldLabel = 'Field label';
+
+        $this->fieldsProvider->method('getFields')->willReturn(['fieldKnown']);
+
+        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->getMock(ExecutionContextInterface::class);
+        $context->expects($this->never())->method('addViolation');
+
+        $value = 'product.additionalField';
+
+        $this->preprocessor->expects($this->any())
+            ->method('process')
+            ->with($value)
+            ->willReturnArgument(0);
+
+        $this->expressionValidator->initialize($context);
+        $this->expressionValidator->validate($value, $constraint);
+    }
+
+    public function testValidateDivisionByZero()
+    {
+        $value = 'product.msrp.value/0';
+
+        $this->fieldsProvider->method('getFields')->willReturn(['value']);
+
+        /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->getMock(ExecutionContextInterface::class);
+        $context->expects($this->once())
+            ->method('addViolation')
+            ->with('oro.pricing.validators.division_by_zero.message');
+
+        $this->doTestValidation($value, $context);
+    }
+
     /**
      * @param string $value
      * @param ExecutionContextInterface $context
      */
     protected function doTestValidation($value, ExecutionContextInterface $context)
     {
-        /** @var PriceRuleExpression|\PHPUnit_Framework_MockObject_MockObject $constraint * */
-        $constraint = $this->getMockBuilder(PriceRuleExpression::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $constraint = new PriceRuleExpression();
+        $constraint->fieldLabel = 'Field label';
+        $this->preprocessor->expects($this->any())
+            ->method('process')
+            ->with($value)
+            ->willReturnArgument(0);
         $this->expressionValidator->initialize($context);
         $this->expressionValidator->validate($value, $constraint);
     }

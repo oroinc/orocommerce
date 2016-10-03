@@ -15,9 +15,7 @@ class RestrictIndexProductsEventListenerTest extends AbstractSearchWebTestCase
 {
     protected function setUp()
     {
-        $this->initClient();
-
-        $this->addFrontendRequest();
+        parent::setUp();
 
         $this->loadFixtures([LoadProductData::class]);
     }

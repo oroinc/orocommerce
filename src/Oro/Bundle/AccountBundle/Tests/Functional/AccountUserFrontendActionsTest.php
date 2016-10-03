@@ -18,7 +18,7 @@ class AccountUserFrontendActionsTest extends AbstractAccountUserActionsTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'

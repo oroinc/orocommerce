@@ -40,10 +40,11 @@ class CategoryEntityListener extends AbstractRuleEntityListener
     {
         $products = $event->getProducts();
         // Get lexemes associated with Category::id relation
-        $lexemes = $this->findEntityLexemes(['id']);
+        $lexemes = $this->priceRuleLexemeTriggerHandler
+            ->findEntityLexemes($this->getEntityClassName(), ['id']);
 
         foreach ($products as $product) {
-            $this->addTriggersByLexemes($lexemes, $product);
+            $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product);
         }
     }
 
