@@ -176,9 +176,7 @@ define(function(require) {
         },
 
         resetData: function() {
-            if (this.fieldsByName.hasOwnProperty('quantity')) {
-                this.model.set('quantity', 1);
-            }
+            this.model.set('quantity', 1);
 
             if (this.fieldsByName.hasOwnProperty('priceValue')) {
                 this.fieldsByName.priceValue.val(0).addClass('matched-price');
