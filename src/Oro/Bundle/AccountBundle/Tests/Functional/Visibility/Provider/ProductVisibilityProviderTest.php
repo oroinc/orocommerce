@@ -6,7 +6,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\AccountBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
-use Oro\Bundle\AccountBundle\Visibility\Provider\AccountProductVisibilityProvider;
+use Oro\Bundle\AccountBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
@@ -14,7 +14,7 @@ use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 /**
  * @dbIsolation
  */
-class AccountProductVisibilityProviderTest extends WebTestCase
+class ProductVisibilityProviderTest extends WebTestCase
 {
     const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_account.product_visibility';
     const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_account.category_visibility';
@@ -25,7 +25,7 @@ class AccountProductVisibilityProviderTest extends WebTestCase
     private $configManager;
 
     /**
-     * @var AccountProductVisibilityProvider
+     * @var ProductVisibilityProvider
      */
     private $provider;
 
@@ -47,7 +47,7 @@ class AccountProductVisibilityProviderTest extends WebTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new AccountProductVisibilityProvider(
+        $this->provider = new ProductVisibilityProvider(
             $this->getContainer()->get('oro_entity.doctrine_helper'),
             $this->configManager
         );

@@ -578,24 +578,32 @@ services:
             - "@doctrine"
             - "@oro_entity.orm.insert_from_select_query_executor"
 
+    oro_account.visibility.cache.product.product_cache_builder.abstract:
+        class: 'Oro\Bundle\AccountBundle\Visibility\Cache\Product\AbstractProductResolvedCacheBuilder'
+        public: false
+        abstract: true
+        parent: oro_account.visibility.cache.product.cache_builder.abstract
+        calls:
+            - [setEventDispatcher, ['@event_dispatcher']]
+
     oro_account.visibility.cache.product.account_group_product_resolved_cache_builder:
         class: 'Oro\Bundle\AccountBundle\Visibility\Cache\Product\AccountGroupProductResolvedCacheBuilder'
         public: false
-        parent: oro_account.visibility.cache.product.cache_builder.abstract
+        parent: oro_account.visibility.cache.product.product_cache_builder.abstract
         calls:
             - [setCacheClass, ['%oro_account.entity.account_group_product_visibility_resolved.class%']]
 
     oro_account.visibility.cache.product.account_product_resolved_cache_builder:
         class: 'Oro\Bundle\AccountBundle\Visibility\Cache\Product\AccountProductResolvedCacheBuilder'
         public: false
-        parent: oro_account.visibility.cache.product.cache_builder.abstract
+        parent: oro_account.visibility.cache.product.product_cache_builder.abstract
         calls:
             - [setCacheClass, ['%oro_account.entity.account_product_visibility_resolved.class%']]
 
     oro_account.visibility.cache.product.product_resolved_cache_builder:
         class: 'Oro\Bundle\AccountBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder'
         public: false
-        parent: oro_account.visibility.cache.product.cache_builder.abstract
+        parent: oro_account.visibility.cache.product.product_cache_builder.abstract
         calls:
             - [setCacheClass, ['%oro_account.entity.product_visibility_resolved.class%']]
 
@@ -973,8 +981,9 @@ services:
             - { name: oro_message_queue.client.message_processor, topicName: 'oro_account.visibility.category_remove' }
             - { name: oro_message_queue.client.message_processor, topicName: 'oro_account.visibility.category_position_change' }
 
-    oro_account.visibility.provider.account_product_visibility_provider:
-        class: Oro\Bundle\AccountBundle\Visibility\Provider\AccountProductVisibilityProvider
+    oro_account.visibility.provider.product_visibility_provider:
+        class: Oro\Bundle\AccountBundle\Visibility\Provider\ProductVisibilityProvider
+        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_config.global'
@@ -982,10 +991,14 @@ services:
             - [setProductVisibilitySystemConfigurationPath, ['oro_account.product_visibility']]
             - [setCategoryVisibilitySystemConfigurationPath, ['oro_account.category_visibility']]
 
+    oro_account.indexer.product_visibility_indexer:
+        class: 'Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer'
+        arguments:
+            - '@oro_account.visibility.provider.product_visibility_provider'
+
     oro_account.event_listener.website_search_product_visibility_indexer_listener:
         class: 'Oro\Bundle\AccountBundle\EventListener\WebsiteSearchProductVisibilityIndexerListener'
         arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_account.visibility.provider.account_product_visibility_provider'
+            - '@oro_account.indexer.product_visibility_indexer'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }

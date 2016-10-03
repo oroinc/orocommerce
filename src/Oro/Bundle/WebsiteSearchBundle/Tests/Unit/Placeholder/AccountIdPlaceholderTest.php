@@ -25,11 +25,6 @@ class AccountIdPlaceholderTest extends \PHPUnit_Framework_TestCase
         $this->placeholder = new AccountIdPlaceholder($this->tokenStorage);
     }
 
-    protected function tearDown()
-    {
-        unset($this->placeholder, $this->localizationManager);
-    }
-
     public function testGetPlaceholder()
     {
         $this->assertInternalType('string', $this->placeholder->getPlaceholder());

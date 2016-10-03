@@ -177,7 +177,8 @@ TERM;
      */
     protected function getRootAlias(QueryBuilder $queryBuilder)
     {
-        return $queryBuilder->getRootAliases()[0];
+        $aliases = $queryBuilder->getRootAliases();
+        return reset($aliases);
     }
 
     /**

@@ -16,7 +16,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountProductVisibilityProvider
+class ProductVisibilityProvider
 {
     use ProductVisibilityTrait;
 
