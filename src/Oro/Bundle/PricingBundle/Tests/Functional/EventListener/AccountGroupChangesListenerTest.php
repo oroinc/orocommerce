@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
@@ -42,12 +43,9 @@ class AccountGroupChangesListenerTest extends WebTestCase
         $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), 204);
     }
 
-    /**
-     * @todo: fix test name
-     */
-    public function testDeleteGroup1()
+    public function testDeleteAccountGroupWithAssignedAccount()
     {
-        $this->sendDeleteAccountGroupRequest($this->getReference('account_group.group1'));
+        $this->sendDeleteAccountGroupRequest($this->getReference(LoadGroups::GROUP1));
 
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
@@ -58,28 +56,9 @@ class AccountGroupChangesListenerTest extends WebTestCase
         );
     }
 
-    /**
-     * @todo: fix test name
-     */
-    public function testDeleteGroup2()
+    public function testDeleteAccountGroupWithoutAccount()
     {
-        $this->sendDeleteAccountGroupRequest($this->getReference('account_group.group2'));
-
-        self::assertMessageSent(
-            Topics::REBUILD_COMBINED_PRICE_LISTS,
-            [
-                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                PriceListRelationTrigger::ACCOUNT => $this->getReference('account.level_1.2')->getId()
-            ]
-        );
-    }
-
-    /**
-     * @todo: fix test name
-     */
-    public function testDeleteGroup3()
-    {
-        $this->sendDeleteAccountGroupRequest($this->getReference('account_group.group3'));
+        $this->sendDeleteAccountGroupRequest($this->getReference(LoadGroups::GROUP3));
 
         self::assertEmptyMessages(Topics::REBUILD_COMBINED_PRICE_LISTS);
     }
