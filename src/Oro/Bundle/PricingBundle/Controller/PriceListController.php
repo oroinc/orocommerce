@@ -2,10 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
-use Doctrine\DBAL\Types\Type;
-use Oro\Bundle\EntityBundle\DBAL\Types\ConfigObjectType;
 use Oro\Bundle\PricingBundle\Async\NotificationMessages;
-use Oro\DBAL\Types\ArrayType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -33,48 +30,6 @@ class PriceListController extends Controller
      */
     public function viewAction(PriceList $priceList)
     {
-        $connection = $this->getDoctrine()->getConnection();
-        $selectQuery = "SELECT array_value FROM oro_config_value WHERE name = ? AND section = ? LIMIT 1";
-        $selectQueryParameters = ['default_price_lists', 'oro_pricing'];
-
-        $result = $connection->fetchColumn($selectQuery, $selectQueryParameters);
-
-        $arrayType = Type::getType(Type::TARRAY);
-        $platform = $connection->getDatabasePlatform();
-
-        $defaultPriceLists = $arrayType->convertToPHPValue($result, $platform);
-
-        usort(
-            $defaultPriceLists,
-            function ($a, $b) {
-                return ($a['priority'] < $b['priority']) ? -1 : 1;
-            }
-        );
-
-        $priorities = [];
-        foreach ($defaultPriceLists as $priceList) {
-            $priorities[] = $priceList['priority'];
-        }
-
-        $priceLists = [];
-        foreach ($defaultPriceLists as $defaultPriceList) {
-            $priceLists[] = [
-                'priceList' => $defaultPriceList['priceList'],
-                'priority' => array_pop($priorities),
-                'mergeAllowed' => $defaultPriceList['mergeAllowed']
-            ];
-        }
-
-        $priceListsArrayValue = $arrayType->convertToDatabaseValue($priceLists, $platform);
-
-        $updateQuery = "UPDATE oro_config_value SET array_value = ?";
-        $updateQueryParameters = [$priceListsArrayValue];
-
-
-        $connection->executeUpdate($updateQuery, $updateQueryParameters);
-
-        exit();
-
         if (!$priceList->isActual()) {
             $this->get('session')->getFlashBag()->add(
                 'warning',
