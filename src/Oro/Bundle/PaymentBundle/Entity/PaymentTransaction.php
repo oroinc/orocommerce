@@ -11,10 +11,7 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
-
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
@@ -45,7 +42,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterface
+class PaymentTransaction implements DatesAwareInterface
 {
     use DatesAwareTrait;
     use UserAwareTrait;
