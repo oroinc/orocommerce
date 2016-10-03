@@ -12,7 +12,7 @@ class DeleteMessageTextGenerator
 {
     const ACCOUNT_GROUP_GRID_NAME = 'account-groups-grid';
     const ACCOUNT_GRID_NAME = 'account-accounts-grid';
-    const ACCOUNT_GROUP_GRID_ROUTE = 'oro_account_group_index';
+    const ACCOUNT_GROUP_GRID_ROUTE = 'oro_customer_account_group_index';
     const ACCOUNT_GRID_ROUTE = 'oro_customer_account_index';
 
     /** @var RouterInterface  */
