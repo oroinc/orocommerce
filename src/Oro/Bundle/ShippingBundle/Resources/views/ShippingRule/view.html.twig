@@ -35,10 +35,10 @@
                     UI.renderList(entity.destinations)) }}
                 {% endif %}
 
-                {% if entity.configurations.count %}
+                {% if entity.methodConfigs.count %}
                     {{ UI.renderHtmlProperty(
-                    'oro.shipping.shippingrule.configurations.label'|trans,
-                    UI.renderList(entity.configurations)) }}
+                    'oro.shipping.shippingrule.method_configs.label'|trans,
+                    UI.renderList(entity.methodConfigs)) }}
                 {% endif %}
             </div>
             <div class="responsive-block">
@@ -48,13 +48,13 @@
     {%- endset -%}
 
     {% set dataBlocks = [
-    {
-    'title': 'oro.entity_config.block_titles.general.label'|trans,
-    'class': 'active',
-    'subblocks': [
-    {'data' : [shippingRuleInformation]}
-    ]
-    }
+        {
+            'title': 'oro.entity_config.block_titles.general.label'|trans,
+            'class': 'active',
+            'subblocks': [
+                {'data' : [shippingRuleInformation]}
+            ]
+        }
     ] %}
 
     {% set id = 'shipping-rule-view' %}

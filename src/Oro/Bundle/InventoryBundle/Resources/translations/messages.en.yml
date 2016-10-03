@@ -48,3 +48,16 @@ oro:
                 unit_required: The Unit must be specified
                 not_found_entity: The specified %entity% has not been found in the system
                 general_error: General error:
+
+        system_configuration:
+            groups:
+                product_options.title: Product Options
+                product_inventory_options.title: Product Inventory Options
+            fields:
+                manage_inventory.label: Manage Inventory
+
+        manage_inventory:
+            label: Manage Inventory
+            choice:
+                'true': Yes
+                'false': No

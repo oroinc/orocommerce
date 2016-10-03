@@ -23,7 +23,7 @@ class ProductImageType
     protected $id;
 
     /**
-     * @var Product
+     * @var ProductImage
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductImage", inversedBy="types")
      * @ORM\JoinColumn(name="product_image_id", referencedColumnName="id", nullable=false)
      */
@@ -68,5 +68,13 @@ class ProductImageType
         $this->productImage = $productImage;
 
         return $this;
+    }
+
+    /**
+     * @return ProductImage
+     */
+    public function getProductImage()
+    {
+        return $this->productImage;
     }
 }

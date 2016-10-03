@@ -45,7 +45,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $currencies = (array) $configManager->get('oro_currency.allowed_currencies', []);
         $currencies = array_unique(array_merge($currencies, ['EUR']));
         $configManager->set('oro_currency.allowed_currencies', $currencies);
-        $configManager->set('oro_b2b_pricing.enabled_currencies', ['EUR', 'USD']);
+        $configManager->set('oro_pricing.enabled_currencies', ['EUR', 'USD']);
         $configManager->flush();
     }
 
@@ -103,7 +103,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     public function adminUserEditedWithNextData($shippingRule, TableNode $table)
     {
         $this->getMink()->setDefaultSessionName('second_session');
-        $this->getSession()->resizeWindow(1920, 1080, 'current');
+        $this->getSession()->resizeWindow(1920, 1880, 'current');
 
         $this->oroMainContext->loginAsUserWithPassword();
         $this->waitForAjax();
@@ -119,8 +119,9 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
 
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
-        if (array_search('Country2', $table->getColumn(0))) {
-            $form->clickLink('Add');
+        if (in_array('Country2', $table->getColumn(0), true)) {
+            $destinationAdd = $form->find('css', '.add-list-item');
+            $destinationAdd->click();
         }
         $form->fill($table);
         $form->saveAndClose();
@@ -136,7 +137,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     public function adminUserCreatedWithNextData($shoppingRuleName, TableNode $table)
     {
         $this->getMink()->setDefaultSessionName('second_session');
-        $this->getSession()->resizeWindow(1920, 1080, 'current');
+        $this->getSession()->resizeWindow(1920, 1880, 'current');
 
         $this->oroMainContext->loginAsUserWithPassword();
         $this->waitForAjax();
@@ -153,9 +154,17 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $form = $this->createElement('Shipping Rule');
         $form->fillField('Name', $shoppingRuleName);
 
-        if (array_search('Country2', $table->getColumn(0))) {
+        // Add method type config
+        if (in_array('Type', $table->getColumn(0), true)) {
+            $shippingMethodConfigAdd = $form->find('css', '.add-method');
+            $shippingMethodConfigAdd->click();
+            $this->waitForAjax();
+        }
+
+        if (in_array('Country2', $table->getColumn(0), true)) {
             $form->fillField('Sort Order', '1');
-            $form->clickLink('Add');
+            $destinationAdd = $form->find('css', '.add-list-item');
+            $destinationAdd->click();
         }
 
         $form->fill($table);

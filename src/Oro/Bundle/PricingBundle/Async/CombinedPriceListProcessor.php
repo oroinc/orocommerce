@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
+use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -95,7 +96,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
             $trigger = $this->triggerFactory->createFromArray($messageData);
             $this->handlePriceListRelationTrigger($trigger);
             $this->dispatchChangeAssociationEvents();
-        } catch (\Exception $e) {
+        } catch (InvalidArgumentException $e) {
             $this->logger->error(
                 sprintf(
                     'Message is invalid: %s. Original message: "%s"',
@@ -105,6 +106,16 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
             );
 
             return self::REJECT;
+        } catch (\Exception $e) {
+            $this->logger->error(
+                sprintf(
+                    'Message is invalid: %s. Original message: "%s"',
+                    $e->getMessage(),
+                    $message->getBody()
+                )
+            );
+
+            return self::REQUEUE;
         }
 
         return self::ACK;
@@ -201,7 +212,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::REBUILD_PRICE_LISTS];
+        return [Topics::REBUILD_COMBINED_PRICE_LISTS];
     }
 
     protected function resetCache()

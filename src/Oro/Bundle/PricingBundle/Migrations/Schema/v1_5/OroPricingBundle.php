@@ -6,6 +6,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
@@ -16,6 +17,9 @@ use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, RenameExtensionAwareInterface
 {
     use MigrationConstraintTrait;
@@ -50,6 +54,8 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
 
         $this->renameColumnsAndTables($schema, $queries);
         $this->renameIndexes($schema, $queries);
+
+        $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_pricing', 'oro_pricing'));
     }
 
     /**

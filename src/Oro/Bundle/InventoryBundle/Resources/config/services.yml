@@ -33,3 +33,22 @@ services:
             - '@oro_api.doctrine_helper'
         tags:
             - { name: oro.api.processor, action: create, group: normalize_input, priority: -45, class: '%oro_inventory.entity.inventory_level.class%' }
+
+    oro_warehouse.event_listener.product_manage_inventory_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductManageInventoryFormViewListener'
+        arguments:
+            - "@request_stack"
+            - "@oro_entity.doctrine_helper"
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
+
+    oro_warehouse.event_listener.category_manage_inventory_form_view:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryManageInventoryFormViewListener'
+        arguments:
+            - "@request_stack"
+            - "@oro_entity.doctrine_helper"
+            - "@translator"
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }

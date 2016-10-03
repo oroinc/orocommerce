@@ -14,7 +14,7 @@ class AccountGroupControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader());
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups'
@@ -39,7 +39,7 @@ class AccountGroupControllerTest extends WebTestCase
     {
         $id = $this->getContainer()
             ->get('oro_config.global')
-            ->get('oro_b2b_account.anonymous_account_group');
+            ->get('oro_account.anonymous_account_group');
 
         $this->client->request(
             'DELETE',

@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\WarehouseBundle\Tests\Unit\ImportExport\Normalizer;
 
+use Oro\Bundle\CurrencyBundle\Rounding\QuantityRoundingService;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\ImportExport\Serializer\InventoryLevelNormalizer;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
-use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use Oro\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelNormalizer;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class WarehouseInventoryLevelNormalizerTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,7 +31,7 @@ class WarehouseInventoryLevelNormalizerTest extends \PHPUnit_Framework_TestCase
         $this->roundingService = $this->getMockBuilder(QuantityRoundingService::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->warehouseInventoryLevelNormalizer = new WarehouseInventoryLevelNormalizer(
+        $this->warehouseInventoryLevelNormalizer = new InventoryLevelNormalizer(
             $this->formatter,
             $this->roundingService
         );
@@ -45,7 +45,7 @@ class WarehouseInventoryLevelNormalizerTest extends \PHPUnit_Framework_TestCase
      */
     public function testNormalizeShouldGenerateCorrectArray($quantity, $wareHouseName, $productUnitCode)
     {
-        $object = new WarehouseInventoryLevel();
+        $object = new InventoryLevel();
         $object->setQuantity($quantity);
 
         $wareHouse = new Warehouse();
@@ -80,7 +80,7 @@ class WarehouseInventoryLevelNormalizerTest extends \PHPUnit_Framework_TestCase
 
     public function testNormalizeShouldIgnoreZeroQuantity()
     {
-        $object = new WarehouseInventoryLevel();
+        $object = new InventoryLevel();
         $results = $this->warehouseInventoryLevelNormalizer->normalize($object);
         $this->assertNull($results['quantity']);
     }

@@ -62,42 +62,52 @@ oro:
             conditions.label: Conditions
             destinations.label: Destinations
             address.label: Address
-            configurations.label: Configurations
+            method_configs.label: Configurations
             currency.label: Currency
             stop_processing.label: Stop Further Rule Processing
-        shippingruleconfiguration:
-            entity_label: Shipping Rule Configuration
-            entity_plural_label: Shipping Rule Configurations
+        shippingrulemethodconfig:
+            entity_label: Shipping Rule Method Config
+            entity_plural_label: Shipping Rule Methods Configs
             id.label: Id
-            currency.label: Currency
-            enabled.label: Enabled
-            type.label: Type
             method.label: Method
+            options.label: Options
             rule.label: Rule
-        flatrateruleconfiguration:
-            entity_label: Flat Rate Rule Configuraiton
-            entity_plural_label: Flat Rate Rule Configuraitons
+            type_configs.label: Types
+        shippingrulemethodtypeconfig:
+            entity_label: Shipping Rule Method Type Config
+            entity_plural_label: Shipping Rule Method Types Configs
             id.label: Id
-            enabled.label: Enabled
-            processing_type:
-                label: Type
-                per_item.label: Per Item
-                per_order.label: Per Order
             type.label: Type
-            method.label: Method
-            value.label: Price
-            rule.label: Rule
-            handling_fee_value.label: Handling Fee
+            enabled.label: Enabled
+            options.label: Options
+            method_config.label: Method Config
         product:
             section:
                 shipping_options: Shipping Options
         form:
-            oro_shipping_flat_rate_rule_config:
+            oro_shipping_flat_rate_type_options:
                 label: Flat Rate
             placeholder:
                 length_unit.label: Select unit of length
                 weight_unit.label: Select unit of weight
                 freight_class.label: Select freight class
+        method:
+            flat_rate:
+                label: Flat Rate
+                type.label: Flat Rate
+                price.label: Price
+                handling_fee.label: Handling Fee
+                processing_type:
+                    label: Type
+                    per_item.label: Per Item
+                    per_order.label: Per Order
+            ups:
+                label: UPS
+                type.label: UPS
+                price.label: Price
+                handling_fee.label: Handling Fee
+                processing_type:
+                    label: Type
         methods:
             label: "Shipping Method"
             select_method: 'Select a Shipping Method'
