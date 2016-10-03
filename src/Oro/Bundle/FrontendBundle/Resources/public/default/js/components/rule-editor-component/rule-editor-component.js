@@ -12,7 +12,33 @@ define([
          *
          * @property {Object}
          */
-        options: null,
+        options: {
+            data: {
+                product: {
+                    id: 'any',
+                    name: 'any',
+                    category: 'any',
+                    status: ['ENABLED', 'DISABLED']
+                },
+                category: {
+                    id: 'any',
+                    name: 'any',
+                    parent: 'any'
+                },
+                account: {
+                    id: 'any',
+                    name: 'any',
+                    role: 'any'
+                },
+                products: {
+                    type: 'array',
+                    entity: 'product'
+                }
+            },
+            operations: ['+', '-', '=', '!='],
+            grouping: ['or', 'and'],
+            array_operation: ['all', 'any']
+        },
 
         /**
          *
@@ -56,7 +82,7 @@ define([
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            this.$element = this.options._sourceElement.find(options.input).eq(0);
+            this.$element = this.options._sourceElement.eq(0);
             this.opsRegEx = this.getRegexp(options.operations);
 
             this.dataWordCases = this.getStrings(options.data);
