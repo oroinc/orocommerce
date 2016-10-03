@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\Visibility;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
@@ -16,19 +15,14 @@ class AccountGroupCategoryVisibilityResolvedTest extends \PHPUnit_Framework_Test
     /** @var AccountGroupCategoryVisibilityResolved */
     protected $accountGroupCategoryVisibilityResolved;
 
-    /** @var AccountGroup */
-    protected $accountGroup;
-
     /** @var Category */
     protected $category;
 
     protected function setUp()
     {
         $this->category = new Category();
-        $this->accountGroup = new AccountGroup();
         $this->accountGroupCategoryVisibilityResolved = new AccountGroupCategoryVisibilityResolved(
-            $this->category,
-            $this->accountGroup
+            $this->category
         );
     }
 
@@ -37,7 +31,7 @@ class AccountGroupCategoryVisibilityResolvedTest extends \PHPUnit_Framework_Test
      */
     protected function tearDown()
     {
-        unset($this->accountGroupCategoryVisibilityResolved, $this->accountGroup, $this->category);
+        unset($this->accountGroupCategoryVisibilityResolved, $this->category);
     }
 
     /**
@@ -53,11 +47,6 @@ class AccountGroupCategoryVisibilityResolvedTest extends \PHPUnit_Framework_Test
                 ['source', BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE],
             ]
         );
-    }
-
-    public function testGetAccountGroup()
-    {
-        $this->assertEquals($this->accountGroup, $this->accountGroupCategoryVisibilityResolved->getAccountGroup());
     }
 
     public function testGetCategory()

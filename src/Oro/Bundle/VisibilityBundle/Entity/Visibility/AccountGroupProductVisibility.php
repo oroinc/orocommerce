@@ -6,10 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
  * @ORM\Entity(
@@ -20,13 +16,13 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="oro_acc_grp_prod_vis_uidx",
- *              columns={"website_id", "product_id", "account_group_id"}
+ *              columns={"product_id"}
  *          )
  *      }
  * )
  * @Config
  */
-class AccountGroupProductVisibility implements VisibilityInterface, AccountGroupAwareInterface, WebsiteAwareInterface
+class AccountGroupProductVisibility implements VisibilityInterface
 {
     const CURRENT_PRODUCT = 'current_product';
     const CATEGORY = 'category';
@@ -47,22 +43,6 @@ class AccountGroupProductVisibility implements VisibilityInterface, AccountGroup
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $product;
-
-    /**
-     * @var Website
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $website;
-
-    /**
-     * @var AccountGroup
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountGroup")
-     * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $accountGroup;
 
     /**
      * @var string
@@ -108,26 +88,6 @@ class AccountGroupProductVisibility implements VisibilityInterface, AccountGroup
     public function setProduct(Product $product)
     {
         $this->product = $product;
-
-        return $this;
-    }
-
-    /**
-     * @return AccountGroup
-     */
-    public function getAccountGroup()
-    {
-        return $this->accountGroup;
-    }
-
-    /**
-     * @param AccountGroup $accountGroup
-     *
-     * @return $this
-     */
-    public function setAccountGroup(AccountGroup $accountGroup)
-    {
-        $this->accountGroup = $accountGroup;
 
         return $this;
     }
@@ -188,24 +148,6 @@ class AccountGroupProductVisibility implements VisibilityInterface, AccountGroup
     public function setTargetEntity($product)
     {
         $this->setProduct($product);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getWebsite()
-    {
-        return $this->website;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setWebsite(Website $website)
-    {
-        $this->website = $website;
 
         return $this;
     }

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\Visibility;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
@@ -16,25 +15,20 @@ class AccountCategoryVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
     /** @var AccountCategoryVisibilityResolved */
     protected $accountCategoryVisibilityResolved;
 
-    /** @var Account */
-    protected $account;
-
     /** @var Category */
     protected $category;
 
     protected function setUp()
     {
         $this->category = new Category();
-        $this->account = new Account();
         $this->accountCategoryVisibilityResolved = new AccountCategoryVisibilityResolved(
-            $this->category,
-            $this->account
+            $this->category
         );
     }
 
     protected function tearDown()
     {
-        unset($this->accountCategoryVisibilityResolved, $this->category, $this->account);
+        unset($this->accountCategoryVisibilityResolved, $this->category);
     }
 
     /**
@@ -50,11 +44,6 @@ class AccountCategoryVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
                 ['source', BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE],
             ]
         );
-    }
-
-    public function testGetAccount()
-    {
-        $this->assertEquals($this->account, $this->accountCategoryVisibilityResolved->getAccount());
     }
 
     public function testGetCategory()

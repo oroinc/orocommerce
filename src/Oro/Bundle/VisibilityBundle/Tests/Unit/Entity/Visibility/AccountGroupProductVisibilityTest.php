@@ -5,9 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\Visibility;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupProductVisibilityTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,8 +24,6 @@ class AccountGroupProductVisibilityTest extends \PHPUnit_Framework_TestCase
             [
                 ['id', 1],
                 ['product', $product],
-                ['accountGroup', new AccountGroup()],
-                ['website', new Website()],
                 ['visibility', AccountGroupProductVisibility::CATEGORY],
             ]
         );

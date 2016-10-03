@@ -29,7 +29,7 @@ class CategoryVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        unset($this->entity, $this->website, $this->category);
+        unset($this->entity, $this->category);
     }
 
     /**

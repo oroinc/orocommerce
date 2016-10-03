@@ -6,8 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
 
 /**
  * @ORM\Entity()
@@ -16,13 +14,13 @@ use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="oro_acc_ctgr_vis_uidx",
- *              columns={"category_id", "account_id"}
+ *              columns={"category_id"}
  *          )
  *      }
  * )
  * @Config
  */
-class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInterface
+class AccountCategoryVisibility implements VisibilityInterface
 {
     const PARENT_CATEGORY = 'parent_category';
     const CATEGORY = 'category';
@@ -44,14 +42,6 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $category;
-
-    /**
-     * @var Account
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $account;
 
     /**
      * @var string
@@ -92,24 +82,6 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
     public function setCategory(Category $category)
     {
         $this->category = $category;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAccount()
-    {
-        return $this->account;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAccount(Account $account)
-    {
-        $this->account = $account;
 
         return $this;
     }

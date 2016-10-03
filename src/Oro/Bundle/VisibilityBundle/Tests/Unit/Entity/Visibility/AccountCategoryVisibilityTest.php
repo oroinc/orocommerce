@@ -4,7 +4,6 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\Visibility;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
-use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class AccountCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
@@ -24,7 +23,6 @@ class AccountCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
             [
                 ['id', 1],
                 ['category', $category],
-                ['account', new Account()],
                 ['visibility', AccountCategoryVisibility::CATEGORY],
             ]
         );
