@@ -24,7 +24,7 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
     protected function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->repository = $this->getContainer()
             ->get('doctrine')
             ->getRepository(ProductVisibility::class);

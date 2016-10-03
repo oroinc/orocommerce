@@ -1334,9 +1334,9 @@
 }
 
 //Remove code below, when grid styles will be free of platform styles
-//'.oro-grid__row--has-child-grid' is used in account bundle on the address book page for addresses datagrid
+//'.grid__row--has-child-grid' is used in account bundle on the address book page for addresses datagrid
 //It should remove this class too
-.oro-grid__row--has-child-grid {
+.grid__row--has-child-grid {
   .oro-datagrid {
     .grid {
       .launchers-list {

@@ -51,6 +51,7 @@ class InvoiceControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader()));
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [

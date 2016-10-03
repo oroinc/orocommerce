@@ -20,6 +20,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([
             'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
             'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',

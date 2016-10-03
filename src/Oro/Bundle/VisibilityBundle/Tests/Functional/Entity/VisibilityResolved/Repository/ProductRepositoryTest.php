@@ -53,7 +53,7 @@ class ProductRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->website = $this->getWebsiteRepository()->getDefaultWebsite();
 
         $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');

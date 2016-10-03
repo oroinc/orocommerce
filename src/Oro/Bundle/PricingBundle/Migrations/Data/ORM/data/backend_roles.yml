@@ -3,7 +3,7 @@ ROLE_CATALOG_MANAGER:
         entity|Oro\Bundle\PricingBundle\Entity\PriceList: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
         entity|Oro\Bundle\PricingBundle\Entity\ProductPrice: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
 
-ROLE_SALES_MANAGER:
+ROLE_SALES_ASSISTANT:
     permissions:
         entity|Oro\Bundle\PricingBundle\Entity\PriceList: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]
         entity|Oro\Bundle\PricingBundle\Entity\ProductPrice: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, DELETE_SYSTEM]

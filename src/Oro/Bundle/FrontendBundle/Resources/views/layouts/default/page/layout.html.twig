@@ -42,7 +42,8 @@
                     placeholder: null,
                     labelPrefix: '{{ 'oro.ui.filter.by'|trans  }} '
                 },
-                'orofilter/js/filter-hint': {inline: false}
+                'orofilter/js/filter-hint': {inline: false},
+                'oroaddress/js/region/view': {switchState: 'disable'}
             }
         });
         require({
@@ -65,10 +66,25 @@
     </div>
 {% endblock %}
 
+{% block _wrapper_content_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        'data-page-component-options': {
+            'view': 'orofrontend/default/js/app/views/dom-relocation-view'
+            },
+        '~class': ' wrapper__content'
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _main_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' main'
     }) %}
+
     <main{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </main>

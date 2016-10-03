@@ -22,6 +22,7 @@ class AccountControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -181,7 +182,7 @@ class AccountControllerTest extends WebTestCase
         $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_2);
 
         $this->assertContains($accountTaxCode->getCode(), $html);
-        $this->assertContains('(Defined for Account Group)', $html);
+        $this->assertContains('(Defined for Customer Group)', $html);
     }
 
     /**
@@ -217,7 +218,7 @@ class AccountControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Account has been saved', $html);
+        $this->assertContains('Customer has been saved', $html);
         $this->assertViewPage($html, $name, $parent, $group, $internalRating, $accountTaxCode);
     }
 
