@@ -18,6 +18,7 @@ class RequestStatusControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(['Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData']);
     }

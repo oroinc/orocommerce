@@ -94,6 +94,11 @@
     }
   }
 
+  .method_title {
+    margin-bottom: 10px;
+    margin-top: 10px;
+  }
+
   &__select {
     select {
       @include input();

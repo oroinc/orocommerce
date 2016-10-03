@@ -34,7 +34,7 @@ class CategoryListenerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->categoryManager = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroCatalogBundle:Category');
         $this->categoryRepository = $this->categoryManager

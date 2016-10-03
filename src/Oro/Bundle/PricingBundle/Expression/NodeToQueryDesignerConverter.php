@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Expression;
 
-use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListQueryDesigner;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 
 class NodeToQueryDesignerConverter
 {
@@ -64,14 +64,11 @@ class NodeToQueryDesignerConverter
                 ];
                 $addedColumns[$subNode->getField()] = true;
             }
-        } elseif ($subNode->getContainer() === ProductPrice::class) {
-            $path = sprintf('%1$s::product+%1$s::%2$s', ProductPrice::class, $subNode->getField());
-            if (empty($addedColumns[$path])) {
-                $definition['columns'][] = [
-                    'name' => $path,
-                    'table_identifier' => $subNode->getContainer(),
-                ];
-                $addedColumns[$path] = true;
+        } elseif ($subNode->getContainer() === PriceList::class) {
+            $priceListKey = 'pricelist|' . $subNode->getContainerId();
+            if (empty($addedColumns[$priceListKey])) {
+                $definition['price_lists'][] = $subNode->getContainerId();
+                $addedColumns[$priceListKey] = true;
             }
         } else {
             throw new \InvalidArgumentException(
@@ -89,19 +86,27 @@ class NodeToQueryDesignerConverter
     {
         $tableIdentifier = $subNode->getRelationAlias();
 
-        $resolvedContainer = $this->fieldsProvider->getRealClassName($tableIdentifier);
-        $path = sprintf(
-            '%s+%s::%s',
-            $subNode->getField(),
-            $resolvedContainer,
-            $subNode->getRelationField()
-        );
-        if (empty($addedColumns[$path])) {
-            $definition['columns'][] = [
-                'name' => $path,
-                'table_identifier' => $tableIdentifier,
-            ];
-            $addedColumns[$path] = true;
+        if ($subNode->getContainer() === PriceList::class && $subNode->getField() === 'prices') {
+            $pricesKey = 'price|' . $subNode->getContainerId();
+            if (empty($addedColumns[$pricesKey])) {
+                $definition['prices'][] = $subNode->getContainerId();
+                $addedColumns[$pricesKey] = true;
+            }
+        } else {
+            $resolvedContainer = $this->fieldsProvider->getRealClassName($tableIdentifier);
+            $path = sprintf(
+                '%s+%s::%s',
+                $subNode->getField(),
+                $resolvedContainer,
+                $subNode->getRelationField()
+            );
+            if (empty($addedColumns[$path])) {
+                $definition['columns'][] = [
+                    'name' => $path,
+                    'table_identifier' => $tableIdentifier,
+                ];
+                $addedColumns[$path] = true;
+            }
         }
     }
 }

@@ -89,7 +89,11 @@ class ProductImageCollectionTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
-        $this->assertEquals($expectedData, $form->getData());
+
+        $formData = $form->getData();
+
+        $this->syncUpdatedAt($expectedData, $formData);
+        $this->assertEquals($expectedData, $formData);
     }
 
     public function submitDataProvider()
@@ -148,5 +152,22 @@ class ProductImageCollectionTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertEquals(ProductImageCollectionType::NAME, $this->formType->getName());
+    }
+
+    /**
+     * @param array $expectedData
+     * @param array $formData
+     */
+    protected function syncUpdatedAt($expectedData, $formData)
+    {
+        $now = new \DateTime();
+        /** @var ProductImage $productImage */
+        foreach ($expectedData as $productImage) {
+            $productImage->setUpdatedAt($now);
+        }
+        /** @var ProductImage $productImage */
+        foreach ($formData as $productImage) {
+            $productImage->setUpdatedAt($now);
+        }
     }
 }

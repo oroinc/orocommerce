@@ -80,6 +80,7 @@ class ProductVisibilityControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
@@ -147,7 +148,6 @@ class ProductVisibilityControllerTest extends WebTestCase
     public function testDuplicateProduct()
     {
         $this->initClient([], $this->generateWsseAuthHeader());
-
         $this->client->followRedirects(true);
         $this->client->request(
             'GET',

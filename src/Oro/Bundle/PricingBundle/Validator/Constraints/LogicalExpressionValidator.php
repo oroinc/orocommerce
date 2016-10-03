@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
+use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -16,11 +17,18 @@ class LogicalExpressionValidator extends ConstraintValidator
     protected $expressionParser;
 
     /**
-     * @param ExpressionParser $expressionParser
+     * @var ExpressionPreprocessorInterface
      */
-    public function __construct(ExpressionParser $expressionParser)
+    protected $preprocessor;
+
+    /**
+     * @param ExpressionParser $expressionParser
+     * @param ExpressionPreprocessorInterface $preprocessor
+     */
+    public function __construct(ExpressionParser $expressionParser, ExpressionPreprocessorInterface $preprocessor)
     {
         $this->expressionParser = $expressionParser;
+        $this->preprocessor = $preprocessor;
     }
 
     /**
@@ -32,6 +40,7 @@ class LogicalExpressionValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         try {
+            $value = $this->preprocessor->process($value);
             $node = $this->expressionParser->parse($value);
 
             if ($node && !$node->isBoolean()) {
