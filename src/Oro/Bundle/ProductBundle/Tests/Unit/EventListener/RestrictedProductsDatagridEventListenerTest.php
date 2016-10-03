@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
+use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -64,6 +67,18 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
         $this->listener->onBuildAfter($event);
     }
 
+    public function testOnBuildAfterWorksWithSearchGrid()
+    {
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn(new Request());
+        $event = $this->createEventForSearchDataSource();
+
+        $this->productManager->expects($this->once())->method('restrictSearchQuery');
+
+        $this->listener->onBuildAfter($event);
+    }
+
     /**
      * @return array
      */
@@ -90,10 +105,32 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
     protected function createEvent()
     {
         /** @var OrmDatasource|\PHPUnit_Framework_MockObject_MockObject $dataSource */
-        $dataSource = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource')
+        $dataSource = $this->getMockBuilder(OrmDatasource::class)
             ->disableOriginalConstructor()
             ->getMock();
         $dataSource->expects($this->once())->method('getQueryBuilder')->willReturn($this->qb);
+
+        /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
+        $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $dataGrid->expects($this->once())->method('getDatasource')->willReturn($dataSource);
+
+        return new BuildAfter($dataGrid);
+    }
+
+    /**
+     * @return BuildAfter
+     */
+    protected function createEventForSearchDataSource()
+    {
+        $searchQuery = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
+        $searchQuery->expects($this->any())->method('getQuery')->willReturn(
+            $this->getMockBuilder(Query::class)->getMock()
+        );
+        /** @var SearchDatasource|\PHPUnit_Framework_MockObject_MockObject $dataSource */
+        $dataSource = $this->getMockBuilder(SearchDatasource::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $dataSource->expects($this->once())->method('getSearchQuery')->willReturn($searchQuery);
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
         $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');

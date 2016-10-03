@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
+use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -22,14 +23,14 @@ class RestrictedProductsDatagridEventListener
     protected $productManager;
 
     /**
-     * @param RequestStack $requestStack
+     * @param RequestStack   $requestStack
      * @param ProductManager $productManager
      */
     public function __construct(
         RequestStack $requestStack,
         ProductManager $productManager
     ) {
-        $this->requestStack = $requestStack;
+        $this->requestStack   = $requestStack;
         $this->productManager = $productManager;
     }
 
@@ -38,13 +39,19 @@ class RestrictedProductsDatagridEventListener
      */
     public function onBuildAfter(BuildAfter $event)
     {
-        /** @var OrmDatasource $dataSource */
+        /** @var OrmDatasource|SearchDatasource $dataSource */
         $dataSource = $event->getDatagrid()->getDatasource();
-        $queryBuilder = $dataSource->getQueryBuilder();
-        $request = $this->requestStack->getCurrentRequest();
+        $request    = $this->requestStack->getCurrentRequest();
         if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
             $params = [];
         }
-        $this->productManager->restrictQueryBuilder($queryBuilder, $params);
+
+        if (is_a($dataSource, OrmDatasource::class)) {
+            $queryBuilder = $dataSource->getQueryBuilder();
+            $this->productManager->restrictQueryBuilder($queryBuilder, $params);
+        } elseif (is_a($dataSource, SearchDatasource::class)) {
+            $websiteQuery = $dataSource->getSearchQuery();
+            $this->productManager->restrictSearchQuery($websiteQuery->getQuery());
+        }
     }
 }
