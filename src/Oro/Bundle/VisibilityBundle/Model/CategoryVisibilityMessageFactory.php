@@ -4,8 +4,6 @@ namespace Oro\Bundle\VisibilityBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
@@ -18,8 +16,8 @@ class CategoryVisibilityMessageFactory implements MessageFactoryInterface
     const ID = 'id';
     const ENTITY_CLASS_NAME = 'entity_class_name';
     const CATEGORY_ID = 'category';
-    const ACCOUNT_ID = 'account';
-    const ACCOUNT_GROUP_ID = 'account_group';
+    const SCOPE_ID = 'scope';
+
     /**
      * @var ManagerRegistry
      */
@@ -39,22 +37,18 @@ class CategoryVisibilityMessageFactory implements MessageFactoryInterface
      */
     public function createMessage($visibility)
     {
-        $entityClass = ClassUtils::getClass($visibility);
-        switch ($entityClass) {
-            case CategoryVisibility::class:
-                $message = $this->categoryVisibilityToArray($visibility);
-                break;
-            case AccountCategoryVisibility::class:
-                $message = $this->accountCategoryVisibilityToArray($visibility);
-                break;
-            case AccountGroupCategoryVisibility::class:
-                $message = $this->accountGroupCategoryVisibilityToArray($visibility);
-                break;
-            default:
-                throw new InvalidArgumentException('Unsupported entity class.');
+        if ($visibility instanceof CategoryVisibility
+            || $visibility instanceof AccountCategoryVisibility
+            || $visibility instanceof AccountGroupCategoryVisibility
+        ) {
+            return [
+                self::ID => $visibility->getId(),
+                self::ENTITY_CLASS_NAME => ClassUtils::getClass($visibility),
+                self::CATEGORY_ID => $visibility->getTargetEntity()->getId(),
+                self::SCOPE_ID => $visibility->getScope()->getId(),
+            ];
         }
-
-        return $message;
+        throw new InvalidArgumentException('Unsupported entity class.');
     }
 
     /**
@@ -104,8 +98,12 @@ class CategoryVisibilityMessageFactory implements MessageFactoryInterface
         if (!$category) {
             throw new InvalidArgumentException('Category object was not found.');
         }
+        if (!$scope) {
+            throw new InvalidArgumentException('Scope object was not found.');
+        }
         $visibility = new CategoryVisibility();
         $visibility->setCategory($category);
+        $visibility->setScope($scope);
         $visibility->setVisibility(CategoryVisibility::getDefault($category));
 
         return $visibility;
@@ -120,18 +118,18 @@ class CategoryVisibilityMessageFactory implements MessageFactoryInterface
         $category = $this->registry->getManagerForClass(Category::class)
             ->getRepository(Category::class)
             ->find($data[self::CATEGORY_ID]);
-        $account = $this->registry->getManagerForClass(Account::class)
-            ->getRepository(Account::class)
-            ->find($data[self::ACCOUNT_ID]);
+        $scope = $this->registry->getManagerForClass(Scope::class)
+            ->getRepository(Scope::class)
+            ->find($data[self::SCOPE_ID]);
         if (!$category) {
             throw new InvalidArgumentException('Category object was not found.');
         }
-        if (!$account) {
-            throw new InvalidArgumentException('Account object was not found.');
+        if (!$scope) {
+            throw new InvalidArgumentException('Scope object was not found.');
         }
         $visibility = new AccountCategoryVisibility();
         $visibility->setCategory($category);
-        $visibility->setAccount($account);
+        $visibility->setScope($scope);
         $visibility->setVisibility(AccountCategoryVisibility::getDefault($category));
 
         return $visibility;
@@ -146,57 +144,20 @@ class CategoryVisibilityMessageFactory implements MessageFactoryInterface
         $category = $this->registry->getManagerForClass(Category::class)
             ->getRepository(Category::class)
             ->find($data[self::CATEGORY_ID]);
-        $accountGroup = $this->registry->getManagerForClass(AccountGroup::class)
-            ->getRepository(AccountGroup::class)
-            ->find($data[self::ACCOUNT_GROUP_ID]);
+        $scope = $this->registry->getManagerForClass(Scope::class)
+            ->getRepository(Scope::class)
+            ->find($data[self::SCOPE_ID]);
         if (!$category) {
             throw new InvalidArgumentException('Category object was not found.');
         }
-        if (!$accountGroup) {
-            throw new InvalidArgumentException('AccountGroup object was not found.');
+        if (!$scope) {
+            throw new InvalidArgumentException('Scope object was not found.');
         }
         $visibility = new AccountGroupCategoryVisibility();
         $visibility->setCategory($category);
-        $visibility->setAccountGroup($accountGroup);
+        $visibility->setScope($scope);
         $visibility->setVisibility(AccountGroupCategoryVisibility::getDefault($category));
 
         return $visibility;
-    }
-
-    /**
-     * @param VisibilityInterface|CategoryVisibility $visibility
-     * @return array
-     */
-    protected function categoryVisibilityToArray(VisibilityInterface $visibility)
-    {
-        return [
-            self::ID => $visibility->getId(),
-            self::ENTITY_CLASS_NAME => ClassUtils::getClass($visibility),
-            self::CATEGORY_ID => $visibility->getCategory()->getId(),
-        ];
-    }
-
-    /**
-     * @param VisibilityInterface|AccountCategoryVisibility $visibility
-     * @return array
-     */
-    protected function accountCategoryVisibilityToArray(VisibilityInterface $visibility)
-    {
-        $data = $this->categoryVisibilityToArray($visibility);
-        $data[self::ACCOUNT_ID] = $visibility->getAccount()->getId();
-
-        return $data;
-    }
-
-    /**
-     * @param VisibilityInterface|AccountGroupCategoryVisibility $visibility
-     * @return array
-     */
-    protected function accountGroupCategoryVisibilityToArray(VisibilityInterface $visibility)
-    {
-        $data = $this->categoryVisibilityToArray($visibility);
-        $data[self::ACCOUNT_GROUP_ID] = $visibility->getAccountGroup()->getId();
-
-        return $data;
     }
 }

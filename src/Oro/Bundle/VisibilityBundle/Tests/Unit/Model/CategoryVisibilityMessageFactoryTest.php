@@ -6,10 +6,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Entity\Repository\AccountGroupRepository;
-use Oro\Bundle\AccountBundle\Entity\Repository\AccountRepository;
+use Oro\Bundle\ScopeBundle\Entity\Repository\ScopeRepository;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
@@ -68,15 +66,15 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMessageForAccountGroupCategoryVisibility()
     {
-        $accountGroupId = 1;
+        $scopeId = 1;
         $categoryId = 123;
         $categoryVisibilityId = 42;
 
         /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => $categoryId]);
 
-        /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity(AccountGroup::class, ['id' => $accountGroupId]);
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
 
         /** @var AccountGroupCategoryVisibility $accountGroupCategoryVisibility */
         $accountGroupCategoryVisibility = $this->getEntity(
@@ -84,13 +82,13 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ['id' => $categoryVisibilityId]
         );
         $accountGroupCategoryVisibility->setCategory($category);
-        $accountGroupCategoryVisibility->setAccountGroup($accountGroup);
+        $accountGroupCategoryVisibility->setScope($scope);
 
         $expected = [
             CategoryVisibilityMessageFactory::ID => $categoryVisibilityId,
             CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupCategoryVisibility::class,
             CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId,
-            CategoryVisibilityMessageFactory::ACCOUNT_GROUP_ID => $accountGroupId
+            CategoryVisibilityMessageFactory::SCOPE_ID => $scopeId
         ];
 
         $this->assertEquals(
@@ -101,15 +99,15 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMessageForAccountCategoryVisibility()
     {
-        $accountId = 5;
+        $scopeId = 5;
         $categoryId = 123;
         $categoryVisibilityId = 42;
 
         /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => $categoryId]);
 
-        /** @var Account $account */
-        $account = $this->getEntity(Account::class, ['id' => $accountId]);
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
 
         /** @var AccountCategoryVisibility $accountCategoryVisibility */
         $accountCategoryVisibility = $this->getEntity(
@@ -117,7 +115,7 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ['id' => $categoryVisibilityId]
         );
         $accountCategoryVisibility->setCategory($category);
-        $accountCategoryVisibility->setAccount($account);
+        $accountCategoryVisibility->setScope($scope);
 
         $this->categoryVisibilityMessageFactory->createMessage($accountCategoryVisibility);
 
@@ -125,7 +123,7 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             CategoryVisibilityMessageFactory::ID => $categoryVisibilityId,
             CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountCategoryVisibility::class,
             CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId,
-            CategoryVisibilityMessageFactory::ACCOUNT_ID => $accountId
+            CategoryVisibilityMessageFactory::SCOPE_ID => $scopeId
         ];
 
         $this->assertEquals(
@@ -280,19 +278,19 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $accountCategoryVisibilityId = 123;
         $categoryId = 42;
-        $accountId = 4;
+        $scopeId = 4;
 
         /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => $categoryId]);
 
-        /** @var Account $account */
-        $account = $this->getEntity(Account::class, ['id' => $accountId]);
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
 
         $data =  [
             CategoryVisibilityMessageFactory::ID => $accountCategoryVisibilityId,
             CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountCategoryVisibility::class,
             CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId,
-            CategoryVisibilityMessageFactory::ACCOUNT_ID => $accountId
+            CategoryVisibilityMessageFactory::SCOPE_ID => $scopeId
         ];
 
         $categoryRepository = $this->getMockBuilder(CategoryRepository::class)
@@ -304,14 +302,14 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->with($categoryId)
             ->willReturn($category);
 
-        $accountRepository = $this->getMockBuilder(AccountRepository::class)
+        $scopeRepository = $this->getMockBuilder(ScopeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $accountRepository->expects($this->once())
+        $scopeRepository->expects($this->once())
             ->method('find')
-            ->with($accountId)
-            ->willReturn($account);
+            ->with($scopeId)
+            ->willReturn($scope);
 
         $accountCategoryVisibilityRepository = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
@@ -328,7 +326,7 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturnMap([
                 [AccountCategoryVisibility::class, $accountCategoryVisibilityRepository],
                 [Category::class, $categoryRepository],
-                [Account::class, $accountRepository]
+                [Scope::class, $scopeRepository]
             ]);
 
         $this->registry->expects($this->any())
@@ -337,7 +335,7 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
         $expectedVisibility = new AccountCategoryVisibility();
         $expectedVisibility->setCategory($category);
-        $expectedVisibility->setAccount($account);
+        $expectedVisibility->setScope($scope);
         $expectedVisibility->setVisibility(AccountCategoryVisibility::ACCOUNT_GROUP);
 
         $this->assertEquals($expectedVisibility, $this->categoryVisibilityMessageFactory->getEntityFromMessage($data));
@@ -351,16 +349,16 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $accountCategoryVisibilityId = 123;
         $categoryId = 42;
-        $accountId = 4;
+        $scopeId = 4;
 
-        /** @var Account $account */
-        $account = $this->getEntity(Account::class, ['id' => $accountId]);
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
 
         $data =  [
             CategoryVisibilityMessageFactory::ID => $accountCategoryVisibilityId,
             CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountCategoryVisibility::class,
             CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId,
-            CategoryVisibilityMessageFactory::ACCOUNT_ID => $accountId
+            CategoryVisibilityMessageFactory::SCOPE_ID => $scopeId
         ];
 
         $categoryRepository = $this->getMockBuilder(CategoryRepository::class)
@@ -372,14 +370,14 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->with($categoryId)
             ->willReturn(null);
 
-        $accountRepository = $this->getMockBuilder(AccountRepository::class)
+        $scopeRepository = $this->getMockBuilder(ScopeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $accountRepository->expects($this->once())
+        $scopeRepository->expects($this->once())
             ->method('find')
-            ->with($accountId)
-            ->willReturn($account);
+            ->with($scopeId)
+            ->willReturn($scope);
 
         $accountCategoryVisibilityRepository = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
@@ -396,7 +394,7 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturnMap([
                 [AccountCategoryVisibility::class, $accountCategoryVisibilityRepository],
                 [Category::class, $categoryRepository],
-                [Account::class, $accountRepository]
+                [Scope::class, $scopeRepository]
             ]);
 
         $this->registry->expects($this->any())
@@ -408,13 +406,13 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Account object was not found.
+     * @expectedExceptionMessage Scope object was not found.
      */
     public function testGetEntityFromMessageAccountCategoryVisibilityWithoutAccount()
     {
         $accountCategoryVisibilityId = 123;
         $categoryId = 42;
-        $accountId = 4;
+        $scopeId = 4;
 
         /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => $categoryId]);
@@ -423,7 +421,7 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             CategoryVisibilityMessageFactory::ID => $accountCategoryVisibilityId,
             CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountCategoryVisibility::class,
             CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId,
-            CategoryVisibilityMessageFactory::ACCOUNT_ID => $accountId
+            CategoryVisibilityMessageFactory::SCOPE_ID => $scopeId
         ];
 
         $categoryRepository = $this->getMockBuilder(CategoryRepository::class)
@@ -435,13 +433,13 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->with($categoryId)
             ->willReturn($category);
 
-        $accountRepository = $this->getMockBuilder(AccountRepository::class)
+        $scopeRepository = $this->getMockBuilder(ScopeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $accountRepository->expects($this->once())
+        $scopeRepository->expects($this->once())
             ->method('find')
-            ->with($accountId)
+            ->with($scopeId)
             ->willReturn(null);
 
         $accountCategoryVisibilityRepository = $this->getMockBuilder(EntityRepository::class)
@@ -459,7 +457,7 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturnMap([
                 [AccountCategoryVisibility::class, $accountCategoryVisibilityRepository],
                 [Category::class, $categoryRepository],
-                [Account::class, $accountRepository]
+                [Scope::class, $scopeRepository]
             ]);
 
         $this->registry->expects($this->any())
@@ -473,19 +471,19 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $accountGroupCategoryVisibilityId = 123;
         $categoryId = 42;
-        $accountGroupId = 4;
+        $scopeId = 4;
 
         /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => $categoryId]);
 
-        /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity(AccountGroup::class, ['id' => $accountGroupId]);
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
 
         $data =  [
             CategoryVisibilityMessageFactory::ID => $accountGroupCategoryVisibilityId,
             CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupCategoryVisibility::class,
             CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId,
-            CategoryVisibilityMessageFactory::ACCOUNT_GROUP_ID => $accountGroupId
+            CategoryVisibilityMessageFactory::SCOPE_ID => $scopeId
         ];
 
         $categoryRepository = $this->getMockBuilder(CategoryRepository::class)
@@ -497,14 +495,14 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->with($categoryId)
             ->willReturn($category);
 
-        $accountGroupRepository = $this->getMockBuilder(AccountGroupRepository::class)
+        $scopeRepository = $this->getMockBuilder(ScopeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $accountGroupRepository->expects($this->once())
+        $scopeRepository->expects($this->once())
             ->method('find')
-            ->with($accountGroupId)
-            ->willReturn($accountGroup);
+            ->with($scopeId)
+            ->willReturn($scope);
 
         $accountCategoryVisibilityRepository = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
@@ -521,7 +519,7 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturnMap([
                 [AccountGroupCategoryVisibility::class, $accountCategoryVisibilityRepository],
                 [Category::class, $categoryRepository],
-                [AccountGroup::class, $accountGroupRepository]
+                [Scope::class, $scopeRepository]
             ]);
 
         $this->registry->expects($this->any())
@@ -530,7 +528,7 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
         $expectedVisibility = new AccountGroupCategoryVisibility();
         $expectedVisibility->setCategory($category);
-        $expectedVisibility->setAccountGroup($accountGroup);
+        $expectedVisibility->setScope($scope);
         $expectedVisibility->setVisibility(AccountGroupCategoryVisibility::CATEGORY);
 
         $this->assertEquals($expectedVisibility, $this->categoryVisibilityMessageFactory->getEntityFromMessage($data));
@@ -538,13 +536,13 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage AccountGroup object was not found.
+     * @expectedExceptionMessage Scope object was not found.
      */
     public function testGetEntityFromMessageAccountGroupCategoryVisibilityWithoutAccountGroup()
     {
         $accountGroupCategoryVisibilityId = 123;
         $categoryId = 42;
-        $accountGroupId = 4;
+        $scopeId = 4;
 
         /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => $categoryId]);
@@ -553,7 +551,7 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             CategoryVisibilityMessageFactory::ID => $accountGroupCategoryVisibilityId,
             CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupCategoryVisibility::class,
             CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId,
-            CategoryVisibilityMessageFactory::ACCOUNT_GROUP_ID => $accountGroupId
+            CategoryVisibilityMessageFactory::SCOPE_ID => $scopeId
         ];
 
         $categoryRepository = $this->getMockBuilder(CategoryRepository::class)
@@ -565,13 +563,13 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->with($categoryId)
             ->willReturn($category);
 
-        $accountGroupRepository = $this->getMockBuilder(AccountGroupRepository::class)
+        $scopeRepository = $this->getMockBuilder(ScopeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $accountGroupRepository->expects($this->once())
+        $scopeRepository->expects($this->once())
             ->method('find')
-            ->with($accountGroupId)
+            ->with($scopeId)
             ->willReturn(null);
 
         $accountGroupCategoryVisibilityRepository = $this
@@ -590,7 +588,7 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturnMap([
                 [AccountGroupCategoryVisibility::class, $accountGroupCategoryVisibilityRepository],
                 [Category::class, $categoryRepository],
-                [AccountGroup::class, $accountGroupRepository]
+                [Scope::class, $scopeRepository]
             ]);
 
         $this->registry->expects($this->any())
@@ -608,16 +606,16 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $accountGroupCategoryVisibilityId = 123;
         $categoryId = 42;
-        $accountGroupId = 4;
+        $scopeId = 4;
 
-        /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity(AccountGroup::class, ['id' => $accountGroupId]);
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
 
         $data =  [
             CategoryVisibilityMessageFactory::ID => $accountGroupCategoryVisibilityId,
             CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupCategoryVisibility::class,
             CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId,
-            CategoryVisibilityMessageFactory::ACCOUNT_GROUP_ID => $accountGroupId
+            CategoryVisibilityMessageFactory::SCOPE_ID => $scopeId
         ];
 
         $categoryRepository = $this->getMockBuilder(CategoryRepository::class)
@@ -629,14 +627,14 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->with($categoryId)
             ->willReturn(null);
 
-        $accountGroupRepository = $this->getMockBuilder(AccountGroupRepository::class)
+        $scopeRepository = $this->getMockBuilder(ScopeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $accountGroupRepository->expects($this->once())
+        $scopeRepository->expects($this->once())
             ->method('find')
-            ->with($accountGroupId)
-            ->willReturn($accountGroup);
+            ->with($scopeId)
+            ->willReturn($scope);
 
         $accountGroupCategoryVisibilityRepository = $this
             ->getMockBuilder(AccountGroupCategoryVisibilityRepository::class)
@@ -654,7 +652,7 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturnMap([
                 [AccountGroupCategoryVisibility::class, $accountGroupCategoryVisibilityRepository],
                 [Category::class, $categoryRepository],
-                [AccountGroup::class, $accountGroupRepository]
+                [Scope::class, $scopeRepository]
             ]);
 
         $this->registry->expects($this->any())

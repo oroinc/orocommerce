@@ -5,6 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Async\Visibility;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -21,6 +22,7 @@ use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryProcessor;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 
 use Psr\Log\LoggerInterface;
 
@@ -52,6 +54,11 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
     protected $cacheBuilder;
 
     /**
+     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $scopeManager;
+
+    /**
      * @var CategoryProcessor
      */
     protected $categoryProcessor;
@@ -67,12 +74,16 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->cacheBuilder = $this->getMock(CacheBuilder::class);
+        $this->scopeManager = $this->getMockBuilder(ScopeManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->categoryProcessor = new CategoryProcessor(
             $this->registry,
             $this->insertFromSelectQueryExecutor,
             $this->logger,
             $this->messageFactory,
-            $this->cacheBuilder
+            $this->cacheBuilder,
+            $this->scopeManager
         );
     }
 
@@ -130,13 +141,22 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 42];
         $body = json_encode($data);
 
+        $scope = $this->getMockBuilder(Scope::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->scopeManager->expects($this->once())
+            ->method('findRelatedScopes')
+            ->with('product_visibility')
+            ->willReturn($scope);
+
         $productVisibilityRepository = $this->getMockBuilder(ProductVisibilityRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $productVisibilityRepository->expects($this->once())
+        $productVisibilityRepository->expects($this->any())
             ->method('setToDefaultWithoutCategory')
-            ->with($this->insertFromSelectQueryExecutor);
+            ->with($this->insertFromSelectQueryExecutor, $this->scopeManager);
 
         $accountGroupProductVisibilityRepository = $this->getMockBuilder(AccountGroupProductVisibilityRepository::class)
             ->disableOriginalConstructor()
