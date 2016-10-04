@@ -2,10 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Driver\DriverException;
+use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
@@ -59,6 +64,16 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
     protected $logger;
 
     /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
+     * @var DatabaseExceptionHelper
+     */
+    protected $databaseExceptionHelper;
+
+    /**
      * @param CombinedPriceListsBuilder $commonPriceListsBuilder
      * @param WebsiteCombinedPriceListsBuilder $websitePriceListsBuilder
      * @param AccountGroupCombinedPriceListsBuilder $accountGroupPriceListsBuilder
@@ -66,6 +81,8 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
      * @param EventDispatcherInterface $dispatcher
      * @param LoggerInterface $logger
      * @param PriceListRelationTriggerFactory $triggerFactory
+     * @param ManagerRegistry $registry
+     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
         CombinedPriceListsBuilder $commonPriceListsBuilder,
@@ -74,7 +91,9 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         AccountCombinedPriceListsBuilder $accountPriceListsBuilder,
         EventDispatcherInterface $dispatcher,
         LoggerInterface $logger,
-        PriceListRelationTriggerFactory $triggerFactory
+        PriceListRelationTriggerFactory $triggerFactory,
+        ManagerRegistry $registry,
+        DatabaseExceptionHelper $databaseExceptionHelper
     ) {
         $this->commonPriceListsBuilder = $commonPriceListsBuilder;
         $this->websitePriceListsBuilder = $websitePriceListsBuilder;
@@ -83,6 +102,8 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         $this->dispatcher = $dispatcher;
         $this->logger = $logger;
         $this->triggerFactory = $triggerFactory;
+        $this->registry = $registry;
+        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
     /**
@@ -90,13 +111,19 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
+        /** @var EntityManagerInterface $em */
+        $em = $this->registry->getManagerForClass(CombinedPriceList::class);
+        $em->beginTransaction();
+        
         try {
             $this->resetCache();
             $messageData = JSON::decode($message->getBody());
             $trigger = $this->triggerFactory->createFromArray($messageData);
             $this->handlePriceListRelationTrigger($trigger);
             $this->dispatchChangeAssociationEvents();
+            $em->commit();
         } catch (InvalidArgumentException $e) {
+            $em->rollback();
             $this->logger->error(
                 sprintf(
                     'Message is invalid: %s. Original message: "%s"',
@@ -107,15 +134,17 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
 
             return self::REJECT;
         } catch (\Exception $e) {
+            $em->rollback();
             $this->logger->error(
-                sprintf(
-                    'Message is invalid: %s. Original message: "%s"',
-                    $e->getMessage(),
-                    $message->getBody()
-                )
+                'Unexpected exception occurred during Combined Price Lists build',
+                ['exception' => $e]
             );
 
-            return self::REQUEUE;
+            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
+                return self::REQUEUE;
+            } else {
+                return self::REJECT;
+            }
         }
 
         return self::ACK;
