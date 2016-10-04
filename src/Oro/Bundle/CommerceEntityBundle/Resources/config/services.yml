@@ -1,6 +1,6 @@
 parameters:
-    oro_commerce_entity.event_listener.doctrine_post_flush_listener.class: Oro\Bundle\B2BEntityBundle\EventListener\DoctrinePostFlushListener
-    oro_commerce_entity.extra_insert_entity_storage.class: Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorage
+    oro_commerce_entity.event_listener.doctrine_post_flush_listener.class: Oro\Bundle\CommerceEntityBundle\EventListener\DoctrinePostFlushListener
+    oro_commerce_entity.extra_insert_entity_storage.class: Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorage
 
 services:
     oro_commerce_entity.extra_insert_entity_storage:
