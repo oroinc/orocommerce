@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_7;
+namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;

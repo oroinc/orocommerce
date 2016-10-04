@@ -33,7 +33,7 @@ class OroPricingBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_5';
     }
 
     /**
