@@ -1,39 +1,26 @@
 {% extends 'form_div_layout.html.twig' %}
 
 {%- block form_label -%}
-    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
-    {% set modifier = modifier|default("__form__label") %}
-    {% set label_attr = label_attr|merge({
-        class: [
-            label_attr.class|default(''),
-            class_prefix ~ modifier
-        ]|join(' ')
+    {% set label_attr = layout_attr_defaults(attr, {
+        '~class': ' label label--full'
     }) %}
 
     {{ parent() }}
 {%- endblock form_label -%}
 
 {% block form_widget_simple %}
-    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
-    {% set attr = attr|merge({
-        class: [
-            attr.class|default(''),
-            class_prefix ~ "__form__input",
-            "input input_block input_md"
-        ]|join(' ')
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' input input--full'
     }) %}
+
     {{ parent() }}
 {% endblock %}
 
 {% block textarea_widget %}
-    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
-    {% set attr = attr|merge({
-        class: [
-            attr.class|default(''),
-            class_prefix ~ "__form__input",
-            "input input_block input_md",
-        ]|join(' ')
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' textarea textarea--full'
     }) %}
+
     {{ parent() }}
 {% endblock %}
 
@@ -79,15 +66,10 @@
 {%- endblock form_errors -%}
 
 {%- block choice_widget %}
-    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
-    {% set attr = attr|merge({
-        class: [
-            attr.class|default(''),
-            'input input_md input_block',
-            class_prefix ~ '__form__input'
-        ]|join(' ')
-    })
-    %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' input input--size-m input--full'
+    }) %}
+
     {{ parent() }}
 {% endblock %}
 

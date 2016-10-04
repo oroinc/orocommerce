@@ -6,13 +6,8 @@
 {%- endblock form_label -%}
 
 {% block _oro_paypal_credit_card_payment_credit_card_cvv_widget %}
-    {% set attr = attr|merge({
-        class: [
-            attr.class|default(''),
-            class_prefix ~ "__form__input_ccv",
-            class_prefix ~ "__form__input",
-            'input input_md'
-        ]|join(' ')
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' input input--full'
     }) %}
 
     {%- set type = type|default('password') -%}

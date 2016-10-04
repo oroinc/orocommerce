@@ -127,7 +127,7 @@
                 <div class="form-input" data-role="editor">
                 <textarea placeholder="{{ 'oro.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
                           rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
-                          class="input input_sm input_block">{{ notes }}</textarea>
+                          class="textarea textarea--full">{{ notes }}</textarea>
                 </div>
             </div>
         </div>
@@ -219,11 +219,11 @@
                                     <div class="product__qty-input__count-option">
                                         <input type="number" value="{{ lineItem.quantity }}" name="product_qty" data-name="field__quantity"
                                             placeholder="{{ 'oro.frontend.shoppinglist.view.qty.label'|trans }}"
-                                            class="input input_md input_block text-center" disabled="disabled" required />
+                                            class="input  input--full text-center" disabled="disabled" required />
                                     </div>
                                 </div>
                                 <div class="product__select inline va-m_md">
-                                    <select class="input input_block input_sm" name="product_unit" data-name="field__unit" required>
+                                    <select class="select select--full" name="product_unit" data-name="field__unit" required>
                                         {% if productsUnits[lineItem.product.id] is defined %}
                                             {% for unit in productsUnits[lineItem.product.id] %}
                                             <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|oro_format_product_unit_label}}</option>
@@ -368,7 +368,7 @@
                                     </label>
                                 </div>
                             <div class="form-input form-input_textarea" data-role="editor">
-                                <textarea class="input input_sm input_block" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
+                                <textarea class="textarea textarea--full" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
                                     placeholder="{{ 'oro.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
                             </div>
                         </div>

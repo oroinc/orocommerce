@@ -329,13 +329,6 @@
   }
 }
 
-.form-field-quantity {
-  input[type="text"].input_block,
-  input[type="number"].input_block {
-    width: 70px !important;
-  }
-}
-
 .product__qty-input {
   max-width: 60px;
   min-width: 60px;
@@ -358,10 +351,6 @@
         .count-plus {
           display: block;
         }
-
-        input[type="number"] {
-         border-radius: 0;
-        }
       }
 
       .product__qty-input_more-info__popup {
@@ -373,19 +362,6 @@
       position: relative;
 
       border: 1px solid transparent;
-
-      input[type="number"] {
-        vertical-align: middle;
-
-        appearance: textfield;
-
-        &::-webkit-outer-spin-button,
-        &::-webkit-inner-spin-button {
-          margin: 0;
-
-          appearance: none;
-        }
-      }
 
       .count-minus,
       .count-plus {
@@ -427,33 +403,6 @@
 
     &.wsnr {
       white-space: nowrap;
-    }
-  }
-
-  input[type="text"],
-  input[type="number"] {
-    @include input();
-
-    &::-webkit-input-placeholder {
-      color: $base-font-color-lightest;
-    }
-
-    &::-moz-placeholder {
-      color: $base-font-color-lightest;
-    }
-
-    &:-moz-placeholder {
-      color: $base-font-color-lightest;
-    }
-
-    &:-ms-input-placeholder {
-      color: $base-font-color-lightest;
-    }
-
-    &:focus {
-      border-color: $base-link-color;
-      outline: 0;
-      box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
     }
   }
 }
