@@ -33,11 +33,12 @@ CheckoutBundle:
 - Removed `Oro\Bundle\CheckoutBundle\Provider\ShippingCostCalculationProvider`
 - Changed type from `Oro\Bundle\WorkflowBundle\Entity\WorkflowAwareInterface` to `Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface` of first argument of method `Oro\Bundle\CheckoutBundle\Controller\Frontend\CheckoutController:handleTransition`
 - Changed name from `baseCheckoutRepository` to `checkoutRepository` and type from `Oro\Bundle\CheckoutBundle\Entity\Repository\BaseCheckoutRepository` to `Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository` of second argument `Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener` constructor
-- Removed method `setCheckoutType` from class `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener`
-- Removed method `isStartWorkflowAllowed` from class `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener`
-- Removed method `isAcceptableCheckoutType` from class `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener`
-- Removed method `getCheckoutType` from class `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener`
-- Removed method `getWorkflowName` from class `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener`
+- Changes in `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener`
+    - Removed method `setCheckoutType`
+    - Removed method `isStartWorkflowAllowed`
+    - Removed method `isAcceptableCheckoutType`
+    - Removed method `getCheckoutType`
+    - Removed method `getWorkflowName`
 - Changed name from `workflowManager` to `doctrine` and type from `Oro\Bundle\WorkflowBundle\Model\WorkflowManager` to `Symfony\Bridge\Doctrine\RegistryInterface` of first argument of `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener` constructor
 - Changed name from `doctrine` to `userCurrencyManager` and type from `Symfony\Bridge\Doctrine\RegistryInterface` to `Oro\Bundle\PricingBundle\Manager\UserCurrencyManager` of second argument of `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener` constructor
 - Changed type from `Oro\Bundle\CheckoutBundle\Entity\BaseCheckout` to `Oro\Bundle\CheckoutBundle\Entity\Checkout` of first argument of method `Oro\Bundle\CheckoutBundle\EventListener\CheckoutEntityListener:actualizeCheckoutCurrency`
@@ -131,17 +132,18 @@ PricingBundle:
 - Removed method `getAccountWebsitePairsByAccountGroup` from class `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository`
 - Removed method `getAccountWebsitePairsByAccountGroupQueryBuilder` from class `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository`
 - Removed method `getWebsiteIdsByAccountGroup` from class `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository`
-- Removed method `deleteByProductUnit` from class `Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository`
-- Removed method `deleteByPriceList` from class `Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository`
-- Removed method `countByPriceList` from class `Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository`
-- Removed method `getAvailableCurrencies` from class `Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository`
-- Removed method `getPricesByProduct` from class `Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository`
-- Removed method `findByPriceListIdAndProductIds` from class `Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository`
-- Removed method `getPricesBatch` from class `Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository`
-- Removed method `getProductUnitsByPriceList` from class `Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository`
-- Removed method `getProductUnitsByPriceListQueryBuilder` from class `Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository`
-- Removed method `getProductsUnitsByPriceList` from class `Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository`
-- Removed method `copyPrices` from class `Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository`
+- Removed methods from `Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository`
+    - `deleteByProductUnit` 
+    - `deleteByPriceList` 
+    - `countByPriceList`
+    - `getAvailableCurrencies`
+    - `getPricesByProduct`
+    - `findByPriceListIdAndProductIds` 
+    - `getPricesBatch`
+    - `getProductUnitsByPriceList`
+    - `getProductUnitsByPriceListQueryBuilder`
+    - `getProductsUnitsByPriceList`
+    - `copyPrices`
 
 SaleBundle:
 -----------
@@ -154,9 +156,10 @@ SaleBundle:
 CatalogBundle
 -------------
 - `oro_catalog.repository.category` inherits `oro_entity.abstract_repository`
-- Removed method `getDefaultTitle` from class `Oro\Bundle\CatalogBundle\Entity\Category`
-- Removed method `getDefaultShortDescription` from class `Oro\Bundle\CatalogBundle\Entity\Category`
-- Removed method `getDefaultLongDescription` from class `Oro\Bundle\CatalogBundle\Entity\Category`
+- Changes in `Oro\Bundle\CatalogBundle\Entity\Category`
+    - Removed method `getDefaultTitle`
+    - Removed method `getDefaultShortDescription`
+    - Removed method `getDefaultLongDescription`
 
 ProductBundle
 -------------
@@ -165,11 +168,12 @@ ProductBundle
 - Changed namespace of class `Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct`
 - Removed fourth argument `unitFormatter` from  `Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener` constructor
 - Changed type from `Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface` to `Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface` of first argument of `Oro\Bundle\ProductBundle\Form\Type\QuantityType` constructor
-- Changed name from `quickAddFormProvider` to `productFormProvider`, type from `Oro\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider` to `Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider` of first argument of `Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler` constructor
-- Changed name from `quickAddImportFormProvider` to `quickAddRowCollectionBuilder`, type from `Oro\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider` to `Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder` of second argument of `Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler` constructor
-- Changed name from `quickAddCopyPasteFormProvider` to `componentRegistry`, type from `Oro\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider` to `Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry` of third argument of `Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler` constructor
-- Changed name from `quickAddRowCollectionBuilder` to `router`, type from `Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder` to `Symfony\Component\Routing\Generator\UrlGeneratorInterface` of fourth argument of `Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler` constructor
-- Changed name from `componentRegistry` to `translator`, type from `Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry` to `Symfony\Component\Translation\TranslatorInterface` of fifth argument of `Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler` constructor
+- Changed `Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler` constructor
+    - Changed name from `quickAddFormProvider` to `productFormProvider`, type from `Oro\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider` to `Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider` of first argument
+    - Changed name from `quickAddImportFormProvider` to `quickAddRowCollectionBuilder`, type from `Oro\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider` to `Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder` of second argument
+    - Changed name from `quickAddCopyPasteFormProvider` to `componentRegistry`, type from `Oro\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider` to `Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry` of third argument
+    - Changed name from `quickAddRowCollectionBuilder` to `router`, type from `Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder` to `Symfony\Component\Routing\Generator\UrlGeneratorInterface` of fourth argument
+    - Changed name from `componentRegistry` to `translator`, type from `Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry` to `Symfony\Component\Translation\TranslatorInterface` of fifth argument
 - Added sixth argument `container` to `Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor` constructor
 - Removed method `getDefaultName` from class `Oro\Bundle\ProductBundle\Entity\Product`
 - Removed method `getDefaultDescription` from class `Oro\Bundle\ProductBundle\Entity\Product`
@@ -283,5 +287,6 @@ WarehouseBundle
 - Added `manageInventory` field to `Product` entity and related admin pages with fallback support
 - Added `CategoryFallbackProvider` with fallback id `category`
 - Added `ParentCategoryFallbackProvider` with fallback id `parentCategory`
-- Changed type from `Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService` to `Oro\Bundle\CurrencyBundle\Rounding\QuantityRoundingService` of second argument of `Oro\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelNormalizer` constructor
-- Changed type from `Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface` to `Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface` of fourth argument of `Oro\Bundle\WarehouseBundle\Form\Handler\WarehouseInventoryLevelHandler` constructor
+- Modified of `Oro\Bundle\WarehouseBundle\ImportExport\Serializer\WarehouseInventoryLevelNormalizer` constructor
+    - Changed type from `Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService` to `Oro\Bundle\CurrencyBundle\Rounding\QuantityRoundingService` of second argument 
+    - Changed type from `Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface` to `Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface` of fourth argument
