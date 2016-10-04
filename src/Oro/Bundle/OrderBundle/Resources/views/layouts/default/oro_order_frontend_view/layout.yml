@@ -144,13 +144,6 @@ layout:
                         dateType: 3
                         label: 'oro.order.ship_until.label'
                         additional_block_prefixes: ['order_body_column_element']
-                order_po_number:
-                    blockType: text
-                    options:
-                        visible: '=data["order"].getPoNumber()!=null'
-                        text: '=data["order"].getPoNumber()'
-                        label: 'oro.order.po_number.label'
-                        additional_block_prefixes: ['order_body_column_element']
                 order_total:
                     blockType: order_total
                     options:
@@ -175,7 +168,6 @@ layout:
                                         order_payment_term: ~
                                         order_payment_status: ~
                                         order_ship_until: ~
-                                        order_po_number: ~
                                         order_customer_notes: ~
                             order_after_line_items_grid:
                                 order_list_link: ~
