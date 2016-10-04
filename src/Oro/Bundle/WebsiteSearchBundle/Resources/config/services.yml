@@ -50,6 +50,14 @@ services:
         tags:
             - { name: website_search.placeholder }
 
+    oro_website_search.account_id.placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder'
+        public: false
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: website_search.placeholder }
+
     oro_website_search.loader.mapping_configuration_loader:
         public: false
         class: Oro\Bundle\WebsiteSearchBundle\Loader\MappingConfigurationLoader

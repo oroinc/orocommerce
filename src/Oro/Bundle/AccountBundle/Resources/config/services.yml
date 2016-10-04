@@ -979,3 +979,25 @@ services:
         tags:
             - { name: oro_message_queue.client.message_processor, topicName: 'oro_account.visibility.category_remove' }
             - { name: oro_message_queue.client.message_processor, topicName: 'oro_account.visibility.category_position_change' }
+
+    oro_account.visibility.provider.product_visibility_provider:
+        class: Oro\Bundle\AccountBundle\Visibility\Provider\ProductVisibilityProvider
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.global'
+        calls:
+            - [setProductVisibilitySystemConfigurationPath, ['oro_account.product_visibility']]
+            - [setCategoryVisibilitySystemConfigurationPath, ['oro_account.category_visibility']]
+
+    oro_account.indexer.product_visibility_indexer:
+        class: 'Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer'
+        arguments:
+            - '@oro_account.visibility.provider.product_visibility_provider'
+
+    oro_account.event_listener.website_search_product_visibility_indexer_listener:
+        class: 'Oro\Bundle\AccountBundle\EventListener\WebsiteSearchProductVisibilityIndexerListener'
+        arguments:
+            - '@oro_account.indexer.product_visibility_indexer'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
