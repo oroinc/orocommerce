@@ -575,7 +575,7 @@ services:
         public: false
         arguments:
             - '@security.token_storage'
-            - '@oro_config.global'
+            - '@oro_website_search.provider.placeholder_fields_provider'
 
     oro_account.visibility.cache.product.cache_builder.abstract:
         class: 'Oro\Bundle\AccountBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder'

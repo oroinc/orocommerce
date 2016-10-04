@@ -4,27 +4,39 @@ namespace Oro\Bundle\AccountBundle\Model;
 
 use Doctrine\Common\Collections\Expr\CompositeExpression;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderFieldsProvider;
+
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ProductVisibilitySearchQueryModifier
 {
     /**
      * @var TokenStorageInterface
      */
-    protected $tokenStorage;
+    private $tokenStorage;
+
+    /**
+     * @var PlaceholderFieldsProvider
+     */
+    private $placeholderFieldsProvider;
 
     /**
      * @param TokenStorageInterface $tokenStorage
+     * @param PlaceholderFieldsProvider $placeholderFieldsProvider
      */
-    public function __construct(TokenStorageInterface $tokenStorage)
-    {
+    public function __construct(
+        TokenStorageInterface $tokenStorage,
+        PlaceholderFieldsProvider $placeholderFieldsProvider
+    ) {
         $this->tokenStorage = $tokenStorage;
+        $this->placeholderFieldsProvider = $placeholderFieldsProvider;
     }
 
     /**
@@ -38,22 +50,23 @@ class ProductVisibilitySearchQueryModifier
     /**
      * @return CompositeExpression
      */
-    protected function createProductVisibilityExpression()
+    private function createProductVisibilityExpression()
     {
         $exprBuilder = Criteria::expr();
-        $accountUser = $this->getAccountUser();
+        $account = $this->getAccount();
 
-        if ($accountUser) {
-            $accountField = $this->completeFieldName(
-                sprintf(
-                    '%s_%s',
-                    ProductVisibilityIndexer::FIELD_VISIBILITY_ACCOUNT,
-                    $accountUser->getId()
-                )
+        if ($account) {
+            $accountField = $this->placeholderFieldsProvider->getPlaceholderFieldName(
+                Product::class,
+                ProductVisibilityIndexer::FIELD_VISIBILITY_ACCOUNT,
+                [
+                   AccountIdPlaceholder::NAME => $account->getId()
+                ]
             );
-            $defaultField = $this->completeFieldName(
-                ProductVisibilityIndexer::FIELD_IS_VISIBLE_BY_DEFAULT
-            );
+
+            $accountField = $this->completeFieldName($accountField);
+
+            $defaultField = $this->completeFieldName(ProductVisibilityIndexer::FIELD_IS_VISIBLE_BY_DEFAULT);
 
             $expression = $exprBuilder->orX(
                 $exprBuilder->andX(
@@ -69,12 +82,9 @@ class ProductVisibilitySearchQueryModifier
                 )
             );
         } else {
-            $field = $this->completeFieldName(
-                ProductVisibilityIndexer::FIELD_VISIBILITY_ANONYMOUS
-            );
+            $field = $this->completeFieldName(ProductVisibilityIndexer::FIELD_VISIBILITY_ANONYMOUS);
             $expression = $exprBuilder->eq($field, BaseVisibilityResolved::VISIBILITY_VISIBLE);
         }
-
 
         return $expression;
     }
@@ -83,7 +93,7 @@ class ProductVisibilitySearchQueryModifier
      * @param $name
      * @return string
      */
-    protected function completeFieldName($name)
+    private function completeFieldName($name)
     {
         return Criteria::implodeFieldTypeName(Query::TYPE_INTEGER, $name);
     }
@@ -91,11 +101,11 @@ class ProductVisibilitySearchQueryModifier
     /**
      * @return AccountUser|null
      */
-    protected function getAccountUser()
+    private function getAccount()
     {
         $token = $this->tokenStorage->getToken();
         if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            return $user;
+            return $user->getAccount();
         }
 
         return null;
