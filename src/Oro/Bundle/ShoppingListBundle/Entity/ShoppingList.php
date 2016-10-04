@@ -9,7 +9,6 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use Oro\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
@@ -18,7 +17,7 @@ use Oro\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
+use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
  * @ORM\Table(
@@ -80,7 +79,7 @@ class ShoppingList extends ExtendShoppingList implements
 {
     use DatesAwareTrait;
     use FrontendAccountUserAwareTrait;
-    use AuditableUserAwareTrait;
+    use UserAwareTrait;
 
     /**
      * @var int
