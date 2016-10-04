@@ -148,6 +148,10 @@ class CategoryRepository extends NestedTreeRepository
             ->getOneOrNullResult();
     }
 
+    /**
+     * @param array $categories
+     * @return QueryBuilder
+     */
     public function getCategoriesProductsCountQueryBuilder($categories)
     {
         $qb = $this->_em->createQueryBuilder();
@@ -175,5 +179,24 @@ class CategoryRepository extends NestedTreeRepository
          return $this->getChildrenQueryBuilderPartial($category)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param Category[] $categories
+     * @return array
+     */
+    public function getProductIdsByCategories(array $categories)
+    {
+        $qb = $this->createQueryBuilder('category');
+        $productIds = $qb->select('product.id')
+            ->innerJoin('category.products', 'product')
+            ->where($qb->expr()->in('category.id', ':categories'))
+            ->setParameter('categories', $categories)
+            ->groupBy('product.id')
+            ->orderBy($qb->expr()->asc('product.id'))
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_column($productIds, 'id');
     }
 }
