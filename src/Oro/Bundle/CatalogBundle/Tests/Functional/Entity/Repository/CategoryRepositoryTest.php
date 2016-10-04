@@ -5,6 +5,8 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\Entity\Repository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\PersistentCollection;
 
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -30,11 +32,7 @@ class CategoryRepositoryTest extends WebTestCase
         $this->initClient();
         $this->registry = $this->getContainer()->get('doctrine');
         $this->repository = $this->registry->getRepository('OroCatalogBundle:Category');
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-            ]
-        );
+        $this->loadFixtures([LoadCategoryData::class, LoadCategoryProductData::class]);
     }
 
     public function testGetMasterCatalogRoot()
@@ -104,6 +102,26 @@ class CategoryRepositoryTest extends WebTestCase
                 return $category;
             }
         }
+
         return null;
+    }
+
+    public function testGetProductIdsByCategories()
+    {
+        $severalCategories[] = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $severalCategories[] = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+        $severalCategories[] = $this->getReference(LoadCategoryData::FOURTH_LEVEL2);
+        $productIds = $this->repository->getProductIdsByCategories($severalCategories);
+        $this->assertCount(4, $productIds);
+        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_1)->getId(), $productIds[0]);
+        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_2)->getId(), $productIds[1]);
+        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_7)->getId(), $productIds[2]);
+        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_8)->getId(), $productIds[3]);
+    }
+
+    public function testNoOneCategoryInArray()
+    {
+        $productIds = $this->repository->getProductIdsByCategories([]);
+        $this->assertCount(0, $productIds);
     }
 }

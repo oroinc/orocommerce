@@ -36,6 +36,13 @@ services:
         calls:
             - [addPlaceholder, ['@oro_website_search.website_id.placeholder']]
             - [addPlaceholder, ['@oro_website_search.localization_id.placeholder']]
+            - [addPlaceholder, ['@oro_website_search.account_id.placeholder']]
+
+    oro_website_search.account_id.placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder'
+        public: false
+        arguments:
+            - '@security.token_storage'
 
     oro_website_search.website_id.placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder'

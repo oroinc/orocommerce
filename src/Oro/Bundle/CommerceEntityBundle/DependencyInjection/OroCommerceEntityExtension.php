@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\B2BEntityBundle\DependencyInjection;
+namespace Oro\Bundle\CommerceEntityBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class OroB2BEntityExtension extends Extension
+class OroCommerceEntityExtension extends Extension
 {
     /**
      * {@inheritDoc}
