@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\CustomerBundle\Async\Visibility;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\CustomerBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Model\ProductMessageFactory;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
@@ -13,12 +16,11 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ProductProcessor implements MessageProcessorInterface
 {
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -43,26 +45,31 @@ class ProductProcessor implements MessageProcessorInterface
     protected $resolvedVisibilityClassName = '';
 
     /**
-     * @param RegistryInterface $registry
+     * @var DatabaseExceptionHelper
+     */
+    protected $databaseExceptionHelper;
+
+    /**
+     * @param ManagerRegistry $registry
      * @param ProductMessageFactory $messageFactory
      * @param LoggerInterface $logger
      * @param CacheBuilderInterface $cacheBuilder
+     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
-        RegistryInterface $registry,
+        ManagerRegistry $registry,
         ProductMessageFactory $messageFactory,
         LoggerInterface $logger,
-        CacheBuilderInterface $cacheBuilder
+        CacheBuilderInterface $cacheBuilder,
+        DatabaseExceptionHelper $databaseExceptionHelper
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
         $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
+        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     /**
      * {@inheritdoc}
      */
@@ -91,13 +98,15 @@ class ProductProcessor implements MessageProcessorInterface
         } catch (\Exception $e) {
             $em->rollback();
             $this->logger->error(
-                sprintf(
-                    'Transaction aborted wit error: %s.',
-                    $e->getMessage()
-                )
+                'Unexpected exception occurred during Product Visibility resolve by Product',
+                ['exception' => $e]
             );
 
-            return self::REQUEUE;
+            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
+                return self::REQUEUE;
+            } else {
+                return self::REJECT;
+            }
         }
 
         return self::ACK;

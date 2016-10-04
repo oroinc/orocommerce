@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Async\NotificationMessages;
 use Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor;
 use Oro\Bundle\PricingBundle\Async\Topics;
@@ -49,6 +51,12 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected $translator;
 
+
+    /**
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
     /**
      * @var PriceListAssignedProductsProcessor
      */
@@ -70,12 +78,15 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->translator = $this->getMock(TranslatorInterface::class);
 
+        $this->registry = $this->getMock(ManagerRegistry::class);
+
         $this->processor = new PriceListAssignedProductsProcessor(
             $this->triggerFactory,
             $this->assignmentBuilder,
             $this->logger,
             $this->messenger,
-            $this->translator
+            $this->translator,
+            $this->registry
         );
     }
 
@@ -83,6 +94,20 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $data = ['test' => 1];
         $body = json_encode($data);
+
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
@@ -115,6 +140,19 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $exception = new \Exception('Some error');
 
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
         $message->expects($this->any())
@@ -145,6 +183,19 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 1];
         $body = json_encode($data);
         $exception = new \Exception('Some error');
+
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
@@ -205,6 +256,19 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $data = ['test' => 1];
         $body = json_encode($data);
+
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\AccountProductVisibility;
@@ -12,6 +13,7 @@ use Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\CacheBuilder;
 use Oro\Bundle\CatalogBundle\Model\CategoryMessageFactory;
 use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -44,6 +46,11 @@ class CategoryProcessor implements MessageProcessorInterface
      * @var CacheBuilder
      */
     protected $cacheBuilder;
+    
+    /**
+     * @var DatabaseExceptionHelper
+     */
+    protected $databaseExceptionHelper;
 
     /**
      * @param ManagerRegistry $registry
@@ -51,19 +58,22 @@ class CategoryProcessor implements MessageProcessorInterface
      * @param LoggerInterface $logger
      * @param CategoryMessageFactory $messageFactory
      * @param CacheBuilder $cacheBuilder
+     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
         ManagerRegistry $registry,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
         LoggerInterface $logger,
         CategoryMessageFactory $messageFactory,
-        CacheBuilder $cacheBuilder
+        CacheBuilder $cacheBuilder,
+        DatabaseExceptionHelper $databaseExceptionHelper
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
         $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
+        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
     /**
@@ -99,13 +109,15 @@ class CategoryProcessor implements MessageProcessorInterface
         } catch (\Exception $e) {
             $em->rollback();
             $this->logger->error(
-                sprintf(
-                    'Transaction aborted wit error: %s.',
-                    $e->getMessage()
-                )
+                'Unexpected exception occurred during Category visibility resolve',
+                ['exception' => $e]
             );
 
-            return self::REQUEUE;
+            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
+                return self::REQUEUE;
+            } else {
+                return self::REJECT;
+            }
         }
 
         return self::ACK;

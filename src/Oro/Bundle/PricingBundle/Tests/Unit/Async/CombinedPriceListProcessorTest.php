@@ -4,13 +4,16 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor;
 use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
@@ -62,11 +65,6 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
     protected $cplAccountBuilder;
 
     /**
-     * @var CombinedPriceListProcessor
-     */
-    protected $processor;
-
-    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
      */
     protected $dispatcher;
@@ -82,12 +80,20 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
     protected $triggerFactory;
 
     /**
+     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $databaseExceptionHelper;
+
+    /**
+     * @var CombinedPriceListProcessor
+     */
+    protected $processor;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-
         $cplBuilderClass = 'Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder';
         $this->cplBuilder = $this->getMockBuilder($cplBuilderClass)
             ->disableOriginalConstructor()
@@ -115,6 +121,13 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->registry = $this->getMock(ManagerRegistry::class);
+
+        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /** @var CombinedPriceListProcessor processor */
         $this->processor = new CombinedPriceListProcessor(
             $this->cplBuilder,
             $this->cplWebsiteBuilder,
@@ -122,7 +135,9 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             $this->cplAccountBuilder,
             $this->dispatcher,
             $this->logger,
-            $this->triggerFactory
+            $this->triggerFactory,
+            $this->registry,
+            $this->databaseExceptionHelper
         );
     }
 
@@ -132,6 +147,22 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcess(PriceListRelationTrigger $trigger)
     {
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->never()))
+            ->method('rollback');
+
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
+
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
         $message->method('getBody')->willReturn('');
@@ -146,6 +177,22 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWithException()
     {
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $em->expects(($this->never()))
+            ->method('commit');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
+
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
         $message->method('getBody')->willReturn('');
@@ -194,6 +241,22 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testDispatchAccountScopeEvent(array $builtList)
     {
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->never()))
+            ->method('rollback');
+
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
+
         $this->cplAccountBuilder->expects($this->once())
             ->method('getBuiltList')
             ->willReturn($builtList);
@@ -255,6 +318,22 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testDispatchAccountGroupScopeEvent(array $builtList)
     {
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->never()))
+            ->method('rollback');
+
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
+
         $this->cplAccountGroupBuilder->expects($this->once())
             ->method('getBuiltList')
             ->willReturn($builtList);
@@ -313,6 +392,22 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testDispatchWebsiteScopeEvent(array $builtList)
     {
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->never()))
+            ->method('rollback');
+
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
+
         $this->cplWebsiteBuilder->expects($this->once())
             ->method('getBuiltList')
             ->willReturn($builtList);
@@ -363,6 +458,22 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testDispatchConfigScopeEvent($isBuilt)
     {
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->never()))
+            ->method('rollback');
+
+        $em->expects(($this->once()))
+            ->method('commit');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(CombinedPriceList::class)
+            ->willReturn($em);
+
         $this->cplBuilder->expects($this->once())
             ->method('isBuilt')
             ->willReturn($isBuilt);

@@ -277,9 +277,9 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
                     'account_group.group2',
                 ],
                 'expectsResult' => [
-                    ['account_group.group1', 'US', 'priceList6'],
-                    ['account_group.group1', 'US', 'priceList1'],
                     ['account_group.group1', 'US', 'priceList5'],
+                    ['account_group.group1', 'US', 'priceList1'],
+                    ['account_group.group1', 'US', 'priceList6'],
                     ['account_group.group2', 'US', 'priceList4'],
                 ],
             ],
