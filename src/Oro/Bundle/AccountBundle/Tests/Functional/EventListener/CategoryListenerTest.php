@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class CategoryListenerTest extends WebTestCase
 {
@@ -46,6 +46,28 @@ class CategoryListenerTest extends WebTestCase
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
         $this->messageProducer->clear();
         $this->messageProducer->enable();
+    }
+
+    public function testCreateProduct()
+    {
+        $em = $this->getContainer()->get('doctrine')->getManager();
+
+        $product = new Product();
+        $product->setSku('TestSKU02');
+
+        $em->persist($product);
+
+        /** @var $category Category */
+        $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+        $em->refresh($category);
+
+        $category->addProduct($product);
+        $em->flush();
+
+        $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
+        $messages = $this->messageProducer->getSentMessages();
+
+        $this->assertEquals([], $messages);
     }
 
     public function testChangeProductCategory()
