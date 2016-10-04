@@ -101,6 +101,9 @@ class OroProductBundle implements Migration, RenameExtensionAwareInterface
 
         // system configuration
         $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_product', 'oro_product'));
+
+        $table = $schema->getTable('oro_product_image');
+        $table->addColumn('updated_at', 'datetime', []);
     }
 
     /**
