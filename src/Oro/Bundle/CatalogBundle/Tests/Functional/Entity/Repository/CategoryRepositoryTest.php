@@ -113,10 +113,10 @@ class CategoryRepositoryTest extends WebTestCase
         $severalCategories[] = $this->getReference(LoadCategoryData::FOURTH_LEVEL2);
         $productIds = $this->repository->getProductIdsByCategories($severalCategories);
         $this->assertCount(4, $productIds);
-        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_1)->getId(), $productIds[0]['id']);
-        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_2)->getId(), $productIds[1]['id']);
-        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_7)->getId(), $productIds[2]['id']);
-        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_8)->getId(), $productIds[3]['id']);
+        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_1)->getId(), $productIds[0]);
+        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_2)->getId(), $productIds[1]);
+        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_7)->getId(), $productIds[2]);
+        $this->assertEquals($this->getReference(LoadProductData::PRODUCT_8)->getId(), $productIds[3]);
     }
 
     public function testNoOneCategoryInArray()

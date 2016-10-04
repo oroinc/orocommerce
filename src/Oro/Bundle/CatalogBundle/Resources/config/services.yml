@@ -142,4 +142,4 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Model\CategoryMaterializedPathModifier'
         public: false
         arguments:
-            - '@oro_entity.extra_insert_entity_storage'
+            - '@oro_commerce_entity.extra_insert_entity_storage'

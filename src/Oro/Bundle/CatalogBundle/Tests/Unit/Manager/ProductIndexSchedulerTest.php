@@ -35,7 +35,7 @@ class ProductIndexSchedulerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrineHelper->expects($this->any())
+        $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(Category::class)
             ->willReturn($this->categoryRepository);

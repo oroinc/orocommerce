@@ -182,7 +182,7 @@ class CategoryRepository extends NestedTreeRepository
     }
 
     /**
-     * @param array $categories
+     * @param Category[] $categories
      * @return array
      */
     public function getProductIdsByCategories(array $categories)
@@ -193,10 +193,10 @@ class CategoryRepository extends NestedTreeRepository
             ->where($qb->expr()->in('category.id', ':categories'))
             ->setParameter('categories', $categories)
             ->groupBy('product.id')
-            ->orderBy('product.id', 'ASC')
+            ->orderBy($qb->expr()->asc('product.id'))
             ->getQuery()
             ->getScalarResult();
 
-        return $productIds;
+        return array_column($productIds, 'id');
     }
 }
