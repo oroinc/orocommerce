@@ -5,11 +5,10 @@ namespace Oro\Bundle\ScopeBundle\Tests\Unit\Manager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Gedmo\Tree\Strategy\ORM\Closure;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\ScopeBundle\Manager\ScopeProviderInterface;
+use Oro\Bundle\ScopeBundle\Manager\ScopeCriteriaProviderInterface;
 
 class ScopeManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -45,7 +44,7 @@ class ScopeManagerTest extends \PHPUnit_Framework_TestCase
     public function testFind()
     {
         $scope = new Scope();
-        $provider = $this->getMock(ScopeProviderInterface::class);
+        $provider = $this->getMock(ScopeCriteriaProviderInterface::class);
         $provider->method('getCriteriaForCurrentScope')->willReturn(['fieldName' => 1]);
 
         $repository = $this->getMock(ObjectRepository::class);
@@ -68,7 +67,7 @@ class ScopeManagerTest extends \PHPUnit_Framework_TestCase
     public function testFindOrCreate()
     {
         $scope = new Scope();
-        $provider = $this->getMock(ScopeProviderInterface::class);
+        $provider = $this->getMock(ScopeCriteriaProviderInterface::class);
         $provider->method('getCriteriaForCurrentScope')->willReturn([]);
 
         $repository = $this->getMock(ObjectRepository::class);
@@ -92,7 +91,7 @@ class ScopeManagerTest extends \PHPUnit_Framework_TestCase
     {
         $scope = new Scope();
         $context = ['scopeAttribute' => new \stdClass()];
-        $provider = $this->getMock(ScopeProviderInterface::class);
+        $provider = $this->getMock(ScopeCriteriaProviderInterface::class);
         $provider->method('getCriteriaByContext')->with($context)->willReturn([]);
 
         $repository = $this->getMock(ObjectRepository::class);

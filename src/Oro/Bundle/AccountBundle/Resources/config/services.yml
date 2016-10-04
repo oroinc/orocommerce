@@ -585,28 +585,28 @@ services:
         tags:
              - { name: layout.data_provider, alias: account_user_address_provider }
 
-    oro_account.account_scope_provider:
-        class: 'Oro\Bundle\AccountBundle\Provider\ScopeAccountProvider'
+    oro_account.account_scope_criteria_provider:
+        class: 'Oro\Bundle\AccountBundle\Provider\ScopeAccountCriteriaProvider'
         public: false
         arguments:
             - "@oro_security.security_facade"
 
-    oro_account.account_group_scope_provider:
-        class: 'Oro\Bundle\AccountBundle\Provider\ScopeAccountGroupProvider'
+    oro_account.account_group_scope_criteria_provider:
+        class: 'Oro\Bundle\AccountBundle\Provider\ScopeAccountGroupCriteriaProvider'
         public: false
         arguments:
             - "@oro_security.security_facade"
 
-    oro_account.account_group_scope_provider.link:
+    oro_account.account_group_scope_context_provider.link:
         public: false
         tags:
-            - { name: oro_service_link, service: oro_account.account_group_scope_provider }
+            - { name: oro_service_link, service: oro_account.account_group_scope_criteria_provider }
             - { name: oro_scope.provider, scopeType: category_visibility, priority: 30 }
             - { name: oro_scope.provider, scopeType: account_group_product_visibility, priority: 30 }
 
     oro_account.account_scope_provider.link:
         public: false
         tags:
-            - { name: oro_service_link, service: oro_account.account_scope_provider }
+            - { name: oro_service_link, service: oro_account.account_scope_criteria_provider }
             - { name: oro_scope.provider, scopeType: category_visibility, priority: 30 }
             - { name: oro_scope.provider, scopeType: account_product_visibility, priority: 30 }

@@ -5,12 +5,13 @@ namespace Oro\Bundle\AccountBundle\Provider;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\ScopeBundle\Manager\ScopeProviderInterface;
+use Oro\Bundle\ScopeBundle\Manager\ScopeCriteriaProviderInterface;
+use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
-class ScopeAccountGroupProvider implements ScopeProviderInterface
+class ScopeAccountGroupCriteriaProvider implements ScopeCriteriaProviderInterface
 {
     const FIELD_NAME = 'accountGroup';
 
@@ -39,7 +40,7 @@ class ScopeAccountGroupProvider implements ScopeProviderInterface
     {
         if (is_object($context) || is_array($context)) {
             $accountGroup = $this->getValue($context, 'accountGroup');
-            if ($accountGroup instanceof AccountGroup) {
+            if ($accountGroup instanceof AccountGroup || ScopeCriteria::IS_NOT_NULL === $accountGroup) {
                 return ['accountGroup' => $accountGroup];
             }
 

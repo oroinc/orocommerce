@@ -25,10 +25,33 @@ class Scope extends ExtendScope
     private $id;
 
     /**
+     * Non persistent attribute can be used when needed for example in twig templates
+     *
+     * @var string
+     */
+    private $label;
+
+    /**
      * @return int
      */
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLabel()
+    {
+        return $this->label;
+    }
+
+    /**
+     * @param string $label
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
     }
 }

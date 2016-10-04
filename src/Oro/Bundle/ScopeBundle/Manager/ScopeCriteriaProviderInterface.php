@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ScopeBundle\Manager;
 
-interface ScopeProviderInterface
+interface ScopeCriteriaProviderInterface
 {
     /**
      * @param array|object $context

@@ -8,6 +8,7 @@ services:
         abstract: true
         arguments:
             - '@doctrine'
+            - '@oro_scope.scope_manager'
 
     oro_account.form.event_listener.abstract_visibility_post_submit:
         class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\AbstractPostSubmitVisibilityListener'

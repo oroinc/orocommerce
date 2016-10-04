@@ -6,10 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
  * @ORM\Entity(
@@ -20,13 +16,13 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="oro_acc_prod_vis_uidx",
- *              columns={"website_id", "product_id", "account_id"}
+ *              columns={"scope_id", "product_id"}
  *          )
  *      }
  * )
  * @Config
  */
-class AccountProductVisibility implements VisibilityInterface, AccountAwareInterface, WebsiteAwareInterface
+class AccountProductVisibility implements VisibilityInterface
 {
     const ACCOUNT_GROUP = 'account_group';
     const CURRENT_PRODUCT = 'current_product';
@@ -48,22 +44,6 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $product;
-
-    /**
-     * @var Website
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $website;
-
-    /**
-     * @var Account
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $account;
 
     /**
      * @var string
@@ -109,24 +89,6 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
     public function setProduct(Product $product)
     {
         $this->product = $product;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAccount()
-    {
-        return $this->account;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAccount(Account $account)
-    {
-        $this->account = $account;
 
         return $this;
     }
@@ -188,24 +150,6 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
     public function setTargetEntity($product)
     {
         $this->setProduct($product);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getWebsite()
-    {
-        return $this->website;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setWebsite(Website $website)
-    {
-        $this->website = $website;
 
         return $this;
     }

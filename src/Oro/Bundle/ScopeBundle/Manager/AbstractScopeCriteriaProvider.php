@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\ScopeBundle\Manager;
 
+use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
-abstract class AbstractScopeProvider implements ScopeProviderInterface
+abstract class AbstractScopeCriteriaProvider implements ScopeCriteriaProviderInterface
 {
     /**
      * @var PropertyAccessor
@@ -21,7 +22,7 @@ abstract class AbstractScopeProvider implements ScopeProviderInterface
         $this->propertyAccessor = new PropertyAccessor();
         if (is_object($context) || is_array($context)) {
             $value = $this->getValue($context);
-            if (is_a($value, $this->getCriteriaValueType())) {
+            if ($this->isSupportedValue($value)) {
                 return [$this->getCriteriaField() => $value];
             }
         }
@@ -68,5 +69,14 @@ abstract class AbstractScopeProvider implements ScopeProviderInterface
         }
 
         return $this->propertyAccessor;
+    }
+
+    /**
+     * @param $value
+     * @return bool
+     */
+    protected function isSupportedValue($value)
+    {
+        return is_a($value, $this->getCriteriaValueType()) || $value === ScopeCriteria::IS_NOT_NULL;
     }
 }

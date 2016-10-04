@@ -5,55 +5,32 @@ namespace Oro\Bundle\ScopeBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
 class ScopeRepository extends EntityRepository
 {
-    const IS_NOT_NULL = 'IS_NOT_NULL';
-
     /**
-     * @param array $criteria
+     * @param ScopeCriteria $criteria
      * @return BufferedQueryResultIterator|Scope[]
      */
-    public function findByCriteria(array $criteria)
+    public function findByCriteria(ScopeCriteria $criteria)
     {
-        $qb = $this->getQbByCriteria($criteria);
+        $qb = $this->createQueryBuilder('scope');
+        $criteria->applyWhere($qb, 'scope');
 
         return new BufferedQueryResultIterator($qb);
     }
 
     /**
-     * @param array $criteria
+     * @param ScopeCriteria $criteria
      * @return Scope
      */
-    public function findOneByCriteria(array $criteria)
+    public function findOneByCriteria(ScopeCriteria $criteria)
     {
-        $qb = $this->getQbByCriteria($criteria);
+        $qb = $this->createQueryBuilder('scope');
+        $criteria->applyWhere($qb, 'scope');
         $qb->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    /**
-     * @param array $criteria
-     * @return \Doctrine\ORM\QueryBuilder
-     */
-    protected function getQbByCriteria(array $criteria)
-    {
-        $qb = $this->createQueryBuilder('scope');
-        foreach ($criteria as $field => $value) {
-            if ($value === null) {
-                $qb->andWhere($qb->expr()->isNull('scope.' . $field));
-            } else {
-                if ($value === self::IS_NOT_NULL) {
-                    $qb->andWhere($qb->expr()->isNotNull('scope.' . $field));
-                } else {
-                    $paramName = 'param_' . $field;
-                    $qb->andWhere($qb->expr()->eq('scope.' . $field, ':'.$paramName));
-                    $qb->setParameter($paramName, $value);
-                }
-            }
-        }
-
-        return $qb;
     }
 }

@@ -85,8 +85,8 @@ services:
         tags:
             - { name: twig.extension }
 
-    oro_website.website_scope_provider:
-        class: 'Oro\Bundle\WebsiteBundle\Provider\ScopeProvider'
+    oro_website.website_scope_criteria_provider:
+        class: 'Oro\Bundle\WebsiteBundle\Provider\ScopeCriteriaProvider'
         public: false
         arguments:
             - "@oro_website.manager"

@@ -31,7 +31,7 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
      */
     protected function setFormAllData(FormInterface $form)
     {
-        $visibility = $this->findFormFieldData($form, 'all');
+        $visibility = $this->findFormFieldData($form, 'all', 'product_visibility');
 
         if ($visibility instanceof VisibilityInterface) {
             $data = $visibility->getVisibility();
@@ -46,17 +46,20 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
      */
     protected function setFormAccountGroupData(FormInterface $form)
     {
-        $visibilities = $this->findFormFieldData($form, 'accountGroup');
+        $visibilities = $this->findFormFieldData($form, 'accountGroup', 'account_group_product_visibility');
 
-        $data = array_map(function ($visibility) {
-            /** @var VisibilityInterface|AccountGroupAwareInterface $visibility */
-            return [
-                'entity' => $visibility->getAccountGroup(),
-                'data' => [
-                    'visibility' => $visibility->getVisibility(),
-                ],
-            ];
-        }, $visibilities);
+        $data = array_map(
+            function ($visibility) {
+                /** @var VisibilityInterface|AccountGroupAwareInterface $visibility */
+                return [
+                    'entity' => $visibility->getScope()->getAccountGroup(),
+                    'data' => [
+                        'visibility' => $visibility->getVisibility(),
+                    ],
+                ];
+            },
+            $visibilities
+        );
 
         $form->get('accountGroup')->setData($data);
     }
@@ -66,17 +69,20 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
      */
     protected function setFormAccountData(FormInterface $form)
     {
-        $visibilities = $this->findFormFieldData($form, 'account');
+        $visibilities = $this->findFormFieldData($form, 'account', 'account_product_visibility');
 
-        $data = array_map(function ($visibility) {
-            /** @var VisibilityInterface|AccountAwareInterface $visibility */
-            return [
-                'entity' => $visibility->getAccount(),
-                'data' => [
-                    'visibility' => $visibility->getVisibility(),
-                ],
-            ];
-        }, $visibilities);
+        $data = array_map(
+            function ($visibility) {
+                /** @var VisibilityInterface|AccountAwareInterface $visibility */
+                return [
+                    'entity' => $visibility->getScope()->getAccount(),
+                    'data' => [
+                        'visibility' => $visibility->getVisibility(),
+                    ],
+                ];
+            },
+            $visibilities
+        );
 
         $form->get('account')->setData($data);
     }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
+use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSet;
@@ -48,7 +49,7 @@ class EntityVisibilityType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'website' => null,
+                'scope' => null,
             ]
         );
         $resolver->setRequired(
@@ -103,6 +104,7 @@ class EntityVisibilityType extends AbstractType
                 EntityChangesetType::NAME,
                 [
                     'class' => $this->accountClass,
+                    'context' => ['account' => ScopeCriteria::IS_NOT_NULL],
                     'constraints' => [new VisibilityChangeSet(['entityClass' => $this->accountClass])],
                 ]
             )
@@ -111,6 +113,7 @@ class EntityVisibilityType extends AbstractType
                 EntityChangesetType::NAME,
                 [
                     'class' => $this->accountGroupClass,
+                    'context' => ['accountGroup' => ScopeCriteria::IS_NOT_NULL],
                     'constraints' => [new VisibilityChangeSet(['entityClass' => $this->accountGroupClass])],
                 ]
             );

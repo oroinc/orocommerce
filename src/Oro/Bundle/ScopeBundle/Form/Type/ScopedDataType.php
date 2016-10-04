@@ -1,7 +1,10 @@
 <?php
 
-namespace Oro\Bundle\WebsiteBundle\Form\Type;
+namespace Oro\Bundle\ScopeBundle\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -10,39 +13,15 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-
-/**
- * @deprecated use Oro\Bundle\ScopeBundle\Form\Type\ScopedDataType instead
- */
-class WebsiteScopedDataType extends AbstractType
+class ScopedDataType extends AbstractType
 {
-    const NAME = 'oro_website_scoped_data_type';
-    const WEBSITE_OPTION = 'website';
+    const NAME = 'oro_scoped_data_type';
+    const SCOPE_OPTION = 'scope';
 
     /**
      * @var ManagerRegistry
      */
     protected $registry;
-
-    /**
-     * @return Website[]
-     */
-    protected $websites;
-
-    /**
-     * @var string
-     */
-    protected $websiteCLass = 'Oro\Bundle\WebsiteBundle\Entity\Website';
-
-    /**
-     * @var WebsiteProviderInterface
-     */
-    protected $websiteProvider;
 
     /**
      * {@inheritdoc}
@@ -62,12 +41,10 @@ class WebsiteScopedDataType extends AbstractType
 
     /**
      * @param ManagerRegistry $registry
-     * @param WebsiteProviderInterface $websiteProvider
      */
-    public function __construct(ManagerRegistry $registry, WebsiteProviderInterface $websiteProvider)
+    public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
-        $this->websiteProvider = $websiteProvider;
     }
 
     /**
@@ -83,7 +60,7 @@ class WebsiteScopedDataType extends AbstractType
 
         $resolver->setDefaults(
             [
-                'preloaded_websites' => [],
+                'preloaded_scopes' => [],
                 'options' => null,
             ]
         );
@@ -94,15 +71,17 @@ class WebsiteScopedDataType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $loadedWebsites = !empty($options['preloaded_websites'])
-            ? $options['preloaded_websites']
-            : $this->getWebsites();
+        if (!empty($options['preloaded_scopes'])) {
+            $loadedWebsites = $options['preloaded_scopes'];
+        } else {
+            $loadedWebsites = $this->getScopes();
+        }
 
         $options['options']['data'] = $options['data'];
         $options['options']['ownership_disabled'] = true;
 
         foreach ($loadedWebsites as $website) {
-            $options['options'][self::WEBSITE_OPTION] = $website;
+            $options['options'][self::SCOPE_OPTION] = $website;
             $builder->add(
                 $website->getId(),
                 $options['type'],
@@ -136,10 +115,10 @@ class WebsiteScopedDataType extends AbstractType
             }
 
             /** @var EntityManager $em */
-            $em = $this->registry->getManagerForClass($this->websiteCLass);
+            $em = $this->registry->getManagerForClass(Scope::class);
 
-            $formOptions['options'][self::WEBSITE_OPTION] = $em
-                ->getReference($this->websiteCLass, $websiteId);
+            $formOptions['options'][self::SCOPE_OPTION] = $em
+                ->getReference(Scope::class, $websiteId);
 
             $form->add(
                 $websiteId,
@@ -160,20 +139,20 @@ class WebsiteScopedDataType extends AbstractType
         $formOptions = $form->getConfig()->getOptions();
 
         $formOptions['options']['ownership_disabled'] = true;
-
         /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass($this->websiteCLass);
-        foreach ($event->getData() as $websiteId => $value) {
+        $em = $this->registry->getManagerForClass(Scope::class);
+
+        foreach ($event->getData() as $scopeId => $value) {
             $formOptions['options']['data'] = [];
 
             if (is_array($value)) {
                 $formOptions['options']['data'] = $value;
             }
 
-            $formOptions['options'][self::WEBSITE_OPTION] = $em->getReference($this->websiteCLass, $websiteId);
+            $formOptions['options'][self::SCOPE_OPTION] = $em->getReference(Scope::class, $scopeId);
 
             $form->add(
-                $websiteId,
+                $scopeId,
                 $formOptions['type'],
                 $formOptions['options']
             );
@@ -185,26 +164,20 @@ class WebsiteScopedDataType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['websites'] = $this->getWebsites();
+        $view->vars['scopes'] = $this->getScopes();
     }
 
     /**
-     * @return Website[]
+     * @return Scope[]
      */
-    protected function getWebsites()
+    protected function getScopes()
     {
-        if (null === $this->websites) {
-            $this->websites = $this->websiteProvider->getWebsites();
-        }
-
-        return $this->websites;
-    }
-
-    /**
-     * @param string $websiteCLass
-     */
-    public function setWebsiteClass($websiteCLass)
-    {
-        $this->websiteCLass = $websiteCLass;
+//        todo: 4710 create scope provider, redefine in website bundle
+//        if (null === $this->s) {
+//            $this->websites = $this->websiteProvider->getWebsites();
+//        }
+//
+//        return $this->websites;
+        return [];
     }
 }
