@@ -7,6 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
@@ -179,14 +180,29 @@ class CategoryRepository extends NestedTreeRepository
 
     /**
      * @param Product[] $products
+     * @param Localization[] $localizations
      * @return array
      */
-    public function getCategoryMapByProducts(array $products)
+    public function getCategoryMapByProducts(array $products, array $localizations = [])
     {
         $builder = $this->createQueryBuilder('category')
             ->join(Product::class, 'product', 'WITH', 'product MEMBER OF category.products')
             ->andWhere('product IN (:products)')
             ->setParameter('products', $products);
+
+        // Join localization fields to avoid lazy-loading
+        $localizationFields = ['titles', 'shortDescriptions', 'longDescriptions'];
+        foreach ($localizationFields as $field) {
+            $builder
+                ->addSelect($field)
+                ->leftJoin(
+                    sprintf('category.%s', $field),
+                    $field,
+                    'WITH',
+                    sprintf('%s.localization IN (:localizations) OR %s.localization IS NULL', $field, $field)
+                );
+        }
+        $builder->setParameter('localizations', $localizations);
 
         $relationBuilder = clone $builder;
         $relationBuilder->select('product.id as product_id, category.id as category_id');

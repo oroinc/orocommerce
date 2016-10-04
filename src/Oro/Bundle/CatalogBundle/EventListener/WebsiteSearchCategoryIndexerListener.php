@@ -62,7 +62,7 @@ class WebsiteSearchCategoryIndexerListener
             : null;
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
-        $categoryMap = $this->getRepository()->getCategoryMapByProducts($products);
+        $categoryMap = $this->getRepository()->getCategoryMapByProducts($products, $localizations);
 
         foreach ($products as $product) {
             /** @var Category $category */
