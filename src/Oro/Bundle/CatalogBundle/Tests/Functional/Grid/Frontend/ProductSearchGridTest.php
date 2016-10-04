@@ -33,6 +33,9 @@ class ProductSearchGridTest extends FrontendWebTestCase
             ]
         );
 
+        // load image filters for grid images
+        $this->getContainer()->get('oro_layout.loader.image_filter')->load();
+
         // TODO: trigger immediate reindexation event instead
         $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
@@ -110,10 +113,12 @@ class ProductSearchGridTest extends FrontendWebTestCase
             ]
         );
 
-        $this->assertCount(1, $filteredData);
+        // can't use strict comparing because of different search engines
+        $this->assertGreaterThanOrEqual(1, count($filteredData));
 
-        $filteredRow = array_shift($filteredData);
+        $filteredRow = $this->getRowBySku($filteredData, $lastRow['sku']);
 
+        $this->assertNotNull($filteredRow);
         $this->assertEquals($lastRow['sku'], $filteredRow['sku']);
         $this->assertEquals($lastRow['name'], $filteredRow['name']);
     }
@@ -136,10 +141,10 @@ class ProductSearchGridTest extends FrontendWebTestCase
             ]
         );
 
-        $this->assertCount(1, $filteredData);
+        // can't use strict comparing because of different search engines
+        $this->assertGreaterThanOrEqual(1, count($filteredData));
 
-        $filteredRow = array_shift($filteredData);
-
+        $filteredRow = $this->getRowBySku($filteredData, $lastRow['sku']);
         $this->assertStringStartsWith($allTextValue, $filteredRow['shortDescription']);
     }
 
@@ -192,5 +197,21 @@ class ProductSearchGridTest extends FrontendWebTestCase
         $this->assertJsonResponseStatusCodeEquals($response, 200);
 
         return json_decode($response->getContent(), true)['data'];
+    }
+
+    /**
+     * @param array $rows
+     * @param string $sku
+     * @return array|null
+     */
+    protected function getRowBySku(array $rows, $sku)
+    {
+        foreach ($rows as $row) {
+            if ($row['sku'] === $sku) {
+                return $row;
+            }
+        }
+
+        return null;
     }
 }

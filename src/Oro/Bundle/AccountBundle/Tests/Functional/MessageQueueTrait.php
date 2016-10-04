@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional;
 
-use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -12,32 +11,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 trait MessageQueueTrait
 {
-    /**
-     * @var string
-     */
-    protected $topic;
+    use MessageQueueAssertTrait;
 
-    protected function cleanQueueMessageTraces()
+    protected function cleanScheduledMessages()
     {
         $this->sendScheduledMessages();
-
-        $this->getMessageProducer()->enable();
-        $this->getMessageProducer()->clear();
-    }
-
-    /**
-     * @return array
-     */
-    protected function getQueueMessageTraces()
-    {
-        $this->sendScheduledMessages();
-
-        return array_filter(
-            $this->getMessageProducer()->getSentMessages(),
-            function (array $trace) {
-                return $this->topic === $trace['topic'];
-            }
-        );
+        $this->getMessageCollector()->enable();
+        $this->getMessageCollector()->clear();
     }
 
     /**
@@ -50,31 +30,5 @@ trait MessageQueueTrait
         if ($this->getMessageHandler()) {
             $this->getMessageHandler()->sendScheduledMessages();
         }
-    }
-
-    /**
-     * @return MessageCollector
-     */
-    protected function getMessageProducer()
-    {
-        return self::getContainer()->get('oro_message_queue.message_producer');
-    }
-
-    /**
-     * @param array $trace
-     * @return int
-     */
-    protected function getEntityIdFromTrace(array $trace)
-    {
-        return $trace['message'][VisibilityMessageFactory::ID];
-    }
-    
-    /**
-     * @param array $trace
-     * @return int
-     */
-    protected function getVisibilityEntityClassFromTrace(array $trace)
-    {
-        return $trace['message'][VisibilityMessageFactory::ENTITY_CLASS_NAME];
     }
 }
