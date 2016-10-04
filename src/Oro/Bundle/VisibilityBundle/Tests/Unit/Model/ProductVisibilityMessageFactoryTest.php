@@ -4,8 +4,6 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
@@ -70,16 +68,12 @@ class ProductVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMessageForAccountGroupProductVisibility()
     {
-        $accountGroupId = 1;
         $productId = 123;
         $productVisibilityId = 42;
         $scopeId = 1;
         
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => $productId]);
-
-        /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity(AccountGroup::class, ['id' => $accountGroupId]);
 
         /** @var Scope $scope */
         $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
@@ -90,7 +84,6 @@ class ProductVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ['id' => $productVisibilityId]
         );
         $accountGroupProductVisibility->setProduct($product);
-        $accountGroupProductVisibility->setAccountGroup($accountGroup);
         $accountGroupProductVisibility->setScope($scope);
 
         $expected = [
@@ -108,16 +101,12 @@ class ProductVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMessageForAccountProductVisibility()
     {
-        $accountId = 5;
         $productId = 123;
         $productVisibilityId = 42;
         $scopeId = 1;
 
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => $productId]);
-
-        /** @var Account $account */
-        $account = $this->getEntity(Account::class, ['id' => $accountId]);
 
         /** @var Scope $scope */
         $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
@@ -128,7 +117,6 @@ class ProductVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ['id' => $productVisibilityId]
         );
         $accountProductVisibility->setProduct($product);
-        $accountProductVisibility->setAccount($account);
         $accountProductVisibility->setScope($scope);
 
         $this->productVisibilityMessageFactory->createMessage($accountProductVisibility);

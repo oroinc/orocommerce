@@ -5,6 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\Visibility;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class AccountCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,6 +25,7 @@ class AccountCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
                 ['id', 1],
                 ['category', $category],
                 ['visibility', AccountCategoryVisibility::CATEGORY],
+                ['scope', new Scope()]
             ]
         );
 

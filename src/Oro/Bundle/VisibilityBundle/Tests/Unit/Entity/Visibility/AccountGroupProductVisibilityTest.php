@@ -6,6 +6,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class AccountGroupProductVisibilityTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,6 +26,7 @@ class AccountGroupProductVisibilityTest extends \PHPUnit_Framework_TestCase
                 ['id', 1],
                 ['product', $product],
                 ['visibility', AccountGroupProductVisibility::CATEGORY],
+                ['scope', new Scope()]
             ]
         );
         $entity->setTargetEntity($product);

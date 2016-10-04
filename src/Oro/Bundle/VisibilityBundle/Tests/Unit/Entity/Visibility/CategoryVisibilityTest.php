@@ -5,6 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\Visibility;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class CategoryVisibilityTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,6 +24,7 @@ class CategoryVisibilityTest extends \PHPUnit_Framework_TestCase
                 ['id', 1],
                 ['category', $category],
                 ['visibility', CategoryVisibility::PARENT_CATEGORY],
+                ['scope', new Scope()]
             ]
         );
         $entity->setTargetEntity($category);

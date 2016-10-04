@@ -8,6 +8,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityR
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class ProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,13 +20,17 @@ class ProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
     /** @var Product */
     protected $product;
 
+    /** @var Scope */
+    protected $scope;
+
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         $this->product = new Product();
-        $this->entity = new ProductVisibilityResolved($this->product);
+        $this->scope = new Scope();
+        $this->entity = new ProductVisibilityResolved($this->scope, $this->product);
     }
 
     /**
@@ -33,7 +38,7 @@ class ProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        unset($this->entity, $this->product);
+        unset($this->entity, $this->product, $this->scope);
     }
 
     /**
@@ -41,7 +46,7 @@ class ProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
      */
     public function testAccessors()
     {
-        $entity = new ProductVisibilityResolved(new Product());
+        $entity = new ProductVisibilityResolved(new Scope, new Product());
 
         $this->assertPropertyAccessors(
             $entity,
@@ -52,6 +57,11 @@ class ProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
                 ['category', new Category()]
             ]
         );
+    }
+
+    public function testGetScope()
+    {
+        $this->assertEquals($this->scope, $this->entity->getScope());
     }
 
     public function testGetProduct()
