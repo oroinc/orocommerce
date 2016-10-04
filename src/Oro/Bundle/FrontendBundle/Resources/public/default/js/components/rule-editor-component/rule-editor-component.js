@@ -35,9 +35,12 @@ define([
                     entity: 'product'
                 }
             },
-            operations: ['+', '-', '=', '!='],
-            grouping: ['or', 'and'],
-            array_operation: ['all', 'any']
+            operations: {
+                math: ['+', '-', '%'],
+                bool: ['and', 'or'],
+                compare: ['>', '<', '=', '!=', 'in', 'not in']
+            },
+            allowedOperations: ['math', 'bool', 'compare']
         },
 
         /**
@@ -48,9 +51,9 @@ define([
 
         /**
          *
-         * @property {RegExp}
+         * @property {Array}
          */
-        opsRegEx: null,
+        opsRegEx: {},
 
         /**
          *
@@ -82,20 +85,31 @@ define([
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            this.$element = this.options._sourceElement.eq(0);
-            this.opsRegEx = this.getRegexp(options.operations);
-
-            this.dataWordCases = this.getStrings(options.data);
-            this.logicWordCases = this.getStrings(options.grouping);
-            this.operationsCases = this.getStrings(options.operations);
+            this.$element = this.options._sourceElement;
 
             var _this = this;
 
-            this.$element.on('keyup paste change', function() {
-                _this.$element.toggleClass('error', !_this.validate(_this.$element.val()));
+            this.dataWordCases = this.getStrings(options.data);
+            this.logicWordCases = this.getStrings(options.grouping);
+
+            _.each(this.options.allowedOperations, function(item) {
+                _this.operationsCases[item] = _this.getStrings(_this.options.operations[item]);
+                _this.opsRegEx[item] = _this.getRegexp(_this.options.operations[item], item);
             });
 
-            this.initAutocomplete();
+            this.$element.on('keyup paste blur', function(e) {
+                var $el = $(e.target);
+
+                setTimeout(function() {
+                    var isValid = _this.isValid($el.val());
+
+                    $el.toggleClass('error', !isValid);
+                    $el.parent().toggleClass('validation-error', !isValid);
+
+                });
+            });
+
+            // this.initAutocomplete();
         },
 
         /**
@@ -103,12 +117,12 @@ define([
          * @param value
          * @returns {Boolean}
          */
-        validate: function(value) {
+        isValid: function(value) {
             if (_.isEmpty(value)) {
                 return true;
             }
 
-            if (!this.validateBrackets(value)) {
+            if (!this.hasValidBrackets(value)) {
                 return false;
             }
 
@@ -119,7 +133,7 @@ define([
             var groups = this.getGroups(words);
 
             var logicIsValid = _.last(groups.logicWords) !== _.last(words) && _.every(groups.logicWords, function(item) {
-                    return _this.contains(_this.options.grouping, item);
+                    return _this.contains(_this.options.operations.bool, item);
                 });
 
             var dataWordsAreValid = _.every(groups.dataWords, function(item) {
@@ -130,19 +144,9 @@ define([
         },
 
         initAutocomplete: function() {
-            var clickHandler;
             var _context;
             var _position;
             var _this = this;
-
-            clickHandler = function() {
-                var _this = this;
-                var _arguments = arguments;
-
-                setTimeout(function() {
-                    _this.keyup.apply(_this, _arguments);
-                }, 10);
-            };
 
             _context = this.$element.typeahead({
                 minLength: 0,
@@ -161,7 +165,7 @@ define([
                 updater: function(item) {
                     return _this.getUpdateValue(this.query, item, _position);
                 },
-                focus: function(e) {
+                focus: function() {
                     this.focused = true;
                     clickHandler.apply(this, arguments);
                 },
@@ -179,6 +183,15 @@ define([
                     clickHandler.apply(_context, arguments);
                 });
             }
+
+            function clickHandler() {
+                var _this = this;
+                var _arguments = arguments;
+
+                setTimeout(function() {
+                    _this.keyup.apply(_this, _arguments);
+                }, 10);
+            }
         },
 
         /**
@@ -186,7 +199,7 @@ define([
          * @param value {String}
          * @returns {Boolean}
          */
-        validateBrackets: function(value) {
+        hasValidBrackets: function(value) {
             var nestingLevel = 0;
 
             _.each(value, function(char) {
@@ -336,7 +349,11 @@ define([
          * @returns {*}
          */
         isDataExpression: function(string) {
-            var expressionMatch = string.match(this.opsRegEx);
+            var expressionMatch = string.match(_.find(this.opsRegEx, function(re, name) {
+                if (name !== 'bool') {
+                    return string.match(re);
+                }
+            }));
 
             if (_.isNull(expressionMatch) || expressionMatch.length > 1) {
                 return false;
@@ -364,6 +381,36 @@ define([
 
         /**
          *
+         * @param opsArr
+         * @param name
+         * @returns {RegExp}
+         */
+        getRegexp: function(opsArr, name) {
+            if (_.isEmpty(opsArr)) {
+                return null;
+            }
+
+            var reString;
+
+            var escapedOps = opsArr.map(function(item) {
+                if (!item.match(/\s|\w/gi)) {
+                    return '\\' + item.split('').join('\\');
+                } else {
+                    return item.replace(/\s+/gi, '\\s?');
+                }
+            });
+
+            if (name !== 'bool') {
+                reString = '(\\s|\\~)*(' + escapedOps.join('|') + ')(\\s|\\~)*'
+            } else {
+                reString = '\\s*(' + escapedOps.join('|') + ')\\s*'
+            }
+
+            return new RegExp(reString, 'gi');
+        },
+
+        /**
+         *
          * @param value
          * @param regex
          * @param caretPosition
@@ -373,8 +420,18 @@ define([
             var hasCutPosition = !_.isUndefined(caretPosition);
             var string = hasCutPosition ? this.getStringPart(value, 0, caretPosition) : value;
 
+            string = string.replace(/\[(.*?)\]/g, '');
             string = string.replace(/\s*,\s*/g, ',');
-            string = string.replace(regex, '$1');
+
+            _.each(regex, function(re, name) {
+                if (name !== 'bool') {
+                    // string = string.replace(re, '~$1~');
+                    string = string.replace(re, function(match) {
+                        return '~' + match.replace(/\s+/g, '') + '~';
+                    });
+                }
+            });
+
             string = string.replace(this.bracketsRegExp, ' ');
             string = string.replace(/\s+/g, ' ');
             string = string.trim();
@@ -450,23 +507,6 @@ define([
             var length = _.isNumber(endPos) ? endPos - startPos : undefined;
 
             return _.isNumber(startPos) ? string.substr(startPos, length) : string;
-        },
-
-        /**
-         *
-         * @param opsArr
-         * @returns {RegExp}
-         */
-        getRegexp: function(opsArr) {
-            if (_.isEmpty(opsArr)) {
-                return null;
-            }
-
-            var escapedOps = opsArr.map(function(item) {
-                return '\\' + item.split('').join('\\');
-            });
-
-            return new RegExp('\\s*((' + escapedOps.join(')|(') + '))\\s*', 'gi');
         },
 
         /**
