@@ -4,12 +4,11 @@ namespace Oro\Bundle\PricingBundle\Compiler;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
 use Oro\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter;
-use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
-use Oro\Bundle\PricingBundle\Expression\QueryExpressionBuilder;
 use Oro\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter;
+use Oro\Component\Expression\ExpressionParser;
+use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
+use Oro\Component\Expression\QueryExpressionBuilder;
 
 abstract class AbstractRuleCompiler
 {
