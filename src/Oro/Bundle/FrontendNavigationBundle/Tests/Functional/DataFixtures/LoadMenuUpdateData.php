@@ -6,8 +6,9 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate;
+use Oro\Bundle\FrontendNavigationBundle\Provider\AccountOwnershipProvider;
+use Oro\Bundle\NavigationBundle\Menu\Provider\GlobalOwnershipProvider;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadMenuUpdateData extends AbstractFixture implements
@@ -41,20 +42,13 @@ class LoadMenuUpdateData extends AbstractFixture implements
 
         $updatesData = [
             [
-                'ownershipType' => MenuUpdate::OWNERSHIP_ORGANIZATION,
+                'ownershipType' => GlobalOwnershipProvider::TYPE,
                 'ownerId' => $this->getReference(self::ORGANIZATION)->getId(),
                 'key' => 'profile',
                 'url' => '/profile',
             ],
             [
-                'ownershipType' => MenuUpdate::OWNERSHIP_ACCOUNT_USER,
-                'ownerId' => $this->getReference(LoadAccountUserData::EMAIL)->getId(),
-                'key' => 'orders',
-                'priority' => 5,
-                'website' => $this->getReference(LoadWebsiteData::WEBSITE1),
-            ],
-            [
-                'ownershipType' => MenuUpdate::OWNERSHIP_ACCOUNT,
+                'ownershipType' => AccountOwnershipProvider::TYPE,
                 'ownerId' => $this->getReference(self::ACCOUNT)->getId(),
                 'key' => 'quotes',
                 'priority' => 5,
@@ -81,10 +75,6 @@ class LoadMenuUpdateData extends AbstractFixture implements
 
             if (array_key_exists('priority', $updateData)) {
                 $update->setPriority($updateData['priority']);
-            }
-
-            if (array_key_exists('website', $updateData)) {
-                $update->setWebsite($updateData['website']);
             }
 
             $manager->persist($update);
