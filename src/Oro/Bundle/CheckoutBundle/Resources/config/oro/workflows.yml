@@ -301,7 +301,7 @@ workflows:
             back_to_payment:
                 label: Edit Payment
                 step_to: enter_payment
-                transition_definition: clear_payment_method_and_recalculate_state_definition
+                transition_definition: recalculate_state_definition
                 is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
@@ -1088,6 +1088,18 @@ workflows:
                         route_parameters:
                             id: $order.id
 
+            recalculate_state_definition:
+                preconditions:
+                    '@not_equal': [$payment_in_progress, true]
+                actions:
+                    - '@generate_checkout_state_snapshot':
+                        entity: $checkout
+                        attribute: $.result.actualCheckoutState
+                    - '@save_checkout_state':
+                        entity: $checkout
+                        state: $.result.actualCheckoutState
+                        attribute: $state_token
+                    - '@assign_value': [$internal_state_token, $state_token]
             clear_payment_method_and_recalculate_state_definition:
                 preconditions:
                     '@not_equal': [$payment_in_progress, true]
