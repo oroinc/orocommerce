@@ -9,7 +9,7 @@ General
 FrontendBundle:
 ---------------
 - Value for parameter `applications` for `Frontend` part of OroCommerce in operation configuration renamed from `frontend` to `commerce`.
-- Changed name from `requestStack` to `container`, type from `Symfony\Component\HttpFoundation\RequestStack` to `Symfony\Component\DependencyInjection\ContainerInterface` of second argument of `Oro\Bundle\FrontendBundle\Request\FrontendHelper` constructor
+- Changed name from `requestStack` to `container` and type from `Symfony\Component\HttpFoundation\RequestStack` to `Symfony\Component\DependencyInjection\ContainerInterface` of second argument of `Oro\Bundle\FrontendBundle\Request\FrontendHelper` constructor
 
 CheckoutBundle:
 ---------------
@@ -148,7 +148,7 @@ PricingBundle:
 SaleBundle:
 -----------
 - Modified `Oro\Bundle\SaleBundle\Entity\Quote` with property `paymentTerm` as many-to-one relation to `Oro\Bundle\PaymentBundle\Entity\PaymentTerm`.
-- Changed name from `quoteAddressSecurityProvider` to `securityFacade`, type from `Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider` to `Oro\Bundle\SecurityBundle\SecurityFacade` of first argument of `Oro\Bundle\SaleBundle\Form\Type\QuoteType` constructor
+- Changed name from `quoteAddressSecurityProvider` to `securityFacade` and type from `Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider` to `Oro\Bundle\SecurityBundle\SecurityFacade` of first argument of `Oro\Bundle\SaleBundle\Form\Type\QuoteType` constructor
 - Added second argument `configManager` to `Oro\Bundle\SaleBundle\Twig\QuoteExtension` constructor
 - Added second argument `quoteAddressSecurityProvider` to `Oro\Bundle\SaleBundle\Form\Type\QuoteType` constructor
 - Added third argument `paymentTermProvider` to `Oro\Bundle\SaleBundle\Form\Type\QuoteType` constructor
@@ -169,18 +169,18 @@ ProductBundle
 - Removed fourth argument `unitFormatter` from  `Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener` constructor
 - Changed type from `Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface` to `Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface` of first argument of `Oro\Bundle\ProductBundle\Form\Type\QuantityType` constructor
 - Changed `Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler` constructor
-    - Changed name from `quickAddFormProvider` to `productFormProvider`, type from `Oro\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider` to `Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider` of first argument
-    - Changed name from `quickAddImportFormProvider` to `quickAddRowCollectionBuilder`, type from `Oro\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider` to `Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder` of second argument
-    - Changed name from `quickAddCopyPasteFormProvider` to `componentRegistry`, type from `Oro\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider` to `Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry` of third argument
-    - Changed name from `quickAddRowCollectionBuilder` to `router`, type from `Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder` to `Symfony\Component\Routing\Generator\UrlGeneratorInterface` of fourth argument
-    - Changed name from `componentRegistry` to `translator`, type from `Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry` to `Symfony\Component\Translation\TranslatorInterface` of fifth argument
+    - Changed name from `quickAddFormProvider` to `productFormProvider` and type from `Oro\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider` to `Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider` of first argument
+    - Changed name from `quickAddImportFormProvider` to `quickAddRowCollectionBuilder` and type from `Oro\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider` to `Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder` of second argument
+    - Changed name from `quickAddCopyPasteFormProvider` to `componentRegistry` and type from `Oro\Bundle\ProductBundle\Layout\DataProvider\QuickAddCopyPasteFormProvider` to `Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry` of third argument
+    - Changed name from `quickAddRowCollectionBuilder` to `router` and type from `Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder` to `Symfony\Component\Routing\Generator\UrlGeneratorInterface` of fourth argument
+    - Changed name from `componentRegistry` to `translator` and type from `Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry` to `Symfony\Component\Translation\TranslatorInterface` of fifth argument
 - Added sixth argument `container` to `Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor` constructor
 - Removed method `getDefaultName` from class `Oro\Bundle\ProductBundle\Entity\Product`
 - Removed method `getDefaultDescription` from class `Oro\Bundle\ProductBundle\Entity\Product`
 - Removed method `getDefaultShortDescription` from class `Oro\Bundle\ProductBundle\Entity\Product`
 - Removed default value `oro_product_unit_selection` of second argument of `Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub` constructor
 - Changed name from `code` to `reference` of second argument of method `Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits:createProductUnit`
-- Changed name from `attachmentManager` to `fileManager`, type from `Oro\Bundle\AttachmentBundle\Manager\AttachmentManager` to `Oro\Bundle\AttachmentBundle\Manager\FileManager` of third argument of `Oro\Bundle\ProductBundle\Duplicator\ProductDuplicator` constructor
+- Changed name from `attachmentManager` to `fileManager` and type from `Oro\Bundle\AttachmentBundle\Manager\AttachmentManager` to `Oro\Bundle\AttachmentBundle\Manager\FileManager` of third argument of `Oro\Bundle\ProductBundle\Duplicator\ProductDuplicator` constructor
 
 
 ShippingBundle
