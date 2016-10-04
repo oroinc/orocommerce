@@ -1,15 +1,15 @@
 <?php
 
-namespace Oro\Bundle\B2BEntityBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CommerceEntityBundle\Tests\Unit\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Util\ClassUtils;
 
-use Oro\Bundle\B2BEntityBundle\EventListener\DoctrinePostFlushListener;
-use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorage;
-use Oro\Bundle\B2BEntityBundle\Tests\Stub\Entity1;
-use Oro\Bundle\B2BEntityBundle\Tests\Stub\Entity2;
+use Oro\Bundle\CommerceEntityBundle\EventListener\DoctrinePostFlushListener;
+use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorage;
+use Oro\Bundle\CommerceEntityBundle\Tests\Stub\Entity1;
+use Oro\Bundle\CommerceEntityBundle\Tests\Stub\Entity2;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class DoctrinePostFlushListenerTest extends \PHPUnit_Framework_TestCase

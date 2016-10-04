@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\B2BEntityBundle\Tests\Unit\Storage;
+namespace Oro\Bundle\CommerceEntityBundle\Tests\Unit\Storage;
 
-use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorage;
+use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorage;
 
 class ExtraActionEntityStorageTest extends \PHPUnit_Framework_TestCase
 {
