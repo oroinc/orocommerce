@@ -37,9 +37,6 @@ class OroShippingBundleInstaller implements Installation
         $this->createOroShippingRuleDestinationTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroShippingRuleConfigForeignKeys($schema);
-        $this->addOroShipFlatRateRuleCnfForeignKeys($schema);
-
         $this->addOroShippingProductOptsForeignKeys($schema);
         $this->addOroShippingRuleMthdConfigForeignKeys($schema);
         $this->addOroShippingRuleMthdTpCnfgForeignKeys($schema);
