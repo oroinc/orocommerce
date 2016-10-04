@@ -66,7 +66,7 @@ class PlaceholderFieldsProviderTest extends \PHPUnit_Framework_TestCase
                 'name' => [
                     'name' => 'name_LOCALIZATION_ID'
                 ]
-           ]);
+            ]);
 
         $placeholders = ['LOCALIZATION_ID' => 1];
 

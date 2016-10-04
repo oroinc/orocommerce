@@ -118,10 +118,10 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
 
     public function wrongAccountUser()
     {
-       return [
-           [null],
-           [new \stdClass()]
-       ];
+        return [
+            [null],
+            [new \stdClass()]
+        ];
     }
 
     /**
