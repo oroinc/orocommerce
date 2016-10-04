@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\EntityListener;
 
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,7 +21,7 @@ trait MessageQueueTrait
 
     protected function sendScheduledMessages()
     {
-        self::getContainer()->get('oro_pricing.price_list_trigger_handler')
-            ->sendScheduledTriggers();
+        self::getContainer()->get('oro_account.visibility_message_handler')
+            ->sendScheduledMessages();
     }
 }

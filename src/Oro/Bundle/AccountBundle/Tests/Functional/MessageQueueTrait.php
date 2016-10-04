@@ -1,8 +1,9 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
+namespace Oro\Bundle\AccountBundle\Tests\Functional;
 
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
+use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,9 +20,15 @@ trait MessageQueueTrait
         $this->getMessageCollector()->clear();
     }
 
+    /**
+     * @return ProductMessageHandler
+     */
+    abstract function getMessageHandler();
+
     protected function sendScheduledMessages()
     {
-        self::getContainer()->get('oro_pricing.price_list_trigger_handler')
-            ->sendScheduledTriggers();
+        if ($this->getMessageHandler()) {
+            $this->getMessageHandler()->sendScheduledMessages();
+        }
     }
 }
