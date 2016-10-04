@@ -1,6 +1,5 @@
 <?php
-
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -63,7 +62,7 @@ class WebsiteSearchCompilerPassTest extends \PHPUnit_Framework_TestCase
             ->with(WebsiteSearchCompilerPass::WEBSITE_SEARCH_PLACEHOLDER_REGISTRY)
             ->will($this->returnValue($placeholderRegistryDefinition));
 
-        $services = array('LocalizationIdPlaceholder' => []);
+        $services = ['LocalizationIdPlaceholder' => []];
 
         $this->containerBuilder->expects($this->once())
             ->method('findTaggedServiceIds')
@@ -72,7 +71,7 @@ class WebsiteSearchCompilerPassTest extends \PHPUnit_Framework_TestCase
 
         $placeholderRegistryDefinition->expects($this->once())
             ->method('addMethodCall')
-            ->with('addPlaceholder', array(new Reference('LocalizationIdPlaceholder')));
+            ->with('addPlaceholder', [new Reference('LocalizationIdPlaceholder')]);
 
         $this->runCompilerPass();
     }
