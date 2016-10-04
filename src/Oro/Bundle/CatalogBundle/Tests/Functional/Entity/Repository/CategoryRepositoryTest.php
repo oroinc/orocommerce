@@ -30,6 +30,7 @@ class CategoryRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->registry = $this->getContainer()->get('doctrine');
         $this->repository = $this->registry->getRepository('OroCatalogBundle:Category');
         $this->loadFixtures([LoadCategoryData::class, LoadCategoryProductData::class]);

@@ -212,7 +212,7 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::REBUILD_PRICE_LISTS];
+        return [Topics::REBUILD_COMBINED_PRICE_LISTS];
     }
 
     protected function resetCache()

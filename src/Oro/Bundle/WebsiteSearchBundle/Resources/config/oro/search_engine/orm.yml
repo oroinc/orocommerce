@@ -1,13 +1,29 @@
 services:
     oro_website_search.indexer:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer'
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmIndexer'
         parent: 'oro_website_search.search.indexer'
+        calls:
+            - [setDriver, ['@oro_website_search.engine.orm.driver']]
 
     oro_website_search.engine:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine'
         parent: 'oro_website_search.search.engine'
         calls:
-            - [setRegistry, ['@doctrine']]
-            - [setDrivers, ['%oro_search.drivers%']]
+            - [setDriver, ['@oro_website_search.engine.orm.driver']]
             - [setMapper, ['@oro_website_search.engine.mapper']]
-            - [setMappingProvider, ['@oro_website_search.provider.search_mapping']]
+
+    oro_website_search.engine.orm.driver:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\DriverDecorator'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        calls:
+            - [addDriver, ['@oro_website_search.engine.orm.driver.mysql']]
+            - [addDriver, ['@oro_website_search.engine.orm.driver.pgsql']]
+
+    oro_website_search.engine.orm.driver.mysql:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\PdoMysql'
+        public: false
+
+    oro_website_search.engine.orm.driver.pgsql:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver\PdoPgsql'
+        public: false

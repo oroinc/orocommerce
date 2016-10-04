@@ -82,7 +82,7 @@ class ShippingMethodsCompilerPassTest extends \PHPUnit_Framework_TestCase
         $this->container->expects($this->once())
             ->method('findTaggedServiceIds')
             ->with($this->equalTo(ShippingMethodsCompilerPass::TAG))
-            ->will($this->returnValue(['service' => ['class' => '\stdClass']]));
+            ->will($this->returnValue(['service' => ['class' => [[]]]]));
 
         $definition = $this->getMock('Symfony\Component\DependencyInjection\Definition');
 
@@ -93,7 +93,7 @@ class ShippingMethodsCompilerPassTest extends \PHPUnit_Framework_TestCase
 
         $definition->expects($this->once())
             ->method('addMethodCall')
-            ->with('addShippingMethod', $this->isType('array'));
+            ->with('addProvider', $this->isType('array'));
 
         $this->compilerPass->process($this->container);
     }

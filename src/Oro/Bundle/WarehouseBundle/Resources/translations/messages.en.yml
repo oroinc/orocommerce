@@ -77,8 +77,17 @@ oro:
             groups:
                 warehouse.title: Warehouses
                 warehouse_configuration.title: Warehouse Configuration
+                product_options.title: Product Options
+                product_inventory_options.title: Product Inventory Options
             fields:
                 enabled_warehouses.label: Enabled Warehouses
+                manage_inventory.label: Manage Inventory
+
+        manage_inventory:
+            label: Manage Inventory
+            choice:
+                'true': Yes
+                'false': No
 
     order:
         orderlineitem:

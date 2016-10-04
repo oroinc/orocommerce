@@ -3,3 +3,4 @@ assets:
         'oropricing':
             - 'bundles/oropricing/css/style.less'
             - 'bundles/oropricing/css/product-prices.less'
+            - 'bundles/oropricing/css/price-rule.less'

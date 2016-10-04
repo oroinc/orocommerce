@@ -1,6 +1,16 @@
+{% block __oro_account_user_address_form__account_user_address_edit_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " address-form"
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block __oro_account_user_address_form__account_user_address_edit_form_actions_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " mt2-md"
+        class: attr.class|default('') ~ " address-form-actions"
     }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}

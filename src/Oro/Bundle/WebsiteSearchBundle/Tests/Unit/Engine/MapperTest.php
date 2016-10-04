@@ -45,6 +45,26 @@ class MapperTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResult, $this->mapper->mapSelectedData($query, $item));
     }
 
+    public function testMapSelectedDataWithAliases()
+    {
+        $query = new Query();
+        $query->select('titleCode as title');
+        $query->addSelect('codeId as code');
+
+        $item = [
+            'titleCode' => 'QWERTY',
+            'codeId' => 123,
+            'description' => 'I don\'t want to select it',
+        ];
+
+        $expectedResult = [
+            'title' => 'QWERTY',
+            'code' => 123,
+        ];
+
+        $this->assertEquals($expectedResult, $this->mapper->mapSelectedData($query, $item));
+    }
+
     public function testMapSelectedDataEmptySelect()
     {
         $query = new Query();
@@ -52,7 +72,7 @@ class MapperTest extends \PHPUnit_Framework_TestCase
             'title' => 'Test item title',
         ];
 
-        $this->assertNull($this->mapper->mapSelectedData($query, $item));
+        $this->assertEquals([], $this->mapper->mapSelectedData($query, $item));
     }
 
     public function testMapSelectedDataEmptyItem()

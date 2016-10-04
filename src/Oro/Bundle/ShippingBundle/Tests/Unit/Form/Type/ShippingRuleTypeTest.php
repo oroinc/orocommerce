@@ -2,49 +2,60 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
-use Symfony\Component\Form\PreloadedExtension;
-
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
-
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-use Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationCollectionType;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodConfigCollectionType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodConfigType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodTypeConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType;
-use Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod;
+use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
+use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodProvider;
+use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\SubscriberProxy;
-use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroup;
-use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroupValidator;
-use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingConfigurationType;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleConfigurationType;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\RuleMethodConfigCollectionSubscriberProxy;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\RuleMethodConfigSubscriberProxy;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\RuleMethodTypeConfigCollectionSubscriberProxy;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
-
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ShippingRuleTypeTest extends FormIntegrationTestCase
 {
-    /** @var ShippingRuleType */
+    /**
+     * @var ShippingRuleType
+     */
     protected $formType;
 
     /**
-     * @var SubscriberProxy
+     * @var RuleMethodTypeConfigCollectionSubscriberProxy
      */
-    protected $subscriber;
+    protected $ruleMethodTypeConfigCollectionSubscriber;
+
+    /**
+     * @var RuleMethodConfigCollectionSubscriberProxy
+     */
+    protected $ruleMethodConfigCollectionSubscriber;
+
+    /**
+     * @var RuleMethodConfigSubscriberProxy
+     */
+    protected $ruleMethodConfigSubscriber;
 
     /**
      * @var ShippingMethodRegistry
@@ -54,18 +65,31 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->methodRegistry = new ShippingMethodRegistry();
-        $flatRate = new FlatRateShippingMethod();
-        $this->methodRegistry->addShippingMethod($flatRate);
-        $this->subscriber = new SubscriberProxy();
+        $flatRate = new FlatRateShippingMethodProvider();
+        $this->methodRegistry->addProvider($flatRate);
+        $this->ruleMethodTypeConfigCollectionSubscriber = new RuleMethodTypeConfigCollectionSubscriberProxy();
+        $this->ruleMethodConfigSubscriber = new RuleMethodConfigSubscriberProxy();
+        $this->ruleMethodConfigCollectionSubscriber = new RuleMethodConfigCollectionSubscriberProxy();
         parent::setUp();
-        $this->subscriber->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
-        parent::setUp();
-        $this->formType = new ShippingRuleType();
+        $this->ruleMethodTypeConfigCollectionSubscriber
+            ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
+        $this->ruleMethodConfigSubscriber->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
+        $this->ruleMethodConfigCollectionSubscriber
+            ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
+
+        $translator = $this->getMock(TranslatorInterface::class);
+        $translator->expects(static::any())
+            ->method('trans')
+            ->will(static::returnCallback(function ($message) {
+                return $message.'_translated';
+            }));
+
+        $this->formType = new ShippingRuleType($this->methodRegistry, $translator);
     }
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(ShippingRuleType::NAME, $this->formType->getBlockPrefix());
+        $this->assertEquals(ShippingRuleType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
     }
 
     /**
@@ -77,21 +101,28 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create($this->formType, $data);
 
-        $this->assertEquals($data, $form->getData());
+        $this->assertSame($data, $form->getData());
 
         $form->submit([
             'name' => 'new rule',
             'currency' => 'USD',
             'priority' => '1',
-            'configurations' => [
+            'methodConfigs' => [
                 [
-                    'enabled' => true,
-                    'method' => FlatRateShippingMethod::NAME,
-                    'type' => FlatRateShippingMethod::NAME,
-                    'processingType' => FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER,
-                    'value' => 21,
+                    'method' => FlatRateShippingMethod::IDENTIFIER,
+                    'options' => [],
+                    'typeConfigs' => [
+                        [
+                            'enabled' => '1',
+                            'type' => FlatRateShippingMethodType::IDENTIFIER,
+                            'options' => [
+                                'price' => 12,
+                                'type' => FlatRateShippingMethodType::PER_ITEM_TYPE,
+                            ],
+                        ]
+                    ]
                 ]
-            ],
+            ]
         ]);
 
         $shippingRule = (new ShippingRule())
@@ -99,13 +130,20 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
             ->setCurrency('USD')
             ->setPriority(1)
             ->setEnabled(false)
-            ->addConfiguration(
-                (new FlatRateRuleConfiguration())
-                    ->setMethod(FlatRateShippingMethod::NAME)
-                    ->setType(FlatRateShippingMethod::NAME)
-                    ->setProcessingType(FlatRateRuleConfiguration::PROCESSING_TYPE_PER_ORDER)
-                    ->setValue(21)
-                    ->setEnabled(true)
+            ->addMethodConfig(
+                (new ShippingRuleMethodConfig())
+                    ->setMethod(FlatRateShippingMethod::IDENTIFIER)
+                    ->setOptions([])
+                    ->addTypeConfig(
+                        (new ShippingRuleMethodTypeConfig())
+                            ->setEnabled(true)
+                            ->setType(FlatRateShippingMethodType::IDENTIFIER)
+                            ->setOptions([
+                                'price' => 12,
+                                'handling_fee' => null,
+                                'type' => FlatRateShippingMethodType::PER_ITEM_TYPE,
+                            ])
+                    )
             );
 
         $this->assertTrue($form->isValid());
@@ -118,7 +156,7 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
     public function submitDataProvider()
     {
         return [
-            [(new ShippingRule())],
+            [new ShippingRule()],
             [
                 (new ShippingRule())
                     ->setCurrency('EUR')
@@ -133,10 +171,10 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
      */
     protected function getValidators()
     {
-        $constraint = new EnabledConfigurationValidationGroup();
+        $constraint = new EnabledTypeConfigsValidationGroup();
 
         return [
-            $constraint->validatedBy() => new EnabledConfigurationValidationGroupValidator(),
+            $constraint->validatedBy() => new EnabledTypeConfigsValidationGroupValidator(),
         ];
     }
 
@@ -145,6 +183,14 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
      */
     public function getExtensions()
     {
+        $roundingService = $this->getMock(RoundingServiceInterface::class);
+        $roundingService->expects($this->any())
+            ->method('getPrecision')
+            ->willReturn(4);
+        $roundingService->expects($this->any())
+            ->method('getRoundType')
+            ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
+
         $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
         $configManager->expects($this->any())
             ->method('get')
@@ -156,62 +202,21 @@ class ShippingRuleTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $country = new Country('US');
-        $choices = [
-            'OroAddressBundle:Country' => ['US' => $country],
-            'OroAddressBundle:Region' => ['US-AL' => (new Region('US-AL'))->setCountry($country)],
-        ];
-
-        $translatableEntity->expects($this->any())->method('setDefaultOptions')->will(
-            $this->returnCallback(
-                function (OptionsResolver $resolver) use ($choices) {
-                    $choiceList = function (Options $options) use ($choices) {
-                        $className = $options->offsetGet('class');
-                        if (array_key_exists($className, $choices)) {
-                            return new ArrayChoiceList(
-                                $choices[$className],
-                                function ($item) {
-                                    if ($item instanceof Country) {
-                                        return $item->getIso2Code();
-                                    }
-
-                                    if ($item instanceof Region) {
-                                        return $item->getCombinedCode();
-                                    }
-
-                                    return $item . uniqid('form', true);
-                                }
-                            );
-                        }
-
-                        return new ArrayChoiceList([]);
-                    };
-
-                    $resolver->setDefault('choice_list', $choiceList);
-                }
-            )
-        );
-
-        $roundingService = $this->getMock(RoundingServiceInterface::class);
-        $roundingService->expects($this->any())
-            ->method('getPrecision')
-            ->willReturn(4);
-        $roundingService->expects($this->any())
-            ->method('getRoundType')
-            ->willReturn(RoundingServiceInterface::ROUND_HALF_UP);
-
         return [
             new PreloadedExtension(
                 [
+                    FlatRateShippingMethodTypeOptionsType::class
+                    => new FlatRateShippingMethodTypeOptionsType($roundingService),
+                    ShippingRuleMethodConfigCollectionType::class
+                    => new ShippingRuleMethodConfigCollectionType($this->ruleMethodConfigCollectionSubscriber),
+                    ShippingRuleMethodConfigType::class
+                    => new ShippingRuleMethodConfigType($this->ruleMethodConfigSubscriber, $this->methodRegistry),
+                    ShippingRuleMethodTypeConfigCollectionType::class =>
+                        new ShippingRuleMethodTypeConfigCollectionType($this->ruleMethodTypeConfigCollectionSubscriber),
                     CurrencySelectionType::NAME => new CurrencySelectionType(
                         $configManager,
                         $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock()
                     ),
-                    ShippingRuleConfigurationCollectionType::NAME => new ShippingRuleConfigurationCollectionType(
-                        $this->subscriber
-                    ),
-                    FlatRateShippingConfigurationType::NAME => new FlatRateShippingConfigurationType($roundingService),
-                    ShippingRuleConfigurationType::NAME => new ShippingRuleConfigurationType(),
                     CollectionType::NAME => new CollectionType(),
                     ShippingRuleDestinationType::NAME => new ShippingRuleDestinationType(
                         new AddressCountryAndRegionSubscriberStub()

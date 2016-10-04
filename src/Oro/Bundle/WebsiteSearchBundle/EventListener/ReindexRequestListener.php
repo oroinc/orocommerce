@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 class ReindexRequestListener
@@ -121,8 +122,7 @@ class ReindexRequestListener
 
         $websiteId = $event->getWebsiteId();
         if (!empty($websiteId)) {
-            // TODO uncomment when AbstractIndexer is available
-            // $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
+             $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
         }
 
         return $context;
