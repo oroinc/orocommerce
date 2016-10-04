@@ -33,21 +33,22 @@ services:
     oro_website_search.placeholder.registry:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry'
         public: false
-        calls:
-            - [addPlaceholder, ['@oro_website_search.website_id.placeholder']]
-            - [addPlaceholder, ['@oro_website_search.localization_id.placeholder']]
 
     oro_website_search.website_id.placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder'
         public: false
         arguments:
             - '@oro_website.manager'
+        tags:
+            - { name: website_search.placeholder }
 
     oro_website_search.localization_id.placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder'
         public: false
         arguments:
             - '@oro_frontend_localization.manager.user_localization'
+        tags:
+            - { name: website_search.placeholder }
 
     oro_website_search.loader.mapping_configuration_loader:
         public: false
