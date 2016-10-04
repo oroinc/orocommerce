@@ -57,7 +57,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testCreate($email, $password, $isPasswordGenerate, $isSendEmail, $emailsCount)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_account_user_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_user_create'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         /** @var \Oro\Bundle\CustomerBundle\Entity\Account $account */
@@ -117,7 +117,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_account_user_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_user_index'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -140,7 +140,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
             ->findOneBy(['email' => self::EMAIL, 'firstName' => self::FIRST_NAME, 'lastName' => self::LAST_NAME]);
         $id = $accountUser->getId();
 
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_account_user_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_user_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save and Close')->form();
         $form['oro_account_account_user[enabled]'] = false;
@@ -168,7 +168,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testView($id)
     {
-        $this->client->request('GET', $this->getUrl('oro_account_account_user_view', ['id' => $id]));
+        $this->client->request('GET', $this->getUrl('oro_customer_account_user_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -196,7 +196,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
     {
         $this->client->request(
             'GET',
-            $this->getUrl('oro_account_account_user_info', ['id' => $id]),
+            $this->getUrl('oro_customer_account_user_info', ['id' => $id]),
             ['_widgetContainer' => 'dialog']
         );
 
@@ -233,7 +233,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
         $this->client->request(
             'GET',
-            $this->getUrl('oro_account_account_user_roles'),
+            $this->getUrl('oro_customer_account_user_roles'),
             ['_widgetContainer' => 'widget']
         );
         $response = $this->client->getResponse();
@@ -247,7 +247,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
         $this->client->request(
             'GET',
-            $this->getUrl('oro_account_account_user_roles', ['accountId' => $foreignAccount->getId()])
+            $this->getUrl('oro_customer_account_user_roles', ['accountId' => $foreignAccount->getId()])
         );
 
         $response = $this->client->getResponse();
@@ -279,7 +279,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_account_account_user_roles',
+                'oro_customer_account_user_roles',
                 [
                     'accountUserId' => $accountUser->getId(),
                     'accountId'     => $userAccount->getId(),
@@ -301,7 +301,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_account_account_user_roles',
+                'oro_customer_account_user_roles',
                 [
                     'accountUserId' => $accountUser->getId(),
                 ]

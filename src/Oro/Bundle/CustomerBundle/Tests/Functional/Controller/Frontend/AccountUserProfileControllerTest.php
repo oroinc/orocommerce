@@ -21,7 +21,7 @@ class AccountUserProfileControllerTest extends WebTestCase
 
     public function testViewProfile()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_profile'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_profile'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -30,7 +30,7 @@ class AccountUserProfileControllerTest extends WebTestCase
 
     public function testEditProfile()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_profile_update'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_profile_update'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -48,7 +48,7 @@ class AccountUserProfileControllerTest extends WebTestCase
 
     public function testEditProfilePasswordMismatch()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_profile_update'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_profile_update'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -75,7 +75,7 @@ class AccountUserProfileControllerTest extends WebTestCase
 
     public function testEditProfileWithoutCurrentPassword()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_profile_update'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_profile_update'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 

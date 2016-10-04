@@ -44,7 +44,7 @@ abstract class AbstractAccountUserActionsTestCase extends WebTestCase
 
         $configManager = $this->getContainer()->get('oro_config.manager');
         $loginUrl = trim($configManager->get('oro_ui.application_url'), '/')
-            . $this->getUrl('oro_account_account_user_security_login');
+            . $this->getUrl('oro_customer_account_user_security_login');
 
         $this->assertContains($loginUrl, $message->getBody());
 

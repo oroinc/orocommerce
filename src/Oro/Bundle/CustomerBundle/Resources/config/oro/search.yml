@@ -40,7 +40,7 @@ search:
         label: oro.customer.accountuser.entity_plural_label
         title_fields: [email]
         route:
-            name: oro_account_account_user_view
+            name: oro_customer_account_user_view
             parameters:
                 id: id
         search_template: OroCustomerBundle:AccountUser:searchResult.html.twig
@@ -59,11 +59,11 @@ search:
                 target_fields: [lastName]
 
     Oro\Bundle\CustomerBundle\Entity\AccountUserRole:
-        alias: oro_account_account_user_role
+        alias: oro_customer_account_user_role
         label: oro.customer.accountuserrole.entity_plural_label
         title_fields: [label]
         route:
-            name: oro_account_account_user_role_update
+            name: oro_customer_account_user_role_update
             parameters:
                 id: id
         search_template: OroCustomerBundle:AccountUserRole:searchResult.html.twig

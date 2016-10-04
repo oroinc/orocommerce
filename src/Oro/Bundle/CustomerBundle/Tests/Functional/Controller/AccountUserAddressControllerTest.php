@@ -33,7 +33,7 @@ class AccountUserAddressControllerTest extends WebTestCase
 
     public function testAccountUserView()
     {
-        $this->client->request('GET', $this->getUrl('oro_account_account_user_view', [
+        $this->client->request('GET', $this->getUrl('oro_customer_account_user_view', [
             'id' => $this->accountUser->getId()
         ]));
 
@@ -54,7 +54,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         $crawler     = $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_account_account_user_address_create',
+                'oro_customer_account_user_address_create',
                 ['entityId' => $accountUser->getId(), '_widgetContainer' => 'dialog']
             )
         );
@@ -125,7 +125,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_account_account_user_address_update',
+                'oro_customer_account_user_address_update',
                 ['entityId' => $accountUserId, 'id' => $address['id'], '_widgetContainer' => 'dialog']
             )
         );

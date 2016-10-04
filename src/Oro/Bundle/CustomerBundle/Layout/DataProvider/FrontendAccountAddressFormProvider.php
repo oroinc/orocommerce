@@ -11,8 +11,8 @@ use Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressType;
 
 class FrontendAccountAddressFormProvider extends AbstractFormProvider
 {
-    const ACCOUNT_ADDRESS_CREATE_ROUTE_NAME = 'oro_account_frontend_account_address_create';
-    const ACCOUNT_ADDRESS_UPDATE_ROUTE_NAME = 'oro_account_frontend_account_address_update';
+    const ACCOUNT_ADDRESS_CREATE_ROUTE_NAME = 'oro_customer_frontend_account_address_create';
+    const ACCOUNT_ADDRESS_UPDATE_ROUTE_NAME = 'oro_customer_frontend_account_address_update';
 
     /**
      * Get form accessor with account address form

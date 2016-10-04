@@ -39,7 +39,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
         $id = $user->getId();
         $this->client->request(
             'GET',
-            $this->getUrl('oro_account_frontend_account_user_get_account', ['id' => $id])
+            $this->getUrl('oro_customer_frontend_account_user_get_account', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);

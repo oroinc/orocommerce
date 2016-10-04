@@ -33,7 +33,7 @@
             {% endif %}
 
             {% if entity.users | length %}
-                {{ UI.renderHtmlProperty('oro.customer.account.users.label'|trans, UI.entityViewLinks(entity.users, 'fullName', 'oro_account_account_user_view')) }}
+                {{ UI.renderHtmlProperty('oro.customer.account.users.label'|trans, UI.entityViewLinks(entity.users, 'fullName', 'oro_customer_account_user_view')) }}
             {% endif %}
 
             {% if entity.salesRepresentatives | length %}

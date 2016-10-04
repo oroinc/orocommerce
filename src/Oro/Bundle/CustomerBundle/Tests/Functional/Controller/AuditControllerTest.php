@@ -88,7 +88,7 @@ class AuditControllerTest extends WebTestCase
 
     protected function createUser()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_create'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $form = $crawler->selectButton('Save')->form();

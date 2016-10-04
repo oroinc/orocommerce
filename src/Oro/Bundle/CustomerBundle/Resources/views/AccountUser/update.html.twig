@@ -7,14 +7,14 @@
     }
 }) %}
 
-{% set formAction = entity.id ? path('oro_account_account_user_update', { 'id': entity.id }) : path('oro_account_account_user_create')  %}
+{% set formAction = entity.id ? path('oro_customer_account_user_update', { 'id': entity.id }) : path('oro_customer_account_user_create')  %}
 
 {% block navButtons %}
     {{ parent() }}
 
-    {{ UI.cancelButton(path('oro_account_account_user_index')) }}
+    {{ UI.cancelButton(path('oro_customer_account_user_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('oro_account_account_user_update') %}
+    {% if entity.id or resource_granted('oro_customer_account_user_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -24,7 +24,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('oro_account_account_user_index'),
+            'indexPath':   path('oro_customer_account_user_index'),
             'indexLabel': 'oro.customer.accountuser.entity_plural_label'|trans,
             'entityTitle': entity.email|default('N/A'|trans)
         } %}
@@ -44,7 +44,7 @@
 
 {% block content_data %}
     {% set id = 'account-user-edit' %}
-    {% set roleWidgetAlias = 'oro_account_account_user_role' %}
+    {% set roleWidgetAlias = 'oro_customer_account_user_role' %}
 
     {% set accountFormOptions = {
         accountUserId: entity.id|default(null),
@@ -112,7 +112,7 @@
     {% if hasRoles %}
         {% set userRoles %}
             {% set widgetOptions = {} %}
-            {% set widgetUrl = 'oro_account_account_user_roles' %}
+            {% set widgetUrl = 'oro_customer_account_user_roles' %}
             {% if entity.id %}
                 {% set widgetOptions = widgetOptions|merge({accountUserId: entity.id}) %}
             {% endif %}

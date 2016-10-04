@@ -18,7 +18,7 @@ use Oro\Bundle\CustomerBundle\Form\Type\AccountUserTypedAddressType;
 class AccountUserAddressController extends Controller
 {
     /**
-     * @Route("/address-book/{id}", name="oro_account_account_user_address_book", requirements={"id"="\d+"})
+     * @Route("/address-book/{id}", name="oro_customer_account_user_address_book", requirements={"id"="\d+"})
      * @Template("OroCustomerBundle:Address/widget:addressBook.html.twig")
      * @AclAncestor("oro_account_account_user_view")
      *
@@ -37,7 +37,7 @@ class AccountUserAddressController extends Controller
     /**
      * @Route(
      *      "/{entityId}/address-create",
-     *      name="oro_account_account_user_address_create",
+     *      name="oro_customer_account_user_address_create",
      *      requirements={"accountUserId"="\d+"}
      * )
      * @Template("OroCustomerBundle:Address/widget:update.html.twig")
@@ -55,7 +55,7 @@ class AccountUserAddressController extends Controller
     /**
      * @Route(
      *      "/{entityId}/address-update/{id}",
-     *      name="oro_account_account_user_address_update",
+     *      name="oro_customer_account_user_address_update",
      *      requirements={"accountUserId"="\d+","id"="\d+"},defaults={"id"=0}
      * )
      * @Template("OroCustomerBundle:Address/widget:update.html.twig")
@@ -114,8 +114,8 @@ class AccountUserAddressController extends Controller
 
         $responseData['form'] = $form->createView();
         $responseData['routes'] = [
-            'create' => 'oro_account_account_user_address_create',
-            'update' => 'oro_account_account_user_address_update'
+            'create' => 'oro_customer_account_user_address_create',
+            'update' => 'oro_customer_account_user_address_update'
         ];
         return $responseData;
     }
@@ -130,7 +130,7 @@ class AccountUserAddressController extends Controller
             'entityId' => $entity->getId()
         ]);
 
-        $addressCreateUrl = $this->generateUrl('oro_account_account_user_address_create', [
+        $addressCreateUrl = $this->generateUrl('oro_customer_account_user_address_create', [
             'entityId' => $entity->getId()
         ]);
 
@@ -141,7 +141,7 @@ class AccountUserAddressController extends Controller
             'entityId'               => $entity->getId(),
             'addressListUrl'         => $addressListUrl,
             'addressCreateUrl'       => $addressCreateUrl,
-            'addressUpdateRouteName' => 'oro_account_account_user_address_update',
+            'addressUpdateRouteName' => 'oro_customer_account_user_address_update',
             'currentAddresses'       => $currentAddresses
         ];
     }

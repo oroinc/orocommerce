@@ -57,7 +57,7 @@ define(function(require) {
                 }
 
                 widget.setUrl(
-                    routing.generate('oro_account_account_user_roles', params)
+                    routing.generate('oro_customer_account_user_roles', params)
                 );
                 widget.render();
             });

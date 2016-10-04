@@ -25,8 +25,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      }
  * )
  * @Config(
- *      routeName="oro_account_account_user_role_index",
- *      routeUpdate="oro_account_account_user_role_update",
+ *      routeName="oro_customer_account_user_role_index",
+ *      routeUpdate="oro_customer_account_user_role_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"

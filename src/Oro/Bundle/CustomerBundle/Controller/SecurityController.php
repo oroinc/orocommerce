@@ -11,13 +11,13 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 class SecurityController extends Controller
 {
     /**
-     * @Route("/login", name="oro_account_account_user_security_login")
+     * @Route("/login", name="oro_customer_account_user_security_login")
      * @Layout()
      */
     public function loginAction()
     {
         if ($this->getUser()) {
-            return $this->redirect($this->generateUrl('oro_account_frontend_account_user_profile'));
+            return $this->redirect($this->generateUrl('oro_customer_frontend_account_user_profile'));
         }
 
         $registrationAllowed = (bool) $this->get('oro_config.manager')->get('oro_customer.registration_allowed');
@@ -30,7 +30,7 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/login-check", name="oro_account_account_user_security_check")
+     * @Route("/login-check", name="oro_customer_account_user_security_check")
      */
     public function checkAction()
     {
@@ -41,7 +41,7 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/logout", name="oro_account_account_user_security_logout")
+     * @Route("/logout", name="oro_customer_account_user_security_logout")
      */
     public function logoutAction()
     {

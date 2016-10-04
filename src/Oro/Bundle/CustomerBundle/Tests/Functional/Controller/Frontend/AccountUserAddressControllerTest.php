@@ -43,7 +43,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         $this->markTestSkipped('Should be fixed after BAP-10981');
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_frontend_account_user_address_index')
+            $this->getUrl('oro_customer_frontend_account_user_address_index')
         );
 
         $addCompanyAddressLink = $crawler->selectLink('Add Company Address')->link();
@@ -59,7 +59,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_account_frontend_account_user_address_create',
+                'oro_customer_frontend_account_user_address_create',
                 ['entityId' => $this->currentUser->getId()]
             )
         );
@@ -149,7 +149,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_account_frontend_account_user_address_update',
+                'oro_customer_frontend_account_user_address_update',
                 ['entityId' => $this->currentUser->getId(), 'id' => $addressId]
             )
         );

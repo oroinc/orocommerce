@@ -12,8 +12,8 @@ use Oro\Bundle\CustomerBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler;
 
 class FrontendAccountUserRoleFormProvider extends AbstractFormProvider
 {
-    const ACCOUNT_USER_ROLE_CREATE_ROUTE_NAME = 'oro_account_frontend_account_user_role_create';
-    const ACCOUNT_USER_ROLE_UPDATE_ROUTE_NAME = 'oro_account_frontend_account_user_role_update';
+    const ACCOUNT_USER_ROLE_CREATE_ROUTE_NAME = 'oro_customer_frontend_account_user_role_create';
+    const ACCOUNT_USER_ROLE_UPDATE_ROUTE_NAME = 'oro_customer_frontend_account_user_role_update';
 
     /** @var AccountUserRoleUpdateFrontendHandler */
     protected $handler;

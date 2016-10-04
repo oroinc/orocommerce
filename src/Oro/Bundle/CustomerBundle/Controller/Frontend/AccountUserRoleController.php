@@ -17,7 +17,7 @@ use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 class AccountUserRoleController extends Controller
 {
     /**
-     * @Route("/", name="oro_account_frontend_account_user_role_index")
+     * @Route("/", name="oro_customer_frontend_account_user_role_index")
      * @Layout(vars={"entity_class"})
      * @Acl(
      *      id="oro_account_frontend_account_user_role_index",
@@ -36,7 +36,7 @@ class AccountUserRoleController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="oro_account_frontend_account_user_role_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_customer_frontend_account_user_role_view", requirements={"id"="\d+"})
      * @Layout()
      *
      * @param AccountUserRole $role
@@ -61,7 +61,7 @@ class AccountUserRoleController extends Controller
     }
 
     /**
-     * @Route("/create", name="oro_account_frontend_account_user_role_create")
+     * @Route("/create", name="oro_customer_frontend_account_user_role_create")
      * @Layout()
      * @Acl(
      *      id="oro_account_frontend_account_user_role_create",
@@ -79,7 +79,7 @@ class AccountUserRoleController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="oro_account_frontend_account_user_role_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_customer_frontend_account_user_role_update", requirements={"id"="\d+"})
      * @Layout()
      * @param AccountUserRole $role
      * @param Request $request
@@ -120,13 +120,13 @@ class AccountUserRoleController extends Controller
             $form,
             function (AccountUserRole $role) {
                 return [
-                    'route' => 'oro_account_frontend_account_user_role_update',
+                    'route' => 'oro_customer_frontend_account_user_role_update',
                     'parameters' => ['id' => $role->getId()],
                 ];
             },
             function (AccountUserRole $role) {
                 return [
-                    'route' => 'oro_account_frontend_account_user_role_view',
+                    'route' => 'oro_customer_frontend_account_user_role_view',
                     'parameters' => ['id' => $role->getId()],
                 ];
             },

@@ -19,7 +19,7 @@ define(function(require) {
             accountSelect: '.account-account-select input[type="hidden"]',
             accountUserSelect: '.account-accountuser-select input[type="hidden"]',
             accountUserMultiSelect: '.account-accountuser-multiselect input[type="hidden"]',
-            accountRoute: 'oro_account_account_user_get_account',
+            accountRoute: 'oro_customer_account_user_get_account',
             errorMessage: 'Sorry, unexpected error was occurred'
         },
 

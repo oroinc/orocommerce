@@ -22,7 +22,7 @@ class AccountAddressController extends Controller
     /**
      * @Route(
      *     "/{entityId}/create",
-     *     name="oro_account_frontend_account_address_create",
+     *     name="oro_customer_frontend_account_address_create",
      *     requirements={"entityId":"\d+"}
      * )
      * @Acl(
@@ -48,7 +48,7 @@ class AccountAddressController extends Controller
     /**
      * @Route(
      *     "/{entityId}/update/{id}",
-     *     name="oro_account_frontend_account_address_update",
+     *     name="oro_customer_frontend_account_address_update",
      *     requirements={"entityId":"\d+", "id":"\d+"}
      * )
      * @Acl(
@@ -98,13 +98,13 @@ class AccountAddressController extends Controller
             $form,
             function (AccountAddress $accountAddress) use ($account) {
                 return [
-                    'route' => 'oro_account_frontend_account_address_update',
+                    'route' => 'oro_customer_frontend_account_address_update',
                     'parameters' => ['id' => $accountAddress->getId(), 'entityId' => $account->getId()],
                 ];
             },
             function (AccountAddress $accountAddress) {
                 return [
-                    'route' => 'oro_account_frontend_account_user_address_index'
+                    'route' => 'oro_customer_frontend_account_user_address_index'
                 ];
             },
             $this->get('translator')->trans('oro.customer.controller.accountaddress.saved.message'),

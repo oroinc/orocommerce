@@ -42,7 +42,7 @@ class AccountAddressControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_account_frontend_account_address_create',
+                'oro_customer_frontend_account_address_create',
                 ['entityId' => $this->currentUser->getId()]
             )
         );
@@ -132,7 +132,7 @@ class AccountAddressControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_account_frontend_account_address_update',
+                'oro_customer_frontend_account_address_update',
                 ['entityId' => $this->currentUser->getId(), 'id' => $addressId]
             )
         );

@@ -61,7 +61,7 @@
                         {{ UI.renderHtmlProperty('oro.customer.accountuser.profile.company_name'|trans, accountUser.account.name) }}
                     {% endif %}
 
-                    {% if resource_granted('oro_account_account_user_role_view') %}
+                    {% if resource_granted('oro_customer_account_user_role_view') %}
                         {% set roles = [] %}
                         {% for accountUserRole in accountUser.roles %}
                             {% set roles = roles|merge([accountUserRole.label]) %}

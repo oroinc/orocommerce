@@ -60,7 +60,7 @@ class AccountControllersTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('oro_account_account_user_view', ['id' => $this->accountUser->getId()])
+            $this->getUrl('oro_customer_account_user_view', ['id' => $this->accountUser->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);

@@ -810,8 +810,8 @@ services:
         calls:
             - [setEntityClass, ['Oro\Bundle\CustomerBundle\Entity\Account']]
             - [setListRouteName, ['oro_api_account_frontend_get_account_addresses']]
-            - [setCreateRouteName, ['oro_account_frontend_account_address_create']]
-            - [setUpdateRouteName, ['oro_account_frontend_account_address_update']]
+            - [setCreateRouteName, ['oro_customer_frontend_account_address_create']]
+            - [setUpdateRouteName, ['oro_customer_frontend_account_address_update']]
         tags:
              - { name: layout.data_provider, alias: account_address_provider }
 
@@ -820,8 +820,8 @@ services:
         calls:
             - [setEntityClass, ['Oro\Bundle\CustomerBundle\Entity\AccountUser']]
             - [setListRouteName, ['oro_api_account_frontend_get_accountuser_addresses']]
-            - [setCreateRouteName, ['oro_account_frontend_account_user_address_create']]
-            - [setUpdateRouteName, ['oro_account_frontend_account_user_address_update']]
+            - [setCreateRouteName, ['oro_customer_frontend_account_user_address_create']]
+            - [setUpdateRouteName, ['oro_customer_frontend_account_user_address_update']]
         tags:
              - { name: layout.data_provider, alias: account_user_address_provider }
 

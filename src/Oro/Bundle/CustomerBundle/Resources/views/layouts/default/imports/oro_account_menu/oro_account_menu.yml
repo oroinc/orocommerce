@@ -17,14 +17,14 @@ layout:
             blockType: link
             options:
                 visible: '=data["acl"].isGranted("oro_account_frontend_account_user_view")'
-                route_name: oro_account_frontend_account_user_profile
+                route_name: oro_customer_frontend_account_user_profile
                 text: oro.customer.frontend.account_user.profile.label
         - '@add':
             id: account_sidebar_account_user_address
             parentId: account_sidebar
             blockType: link
             options:
-                route_name: oro_account_frontend_account_user_address_index
+                route_name: oro_customer_frontend_account_user_address_index
                 text: oro.customer.frontend.account_user.address.label
                 visible: '=data["acl"].isGranted("oro_account_frontend_account_view") or data["acl"].isGranted("oro_account_frontend_account_user_view")'
         - '@add':
@@ -33,7 +33,7 @@ layout:
             blockType: link
             options:
                 visible: '=data["acl"].isGranted("oro_account_frontend_account_user_view")'
-                route_name: oro_account_frontend_account_user_index
+                route_name: oro_customer_frontend_account_user_index
                 text: oro.customer.frontend.account_user.entity_plural_label
         - '@add':
             id: account_sidebar_account_role
@@ -41,5 +41,5 @@ layout:
             blockType: link
             options:
                 visible: '=data["acl"].isGranted("oro_account_frontend_account_user_role_index")'
-                route_name: oro_account_frontend_account_user_role_index
+                route_name: oro_customer_frontend_account_user_role_index
                 text: oro.customer.frontend.account_user.role.entity_plural_label

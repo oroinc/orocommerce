@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroCustomerBundle:layouts:default/oro_account_frontend_account_user_reset_check_email/check_email.html.twig'
+            themes: 'OroCustomerBundle:layouts:default/oro_customer_frontend_account_user_reset_check_email/check_email.html.twig'
 
         - '@appendOption':
             id: title
@@ -30,7 +30,7 @@ layout:
                 check_email_return_to_login:
                     blockType: link
                     options:
-                        route_name: oro_account_account_user_security_login
+                        route_name: oro_customer_account_user_security_login
                         text: 'oro.customer.accountuser.profile.return_to_login'
 
             tree:

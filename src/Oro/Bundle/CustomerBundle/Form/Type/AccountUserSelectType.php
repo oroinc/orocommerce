@@ -19,7 +19,7 @@ class AccountUserSelectType extends AbstractType
         $resolver->setDefaults(
             [
                 'autocomplete_alias' => 'oro_account_account_user',
-                'create_form_route' => 'oro_account_account_user_create',
+                'create_form_route' => 'oro_customer_account_user_create',
                 'configs' => [
                     'component' => 'autocomplete-accountuser',
                     'placeholder' => 'oro.customer.accountuser.form.choose',

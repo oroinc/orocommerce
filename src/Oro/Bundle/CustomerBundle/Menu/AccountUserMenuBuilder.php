@@ -26,7 +26,7 @@ class AccountUserMenuBuilder implements BuilderInterface
             ->addChild(
                 'oro.customer.menu.account_user_logout.label',
                 [
-                    'route'          => 'oro_account_account_user_security_logout',
+                    'route'          => 'oro_customer_account_user_security_logout',
                     'linkAttributes' => ['class' => 'no-hash']
                 ]
             );

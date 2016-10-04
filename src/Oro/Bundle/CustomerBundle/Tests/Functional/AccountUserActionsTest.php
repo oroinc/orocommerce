@@ -50,7 +50,7 @@ class AccountUserActionsTest extends AbstractAccountUserActionsTestCase
                 'oro_action_operation_execute',
                 [
                     'operationName' => $operationName,
-                    'route' => 'oro_account_account_user_view',
+                    'route' => 'oro_customer_account_user_view',
                     'entityId' => $accountUser->getId(),
                     'entityClass' => 'Oro\Bundle\CustomerBundle\Entity\AccountUser'
                 ]

@@ -32,6 +32,6 @@ layout:
             parentId: account_user_view_page
             prepend: true
             options:
-                route_name: oro_account_frontend_account_user_index
+                route_name: oro_customer_frontend_account_user_index
                 text: 'oro.customer.frontend.account_user_link.text'
 

@@ -18,7 +18,7 @@
             {% set accountUserView = '' %}
             {% if entity.accountUser is not empty %}
                 {% if resource_granted('VIEW', entity.accountUser) %}
-                    {% set accountUserView = UI.renderUrl(path('oro_account_account_user_view', {'id': entity.accountUser.id}), entity.accountUser|oro_format_name) %}
+                    {% set accountUserView = UI.renderUrl(path('oro_customer_account_user_view', {'id': entity.accountUser.id}), entity.accountUser|oro_format_name) %}
                 {% else %}
                     {% set accountUserView = entity.accountUser|oro_format_name|trim %}
                 {% endif %}

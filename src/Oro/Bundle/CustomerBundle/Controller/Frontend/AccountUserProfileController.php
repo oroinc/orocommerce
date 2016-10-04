@@ -15,7 +15,7 @@ use Oro\Bundle\CustomerBundle\Form\Handler\FrontendAccountUserHandler;
 class AccountUserProfileController extends Controller
 {
     /**
-     * @Route("/", name="oro_account_frontend_account_user_profile")
+     * @Route("/", name="oro_customer_frontend_account_user_profile")
      * @Layout
      * @AclAncestor("oro_account_frontend_account_user_view")
      *
@@ -33,7 +33,7 @@ class AccountUserProfileController extends Controller
     /**
      * Edit account user form
      *
-     * @Route("/update", name="oro_account_frontend_account_user_profile_update")
+     * @Route("/update", name="oro_customer_frontend_account_user_profile_update")
      * @Layout()
      * @AclAncestor("oro_account_frontend_account_user_update")
      *
@@ -54,8 +54,8 @@ class AccountUserProfileController extends Controller
         $resultHandler = $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,
-            ['route' => 'oro_account_frontend_account_user_profile_update'],
-            ['route' => 'oro_account_frontend_account_user_profile'],
+            ['route' => 'oro_customer_frontend_account_user_profile_update'],
+            ['route' => 'oro_customer_frontend_account_user_profile'],
             $this->get('translator')->trans('oro.customer.controller.accountuser.profile_updated.message'),
             $handler
         );

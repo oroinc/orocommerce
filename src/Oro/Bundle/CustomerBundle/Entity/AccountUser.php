@@ -42,9 +42,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *      )
  * })
  * @Config(
- *      routeName="oro_account_account_user_index",
- *      routeView="oro_account_account_user_view",
- *      routeUpdate="oro_account_account_user_update",
+ *      routeName="oro_customer_account_user_index",
+ *      routeView="oro_customer_account_user_view",
+ *      routeUpdate="oro_customer_account_user_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"

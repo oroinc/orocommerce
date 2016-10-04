@@ -40,7 +40,7 @@ layout:
                     blockType: link
                     options:
                         visible: '=data["acl"].isGranted("oro_account_frontend_account_user_address_create")'
-                        route_name: oro_account_frontend_account_user_address_create
+                        route_name: oro_customer_frontend_account_user_address_create
                         route_parameters:
                             entityId: '=data["entity"].getId()'
                         text: 'oro.customer.address.add'

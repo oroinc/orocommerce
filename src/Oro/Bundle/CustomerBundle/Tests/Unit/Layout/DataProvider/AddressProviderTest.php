@@ -39,8 +39,8 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->provider->setEntityClass('Oro\Bundle\CustomerBundle\Entity\Account');
         $this->provider->setListRouteName('oro_api_account_frontend_get_account_addresses');
-        $this->provider->setCreateRouteName('oro_account_frontend_account_address_create');
-        $this->provider->setUpdateRouteName('oro_account_frontend_account_address_update');
+        $this->provider->setCreateRouteName('oro_customer_frontend_account_address_create');
+        $this->provider->setUpdateRouteName('oro_customer_frontend_account_address_update');
 
         /** @var Account $entity */
         $entity = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 40]);
@@ -55,7 +55,7 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
                     '/address/list/test/url'
                 ],
                 [
-                    'oro_account_frontend_account_address_create',
+                    'oro_customer_frontend_account_address_create',
                     ['entityId' => $entity->getId()],
                     UrlGeneratorInterface::ABSOLUTE_PATH,
                     '/address/create/test/url'
@@ -74,7 +74,7 @@ class AddressProviderTest extends \PHPUnit_Framework_TestCase
                 'entityId' => 40,
                 'addressListUrl' => '/address/list/test/url',
                 'addressCreateUrl' => '/address/create/test/url',
-                'addressUpdateRouteName' => 'oro_account_frontend_account_address_update',
+                'addressUpdateRouteName' => 'oro_customer_frontend_account_address_update',
                 'currentAddresses' => ['data'],
             ],
             $data

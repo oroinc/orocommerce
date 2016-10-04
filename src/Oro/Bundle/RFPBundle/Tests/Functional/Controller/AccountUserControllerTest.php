@@ -34,7 +34,7 @@ class AccountUserControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_account_account_user_view',
+                'oro_customer_account_user_view',
                 ['id' => $accountUser->getId()]
             )
         );

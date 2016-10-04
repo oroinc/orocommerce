@@ -28,7 +28,7 @@ layout:
                 __account_user_form_actions_cancel:
                     blockType: link
                     options:
-                        route_name: oro_account_frontend_account_user_index
+                        route_name: oro_customer_frontend_account_user_index
                         text: oro.customer.form.action.cancel.label
                         attr:
                             'class': btn theme-btn btn-gray

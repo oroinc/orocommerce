@@ -12,7 +12,7 @@ class AjaxAccountUserController extends AbstractAjaxAccountUserController
 {
     /**
      * @Route("/get-account/{id}",
-     *      name="oro_account_frontend_account_user_get_account",
+     *      name="oro_customer_frontend_account_user_get_account",
      *      requirements={"id"="\d+"}
      * )
      * @AclAncestor("oro_account_frontend_account_user_view")

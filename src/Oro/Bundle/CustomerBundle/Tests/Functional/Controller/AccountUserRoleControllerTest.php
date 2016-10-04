@@ -57,7 +57,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_account_user_role_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_user_role_create'));
 
         $form = $crawler->selectButton('Save and Close')->form();
         $form['oro_account_account_user_role[label]'] = self::TEST_ROLE;
@@ -76,7 +76,7 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_account_user_role_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_user_role_index'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -99,7 +99,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_account_user_role_update', ['id' => $id])
+            $this->getUrl('oro_customer_account_user_role_update', ['id' => $id])
         );
 
         /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUser $accountUser */
@@ -160,7 +160,7 @@ class AccountUserRoleControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_account_user_role_view', ['id' => $id])
+            $this->getUrl('oro_customer_account_user_role_view', ['id' => $id])
         );
 
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);

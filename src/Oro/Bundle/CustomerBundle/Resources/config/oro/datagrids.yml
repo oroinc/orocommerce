@@ -13,7 +13,7 @@ datagrids:
             type: account-role-frontend-permission-provider
         acl_resource: oro_account_frontend_account_user_role_update
         options:
-            access_level_route: oro_account_frontend_acl_access_levels
+            access_level_route: oro_customer_frontend_acl_access_levels
 
     account-accounts-select-grid:
         acl_resource: oro_customer_account_view
@@ -308,7 +308,7 @@ datagrids:
             id: ~
             view_link:
                 type:   url
-                route:  oro_account_account_user_view
+                route:  oro_customer_account_user_view
                 params: [ id ]
         sorters:
             columns:
@@ -539,7 +539,7 @@ datagrids:
                     data_name: self_managed
         properties:
             view_link:
-                route: oro_account_account_user_role_view
+                route: oro_customer_account_user_role_view
         actions:
             view:
                 acl_resource:  oro_account_account_user_role_view
@@ -558,12 +558,12 @@ datagrids:
             id: ~
             view_link:
                 type: url
-                route:  oro_account_frontend_account_user_role_view
+                route:  oro_customer_frontend_account_user_role_view
                 params:
                     - id
             update_link:
                 type: url
-                route: oro_account_frontend_account_user_role_update
+                route: oro_customer_frontend_account_user_role_update
                 params:
                     - id
             delete_link:
@@ -729,7 +729,7 @@ datagrids:
             id: ~
             view_link:
                 type:   url
-                route:  oro_account_frontend_account_user_view
+                route:  oro_customer_frontend_account_user_view
                 params: [ id ]
         actions:
             view:
@@ -811,7 +811,7 @@ datagrids:
                     data_name: accountName
         properties:
             update_link:
-                route: oro_account_account_user_role_update
+                route: oro_customer_account_user_role_update
 
     frontend-account-account-users-grid-update:
         extends: frontend-account-account-users-grid-basic
@@ -1081,11 +1081,11 @@ datagrids:
             id: ~
             view_link:
                 type:   url
-                route:  oro_account_frontend_account_user_view
+                route:  oro_customer_frontend_account_user_view
                 params: [ id ]
             update_link:
                 type:   url
-                route:  oro_account_frontend_account_user_update
+                route:  oro_customer_frontend_account_user_update
                 params: [ id ]
             delete_link:
                 type:   url
@@ -1254,7 +1254,7 @@ datagrids:
         properties:
             update_link:
                 type: url
-                route: oro_account_frontend_account_address_update
+                route: oro_customer_frontend_account_address_update
                 params: {entityId: frontendOwner.id , id: id}
 
             delete_link:
@@ -1284,7 +1284,7 @@ datagrids:
         properties:
             update_link:
                 type: url
-                route: oro_account_frontend_account_user_address_update
+                route: oro_customer_frontend_account_user_address_update
                 params: {entityId: frontendOwner.id , id: id}
 
             delete_link:

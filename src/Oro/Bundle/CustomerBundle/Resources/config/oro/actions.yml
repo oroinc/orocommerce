@@ -49,7 +49,7 @@ operations:
         label: oro.customer.action.account_user.disable
         applications: [commerce]
         routes:
-            - oro_account_frontend_account_user_view
+            - oro_customer_frontend_account_user_view
         order: 10
         button_options:
             icon: icon-remove
@@ -69,7 +69,7 @@ operations:
                     current_user: $.currentUser
             - '@redirect':
                 parameters:
-                    route: oro_account_frontend_account_user_view
+                    route: oro_customer_frontend_account_user_view
                     route_parameters:
                         id: $id
             - '@flash_message':
@@ -88,7 +88,7 @@ operations:
         label: oro.customer.action.account_user.enable
         applications: [commerce]
         routes:
-            - oro_account_frontend_account_user_view
+            - oro_customer_frontend_account_user_view
         order: 10
         button_options:
             icon: icon-ok
@@ -108,7 +108,7 @@ operations:
                     current_user: $.currentUser
             - '@redirect':
                 parameters:
-                    route: oro_account_frontend_account_user_view
+                    route: oro_customer_frontend_account_user_view
                     route_parameters:
                         id: $id
             - '@flash_message':
@@ -126,8 +126,8 @@ operations:
     oro_account_accountuser_confirm:
         label: oro.customer.action.account_user.confirm
         routes:
-            - oro_account_account_user_view
-            - oro_account_frontend_account_user_view
+            - oro_customer_account_user_view
+            - oro_customer_frontend_account_user_view
         order: 20
         button_options:
             class: back no-hash icons-holder-text
@@ -147,8 +147,8 @@ operations:
     oro_account_accountuser_sendconfirmation:
         label: oro.customer.action.account_user.send_confirmation
         routes:
-            - oro_account_account_user_view
-            - oro_account_frontend_account_user_view
+            - oro_customer_account_user_view
+            - oro_customer_frontend_account_user_view
         order: 30
         button_options:
             class: back no-hash icons-holder-text
@@ -169,32 +169,32 @@ operations:
         label: oro.customer.action.account_user.create
         applications: [commerce]
         routes:
-           - oro_account_frontend_account_user_index
+           - oro_customer_frontend_account_user_index
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\CustomerBundle\Entity\AccountUser]
         order: 10
         actions:
            - '@redirect':
                parameters:
-                   route: oro_account_frontend_account_user_create
+                   route: oro_customer_frontend_account_user_create
 
     oro_account_frontend_create_role:
         label: oro.customer.action.account_user_role.create
         applications: [commerce]
         routes:
-            - oro_account_frontend_account_user_role_index
+            - oro_customer_frontend_account_user_role_index
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\CustomerBundle\Entity\AccountUserRole]
         order: 10
         actions:
             - '@redirect':
                 parameters:
-                    route: oro_account_frontend_account_user_role_create
+                    route: oro_customer_frontend_account_user_role_create
 
     oro_account_frontend_delete_user:
         label: oro.customer.action.account_user.delete
         applications: [commerce]
         routes:
-            - oro_account_frontend_account_user_view
-            - oro_account_frontend_account_user_update
+            - oro_customer_frontend_account_user_view
+            - oro_customer_frontend_account_user_update
         acl_resource: [DELETE, $.data]
         order: 20
         button_options:
@@ -218,13 +218,13 @@ operations:
                 type: 'success'
                 message_parameters:
                     entityLabel: $.entityLabel
-            - '@redirect': {route: oro_account_frontend_account_user_index}
+            - '@redirect': {route: oro_customer_frontend_account_user_index}
 
     oro_account_frontend_edit_user:
         label: oro.customer.action.account_user.edit
         applications: [commerce]
         routes:
-            - oro_account_frontend_account_user_view
+            - oro_customer_frontend_account_user_view
         acl_resource: [EDIT, $.data]
         order: 5
         button_options:
@@ -232,7 +232,7 @@ operations:
         actions:
             - '@redirect':
                 parameters:
-                    route: oro_account_frontend_account_user_update
+                    route: oro_customer_frontend_account_user_update
                     route_parameters:
                         id: $id
 
@@ -240,7 +240,7 @@ operations:
         label: oro.customer.action.account_user.edit
         applications: [commerce]
         routes:
-            - oro_account_frontend_account_user_profile
+            - oro_customer_frontend_account_user_profile
         acl_resource: [EDIT, $.data]
         order: 5
         button_options:
@@ -248,13 +248,13 @@ operations:
         actions:
             - '@redirect':
                 parameters:
-                    route: oro_account_frontend_account_user_profile_update
+                    route: oro_customer_frontend_account_user_profile_update
 
     oro_account_frontend_edit_role:
         label: oro.customer.frontend.action.account_user_role.edit
         applications: [commerce]
         routes:
-            - oro_account_frontend_account_user_role_view
+            - oro_customer_frontend_account_user_role_view
         acl_resource: [EDIT, entity:commerce@Oro\Bundle\CustomerBundle\Entity\AccountUserRole]
         order: 10
         button_options:
@@ -262,7 +262,7 @@ operations:
         actions:
             - '@redirect':
                 parameters:
-                    route: oro_account_frontend_account_user_role_update
+                    route: oro_customer_frontend_account_user_role_update
                     route_parameters:
                         id: $id
 
@@ -270,8 +270,8 @@ operations:
         label: oro.customer.action.account_user_role.delete
         applications: [commerce]
         routes:
-            - oro_account_frontend_account_user_role_view
-            - oro_account_frontend_account_user_role_update
+            - oro_customer_frontend_account_user_role_view
+            - oro_customer_frontend_account_user_role_update
         acl_resource: [DELETE, $.data]
         order: 20
         button_options:
@@ -296,7 +296,7 @@ operations:
                 type: 'success'
                 message_parameters:
                     entityLabel: $.entityLabel
-            - '@redirect': {route: oro_account_frontend_account_user_role_index}
+            - '@redirect': {route: oro_customer_frontend_account_user_role_index}
     UPDATE:
         exclude_datagrids:
             - account-account-user-select-grid

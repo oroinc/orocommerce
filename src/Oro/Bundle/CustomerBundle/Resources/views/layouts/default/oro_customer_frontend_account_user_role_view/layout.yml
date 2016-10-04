@@ -8,7 +8,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: 'OroCustomerBundle:layouts:default/oro_account_frontend_account_user_role_view/layout.html.twig'
+            themes: 'OroCustomerBundle:layouts:default/oro_customer_frontend_account_user_role_view/layout.html.twig'
         - '@appendOption':
             id: title
             optionName: value
@@ -28,7 +28,7 @@ layout:
                 account_user_role_back_link:
                     blockType: link
                     options:
-                        route_name: oro_account_frontend_account_user_role_index
+                        route_name: oro_customer_frontend_account_user_role_index
                         text: oro.customer.frontend.action.back.label
                 account_user_role_top_actions:
                     blockType: action_line_buttons

@@ -45,7 +45,7 @@ layout:
                 __account_user_role_form_actions_cancel_top:
                     blockType: link
                     options:
-                        route_name: oro_account_frontend_account_user_role_index
+                        route_name: oro_customer_frontend_account_user_role_index
                         text: oro.customer.action.account_user_role.cancel_label
                         attr:
                             'class': btn theme-btn btn-gray
@@ -62,7 +62,7 @@ layout:
                 __account_user_role_form_actions_cancel_bottom:
                     blockType: link
                     options:
-                        route_name: oro_account_frontend_account_user_role_index
+                        route_name: oro_customer_frontend_account_user_role_index
                         text: oro.customer.action.account_user_role.cancel_label
                         attr:
                             'class': btn theme-btn btn-gray

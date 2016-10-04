@@ -18,7 +18,7 @@ use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 class AccountUserRoleController extends Controller
 {
     /**
-     * @Route("/", name="oro_account_account_user_role_index")
+     * @Route("/", name="oro_customer_account_user_role_index")
      * @Template
      * @AclAncestor("oro_account_account_user_role_view")
      *
@@ -32,7 +32,7 @@ class AccountUserRoleController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="oro_account_account_user_role_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_customer_account_user_role_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
      *      id="oro_account_account_user_role_view",
@@ -60,7 +60,7 @@ class AccountUserRoleController extends Controller
     }
 
     /**
-     * @Route("/create", name="oro_account_account_user_role_create")
+     * @Route("/create", name="oro_customer_account_user_role_create")
      * @Template("OroCustomerBundle:AccountUserRole:update.html.twig")
      * @Acl(
      *      id="oro_account_account_user_role_create",
@@ -79,7 +79,7 @@ class AccountUserRoleController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="oro_account_account_user_role_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_customer_account_user_role_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
      *      id="oro_account_account_user_role_update",

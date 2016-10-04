@@ -72,11 +72,11 @@ class FrontendAccountUserRoleFormProviderTest extends \PHPUnit_Framework_TestCas
         return [
             [
                 'role' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserRole'),
-                'route' => 'oro_account_frontend_account_user_role_create'
+                'route' => 'oro_customer_frontend_account_user_role_create'
             ],
             [
                 'role' => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserRole', ['id' => 42]),
-                'route' => 'oro_account_frontend_account_user_role_update',
+                'route' => 'oro_customer_frontend_account_user_role_update',
                 'routeParameters' => ['id' => 42]
             ]
         ];

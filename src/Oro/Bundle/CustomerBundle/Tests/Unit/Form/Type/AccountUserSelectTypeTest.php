@@ -46,7 +46,7 @@ class AccountUserSelectTypeTest extends FormIntegrationTestCase
                     $this->assertArrayHasKey('create_form_route', $options);
                     $this->assertArrayHasKey('configs', $options);
                     $this->assertEquals('oro_account_account_user', $options['autocomplete_alias']);
-                    $this->assertEquals('oro_account_account_user_create', $options['create_form_route']);
+                    $this->assertEquals('oro_customer_account_user_create', $options['create_form_route']);
                     $this->assertEquals(
                         [
                             'component' => 'autocomplete-accountuser',

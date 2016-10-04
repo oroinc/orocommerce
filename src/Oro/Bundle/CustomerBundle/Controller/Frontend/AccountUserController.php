@@ -17,7 +17,7 @@ use Oro\Bundle\CustomerBundle\Form\Handler\AccountUserHandler;
 class AccountUserController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="oro_account_frontend_account_user_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_customer_frontend_account_user_view", requirements={"id"="\d+"})
      * @Layout
      * @Acl(
      *      id="oro_account_frontend_account_user_view",
@@ -40,7 +40,7 @@ class AccountUserController extends Controller
     }
 
     /**
-     * @Route("/", name="oro_account_frontend_account_user_index")
+     * @Route("/", name="oro_customer_frontend_account_user_index")
      * @Layout(vars={"entity_class"})
      * @AclAncestor("oro_account_frontend_account_user_view")
      *
@@ -56,7 +56,7 @@ class AccountUserController extends Controller
     /**
      * Create account user form
      *
-     * @Route("/create", name="oro_account_frontend_account_user_create")
+     * @Route("/create", name="oro_customer_frontend_account_user_create")
      * @Layout
      * @Acl(
      *      id="oro_account_frontend_account_user_create",
@@ -76,7 +76,7 @@ class AccountUserController extends Controller
     /**
      * Edit account user form
      *
-     * @Route("/update/{id}", name="oro_account_frontend_account_user_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_customer_frontend_account_user_update", requirements={"id"="\d+"})
      * @Layout
      * @Acl(
      *      id="oro_account_frontend_account_user_update",
@@ -122,13 +122,13 @@ class AccountUserController extends Controller
             $form,
             function (AccountUser $accountUser) {
                 return [
-                    'route' => 'oro_account_frontend_account_user_update',
+                    'route' => 'oro_customer_frontend_account_user_update',
                     'parameters' => ['id' => $accountUser->getId()]
                 ];
             },
             function (AccountUser $accountUser) {
                 return [
-                    'route' => 'oro_account_frontend_account_user_view',
+                    'route' => 'oro_customer_frontend_account_user_view',
                     'parameters' => ['id' => $accountUser->getId()]
                 ];
             },

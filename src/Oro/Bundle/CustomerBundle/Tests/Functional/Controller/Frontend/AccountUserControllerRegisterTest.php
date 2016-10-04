@@ -47,7 +47,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
     public function testRegisterPasswordMismatch()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_register'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_register'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -88,7 +88,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->configManager->set('oro_customer.send_password_in_welcome_email', $withPassword);
         $this->configManager->flush();
 
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_register'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_register'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -107,7 +107,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertContains($email, $message->getBody());
         $this->assertContains(
             trim($this->configManager->get('oro_ui.application_url'), '/')
-            . $this->getUrl('oro_account_account_user_security_login'),
+            . $this->getUrl('oro_customer_account_user_security_login'),
             $message->getBody()
         );
 
@@ -149,7 +149,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
     {
         $this->configManager->set('oro_customer.confirmation_required', true);
 
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_register'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_register'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -171,7 +171,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $confirmMessage = 'Please follow this link to confirm your email address: <a href="'
             . trim($this->configManager->get('oro_ui.application_url'), '/')
             . htmlspecialchars($this->getUrl(
-                'oro_account_frontend_account_user_confirmation',
+                'oro_customer_frontend_account_user_confirmation',
                 [
                     'username' => $user->getUsername(),
                     'token' => $user->getConfirmationToken()
@@ -198,7 +198,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_account_frontend_account_user_confirmation',
+                'oro_customer_frontend_account_user_confirmation',
                 [
                     'username' => $user->getUsername(),
                     'token' => $user->getConfirmationToken()
@@ -221,7 +221,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
      */
     public function testRegisterExistingEmail()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_register'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_register'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -253,7 +253,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
      */
     public function testResetPassword()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_account_user_security_login'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_user_security_login'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals(
@@ -275,7 +275,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_account_frontend_account_user_password_reset',
+                'oro_customer_frontend_account_user_password_reset',
                 [
                     'token' => $user->getConfirmationToken(),
                     'username' => $user->getUsername()
@@ -407,7 +407,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $user = $this->getAccountUser(['email' => self::EMAIL]);
         $resetUrl = trim($this->configManager->get('oro_ui.application_url'), '/')
             . htmlspecialchars($this->getUrl(
-                'oro_account_frontend_account_user_password_reset',
+                'oro_customer_frontend_account_user_password_reset',
                 [
                     'token' => $user->getConfirmationToken(),
                     'username' => $user->getUsername()

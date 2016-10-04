@@ -70,7 +70,7 @@ class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
         if ($user) {
             $this->securityFacade->expects($this->once())
                 ->method('isGranted')
-                ->with('oro_account_frontend_account_user_role_view')
+                ->with('oro_customer_frontend_account_user_role_view')
                 ->willReturn($isGranted);
         }
 
