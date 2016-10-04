@@ -9,10 +9,11 @@ use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
-class OroProductBundle implements Migration, RenameExtensionAwareInterface
+class OroProductBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
 {
     /**
      * @var RenameExtension
@@ -24,6 +25,9 @@ class OroProductBundle implements Migration, RenameExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $table = $schema->getTable('orob2b_product_image');
+        $table->addColumn('updated_at', 'datetime', ['notnull' => false]);
+
         $extension = $this->renameExtension;
 
         // attachments
@@ -101,9 +105,6 @@ class OroProductBundle implements Migration, RenameExtensionAwareInterface
 
         // system configuration
         $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_product', 'oro_product'));
-
-        $table = $schema->getTable('oro_product_image');
-        $table->addColumn('updated_at', 'datetime', []);
     }
 
     /**
@@ -112,5 +113,13 @@ class OroProductBundle implements Migration, RenameExtensionAwareInterface
     public function setRenameExtension(RenameExtension $renameExtension)
     {
         $this->renameExtension = $renameExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 10;
     }
 }
