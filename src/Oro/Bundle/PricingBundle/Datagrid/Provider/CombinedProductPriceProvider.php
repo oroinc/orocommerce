@@ -15,22 +15,22 @@ class CombinedProductPriceProvider implements CombinedProductPriceProviderInterf
     /**
      * @var CombinedProductPriceRepository
      */
-    protected $combinedProductPriceRepository;
+    private $combinedProductPriceRepository;
 
     /**
      * @var NumberFormatter
      */
-    protected $numberFormatter;
+    private $numberFormatter;
 
     /**
      * @var UnitLabelFormatter
      */
-    protected $unitLabelFormatter;
+    private $unitLabelFormatter;
 
     /**
      * @var UnitValueFormatter
      */
-    protected $unitValueFormatter;
+    private $unitValueFormatter;
 
     /**
      * @param CombinedProductPriceRepository $combinedProductPriceRepository
@@ -87,7 +87,7 @@ class CombinedProductPriceProvider implements CombinedProductPriceProviderInterf
      * @param CombinedProductPrice $price
      * @return array
      */
-    protected function prepareResultPrice(CombinedProductPrice $price)
+    private function prepareResultPrice(CombinedProductPrice $price)
     {
         $priceValue      = $price->getPrice()->getValue();
         $unitCode        = $price->getUnit()->getCode();

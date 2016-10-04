@@ -150,7 +150,10 @@ class CombinedProductPriceProviderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    protected function getDependencies()
+    /**
+     * @return array
+     */
+    private function getDependencies()
     {
         $numberFormatter = $this->getMockBuilder(NumberFormatter::class)
             ->disableOriginalConstructor()

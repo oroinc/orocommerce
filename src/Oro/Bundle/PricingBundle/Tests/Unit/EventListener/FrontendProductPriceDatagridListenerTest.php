@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use Oro\Bundle\PricingBundle\Datagrid\Provider\CombinedProductPriceProviderInterface;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
@@ -24,22 +22,17 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
     /**
      * @var FrontendProductPriceDatagridListener
      */
-    protected $listener;
+    private $listener;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
      */
-    protected $priceListRequestHandler;
+    private $priceListRequestHandler;
 
     /**
      * @var UserCurrencyManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $currencyManager;
-
-    /**
-     * @var Registry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $registry;
+    private $currencyManager;
 
     /**
      * @var CombinedProductPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -49,11 +42,11 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
     public function setUp()
     {
         $this->priceListRequestHandler = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->getMockBuilder(PriceListRequestHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->currencyManager = $this->getMockBuilder('Oro\Bundle\PricingBundle\Manager\UserCurrencyManager')
+        $this->currencyManager = $this->getMockBuilder(UserCurrencyManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -77,7 +70,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
             ->expects($this->any())
             ->method('getPriceListByAccount')
             ->willReturn(
-                $this->getEntity('Oro\Bundle\PricingBundle\Entity\CombinedPriceList', ['id' => $priceListId])
+                $this->getEntity(CombinedPriceList::class, ['id' => $priceListId])
             );
 
         $this->currencyManager
@@ -97,7 +90,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
         $this->setUpPriceListRequestHandler($priceListId, $priceCurrencies);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->getMock(DatagridInterface::class);
         $config   = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);
