@@ -8,6 +8,7 @@ use Oro\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\AccountBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -44,6 +45,11 @@ class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
     protected $productMessageHandler;
 
     /**
+     * @var DatabaseExceptionHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $databaseExceptionHelper;
+
+    /**
      * @var CategoryVisibilityProcessor
      */
     protected $categoryVisibilityProcessor;
@@ -57,11 +63,15 @@ class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
         $this->productMessageHandler = $this->getMockBuilder(ProductMessageHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->categoryVisibilityProcessor = new CategoryVisibilityProcessor(
             $this->registry,
             $this->messageFactory,
             $this->logger,
             $this->cacheBuilder,
+            $this->databaseExceptionHelper,
             $this->productMessageHandler
         );
 
@@ -79,6 +89,12 @@ class CategoryVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('beginTransaction');
+
+        $em->expects(($this->never()))
+            ->method('rollback');
+
+        $em->expects($this->once())
+            ->method('commit');
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
