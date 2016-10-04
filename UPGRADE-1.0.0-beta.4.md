@@ -163,7 +163,7 @@ ProductBundle
 - `oro_product.repository.product` inherits `oro_entity.abstract_repository`
 - Moved classes `Oro\Bundle\ProductBundle\Rounding\AbstractRoundingService` and `Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService` to `CurrencyBundle`
 - Changed namespace of class `Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct`
-- Removed fourth argument `unitFormatter` from  ``Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener` constructor
+- Removed fourth argument `unitFormatter` from  `Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener` constructor
 - Changed type from `Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface` to `Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface` of first argument of `Oro\Bundle\ProductBundle\Form\Type\QuantityType` constructor
 - Changed name from `quickAddFormProvider` to `productFormProvider`, type from `Oro\Bundle\ProductBundle\Layout\DataProvider\QuickAddFormProvider` to `Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider` of first argument of `Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler` constructor
 - Changed name from `quickAddImportFormProvider` to `quickAddRowCollectionBuilder`, type from `Oro\Bundle\ProductBundle\Layout\DataProvider\QuickAddImportFormProvider` to `Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder` of second argument of `Oro\Bundle\ProductBundle\Form\Handler\QuickAddHandler` constructor
