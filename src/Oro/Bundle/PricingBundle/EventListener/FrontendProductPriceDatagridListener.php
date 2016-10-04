@@ -18,22 +18,22 @@ class FrontendProductPriceDatagridListener
     /**
      * @var PriceListRequestHandler
      */
-    protected $priceListRequestHandler;
+    private $priceListRequestHandler;
 
     /**
      * @var UserCurrencyManager
      */
-    protected $currencyManager;
+    private $currencyManager;
 
     /**
      * @var CombinedPriceList
      */
-    protected $priceList;
+    private $priceList;
 
     /**
      * @var CombinedProductPriceProviderInterface
      */
-    protected $combinedProductPriceProvider;
+    private $combinedProductPriceProvider;
 
     /**
      * @param PriceListRequestHandler               $priceListRequestHandler
@@ -104,7 +104,7 @@ class FrontendProductPriceDatagridListener
     /**
      * @return CombinedPriceList
      */
-    protected function getPriceList()
+    private function getPriceList()
     {
         if (!$this->priceList) {
             $this->priceList = $this->priceListRequestHandler->getPriceListByAccount();
