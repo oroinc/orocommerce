@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
-use Oro\Bundle\PricingBundle\Expression\BinaryNode;
-use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
-use Oro\Bundle\PricingBundle\Expression\NodeInterface;
-use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
-use Oro\Bundle\PricingBundle\Expression\ValueNode;
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Component\Expression\ExpressionParser;
+use Oro\Component\Expression\FieldsProviderInterface;
+use Oro\Component\Expression\Node;
+use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
@@ -21,9 +19,9 @@ class PriceRuleExpressionValidator extends ConstraintValidator
     protected $parser;
 
     /**
-     * @var PriceRuleFieldsProvider
+     * @var FieldsProviderInterface
      */
-    protected $priceRuleFieldsProvider;
+    protected $fieldsProvider;
 
     /**
      * @var ExpressionPreprocessorInterface
@@ -38,17 +36,17 @@ class PriceRuleExpressionValidator extends ConstraintValidator
     /**
      * @param ExpressionParser $parser
      * @param ExpressionPreprocessorInterface $preprocessor
-     * @param PriceRuleFieldsProvider $priceRuleFieldsProvider
+     * @param FieldsProviderInterface $fieldsProvider
      * @param TranslatorInterface $translator
      */
     public function __construct(
         ExpressionParser $parser,
         ExpressionPreprocessorInterface $preprocessor,
-        PriceRuleFieldsProvider $priceRuleFieldsProvider,
+        FieldsProviderInterface $fieldsProvider,
         TranslatorInterface $translator
     ) {
         $this->parser = $parser;
-        $this->priceRuleFieldsProvider = $priceRuleFieldsProvider;
+        $this->fieldsProvider = $fieldsProvider;
         $this->preprocessor = $preprocessor;
         $this->translator = $translator;
     }
@@ -100,7 +98,7 @@ class PriceRuleExpressionValidator extends ConstraintValidator
      */
     protected function getSupportedFields(Constraint $constraint, $class)
     {
-        $supportedFields = $this->priceRuleFieldsProvider->getFields(
+        $supportedFields = $this->fieldsProvider->getFields(
             $class,
             $constraint->numericOnly,
             $constraint->withRelations
@@ -115,10 +113,10 @@ class PriceRuleExpressionValidator extends ConstraintValidator
     }
 
     /**
-     * @param NodeInterface $rootNode
+     * @param Node\NodeInterface $rootNode
      * @param PriceRuleExpression $constraint
      */
-    protected function validateSupportedFields(NodeInterface $rootNode, PriceRuleExpression $constraint)
+    protected function validateSupportedFields(Node\NodeInterface $rootNode, PriceRuleExpression $constraint)
     {
         $unsupportedFields = [];
         $lexemesInfo = $this->parser->getUsedLexemesByNode($rootNode);
@@ -145,15 +143,15 @@ class PriceRuleExpressionValidator extends ConstraintValidator
     }
 
     /**
-     * @param NodeInterface $rootNode
+     * @param Node\NodeInterface $rootNode
      * @param PriceRuleExpression $constraint
      */
-    protected function validateDivisionByZero(NodeInterface $rootNode, PriceRuleExpression $constraint)
+    protected function validateDivisionByZero(Node\NodeInterface $rootNode, PriceRuleExpression $constraint)
     {
         foreach ($rootNode->getNodes() as $node) {
-            if ($node instanceof BinaryNode) {
+            if ($node instanceof Node\BinaryNode) {
                 $right = $node->getRight();
-                if ($node->getOperation() === '/' && $right instanceof ValueNode && $right->getValue() == 0.0) {
+                if ($node->getOperation() === '/' && $right instanceof Node\ValueNode && $right->getValue() == 0.0) {
                     $this->context->addViolation($constraint->divisionByZeroMessage);
                 }
             }

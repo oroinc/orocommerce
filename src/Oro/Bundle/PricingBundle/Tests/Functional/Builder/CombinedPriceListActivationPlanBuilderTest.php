@@ -179,8 +179,8 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
                 $this->assertEquals($rule->isActive(), $expectedData['active']);
                 $this->assertEquals($rule->getActivateAt(), $activeAt);
                 $this->assertEquals($rule->getExpireAt(), $expireAt);
-
             }
+
             $this->assertSame(count($combinedPriceListsChanges[$cplKey]), $totalRules);
         }
     }

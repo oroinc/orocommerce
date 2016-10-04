@@ -772,13 +772,13 @@ services:
             - '@event_dispatcher'
 
     oro_pricing.expression.expression_language_converter:
-        class: 'Oro\Bundle\PricingBundle\Expression\ExpressionLanguageConverter'
+        class: 'Oro\Component\Expression\ExpressionLanguageConverter'
         public: false
         arguments:
             - '@oro_pricing.provider.price_rule_fields_provider'
 
     oro_pricing.expression.parser:
-        class: 'Oro\Bundle\PricingBundle\Expression\ExpressionParser'
+        class: 'Oro\Component\Expression\ExpressionParser'
         public: false
         arguments:
             - '@oro_pricing.expression.expression_language_converter'
@@ -793,23 +793,23 @@ services:
             - '@oro_pricing.provider.price_rule_fields_provider'
 
     oro_pricing.expression.query_expression.converter.binary_node:
-        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\BinaryNodeConverter'
+        class: 'Oro\Component\Expression\QueryExpressionConverter\BinaryNodeConverter'
         public: false
 
     oro_pricing.expression.query_expression.converter.name_node:
-        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\NameNodeConverter'
+        class: 'Oro\Component\Expression\QueryExpressionConverter\NameNodeConverter'
         public: false
 
     oro_pricing.expression.query_expression.converter.relation_node:
-        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\RelationNodeConverter'
+        class: 'Oro\Component\Expression\QueryExpressionConverter\RelationNodeConverter'
         public: false
 
     oro_pricing.expression.query_expression.converter.unary_node:
-        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\UnaryNodeConverter'
+        class: 'Oro\Component\Expression\QueryExpressionConverter\UnaryNodeConverter'
         public: false
 
     oro_pricing.expression.query_expression.converter.value_node:
-        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\ValueNodeConverter'
+        class: 'Oro\Component\Expression\QueryExpressionConverter\ValueNodeConverter'
         public: false
 
     oro_pricing.expression.query_expression.converter.assigned_products:
@@ -819,7 +819,7 @@ services:
         public: false
 
     oro_pricing.expression.query_expression_builder:
-        class: 'Oro\Bundle\PricingBundle\Expression\QueryExpressionBuilder'
+        class: 'Oro\Component\Expression\QueryExpressionBuilder'
         calls:
             - ['registerConverter', ['@oro_pricing.expression.query_expression.converter.assigned_products', 10]]
             - ['registerConverter', ['@oro_pricing.expression.query_expression.converter.binary_node']]
@@ -835,7 +835,7 @@ services:
         public: false
 
     oro_pricing.expression.preprocessor:
-        class: Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessor
+        class: Oro\Component\Expression\Preprocessor\ExpressionPreprocessor
         calls:
             - ['registerPreprocessor', ['@oro_pricing.expression.preprocessor.product_assignment_rule']]
 

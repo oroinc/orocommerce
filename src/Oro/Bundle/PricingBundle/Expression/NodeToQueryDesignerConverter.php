@@ -4,30 +4,31 @@ namespace Oro\Bundle\PricingBundle\Expression;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListQueryDesigner;
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
+use Oro\Component\Expression\FieldsProviderInterface;
+use Oro\Component\Expression\Node;
 
 class NodeToQueryDesignerConverter
 {
     /**
-     * @var PriceRuleFieldsProvider
+     * @var FieldsProviderInterface
      */
     protected $fieldsProvider;
 
     /**
-     * @param PriceRuleFieldsProvider $fieldsProvider
+     * @param FieldsProviderInterface $fieldsProvider
      */
-    public function __construct(PriceRuleFieldsProvider $fieldsProvider)
+    public function __construct(FieldsProviderInterface $fieldsProvider)
     {
         $this->fieldsProvider = $fieldsProvider;
     }
 
     /**
-     * @param NodeInterface $node
+     * @param Node\NodeInterface $node
      * @return AbstractQueryDesigner
      */
-    public function convert(NodeInterface $node)
+    public function convert(Node\NodeInterface $node)
     {
         $source = new PriceListQueryDesigner();
         $source->setEntity(Product::class);
@@ -37,9 +38,9 @@ class NodeToQueryDesignerConverter
         ];
         $addedColumns = [];
         foreach ($node->getNodes() as $subNode) {
-            if ($subNode instanceof NameNode) {
+            if ($subNode instanceof Node\NameNode) {
                 $this->convertNames($subNode, $addedColumns, $definition);
-            } elseif ($subNode instanceof RelationNode) {
+            } elseif ($subNode instanceof Node\RelationNode) {
                 $this->convertRelations($subNode, $addedColumns, $definition);
             }
         }
@@ -50,11 +51,11 @@ class NodeToQueryDesignerConverter
     }
 
     /**
-     * @param NameNode $subNode
+     * @param Node\NameNode $subNode
      * @param array $addedColumns
      * @param array $definition
      */
-    protected function convertNames(NameNode $subNode, array &$addedColumns, array &$definition)
+    protected function convertNames(Node\NameNode $subNode, array &$addedColumns, array &$definition)
     {
         if ($subNode->getContainer() === Product::class) {
             if (empty($addedColumns[$subNode->getField()])) {
@@ -78,11 +79,11 @@ class NodeToQueryDesignerConverter
     }
 
     /**
-     * @param RelationNode $subNode
+     * @param Node\RelationNode $subNode
      * @param array $addedColumns
      * @param array $definition
      */
-    protected function convertRelations(RelationNode $subNode, array &$addedColumns, array &$definition)
+    protected function convertRelations(Node\RelationNode $subNode, array &$addedColumns, array &$definition)
     {
         $tableIdentifier = $subNode->getRelationAlias();
 

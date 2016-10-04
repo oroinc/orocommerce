@@ -4,19 +4,18 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Expression;
 
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Expression\NameNode;
-use Oro\Bundle\PricingBundle\Expression\NodeInterface;
 use Oro\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter;
-use Oro\Bundle\PricingBundle\Expression\RelationNode;
 use Oro\Bundle\PricingBundle\Model\PriceListQueryDesigner;
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Expression\FieldsProviderInterface;
+use Oro\Component\Expression\Node\NameNode;
+use Oro\Component\Expression\Node\NodeInterface;
+use Oro\Component\Expression\Node\RelationNode;
 
 class NodeToQueryDesignerConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PriceRuleFieldsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $fieldsProvider;
 
@@ -27,9 +26,7 @@ class NodeToQueryDesignerConverterTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fieldsProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->fieldsProvider = $this->getMock(FieldsProviderInterface::class);
         $this->converter = new NodeToQueryDesignerConverter($this->fieldsProvider);
     }
 

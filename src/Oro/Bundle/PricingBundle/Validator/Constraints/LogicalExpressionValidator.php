@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
-use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
+use Oro\Component\Expression\ExpressionParser;
+use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-
-use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
 
 class LogicalExpressionValidator extends ConstraintValidator
 {
