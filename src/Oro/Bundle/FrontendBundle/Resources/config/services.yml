@@ -112,9 +112,23 @@ services:
     oro_frontend.listener.update_migration_namespaces:
         class: 'Oro\Bundle\FrontendBundle\CacheWarmer\UpdateNamespacesWarmer'
         arguments:
+            - '@oro_frontend.class_migration'
+        tags:
+            - { name: oro_entity_extend.warmer }
+
+    oro_frontend.class_migration:
+        class: 'Oro\Bundle\FrontendBundle\CacheWarmer\ClassMigration'
+        arguments:
             - '@doctrine'
             - '@oro_entity_config.config_manager'
             - '%installed%'
+        calls:
+            - ['append', ['OroB2B', 'Oro']]
+            - ['append', ['orob2b', 'oro']]
+
+    oro_frontend.listener.load_class_metadata:
+        class: 'Oro\Bundle\FrontendBundle\EventListener\LoadClassMetadataEventListener'
+        arguments:
+            - '@oro_frontend.class_migration'
         tags:
-            - { name: kernel.cache_warmer, priority: 35 }
-            - { name: oro_entity_extend.warmer }
+            - { name: doctrine.event_listener, event: loadClassMetadata }

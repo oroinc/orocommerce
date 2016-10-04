@@ -2,23 +2,29 @@
 
 namespace Oro\Bundle\ProductBundle\EventListener;
 
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 
 class FrontendProductDatagridListener
 {
     const COLUMN_PRODUCT_UNITS = 'product_units';
-    const PRODUCT_IMAGE_FILTER = 'product_large';
+
+    const PRODUCT_IMAGE_FILTER_LARGE = 'product_large';
+    const PRODUCT_IMAGE_FILTER_MEDIUM = 'product_medium';
+
+    const DEFAULT_IMAGE = '/bundles/oroproduct/default/images/no_image.png';
 
     /**
      * @var DataGridThemeHelper
@@ -36,18 +42,26 @@ class FrontendProductDatagridListener
     protected $attachmentManager;
 
     /**
+     * @var CacheManager
+     */
+    protected $imagineCacheManager;
+
+    /**
      * @param DataGridThemeHelper $themeHelper
      * @param RegistryInterface $registry
      * @param AttachmentManager $attachmentManager
+     * @param CacheManager $imagineCacheManager
      */
     public function __construct(
         DataGridThemeHelper $themeHelper,
         RegistryInterface $registry,
-        AttachmentManager $attachmentManager
+        AttachmentManager $attachmentManager,
+        CacheManager $imagineCacheManager
     ) {
         $this->themeHelper = $themeHelper;
         $this->registry = $registry;
         $this->attachmentManager = $attachmentManager;
+        $this->imagineCacheManager = $imagineCacheManager;
     }
 
     /**
@@ -165,24 +179,33 @@ class FrontendProductDatagridListener
     protected function addProductImages(OrmResultAfter $event, array $productIds, array $records)
     {
         $gridName = $event->getDatagrid()->getName();
-        $supportedViews = [DataGridThemeHelper::VIEW_GRID, DataGridThemeHelper::VIEW_TILES];
-        if (!in_array($this->themeHelper->getTheme($gridName), $supportedViews, true)) {
-            return;
+        $theme = $this->themeHelper->getTheme($gridName);
+        switch ($theme) {
+            case DataGridThemeHelper::VIEW_GRID:
+                $imageFilter = self::PRODUCT_IMAGE_FILTER_LARGE;
+                break;
+            case DataGridThemeHelper::VIEW_TILES:
+                $imageFilter = self::PRODUCT_IMAGE_FILTER_MEDIUM;
+                break;
+            default:
+                return;
         }
 
         $productImages = $this->getProductRepository()->getListingImagesFilesByProductIds($productIds);
 
+        $defaultImageUrl = $this->imagineCacheManager->getBrowserPath(self::DEFAULT_IMAGE, $imageFilter);
         foreach ($records as $record) {
-            $imageUrl = null;
             $productId = $record->getValue('id');
 
             if (isset($productImages[$productId])) {
                 $imageUrl = $this->attachmentManager->getFilteredImageUrl(
                     $productImages[$productId],
-                    self::PRODUCT_IMAGE_FILTER
+                    $imageFilter
                 );
-                $record->addData(['image' => $imageUrl]);
+            } else {
+                $imageUrl = $defaultImageUrl;
             }
+            $record->addData(['image' => $imageUrl]);
         }
     }
 
