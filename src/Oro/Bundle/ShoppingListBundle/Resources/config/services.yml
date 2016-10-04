@@ -123,9 +123,12 @@ services:
     orob2b_shopping_list.layout.data_provider.frontend_shopping_list_products:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider'
         arguments:
+            - '@oro_entity.doctrine_helper'
             - '@orob2b_shopping_list.data_provider.frontend_product_prices'
             - '@orob2b_shopping_list.data_provider.shopping_list_line_items'
             - '@orob2b_pricing.formatter.product_price_formatter'
+        calls:
+            - [setLineItemClass, ['%orob2b_shopping_list.entity.line_item.class%']]
         tags:
             - { name: layout.data_provider, alias: orob2b_shopping_list_products }
 

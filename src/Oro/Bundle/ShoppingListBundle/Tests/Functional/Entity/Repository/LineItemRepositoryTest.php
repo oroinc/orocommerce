@@ -4,9 +4,9 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as OroLoadAccountUserData;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as OroLoadAccountUserData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -118,6 +118,32 @@ class LineItemRepositoryTest extends WebTestCase
 
         $this->assertTrue(count($shoppingListLabelList) > 1);
         $this->assertTrue(in_array($shoppingList->getLabel(), $shoppingListLabelList));
+    }
+
+    public function testGetLastProductNamesGroupedByShoppingList()
+    {
+        $shoppingLists = [
+            $this->getReference(LoadShoppingLists::SHOPPING_LIST_1),
+            $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)
+        ];
+
+        $productName1 = $this->getReference(LoadProductData::PRODUCT_1)->getName();
+        $productName5 = $this->getReference(LoadProductData::PRODUCT_5)->getName();
+
+        $shoppingListId1 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1)->getId();
+        $shoppingListId5 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)->getId();
+
+        /** @var LineItem[] $lineItems */
+        $result = $this->getLineItemRepository()->getLastProductNamesGroupedByShoppingList($shoppingLists, 1);
+
+        $this->assertCount(2, $result);
+        $this->assertEquals(
+            [
+                $shoppingListId1 => [$productName1],
+                $shoppingListId5 => [$productName5]
+            ],
+            $result
+        );
     }
 
     /**
