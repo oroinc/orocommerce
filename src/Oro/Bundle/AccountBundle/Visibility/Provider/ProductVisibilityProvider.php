@@ -46,7 +46,7 @@ class ProductVisibilityProvider
     {
         $qb = $this->createProductsQuery($products);
 
-        $qb //Dummy condition to join not related entity
+        $qb
             ->join(Account::class, 'account', Join::WITH, 'account.id <> 0');
 
         $visibilityTerm = $this->getTotalAccountsProductVisibilityResolvedTerm($qb, $this->getWebsiteById($websiteId));
