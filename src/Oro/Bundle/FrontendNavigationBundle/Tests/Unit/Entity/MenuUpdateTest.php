@@ -3,7 +3,6 @@
 namespace Oro\Bundle\FrontendNavigationBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate;
 use Oro\Bundle\FrontendNavigationBundle\Tests\Unit\Entity\Stub\MenuUpdateStub;
 

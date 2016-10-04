@@ -3,8 +3,8 @@
 namespace Oro\Bundle\FrontendNavigationBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Doctrine\DBAL\Types\StringType;
+
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 

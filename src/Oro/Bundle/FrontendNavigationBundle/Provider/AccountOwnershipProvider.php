@@ -47,6 +47,6 @@ class AccountOwnershipProvider extends AbstractOwnershipProvider
             return null;
         }
 
-        return $user->getAccount();
+        return $user->getAccount()->getId();
     }
 }

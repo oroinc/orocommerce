@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 
+use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\FrontendNavigationBundle\Provider\AccountOwnershipProvider;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class AccountOwnershipProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,6 +18,11 @@ class AccountOwnershipProviderTest extends \PHPUnit_Framework_TestCase
     private $provider;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository
+     */
+    private $entityRepository;
+
+    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
      */
     private $tokenStorage;
@@ -23,7 +30,11 @@ class AccountOwnershipProviderTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->tokenStorage = $this->getMock(TokenStorageInterface::class);
-        $this->provider = new AccountOwnershipProvider($this->tokenStorage);
+        $this->entityRepository = $this->getMockBuilder(EntityRepository::class)
+            ->setMethods(['getMenuUpdates'])
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->provider = new AccountOwnershipProvider($this->entityRepository, $this->tokenStorage);
     }
 
     public function testGetType()
@@ -54,7 +65,11 @@ class AccountOwnershipProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetId()
     {
+        $accountId = 26;
         $account = $this->getMock(Account::class);
+        $account->expects($this->once())
+            ->method('getId')
+            ->willReturn($accountId);
         $user = $this->getMock(AccountUser::class);
         $user->expects($this->once())
             ->method('getAccount')
@@ -66,6 +81,6 @@ class AccountOwnershipProviderTest extends \PHPUnit_Framework_TestCase
         $this->tokenStorage->expects($this->once())
             ->method('getToken')
             ->willReturn($token);
-        $this->assertEquals($account, $this->provider->getId());
+        $this->assertEquals($accountId, $this->provider->getId());
     }
 }
