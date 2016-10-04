@@ -85,30 +85,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     }
 
     /**
-     * @param object           $entity
-     * @param bool             $isFullData
-     * @param bool             $isPersistNew
-     * @param mixed|array|null $itemData
-     * @param array            $searchContext
-     * @param bool             $entityIsRelation
-     *
-     * @return null|object
-     */
-    protected function processEntity(
-        $entity,
-        $isFullData = false,
-        $isPersistNew = false,
-        $itemData = null,
-        array $searchContext = [],
-        $entityIsRelation = false
-    ) {
-        /*if ($entity instanceof $this->unitPrecisionClass) {
-            $this->product = $entity->getProduct();
-        }*/
-        return parent::processEntity($entity, $isFullData, $isPersistNew, $itemData, $searchContext, $entityIsRelation);
-    }
-
-    /**
      * @param Product $entity
      * @return Product
      */
@@ -156,7 +132,18 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     protected function findEntityByIdentityValues($entityName, array $identityValues)
     {
         if (is_a($entityName, $this->unitPrecisionClass, true)) {
-            $identityValues['product'] = clone $this->product;
+            if ($this->databaseHelper->getIdentifier($this->product)) {
+                $product = $this->product;
+            } else {
+                $existingEntity = $this->findExistingEntity($this->product);
+
+                if (!$existingEntity) {
+                    return null;
+                }
+
+                $product = $existingEntity;
+            }
+            $identityValues['product'] = $product;
         }
         if (is_a($entityName, $this->variantLinkClass, true)) {
             $newIdentityValues = [];

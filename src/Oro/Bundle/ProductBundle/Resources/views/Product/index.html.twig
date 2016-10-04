@@ -8,6 +8,7 @@
         entity_class: entity_class,
         exportProcessor: 'oro_product_product',
         exportTemplateProcessor: 'oro_product_product_export_template',
+        importJob: 'product_entity_import_from_csv',
         importProcessor: 'oro_product_product.add_or_replace',
         importTitle: 'oro.importexport.import.entity'|trans({'%entityName%': 'oro.product.entity_plural_label'|trans}),
         dataGridName: gridName

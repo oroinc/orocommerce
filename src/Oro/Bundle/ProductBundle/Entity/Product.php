@@ -613,7 +613,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
             $existingUnitPrecision
                 ->setPrecision($unitPrecision->getPrecision())
                 ->setConversionRate($unitPrecision->getConversionRate())
-                ->setSell($unitPrecision->isSell());
+                ->setSell($unitPrecision->isSell())
+                ->setProduct($this);
         } else {
             $unitPrecision->setProduct($this);
             $this->unitPrecisions->add($unitPrecision);

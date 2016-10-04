@@ -1,0 +1,15 @@
+connector:
+    name: oro_importexport
+    jobs:
+        product_entity_import_from_csv:
+            title: "Product Import from CSV"
+            type: import
+            steps:
+                import:
+                    title:     import
+                    class:     Oro\Bundle\BatchBundle\Step\ItemStep
+                    services:
+                        reader:    oro_importexport.reader.csv
+                        processor: oro_importexport.processor.import_delegate
+                        writer:    oro_product.importexport.writer.product
+                    parameters: ~

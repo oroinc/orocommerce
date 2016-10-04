@@ -99,7 +99,7 @@ services:
             - { name: oro_importexport.processor, type: export_template, entity: '%oro_product.entity.product.class%', alias: oro_product.inventory_status_only_template }
 
     # Writer
-    oro_pricing.importexport.writer.product_price:
+    oro_product.importexport.writer.product:
         class: 'Oro\Bundle\ProductBundle\ImportExport\Writer\ProductWriter'
         public: false
-        parent: oro_integration.writer.persistent_batch_writer
+        parent: oro_importexport.writer.entity
