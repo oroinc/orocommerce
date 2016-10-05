@@ -9,9 +9,9 @@ use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\WarehouseBundle\EventListener\CategoryManageInventoryFormViewListener;
+use Oro\Bundle\WarehouseBundle\EventListener\CategoryQuantityToOrderFormViewListener;
 
-class CategoryManageInventoryFormViewListenerTest extends FormViewListenerTestCase
+class CategoryQuantityToOrderFormViewListenerTest extends FormViewListenerTestCase
 {
     /**
      * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
@@ -24,13 +24,11 @@ class CategoryManageInventoryFormViewListenerTest extends FormViewListenerTestCa
     protected $request;
 
     /**
-     * @var CategoryManageInventoryFormViewListener
+     * @var CategoryQuantityToOrderFormViewListener
      */
     protected $categoryFormViewListener;
 
-    /**
-     * @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject * */
     protected $event;
 
     protected function setUp()
@@ -39,7 +37,7 @@ class CategoryManageInventoryFormViewListenerTest extends FormViewListenerTestCa
         $this->requestStack = $this->getMock(RequestStack::class);
         $this->request = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
-        $this->categoryFormViewListener = new CategoryManageInventoryFormViewListener(
+        $this->categoryFormViewListener = new CategoryQuantityToOrderFormViewListener(
             $this->requestStack,
             $this->doctrineHelper,
             $this->translator

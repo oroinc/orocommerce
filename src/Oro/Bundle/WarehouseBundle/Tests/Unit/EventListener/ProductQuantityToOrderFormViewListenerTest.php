@@ -6,12 +6,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\WarehouseBundle\EventListener\CategoryManageInventoryFormViewListener;
+use Oro\Bundle\WarehouseBundle\EventListener\ProductQuantityToOrderFormViewListener;
 
-class CategoryManageInventoryFormViewListenerTest extends FormViewListenerTestCase
+class ProductQuantityToOrderFormViewListenerTest extends FormViewListenerTestCase
 {
     /**
      * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
@@ -24,13 +24,11 @@ class CategoryManageInventoryFormViewListenerTest extends FormViewListenerTestCa
     protected $request;
 
     /**
-     * @var CategoryManageInventoryFormViewListener
+     * @var ProductQuantityToOrderFormViewListener
      */
-    protected $categoryFormViewListener;
+    protected $productWarehouseFormViewListener;
 
-    /**
-     * @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject * */
     protected $event;
 
     protected function setUp()
@@ -39,7 +37,7 @@ class CategoryManageInventoryFormViewListenerTest extends FormViewListenerTestCa
         $this->requestStack = $this->getMock(RequestStack::class);
         $this->request = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
-        $this->categoryFormViewListener = new CategoryManageInventoryFormViewListener(
+        $this->productWarehouseFormViewListener = new ProductQuantityToOrderFormViewListener(
             $this->requestStack,
             $this->doctrineHelper,
             $this->translator
@@ -47,33 +45,32 @@ class CategoryManageInventoryFormViewListenerTest extends FormViewListenerTestCa
         $this->event = $this->getBeforeListRenderEventMock();
     }
 
-    public function testOnCategoryEditIgnoredIfNoCategoryId()
+    public function testOnProductViewIgnoredIfNoProductId()
     {
         $this->doctrineHelper->expects($this->never())->method('getEntityReference');
-        $this->categoryFormViewListener->onCategoryEdit($this->event);
+        $this->productWarehouseFormViewListener->onProductView($this->event);
     }
 
-    public function testOnCategoryEditIgnoredIfNoCategoryFound()
+    public function testOnProductViewIgnoredIfNoProductFound()
     {
-        $this->doctrineHelper->expects($this->once())->method('getEntityReference');
         $this->request->expects($this->once())->method('get')->willReturn('1');
-        $this->categoryFormViewListener->onCategoryEdit($this->event);
+        $this->event->expects($this->never())->method('getEnvironment');
+        $this->productWarehouseFormViewListener->onProductView($this->event);
     }
 
-    public function testCategoryEditRendersAndAddsSubBlock()
+    public function testOnProductViewRendersAndAddsSubBlock()
     {
         $this->request->expects($this->once())->method('get')->willReturn('1');
-        $category = new Category();
-        $this->doctrineHelper->expects($this->once())->method('getEntityReference')->willReturn($category);
+        $product = new Product();
+        $this->doctrineHelper->expects($this->once())->method('getEntityReference')->willReturn($product);
         $env = $this->getMockBuilder(\Twig_Environment::class)->disableOriginalConstructor()->getMock();
         $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
         $scrollData = $this->getMock(ScrollData::class);
         $this->event->expects($this->once())->method('getScrollData')->willReturn($scrollData);
-        $env->expects($this->once())->method('render');
-        $scrollData->expects($this->once())->method('addSubBlockData');
         $scrollData->expects($this->once())->method('getData')->willReturn(
-            ['dataBlocks' => [1 => ['title' => 'oro.catalog.sections.default_options.trans']]]
+            ['dataBlocks' => [1 => ['title' => 'oro.product.sections.inventory.trans']]]
         );
-        $this->categoryFormViewListener->onCategoryEdit($this->event);
+
+        $this->productWarehouseFormViewListener->onProductView($this->event);
     }
 }

@@ -39,7 +39,8 @@ class ProductManageInventoryFormViewListenerTest extends FormViewListenerTestCas
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
         $this->productWarehouseFormViewListener = new ProductManageInventoryFormViewListener(
             $this->requestStack,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->translator
         );
         $this->event = $this->getBeforeListRenderEventMock();
     }
@@ -64,7 +65,11 @@ class ProductManageInventoryFormViewListenerTest extends FormViewListenerTestCas
         $this->doctrineHelper->expects($this->once())->method('getEntityReference')->willReturn($product);
         $env = $this->getMockBuilder(\Twig_Environment::class)->disableOriginalConstructor()->getMock();
         $this->event->expects($this->once())->method('getEnvironment')->willReturn($env);
-        $this->event->expects($this->once())->method('getScrollData')->willReturn($this->getMock(ScrollData::class));
+        $scrollData = $this->getMock(ScrollData::class);
+        $this->event->expects($this->once())->method('getScrollData')->willReturn($scrollData);
+        $scrollData->expects($this->once())->method('getData')->willReturn(
+            ['dataBlocks' => [1 => ['title' => 'oro.product.sections.inventory.trans']]]
+        );
 
         $this->productWarehouseFormViewListener->onProductView($this->event);
     }

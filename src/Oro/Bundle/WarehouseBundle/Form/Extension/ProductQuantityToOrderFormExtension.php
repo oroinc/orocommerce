@@ -29,15 +29,16 @@ class ProductQuantityToOrderFormExtension extends AbstractTypeExtension
     {
         $product = $builder->getData();
         // set category as default fallback
-        if (!$product->getMinimumQuantityToOrder() || !$product->getMaximumQuantityToOrder()) {
+        if (!$product->getMinimumQuantityToOrder()) {
             $entityFallback = new EntityFieldFallbackValue();
             $entityFallback->setFallback(CategoryFallbackProvider::FALLBACK_ID);
-            if (!$product->getMinimumQuantityToOrder()) {
-                $product->setMinimumQuantityToOrder($entityFallback);
-            }
-            if (!$product->getMaximumQuantityToOrder()) {
-                $product->setMaximumQuantityToOrder($entityFallback);
-            }
+            $product->setMinimumQuantityToOrder($entityFallback);
+        }
+
+        if (!$product->getMaximumQuantityToOrder()) {
+            $entityFallback = new EntityFieldFallbackValue();
+            $entityFallback->setFallback(CategoryFallbackProvider::FALLBACK_ID);
+            $product->setMaximumQuantityToOrder($entityFallback);
         }
 
         $builder->add(
