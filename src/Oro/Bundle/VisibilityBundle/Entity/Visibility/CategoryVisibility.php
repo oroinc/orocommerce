@@ -14,7 +14,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="oro_ctgr_vis_uidx",
- *              columns={"category_id"}
+ *              columns={"category_id", "scope_id"}
  *          )
  *      }
  * )
@@ -53,7 +53,7 @@ class CategoryVisibility implements VisibilityInterface
      * @var Scope
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
-     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $scope;
 

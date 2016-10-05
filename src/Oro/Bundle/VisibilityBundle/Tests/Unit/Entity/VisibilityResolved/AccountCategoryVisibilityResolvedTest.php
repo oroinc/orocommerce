@@ -7,6 +7,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class AccountCategoryVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,17 +19,22 @@ class AccountCategoryVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
     /** @var Category */
     protected $category;
 
+    /** @var Scope */
+    protected $scope;
+
     protected function setUp()
     {
         $this->category = new Category();
+        $this->scope = new Scope();
         $this->accountCategoryVisibilityResolved = new AccountCategoryVisibilityResolved(
-            $this->category
+            $this->category,
+            $this->scope
         );
     }
 
     protected function tearDown()
     {
-        unset($this->accountCategoryVisibilityResolved, $this->category);
+        unset($this->accountCategoryVisibilityResolved, $this->category, $this->scope);
     }
 
     /**
@@ -44,6 +50,11 @@ class AccountCategoryVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
                 ['source', BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE],
             ]
         );
+    }
+
+    public function testGetScope()
+    {
+        $this->assertEquals($this->scope, $this->accountCategoryVisibilityResolved->getScope());
     }
 
     public function testGetCategory()

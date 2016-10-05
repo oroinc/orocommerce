@@ -5,9 +5,8 @@ namespace Oro\Bundle\VisibilityBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadScopeAccountDemoData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
@@ -39,7 +38,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     {
         return [
             LoadProductDemoData::class,
-            LoadAccountDemoData::class,
+            LoadScopeAccountDemoData::class,
             LoadCategoryVisibilityDemoData::class,
         ];
     }
@@ -57,21 +56,21 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     /**
      * @param ObjectManager $manager
      * @param string $name
-     * @return Account
+     * @return Scope
      */
-    protected function getAccount(ObjectManager $manager, $name)
+    protected function getScopeAccount(ObjectManager $manager, $name)
     {
-        return $manager->getRepository('OroAccountBundle:Account')->findOneBy(['name' => $name]);
+        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['account_id' => $name]);
     }
 
     /**
      * @param ObjectManager $manager
      * @param string $name
-     * @return AccountGroup
+     * @return Scope
      */
     protected function getAccountGroup(ObjectManager $manager, $name)
     {
-        return $manager->getRepository('OroAccountBundle:AccountGroup')->findOneBy(['name' => $name]);
+        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['accountGroup_id' => $name]);
     }
 
     /**
@@ -157,15 +156,15 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
             $this->saveVisibility($manager, $productVisibility, $product, $visibility);
         }
 
-        if ($row['account']) {
+        if ($row['scopeAccount']) {
             $accountVisibility = new AccountProductVisibility();
-            $accountVisibility->setAccount($this->getAccount($manager, $row['account']));
+            $accountVisibility->setScope($this->getScopeAccount($manager, $row['scopeAccount']));
             $this->saveVisibility($manager, $accountVisibility, $product, $visibility);
         }
 
-        if ($row['accountGroup']) {
+        if ($row['scopeAccountGroup']) {
             $accountGroupVisibility = new AccountGroupProductVisibility();
-            $accountGroupVisibility->setAccountGroup($this->getAccountGroup($manager, $row['accountGroup']));
+            $accountGroupVisibility->setScope($this->getScopeAccountGroup($manager, $row['scopeAccountGroup']));
             $this->saveVisibility($manager, $accountGroupVisibility, $product, $visibility);
         }
     }

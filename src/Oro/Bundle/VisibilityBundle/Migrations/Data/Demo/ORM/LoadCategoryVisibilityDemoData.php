@@ -5,15 +5,14 @@ namespace Oro\Bundle\VisibilityBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData;
+use Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadScopeAccountDemoData;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     DependentFixtureInterface,
@@ -35,7 +34,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     {
         return [
             'Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData',
-            LoadAccountDemoData::class
+            LoadScopeAccountDemoData::class
         ];
     }
     /**
@@ -51,22 +50,23 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
             $row = array_combine($headers, array_values($data));
             $category = $this->getCategory($manager, $row['category']);
             $visibility = $row['visibility'];
+
             if ($row['all']) {
                 $categoryVisibility = $this->createCategoryVisibility($category, $visibility);
                 $manager->persist($categoryVisibility);
             }
-            if ($row['account']) {
+            if ($row['scopeAccount']) {
                 $accountCategoryVisibility = $this->createAccountCategoryVisibility(
                     $category,
-                    $this->getAccount($manager, $row['account']),
+                    $this->getScopeAccount($manager, $row['scopeAccount']),
                     $visibility
                 );
                 $manager->persist($accountCategoryVisibility);
             }
-            if ($row['accountGroup']) {
+            if ($row['scopeAccountGroup']) {
                 $accountGroupCategoryVisibility = $this->createAccountGroupCategoryVisibility(
                     $category,
-                    $this->getAccountGroup($manager, $row['accountGroup']),
+                    $this->getScopeAccountGroup($manager, $row['scopeAccountGroup']),
                     $visibility
                 );
                 $manager->persist($accountGroupCategoryVisibility);
@@ -88,20 +88,20 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     /**
      * @param ObjectManager $manager
      * @param string $name
-     * @return Account
+     * @return Scope
      */
-    protected function getAccount(ObjectManager $manager, $name)
+    protected function getScopeAccount(ObjectManager $manager, $name)
     {
-        return $manager->getRepository('OroAccountBundle:Account')->findOneBy(['name' => $name]);
+        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['account_id' => $name]);
     }
     /**
      * @param ObjectManager $manager
      * @param string $name
-     * @return AccountGroup
+     * @return Scope
      */
-    protected function getAccountGroup(ObjectManager $manager, $name)
+    protected function getScopeAccountGroup(ObjectManager $manager, $name)
     {
-        return $manager->getRepository('OroAccountBundle:AccountGroup')->findOneBy(['name' => $name]);
+        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['accountGroup_id' => $name]);
     }
     /**
      * @param Category $category
@@ -118,31 +118,31 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     }
     /**
      * @param Category $category
-     * @param Account $account
+     * @param Scope $scope
      * @param string $visibility
      * @return AccountCategoryVisibility
      */
-    protected function createAccountCategoryVisibility(Category $category, Account $account, $visibility)
+    protected function createAccountCategoryVisibility(Category $category, Scope $scope, $visibility)
     {
         $accountCategoryVisibility = new AccountCategoryVisibility();
         $accountCategoryVisibility
             ->setCategory($category)
-            ->setAccount($account)
+            ->setScope($scope)
             ->setVisibility($visibility);
         return $accountCategoryVisibility;
     }
     /**
      * @param Category $category
-     * @param AccountGroup $accountGroup
+     * @param Scope $scope
      * @param string $visibility
      * @return AccountGroupCategoryVisibility
      */
-    protected function createAccountGroupCategoryVisibility(Category $category, AccountGroup $accountGroup, $visibility)
+    protected function createAccountGroupCategoryVisibility(Category $category, Scope $scope, $visibility)
     {
         $accountGroupCategoryVisibility = new AccountGroupCategoryVisibility();
         $accountGroupCategoryVisibility
             ->setCategory($category)
-            ->setAccountGroup($accountGroup)
+            ->setScope($scope)
             ->setVisibility($visibility);
         return $accountGroupCategoryVisibility;
     }
