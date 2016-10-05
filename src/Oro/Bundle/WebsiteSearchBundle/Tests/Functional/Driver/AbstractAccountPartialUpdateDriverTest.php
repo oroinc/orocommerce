@@ -6,10 +6,7 @@ use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
 use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\AccountBundle\EventListener\WebsiteSearchProductVisibilityIndexerListener;
-use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
-use Oro\Bundle\AccountBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -26,10 +23,14 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
     const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_account.product_visibility';
     const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_account.category_visibility';
 
-    /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var ConfigManager
+     */
     private $configManager;
 
-    /** @var OrmAccountPartialUpdateDriver */
+    /**
+     * @var OrmAccountPartialUpdateDriver
+     */
     private $driver;
 
     protected function setUp()
@@ -38,45 +39,21 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
 
         $this->loadFixtures([LoadProductVisibilityData::class]);
 
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $anonymousGroupId = $this->getContainer()
+            ->get('oro_config.global')
+            ->get('oro_account.anonymous_account_group');
 
-        $productVisibilityProvider = new ProductVisibilityProvider(
-            $this->getContainer()->get('oro_entity.doctrine_helper'),
-            $this->configManager
-        );
+        $this->configManager = $this->getContainer()->get('oro_config.global');
+        $this->configManager->set('oro_account.anonymous_account_group', $anonymousGroupId);
 
-        $productVisibilityProvider->setProductVisibilitySystemConfigurationPath('oro_account.product_visibility');
-        $productVisibilityProvider->setCategoryVisibilitySystemConfigurationPath('oro_account.category_visibility');
-
-        $this->driver = $this->createDriver($productVisibilityProvider);
+        $this->driver = $this->getDriver();
         $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
-
-        $eventName = 'oro_website_search.event.index_entity';
-        $productVisibilityIndexer = new ProductVisibilityIndexer($productVisibilityProvider);
-        $listener = new WebsiteSearchProductVisibilityIndexerListener($productVisibilityIndexer);
-
-        $this->dispatcher->removeListener($eventName, [
-            $this->getContainer()->get('oro_account.event_listener.website_search_product_visibility_indexer_listener'),
-            'onWebsiteSearchIndex'
-        ]);
-
-        $this->dispatcher->addListener(
-            $eventName,
-            [
-                $listener,
-                'onWebsiteSearchIndex'
-            ],
-            -255
-        );
     }
 
     /**
-     * @param ProductVisibilityProvider $productVisibilityProvider
      * @return AccountPartialUpdateDriverInterface
      */
-    abstract protected function createDriver(ProductVisibilityProvider $productVisibilityProvider);
+    abstract protected function getDriver();
 
     /**
      * @param Account $account
@@ -113,7 +90,8 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
 
     public function testCreateAccountWithoutAccountGroupVisibility()
     {
-        $this->configureSystemVisibilities(VisibilityInterface::HIDDEN, VisibilityInterface::HIDDEN);
+        $this->configManager->set(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH, VisibilityInterface::HIDDEN);
+        $this->configManager->set(self::CATEGORY_VISIBILITY_CONFIGURATION_PATH, VisibilityInterface::HIDDEN);
 
         $this->reindexProducts();
 
@@ -146,7 +124,8 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
 
     public function testUpdateAccountVisibility()
     {
-        $this->configureSystemVisibilities(VisibilityInterface::VISIBLE, VisibilityInterface::VISIBLE);
+        $this->configManager->set(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH, VisibilityInterface::VISIBLE);
+        $this->configManager->set(self::CATEGORY_VISIBILITY_CONFIGURATION_PATH, VisibilityInterface::VISIBLE);
 
         $this->reindexProducts();
 
@@ -189,39 +168,10 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
         $this->assertEquals('product.3', $values[0]->getRecordTitle());
     }
 
-    /**
-     * @param string $productSystemVisibility
-     * @param string $categorySystemVisibility
-     */
-    private function configureSystemVisibilities($productSystemVisibility, $categorySystemVisibility)
-    {
-        $anonymousGroupId = $this->getContainer()
-            ->get('oro_config.global')
-            ->get('oro_account.anonymous_account_group');
-
-        $this->configManager
-            ->expects($this->exactly(6))
-            ->method('get')
-            ->withConsecutive(
-                [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
-                [self::CATEGORY_VISIBILITY_CONFIGURATION_PATH],
-                ['oro_account.anonymous_account_group'],
-                ['oro_account.anonymous_account_group'],
-                ['oro_account.anonymous_account_group']
-            )
-            ->willReturnOnConsecutiveCalls(
-                $productSystemVisibility,
-                $categorySystemVisibility,
-                $anonymousGroupId,
-                $anonymousGroupId,
-                $anonymousGroupId,
-                $anonymousGroupId
-            );
-    }
-
     public function testDeleteAccountVisibility()
     {
-        $this->configureSystemVisibilities(VisibilityInterface::VISIBLE, VisibilityInterface::VISIBLE);
+        $this->configManager->set(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH, VisibilityInterface::VISIBLE);
+        $this->configManager->set(self::CATEGORY_VISIBILITY_CONFIGURATION_PATH, VisibilityInterface::VISIBLE);
 
         $this->reindexProducts();
 

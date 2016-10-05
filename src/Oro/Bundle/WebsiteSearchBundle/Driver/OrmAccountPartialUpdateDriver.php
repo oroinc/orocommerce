@@ -2,22 +2,20 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Driver;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query as OrmQuery;
 
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\AccountBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\VisitorReplacePlaceholder;
 
 class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
 {
@@ -39,23 +37,31 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
     private $productVisibilityProvider;
 
     /**
-     * @param VisitorReplacePlaceholder $visitorReplacePlaceholder
-     * @param AbstractSearchMappingProvider $mappingProvider
+     * @var EntityManagerInterface
+     */
+    private $itemEntityManager;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
+     */
+    public function setDoctrineHelper(DoctrineHelper $doctrineHelper)
+    {
+        $this->doctrineHelper = $doctrineHelper;
+    }
+
+    /**
      * @param InsertFromSelectQueryExecutor $insertExecutor
+     */
+    public function setInsertExecutor(InsertFromSelectQueryExecutor $insertExecutor)
+    {
+        $this->insertExecutor = $insertExecutor;
+    }
+
+    /**
      * @param ProductVisibilityProvider $productVisibilityProvider
      */
-    public function __construct(
-        VisitorReplacePlaceholder $visitorReplacePlaceholder,
-        AbstractSearchMappingProvider $mappingProvider,
-        DoctrineHelper $doctrineHelper,
-        InsertFromSelectQueryExecutor $insertExecutor,
-        ProductVisibilityProvider $productVisibilityProvider
-    ) {
-        parent::__construct($visitorReplacePlaceholder, $mappingProvider);
-
-        $this->doctrineHelper = $doctrineHelper;
-        $this->insertExecutor = $insertExecutor;
+    public function setProductVisibilityProvider(ProductVisibilityProvider $productVisibilityProvider)
+    {
         $this->productVisibilityProvider = $productVisibilityProvider;
     }
 
@@ -153,10 +159,9 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
 
         $queryBuilder->select('product.id');
 
-        $batchSize = self::PRODUCT_SELECT_FOR_UPDATE_BATCH_SIZE;
         $iterator = new BufferedQueryResultIterator($queryBuilder);
         $iterator->setHydrationMode(OrmQuery::HYDRATE_ARRAY);
-        $iterator->setBufferSize($batchSize);
+        $iterator->setBufferSize(self::PRODUCT_SELECT_FOR_UPDATE_BATCH_SIZE);
 
         $productIds = [];
         $rows = 0;
@@ -164,7 +169,7 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
             ++$rows;
             $productIds[] = $productData['id'];
 
-            if ($rows % $batchSize === 0) {
+            if ($rows % self::PRODUCT_SELECT_FOR_UPDATE_BATCH_SIZE === 0) {
                 $this->insertAccountVisibilityData($account, $website, $productIds);
                 $productIds = [];
             }
@@ -227,15 +232,14 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
     }
 
     /**
-     * @return \Doctrine\ORM\EntityManager
+     * @return EntityManagerInterface
      */
     private function getEntityManager()
     {
-        try {
-            $manager = $this->doctrineHelper->getEntityManagerForClass(Item::class);
-        } catch (NotManageableEntityException $exception) {
+        if (!$this->itemEntityManager) {
+            $this->itemEntityManager = $this->doctrineHelper->getEntityManagerForClass(Item::class);
         }
 
-        return $manager;
+        return $this->itemEntityManager;
     }
 }

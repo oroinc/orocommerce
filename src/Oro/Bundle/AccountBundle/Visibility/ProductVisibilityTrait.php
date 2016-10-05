@@ -178,6 +178,7 @@ TERM;
     protected function getRootAlias(QueryBuilder $queryBuilder)
     {
         $aliases = $queryBuilder->getRootAliases();
+
         return reset($aliases);
     }
 

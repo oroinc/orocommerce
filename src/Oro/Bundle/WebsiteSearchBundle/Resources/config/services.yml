@@ -204,8 +204,8 @@ services:
     oro_website_search.driver.orm_account_partial_update_driver:
         class: 'Oro\Bundle\WebsiteSearchBundle\Driver\OrmAccountPartialUpdateDriver'
         parent: oro_website_search.driver.account_partial_update_driver.abstract
-        public: false
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_entity.orm.insert_from_select_query_executor'
-            - '@oro_account.visibility.provider.product_visibility_provider'
+        public: true
+        calls:
+            - [setDoctrineHelper, ['@oro_entity.doctrine_helper']]
+            - [setInsertExecutor, ['@oro_entity.orm.insert_from_select_query_executor']]
+            - [setProductVisibilityProvider, ['@oro_account.visibility.provider.product_visibility_provider']]
