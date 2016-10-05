@@ -1,0 +1,7 @@
+services:
+    oro_validation.validator_constraints.not_blank_one_of:
+        class: 'Oro\Bundle\ValidationBundle\Validator\Constraints\NotBlankOneOfValidator'
+        arguments:
+            - '@translator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_validation.validator_constraints.not_blank_one_of_validator }

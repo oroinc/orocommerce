@@ -1,6 +1,6 @@
 {% block __oro_account_address_grid__addresses_head_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " oro-grid__row"
+        '~class': " grid__row"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -9,7 +9,7 @@
 
 {% block __oro_account_address_grid__addresses_head_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " oro-grid__column oro-grid__column-half"
+        '~class': " grid__column grid__column-half"
     }) %}
     <div {{ block('block_attributes') }}>
         <h2 class="user-page-title">
@@ -32,7 +32,7 @@
 
 {% block __oro_account_address_grid__datagrid_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " oro-grid__row oro-grid__row--has-twin-row oro-grid__row--has-child-grid"
+        '~class': " grid__row grid__row--has-twin-row grid__row--has-child-grid"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}

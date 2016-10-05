@@ -5,12 +5,12 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\Entity\Repository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\PersistentCollection;
 
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -30,9 +30,15 @@ class CategoryRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->registry = $this->getContainer()->get('doctrine');
         $this->repository = $this->registry->getRepository('OroCatalogBundle:Category');
-        $this->loadFixtures([LoadCategoryData::class, LoadCategoryProductData::class]);
+        $this->loadFixtures(
+            [
+                LoadCategoryData::class,
+                LoadCategoryProductData::class,
+            ]
+        );
     }
 
     public function testGetMasterCatalogRoot()
@@ -88,6 +94,29 @@ class CategoryRepositoryTest extends WebTestCase
         $this->assertEquals($expectedTitle, $actualCategory->getDefaultTitle()->getString());
 
         $this->assertNull($this->repository->findOneByDefaultTitle('Not existing category'));
+    }
+
+    public function testGetCategoryMapByProducts()
+    {
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+        $product3 = $this->getReference(LoadProductData::PRODUCT_5);
+        $category1 = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $category2 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+        $category3 = $this->getReference(LoadCategoryData::SECOND_LEVEL2);
+        $expectedMap = [
+            $product1->getId() => $category1,
+            $product2->getId() => $category2,
+            $product3->getId() => $category3
+        ];
+
+        $actualCategory = $this->repository->getCategoryMapByProducts([$product1, $product2, $product3]);
+        $this->assertEquals($expectedMap, $actualCategory);
+    }
+
+    public function testGetCategoryMapByProductsEmpty()
+    {
+        $this->assertEmpty($this->repository->getCategoryMapByProducts([]));
     }
 
     /**

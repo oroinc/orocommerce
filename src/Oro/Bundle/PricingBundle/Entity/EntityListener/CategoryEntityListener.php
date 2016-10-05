@@ -47,10 +47,11 @@ class CategoryEntityListener extends AbstractRuleEntityListener
                 && $collection->isDirty() && $collection->isInitialized()
             ) {
                 // Get lexemes associated with Category::id relation
-                $lexemes = $this->findEntityLexemes(['id']);
+                $lexemes = $this->priceRuleLexemeTriggerHandler
+                    ->findEntityLexemes($this->getEntityClassName(), ['id']);
                 /** @var Product $product */
                 foreach (array_merge($collection->getInsertDiff(), $collection->getDeleteDiff()) as $product) {
-                    $this->addTriggersByLexemes($lexemes, $product);
+                    $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product);
                 }
             }
         }

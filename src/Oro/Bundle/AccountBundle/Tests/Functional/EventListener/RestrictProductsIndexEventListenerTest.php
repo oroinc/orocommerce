@@ -167,7 +167,7 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
     /**
      * {@inheritdoc}
      */
-    public function getRestrictEntityEventName()
+    protected function getRestrictEntityEventName()
     {
         return sprintf('%s.%s', RestrictIndexEntityEvent::NAME, 'product');
     }

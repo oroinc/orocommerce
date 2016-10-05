@@ -1,12 +1,10 @@
-{% extends 'OroAccountBundle:layouts:default/oro_account_account_user_security_login/layout.html.twig' %}
-
 {% block _login_page_widget %}
     {% if loginPage and loginPage.backgroundImage %}
         {% set attr = attr|merge({
             style: attr.style|default('') ~ "background-image: url('" ~ file_url(loginPage, 'backgroundImage', loginPage.backgroundImage) ~ "');"
         }) %}
     {% endif %}
-    {{ parent() }}
+    {{ parent_block_widget(block) }}
 {% endblock %}
 
 {% block _login_page_logo_widget %}

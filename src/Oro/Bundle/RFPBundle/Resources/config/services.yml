@@ -36,15 +36,15 @@ services:
         tags:
             - { name: oro_product.quick_add_processor }
 
-    oro_rfp.event_listener.product_select_db_query:
-        class: '%oro_product.event_listener.scoped_product_select_db_query.common_class%'
-        parent: oro_product.event_listener.abstract_product_select_db_query
+    oro_rfp.event_listener.product_db_query_restriction:
+        class: '%oro_product.event_listener.scoped_product_db_query_restriction.common_class%'
+        parent: oro_product.event_listener.abstract_product_db_query_restriction
         calls:
             - [setScope, ['rfp']]
             - [setFrontendSystemConfigurationPath, ['oro_rfp.frontend_product_visibility']]
             - [setBackendSystemConfigurationPath, ['oro_rfp.backend_product_visibility']]
         tags:
-            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
     oro_rfp.service.request_to_quote_data_storage:
         class: 'Oro\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage'

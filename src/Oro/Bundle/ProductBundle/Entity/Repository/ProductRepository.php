@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Entity\Repository;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
@@ -220,7 +221,7 @@ class ProductRepository extends EntityRepository
 
     /**
      * @param string $sku
-     * @return string
+     * @return string|null
      */
     public function getPrimaryUnitPrecisionCode($sku)
     {
@@ -232,7 +233,7 @@ class ProductRepository extends EntityRepository
             ->where($qb->expr()->eq('product.sku', ':sku'))
             ->setParameter('sku', $sku)
             ->getQuery()
-            ->getSingleScalarResult();
+            ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
     }
 
     /**

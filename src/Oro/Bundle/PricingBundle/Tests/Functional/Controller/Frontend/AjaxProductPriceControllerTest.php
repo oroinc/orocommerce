@@ -179,6 +179,8 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
      */
     public function testGridFilter(array $filter, array $expected)
     {
+        $this->markTestSkipped('TODO: Implement in scope of BB-4176');
+
         $account = $this->getReference('account.level_1.2');
         $response = $this->client->requestFrontendGrid(
             [

@@ -28,11 +28,6 @@ class WebsiteSearchProductVisibilityIndexerListener
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
-        $entityClass = $event->getEntityClass();
-        if (!is_a($entityClass, Product::class, true)) {
-            return;
-        }
-
         $context = $event->getContext();
         if (!isset($context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY])) {
             throw new \InvalidArgumentException('Website id is absent in context');

@@ -143,3 +143,11 @@ services:
         public: false
         arguments:
             - '@oro_commerce_entity.extra_insert_entity_storage'
+
+    oro_catalog.event_listener.website_search_index:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\WebsiteSearchCategoryIndexerListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_website.provider.website_localization'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }

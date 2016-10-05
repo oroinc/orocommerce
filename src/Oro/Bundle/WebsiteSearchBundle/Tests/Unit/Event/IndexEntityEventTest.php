@@ -7,17 +7,10 @@ use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
 
 class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetEntityName()
-    {
-        $event = new IndexEntityEvent('EntityName', [], []);
-
-        $this->assertEquals('EntityName', $event->getEntityClass());
-    }
-
     public function testGetEntityIds()
     {
         $entities = [new \stdClass(), new \stdClass()];
-        $event = new IndexEntityEvent('', $entities, []);
+        $event = new IndexEntityEvent($entities, []);
 
         $this->assertEquals($entities, $event->getEntities());
     }
@@ -28,21 +21,21 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
             'someKey' => 'someValue'
         ];
 
-        $event = new IndexEntityEvent('', [], $context);
+        $event = new IndexEntityEvent([], $context);
 
         $this->assertEquals($context, $event->getContext());
     }
 
     public function testGetEntitiesDataWhenNothingWasAdded()
     {
-        $event = new IndexEntityEvent('', [], []);
+        $event = new IndexEntityEvent([], []);
 
         $this->assertEquals([], $event->getEntitiesData());
     }
 
     public function testGetEntityDataWhenFieldsAreAdded()
     {
-        $event = new IndexEntityEvent('', [1, 2], []);
+        $event = new IndexEntityEvent([1, 2], []);
 
         $event->addField(1, 'title', 'Product title');
         $event->addField(1, 'description', 'Product description');

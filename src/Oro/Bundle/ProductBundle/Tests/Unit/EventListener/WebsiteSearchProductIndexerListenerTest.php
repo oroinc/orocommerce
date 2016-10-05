@@ -132,7 +132,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
 
         $product = $this->prepareProduct($defaultLocale, $customLocale);
 
-        $event = new IndexEntityEvent(Product::class, [$product], []);
+        $event = new IndexEntityEvent([$product], []);
 
         $this->listener->onWebsiteSearchIndex($event);
 
@@ -177,12 +177,5 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
         ];
 
         $this->assertEquals($expected, $event->getEntitiesData());
-    }
-
-    public function testOnWebsiteSearchIndexNotSupportedClass()
-    {
-        $event = new IndexEntityEvent(\stdClass::class, [new Product()], []);
-        $this->listener->onWebsiteSearchIndex($event);
-        $this->assertEquals([], $event->getEntitiesData());
     }
 }

@@ -2,9 +2,6 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Query;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-use Oro\Bundle\WebsiteSearchBundle\Event\SelectDataFromSearchIndexEvent;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
@@ -21,9 +18,6 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
     /** @var Query|\PHPUnit_Framework_MockObject_MockObject */
     protected $query;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $dispatcher;
-
     public function setUp()
     {
         $this->engine = $this->getMockBuilder(EngineV2Interface::class)
@@ -33,11 +27,8 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->dispatcher = $this->getMock(EventDispatcherInterface::class);
-
         $this->websiteSearchQuery = new WebsiteSearchQuery(
             $this->engine,
-            $this->dispatcher,
             $this->query
         );
     }
@@ -65,31 +56,11 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
         $this->websiteSearchQuery->setFrom($alias);
     }
 
-    public function testWebsiteQueryExecutionAndEventDispatch()
+    public function testWebsiteQueryExecution()
     {
         $result = $this->getMockBuilder(Result::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $selectedData = ['foo'];
-
-        $this->query->expects($this->at(0))
-            ->method('getSelectDataFields')
-            ->willReturn($selectedData);
-
-        $this->dispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(
-                SelectDataFromSearchIndexEvent::EVENT_NAME,
-                $this->isInstanceOf(SelectDataFromSearchIndexEvent::class)
-            );
-
-        $this->query->expects($this->at(1))
-            ->method('select')
-            ->with($selectedData);
-
-        $result->expects($this->once())
-            ->method('getElements');
 
         $this->engine->expects($this->once())
             ->method('search')
