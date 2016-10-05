@@ -38,9 +38,10 @@ define([
             operations: {
                 math: ['+', '-', '%', '*', '/'],
                 bool: ['and', 'or'],
-                compare: ['>', '<', '=', '!=', 'in', 'not in']
+                compare: ['>', '<', '=', '!='],
+                inclusion: ['in', 'not in']
             },
-            allowedOperations: ['math', 'bool', 'compare']
+            allowedOperations: ['math', 'bool', 'compare', 'inclusion']
         },
 
         /**
@@ -126,11 +127,11 @@ define([
             var words = this.splitString(normalized.string, ' ');
             var groups = this.getGroups(words);
 
-            var logicIsValid = _.last(groups.logicWords) !== _.last(words) && _.every(groups.logicWords, function(item) {
+            var logicIsValid = _.last(groups.bool) !== _.last(words) && _.every(groups.bool, function(item) {
                     return _this.contains(_this.options.operations.bool, item);
                 });
 
-            var dataWordsAreValid = _.every(groups.dataWords, function(item) {
+            var dataWordsAreValid = _.every(groups.expr, function(item) {
                 return _this.isDataExpression(item).isFull;
             });
 
@@ -349,30 +350,37 @@ define([
             var _this = this;
 
             var compareMatch = string.match(this.opsRegEx['compare']);
+            var inclusionMatch = string.match(this.opsRegEx['inclusion']);
 
-            if (_.isNull(compareMatch) || compareMatch.length > 1) {
+            var isCompare = !_.isNull(compareMatch) && compareMatch.length === 1;
+            var isInclusion = !_.isNull(inclusionMatch) && inclusionMatch.length === 1;
+
+            if ((!isCompare && !isInclusion) || (isCompare && isInclusion)) {
                 return false;
             }
 
-            var matchSplit = compareMatch ? this.splitString(string, compareMatch[0]) : null;
-            var isValidWord = this.contains(this.dataWordCases, matchSplit[0]);
-            var pathValue = this.getValueByPath(this.options.data, matchSplit[0]);
+            var matchSplit = this.splitString(string, compareMatch[0] || inclusionMatch[0]);
+            var word = matchSplit[0];
+            var expr = matchSplit[1];
 
-            if (!_.isEmpty(matchSplit[1])) {
-                var expressionValues = matchSplit[1].replace(this.opsRegEx['math'], ' ').split(' ');
-                var valueIsNotBool = _.every(expressionValues, function(value) {
-                    return !_.contains(_this.operationsCases.bool, value);
-                });
-                var isValidExpression = valueIsNotBool && pathValue === 'any' && !_.contains(expressionValues, '') && !_.isEmpty(_.last(expressionValues));
+            var isValidWord = this.contains(this.dataWordCases, word);
+            var pathValue = this.getValueByPath(this.options.data, word);
 
-                var hasInCases = this.contains(pathValue, matchSplit[1]);
-
-                var arrayValues = matchSplit[1] ? matchSplit[1].split(',') : [];
-                var isValidArray = pathValue.type === 'array' && !_.isEmpty(arrayValues).length && !_.isEmpty(_.last(arrayValues));
-
-                var isValidValue = isValidExpression || hasInCases || isValidArray;
+            if (_.isEmpty(expr)) {
+                return false;
             }
 
+            var exprInValues = this.contains(pathValue, expr);
+
+            var arrayValues = expr ? expr.split(',') : [];
+            var isValidArray = pathValue.type === 'array' && !_.isEmpty(arrayValues).length && !_.isEmpty(_.last(arrayValues));
+
+            var expressionValues = expr.replace(this.opsRegEx['math'], ' ').split(' ');
+            var valueIsNotBool = _.every(expressionValues, function(value) {
+                return !_.contains(_this.operationsCases.bool, value);
+            });
+            var isValidExpression = valueIsNotBool && pathValue === 'any' && !_.contains(expressionValues, '') && !_.isEmpty(_.last(expressionValues));
+            var isValidValue = isValidExpression || exprInValues || isValidArray;
             var isFullValid = isValidWord && isValidValue;
 
             return {
@@ -404,7 +412,7 @@ define([
             });
 
             switch (name) {
-                case 'compare':
+                case 'inclusion':
                     reString = '(\\s|\\~)*(' + escapedOps.join('|') + ')(\\s|\\~)*';
                     break;
                 case 'bool':
@@ -435,7 +443,7 @@ define([
 
             _.each(regex, function(re, name) {
                 switch (name) {
-                    case 'compare':
+                    case 'inclusion':
                         string = string.replace(re, function(match) {
                             return '~' + match.replace(/\s+/g, '') + '~';
                         });
@@ -492,6 +500,10 @@ define([
                 _.each(src, function(item, name) {
                     var subName = baseName ? baseName + '.' + name : name;
 
+                    if (!_.contains(arr, baseName)) {
+                        arr.push(baseName);
+                    }
+
                     if (item.type === 'array') {
                         arr.push(subName);
                     } else if (_.isObject(item) && !_.isArray(item)) {
@@ -541,8 +553,8 @@ define([
          */
         getGroups: function(words) {
             return {
-                dataWords: separateGroups(words, true),
-                logicWords: separateGroups(words)
+                expr: separateGroups(words, true),
+                bool: separateGroups(words)
             };
 
             function separateGroups(groups, isOdd) {
