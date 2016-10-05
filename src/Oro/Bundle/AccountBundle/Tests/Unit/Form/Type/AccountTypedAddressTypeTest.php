@@ -241,7 +241,6 @@ class AccountTypedAddressTypeTest extends FormIntegrationTestCase
                 'updateOwner' => $account
             ]
         ];
-
     }
 
     public function testGetName()
