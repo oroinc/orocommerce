@@ -22,7 +22,7 @@ class LoadScopeAccountGroupDemoData extends AbstractFixture implements FixtureIn
         foreach ($accountGroups as $accountGroup) {
             $scope = new Scope();
             $scope
-                ->setAccountGroup($accountGroup->getGroup()->getId());
+                ->setAccountGroup($accountGroup);
             $this->addReference($accountGroup->getName(), $scope);
             $manager->persist($scope);
         }

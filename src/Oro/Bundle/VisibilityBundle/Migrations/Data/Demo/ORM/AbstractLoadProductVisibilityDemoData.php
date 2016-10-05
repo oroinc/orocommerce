@@ -60,7 +60,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
      */
     protected function getScopeAccount(ObjectManager $manager, $id)
     {
-        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['account_id' => $id]);
+        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['id' => $id]);
     }
 
     /**
@@ -70,7 +70,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
      */
     protected function getAccountGroup(ObjectManager $manager, $id)
     {
-        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['accountGroup_id' => $id]);
+        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['id' => $id]);
     }
 
     /**

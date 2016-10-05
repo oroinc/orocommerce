@@ -22,7 +22,7 @@ class LoadScopeAccountDemoData extends AbstractFixture implements FixtureInterfa
         foreach ($accounts as $account) {
             $scope = new Scope();
             $scope
-                ->setAccount($account->getId());
+                ->setAccount($account);
             $this->addReference($account->getName(), $scope);
             $manager->persist($scope);
         }
