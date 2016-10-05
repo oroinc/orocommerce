@@ -39,6 +39,7 @@ oro:
 
         actions:
             set_current: Set as current
+            choose_list: Choose list
             view: view shopping list
             add_to_shopping_list: Add to {{ shoppingList }}
             remove_from_shopping_list: Remove From {{ shoppingList }}

@@ -35,11 +35,6 @@ workflows:
                 property_path: checkout.shippingMethod
             shipping_method_type:
                 property_path: checkout.shippingMethodType
-            shipping_rule_config:
-                type: entity
-                label: Shipping Rule Configuration
-                options:
-                    class: Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration
             billing_address_has_shipping:
                 type: boolean
                 label: If billing address also shipping
@@ -230,12 +225,8 @@ workflows:
                             options:
                                 constraints:
                                     - NotBlank: ~
-                        shipping_method_type: ~
-                        shipping_rule_config:
-                            form_type: 'Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType'
+                        shipping_method_type:
                             options:
-                                class: 'OroShippingBundle:ShippingRuleConfiguration'
-                                multiple: false
                                 constraints:
                                     - NotBlank: ~
                         state_token:
@@ -310,7 +301,7 @@ workflows:
             back_to_payment:
                 label: Edit Payment
                 step_to: enter_payment
-                transition_definition: clear_payment_method_and_recalculate_state_definition
+                transition_definition: recalculate_state_definition
                 is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
@@ -619,12 +610,16 @@ workflows:
                             message: oro.checkout.workflow.condition.shipping_method_supports.message
                             parameters:
                                 entity: $checkout
-                                shipping_rule_config: $shipping_rule_config
                 actions:
                     - '@call_service_method':
-                        service: oro_checkout.shipping_cost.calculator
-                        method: calculatePrice
-                        method_parameters: [$checkout, $shipping_rule_config]
+                        service: oro_checkout.factory.shipping_context_provider_factory
+                        method: create
+                        method_parameters: [$checkout]
+                        attribute: $.result.shippingContext
+                    - '@call_service_method':
+                        service: oro_shipping.shipping_price.provider
+                        method: getPrice
+                        method_parameters: [$.result.shippingContext, $shipping_method, $shipping_method_type]
                         attribute: $checkout.shippingCost
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -672,6 +667,10 @@ workflows:
                             entity: $checkout
                 conditions:
                     '@and':
+                        - '@shipping_method_supports':
+                            message: oro.checkout.workflow.condition.shipping_method_supports.message
+                            parameters:
+                                entity: $checkout
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -748,6 +747,11 @@ workflows:
                                     is_ajax: true
                                     expected_key: transition
                                     expected_value: continue_to_order_review
+                conditions:
+                    '@shipping_method_supports':
+                        message: oro.checkout.workflow.condition.shipping_method_supports.message
+                        parameters:
+                            entity: $checkout
                 actions:
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -793,14 +797,19 @@ workflows:
                         message: Payment process is running for this checkout
                         parameters: [$payment_in_progress, true]
                 conditions:
-                    '@or':
-                        - '@empty': $.result.savedCheckoutState
-                        - '@check_checkout_states':
-                            message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                            parameters:
-                                entity: $checkout
-                                state1: $.result.initCheckoutState
-                                state2: $.result.savedCheckoutState
+                  '@and':
+                      - '@or':
+                          - '@empty': $.result.savedCheckoutState
+                          - '@check_checkout_states':
+                              message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                              parameters:
+                                  entity: $checkout
+                                  state1: $.result.initCheckoutState
+                                  state2: $.result.savedCheckoutState
+                      - '@shipping_method_supports':
+                          message: oro.checkout.workflow.condition.shipping_method_supports.message
+                          parameters:
+                              entity: $checkout
                 actions:
                     - '@assign_value':
                         conditions:
@@ -949,6 +958,10 @@ workflows:
                     '@and':
                         - '@not_empty': [$order]
                         - '@equal': [$payment_in_progress, true]
+                        - '@shipping_method_supports':
+                              message: oro.checkout.workflow.condition.shipping_method_supports.message
+                              parameters:
+                                  entity: $checkout
                 actions:
                     # Save billing address if required
                     - '@assign_constant_value': [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
@@ -1075,6 +1088,18 @@ workflows:
                         route_parameters:
                             id: $order.id
 
+            recalculate_state_definition:
+                preconditions:
+                    '@not_equal': [$payment_in_progress, true]
+                actions:
+                    - '@generate_checkout_state_snapshot':
+                        entity: $checkout
+                        attribute: $.result.actualCheckoutState
+                    - '@save_checkout_state':
+                        entity: $checkout
+                        state: $.result.actualCheckoutState
+                        attribute: $state_token
+                    - '@assign_value': [$internal_state_token, $state_token]
             clear_payment_method_and_recalculate_state_definition:
                 preconditions:
                     '@not_equal': [$payment_in_progress, true]
