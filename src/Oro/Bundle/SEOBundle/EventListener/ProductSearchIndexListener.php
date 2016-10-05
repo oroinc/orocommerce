@@ -45,7 +45,7 @@ class ProductSearchIndexListener
 
         $context = $event->getContext();
 
-        $websiteId = (array_key_exists(AbstractIndexer::CONTEXT_WEBSITE_ID_KEY, $context))
+        $websiteId = array_key_exists(AbstractIndexer::CONTEXT_WEBSITE_ID_KEY, $context)
             ? $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY]
             : null;
 
@@ -89,9 +89,7 @@ class ProductSearchIndexListener
      */
     private function cleanUpString($string)
     {
-        $clean = preg_replace('/[[:cntrl:]]/', '', $string);
-
-        return $clean;
+        return preg_replace('/[[:cntrl:]]/', '', $string);
     }
 
     /**

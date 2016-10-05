@@ -100,9 +100,9 @@ class IndexEntityEvent extends Event
         foreach ($placeholderData as $valueWithPlaceholders) {
             $placeholders = $valueWithPlaceholders->getPlaceholders();
             $value        = $valueWithPlaceholders->getValue();
-            $isMatchin    = isset($placeholders[$placeholderKey]) &&
-                            $placeholderValue === $placeholders[$placeholderKey];
-            if (true === $isMatchin) {
+            $isMatching   = array_key_exists($placeholderKey, $placeholders) &&
+                $placeholderValue === $placeholders[$placeholderKey];
+            if (true === $isMatching) {
                 $newValue                 = $value . ' ' . $string;
                 $newValueWithPlaceholders = new ValueWithPlaceholders($newValue, $placeholders);
                 $resultPlaceholderData[]  = $newValueWithPlaceholders;
@@ -121,7 +121,9 @@ class IndexEntityEvent extends Event
      */
     public function getFieldValue($entityId, $fieldName)
     {
-        return $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] ?? null;
+        return isset($this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName]) ?
+            $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] :
+            null;
     }
 
     /**
@@ -131,7 +133,9 @@ class IndexEntityEvent extends Event
      */
     public function getPlaceholderFieldValue($entityId, $fieldName)
     {
-        return $this->entitiesData[$entityId][IndexDataProvider::PLACEHOLDER_VALUES_KEY][$fieldName] ?? null;
+        return isset($this->entitiesData[$entityId][IndexDataProvider::PLACEHOLDER_VALUES_KEY][$fieldName]) ?
+            $this->entitiesData[$entityId][IndexDataProvider::PLACEHOLDER_VALUES_KEY][$fieldName] :
+            null;
     }
 
     /**

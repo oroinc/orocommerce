@@ -51,4 +51,4 @@ services:
             - '@oro_website.provider.website_localization'
             - '@property_accessor'
         tags:
-            - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
