@@ -94,17 +94,27 @@ class CategoryRepositoryTest extends WebTestCase
 
         $this->assertNull($this->repository->findOneByDefaultTitle('Not existing category'));
     }
-    
+
     public function testGetCategoryMapByProducts()
     {
-        $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
-        $expectedMap = [$product->getId() => $category];
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+        $product3 = $this->getReference(LoadProductData::PRODUCT_5);
+        $category1 = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        $category2 = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+        $category3 = $this->getReference(LoadCategoryData::SECOND_LEVEL2);
+        $expectedMap = [
+            $product1->getId() => $category1,
+            $product2->getId() => $category2,
+            $product3->getId() => $category3
+        ];
 
-        $actualCategory = $this->repository->getCategoryMapByProducts([$product]);
-        $this->assertInstanceOf(Category::class, reset($actualCategory));
+        $actualCategory = $this->repository->getCategoryMapByProducts([$product1, $product2, $product3]);
         $this->assertEquals($expectedMap, $actualCategory);
+    }
 
+    public function testGetCategoryMapByProductsEmpty()
+    {
         $this->assertEmpty($this->repository->getCategoryMapByProducts([]));
     }
 

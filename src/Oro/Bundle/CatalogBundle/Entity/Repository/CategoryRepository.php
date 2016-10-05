@@ -112,7 +112,6 @@ class CategoryRepository extends NestedTreeRepository
 
     /**
      * @param Product $product
-     *
      * @return Category|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
@@ -126,7 +125,6 @@ class CategoryRepository extends NestedTreeRepository
 
     /**
      * @param string $productSku
-     *
      * @param bool $includeTitles
      * @return null|Category
      * @throws \Doctrine\ORM\NonUniqueResultException
@@ -177,7 +175,7 @@ class CategoryRepository extends NestedTreeRepository
      */
     public function getAllChildCategories(Category $category)
     {
-         return $this->getChildrenQueryBuilderPartial($category)
+        return $this->getChildrenQueryBuilderPartial($category)
             ->getQuery()
             ->getResult();
     }
@@ -202,6 +200,7 @@ class CategoryRepository extends NestedTreeRepository
     }
 
     /**
+     * Creates product to category map, [product_id => Category, ...]
      * @param Product[] $products
      * @param Localization[] $localizations
      * @return array
@@ -232,25 +231,22 @@ class CategoryRepository extends NestedTreeRepository
         $builder->setParameter('localizations', $localizations);
 
         $relationBuilder = clone $builder;
-        $relationBuilder->select('product.id as product_id, category.id as category_id');
+        $relationBuilder->select('product.id as productId, category.id as categoryId');
 
         $categories = $builder->getQuery()->getResult();
         $relations = $relationBuilder->getQuery()->getArrayResult();
 
-        // Create product to category map, [product_id => Category, ...]
         $categoryMap = [];
-        foreach ($relations as $relation) {
-            array_walk(
-                $categories,
-                function ($category) use (&$categoryMap, $relation) {
-                    /** @var Category $category */
-                    if ($category->getId() === $relation['category_id']) {
-                        $categoryMap[$relation['product_id']] = $category;
-                    }
-                }
-            );
+        /** @var Category $category */
+        foreach ($categories as $category) {
+            $categoryMap[$category->getId()] = $category;
         }
 
-        return $categoryMap;
+        $productCategoryMap = [];
+        foreach ($relations as $relation) {
+            $productCategoryMap[$relation['productId']] = $categoryMap[$relation['categoryId']];
+        }
+
+        return $productCategoryMap;
     }
 }
