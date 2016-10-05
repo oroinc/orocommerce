@@ -17,9 +17,7 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-        $this->client->useHashNavigation(true);
-
+        $this->initClient();
         $this->loadFixtures(
             [
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',

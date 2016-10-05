@@ -74,12 +74,20 @@ oro.pricing:
         entity_label: Price Calculation Rule
         entity_plural_label: Price Calculation Rules
         currency.label: Currency
+        currency_expression.label: Currency Expression
         quantity.label: Quantity
-        product_unit.label: ProductUnit
+        quantity_expression.label: Quantity Expression
+        product_unit.label: Product Unit
+        product_unit_expression.label: Product Unit Expression
         rule_condition.label: Condition
         rule.label: Rule
         priority.label: Priority
         calculate_as.label: Calculate As
+        price_for_quantity.label: Price for quantity
+        show_expression_fields.label: Enter expression
+        show_unit_fields.label: Select unit
+        show_currency_fields.label: Select currency
+        in_separator: in
 
     quantity.label: Quantity
     fallback:
@@ -234,6 +242,16 @@ oro.pricing:
         product_prices:
             empty_prices: Price not available
             price_not_found: Price for requested quantity is not available
+
+    notification:
+        price_list:
+            error:
+                product_assignment_build: 'Error occurred during price list product assignments build'
+                price_rule_build: 'Error occurred during price rule build'
+
+    validators:
+        field_or_expression_is_required: Field "%fieldName%" is required
+
 
 oro:
     importexport:

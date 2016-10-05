@@ -86,7 +86,7 @@ class OrmIndexer extends AbstractIndexer
     /**
      * {@inheritdoc}
      */
-    public function resetIndex($class = null)
+    public function resetIndex($class = null, array $context = [])
     {
         $this->getDriver()->removeIndexByClass($class);
     }

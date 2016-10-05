@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -11,11 +12,11 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Datagrid;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\LocaleBundle\Datagrid\Formatter\Property\LocalizedValueProperty;
-
+use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\EventListener\FrontendProductDatagridListener;
+use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,6 +42,16 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $attachmentManager;
 
+    /**
+     * @var CacheManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $imagineCacheManager;
+
+    /**
+     * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $unitFormatter;
+
     public function setUp()
     {
         $this->themeHelper = $this->getMockBuilder('Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper')
@@ -52,10 +63,18 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->attachmentManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\AttachmentManager')
             ->disableOriginalConstructor()->getMock();
 
+        $this->imagineCacheManager = $this->getMockBuilder('Liip\ImagineBundle\Imagine\Cache\CacheManager')
+            ->disableOriginalConstructor()->getMock();
+
+        $this->unitFormatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+            ->disableOriginalConstructor()->getMock();
+
         $this->listener = new FrontendProductDatagridListener(
             $this->themeHelper,
             $this->doctrine,
-            $this->attachmentManager
+            $this->attachmentManager,
+            $this->imagineCacheManager,
+            $this->unitFormatter
         );
     }
 
@@ -161,9 +180,9 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         }
 
         /**
-         * @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event
+         * @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event
          */
-        $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\OrmResultAfter')
+        $event = $this->getMockBuilder(SearchResultAfter::class)
             ->disableOriginalConstructor()
             ->getMock();
         $event->expects($this->once())
@@ -228,7 +247,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 ->method('getFilteredImageUrl')
                 ->with(
                     $image,
-                    FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER
+                    FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_MEDIUM
                 )
                 ->willReturn($productId);
         }
@@ -242,6 +261,13 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getProductsUnits')
             ->with($ids)
             ->willReturn($units);
+        $this->unitFormatter->expects($this->any())
+            ->method('format')
+            ->willReturnCallback(
+                function ($string) {
+                    return $string . 'Formatted';
+                }
+            );
 
         $this->listener->onResultAfter($event);
         foreach ($expectedData as $expectedRecord) {
@@ -280,7 +306,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'id' => 2,
                         'image' => null,
                         'expectedUnits' => [
-                            'bottle',
+                            'bottle'
                         ]
                     ],
                     [
@@ -331,8 +357,8 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnResultAfterViewWithoutImage($themeName)
     {
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\OrmResultAfter')
+        /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(SearchResultAfter::class)
             ->disableOriginalConstructor()->getMock();
         $event->expects($this->once())
             ->method('getRecords')
