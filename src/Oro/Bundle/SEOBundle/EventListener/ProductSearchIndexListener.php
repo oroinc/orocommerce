@@ -84,7 +84,7 @@ class ProductSearchIndexListener
     /**
      * Cleans up a unicode string from control characters.
      *
-     * @param $string
+     * @param string $string
      * @return string
      */
     private function cleanUpString($string)
