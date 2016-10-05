@@ -156,7 +156,6 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl2']);
         $this->assertEmpty($priceLists);
-
     }
 
     public function testDeleteUnusedDisabledPriceLists()
