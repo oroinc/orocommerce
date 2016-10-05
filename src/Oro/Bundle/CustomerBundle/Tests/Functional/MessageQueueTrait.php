@@ -23,7 +23,7 @@ trait MessageQueueTrait
     /**
      * @return ProductMessageHandler
      */
-    abstract function getMessageHandler();
+    abstract protected function getMessageHandler();
 
     protected function sendScheduledMessages()
     {
