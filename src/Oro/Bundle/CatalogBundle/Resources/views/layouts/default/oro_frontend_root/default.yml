@@ -17,8 +17,12 @@ layout:
                                 label: 'For Medical Professionals'
                                 link: /product/
                                 link_label: View items
-                            - {image: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-2.png'}
-                            - {image: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-3.png'}
+                            -
+                                image: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-2.png'
+                                link: /product/?categoryId=2&includeSubcategories=1
+                            -
+                                image: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-3.png'
+                                link: /product/?categoryId=7&includeSubcategories=1
                         use_slider: true
                         slider_options: {slidesToShow: 1}
                 hero_promo_item:

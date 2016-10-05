@@ -5,6 +5,10 @@
 
     font-size: 0;
 
+    a:hover {
+        text-decoration: none;
+    }
+
     &__info {
         position: absolute;
         top: 50%;
@@ -52,7 +56,7 @@
         font: italic 700 22px serif;
         text-align: center;
 
-        color: $base-dark-color;
+        color: get-color('additional', 'darker');
     }
 
     &__title {
@@ -62,7 +66,7 @@
         line-height: 64px;
         text-align: center;
 
-        color: $base-dark-color;
+        color: get-color('additional', 'darker');
     }
 
     &__view-btn {
