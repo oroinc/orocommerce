@@ -5,7 +5,6 @@ namespace Oro\Bundle\AccountBundle\Tests\Unit\Indexer;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\AccountBundle\Visibility\Provider\ProductVisibilityProvider;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
@@ -39,11 +38,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
     {
         $entityIds = [1, 2, 3];
         $websiteId = 1;
-        $event = new IndexEntityEvent(
-            Product::class,
-            $entityIds,
-            [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $websiteId]
-        );
+        $event = new IndexEntityEvent($entityIds, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $websiteId]);
 
         $this->visibilityProvider
             ->expects($this->once())

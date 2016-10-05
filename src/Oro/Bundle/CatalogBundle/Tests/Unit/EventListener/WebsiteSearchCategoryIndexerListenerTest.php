@@ -152,7 +152,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
             ->method('getCategoryMapByProducts')
             ->willReturn([$product->getId() => $category]);
 
-        $event = new IndexEntityEvent(Product::class, [$product], []);
+        $event = new IndexEntityEvent([$product], []);
 
         $this->listener->onWebsiteSearchIndex($event);
 
@@ -196,12 +196,5 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
         ];
 
         $this->assertEquals($expected, $event->getEntitiesData());
-    }
-
-    public function testOnWebsiteSearchIndexNotSupportedClass()
-    {
-        $event = new IndexEntityEvent(\stdClass::class, [new Product()], []);
-        $this->listener->onWebsiteSearchIndex($event);
-        $this->assertEquals([], $event->getEntitiesData());
     }
 }
