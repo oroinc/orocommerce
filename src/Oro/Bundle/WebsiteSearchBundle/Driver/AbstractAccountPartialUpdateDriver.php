@@ -8,13 +8,13 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\VisitorReplacePlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderVisitor;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 
 abstract class AbstractAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterface
 {
     /**
-     * @var VisitorReplacePlaceholder
+     * @var PlaceholderVisitor
      */
     private $visitorReplacePlaceholder;
 
@@ -24,11 +24,11 @@ abstract class AbstractAccountPartialUpdateDriver implements AccountPartialUpdat
     private $mappingProvider;
 
     /**
-     * @param VisitorReplacePlaceholder $visitorReplacePlaceholder
+     * @param PlaceholderVisitor $visitorReplacePlaceholder
      * @param AbstractSearchMappingProvider $mappingProvider
      */
     public function __construct(
-        VisitorReplacePlaceholder $visitorReplacePlaceholder,
+        PlaceholderVisitor $visitorReplacePlaceholder,
         AbstractSearchMappingProvider $mappingProvider
     ) {
         $this->visitorReplacePlaceholder = $visitorReplacePlaceholder;
