@@ -30,14 +30,14 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
 
     protected function setUp()
     {
-        $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
+        $this->qb = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->requestStack = $this->getMockBuilder('Symfony\Component\HttpFoundation\RequestStack')
+        $this->requestStack = $this->getMockBuilder(RequestStack::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->productManager = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Manager\ProductManager')
+        $this->productManager = $this->getMockBuilder(ProductManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -96,7 +96,7 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
         $dataSource->expects($this->once())->method('getQueryBuilder')->willReturn($this->qb);
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
-        $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $dataGrid = $this->getMock(DatagridInterface::class);
         $dataGrid->expects($this->once())->method('getDatasource')->willReturn($dataSource);
 
         return new BuildAfter($dataGrid);
