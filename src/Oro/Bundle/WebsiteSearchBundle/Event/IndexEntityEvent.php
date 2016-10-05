@@ -81,7 +81,7 @@ class IndexEntityEvent extends Event
     }
 
     /**
-     * @param string $entityId
+     * @param int    $entityId
      * @param string $fieldName
      * @param string $string
      * @param string $placeholderKey
@@ -115,8 +115,8 @@ class IndexEntityEvent extends Event
     }
 
     /**
-     * @param $entityId
-     * @param $fieldName
+     * @param int    $entityId
+     * @param string $fieldName
      * @return string|object|null
      */
     public function getFieldValue($entityId, $fieldName)
@@ -127,8 +127,8 @@ class IndexEntityEvent extends Event
     }
 
     /**
-     * @param $entityId
-     * @param $fieldName
+     * @param int    $entityId
+     * @param string $fieldName
      * @return ValueWithPlaceholders[]|null
      */
     public function getPlaceholderFieldValue($entityId, $fieldName)
