@@ -1,44 +1,31 @@
 .hero-promo-item {
-    display: flex;
+    position: relative;
+
     margin-top: 26px;
 
     font-size: 0;
 
-    &__picture,
     &__info {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translate(0, -50%);
+
+        width: 36.54%;
+
         display: inline-block;
 
         font-size: $base-font-size;
-
-        border: 1px solid $base-border-color;
-    }
-
-    &__picture {
-        width: 63.46%;
-    }
-
-    &__info {
-        position: relative;
-
-        width: 36.54%;
     }
 
     &__img {
         display: block;
-        max-width: 100%;
+        width: 100%;
     }
 
     &__cover {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-
         text-align: center;
         white-space: nowrap;
-
-        background: rgba(87,47,46, .5);
 
         &:before {
             display: inline-block;
@@ -65,7 +52,7 @@
         font: italic 700 22px serif;
         text-align: center;
 
-        color: $base-white-color;
+        color: $base-dark-color;
     }
 
     &__title {
@@ -75,7 +62,7 @@
         line-height: 64px;
         text-align: center;
 
-        color: $base-white-color;
+        color: $base-dark-color;
     }
 
     &__view-btn {
