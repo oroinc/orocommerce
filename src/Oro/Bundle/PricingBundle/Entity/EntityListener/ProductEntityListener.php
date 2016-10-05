@@ -19,9 +19,12 @@ class ProductEntityListener extends AbstractRuleEntityListener
         $this->recalculateByEntityFieldsUpdate($event->getEntityChangeSet(), $product);
     }
 
-    public function postPersist()
+    /**
+     * @param Product $product
+     */
+    public function postPersist(Product $product)
     {
-        $this->recalculateByEntity();
+        $this->recalculateByEntity($product);
     }
 
     /**

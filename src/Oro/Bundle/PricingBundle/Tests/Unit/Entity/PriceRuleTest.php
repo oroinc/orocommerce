@@ -3,11 +3,10 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class PriceRuleTest extends \PHPUnit_Framework_TestCase
@@ -22,6 +21,9 @@ class PriceRuleTest extends \PHPUnit_Framework_TestCase
             ['quantity', 3.1415926],
             ['productUnit', new ProductUnit()],
             ['ruleCondition', 'some string'],
+            ['quantityExpression', 'product.quantity'],
+            ['currencyExpression', 'product.msrp.currency'],
+            ['productUnitExpression', 'product.unit'],
             ['rule', 'some string'],
             ['priceList', new PriceList()],
             ['priority', 42]

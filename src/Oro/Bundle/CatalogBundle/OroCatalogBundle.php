@@ -6,7 +6,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class OroCatalogBundle extends Bundle
 {
@@ -21,7 +20,7 @@ class OroCatalogBundle extends Bundle
             ->addCompilerPass(
                 new DefaultFallbackExtensionPass(
                     [
-                        Category::class => [
+                        'Oro\Bundle\CatalogBundle\Entity\Category' => [
                             'title' => 'titles',
                             'shortDescription' => 'shortDescriptions',
                             'longDescription' => 'longDescriptions'
