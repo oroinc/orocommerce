@@ -17,8 +17,6 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
 use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use Zend\Code\Reflection\PropertyReflection;
-
 class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;

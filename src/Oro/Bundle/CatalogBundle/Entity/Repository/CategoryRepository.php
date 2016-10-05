@@ -185,9 +185,10 @@ class CategoryRepository extends NestedTreeRepository
      */
     public function getCategoryMapByProducts(array $products, array $localizations = [])
     {
-        $builder = $this->createQueryBuilder('category')
-            ->join(Product::class, 'product', 'WITH', 'product MEMBER OF category.products')
-            ->andWhere('product IN (:products)')
+        $builder = $this->createQueryBuilder('category');
+        $builder
+            ->join(Product::class, 'product', 'WITH', $builder->expr()->isMemberOf('product', 'category.products'))
+            ->andWhere($builder->expr()->in('product', ':products'))
             ->setParameter('products', $products);
 
         // Join localization fields to avoid lazy-loading
@@ -199,7 +200,10 @@ class CategoryRepository extends NestedTreeRepository
                     sprintf('category.%s', $field),
                     $field,
                     'WITH',
-                    sprintf('%s.localization IN (:localizations) OR %s.localization IS NULL', $field, $field)
+                    $builder->expr()->orX(
+                        $builder->expr()->in(sprintf('%s.localization', $field), ':localizations'),
+                        $builder->expr()->isNull(sprintf('%s.localization', $field))
+                    )
                 );
         }
         $builder->setParameter('localizations', $localizations);
