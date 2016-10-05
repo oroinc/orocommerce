@@ -154,7 +154,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
-        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => true]);
         $table->setPrimaryKey(['category_id']);
     }
 
@@ -170,7 +170,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
-        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => true]);
         $table->setPrimaryKey(['scope_id', 'category_id']);
     }
 
@@ -186,7 +186,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
-        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => true]);
         $table->setPrimaryKey(['scope_id', 'category_id']);
     }
 
@@ -202,9 +202,9 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => true]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['category_id'], 'oro_ctgr_vis_uidx');
+        $table->addUniqueIndex(['category_id', 'scope_id'], 'oro_ctgr_vis_uidx');
     }
 
     /**
@@ -218,7 +218,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => true]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['category_id', 'scope_id'], 'oro_acc_ctgr_vis_uidx');
     }
@@ -234,7 +234,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => true]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['category_id', 'scope_id'], 'oro_acc_grp_ctgr_vis_uidx');
     }
@@ -250,9 +250,9 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => true]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['scope_id', 'product_id'], 'oro_prod_vis_uidx');
+        $table->addUniqueIndex(['product_id', 'scope_id'], 'oro_prod_vis_uidx');
     }
 
     /**
@@ -266,9 +266,9 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => true]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['scope_id', 'product_id'], 'oro_acc_prod_vis_uidx');
+        $table->addUniqueIndex(['product_id', 'scope_id'], 'oro_acc_prod_vis_uidx');
     }
 
     /**
@@ -282,7 +282,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
-        $table->addColumn('scope_id', 'integer', ['notnull' => false]);
+        $table->addColumn('scope_id', 'integer', ['notnull' => true]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['product_id', 'scope_id'], 'oro_acc_grp_prod_vis_uidx');
     }
@@ -305,7 +305,7 @@ class OroVisibilityBundleInstaller implements Installation
             $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
             ['scope_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -445,12 +445,12 @@ class OroVisibilityBundleInstaller implements Installation
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-//        $table->addForeignKeyConstraint(
-//            $schema->getTable('oro_scope'),
-//            ['scope_id'],
-//            ['id'],
-//            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-//        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_scope'),
+            ['scope_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 
     /**
