@@ -59,12 +59,13 @@ class ProductControllerTest extends WebTestCase
         $this->configManager->flush();
 
         $this->translator = $this->getContainer()->get('translator');
+
+        // TODO: trigger immediate reindexation event instead
+        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 
     public function testIndexAction()
     {
-        $this->markTestSkipped('Test awaits for a implementation of the new search engine.');
-
         $this->client->request('GET', $this->getUrl('oro_product_frontend_product_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -78,52 +79,47 @@ class ProductControllerTest extends WebTestCase
     public function testIndexDatagridViews()
     {
         // default view is DataGridThemeHelper::VIEW_GRID
-        $response = $this->client->requestFrontendGrid('frontend-products-grid', [], true);
+        $response = $this->client->requestFrontendGrid('frontend-product-search-grid', [], true);
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayHasKey('image', $result['data'][0]);
-        $this->assertArrayHasKey('shortDescription', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
-            'frontend-products-grid',
+            'frontend-product-search-grid',
             [
-                'frontend-products-grid[row-view]' => DataGridThemeHelper::VIEW_LIST,
+                'frontend-product-search-grid[row-view]' => DataGridThemeHelper::VIEW_LIST,
             ],
             true
         );
 
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayNotHasKey('image', $result['data'][0]);
-        $this->assertArrayNotHasKey('shortDescription', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
-            'frontend-products-grid',
+            'frontend-product-search-grid',
             [
-                'frontend-products-grid[row-view]' => DataGridThemeHelper::VIEW_GRID,
+                'frontend-product-search-grid[row-view]' => DataGridThemeHelper::VIEW_GRID,
             ],
             true
         );
 
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayHasKey('image', $result['data'][0]);
-        $this->assertArrayHasKey('shortDescription', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
-            'frontend-products-grid',
+            'frontend-product-search-grid',
             [
-                'frontend-products-grid[row-view]' => DataGridThemeHelper::VIEW_TILES,
+                'frontend-product-search-grid[row-view]' => DataGridThemeHelper::VIEW_TILES,
             ],
             true
         );
 
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayHasKey('image', $result['data'][0]);
-        $this->assertArrayNotHasKey('shortDescription', $result['data'][0]);
 
         // view saves to session so current view is DataGridThemeHelper::VIEW_TILES
-        $response = $this->client->requestFrontendGrid('frontend-products-grid', [], true);
+        $response = $this->client->requestFrontendGrid('frontend-product-search-grid', [], true);
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayHasKey('image', $result['data'][0]);
-        $this->assertArrayNotHasKey('shortDescription', $result['data'][0]);
     }
 
     public function testViewProductWithRequestQuoteAvailable()

@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 
@@ -16,6 +17,19 @@ class RestrictIndexProductsEventListenerTest extends AbstractSearchWebTestCase
     protected function setUp()
     {
         parent::setUp();
+
+        $listener = $this->getContainer()->get('oro_product.event_listener.restrict_index_products');
+        $eventName = sprintf('%s.%s', RestrictIndexEntityEvent::NAME, 'product');
+        $this->clearRestrictListeners($eventName);
+
+        $this->dispatcher->addListener(
+            $eventName,
+            [
+                $listener,
+                'onRestrictIndexEntityEvent'
+            ],
+            -255
+        );
 
         $this->loadFixtures([LoadProductData::class]);
     }

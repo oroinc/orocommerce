@@ -13,7 +13,7 @@ use Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements
+class AccountProductResolvedCacheBuilder extends AbstractProductResolvedCacheBuilder implements
     ProductCaseCacheBuilderInterface
 {
     /**
@@ -80,6 +80,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
         }
 
         $this->executeDbQuery($er, $insert, $delete, $update, $where);
+        $this->triggerProductReindexation($product, $website);
     }
 
     /**
