@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\VisitorReplacePlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderVisitor;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderFieldsProvider;
 
 class PlaceholderFieldsProviderTest extends \PHPUnit_Framework_TestCase
@@ -15,9 +15,9 @@ class PlaceholderFieldsProviderTest extends \PHPUnit_Framework_TestCase
     private $provider;
 
     /**
-     * @var VisitorReplacePlaceholder|\PHPUnit_Framework_MockObject_MockObject
+     * @var PlaceholderVisitor|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $visitorReplacePlaceholder;
+    private $placeholderVisitor;
 
     /**
      * @var AbstractSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -26,7 +26,7 @@ class PlaceholderFieldsProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->visitorReplacePlaceholder = $this->getMockBuilder(VisitorReplacePlaceholder::class)
+        $this->placeholderVisitor = $this->getMockBuilder(PlaceholderVisitor::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -34,7 +34,7 @@ class PlaceholderFieldsProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new PlaceholderFieldsProvider($this->visitorReplacePlaceholder, $this->mappingProvider);
+        $this->provider = new PlaceholderFieldsProvider($this->placeholderVisitor, $this->mappingProvider);
     }
 
     /**
@@ -49,7 +49,7 @@ class PlaceholderFieldsProviderTest extends \PHPUnit_Framework_TestCase
             ->with(TestProduct::class, 'fields')
             ->willReturn([]);
 
-        $this->visitorReplacePlaceholder
+        $this->placeholderVisitor
             ->expects($this->never())
             ->method('replace');
 
@@ -70,7 +70,7 @@ class PlaceholderFieldsProviderTest extends \PHPUnit_Framework_TestCase
 
         $placeholders = ['LOCALIZATION_ID' => 1];
 
-        $this->visitorReplacePlaceholder
+        $this->placeholderVisitor
             ->expects($this->once())
             ->method('replace')
             ->with('name_LOCALIZATION_ID', $placeholders);
