@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\B2BEntityBundle\Storage;
+namespace Oro\Bundle\CommerceEntityBundle\Storage;
 
 interface ExtraActionEntityStorageInterface
 {
