@@ -836,6 +836,7 @@ services:
     oro_account.event_listener.restrict_products_index:
         class: 'Oro\Bundle\AccountBundle\EventListener\RestrictProductsIndexEventListener'
         arguments:
+            - '@oro_entity.doctrine_helper'
             - '@oro_config.global'
             - 'oro_account.product_visibility'
             - 'oro_account.category_visibility'
