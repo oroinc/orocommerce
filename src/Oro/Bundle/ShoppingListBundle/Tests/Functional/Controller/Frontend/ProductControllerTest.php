@@ -36,13 +36,13 @@ class ProductControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_product_frontend_product_view', ['id' => $product->getId()])
+            $this->getUrl('oro_product_frontend_product_view', ['id' => $product->getId()])
         );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $content = $crawler->html();
 
-        $shoppingListClass = $this->getContainer()->getParameter('orob2b_shopping_list.entity.shopping_list.class');
+        $shoppingListClass = $this->getContainer()->getParameter('oro_shopping_list.entity.shopping_list.class');
 
         /** @var ShoppingList[] $shoppingLists */
         $shoppingLists = $this->getContainer()->get('doctrine')->getRepository($shoppingListClass)->findAll();
@@ -61,17 +61,17 @@ class ProductControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             $this->getUrl(
-                'orob2b_shopping_list_frontend_add_product',
+                'oro_shopping_list_frontend_add_product',
                 [
                     'productId' => $product->getId(),
                     'shoppingListId' => $shoppingList->getId()
                 ]
             ),
             [
-                'orob2b_product_frontend_line_item' => [
+                'oro_product_frontend_line_item' => [
                     'quantity' => 5,
                     'unit' => 'liter',
-                    '_token' => $tokenManager->getToken('orob2b_product_frontend_line_item')->getValue()
+                    '_token' => $tokenManager->getToken('oro_product_frontend_line_item')->getValue()
                 ]
             ]
         );
@@ -83,7 +83,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertArrayHasKey('message', $result);
         $this->assertEquals(
             'Product has been added to "<a href="' .
-            $this->getUrl('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()]) .
+            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]) .
             '">'.$shoppingList->getLabel().'</a>"',
             $result['message']
         );

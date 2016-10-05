@@ -10,7 +10,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class ProductShippingOptionsType extends AbstractType
 {
-    const NAME = 'orob2b_shipping_product_shipping_options';
+    const NAME = 'oro_shipping_product_shipping_options';
 
     /** @var string */
     protected $dataClass;

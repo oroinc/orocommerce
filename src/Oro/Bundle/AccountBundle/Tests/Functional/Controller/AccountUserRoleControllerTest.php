@@ -23,7 +23,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         'action' => [
             0 => [
                 'identity' => [
-                    'id' => 'action:orob2b_order_address_billing_allow_manual',
+                    'id' => 'action:oro_order_address_billing_allow_manual',
                     'name' => 'oro.order.security.permission.address_billing_allow_manual',
                 ],
                 'permissions' => [],
@@ -46,6 +46,7 @@ class AccountUserRoleControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
@@ -56,18 +57,18 @@ class AccountUserRoleControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_role_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_account_user_role_create'));
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_account_account_user_role[label]'] = self::TEST_ROLE;
-        $form['orob2b_account_account_user_role[privileges]'] = json_encode($this->privileges);
+        $form['oro_account_account_user_role[label]'] = self::TEST_ROLE;
+        $form['oro_account_account_user_role[privileges]'] = json_encode($this->privileges);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Account User Role has been saved', $crawler->html());
+        $this->assertContains('Customer User Role has been saved', $crawler->html());
     }
 
     /**
@@ -75,7 +76,7 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_role_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_account_user_role_index'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -98,7 +99,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_role_update', ['id' => $id])
+            $this->getUrl('oro_account_account_user_role_update', ['id' => $id])
         );
 
         /** @var \Oro\Bundle\AccountBundle\Entity\AccountUser $accountUser */
@@ -113,10 +114,10 @@ class AccountUserRoleControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
 
         $token = $this->getContainer()->get('security.csrf.token_manager')
-            ->getToken('orob2b_account_account_user_role')->getValue();
+            ->getToken('oro_account_account_user_role')->getValue();
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
-            'orob2b_account_account_user_role' => [
+            'oro_account_account_user_role' => [
                 '_token' => $token,
                 'label' => self::UPDATED_TEST_ROLE,
                 'selfManaged' => true,
@@ -129,7 +130,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $crawler->html();
-        $this->assertContains('Account User Role has been saved', $content);
+        $this->assertContains('Customer User Role has been saved', $content);
 
         $this->getObjectManager()->clear();
 
@@ -159,7 +160,7 @@ class AccountUserRoleControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_role_view', ['id' => $id])
+            $this->getUrl('oro_account_account_user_role_view', ['id' => $id])
         );
 
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);

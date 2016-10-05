@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -43,6 +44,11 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected $attachmentManager;
 
     /**
+     * @var CacheManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $imagineCacheManager;
+
+    /**
      * @var ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $unitFormatter;
@@ -58,6 +64,9 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->attachmentManager = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Manager\AttachmentManager')
             ->disableOriginalConstructor()->getMock();
 
+        $this->imagineCacheManager = $this->getMockBuilder('Liip\ImagineBundle\Imagine\Cache\CacheManager')
+            ->disableOriginalConstructor()->getMock();
+
         $this->unitFormatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
             ->disableOriginalConstructor()->getMock();
 
@@ -65,6 +74,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $this->themeHelper,
             $this->doctrine,
             $this->attachmentManager,
+            $this->imagineCacheManager,
             $this->unitFormatter
         );
     }
@@ -238,7 +248,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 ->method('getFilteredImageUrl')
                 ->with(
                     $image,
-                    FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER
+                    FrontendProductDatagridListener::PRODUCT_IMAGE_FILTER_MEDIUM
                 )
                 ->willReturn($productId);
         }
@@ -289,15 +299,15 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'id' => 1,
                         'image' => 1,
                         'expectedUnits' => [
-                            'item' => 'itemFormatted',
-                            'pack' => 'packFormatted'
+                            'item',
+                            'pack'
                         ]
                     ],
                     [
                         'id' => 2,
                         'image' => null,
                         'expectedUnits' => [
-                            'bottle' => 'bottleFormatted',
+                            'bottle'
                         ]
                     ],
                     [

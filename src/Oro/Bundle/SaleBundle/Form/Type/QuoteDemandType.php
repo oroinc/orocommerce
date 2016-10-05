@@ -13,7 +13,7 @@ use Oro\Bundle\SaleBundle\Manager\QuoteDemandManager;
 
 class QuoteDemandType extends AbstractType
 {
-    const NAME = 'orob2b_sale_quote_demand';
+    const NAME = 'oro_sale_quote_demand';
 
     /**
      * @var QuoteDemandManager

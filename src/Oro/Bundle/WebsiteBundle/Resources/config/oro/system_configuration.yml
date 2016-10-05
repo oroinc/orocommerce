@@ -1,0 +1,44 @@
+system_configuration:
+    groups:
+        websites:
+            title: oro.website.system_configuration.groups.webistes.title
+        routing:
+            title: oro.website.system_configuration.groups.routing.title
+            icon: 'icon-sitemap'
+        websites_routing_general:
+            title: oro.website.system_configuration.groups.general.title
+    fields:
+        oro_website.url:
+            data_type: string
+            type: 'Symfony\Component\Form\Extension\Core\Type\UrlType'
+            priority: 2000
+            options:
+                default_protocol: 'http'
+                label: oro.website.system_configuration.fields.url.label
+                constraints:
+                    - Url: ~
+        oro_website.secure_url:
+            data_type: string
+            type: 'Symfony\Component\Form\Extension\Core\Type\UrlType'
+            priority: 1000
+            options:
+                default_protocol: 'https'
+                label: oro.website.system_configuration.fields.secure_url.label
+                constraints:
+                    - Url: ~
+
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    websites:
+                        priority: 0
+                        children:
+                            routing:
+                                priority: 100
+                                children:
+                                    websites_routing_general:
+                                        priority: 100
+                                        children:
+                                            - oro_website.url
+                                            - oro_website.secure_url

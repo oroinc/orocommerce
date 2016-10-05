@@ -61,13 +61,13 @@ class ShippingOptionLabelExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(3, $filters);
 
         $this->assertInstanceOf('Twig_SimpleFilter', $filters[0]);
-        $this->assertEquals('orob2b_length_unit_format_label', $filters[0]->getName());
+        $this->assertEquals('oro_length_unit_format_label', $filters[0]->getName());
 
         $this->assertInstanceOf('Twig_SimpleFilter', $filters[1]);
-        $this->assertEquals('orob2b_weight_unit_format_label', $filters[1]->getName());
+        $this->assertEquals('oro_weight_unit_format_label', $filters[1]->getName());
 
         $this->assertInstanceOf('Twig_SimpleFilter', $filters[2]);
-        $this->assertEquals('orob2b_freight_class_format_label', $filters[2]->getName());
+        $this->assertEquals('oro_freight_class_format_label', $filters[2]->getName());
     }
 
     public function testGetName()

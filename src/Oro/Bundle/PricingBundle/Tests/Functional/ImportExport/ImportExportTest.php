@@ -29,6 +29,7 @@ class ImportExportTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
@@ -184,8 +185,8 @@ class ImportExportTest extends WebTestCase
     public function strategyDataProvider()
     {
         return [
-            'add or replace' => ['orob2b_pricing_product_price.add_or_replace', 0, 8],
-            'reset' => ['orob2b_pricing_product_price.reset', 8, 0]
+            'add or replace' => ['oro_pricing_product_price.add_or_replace', 0, 8],
+            'reset' => ['oro_pricing_product_price.reset', 8, 0]
         ];
     }
 
@@ -302,7 +303,7 @@ class ImportExportTest extends WebTestCase
             $this->getUrl(
                 'oro_importexport_export_instant',
                 [
-                    'processorAlias' => 'orob2b_pricing_product_price',
+                    'processorAlias' => 'oro_pricing_product_price',
                     '_format' => 'json',
                     'options[price_list_id]' => $this->priceList->getId(),
                     'importJob' => 'price_list_product_prices_entity_import_from_csv',
@@ -340,7 +341,7 @@ class ImportExportTest extends WebTestCase
             ->get('oro_importexport.handler.export')
             ->handleExport(
                 'price_list_product_prices_export_to_csv',
-                'orob2b_pricing_product_price',
+                'oro_pricing_product_price',
                 ProcessorRegistry::TYPE_EXPORT,
                 'csv',
                 null,

@@ -21,6 +21,7 @@ class ProductControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions']);
     }
 
@@ -45,14 +46,14 @@ class ProductControllerTest extends WebTestCase
 
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $product->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
-        $formValues['orob2b_product']['additionalUnitPrecisions'][] = ['unit' => 'box', 'precision' => 0];
-        $formValues['orob2b_product'][ProductFormExtension::FORM_ELEMENT_NAME][] = $data;
+        $formValues['oro_product']['additionalUnitPrecisions'][] = ['unit' => 'box', 'precision' => 0];
+        $formValues['oro_product'][ProductFormExtension::FORM_ELEMENT_NAME][] = $data;
 
         $this->client->followRedirects(true);
 
@@ -90,7 +91,7 @@ class ProductControllerTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $product->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -125,16 +126,16 @@ class ProductControllerTest extends WebTestCase
     protected function assertProductShippingOptions(ProductShippingOptions $option, $html)
     {
         /** @var UnitLabelFormatter $unitFormatter */
-        $unitFormatter = $this->getContainer()->get('orob2b_product.formatter.product_unit_label');
+        $unitFormatter = $this->getContainer()->get('oro_product.formatter.product_unit_label');
 
         /** @var UnitValueFormatter $weightFormatter */
-        $weightFormatter = $this->getContainer()->get('orob2b_shipping.formatter.weight_unit_value');
+        $weightFormatter = $this->getContainer()->get('oro_shipping.formatter.weight_unit_value');
 
         /** @var UnitLabelFormatter $lengthFormatter */
-        $lengthFormatter = $this->getContainer()->get('orob2b_shipping.formatter.length_unit_label');
+        $lengthFormatter = $this->getContainer()->get('oro_shipping.formatter.length_unit_label');
 
         /** @var UnitLabelFormatter $freightFormatter */
-        $freightFormatter = $this->getContainer()->get('orob2b_shipping.formatter.freight_class_label');
+        $freightFormatter = $this->getContainer()->get('oro_shipping.formatter.freight_class_label');
 
         $this->assertContains($unitFormatter->format($option->getProductUnit()), $html);
         $this->assertContains(

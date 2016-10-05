@@ -10,10 +10,10 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\AccountBundle\Entity\Visibility\Repository\CategoryVisibilityRepository")
  * @ORM\Table(
- *      name="orob2b_category_visibility",
+ *      name="oro_category_visibility",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="orob2b_ctgr_vis_uidx",
+ *              name="oro_ctgr_vis_uidx",
  *              columns={"category_id"}
  *          )
  *      }

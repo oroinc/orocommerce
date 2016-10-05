@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraint;
 
 class DatesChain extends Constraint implements \JsonSerializable
 {
-    const ALIAS = 'orob2b_pricing_dates_chain_validator';
+    const ALIAS = 'oro_pricing_dates_chain_validator';
 
     /**
      * @var string

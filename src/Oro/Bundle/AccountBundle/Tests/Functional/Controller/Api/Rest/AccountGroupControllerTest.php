@@ -14,7 +14,7 @@ class AccountGroupControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader());
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups'
@@ -29,7 +29,7 @@ class AccountGroupControllerTest extends WebTestCase
         $id = $entity->getId();
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_account_delete_account_group', ['id' => $id])
+            $this->getUrl('oro_api_account_delete_account_group', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
@@ -39,11 +39,11 @@ class AccountGroupControllerTest extends WebTestCase
     {
         $id = $this->getContainer()
             ->get('oro_config.global')
-            ->get('oro_b2b_account.anonymous_account_group');
+            ->get('oro_account.anonymous_account_group');
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_account_delete_account_group', ['id' => $id])
+            $this->getUrl('oro_api_account_delete_account_group', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertSame(403, $result->getStatusCode());

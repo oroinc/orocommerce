@@ -7,25 +7,24 @@
                 {% if methods|length > 0 %}
                     <span class="{{ class_prefix }}__form__label">{{ 'oro.shipping.methods.select_method'|trans }}<sup class="red">*</sup></span>
                     {% for name, method in methods if methods is defined and method is iterable %}
+
                         {% if method.types is defined and method.types|length > 0 %}
-                            <span class="checkbox_custom__text fs13">{{ method.label }}</span>
-                            {% for type in method.types if method.types is defined and type is iterable %}
-                                {% set selected = currentShippingMethodType == type.name %}
-                                <div class="{{ class_prefix }}__form__radio" data-item-container>
-                                    <label class="custom-radio custom-radio--large {% if selected %}checked{% endif %}" data-radio tabindex="0">
-                                        <input class="custom-radio__control" type="radio" name="shippingMethodType" data-shipping-method="{{ method.name }}" data-shipping-rule-config="{{ type.shippingRuleConfig }}" data-shipping-price="{{ type.price.value }}" data-choice="{{ type.name }}" value="{{ type.name }}" {% if selected%}checked="checked"{% endif %} />
-                                        <span class="custom-radio__text">{{ type.label }}: <strong>{{ type.price|oro_format_price }}</strong></span>
-                                    </label>
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            {% set selected = currentShippingMethod == method.name %}
-                            <div class="{{ class_prefix }}__form__radio" data-item-container>
-                                <label class="custom-radio custom-radio--large {% if selected %}checked{% endif %}" data-radio tabindex="0">
-                                    <input class="custom-radio__control" type="radio" name="shippingMethod" data-shipping-rule-config="{{ method.shippingRuleConfig }}"  data-shipping-price="{{ method.price.value }}" data-choice="{{ method.name }}" value="{{ method.name }}" {% if selected%}checked="checked"{% endif %} />
-                                    <span class="custom-radio__text">{{ method.label }}: <strong>{{ method.price|oro_format_price }}</strong></span>
-                                </label>
+                            <div class="fs13 method_title">
+                            {% if method.isGrouped %}
+                                <span class="checkbox_custom__text fs13">{{ method.label|trans }}</span>
+                            {% endif %}
                             </div>
+                            {% for type in method.types if method.types is defined and type is iterable %}
+                                {% if type.price %}
+                                    {% set selected = currentShippingMethodType == type.identifier %}
+                                    <div class="{{ class_prefix }}__form__radio" data-item-container>
+                                        <label class="custom-radio custom-radio--large {% if selected %}checked{% endif %}" data-radio tabindex="0">
+                                            <input class="custom-radio__control" type="radio" name="shippingMethod" data-shipping-rule-config="{{ method.shippingRuleConfig }}"  data-shipping-price="{{ method.price.value }}" data-choice="{{ method.name }}" value="{{ method.name }}" {% if selected%}checked="checked"{% endif %} />
+                                            <span class="custom-radio__text">{{ method.label }}: <strong>{{ method.price|oro_format_price }}</strong></span>
+                                        </label>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
                         {% endif %}
                     {% endfor %}
                 {% else %}

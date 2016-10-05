@@ -13,6 +13,7 @@ class TaxRuleDeleteOperationTest extends ActionTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -27,6 +28,6 @@ class TaxRuleDeleteOperationTest extends ActionTestCase
             LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_1
         );
 
-        $this->assertDeleteOperation($taxRule->getId(), 'orob2b_tax.entity.tax_rule.class', 'orob2b_tax_rule_index');
+        $this->assertDeleteOperation($taxRule->getId(), 'oro_tax.entity.tax_rule.class', 'oro_tax_rule_index');
     }
 }

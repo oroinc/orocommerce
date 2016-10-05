@@ -1,0 +1,4 @@
+features:
+    rfp_frontend:
+        operations:
+            - 'oro_shoppinglist_frontend_request_quote'

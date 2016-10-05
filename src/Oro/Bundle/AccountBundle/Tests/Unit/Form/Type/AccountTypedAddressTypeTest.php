@@ -241,13 +241,12 @@ class AccountTypedAddressTypeTest extends FormIntegrationTestCase
                 'updateOwner' => $account
             ]
         ];
-
     }
 
     public function testGetName()
     {
         $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals('orob2b_account_typed_address', $this->formType->getName());
+        $this->assertEquals('oro_account_typed_address', $this->formType->getName());
     }
 
     /**

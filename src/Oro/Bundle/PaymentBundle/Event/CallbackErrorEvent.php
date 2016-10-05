@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentBundle\Event;
 
 class CallbackErrorEvent extends AbstractCallbackEvent
 {
-    const NAME = 'orob2b_payment.callback.error';
+    const NAME = 'oro_payment.callback.error';
 
     /** {@inheritdoc} */
     public function getEventName()

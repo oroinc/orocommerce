@@ -31,6 +31,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -38,7 +39,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists'
             ]
         );
-        $this->resolver = $this->getContainer()->get('orob2b_pricing.resolver.combined_product_price_resolver');
+        $this->resolver = $this->getContainer()->get('oro_pricing.resolver.combined_product_price_resolver');
     }
 
     /**

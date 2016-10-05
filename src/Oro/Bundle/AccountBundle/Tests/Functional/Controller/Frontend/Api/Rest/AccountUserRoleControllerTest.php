@@ -25,6 +25,7 @@ class AccountUserRoleControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
@@ -39,7 +40,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_frontend_account_delete_accountuserrole', ['id' => $predefinedRole->getId()])
+            $this->getUrl('oro_api_frontend_account_delete_accountuserrole', ['id' => $predefinedRole->getId()])
         );
 
         $result = $this->client->getResponse();
@@ -61,7 +62,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_frontend_account_delete_accountuserrole', ['id' => $customizedRole->getId()])
+            $this->getUrl('oro_api_frontend_account_delete_accountuserrole', ['id' => $customizedRole->getId()])
         );
 
         $result = $this->client->getResponse();

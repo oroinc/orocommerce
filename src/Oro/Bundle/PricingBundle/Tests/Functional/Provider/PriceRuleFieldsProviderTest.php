@@ -19,7 +19,8 @@ class PriceRuleFieldsProviderTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([]);
-        $this->provider = $this->getContainer()->get('orob2b_pricing.provider.price_rule_fields_provider');
+        $this->client->useHashNavigation(true);
+        $this->provider = $this->getContainer()->get('oro_pricing.provider.price_rule_fields_provider');
     }
 
     /**

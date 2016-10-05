@@ -37,6 +37,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -61,7 +62,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
         $this->context = new StepExecutionProxyContext($this->stepExecution);
         $this->strategy->setImportExportContext($this->context);
         $this->strategy->setEntityName(
-            $container->getParameter('orob2b_pricing.entity.product_price.class')
+            $container->getParameter('oro_pricing.entity.product_price.class')
         );
     }
 

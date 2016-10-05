@@ -3,7 +3,11 @@
 namespace Oro\Bundle\RFPBundle\Form\Extension;
 
 use Doctrine\Common\Collections\Collection;
-
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
+use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
+use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
+use Oro\Bundle\RFPBundle\Form\Type\OffersType;
+use Oro\Bundle\RFPBundle\Storage\OffersFormStorage;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -12,12 +16,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Oro\Bundle\RFPBundle\Form\Type\OffersType;
-use Oro\Bundle\RFPBundle\Storage\OffersFormStorage;
-use Oro\Bundle\ProductBundle\Storage\DataStorageInterface;
-
-class OrderLineItemDataStorageExtension extends AbstractTypeExtension
+class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements FeatureToggleableInterface
 {
+    use FeatureCheckerHolderTrait;
+
     const OFFERS_DATA_KEY = 'offers';
 
     /** @var RequestStack */
@@ -177,12 +179,12 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        return $request && $request->get(DataStorageInterface::STORAGE_KEY);
+        return $this->isFeaturesEnabled() && $request && $request->get(DataStorageInterface::STORAGE_KEY);
     }
 
     /** {@inheritdoc} */
     public function getExtendedType()
     {
-        return 'orob2b_order_line_item';
+        return 'oro_order_line_item';
     }
 }

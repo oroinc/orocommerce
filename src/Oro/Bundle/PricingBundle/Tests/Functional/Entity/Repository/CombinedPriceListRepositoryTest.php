@@ -3,27 +3,26 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class CombinedPriceListRepositoryTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->initClient();
         $this->loadFixtures(
             [
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules',
@@ -157,7 +156,6 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl2']);
         $this->assertEmpty($priceLists);
-
     }
 
     public function testDeleteUnusedDisabledPriceLists()
@@ -327,6 +325,17 @@ class CombinedPriceListRepositoryTest extends WebTestCase
                 'calculatedPrices' => true,
             ],
         ];
+    }
+
+    public function testGetCombinedPriceListsByPriceLists()
+    {
+        /** @var PriceList $priceList */
+        $priceLists[] = $this->getReference('price_list_1');
+        $priceLists[] = $this->getReference('price_list_3');
+        $priceLists[] = $this->getReference('price_list_4');
+
+        $cPriceLists = $this->getRepository()->getCombinedPriceListsByPriceLists($priceLists);
+        $this->assertCount(7, $cPriceLists);
     }
 
     /**

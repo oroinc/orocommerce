@@ -13,6 +13,7 @@ class ProductPriceDeleteOperationTest extends ActionTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices']);
     }
@@ -25,7 +26,7 @@ class ProductPriceDeleteOperationTest extends ActionTestCase
         $this->assertExecuteOperation(
             'DELETE',
             $productPrice->getId(),
-            $this->getContainer()->getParameter('orob2b_pricing.entity.product_price.class'),
+            $this->getContainer()->getParameter('oro_pricing.entity.product_price.class'),
             ['datagrid' => 'price-list-product-prices-grid']
         );
 

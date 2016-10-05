@@ -1,0 +1,438 @@
+datagrids:
+    tax-base-tax-codes-grid:
+        source:
+            type: orm
+            query:
+                select:
+                    - tax_code.id
+                    - tax_code.code
+                    - tax_code.description
+                    - tax_code.createdAt
+                    - tax_code.updatedAt
+        columns:
+            code:
+                label: ~
+            description:
+                label: ~
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        sorters:
+            columns:
+                code:
+                    data_name: tax_code.code
+                description:
+                    data_name: tax_code.description
+                createdAt:
+                    data_name: tax_code.createdAt
+                updatedAt:
+                    data_name: tax_code.updatedAt
+            default:
+                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                code:
+                    type:      string
+                    data_name: tax_code.code
+                description:
+                    type:      string
+                    data_name: tax_code.description
+                createdAt:
+                    type:      datetime
+                    data_name: tax_code.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: tax_code.updatedAt
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                rowAction:     true
+
+    tax-product-tax-codes-grid:
+        acl_resource: oro_tax_product_tax_code_view
+        extends: tax-base-tax-codes-grid
+        options:
+            entityHint: product tax code
+        source:
+            query:
+                from:
+                    - { table: %oro_tax.entity.product_tax_code.class%, alias: tax_code }
+        columns:
+            code:
+                label: oro.tax.producttaxcode.code.label
+            description:
+                label: oro.tax.producttaxcode.description.label
+        properties:
+            view_link:
+                route: oro_tax_product_tax_code_view
+        actions:
+            view:
+                acl_resource:  oro_tax_product_tax_code_view
+
+    tax-account-tax-codes-grid:
+        acl_resource: oro_tax_account_tax_code_view
+        extends: tax-base-tax-codes-grid
+        options:
+            entityHint: customer tax code
+        source:
+            query:
+                from:
+                    - { table: %oro_tax.entity.account_tax_code.class%, alias: tax_code }
+        columns:
+            code:
+                label: oro.tax.accounttaxcode.code.label
+            description:
+                label: oro.tax.accounttaxcode.description.label
+        properties:
+            view_link:
+                route: oro_tax_account_tax_code_view
+        actions:
+            view:
+                acl_resource:  oro_tax_account_tax_code_view
+
+    products-tax-code-select-grid:
+        extends: tax-product-tax-codes-grid
+        properties: { id: ~ }
+        actions: ~
+
+    accounts-tax-code-select-grid:
+        extends: tax-account-tax-codes-grid
+        properties: { id: ~ }
+        actions: ~
+
+    tax-taxes-grid:
+        acl_resource: oro_tax_view
+        options:
+            entityHint: tax
+        source:
+            type:         orm
+            query:
+                select:
+                    - tax.id
+                    - tax.code
+                    - tax.description
+                    - tax.rate
+                    - tax.createdAt
+                    - tax.updatedAt
+                from:
+                    - { table: %oro_tax.entity.tax.class%, alias: tax }
+        columns:
+            code:
+                label: oro.tax.code.label
+            description:
+                label: oro.tax.description.label
+            rate:
+                label: oro.tax.rate.label
+                frontend_type: percent
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        sorters:
+            columns:
+                code:
+                    data_name: tax.code
+                description:
+                    data_name: tax.description
+                rate:
+                    data_name: tax.rate
+                createdAt:
+                    data_name: tax.createdAt
+                updatedAt:
+                    data_name: tax.updatedAt
+            default:
+                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                code:
+                    type:      string
+                    data_name: tax.code
+                description:
+                    type:      string
+                    data_name: tax.description
+                rate:
+                    type:      string
+                    data_name: tax.rate
+                createdAt:
+                    type:      datetime
+                    data_name: tax.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: tax.updatedAt
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: oro_tax_view
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  oro_tax_view
+                rowAction:     true
+
+    tax-taxes-select-grid:
+        extends: tax-taxes-grid
+        properties: { id: ~ }
+        actions: ~
+
+    tax-taxe-rules-grid:
+        acl_resource: oro_tax_rule_view
+        options:
+            entityHint: tax
+        source:
+            type:         orm
+            query:
+                select:
+                    - tax_rule.id
+                    - tax_rule.description
+                    - account_tax_code.code as account_tax_code_code
+                    - product_tax_code.code as product_tax_code_code
+                    - tax.code as tax_code
+                    - tax_jutisdiction.code as tax_jurisdiction_code
+                    - tax_rule.createdAt
+                    - tax_rule.updatedAt
+                from:
+                    - { table: %oro_tax.entity.tax_rule.class%, alias: tax_rule }
+                join:
+                    left:
+                        - { join: tax_rule.accountTaxCode, alias: account_tax_code }
+                        - { join: tax_rule.productTaxCode, alias: product_tax_code }
+                        - { join: tax_rule.tax, alias: tax }
+                        - { join: tax_rule.taxJurisdiction, alias: tax_jutisdiction }
+        columns:
+            account_tax_code_code:
+                label: oro.tax.taxrule.account_tax_code.label
+            product_tax_code_code:
+                label: oro.tax.taxrule.product_tax_code.label
+            tax_jurisdiction_code:
+                label: oro.tax.taxrule.tax_jurisdiction.label
+            tax_code:
+                label: oro.tax.taxrule.tax.label
+            description:
+                label: oro.tax.taxrule.description.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        sorters:
+            columns:
+                description:
+                    data_name: description
+                account_tax_code_code:
+                    data_name: account_tax_code_code
+                product_tax_code_code:
+                    data_name: product_tax_code_code
+                tax_code:
+                    data_name: tax_code
+                tax_jurisdiction_code:
+                    data_name: tax_jurisdiction_code
+                createdAt:
+                    data_name: tax_rule.createdAt
+                updatedAt:
+                    data_name: tax_rule.updatedAt
+            default:
+                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                description:
+                    type:      string
+                    data_name: tax_rule.description
+                account_tax_code_code:
+                    type:      string
+                    data_name: account_tax_code.code
+                product_tax_code_code:
+                    type:      string
+                    data_name: product_tax_code.code
+                tax_code:
+                    type:      string
+                    data_name: tax.code
+                tax_jurisdiction_code:
+                    type:      string
+                    data_name: tax_jurisdiction_code
+                createdAt:
+                    type:      datetime
+                    data_name: tax_code.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: tax_code.updatedAt
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: oro_tax_rule_view
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  oro_tax_rule_view
+                rowAction:     true
+
+    tax-jurisdiction-grid:
+        acl_resource: oro_tax_jurisdiction_view
+        source:
+            type: orm
+            query:
+                select:
+                    - jurisdiction.id
+                    - jurisdiction.code
+                    - jurisdiction.description
+                    - jurisdiction.createdAt
+                    - jurisdiction.updatedAt
+                from:
+                    - { table: %oro_tax.entity.tax_jurisdiction.class%, alias: jurisdiction }
+        columns:
+            code:
+                label: oro.tax.taxjurisdiction.code.label
+            description:
+                label: oro.tax.taxjurisdiction.description.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        sorters:
+            columns:
+                code:
+                    data_name: jurisdiction.code
+                description:
+                    data_name: jurisdiction.description
+                createdAt:
+                    data_name: tax_code.createdAt
+                updatedAt:
+                    data_name: tax_code.updatedAt
+            default:
+                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                code:
+                    type:      string
+                    data_name: jurisdiction.code
+                description:
+                    type:      string
+                    data_name: jurisdiction.description
+                createdAt:
+                    type:      datetime
+                    data_name: tax_code.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: tax_code.updatedAt
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                route: oro_tax_jurisdiction_view
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  oro_tax_jurisdiction_view
+                rowAction:     true
+
+    tax-jurisdiction-select-grid:
+        extends: tax-jurisdiction-grid
+        properties: { id: ~ }
+        actions: ~
+
+    tax-account-group-grid:
+        extends: account-groups-select-grid
+        source:
+            query:
+                join:
+                    left:
+                        - { join: %oro_tax.entity.account_tax_code.class%, alias: account_tax_code, conditionType: 'WITH', condition: 'account_group MEMBER OF account_tax_code.accountGroups' }
+                where:
+                    and:
+                        - account_tax_code.id = :account_tax_code_id
+            bind_parameters:
+                - account_tax_code_id
+        properties:
+            view_link:
+                type:   url
+                route: oro_account_group_view
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  oro_account_group_view
+                rowAction:     true
+
+    tax-account-grid:
+        extends: account-accounts-select-grid
+        source:
+            query:
+                join:
+                    left:
+                        - { join: %oro_tax.entity.account_tax_code.class%, alias: account_tax_code, conditionType: 'WITH', condition: 'account MEMBER OF account_tax_code.accounts' }
+                where:
+                    and:
+                        - account_tax_code.id = :account_tax_code_id
+            bind_parameters:
+                - account_tax_code_id
+        properties:
+            view_link:
+                type:   url
+                route: oro_account_view
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  oro_account_view
+                rowAction:     true
+
+    tax-product-grid:
+        extends: products-select-grid-base
+        source:
+            query:
+                join:
+                    left:
+                        - { join: %oro_tax.entity.product_tax_code.class%, alias: product_tax_code, conditionType: 'WITH', condition: 'product MEMBER OF product_tax_code.products' }
+                where:
+                    and:
+                        - product_tax_code.id = :product_tax_code_id
+            bind_parameters:
+                - product_tax_code_id
+        properties:
+            view_link:
+                type:   url
+                route: oro_product_view
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  oro_product_view
+                rowAction:     true

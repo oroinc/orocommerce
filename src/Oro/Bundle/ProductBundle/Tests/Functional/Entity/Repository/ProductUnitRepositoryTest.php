@@ -17,6 +17,7 @@ class ProductUnitRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions']);
     }
@@ -269,7 +270,7 @@ class ProductUnitRepositoryTest extends WebTestCase
     protected function getRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_product.entity.product_unit.class')
+            $this->getContainer()->getParameter('oro_product.entity.product_unit.class')
         );
     }
 }

@@ -2,203 +2,64 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\EventListener;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
-use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
-use Oro\Bundle\PricingBundle\Entity\PriceListChangeTrigger;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
+use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
  */
 class AccountGroupChangesListenerTest extends WebTestCase
 {
-    /**
-     * @param bool $api
-     */
-    protected function load($api = true)
-    {
-        $this->initClient([], $api ? $this->generateWsseAuthHeader() : $this->generateBasicAuthHeader(), true);
+    use MessageQueueExtension;
 
+    protected function setUp()
+    {
+        $this->initClient([], $this->generateWsseAuthHeader(), true);
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
+                LoadPriceListRelations::class
             ],
             true
         );
-        $this->disableRealTimeMode();
     }
 
     /**
-     * @dataProvider updateAccountDataProvider
-     * @param $accountGroupReference
-     * @param string $accountReference
-     * @param array $expectedChanges
-     * @internal param string $actualGroupReference
+     * @param AccountGroup $group
      */
-    public function testUpdateAccount($accountGroupReference, $accountReference, array $expectedChanges)
+    protected function sendDeleteAccountGroupRequest(AccountGroup $group)
     {
-        $this->load(false);
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $previousChanges = $em->getRepository('OroPricingBundle:PriceListChangeTrigger')->findAll();
-        /** @var Account $account */
-        $account = $this->getReference($accountReference);
-        /** @var AccountGroup $group */
-        $group = $this->getReference($accountGroupReference);
-        $this->client->followRedirects();
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_account_update', ['id' => $account->getId()])
-        );
-
-        $form = $crawler->selectButton('Save')->form();
-        $form->setValues(['orob2b_account_type[group]' => $group->getId()]);
-        $this->client->submit($form);
-        $changes = $em->getRepository('OroPricingBundle:PriceListChangeTrigger')->findAll();
-        $expectedCount = count($expectedChanges) + count($previousChanges);
-        $this->assertCount($expectedCount, $changes);
-        $this->checkChanges($expectedChanges, $changes);
-    }
-
-    /**
-     * @return array
-     */
-    public function updateAccountDataProvider()
-    {
-        return [
-            [
-                'accountGroupReference' => 'account_group.group2',
-                'accountReference' => 'account.level_1.3',
-                'expectedChanges' => [
-                    [
-                        'accountReference' => 'account.level_1.3',
-                        'websiteReference' => 'US'
-                    ]
-                ]
-            ],
-            [
-                'accountGroupReference' => 'account_group.group3',
-                'accountReference' => 'account.level_1.3',
-                'expectedChanges' => [
-                    [
-                        'accountReference' => 'account.level_1.3',
-                        'websiteReference' => 'US'
-                    ]
-                ]
-            ],
-            [
-                'accountGroupReference' => 'account_group.group3',
-                'accountReference' => 'account.level_1.2',
-                'expectedChanges' => [
-                    [
-                        'accountReference' => 'account.level_1.2',
-                        'websiteReference' => 'US'
-                    ]
-                ]
-            ],
-            [
-                'accountGroupReference' => 'account_group.group2',
-                'accountReference' => 'account.level_1',
-                'expectedChanges' => []
-            ]
-        ];
-    }
-
-    /**
-     * @dataProvider deleteGroupDataProvider
-     * @param string $deletedGroupReference
-     * @param array $expectedChanges
-     */
-    public function testDeleteGroup($deletedGroupReference, array $expectedChanges)
-    {
-        $this->load();
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        /** @var AccountGroup $group */
-        $group = $this->getReference($deletedGroupReference);
-
-        $previousChanges = $em->getRepository('OroPricingBundle:PriceListChangeTrigger')->findAll();
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_account_delete_account_group', ['id' => $group->getId()])
+            $this->getUrl('oro_api_account_delete_account_group', ['id' => $group->getId()])
         );
-        $result = $this->client->getResponse();
 
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
-        $changes = $em->getRepository('OroPricingBundle:PriceListChangeTrigger')->findAll();
-        $expectedChangesCount = count($expectedChanges) + count($previousChanges);
-        $this->assertCount($expectedChangesCount, $changes);
-        $this->checkChanges($expectedChanges, $changes);
+        $this->assertEmptyResponseStatusCodeEquals($this->client->getResponse(), 204);
     }
 
-    /**
-     * @return array
-     */
-    public function deleteGroupDataProvider()
+    public function testDeleteAccountGroupWithAssignedAccount()
     {
-        return [
+        $this->sendDeleteAccountGroupRequest($this->getReference(LoadGroups::GROUP1));
+
+        self::assertMessageSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                'deletedGroupReference' => 'account_group.group1',
-                'expectedChanges' => [
-                    [
-                        'accountReference' => 'account.level_1.3',
-                        'websiteReference' => 'US'
-                    ]
-                ]
-            ],
-            [
-                'deletedGroupReference' => 'account_group.group2',
-                'expectedChanges' => [
-                    [
-                        'accountReference' => 'account.level_1.2',
-                        'websiteReference' => 'US'
-                    ]
-                ]
-            ],
-            [
-                'deletedGroupReference' => 'account_group.group3',
-                'expectedChanges' => []
+                PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
+                PriceListRelationTrigger::ACCOUNT => $this->getReference('account.level_1.3')->getId()
             ]
-        ];
-    }
-
-    /**
-     * @param array $expectedChanges
-     * @param PriceListChangeTrigger[] $actual
-     */
-    protected function checkChanges($expectedChanges, $actual)
-    {
-        foreach ($expectedChanges as $expected) {
-            /** @var Account $account */
-            $account = $this->getReference($expected['accountReference']);
-            /** @var Website $website */
-            $website = $this->getReference($expected['websiteReference']);
-            $exist = false;
-            foreach ($actual as $actualChanges) {
-                if ($actualChanges->getAccount() && $actualChanges->getAccount()->getId() === $account->getId()
-                    && $actualChanges->getWebsite()->getId() === $website->getId()
-                ) {
-                    $exist = true;
-                    break;
-                }
-            }
-            $this->assertTrue($exist);
-        }
-    }
-
-    /**
-     * Disable realtime price update mode
-     */
-    protected function disableRealTimeMode()
-    {
-        $configManager = $this->getContainer()->get('oro_config.scope.global');
-        $configManager->set(
-            Configuration::getConfigKeyByName(
-                Configuration::PRICE_LISTS_UPDATE_MODE
-            ),
-            CombinedPriceListQueueConsumer::MODE_SCHEDULED
         );
-        $configManager->flush();
+    }
+
+    public function testDeleteAccountGroupWithoutAccount()
+    {
+        $this->sendDeleteAccountGroupRequest($this->getReference(LoadGroups::GROUP3));
+
+        self::assertEmptyMessages(Topics::REBUILD_COMBINED_PRICE_LISTS);
     }
 }

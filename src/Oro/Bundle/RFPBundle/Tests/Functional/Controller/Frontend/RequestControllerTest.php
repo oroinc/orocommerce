@@ -27,7 +27,7 @@ class RequestControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
@@ -50,7 +50,7 @@ class RequestControllerTest extends WebTestCase
             : [];
         $this->initClient([], $authParams);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), $expectedData['code']);
 
         if ($this->client->getResponse()->isRedirect()) {
@@ -128,7 +128,7 @@ class RequestControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_rfp_frontend_request_view',
+                'oro_rfp_frontend_request_view',
                 ['id' => $request->getId()]
             )
         );
@@ -295,20 +295,20 @@ class RequestControllerTest extends WebTestCase
         $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
         $this->initClient([], $authParams);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
         $form = $crawler->selectButton('Submit Request For Quote')->form();
 
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('orob2b_rfp_frontend_request');
+        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('oro_rfp_frontend_request');
 
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.1');
 
         $parameters = [
             'input_action' => 'save_and_stay',
-            'orob2b_rfp_frontend_request' => $formData
+            'oro_rfp_frontend_request' => $formData
         ];
-        $parameters['orob2b_rfp_frontend_request']['_token'] = $crfToken;
-        $parameters['orob2b_rfp_frontend_request']['requestProducts'] = [
+        $parameters['oro_rfp_frontend_request']['_token'] = $crfToken;
+        $parameters['oro_rfp_frontend_request']['requestProducts'] = [
             [
                 'product' => $productPrice->getProduct()->getId(),
                 'requestProductItems' => [
@@ -382,7 +382,7 @@ class RequestControllerTest extends WebTestCase
 
         $productItems = array_combine(array_map($productIdCallable, array_keys($productItems)), $productItems);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_create', [
+        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create', [
             'product_items' => $productItems,
         ]));
 
@@ -392,7 +392,7 @@ class RequestControllerTest extends WebTestCase
         $form = $crawler->selectButton('Submit Request For Quote')->form();
 
         /** @var array $formRequestProducts */
-        $formRequestProducts = $form->get('orob2b_rfp_frontend_request[requestProducts]');
+        $formRequestProducts = $form->get('oro_rfp_frontend_request[requestProducts]');
 
         $formRequestProducts = array_reduce($formRequestProducts, function (array $result, array $formRequestProduct) {
             /** @var InputFormField $requestProduct */
@@ -474,15 +474,15 @@ class RequestControllerTest extends WebTestCase
         $result = reset($result['data']);
 
         $id = $result['id'];
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Submit Request For Quote')->form();
 
-        $form['orob2b_rfp_frontend_request[firstName]'] = LoadRequestData::FIRST_NAME . '_UPDATE';
-        $form['orob2b_rfp_frontend_request[lastName]'] = LoadRequestData::LAST_NAME . '_UPDATE';
-        $form['orob2b_rfp_frontend_request[email]'] = LoadRequestData::EMAIL . '_UPDATE';
-        $form['orob2b_rfp_frontend_request[poNumber]'] = LoadRequestData::PO_NUMBER . '_UPDATE';
-        $form['orob2b_rfp_frontend_request[assignedAccountUsers]'] = implode(',', [
+        $form['oro_rfp_frontend_request[firstName]'] = LoadRequestData::FIRST_NAME . '_UPDATE';
+        $form['oro_rfp_frontend_request[lastName]'] = LoadRequestData::LAST_NAME . '_UPDATE';
+        $form['oro_rfp_frontend_request[email]'] = LoadRequestData::EMAIL . '_UPDATE';
+        $form['oro_rfp_frontend_request[poNumber]'] = LoadRequestData::PO_NUMBER . '_UPDATE';
+        $form['oro_rfp_frontend_request[assignedAccountUsers]'] = implode(',', [
             $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
             $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
         ]);

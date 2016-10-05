@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Security;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
  */
 class ProductVisibilityTest extends WebTestCase
 {
-    const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_b2b_account.product_visibility';
+    const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_account.product_visibility';
 
     /**
      * {@inheritdoc}
@@ -20,12 +20,13 @@ class ProductVisibilityTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([
             'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
             'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
         ]);
-
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
     }
 
     /**
@@ -48,7 +49,7 @@ class ProductVisibilityTest extends WebTestCase
             $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $product);
             $this->client->request(
                 'GET',
-                $this->getUrl('orob2b_product_frontend_product_view', ['id' => $product->getId()])
+                $this->getUrl('oro_product_frontend_product_view', ['id' => $product->getId()])
             );
             $result = $this->client->getResponse();
             $this->assertHtmlResponseStatusCodeEquals($result, $resultCode);

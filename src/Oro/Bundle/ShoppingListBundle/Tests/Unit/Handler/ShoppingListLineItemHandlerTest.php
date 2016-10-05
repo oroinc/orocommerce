@@ -120,7 +120,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         $this->securityFacade->expects($this->at(1))->method('isGranted')
-            ->with('orob2b_shopping_list_line_item_frontend_add')
+            ->with('oro_shopping_list_line_item_frontend_add')
             ->willReturn($isGrantedAdd);
 
         if ($shoppingList && $isGrantedAdd) {

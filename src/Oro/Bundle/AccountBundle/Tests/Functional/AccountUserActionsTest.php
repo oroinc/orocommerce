@@ -15,6 +15,7 @@ class AccountUserActionsTest extends AbstractAccountUserActionsTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
@@ -27,7 +28,7 @@ class AccountUserActionsTest extends AbstractAccountUserActionsTestCase
      */
     protected function getAccountUserEnableOperationName()
     {
-        return 'orob2b_account_accountuser_enable';
+        return 'oro_account_accountuser_enable';
     }
 
     /**
@@ -35,7 +36,7 @@ class AccountUserActionsTest extends AbstractAccountUserActionsTestCase
      */
     protected function getAccountUserDisableOperationName()
     {
-        return 'orob2b_account_accountuser_disable';
+        return 'oro_account_accountuser_disable';
     }
 
     /**
@@ -49,7 +50,7 @@ class AccountUserActionsTest extends AbstractAccountUserActionsTestCase
                 'oro_action_operation_execute',
                 [
                     'operationName' => $operationName,
-                    'route' => 'orob2b_account_account_user_view',
+                    'route' => 'oro_account_account_user_view',
                     'entityId' => $accountUser->getId(),
                     'entityClass' => 'Oro\Bundle\AccountBundle\Entity\AccountUser'
                 ]

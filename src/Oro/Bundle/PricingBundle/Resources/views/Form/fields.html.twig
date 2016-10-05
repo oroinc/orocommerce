@@ -1,4 +1,4 @@
-{% block orob2b_pricing_product_price_widget %}
+{% block oro_pricing_product_price_widget %}
     <div data-page-component-module="oropricing/js/app/components/price-list-currency-limitations-component">
         <div class="row">
             <div class="small-row">
@@ -30,7 +30,7 @@
     </div>
 {% endblock %}
 
-{% block orob2b_pricing_product_price_collection_widget %}
+{% block oro_pricing_product_price_collection_widget %}
     <div data-page-component-module="oropricing/js/app/components/product-unit-precision-limitations-component"
          class="product-price-collection">
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection' }) %}
@@ -38,19 +38,19 @@
     </div>
 {% endblock %}
 
-{% block orob2b_pricing_price_list_collection_row %}
+{% block oro_pricing_price_list_collection_row %}
     {% if render_as_widget %}
         <div class="price-list-collection-as-widget">
-            {{ block('orob2b_pricing_price_list_collection_widget') }}
+            {{ block('oro_pricing_price_list_collection_widget') }}
         </div>
     {% else %}
         {{ block('form_row') }}
     {% endif %}
 {% endblock %}
 
-{% block orob2b_pricing_price_list_collection_widget %}
+{% block oro_pricing_price_list_collection_widget %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.orob2b_pricing_price_list_collection_prototype(form) %}
+        {% set prototype_html = _self.oro_pricing_price_list_collection_prototype(form) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container price-list-grid-form' }) %}
     {% set id = id ~ '_collection' %}
@@ -70,7 +70,7 @@
                     <tbody class="pricing-price-list-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
                     {% if form.children|length %}
                         {% for child in form.children %}
-                            {{ _self.orob2b_pricing_price_list_collection_prototype(child) }}
+                            {{ _self.oro_pricing_price_list_collection_prototype(child) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
                         {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -83,7 +83,7 @@
     </div>
 {% endblock %}
 
-{% macro orob2b_pricing_price_list_collection_prototype(widget) %}
+{% macro oro_pricing_price_list_collection_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -100,7 +100,7 @@
     </tr>
 {% endmacro %}
 
-{% block orob2b_pricing_price_list_select_with_priority_widget %}
+{% block oro_pricing_price_list_select_with_priority_widget %}
     <td>{{ form_widget(form.priceList) }} {{ form_errors(form.priceList) }}</td>
     <td>{{ form_widget(form.priority, { 'attr': {'class': 'priority'} }) }}{{ form_errors(form.priority) }}</td>
     <td>{{ form_widget(form.mergeAllowed, { 'attr': {'class': 'mergeAllowed'} }) }}{{ form_errors(form.mergeAllowed) }}</td>
@@ -135,7 +135,7 @@
     </tr>
 {% endmacro %}
 
-{% block _orob2b_pricing_price_list_schedules_widget %}
+{% block _oro_pricing_price_list_schedules_widget %}
     {% spaceless %}
         {% if prototype is defined %}
             {% set prototype_html = _self.pl_schedule_collection_item_prototype(form) %}
@@ -179,7 +179,7 @@
 {% endblock %}
 
 {# --------------------------- Product Price Attributes ------------------------------------------------------ #}
-{% block orob2b_pricing_product_attribute_price_collection_widget %}
+{% block oro_pricing_product_attribute_price_collection_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container price-list-grid-form' }) %}
     {% set id = id ~ '_collection' %}
     <div class="pricing-price-attribute">
@@ -190,7 +190,7 @@
                     <tr>
                         <th><span>{{ 'oro.pricing.priceAttribute.unit.label'|trans }}</span></th>
                         {% for currency in form.vars.currencies %}
-                        <th><span>{{ currency }}</span></th>
+                            <th><span>{{ currency }}</span></th>
                         {% endfor %}
                     </tr>
                     </thead>
@@ -220,99 +220,148 @@
 {% endblock %}
 
 {# --------------------------- Price Rules ------------------------------------------------------ #}
-{% macro orob2b_pricing_price_rule_widget_prototype(widget) %}
+{% macro oro_pricing_price_rule_widget_prototype(widget) %}
     {% spaceless %}
-    {% if 'collection' in widget.vars.block_prefixes %}
-        {% set form = widget.vars.prototype %}
-        {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
-    {% else %}
-        {% set form = widget %}
-        {% set name = widget.vars.full_name %}
-    {% endif %}
-    <div class="price_rule"  data-content>
-        <div class="price_rule__row clearfix">
-            <span class="price_rule__title">Price for quantity: </span>
-            <div class="price_rule__quantity">{{ form_widget(form.quantity) }}</div>
-            <div class="price_rule__unit">{{ form_widget(form.productUnit) }}</div>
-            <span> in</span>
-            <div class="price_rule__currency">{{ form_widget(form.currency) }}
-            </div><button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
+        {% if 'collection' in widget.vars.block_prefixes %}
+            {% set form = widget.vars.prototype %}
+            {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
+        {% else %}
+            {% set form = widget %}
+            {% set name = widget.vars.full_name %}
+        {% endif %}
+        {% set quantity = {
+            fieldType: '.price-rule-item-quantity-type-field',
+            expressionType: '.price-rule-item-quantity-type-expression'
+        } %}
+        {% set productUnit = {
+            fieldType: '.price-rule-item-product-unit-type-field',
+            expressionType: '.price-rule-item-product-unit-type-expression'
+        } %}
+        {% set currency = {
+            fieldType: '.price-rule-item-currency-type-field',
+            expressionType: '.price-rule-item-currency-type-expression'
+        } %}
+        <div class="price_rule"  data-content>
+            <div class="price_rule__row clearfix">
+                <span class="price_rule__title">{{ 'oro.pricing.pricerule.price_for_quantity.label'|trans }} </span>
+                <div
+                    data-page-component-module="oroui/js/app/components/view-component"
+                    data-page-component-options="{{ {
+                        view: 'oropricing/js/app/views/quantity-switcher',
+                        selectors: quantity,
+                        errorMessage : 'oro.pricing.validators.field_or_expression_is_required'|trans({
+                            '%fieldName%': 'oro.pricing.pricerule.quantity.label'|trans
+                        })
+                    }|json_encode }}"
+                >
+                    <div class="price_rule__quantity price-rule-item-quantity-type-field" style="display: none;">
+                        {{ form_widget(form.quantity) }}
+                        {{ form_errors(form.quantity) }}
+                    </div>
+                    <div class="price_rule__quantity price-rule-item-quantity-type-expression visible">
+                        {{ form_widget(form.quantityExpression) }}
+                        {{ form_errors(form.quantityExpression) }}
+                    </div>
+                </div>
+
+                <div
+                    data-page-component-module="oroui/js/app/components/view-component"
+                    data-page-component-options="{{ {
+                        view: 'oropricing/js/app/views/expression-field-switcher',
+                        selectors: productUnit,
+                        errorMessage : 'oro.pricing.validators.field_or_expression_is_required'|trans({
+                            '%fieldName%': 'oro.pricing.pricerule.product_unit.label'|trans
+                        })
+                    }|json_encode }}"
+                >
+                    <div class="price-rule-item-product-unit-type-field visible">
+                        <div class="price_rule__unit">
+                            {{ form_widget(form.productUnit) }}
+                        </div>
+                        <a class="price-rule-item-product-unit-type-expression input-type-switcher" href="javascript: void(0);">
+                            {{ 'oro.pricing.pricerule.show_expression_fields.label'|trans }}
+                        </a>
+                    </div>
+                    <div class="price-rule-item-product-unit-type-expression" style="display: none;">
+                        <div class="price_rule__unit">
+                            {{ form_widget(form.productUnitExpression) }}
+                        </div>
+                        <a class="price-rule-item-product-unit-type-field input-type-switcher" href="javascript: void(0);">
+                            {{ 'oro.pricing.pricerule.show_unit_fields.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                <span class="price_rule__in"> {{ 'oro.pricing.pricerule.in_separator'|trans }}</span>
+                <div
+                    data-page-component-module="oroui/js/app/components/view-component"
+                    data-page-component-options="{{ {
+                        view: 'oropricing/js/app/views/expression-field-switcher',
+                        selectors: currency,
+                        errorMessage : 'oro.pricing.validators.field_or_expression_is_required'|trans({
+                            '%fieldName%': 'oro.pricing.pricerule.currency.label'|trans
+                        })
+                    }|json_encode }}"
+                >
+                    <div class="price-rule-item-currency-type-field visible">
+                        <div class="price_rule__currency">
+                            {{ form_widget(form.currency) }}
+                        </div>
+                        <a class="price-rule-item-currency-type-expression input-type-switcher" href="javascript: void(0);">
+                            {{ 'oro.pricing.pricerule.show_expression_fields.label'|trans }}
+                        </a>
+                    </div>
+                    <div class="price-rule-item-currency-type-expression input-type-switcher" style="display: none;">
+                        <div class="price_rule__currency">
+                            {{ form_widget(form.currencyExpression) }}
+                        </div>
+                        <a class="price-rule-item-currency-type-field" href="javascript: void(0);">
+                            {{ 'oro.pricing.pricerule.show_currency_fields.label'|trans }}
+                        </a>
+                    </div>
+                </div>
+
+                <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
+            </div>
+            <div class="price_rule__row clearfix price-rule-item-product-unit-type-field error-block">
+                {{ form_errors(form.productUnit) }}
+            </div>
+            <div class="price_rule__row clearfix price-rule-item-product-unit-type-expression error-block">
+                {{ form_errors(form.productUnitExpression) }}
+            </div>
+            <div class="price_rule__row clearfix price-rule-item-currency-type-field visible error-block">
+                {{ form_errors(form.currency) }}
+            </div>
+            <div class="price_rule__row clearfix price-rule-item-currency-type-expression error-block">
+                {{ form_errors(form.currencyExpression) }}
+            </div>
+            <div>{{ form_row(form.rule) }}</div>
+            <div>{{ form_row(form.ruleCondition) }}</div>
+            <div class="price_rule__priority">{{ form_row(form.priority) }}</div>
         </div>
-        <div>{{ form_row(form.rule) }}</div>
-        <div>{{ form_row(form.ruleCondition) }}</div>
-        <div class="price_rule__priority">{{ form_row(form.priority) }}</div>
-    </div>
     {% endspaceless %}
 {% endmacro %}
 
-{% block _orob2b_pricing_price_list_priceRules_widget %}
+{% block _oro_pricing_price_list_priceRules_widget %}
     {% spaceless %}
         {% if prototype is defined %}
-            {% set prototype_html = _self.orob2b_pricing_price_rule_widget_prototype(form) %}
+            {% set prototype_html = _self.oro_pricing_price_rule_widget_prototype(form) %}
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
-        <style>
-            {# temporary styles should be removed after new disign implemented #}
-            .price_rule {
-                margin-bottom: 50px !important;
-            }
-
-            .price_rule textarea {
-                height: 60px;
-                width: 323px;
-            }
-
-            .price_rule__row {
-                vertical-align: middle;
-                line-height: 30px;
-                margin: 0 0 10px 0;
-            }
-
-            .price_rule__row > * {
-                display: inline-block;
-                float: left;
-                margin-right: 7px;
-            }
-
-            .price_rule__row .price_rule__quantity input{
-                width: 30px !important;
-                margin-left: 10px;
-            }
-
-            .price_rule__row .price_rule__title{
-                margin: 0 15px 0 43px;
-            }
-
-            .price_rule__unit select{
-                width: 90px;
-            }
-
-            .price_rule__currency select{
-                width: 90px;
-            }
-
-            .price_rule__priority input{
-                width: 323px !important;
-            }
-
-            .price_rules__add_btn{
-                margin-left: 170px;
-            }
-        </style>
         <div class="row-oro">
             {% set prototype_name = form.vars.prototype_name %}
             <div
-                {{ block('widget_container_attributes') }}
-                data-last-index="{{ form.children|length}}"
-                data-prototype-name="{{ prototype_name }}"
-                {% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}
+                    {{ block('widget_container_attributes') }}
+                    data-last-index="{{ form.children|length}}"
+                    data-prototype-name="{{ prototype_name }}"
+                    {% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}
             >
-                    {% if form.children|length %}
-                        {% for child in form.children %}
-                            {{ _self.orob2b_pricing_price_rule_widget_prototype(child) }}
-                        {% endfor %}
-                    {% endif %}
+                {% if form.children|length %}
+                    {% for child in form.children %}
+                        {{ _self.oro_pricing_price_rule_widget_prototype(child) }}
+                    {% endfor %}
+                {% endif %}
             </div>
             <div class="price_rules__add_btn">
                 <a class="btn add-list-item" href="javascript: void(0);">

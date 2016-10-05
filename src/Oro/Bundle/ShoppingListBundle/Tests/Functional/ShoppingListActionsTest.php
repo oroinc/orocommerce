@@ -18,7 +18,7 @@ class ShoppingListActionsTest extends ActionTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
@@ -29,7 +29,7 @@ class ShoppingListActionsTest extends ActionTestCase
 
     public function testCreateOrder()
     {
-        if (!$this->client->getContainer()->hasParameter('orob2b_order.entity.order.class')) {
+        if (!$this->client->getContainer()->hasParameter('oro_order.entity.order.class')) {
             $this->markTestSkipped('OrderBundle disabled');
         }
 
@@ -37,7 +37,7 @@ class ShoppingListActionsTest extends ActionTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
 
-        $this->executeOperation($shoppingList, 'orob2b_shoppinglist_createorder');
+        $this->executeOperation($shoppingList, 'oro_shoppinglist_createorder');
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -46,14 +46,14 @@ class ShoppingListActionsTest extends ActionTestCase
         $this->assertArrayHasKey('redirectUrl', $data);
 
         $this->assertStringStartsWith(
-            $this->getUrl('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => 1]),
+            $this->getUrl('oro_order_create', [ProductDataStorage::STORAGE_KEY => 1]),
             $data['redirectUrl']
         );
 
         $this->initClient([], $this->generateBasicAuthHeader());
         $crawler = $this->client->request('GET', $data['redirectUrl']);
 
-        $content = $crawler->filter('[data-ftid=orob2b_order_type_lineItems]')->html();
+        $content = $crawler->filter('[data-ftid=oro_order_type_lineItems]')->html();
         foreach ($shoppingList->getLineItems() as $lineItem) {
             $this->assertContains($lineItem->getProduct()->getSku(), $content);
         }
@@ -69,7 +69,7 @@ class ShoppingListActionsTest extends ActionTestCase
         $product = $this->getReference('product.2');
 
         $crawler = $this->assertOperationForm(
-            'orob2b_shoppinglist_addlineitem',
+            'oro_shoppinglist_addlineitem',
             $shoppingList->getId(),
             get_class($shoppingList)
         );
@@ -94,7 +94,7 @@ class ShoppingListActionsTest extends ActionTestCase
         $shoppingList = $lineItem->getShoppingList();
 
         $crawler = $this->assertOperationForm(
-            'orob2b_shoppinglist_addlineitem',
+            'oro_shoppinglist_addlineitem',
             $shoppingList->getId(),
             get_class($shoppingList)
         );
@@ -119,7 +119,7 @@ class ShoppingListActionsTest extends ActionTestCase
         $unit = $this->getReference('product_unit.liter');
 
         $crawler = $this->assertOperationForm(
-            'orob2b_shoppinglist_updatelineitem',
+            'oro_shoppinglist_updatelineitem',
             $lineItem->getId(),
             get_class($lineItem)
         );
@@ -145,7 +145,7 @@ class ShoppingListActionsTest extends ActionTestCase
             $operationName,
             $shoppingList->getId(),
             'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList',
-            ['route' => 'orob2b_shopping_list_view']
+            ['route' => 'oro_shopping_list_view']
         );
     }
 }

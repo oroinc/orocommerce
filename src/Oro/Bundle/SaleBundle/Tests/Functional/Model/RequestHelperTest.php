@@ -13,6 +13,7 @@ class RequestHelperTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadRequestData',
@@ -35,7 +36,7 @@ class RequestHelperTest extends WebTestCase
 
         $this->assertEquals(
             $expectedRequests,
-            $this->getContainer()->get('orob2b_sale.service.request_helper')->getRequestsWoQuote($days)
+            $this->getContainer()->get('oro_sale.service.request_helper')->getRequestsWoQuote($days)
         );
     }
 

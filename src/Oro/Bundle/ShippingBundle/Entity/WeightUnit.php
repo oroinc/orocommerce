@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
 /**
- * @ORM\Table(name="orob2b_shipping_weight_unit")
+ * @ORM\Table(name="oro_shipping_weight_unit")
  * @ORM\Entity
  */
 class WeightUnit implements MeasureUnitInterface

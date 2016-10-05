@@ -24,11 +24,12 @@ class TaxControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
     }
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_tax_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('tax-taxes-grid', $crawler->html());
@@ -36,7 +37,7 @@ class TaxControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_tax_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -61,7 +62,7 @@ class TaxControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_update', ['id' => $id])
+            $this->getUrl('oro_tax_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -79,7 +80,7 @@ class TaxControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_view', ['id' => $id])
+            $this->getUrl('oro_tax_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -101,9 +102,9 @@ class TaxControllerTest extends WebTestCase
     {
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'orob2b_tax_type[code]' => $code,
-                'orob2b_tax_type[description]' => $description,
-                'orob2b_tax_type[rate]' => $rate,
+                'oro_tax_type[code]' => $code,
+                'oro_tax_type[description]' => $description,
+                'oro_tax_type[rate]' => $rate,
             ]
         );
 

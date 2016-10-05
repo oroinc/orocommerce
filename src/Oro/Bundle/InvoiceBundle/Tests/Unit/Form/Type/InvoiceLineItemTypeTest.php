@@ -6,13 +6,10 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Symfony\Component\Form\PreloadedExtension;
 
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
+use Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use Oro\Bundle\InvoiceBundle\Form\Type\InvoiceLineItemType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
@@ -21,7 +18,9 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
-use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class InvoiceLineItemTypeTest extends FormIntegrationTestCase
 {
@@ -81,7 +80,7 @@ class InvoiceLineItemTypeTest extends FormIntegrationTestCase
             ->will($this->returnValue($repository));
 
         /** @var PriceRoundingService $roundingService */
-        $roundingService = $this->getMockBuilder('Oro\Bundle\PricingBundle\Rounding\PriceRoundingService')
+        $roundingService = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService')
             ->disableOriginalConstructor()
             ->getMock();
 

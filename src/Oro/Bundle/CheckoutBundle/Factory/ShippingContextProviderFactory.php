@@ -2,29 +2,69 @@
 
 namespace Oro\Bundle\CheckoutBundle\Factory;
 
+use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\ShippingBundle\Provider\ShippingContextAwareInterface;
-use Oro\Bundle\ShippingBundle\Provider\ShippingContextProvider;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\ShippingBundle\Context\ShippingContext;
+use Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory;
 
 class ShippingContextProviderFactory
 {
     /**
+     * @var CheckoutLineItemsManager
+     */
+    protected $checkoutLineItemsManager;
+
+    /**
+     * @var TotalProcessorProvider
+     */
+    protected $totalProcessor;
+
+    /**
+     * @var ShippingContextFactory
+     */
+    protected $shippingContextFactory;
+
+    /**
+     * @param CheckoutLineItemsManager $checkoutLineItemsManager
+     * @param TotalProcessorProvider $totalProcessor
+     * @param ShippingContextFactory $shippingContextFactory
+     */
+    public function __construct(
+        CheckoutLineItemsManager $checkoutLineItemsManager,
+        TotalProcessorProvider $totalProcessor,
+        ShippingContextFactory $shippingContextFactory
+    ) {
+        $this->checkoutLineItemsManager = $checkoutLineItemsManager;
+        $this->totalProcessor = $totalProcessor;
+        $this->shippingContextFactory = $shippingContextFactory;
+    }
+
+    /**
      * @param Checkout $checkout
-     * @return ShippingContextAwareInterface
+     * @return ShippingContext
      */
     public function create(Checkout $checkout)
     {
-        $context = [
-            'checkout' => $checkout,
-            'billingAddress' => $checkout->getBillingAddress(),
-            'shippingAddress' => $checkout->getShippingAddress(),
-            'currency' => $checkout->getCurrency(),
-        ];
-        $sourceEntity = $checkout->getSourceEntity();
-        // TODO: refactor durring BB-2812
-        if (!empty($sourceEntity)) {
-            $context['line_items'] = $sourceEntity->getLineItems();
-        }
-        return new ShippingContextProvider($context);
+        $shippingContext = $this->shippingContextFactory->create();
+
+        $shippingContext->setShippingAddress($checkout->getShippingAddress());
+        $shippingContext->setBillingAddress($checkout->getBillingAddress());
+        $shippingContext->setCurrency($checkout->getCurrency());
+        $shippingContext->setPaymentMethod($checkout->getPaymentMethod());
+        $shippingContext->setLineItems(
+            $this->checkoutLineItemsManager->getData($checkout)->toArray()
+        );
+
+        $total = $this->totalProcessor->getTotal($checkout);
+        $subtotal = Price::create(
+            $total->getAmount(),
+            $total->getCurrency()
+        );
+
+        $shippingContext->setSubtotal($subtotal);
+
+        return $shippingContext;
     }
 }

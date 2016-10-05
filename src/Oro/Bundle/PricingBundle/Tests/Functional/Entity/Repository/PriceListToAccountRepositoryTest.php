@@ -2,29 +2,35 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
+use Oro\Bundle\PricingBundle\Model\DTO\AccountWebsiteDTO;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @dbIsolation
  */
 class PriceListToAccountRepositoryTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->initClient();
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings',
+                LoadPriceListRelations::class,
+                LoadPriceListFallbackSettings::class,
             ]
         );
     }
@@ -55,6 +61,9 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function restrictByPriceListDataProvider()
     {
         return [
@@ -226,8 +235,7 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         ];
     }
 
-
-    public function testGetAccountWebsitePairsByAccountGroup()
+    public function testGetAccountWebsitePairsByAccountGroupIterator()
     {
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference('account_group.group1');
@@ -235,27 +243,72 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         $account = $this->getReference('account.level_1.3');
         /** @var Website $website */
         $website = $this->getReference('US');
-        $result = $this->getRepository()->getAccountWebsitePairsByAccountGroup(
-            $accountGroup,
-            [$website->getId()]
+
+        $iterator = $this->getRepository()->getAccountWebsitePairsByAccountGroupIterator($accountGroup);
+        $result = [];
+        foreach ($iterator as $item) {
+            $result[] = $item;
+        }
+        $this->assertEquals(
+            [
+                [
+                    'account' => $account->getId(),
+                    'website' => $website->getId()
+                ]
+            ],
+            $result
         );
-        $this->assertCount(1, $result);
-        $result = $result[0];
-        $this->assertEquals($result->getAccount()->getId(), $account->getId());
-        $this->assertEquals($result->getWebsite()->getId(), $website->getId());
+    }
+
+    public function testGetIteratorByPriceList()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_6');
+        $iterator = $this->getRepository()->getIteratorByPriceList($priceList);
+        $result = [];
+        foreach ($iterator as $item) {
+            $result[] = $item;
+        }
+
+        $this->assertEquals(
+            [
+                [
+                    'account'  => $this->getReference('account.level_1.3')->getId(),
+                    'accountGroup'  => $this->getReference(LoadGroups::GROUP1)->getId(),
+                    'website' => $this->getReference(LoadWebsiteData::WEBSITE1)->getId()
+                ]
+            ],
+            $result
+        );
     }
 
     public function testGetAccountWebsitePairsByAccount()
     {
         /** @var Account $account */
         $account = $this->getReference('account.level_1_1');
-        /** @var Website $website */
-        $website = $this->getReference('US');
+
         /** @var AccountWebsiteDTO[] $result */
         $result = $this->getRepository()->getAccountWebsitePairsByAccount($account);
-        $this->assertCount(1, $result);
-        $this->assertEquals($result[0]->getAccount()->getId(), $account->getId());
-        $this->assertEquals($result[0]->getWebsite()->getId(), $website->getId());
+        $this->assertCount(2, $result);
+
+        $expected = [
+            $account->getId() => [
+                $this->getReference('US')->getId(),
+                $this->getReference('Canada')->getId()
+            ]
+        ];
+
+        $actual = [];
+        foreach ($result as $item) {
+            $actual[$item->getAccount()->getId()][] = $item->getWebsite()->getId();
+        }
+
+        foreach ($actual as $accountId => $websites) {
+            $this->assertEquals($account->getId(), $accountId);
+            foreach ($websites as $website) {
+                $this->assertContains($website, $expected[$accountId]);
+            }
+        }
     }
 
     public function testDelete()
@@ -264,10 +317,10 @@ class PriceListToAccountRepositoryTest extends WebTestCase
         $account = $this->getReference('account.level_1_1');
         /** @var Website $website */
         $website = $this->getReference('US');
-        $this->assertCount(7, $this->getRepository()->findAll());
+        $this->assertCount(8, $this->getRepository()->findAll());
         $this->assertCount(2, $this->getRepository()->findBy(['account' => $account, 'website' => $website]));
         $this->getRepository()->delete($account, $website);
-        $this->assertCount(5, $this->getRepository()->findAll());
+        $this->assertCount(6, $this->getRepository()->findAll());
         $this->assertCount(0, $this->getRepository()->findBy(['account' => $account, 'website' => $website]));
     }
 
@@ -310,9 +363,9 @@ class PriceListToAccountRepositoryTest extends WebTestCase
                 ],
                 'expectsResult' => [
                     ['account.level_1.2', 'US', 'priceList2'],
-                    ['account.level_1.3', 'US', 'priceList6'],
-                    ['account.level_1.3', 'US', 'priceList2'],
                     ['account.level_1.3', 'US', 'priceList4'],
+                    ['account.level_1.3', 'US', 'priceList2'],
+                    ['account.level_1.3', 'US', 'priceList6'],
                 ],
             ],
         ];

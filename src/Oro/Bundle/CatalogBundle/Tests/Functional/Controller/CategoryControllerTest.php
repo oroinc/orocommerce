@@ -48,6 +48,7 @@ class CategoryControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([
             'Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData',
             'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
@@ -64,7 +65,7 @@ class CategoryControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_catalog_category_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals('Categories', $crawler->filter('h1.oro-subtitle')->html());
@@ -211,7 +212,7 @@ class CategoryControllerTest extends WebTestCase
     {
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_delete_category', ['id' => $id]),
+            $this->getUrl('oro_api_delete_category', ['id' => $id]),
             [],
             [],
             $this->generateWsseAuthHeader()
@@ -220,7 +221,7 @@ class CategoryControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
 
-        $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
+        $this->client->request('GET', $this->getUrl('oro_catalog_category_update', ['id' => $id]));
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
@@ -231,7 +232,7 @@ class CategoryControllerTest extends WebTestCase
     {
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_delete_category', ['id' => $this->masterCatalog->getId()]),
+            $this->getUrl('oro_api_delete_category', ['id' => $this->masterCatalog->getId()]),
             [],
             [],
             $this->generateWsseAuthHeader()
@@ -262,7 +263,7 @@ class CategoryControllerTest extends WebTestCase
     ) {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_catalog_category_create', ['id' => $parentId])
+            $this->getUrl('oro_catalog_category_create', ['id' => $parentId])
         );
 
         $fileLocator = $this->getContainer()->get('file_locator');
@@ -281,13 +282,13 @@ class CategoryControllerTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
-        $form['orob2b_catalog_category[titles][values][default]'] = $title;
-        $form['orob2b_catalog_category[shortDescriptions][values][default]'] = $shortDescription;
-        $form['orob2b_catalog_category[longDescriptions][values][default]'] = $longDescription;
-        $form['orob2b_catalog_category[smallImage][file]'] = $smallImage;
-        $form['orob2b_catalog_category[largeImage][file]'] = $largeImage;
-        $form['orob2b_catalog_category[defaultProductOptions][unitPrecision][unit]'] = $unitPrecision['code'];
-        $form['orob2b_catalog_category[defaultProductOptions][unitPrecision][precision]'] = $unitPrecision['precision'];
+        $form['oro_catalog_category[titles][values][default]'] = $title;
+        $form['oro_catalog_category[shortDescriptions][values][default]'] = $shortDescription;
+        $form['oro_catalog_category[longDescriptions][values][default]'] = $longDescription;
+        $form['oro_catalog_category[smallImage][file]'] = $smallImage;
+        $form['oro_catalog_category[largeImage][file]'] = $largeImage;
+        $form['oro_catalog_category[defaultProductOptions][unitPrecision][unit]'] = $unitPrecision['code'];
+        $form['oro_catalog_category[defaultProductOptions][unitPrecision][precision]'] = $unitPrecision['precision'];
 
         if ($parentId === $this->masterCatalog->getId()) {
             $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_1)->getId() . ', '
@@ -296,7 +297,7 @@ class CategoryControllerTest extends WebTestCase
             $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_4)->getId();
         }
 
-        $form['orob2b_catalog_category[appendProducts]'] = $appendProducts;
+        $form['oro_catalog_category[appendProducts]'] = $appendProducts;
         $form->setValues(['input_action' => 'save_and_stay']);
 
         $this->client->followRedirects(true);
@@ -342,7 +343,7 @@ class CategoryControllerTest extends WebTestCase
         $newLongDescription,
         $newUnitPrecision
     ) {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_catalog_category_update', ['id' => $id]));
         $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getValues();
         $html = $crawler->html();
@@ -366,35 +367,35 @@ class CategoryControllerTest extends WebTestCase
         $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
         $parameters = [
             'input_action' => 'save_and_stay',
-            'orob2b_catalog_category' => [
+            'oro_catalog_category' => [
                 '_token' => $crfToken,
                 'appendProducts' => $appendProduct->getId(),
                 'removeProducts' => $testProductOne->getId()
             ]
         ];
 
-        $parameters['orob2b_catalog_category']['titles']['values']['default'] = $newTitle;
-        $parameters['orob2b_catalog_category']['shortDescriptions']['values']['default'] = $newShortDescription;
-        $parameters['orob2b_catalog_category']['longDescriptions']['values']['default'] = $newLongDescription;
-        $parameters['orob2b_catalog_category']['largeImage']['emptyFile'] = true;
-        $parameters['orob2b_catalog_category']['defaultProductOptions']['unitPrecision']['unit'] =
+        $parameters['oro_catalog_category']['titles']['values']['default'] = $newTitle;
+        $parameters['oro_catalog_category']['shortDescriptions']['values']['default'] = $newShortDescription;
+        $parameters['oro_catalog_category']['longDescriptions']['values']['default'] = $newLongDescription;
+        $parameters['oro_catalog_category']['largeImage']['emptyFile'] = true;
+        $parameters['oro_catalog_category']['defaultProductOptions']['unitPrecision']['unit'] =
             $newUnitPrecision['code']
         ;
-        $parameters['orob2b_catalog_category']['defaultProductOptions']['unitPrecision']['precision'] =
+        $parameters['oro_catalog_category']['defaultProductOptions']['unitPrecision']['precision'] =
             $newUnitPrecision['precision']
         ;
 
-        $parentCategory = $crawler->filter('[name = "orob2b_catalog_category[parentCategory]"]')->attr('value');
-        $parameters['orob2b_catalog_category']['parentCategory'] = $parentCategory;
+        $parentCategory = $crawler->filter('[name = "oro_catalog_category[parentCategory]"]')->attr('value');
+        $parameters['oro_catalog_category']['parentCategory'] = $parentCategory;
 
         foreach ($this->localizations as $localization) {
             $locId = $localization->getId();
 
-            $parameters['orob2b_catalog_category']['titles']['values']['localizations'][$locId]['value']
+            $parameters['oro_catalog_category']['titles']['values']['localizations'][$locId]['value']
                 = $localization->getLanguageCode() . $newTitle;
-            $parameters['orob2b_catalog_category']['shortDescriptions']['values']['localizations'][$locId]['value']
+            $parameters['oro_catalog_category']['shortDescriptions']['values']['localizations'][$locId]['value']
                 = $localization->getLanguageCode() . $newShortDescription;
-            $parameters['orob2b_catalog_category']['longDescriptions']['values']['localizations'][$locId]['value']
+            $parameters['oro_catalog_category']['longDescriptions']['values']['localizations'][$locId]['value']
                 = $localization->getLanguageCode() . $newLongDescription;
         }
         $this->client->followRedirects(true);
@@ -460,18 +461,18 @@ class CategoryControllerTest extends WebTestCase
         $shortDescription = self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
         $longDescription = self::DEFAULT_CATEGORY_LONG_DESCRIPTION
     ) {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_catalog_category_update', ['id' => $id]));
         $form = $crawler->selectButton('Save')->form();
         $formValues = $form->getValues();
 
-        $this->assertEquals($title, $formValues['orob2b_catalog_category[titles][values][default]']);
+        $this->assertEquals($title, $formValues['oro_catalog_category[titles][values][default]']);
         $this->assertEquals(
             $shortDescription,
-            $formValues['orob2b_catalog_category[shortDescriptions][values][default]']
+            $formValues['oro_catalog_category[shortDescriptions][values][default]']
         );
         $this->assertEquals(
             $longDescription,
-            $formValues['orob2b_catalog_category[longDescriptions][values][default]']
+            $formValues['oro_catalog_category[longDescriptions][values][default]']
         );
 
         if ($title === self::DEFAULT_CATEGORY_TITLE) {
@@ -518,16 +519,16 @@ class CategoryControllerTest extends WebTestCase
      */
     protected function assertFormDefaultLocalized($formValues, $title, $shortDescription, $longDescription)
     {
-        $this->assertEquals($title, $formValues['orob2b_catalog_category[titles][values][default]']);
+        $this->assertEquals($title, $formValues['oro_catalog_category[titles][values][default]']);
 
         $this->assertEquals(
             $shortDescription,
-            $formValues['orob2b_catalog_category[shortDescriptions][values][default]']
+            $formValues['oro_catalog_category[shortDescriptions][values][default]']
         );
 
         $this->assertEquals(
             $longDescription,
-            $formValues['orob2b_catalog_category[longDescriptions][values][default]']
+            $formValues['oro_catalog_category[longDescriptions][values][default]']
         );
     }
 
@@ -542,19 +543,19 @@ class CategoryControllerTest extends WebTestCase
         foreach ($this->localizations as $localization) {
             $this->assertEquals(
                 $localization->getLanguageCode().$title,
-                $formValues['orob2b_catalog_category[titles][values][localizations]['.$localization->getId().'][value]']
+                $formValues['oro_catalog_category[titles][values][localizations]['.$localization->getId().'][value]']
             );
 
             $locId = $localization->getId();
 
             $this->assertEquals(
                 $localization->getLanguageCode().$shortDescription,
-                $formValues['orob2b_catalog_category[shortDescriptions][values][localizations]['.$locId.'][value]']
+                $formValues['oro_catalog_category[shortDescriptions][values][localizations]['.$locId.'][value]']
             );
 
             $this->assertEquals(
                 $localization->getLanguageCode().$longDescription,
-                $formValues['orob2b_catalog_category[longDescriptions][values][localizations]['.$locId.'][value]']
+                $formValues['oro_catalog_category[longDescriptions][values][localizations]['.$locId.'][value]']
             );
         }
     }

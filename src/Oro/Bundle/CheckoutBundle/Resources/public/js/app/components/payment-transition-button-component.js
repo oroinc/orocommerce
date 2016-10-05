@@ -33,7 +33,9 @@ define(function(require) {
                     this.getPaymentForm().replaceWith(filledForm);
                     delete this.$paymentForm;
                 } else {
+                    mediator.trigger('checkout:payment:remove-filled-form', filledForm);
                     filledForm.remove();
+                    this.getPaymentMethodElement().val(this.getPaymentMethodSelector().filter(':checked').val());
                 }
             } else {
                 if (selectedValue) {

@@ -22,18 +22,18 @@ class OroProductBundleInstaller implements
     NoteExtensionAwareInterface,
     AttachmentExtensionAwareInterface
 {
-    const PRODUCT_TABLE_NAME = 'orob2b_product';
-    const PRODUCT_UNIT_TABLE_NAME = 'orob2b_product_unit';
-    const PRODUCT_UNIT_PRECISION_TABLE_NAME = 'orob2b_product_unit_precision';
-    const PRODUCT_VARIANT_LINK_TABLE_NAME = 'orob2b_product_variant_link';
-    const PRODUCT_SHORT_DESCRIPTION_TABLE_NAME = 'orob2b_product_short_desc';
+    const PRODUCT_TABLE_NAME = 'oro_product';
+    const PRODUCT_UNIT_TABLE_NAME = 'oro_product_unit';
+    const PRODUCT_UNIT_PRECISION_TABLE_NAME = 'oro_product_unit_precision';
+    const PRODUCT_VARIANT_LINK_TABLE_NAME = 'oro_product_variant_link';
+    const PRODUCT_SHORT_DESCRIPTION_TABLE_NAME = 'oro_product_short_desc';
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
 
     const MAX_PRODUCT_IMAGE_SIZE_IN_MB = 10;
     const MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB = 5;
 
-    const PRODUCT_IMAGE_TABLE_NAME = 'orob2b_product_image';
-    const PRODUCT_IMAGE_TYPE_TABLE_NAME = 'orob2b_product_image_type';
+    const PRODUCT_IMAGE_TABLE_NAME = 'oro_product_image';
+    const PRODUCT_IMAGE_TYPE_TABLE_NAME = 'oro_product_image_type';
 
     /** @var ExtendExtension */
     protected $extendExtension;
@@ -84,8 +84,8 @@ class OroProductBundleInstaller implements
         $this->createOroProductTable($schema);
         $this->createOroProductUnitTable($schema);
         $this->createOroProductUnitPrecisionTable($schema);
-        $this->createOrob2BProductNameTable($schema);
-        $this->createOrob2BProductDescriptionTable($schema);
+        $this->createOroProductNameTable($schema);
+        $this->createOroProductDescriptionTable($schema);
         $this->createOroProductVariantLinkTable($schema);
         $this->createOroProductShortDescriptionTable($schema);
         $this->createOroProductImageTable($schema);
@@ -93,8 +93,8 @@ class OroProductBundleInstaller implements
 
         $this->addOroProductForeignKeys($schema);
         $this->addOroProductUnitPrecisionForeignKeys($schema);
-        $this->addOrob2BProductNameForeignKeys($schema);
-        $this->addOrob2BProductDescriptionForeignKeys($schema);
+        $this->addOroProductNameForeignKeys($schema);
+        $this->addOroProductDescriptionForeignKeys($schema);
         $this->addOroProductVariantLinkForeignKeys($schema);
         $this->addOroProductShortDescriptionForeignKeys($schema);
         $this->addOroProductImageForeignKeys($schema);
@@ -106,7 +106,7 @@ class OroProductBundleInstaller implements
     }
 
     /**
-     * Create orob2b_product table
+     * Create oro_product table
      *
      * @param Schema $schema
      */
@@ -125,14 +125,14 @@ class OroProductBundleInstaller implements
         $table->addColumn('primary_unit_precision_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku']);
-        $table->addIndex(['created_at'], 'idx_orob2b_product_created_at', []);
-        $table->addIndex(['updated_at'], 'idx_orob2b_product_updated_at', []);
-        $table->addIndex(['sku'], 'idx_orob2b_product_sku', []);
-        $table->addUniqueIndex(['primary_unit_precision_id'], 'idx_orob2b_product_primary_unit_precision_id');
+        $table->addIndex(['created_at'], 'idx_oro_product_created_at', []);
+        $table->addIndex(['updated_at'], 'idx_oro_product_updated_at', []);
+        $table->addIndex(['sku'], 'idx_oro_product_sku', []);
+        $table->addUniqueIndex(['primary_unit_precision_id'], 'idx_oro_product_primary_unit_precision_id');
     }
 
     /**
-     * Create orob2b_product_unit table
+     * Create oro_product_unit table
      *
      * @param Schema $schema
      */
@@ -145,7 +145,7 @@ class OroProductBundleInstaller implements
     }
 
     /**
-     * Create orob2b_product_unit_precision table
+     * Create oro_product_unit_precision table
      *
      * @param Schema $schema
      */
@@ -159,15 +159,15 @@ class OroProductBundleInstaller implements
         $table->addColumn('conversion_rate', 'float', ['notnull' => false]);
         $table->addColumn('sell', 'boolean', ['notnull' => true]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['product_id', 'unit_code'], 'product_unit_precision__product_id__unit_code__uidx');
+        $table->addUniqueIndex(['product_id', 'unit_code'], 'uidx_oro_product_unit_precision');
     }
 
     /**
      * @param Schema $schema
      */
-    protected function createOrob2BProductNameTable(Schema $schema)
+    protected function createOroProductNameTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_product_name');
+        $table = $schema->createTable('oro_product_name');
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['product_id', 'localized_value_id']);
@@ -177,9 +177,9 @@ class OroProductBundleInstaller implements
     /**
      * @param Schema $schema
      */
-    protected function createOrob2BProductDescriptionTable(Schema $schema)
+    protected function createOroProductDescriptionTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_product_description');
+        $table = $schema->createTable('oro_product_description');
         $table->addColumn('description_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['description_id', 'localized_value_id']);
@@ -187,7 +187,7 @@ class OroProductBundleInstaller implements
     }
 
     /**
-     * Add orob2b_product foreign keys.
+     * Add oro_product foreign keys.
      *
      * @param Schema $schema
      */
@@ -215,7 +215,7 @@ class OroProductBundleInstaller implements
     }
 
     /**
-     * Add orob2b_product_unit_precision foreign keys.
+     * Add oro_product_unit_precision foreign keys.
      *
      * @param Schema $schema
      */
@@ -239,9 +239,9 @@ class OroProductBundleInstaller implements
     /**
      * @param Schema $schema
      */
-    protected function addOrob2BProductNameForeignKeys(Schema $schema)
+    protected function addOroProductNameForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_product_name');
+        $table = $schema->getTable('oro_product_name');
         $table->addForeignKeyConstraint(
             $schema->getTable(self::FALLBACK_LOCALE_VALUE_TABLE_NAME),
             ['localized_value_id'],
@@ -249,7 +249,7 @@ class OroProductBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+            $schema->getTable('oro_product'),
             ['product_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -259,9 +259,9 @@ class OroProductBundleInstaller implements
     /**
      * @param Schema $schema
      */
-    protected function addOrob2BProductDescriptionForeignKeys(Schema $schema)
+    protected function addOroProductDescriptionForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_product_description');
+        $table = $schema->getTable('oro_product_description');
         $table->addForeignKeyConstraint(
             $schema->getTable(self::FALLBACK_LOCALE_VALUE_TABLE_NAME),
             ['localized_value_id'],
@@ -269,7 +269,7 @@ class OroProductBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+            $schema->getTable('oro_product'),
             ['description_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -399,6 +399,7 @@ class OroProductBundleInstaller implements
         $table = $schema->createTable(self::PRODUCT_IMAGE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => true]);
+        $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
     }
 
