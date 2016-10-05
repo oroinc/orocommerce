@@ -17,6 +17,6 @@ class VisibilityChangeSet extends Constraint
      */
     public function validatedBy()
     {
-        return 'oro.account.catalog.visibility.change_set.validatior';
+        return 'oro.visibility.catalog.visibility.change_set.validatior';
     }
 }

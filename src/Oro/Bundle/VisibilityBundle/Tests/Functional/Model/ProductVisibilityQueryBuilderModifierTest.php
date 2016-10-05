@@ -47,8 +47,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()->getMock();
 
-        $this->modifier = $this->getContainer()->get('oro_account.model.product_visibility_query_builder_modifier');
-        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
+        $this->modifier = $this->getContainer()->get('oro_visibility.model.product_visibility_query_builder_modifier');
+        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
     }
 
     /**

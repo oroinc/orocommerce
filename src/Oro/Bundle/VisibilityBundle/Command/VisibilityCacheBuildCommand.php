@@ -34,7 +34,7 @@ class VisibilityCacheBuildCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var CacheBuilder $cacheBuilder */
-        $cacheBuilder = $this->getContainer()->get('oro_account.visibility.cache.cache_builder');
+        $cacheBuilder = $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder');
 
         /** @var Website|null $website */
 //        $website = null;

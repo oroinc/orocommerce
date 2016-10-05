@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EntityVisibilityType extends AbstractType
 {
-    const NAME = 'oro_account_entity_visibility_type';
+    const NAME = 'oro_visibility_entity_visibility_type';
 
     const VISIBILITY = 'visibility';
 

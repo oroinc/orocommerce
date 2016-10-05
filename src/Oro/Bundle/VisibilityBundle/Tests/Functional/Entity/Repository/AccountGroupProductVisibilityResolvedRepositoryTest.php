@@ -26,7 +26,7 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
         $this->repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
             ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
-        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
     }
 
     public function testFindByPrimaryKey()

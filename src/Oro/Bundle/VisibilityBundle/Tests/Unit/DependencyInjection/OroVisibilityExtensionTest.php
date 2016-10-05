@@ -18,8 +18,8 @@ class OroVisibilityExtensionTest extends ExtensionTestCase
         $this->loadExtension($extension);
 
         $expectedParameters = [
-            'oro_account.entity.product_visibility.class',
-            'oro_account.entity.product_visibility_resolved.class'
+            'oro_visibility.entity.product_visibility.class',
+            'oro_visibility.entity.product_visibility_resolved.class'
         ];
 
         $this->assertParametersLoaded($expectedParameters);
