@@ -69,11 +69,11 @@ class MenuUpdateProvider extends AbstractMenuUpdateProvider
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param null|AccountUser $accountUser
      *
      * @return null|Account
      */
-    private function getCurrentAccount(AccountUser $accountUser)
+    private function getCurrentAccount(AccountUser $accountUser = null)
     {
         if ($accountUser !== null) {
             return $accountUser->getAccount();

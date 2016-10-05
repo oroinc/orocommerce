@@ -10,10 +10,6 @@ Example usage:
 
 navigation:
     menu_config:
-        areas:                                    # menu area identifier
-            frontend:                             # identifier area for menus using in frontend
-                - top_nav                         # top navigation in frontend
-
         items:
             first_menu_item:
                 label: 'First Menu Item'
@@ -28,6 +24,7 @@ navigation:
 
         tree:
             top_nav:
+                area: frontend                    # identifier area for menus using in frontend
                 children:
                     first_menu_item ~
                     second_menu_item ~
