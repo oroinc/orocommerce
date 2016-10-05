@@ -5,7 +5,6 @@ namespace Oro\Bundle\FrontendNavigationBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-use Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 
 class OroFrontendNavigationBundle extends Bundle
@@ -19,7 +18,7 @@ class OroFrontendNavigationBundle extends Bundle
 
         $container->addCompilerPass(
             new DefaultFallbackExtensionPass([
-                MenuUpdate::class => ['title' => 'titles']
+                'Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate' => ['title' => 'titles']
             ])
         );
     }
