@@ -26,7 +26,7 @@ class OroProductBundleTest extends \PHPUnit_Framework_TestCase
         $passes = $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses();
 
         $this->assertInternalType('array', $passes);
-        $this->assertCount(6, $passes);
+        $this->assertCount(5, $passes);
         $this->assertInstanceOf(ComponentProcessorPass::class, $passes[0]);
         $this->assertInstanceOf(ProductDataStorageSessionBagPass::class, $passes[1]);
         $this->assertInstanceOf(TwigSandboxConfigurationPass::class, $passes[2]);

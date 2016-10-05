@@ -226,3 +226,10 @@ services:
             - '@oro_pricing.model.price_list_request_handler'
         tags:
             - { name: oro_action.condition, alias: 'has_price_in_shopping_line_items' }
+
+    oro_shopping_list.condition.rfp_allowed:
+        class: 'Oro\Bundle\ShoppingListBundle\Condition\RfpAllowed'
+        arguments:
+            - '@oro_rfp.form.type.extension.frontend_request_data_storage'
+        tags:
+            - { name: oro_action.condition, alias: 'rfp_allowed' }

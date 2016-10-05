@@ -235,7 +235,7 @@ operations:
         preconditions:
             '@and':
                 - '@has_elements': $lineItems
-                - '@equal': [$.data.isAllowedRFP, true]
+                - '@rfp_allowed': $lineItems
         actions:
             - '@call_service_method':
                 service: oro_shopping_list.service.product_data_storage
