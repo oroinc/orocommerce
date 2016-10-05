@@ -3,15 +3,25 @@
 namespace Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
-class LoadScopeAccountGroupDemoData extends AbstractFixture implements FixtureInterface
+class LoadScopeAccountGroupDemoData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return [
+            LoadAccountGroupDemoData::class,
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
