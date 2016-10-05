@@ -184,6 +184,7 @@ navigation:
                             account_user_roles: ~
             frontend_menu:
                 type: application_menu
+                area: frontend
                 children:
                     frontend_configuration_tab:
                         children:
@@ -192,12 +193,15 @@ navigation:
 
             frontend_dots_menu:
                 type: dots_menu
+                area: frontend
+                read_only: true
                 children:
                     frontend_history: ~
                     frontend_favorite: ~
                     frontend_mostviewed: ~
 
             account_usermenu:
+                area: frontend
                 children:
                     oro_account_frontend_account_user_profile: ~
 
