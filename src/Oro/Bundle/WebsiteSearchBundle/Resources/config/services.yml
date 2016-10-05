@@ -33,21 +33,30 @@ services:
     oro_website_search.placeholder.registry:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry'
         public: false
-        calls:
-            - [addPlaceholder, ['@oro_website_search.website_id.placeholder']]
-            - [addPlaceholder, ['@oro_website_search.localization_id.placeholder']]
 
     oro_website_search.website_id.placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder'
         public: false
         arguments:
             - '@oro_website.manager'
+        tags:
+            - { name: website_search.placeholder }
 
     oro_website_search.localization_id.placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder'
         public: false
         arguments:
             - '@oro_frontend_localization.manager.user_localization'
+        tags:
+            - { name: website_search.placeholder }
+
+    oro_website_search.account_id.placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder'
+        public: false
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: website_search.placeholder }
 
     oro_website_search.loader.mapping_configuration_loader:
         public: false
@@ -176,3 +185,10 @@ services:
             - ~ # async indexer
         tags:
             - { name: kernel.event_listener, event: oro_website_search.reindexation_trigger, method: process }
+
+    oro_website_search.event_listener.default_category_visibility_listener:
+        class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\DefaultCategoryVisibilityListener'
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
