@@ -115,7 +115,6 @@ class OroVisibilityBundleInstaller implements Installation
     protected function createOroAccountGroupProductVisibilityResolvedTable(Schema $schema)
     {
         $table = $schema->createTable(self::ORO_ACCOUNT_GROUP_PRODUCT_VISIBILITY_RESOLVED);
-        $table->addColumn('account_group_id', 'integer', []);
         $table->addColumn('scope_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('source_product_visibility', 'integer', ['notnull' => false]);
@@ -133,7 +132,6 @@ class OroVisibilityBundleInstaller implements Installation
     protected function createOroAccountProductVisibilityResolvedTable(Schema $schema)
     {
         $table = $schema->createTable(self::ORO_ACCOUNT_PRODUCT_VISIBILITY_RESOLVED);
-        $table->addColumn('account_id', 'integer', []);
         $table->addColumn('scope_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('source_product_visibility', 'integer', ['notnull' => false]);
@@ -168,13 +166,12 @@ class OroVisibilityBundleInstaller implements Installation
     protected function createOroAccountGroupCategoryVisibilityResolvedTable(Schema $schema)
     {
         $table = $schema->createTable(self::ORO_ACCOUNT_GROUP_CATEGORY_VISIBILITY_RESOLVED);
-        $table->addColumn('account_group_id', 'integer', []);
         $table->addColumn('source_category_visibility', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('scope_id', 'integer', ['notnull' => false]);
-        $table->setPrimaryKey(['account_group_id', 'category_id']);
+        $table->setPrimaryKey(['scope_id', 'category_id']);
     }
 
     /**
@@ -185,13 +182,12 @@ class OroVisibilityBundleInstaller implements Installation
     protected function createOroAccountCategoryVisibilityResolvedTable(Schema $schema)
     {
         $table = $schema->createTable(self::ORO_ACCOUNT_CATEGORY_VISIBILITY_RESOLVED);
-        $table->addColumn('account_id', 'integer', []);
         $table->addColumn('source_category_visibility', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'smallint', ['notnull' => false]);
         $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('scope_id', 'integer', ['notnull' => false]);
-        $table->setPrimaryKey(['account_id', 'category_id']);
+        $table->setPrimaryKey(['scope_id', 'category_id']);
     }
 
 
@@ -221,11 +217,10 @@ class OroVisibilityBundleInstaller implements Installation
         $table = $schema->createTable(self::ORO_ACCOUNT_CATEGORY_VISIBILITY_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['category_id', 'account_id'], 'oro_acc_ctgr_vis_uidx');
+        $table->addUniqueIndex(['category_id', 'scope_id'], 'oro_acc_ctgr_vis_uidx');
     }
 
     /**
@@ -238,11 +233,10 @@ class OroVisibilityBundleInstaller implements Installation
         $table = $schema->createTable(self::ORO_ACCOUNT_GROUP_CATEGORY_VISIBILITY_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['category_id', 'account_group_id'], 'oro_acc_grp_ctgr_vis_uidx');
+        $table->addUniqueIndex(['category_id', 'scope_id'], 'oro_acc_grp_ctgr_vis_uidx');
     }
 
     /**
@@ -255,11 +249,10 @@ class OroVisibilityBundleInstaller implements Installation
         $table = $schema->createTable(self::ORO_PRODUCT_VISIBILITY_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
-        $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['website_id', 'product_id'], 'oro_prod_vis_uidx');
+        $table->addUniqueIndex(['scope_id', 'product_id'], 'oro_prod_vis_uidx');
     }
 
     /**
@@ -272,12 +265,10 @@ class OroVisibilityBundleInstaller implements Installation
         $table = $schema->createTable(self::ORO_ACCOUNT_PRODUCT_VISIBILITY_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
-        $table->addColumn('website_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['website_id', 'product_id', 'account_id'], 'oro_acc_prod_vis_uidx');
+        $table->addUniqueIndex(['scope_id', 'product_id'], 'oro_acc_prod_vis_uidx');
     }
 
     /**
@@ -290,12 +281,10 @@ class OroVisibilityBundleInstaller implements Installation
         $table = $schema->createTable(self::ORO_ACCOUNT_GROUP_PRODUCT_VISIBILITY_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
-        $table->addColumn('website_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('scope_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['website_id', 'product_id', 'account_group_id'], 'oro_acc_grp_prod_vis_uidx');
+        $table->addUniqueIndex(['product_id', 'scope_id'], 'oro_acc_grp_prod_vis_uidx');
     }
 
     /**
@@ -335,16 +324,10 @@ class OroVisibilityBundleInstaller implements Installation
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(OroAccountBundleInstaller::ORO_ACCOUNT_TABLE_NAME),
-            ['account_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
             ['scope_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -363,16 +346,10 @@ class OroVisibilityBundleInstaller implements Installation
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(OroAccountBundleInstaller::ORO_ACCOUNT_GROUP_TABLE_NAME),
-            ['account_group_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
             ['scope_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -391,16 +368,10 @@ class OroVisibilityBundleInstaller implements Installation
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(OroAccountBundleInstaller::ORO_WEBSITE_TABLE_NAME),
-            ['website_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable('oro_scope'),
             ['scope_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -419,22 +390,10 @@ class OroVisibilityBundleInstaller implements Installation
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(OroAccountBundleInstaller::ORO_WEBSITE_TABLE_NAME),
-            ['website_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable(OroAccountBundleInstaller::ORO_ACCOUNT_TABLE_NAME),
-            ['account_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable('oro_scope'),
             ['scope_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -453,22 +412,10 @@ class OroVisibilityBundleInstaller implements Installation
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(OroAccountBundleInstaller::ORO_WEBSITE_TABLE_NAME),
-            ['website_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable(OroAccountBundleInstaller::ORO_ACCOUNT_GROUP_TABLE_NAME),
-            ['account_group_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable('oro_scope'),
             ['scope_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -502,7 +449,7 @@ class OroVisibilityBundleInstaller implements Installation
 //            $schema->getTable('oro_scope'),
 //            ['scope_id'],
 //            ['id'],
-//            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+//            ['onDelete' => 'CASCADE', 'onUpdate' => null]
 //        );
     }
 
@@ -527,23 +474,17 @@ class OroVisibilityBundleInstaller implements Installation
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_group'),
-            ['account_group_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-//        $table->addForeignKeyConstraint(
-//            $schema->getTable('oro_scope'),
-//            ['scope_id'],
-//            ['id'],
-//            ['onDelete' => 'SET NULL', 'onUpdate' => null]
-//        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_scope'),
+            ['scope_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 
     /**
@@ -567,23 +508,17 @@ class OroVisibilityBundleInstaller implements Installation
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account'),
-            ['account_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-//        $table->addForeignKeyConstraint(
-//            $schema->getTable('oro_scope'),
-//            ['scope_id'],
-//            ['id'],
-//            ['onDelete' => 'SET NULL', 'onUpdate' => null]
-//        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_scope'),
+            ['scope_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 
     /**
@@ -610,7 +545,7 @@ class OroVisibilityBundleInstaller implements Installation
             $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
             ['scope_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -629,12 +564,6 @@ class OroVisibilityBundleInstaller implements Installation
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_group'),
-            ['account_group_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
@@ -644,7 +573,7 @@ class OroVisibilityBundleInstaller implements Installation
             $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
             ['scope_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -663,12 +592,6 @@ class OroVisibilityBundleInstaller implements Installation
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account'),
-            ['account_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable('oro_catalog_category'),
             ['category_id'],
             ['id'],
@@ -678,7 +601,7 @@ class OroVisibilityBundleInstaller implements Installation
             $schema->getTable(OroScopeBundleInstaller::ORO_SCOPE),
             ['scope_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }

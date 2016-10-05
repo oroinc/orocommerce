@@ -87,21 +87,21 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     }
     /**
      * @param ObjectManager $manager
-     * @param string $name
+     * @param int $id
      * @return Scope
      */
-    protected function getScopeAccount(ObjectManager $manager, $name)
+    protected function getScopeAccount(ObjectManager $manager, $id)
     {
-        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['account_id' => $name]);
+        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['account_id' => $id]);
     }
     /**
      * @param ObjectManager $manager
-     * @param string $name
+     * @param int $id
      * @return Scope
      */
-    protected function getScopeAccountGroup(ObjectManager $manager, $name)
+    protected function getScopeAccountGroup(ObjectManager $manager, $id)
     {
-        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['accountGroup_id' => $name]);
+        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['accountGroup_id' => $id]);
     }
     /**
      * @param Category $category

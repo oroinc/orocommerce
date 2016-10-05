@@ -6,24 +6,24 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
-class LoadScopeAccountDemoData extends AbstractFixture implements FixtureInterface
+class LoadScopeAccountGroupDemoData extends AbstractFixture implements FixtureInterface
 {
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        /** @var \Oro\Bundle\AccountBundle\Entity\Account $account */
-        $accounts = $manager->getRepository('OroAccountBundle:Account')->findAll();
-        foreach ($accounts as $account) {
+        /** @var \Oro\Bundle\AccountBundle\Entity\AccountGroup $accountGroup */
+        $accountGroups = $manager->getRepository('OroAccountBundle:AccountGroup')->findAll();
+        foreach ($accountGroups as $accountGroup) {
             $scope = new Scope();
             $scope
-                ->setAccount($account->getId());
-            $this->addReference($account->getName(), $scope);
+                ->setAccountGroup($accountGroup->getGroup()->getId());
+            $this->addReference($accountGroup->getName(), $scope);
             $manager->persist($scope);
         }
 

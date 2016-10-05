@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadScopeAccountDemoData;
+use Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadScopeAccountGroupDemoData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
@@ -38,7 +38,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     {
         return [
             LoadProductDemoData::class,
-            LoadScopeAccountDemoData::class,
+            LoadScopeAccountGroupDemoData::class,
             LoadCategoryVisibilityDemoData::class,
         ];
     }
@@ -55,22 +55,22 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
 
     /**
      * @param ObjectManager $manager
-     * @param string $name
+     * @param int $id
      * @return Scope
      */
-    protected function getScopeAccount(ObjectManager $manager, $name)
+    protected function getScopeAccount(ObjectManager $manager, $id)
     {
-        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['account_id' => $name]);
+        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['account_id' => $id]);
     }
 
     /**
      * @param ObjectManager $manager
-     * @param string $name
+     * @param int $id
      * @return Scope
      */
-    protected function getAccountGroup(ObjectManager $manager, $name)
+    protected function getAccountGroup(ObjectManager $manager, $id)
     {
-        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['accountGroup_id' => $name]);
+        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['accountGroup_id' => $id]);
     }
 
     /**
