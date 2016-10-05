@@ -154,6 +154,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'expectedData' => [
                     'product.2',
                     'product.3',
+                    'product.5',
                     'product.6',
                 ]
             ],
@@ -193,6 +194,10 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
     public function testVisibilityProductSystemConfigurationPathNotSet()
     {
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($this->getDefaultWebsite());
+
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
             ->select('p.sku')->orderBy('p.sku');
 
@@ -203,6 +208,10 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
     public function testVisibilityProductCategoryConfigurationPathNotSet()
     {
+        $this->websiteManager->expects($this->once())
+            ->method('getCurrentWebsite')
+            ->willReturn($this->getDefaultWebsite());
+
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
             ->select('p.sku')->orderBy('p.sku');
 

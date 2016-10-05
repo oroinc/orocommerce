@@ -31,6 +31,13 @@ services:
         calls:
             - [addPlaceholder, ['@oro_website_search.website_id.placeholder']]
             - [addPlaceholder, ['@oro_website_search.localization_id.placeholder']]
+            - [addPlaceholder, ['@oro_website_search.account_id.placeholder']]
+
+    oro_website_search.account_id.placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder'
+        public: false
+        arguments:
+            - '@security.token_storage'
 
     oro_website_search.website_id.placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder'
@@ -177,3 +184,10 @@ services:
         arguments:
             - '@oro_website_search.query_factory'
             - '@oro_website_search.provider.search_mapping'
+
+    oro_website_search.event_listener.default_category_visibility_listener:
+        class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\DefaultCategoryVisibilityListener'
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
