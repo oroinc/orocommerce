@@ -46,12 +46,6 @@ class WebsiteSearchCategoryIndexerListener
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
-        $entityClass = $event->getEntityClass();
-
-        if (!is_a($entityClass, Product::class, true)) {
-            return;
-        }
-
         /** @var Product[] $products */
         $products = $event->getEntities();
 

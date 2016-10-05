@@ -45,17 +45,6 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
         $this->listener->onWebsiteSearchIndex($event);
     }
 
-    public function testOnWebsiteSearchIndexWhenWrongEntityClassIsGiven()
-    {
-        $event = new IndexEntityEvent(\stdClass::class, [], []);
-
-        $this->visibilityIndexer
-            ->expects($this->never())
-            ->method('addIndexInfo');
-
-        $this->listener->onWebsiteSearchIndex($event);
-    }
-
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Website id is absent in context
