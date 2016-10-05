@@ -2,6 +2,8 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
+        - '@setFormTheme':
+            themes: 'form_theme.html.twig'
         - '@appendOption':
             id: title
             optionName: value

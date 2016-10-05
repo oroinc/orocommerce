@@ -20,12 +20,6 @@
     <p{{ block('block_attributes') }}>{{ block_widget(block) }}</p>
 {% endblock %}
 
-{% block _registration_form_widget %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _registration_form_submit_wrap_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' form-row'
