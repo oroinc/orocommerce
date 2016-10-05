@@ -5,12 +5,12 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Provider;
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderVisitor;
-use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderFieldsProvider;
+use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
-class PlaceholderFieldsProviderTest extends \PHPUnit_Framework_TestCase
+class PlaceholderProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PlaceholderFieldsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PlaceholderProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     private $provider;
 
@@ -34,14 +34,14 @@ class PlaceholderFieldsProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new PlaceholderFieldsProvider($this->placeholderVisitor, $this->mappingProvider);
+        $this->provider = new PlaceholderProvider($this->placeholderVisitor, $this->mappingProvider);
     }
 
     /**
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Cannot find name field for Oro\Bundle\TestFrameworkBundle\Entity\TestProduct class
      */
-    public function testGetPlaceholderFieldNameWhenNoFieldInConfigExists()
+    public function testGetPlaceholderFieldNameWhenFieldNotExists()
     {
         $this->mappingProvider
             ->expects($this->once())
@@ -76,5 +76,23 @@ class PlaceholderFieldsProviderTest extends \PHPUnit_Framework_TestCase
             ->with('name_LOCALIZATION_ID', $placeholders);
 
         $this->provider->getPlaceholderFieldName(TestProduct::class, 'name', $placeholders);
+    }
+
+    public function testGetPlaceholderEntityAlias()
+    {
+        $this->mappingProvider
+            ->expects($this->once())
+            ->method('getEntityAlias')
+            ->with(TestProduct::class)
+            ->willReturn('alias_WEBSITE_ID');
+
+        $placeholders = ['WEBSITE_ID' => 1];
+
+        $this->placeholderVisitor
+            ->expects($this->once())
+            ->method('replace')
+            ->with('alias_WEBSITE_ID', $placeholders);
+
+        $this->provider->getPlaceholderEntityAlias(TestProduct::class, $placeholders);
     }
 }

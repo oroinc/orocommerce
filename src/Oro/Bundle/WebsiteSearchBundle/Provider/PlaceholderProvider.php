@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Provider;
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderVisitor;
 
-class PlaceholderFieldsProvider
+class PlaceholderProvider
 {
     /**
      * @var PlaceholderVisitor
@@ -45,5 +45,17 @@ class PlaceholderFieldsProvider
         }
 
         return $this->placeholderVisitor->replace($fields[$fieldName]['name'], $placeholders);
+    }
+
+    /**
+     * @param $entityClass
+     * @param array $placeholders
+     * @return null|string
+     */
+    public function getPlaceholderEntityAlias($entityClass, array $placeholders)
+    {
+        $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
+
+        return $this->placeholderVisitor->replace($entityAlias, $placeholders);
     }
 }

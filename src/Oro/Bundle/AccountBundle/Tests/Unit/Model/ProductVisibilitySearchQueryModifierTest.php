@@ -17,7 +17,7 @@ use Oro\Bundle\AccountBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
-use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderFieldsProvider;
+use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
 class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,9 +27,9 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
     protected $tokenStorage;
 
     /**
-     * @var PlaceholderFieldsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var PlaceholderProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $placeholderFieldsProvider;
+    protected $placeholderProvider;
 
     /**
      * @var ProductVisibilitySearchQueryModifier
@@ -42,20 +42,20 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
             ->getMockBuilder(TokenStorageInterface::class)
             ->getMock();
 
-        $this->placeholderFieldsProvider = $this
-            ->getMockBuilder(PlaceholderFieldsProvider::class)
+        $this->placeholderProvider = $this
+            ->getMockBuilder(PlaceholderProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->modifier = new ProductVisibilitySearchQueryModifier(
             $this->tokenStorage,
-            $this->placeholderFieldsProvider
+            $this->placeholderProvider
         );
     }
 
     public function testModify()
     {
-        $this->placeholderFieldsProvider
+        $this->placeholderProvider
             ->expects($this->once())
             ->method('getPlaceholderFieldName')
             ->with(
@@ -131,7 +131,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
      */
     public function testModifyForAnonymous($accountUser)
     {
-        $this->placeholderFieldsProvider
+        $this->placeholderProvider
             ->expects($this->never())
             ->method('getPlaceholderFieldName');
 

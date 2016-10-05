@@ -5,34 +5,24 @@ namespace Oro\Bundle\WebsiteSearchBundle\Driver;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderVisitor;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
 abstract class AbstractAccountPartialUpdateDriver implements AccountPartialUpdateDriverInterface
 {
     /**
-     * @var PlaceholderVisitor
+     * @var PlaceholderProvider
      */
-    private $visitorReplacePlaceholder;
+    private $placeholderProvider;
 
     /**
-     * @var AbstractSearchMappingProvider
+     * @param PlaceholderProvider $placeholderProvider
      */
-    private $mappingProvider;
-
-    /**
-     * @param PlaceholderVisitor $visitorReplacePlaceholder
-     * @param AbstractSearchMappingProvider $mappingProvider
-     */
-    public function __construct(
-        PlaceholderVisitor $visitorReplacePlaceholder,
-        AbstractSearchMappingProvider $mappingProvider
-    ) {
-        $this->visitorReplacePlaceholder = $visitorReplacePlaceholder;
-        $this->mappingProvider = $mappingProvider;
+    public function __construct(PlaceholderProvider $placeholderProvider)
+    {
+        $this->placeholderProvider = $placeholderProvider;
     }
 
     /**
@@ -41,12 +31,12 @@ abstract class AbstractAccountPartialUpdateDriver implements AccountPartialUpdat
      */
     protected function getProductAliasByWebsite(Website $website)
     {
-        $entityAlias = $this->mappingProvider->getEntityAlias(Product::class);
-        $entityAlias = $this->visitorReplacePlaceholder->replace($entityAlias, [
-            WebsiteIdPlaceholder::NAME => $website->getId()
-        ]);
-
-        return $entityAlias;
+        return $this->placeholderProvider->getPlaceholderEntityAlias(
+            Product::class,
+            [
+                WebsiteIdPlaceholder::NAME => $website->getId(),
+            ]
+        );
     }
 
     /**
@@ -71,11 +61,12 @@ abstract class AbstractAccountPartialUpdateDriver implements AccountPartialUpdat
      */
     protected function getAccountVisibilityFieldName(Account $account)
     {
-        $fields = $this->mappingProvider->getEntityMapParameter(Product::class, 'fields');
-        $alias = $fields[ProductVisibilityIndexer::FIELD_VISIBILITY_ACCOUNT]['name'];
-
-        return $this->visitorReplacePlaceholder->replace($alias, [
-            AccountIdPlaceholder::NAME => $account->getId()
-        ]);
+        return $this->placeholderProvider->getPlaceholderFieldName(
+            Product::class,
+            ProductVisibilityIndexer::FIELD_VISIBILITY_ACCOUNT,
+            [
+                AccountIdPlaceholder::NAME => $account->getId(),
+            ]
+        );
     }
 }

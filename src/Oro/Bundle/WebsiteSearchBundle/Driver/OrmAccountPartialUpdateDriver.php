@@ -16,6 +16,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
+use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
 class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
 {
@@ -42,26 +43,21 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
     private $itemEntityManager;
 
     /**
+     * @param PlaceholderProvider $placeholderProvider
      * @param DoctrineHelper $doctrineHelper
-     */
-    public function setDoctrineHelper(DoctrineHelper $doctrineHelper)
-    {
-        $this->doctrineHelper = $doctrineHelper;
-    }
-
-    /**
      * @param InsertFromSelectQueryExecutor $insertExecutor
-     */
-    public function setInsertExecutor(InsertFromSelectQueryExecutor $insertExecutor)
-    {
-        $this->insertExecutor = $insertExecutor;
-    }
-
-    /**
      * @param ProductVisibilityProvider $productVisibilityProvider
      */
-    public function setProductVisibilityProvider(ProductVisibilityProvider $productVisibilityProvider)
-    {
+    public function __construct(
+        PlaceholderProvider $placeholderProvider,
+        DoctrineHelper $doctrineHelper,
+        InsertFromSelectQueryExecutor $insertExecutor,
+        ProductVisibilityProvider $productVisibilityProvider
+    ) {
+        parent::__construct($placeholderProvider);
+        
+        $this->doctrineHelper = $doctrineHelper;
+        $this->insertExecutor = $insertExecutor;
         $this->productVisibilityProvider = $productVisibilityProvider;
     }
 

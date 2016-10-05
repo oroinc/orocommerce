@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
-use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderFieldsProvider;
+use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -23,20 +23,20 @@ class ProductVisibilitySearchQueryModifier
     private $tokenStorage;
 
     /**
-     * @var PlaceholderFieldsProvider
+     * @var PlaceholderProvider
      */
-    private $placeholderFieldsProvider;
+    private $placeholderProvider;
 
     /**
      * @param TokenStorageInterface $tokenStorage
-     * @param PlaceholderFieldsProvider $placeholderFieldsProvider
+     * @param PlaceholderProvider $placeholderProvider
      */
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        PlaceholderFieldsProvider $placeholderFieldsProvider
+        PlaceholderProvider $placeholderProvider
     ) {
         $this->tokenStorage = $tokenStorage;
-        $this->placeholderFieldsProvider = $placeholderFieldsProvider;
+        $this->placeholderProvider = $placeholderProvider;
     }
 
     /**
@@ -56,7 +56,7 @@ class ProductVisibilitySearchQueryModifier
         $account = $this->getAccount();
 
         if ($account) {
-            $accountField = $this->placeholderFieldsProvider->getPlaceholderFieldName(
+            $accountField = $this->placeholderProvider->getPlaceholderFieldName(
                 Product::class,
                 ProductVisibilityIndexer::FIELD_VISIBILITY_ACCOUNT,
                 [
