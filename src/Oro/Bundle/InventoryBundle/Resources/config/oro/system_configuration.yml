@@ -7,7 +7,7 @@ system_configuration:
             title: oro.inventory.system_configuration.groups.product_inventory_options.title
 
     fields:
-        oro_warehouse.manage_inventory:
+        oro_inventory.manage_inventory:
             data_type: boolean
             type: choice
             options:
@@ -28,4 +28,4 @@ system_configuration:
                                 children:
                                     product_inventory_options:
                                         children:
-                                            - oro_warehouse.manage_inventory
+                                            - oro_inventory.manage_inventory
