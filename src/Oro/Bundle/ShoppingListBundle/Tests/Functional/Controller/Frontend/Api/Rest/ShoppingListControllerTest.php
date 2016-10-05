@@ -48,6 +48,16 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertEquals($currentShoppingList->getId(), $shoppingList->getId());
     }
 
+    public function testSetCurrentFailsOnNonExistingList()
+    {
+        $this->client->request(
+            'PUT',
+            $this->getUrl('orob2b_api_set_shoppinglist_current', ['id' => -1])
+        );
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 404);
+    }
+
     public function testDelete()
     {
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);

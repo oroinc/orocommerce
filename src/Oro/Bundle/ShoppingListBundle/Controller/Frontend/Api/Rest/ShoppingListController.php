@@ -27,7 +27,7 @@ class ShoppingListController extends RestController implements ClassResourceInte
      * @Put("/shoppinglists/current/{id}")
      *
      * @ApiDoc(
-     *      description="Set Shopping List current",
+     *      description="Set current Shopping List",
      *      resource=true
      * )
      * @AclAncestor("orob2b_shopping_list_frontend_update")
@@ -45,6 +45,7 @@ class ShoppingListController extends RestController implements ClassResourceInte
             ->getManagerForClass('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')
             ->getRepository('OroShoppingListBundle:ShoppingList')
             ->find($id);
+
         if ($shoppingList === null) {
             throw $this->createNotFoundException('Can\'t find shopping list with id ' . $id);
         }
