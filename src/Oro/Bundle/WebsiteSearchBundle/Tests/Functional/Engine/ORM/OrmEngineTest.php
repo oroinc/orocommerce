@@ -8,7 +8,7 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Tests\Functional\Controller\DataFixtures\LoadSearchItemData;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item as TestEntity;
-use Oro\Bundle\WebsiteSearchBundle\Engine\OrmIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
@@ -90,6 +90,7 @@ class OrmEngineTest extends AbstractSearchWebTestCase
     protected function setUp()
     {
         parent::setUp();
+
         if ($this->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
             $this->markTestSkipped('Should be tested only with ORM search engine');
         }
@@ -119,6 +120,8 @@ class OrmEngineTest extends AbstractSearchWebTestCase
 
         $this->listener = $this->setListener();
 
+        $driver = $this->getContainer()->get('oro_website_search.engine.orm.driver');
+
         $indexer = new OrmIndexer(
             $this->getContainer()->get('oro_entity.doctrine_helper'),
             $this->mappingProviderMock,
@@ -126,11 +129,12 @@ class OrmEngineTest extends AbstractSearchWebTestCase
             $this->getContainer()->get('oro_website_search.provider.index_data'),
             $this->getContainer()->get('oro_website_search.placeholder.visitor_replace')
         );
+        $indexer->setDriver($driver);
 
         $indexer->reindex(TestEntity::class, []);
 
         $this->ormEngine = $this->getContainer()->get('oro_website_search.engine');
-        $this->ormEngine->setMappingProvider($this->mappingProviderMock);
+        $this->ormEngine->setDriver($driver);
     }
 
     /**

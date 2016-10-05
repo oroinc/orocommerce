@@ -22,7 +22,7 @@ class Mapper
         $selectAliases = $query->getSelectAliases();
 
         if (empty($selects)) {
-            return null;
+            return [];
         }
 
         $result = [];
@@ -39,8 +39,8 @@ class Mapper
             }
             $result[$resultName] = '';
 
-            if (isset($item[$resultName])) {
-                $value = $item[$resultName];
+            if (isset($item[$name])) {
+                $value = $item[$name];
                 if (is_array($value)) {
                     $value = array_shift($value);
                 }

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Resolver;
 
+use Doctrine\Common\Collections\Expr\Comparison as DoctrineComparison;
+
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
@@ -68,16 +70,15 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturnOnConsecutiveCalls('oro_first_1', 'oro_second', 'oro_third_2');
 
-        $result = $this->placeholderResolver->replace($query);
+        $this->placeholderResolver->replace($query);
 
-        $this->assertInstanceOf(Query::class, $result);
         $this->assertEquals(
             [
                 'oro_first_1',
                 'oro_second',
                 'oro_third_2'
             ],
-            $result->getFrom()
+            $query->getFrom()
         );
     }
 
@@ -107,16 +108,15 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturnOnConsecutiveCalls('oro_first_1', 'oro_second', 'oro_third_NAME_ID');
 
-        $result = $this->placeholderResolver->replace($query);
+        $this->placeholderResolver->replace($query);
 
-        $this->assertInstanceOf(Query::class, $result);
         $this->assertEquals(
             [
                 'oro_first_1',
                 'oro_second',
                 'oro_third_NAME_ID'
             ],
-            $result->getFrom()
+            $query->getFrom()
         );
     }
 
@@ -125,6 +125,7 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
         $expr = new Comparison("field_name_NAME_ID", "=", "value");
         $criteria = new Criteria();
         $criteria->where($expr);
+        $criteria->orderBy(['sorter_TEST_ID' => 'ASC']);
 
         $query = new Query();
         $query->setCriteria($criteria);
@@ -136,14 +137,31 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
                 'NAME_ID' => $this->getPlaceholder('NAME_ID', '2')
             ]);
 
-        $result = $this->placeholderResolver->replace($query);
-
-        $this->assertInstanceOf(Query::class, $result);
+        $this->placeholderResolver->replace($query);
 
         $expectedExpr = new Comparison("field_name_2", "=", "value");
-        $criteria->where($expectedExpr);
+        $expectedCriteria = new Criteria();
+        $expectedCriteria->where($expectedExpr);
+        $expectedCriteria->orderBy(['sorter_1' => 'ASC']);
 
-        $this->assertEquals($criteria, $result->getCriteria());
+        /** @var DoctrineComparison $expectedComparison */
+        $expectedComparison = $expectedCriteria->getWhereExpression();
+        /** @var DoctrineComparison $actualComparison */
+        $actualComparison = $query->getCriteria()->getWhereExpression();
+
+        $this->assertComparisonEquals($expectedComparison, $actualComparison);
+        $this->assertEquals($expectedCriteria->getOrderings(), $query->getCriteria()->getOrderings());
+    }
+
+    /**
+     * @param DoctrineComparison $expected
+     * @param DoctrineComparison $actual
+     */
+    private function assertComparisonEquals(DoctrineComparison $expected, DoctrineComparison $actual)
+    {
+        $this->assertEquals($expected->getField(), $actual->getField());
+        $this->assertEquals($expected->getOperator(), $actual->getOperator());
+        $this->assertEquals($expected->getValue(), $actual->getValue());
     }
 
     /**
@@ -164,6 +182,14 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
         $placeholder->expects($this->any())
             ->method('getValue')
             ->willReturn($value);
+
+        $placeholder->expects($this->any())
+            ->method('replace')
+            ->willReturnCallback(
+                function ($string, $replaceValue) use ($placeholderName) {
+                    return str_replace($placeholderName, $replaceValue, $string);
+                }
+            );
 
         return $placeholder;
     }

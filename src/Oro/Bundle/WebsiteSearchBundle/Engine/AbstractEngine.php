@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
+use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\WebsiteSearchBundle\Event\BeforeSearchEvent;
@@ -13,34 +13,28 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 abstract class AbstractEngine implements EngineV2Interface
 {
-    /**
-     * @var EventDispatcherInterface
-     */
+    /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
-    /**
-     * @var QueryPlaceholderResolverInterface
-     */
+    /** @var QueryPlaceholderResolverInterface */
     private $queryPlaceholderResolver;
 
-    /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
+    /** @var AbstractSearchMappingProvider */
+    protected $mappingProvider;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param QueryPlaceholderResolverInterface $queryPlaceholderResolver
-     * @param DoctrineHelper $doctrineHelper
+     * @param AbstractSearchMappingProvider $mappingProvider
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         QueryPlaceholderResolverInterface $queryPlaceholderResolver,
-        DoctrineHelper $doctrineHelper
+        AbstractSearchMappingProvider $mappingProvider
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->queryPlaceholderResolver = $queryPlaceholderResolver;
-        $this->doctrineHelper = $doctrineHelper;
+        $this->mappingProvider = $mappingProvider;
     }
 
     /**
@@ -59,7 +53,8 @@ abstract class AbstractEngine implements EngineV2Interface
         $this->eventDispatcher->dispatch(BeforeSearchEvent::EVENT_NAME, $event);
 
         $query = $event->getQuery();
-        $query = $this->queryPlaceholderResolver->replace($query);
+
+        $this->queryPlaceholderResolver->replace($query);
 
         return $this->doSearch($query, $context);
     }

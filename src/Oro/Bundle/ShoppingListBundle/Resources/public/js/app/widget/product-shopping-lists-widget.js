@@ -4,8 +4,10 @@ define(function(require) {
     var ProductShoppingListsWidget;
     var DialogWidget = require('oro/dialog-widget');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
+    var ApiAccessor = require('oroui/js/tools/api-accessor');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
+    var Error = require('oroui/js/error');
     var __ = require('orotranslation/js/translator');
     var _ = require('underscore');
     var $ = require('jquery');
@@ -19,20 +21,39 @@ define(function(require) {
                 resizable: false,
                 width: 580,
                 autoResize: true
+            },
+            update_api_accessor: {
+                http_method: 'PUT',
+                route: 'oro_api_shopping_list_frontend_put_line_item'
             }
         }),
+
+        messages: {
+            processingMessage: __('oro.form.inlineEditing.saving_progress'),
+            preventWindowUnload: __('oro.form.inlineEditing.inline_edits')
+        },
 
         elements: {
             edit: '[data-role="edit"]',
             decline: '[data-role="decline"]',
             lineItem: '[data-role="line-item"]',
             lineItemEdit: '[data-role="line-item-edit"]',
-            lineItemView: '[data-role="line-item-view"]'
+            lineItemView: '[data-role="line-item-view"]',
+            addForm: '[data-role="add-form"]',
+            addFormShoppingList: '[data-role="add-form-shopping-list"]',
+            addFormQty: '[data-role="add-form-qty"]',
+            addFormUnit: '[data-role="add-form-unit"]',
+            addFormAccept: '[data-role="add-form-accept"]',
+            addFormReset: '[data-role="add-form-reset"]'
         },
 
         elementsEvents: {
             edit: ['click', 'edit'],
-            decline: ['click', 'decline']
+            decline: ['click', 'decline'],
+            addFormShoppingList: ['change', 'onAddFormShoppingListChange'],
+            addFormUnit: ['change', 'onAddFormUnitChange'],
+            addFormAccept: ['click', 'onAddFormAccept'],
+            addFormReset: ['click', 'onAddFormReset']
         },
 
         modelAttr: {
@@ -43,10 +64,14 @@ define(function(require) {
             shopping_lists: ['change', 'render']
         },
 
+        shoppingLists: [],
+
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, [
                 'dialogOptions', 'template', 'quantityComponentOptions'
             ]));
+
+            this.shoppingLists = options.shoppingLists || [];
 
             this.initModel(options);
             if (!this.model) {
@@ -79,6 +104,7 @@ define(function(require) {
 
         dispose: function() {
             this.disposeElements();
+            mediator.off(null, null, this);
             ProductShoppingListsWidget.__super__.dispose.apply(this, arguments);
         },
 
@@ -96,6 +122,7 @@ define(function(require) {
             this.clearElementsCache();
 
             var shoppingLists = this.model.get('shopping_lists');
+
             if (_.isEmpty(shoppingLists)) {
                 this.dispose();
                 return;
@@ -103,6 +130,7 @@ define(function(require) {
 
             this.setElement($(this.options.template({
                 shoppingLists: shoppingLists,
+                shoppingListsCollection: this.shoppingLists,
                 productUnits: this.model.get('product_units')
             })));
 
@@ -113,7 +141,7 @@ define(function(require) {
             var shoppingLists = this.model.get('shopping_lists');
             shoppingLists = _.filter(shoppingLists, function(shoppingList, key) {
                 shoppingList.line_items = _.filter(shoppingList.line_items, function(lineItem) {
-                    return lineItem.line_item_id != deleteData.lineItemId;
+                    return lineItem.id != deleteData.lineItemId;
                 });
                 return !_.isEmpty(shoppingList.line_items);
             }, this);
@@ -132,21 +160,166 @@ define(function(require) {
 
             this.model.set('shopping_lists', updatedShoppingLists);
             this.model.trigger('change:shopping_lists');
-            this.toggleEditMode(updateData.event, 'disable');
+
+            if (updateData.event) {
+                this.toggleEditMode(updateData.event, 'disable');
+            }
+        },
+
+        onAddFormReset: function() {
+            var $form = this.getElement('addForm');
+
+            $form[0].reset();
+            $form.find('select').inputWidget('refresh');
+        },
+
+        onAddFormShoppingListChange: function(e) {
+            var $addFormQty = this.getElement('addFormQty');
+            var selectedShoppingList = this.getSelectedShoppingList();
+
+            $addFormQty.val(1);
+            
+            if (selectedShoppingList && selectedShoppingList.line_items) {
+                $addFormQty.val(selectedShoppingList.line_items[0].quantity);
+                this.setSelectedUnit(selectedShoppingList.line_items[0].unit);
+            }
+        },
+
+        onAddFormUnitChange: function(e) {
+            var $addFormQty = this.getElement('addFormQty');
+            var selectedShoppingList = this.getSelectedShoppingList();
+            var selectedUnit = this.getSelectedUnit();
+
+            $addFormQty.val(1);
+
+            if (selectedShoppingList && selectedShoppingList.line_items) {
+                var selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
+
+                if(selectedLineItem && selectedLineItem.quantity) {
+                    $addFormQty.val(selectedLineItem.quantity);
+                }
+            }
+        },
+
+        onAddFormAccept: function() {
+            var $addFormQty = this.getElement('addFormQty');
+            var selectedShoppingList = this.getSelectedShoppingList();
+            var selectedUnit = this.getSelectedUnit();
+
+            if (!selectedShoppingList) {
+                return false;
+            }
+            
+            if (selectedShoppingList.line_items) {
+                var selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
+
+                if (selectedLineItem) {
+                    this.updateLineItem(selectedLineItem, selectedShoppingList.id, parseInt($addFormQty.val(), 10));
+                } else {
+                    this.saveLineItem(selectedShoppingList.id, this.getSelectedUnit(), parseInt($addFormQty.val(), 10));
+                }
+            } else {
+                this.saveLineItem(selectedShoppingList.id, this.getSelectedUnit(), parseInt($addFormQty.val(), 10));
+            }
+        },
+
+        onSaveError: function(jqXHR) {
+            var errorCode = 'responseJSON' in jqXHR ? jqXHR.responseJSON.code : jqXHR.status;
+
+            var errors = [];
+            switch (errorCode) {
+                case 400:
+                    var jqXHRerrors = jqXHR.responseJSON.errors.children;
+                    for (var i in jqXHRerrors) {
+                        if (jqXHRerrors.hasOwnProperty(i) && jqXHRerrors[i].errors) {
+                            errors.push.apply(errors, _.values(jqXHRerrors[i].errors));
+                        }
+                    }
+                    if (!errors.length) {
+                        errors.push(__('oro.ui.unexpected_error'));
+                    }
+                    break;
+                case 403:
+                    errors.push(__('You do not have permission to perform this action.'));
+                    break;
+                default:
+                    errors.push(__('oro.ui.unexpected_error'));
+            }
+
+            _.each(errors, function(value) {
+                mediator.execute('showFlashMessage', 'error', value);
+            });
         },
 
         updateShoppingLists: function(shoppingLists, shoppingListId, lineItemId, newLineItem) {
             return _.map(shoppingLists, function(list) {
-                if (list.shopping_list_id === parseInt(shoppingListId, 10)) {
+                if (list.id === parseInt(shoppingListId, 10)) {
                     list.line_items = this.updateLineItems(list.line_items, lineItemId, newLineItem);
                 }
                 return list;
             }, this);
         },
 
+        saveLineItem: function(shoppingListId, lineItemUnit, newQty) {
+            var urlOptions = {};
+            var formData = this.getElement('addForm').serialize();
+            
+            if (this.model) {
+                urlOptions.productId = this.model.get('id');
+            }
+            urlOptions.shoppingListId = shoppingListId;
+            
+            mediator.execute('showLoading');
+            $.ajax({
+                type: 'POST',
+                url: routing.generate('oro_shopping_list_frontend_add_product', urlOptions),
+                data: formData,
+                success: function(response) {
+                    mediator.execute('hideLoading');
+                    if (response && response.message) {
+                        mediator.execute(
+                            'showFlashMessage', (response.hasOwnProperty('successful') ? 'success' : 'error'),
+                            response.message
+                        );
+                    }
+                    mediator.trigger('shopping-list:updated', response.shoppingList, response.product);
+                },
+                error: function(xhr) {
+                    mediator.execute('hideLoading');
+                    Error.handle({}, xhr, {enforce: true});
+                }
+            });
+        },
+
+        updateLineItem: function(lineItem, shoppingListId, newQty) {
+            var updateApiAccessor = new ApiAccessor(_.extend(this.options.update_api_accessor, {
+                default_route_parameters: {
+                    id: lineItem.id
+                }
+            }));
+
+            var modelData = {
+                quantity: newQty,
+                unit: lineItem.unit
+            };
+            
+            var updatePromise = updateApiAccessor.send(modelData, {oro_product_frontend_line_item: modelData}, {}, {
+                processingMessage: this.messages.processingMessage,
+                preventWindowUnload: this.messages.preventWindowUnload
+            });
+
+            updatePromise
+                .done(_.bind(this.onLineItemUpdate, this, {
+                    shoppingListId: shoppingListId,
+                    lineItemId: lineItem.id,
+                    value: modelData
+                }))
+                .fail(_.bind(this.onSaveError, this));
+        },
+
         updateLineItems: function(lineItems, lineItemId, newLineItem) {
             return _.map(lineItems, function(item) {
-                if (item.line_item_id === parseInt(lineItemId, 10)) {
+                if (item.id === parseInt(lineItemId, 10)) {
                     item.unit = newLineItem.unit;
                     item.quantity = newLineItem.quantity;
                 }
@@ -176,6 +349,30 @@ define(function(require) {
                     .find(this.elements.lineItemView)
                     .removeClass('hidden');
             }
+        },
+
+        getSelectedShoppingListId: function() {
+            return parseInt(this.getElement('addFormShoppingList').val(), 10) || 0;
+        },
+
+        getSelectedShoppingList: function() {
+            var properties = {
+                id: this.getSelectedShoppingListId()
+            };
+
+            if (!properties.id) {
+                return;
+            }
+
+            return _.findWhere(this.model.get('shopping_lists'), properties) || _.findWhere(this.shoppingLists, properties);
+        },
+
+        getSelectedUnit: function() {
+            return this.getElement('addFormUnit').val();
+        },
+
+        setSelectedUnit: function(unit) {
+            this.getElement('addFormUnit').val(unit).inputWidget('refresh');
         },
 
         edit: function(e) {

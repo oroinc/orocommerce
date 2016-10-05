@@ -47,7 +47,7 @@ class ProductRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->website = $this->getWebsiteRepository()->getDefaultWebsite();
 
         $this->entityManager = $this->getResolvedVisibilityManager();

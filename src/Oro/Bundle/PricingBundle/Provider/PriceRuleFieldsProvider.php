@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Provider;
 
+use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 
 class PriceRuleFieldsProvider
 {
@@ -18,9 +18,9 @@ class PriceRuleFieldsProvider
     ];
 
     /**
-     * @var EntityFieldProvider
+     * @var ServiceLink
      */
-    protected $entityFieldProvider;
+    protected $entityFieldProviderLink;
 
     /**
      * @var DoctrineHelper
@@ -33,12 +33,12 @@ class PriceRuleFieldsProvider
     protected $entityFields = [];
 
     /**
-     * @param EntityFieldProvider $entityFieldProvider
+     * @param ServiceLink $entityFieldProviderLink
      * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(EntityFieldProvider $entityFieldProvider, DoctrineHelper $doctrineHelper)
+    public function __construct(ServiceLink $entityFieldProviderLink, DoctrineHelper $doctrineHelper)
     {
-        $this->entityFieldProvider = $entityFieldProvider;
+        $this->entityFieldProviderLink = $entityFieldProviderLink;
         $this->doctrineHelper = $doctrineHelper;
     }
 
@@ -130,7 +130,7 @@ class PriceRuleFieldsProvider
     {
         $cacheKey = $this->getCacheKey($className, $numericOnly, $withRelations);
         if (!array_key_exists($cacheKey, $this->entityFields)) {
-            $fields = $this->entityFieldProvider->getFields(
+            $fields = $this->entityFieldProviderLink->getService()->getFields(
                 $className,
                 $withRelations,
                 $withRelations,

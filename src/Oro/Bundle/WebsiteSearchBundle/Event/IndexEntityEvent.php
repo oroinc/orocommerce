@@ -12,11 +12,6 @@ class IndexEntityEvent extends Event
     const NAME = 'oro_website_search.event.index_entity';
 
     /**
-     * @var string
-     */
-    private $entityClass;
-
-    /**
      * @var object[]
      */
     private $entities;
@@ -32,23 +27,13 @@ class IndexEntityEvent extends Event
     private $entitiesData = [];
 
     /**
-     * @param string $entityClass
      * @param object[] $entities
      * @param array $context
      */
-    public function __construct($entityClass, array $entities, array $context)
+    public function __construct(array $entities, array $context)
     {
         $this->context = $context;
         $this->entities = $entities;
-        $this->entityClass = $entityClass;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEntityClass()
-    {
-        return $this->entityClass;
     }
 
     /**

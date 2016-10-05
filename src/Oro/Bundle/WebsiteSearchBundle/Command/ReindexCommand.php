@@ -53,6 +53,7 @@ class ReindexCommand extends ContainerAwareCommand
 
         $output->writeln($this->getStartingMessage($class, $websiteId));
 
+        // TODO: trigger immediate reindexation event instead
         $indexer = $this->getContainer()->get('oro_website_search.indexer');
         $recordsCount = $indexer->reindex($class, $context);
 

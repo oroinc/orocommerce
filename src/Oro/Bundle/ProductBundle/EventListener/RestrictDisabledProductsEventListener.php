@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 /**
@@ -25,9 +25,9 @@ class RestrictDisabledProductsEventListener
     }
 
     /**
-     * @param ProductSelectDBQueryEvent $event
+     * @param ProductDBQueryRestrictionEvent $event
      */
-    public function onDBQuery(ProductSelectDBQueryEvent $event)
+    public function onDBQuery(ProductDBQueryRestrictionEvent $event)
     {
         $this->modifier->modifyByStatus($event->getQueryBuilder(), [Product::STATUS_ENABLED]);
     }

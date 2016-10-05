@@ -15,6 +15,7 @@ class ImportSingleWarehouseTest extends AbstractImportExportTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadSingleWarehousesAndInventoryLevels::class]);
     }
 

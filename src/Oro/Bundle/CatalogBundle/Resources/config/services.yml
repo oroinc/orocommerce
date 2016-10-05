@@ -122,6 +122,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
 
+    oro_catalog.manager.product_index_scheduler:
+        class: 'Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@event_dispatcher'
+
     oro_catalog.event_listener.orm.category_listener:
         class: 'Oro\Bundle\CatalogBundle\EventListener\ORM\CategoryListener'
         public: false
@@ -135,4 +142,12 @@ services:
         class: 'Oro\Bundle\CatalogBundle\Model\CategoryMaterializedPathModifier'
         public: false
         arguments:
-            - '@oro_b2bentity.extra_insert_entity_storage'
+            - '@oro_commerce_entity.extra_insert_entity_storage'
+
+    oro_catalog.event_listener.website_search_index:
+        class: 'Oro\Bundle\CatalogBundle\EventListener\WebsiteSearchCategoryIndexerListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_website.provider.website_localization'
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }

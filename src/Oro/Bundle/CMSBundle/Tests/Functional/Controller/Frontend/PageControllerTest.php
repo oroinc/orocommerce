@@ -13,6 +13,7 @@ class PageControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
     }
 
     public function testViewBySlug()

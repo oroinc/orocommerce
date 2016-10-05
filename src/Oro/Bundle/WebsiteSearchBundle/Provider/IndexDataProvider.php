@@ -11,7 +11,7 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Helper\FieldHelper;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\VisitorReplacePlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderVisitor;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -33,8 +33,8 @@ class IndexDataProvider
     /** @var EntityAliasResolver */
     private $entityAliasResolver;
 
-    /** @var VisitorReplacePlaceholder */
-    private $visitorReplacePlaceholder;
+    /** @var PlaceholderVisitor */
+    private $placeholderVisitor;
 
     /** @var FieldHelper */
     private $fieldHelper;
@@ -45,18 +45,18 @@ class IndexDataProvider
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param EntityAliasResolver $entityAliasResolver
-     * @param VisitorReplacePlaceholder $visitorReplacePlaceholder
+     * @param PlaceholderVisitor $placeholderVisitor
      * @param FieldHelper $fieldHelper
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         EntityAliasResolver $entityAliasResolver,
-        VisitorReplacePlaceholder $visitorReplacePlaceholder,
+        PlaceholderVisitor $placeholderVisitor,
         FieldHelper $fieldHelper
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->entityAliasResolver = $entityAliasResolver;
-        $this->visitorReplacePlaceholder = $visitorReplacePlaceholder;
+        $this->placeholderVisitor = $placeholderVisitor;
         $this->fieldHelper = $fieldHelper;
     }
 
@@ -83,8 +83,14 @@ class IndexDataProvider
      */
     public function getEntitiesData($entityClass, array $restrictedEntities, array $context, array $entityConfig)
     {
-        $indexEntityEvent = new IndexEntityEvent($entityClass, $restrictedEntities, $context);
+        $entityAlias = $this->entityAliasResolver->getAlias($entityClass);
+
+        $indexEntityEvent = new IndexEntityEvent($restrictedEntities, $context);
         $this->eventDispatcher->dispatch(IndexEntityEvent::NAME, $indexEntityEvent);
+        $this->eventDispatcher->dispatch(
+            sprintf('%s.%s', IndexEntityEvent::NAME, $entityAlias),
+            $indexEntityEvent
+        );
 
         return $this->prepareIndexData($indexEntityEvent->getEntitiesData(), $entityConfig);
     }
@@ -154,12 +160,12 @@ class IndexDataProvider
                 $fieldConfig = $this->getFieldConfig($fieldsConfig, $fieldName);
                 $placeholders = $valueWithPlaceholders->getPlaceholders();
                 $type = $fieldConfig['type'];
-                $replacedFieldName = $this->visitorReplacePlaceholder->replace($fieldConfig['name'], $placeholders);
+                $replacedFieldName = $this->placeholderVisitor->replace($fieldConfig['name'], $placeholders);
                 $clearedValue = $this->clearTextValue($type, $valueWithPlaceholders->getValue());
                 $this->preparedIndexData[$entityId][$type][$replacedFieldName] = $clearedValue;
 
                 if ($type === Query::TYPE_TEXT) {
-                    $replacedTextField = $this->visitorReplacePlaceholder->replace(
+                    $replacedTextField = $this->placeholderVisitor->replace(
                         $allTextFieldConfigName,
                         $placeholders
                     );

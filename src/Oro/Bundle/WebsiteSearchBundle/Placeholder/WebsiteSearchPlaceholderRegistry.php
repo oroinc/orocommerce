@@ -11,7 +11,6 @@ class WebsiteSearchPlaceholderRegistry
 
     /**
      * @param WebsiteSearchPlaceholderInterface $placeholder
-     * @return array
      */
     public function addPlaceholder(WebsiteSearchPlaceholderInterface $placeholder)
     {
