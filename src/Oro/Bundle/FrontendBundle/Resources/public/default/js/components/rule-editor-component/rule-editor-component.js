@@ -36,7 +36,7 @@ define([
                 }
             },
             operations: {
-                math: ['+', '-', '%'],
+                math: ['+', '-', '%', '*', '/'],
                 bool: ['and', 'or'],
                 compare: ['>', '<', '=', '!=', 'in', 'not in']
             },
@@ -72,12 +72,6 @@ define([
          * @property {Array}
          */
         operationsCases: [],
-
-        /**
-         *
-         * @property {RegExp}
-         */
-        bracketsRegExp: /(\(|\))/gi,
 
         /**
          *
@@ -143,6 +137,9 @@ define([
             return logicIsValid && dataWordsAreValid;
         },
 
+        /**
+         *
+         */
         initAutocomplete: function() {
             var _context;
             var _position;
@@ -349,32 +346,38 @@ define([
          * @returns {*}
          */
         isDataExpression: function(string) {
-            var expressionMatch = string.match(_.find(this.opsRegEx, function(re, name) {
-                if (name !== 'bool') {
-                    return string.match(re);
-                }
-            }));
+            var _this = this;
 
-            if (_.isNull(expressionMatch) || expressionMatch.length > 1) {
+            var compareMatch = string.match(this.opsRegEx['compare']);
+
+            if (_.isNull(compareMatch) || compareMatch.length > 1) {
                 return false;
             }
 
-            var matchSplit = expressionMatch ? this.splitString(string, expressionMatch[0]) : null;
+            var matchSplit = compareMatch ? this.splitString(string, compareMatch[0]) : null;
             var isValidWord = this.contains(this.dataWordCases, matchSplit[0]);
             var pathValue = this.getValueByPath(this.options.data, matchSplit[0]);
 
-            var hasInCases = !_.isEmpty(matchSplit[1]) && this.contains(pathValue, matchSplit[1]);
+            if (!_.isEmpty(matchSplit[1])) {
+                var expressionValues = matchSplit[1].replace(this.opsRegEx['math'], ' ').split(' ');
+                var valueIsNotBool = _.every(expressionValues, function(value) {
+                    return !_.contains(_this.operationsCases.bool, value);
+                });
+                var isValidExpression = valueIsNotBool && pathValue === 'any' && !_.contains(expressionValues, '') && !_.isEmpty(_.last(expressionValues));
 
-            var arrayValues = matchSplit[1] ? matchSplit[1].split(',') : [];
-            var isArrayValues = pathValue.type === 'array' && !_.isEmpty(arrayValues).length && !_.isEmpty(_.last(arrayValues));
+                var hasInCases = this.contains(pathValue, matchSplit[1]);
 
-            var isValidValue = !_.isEmpty(matchSplit[1]) && (pathValue === 'any' || hasInCases || isArrayValues);
+                var arrayValues = matchSplit[1] ? matchSplit[1].split(',') : [];
+                var isValidArray = pathValue.type === 'array' && !_.isEmpty(arrayValues).length && !_.isEmpty(_.last(arrayValues));
+
+                var isValidValue = isValidExpression || hasInCases || isValidArray;
+            }
 
             var isFullValid = isValidWord && isValidValue;
 
             return {
                 isFull: isFullValid,
-                hasExpression: !_.isEmpty(expressionMatch),
+                hasExpression: !_.isEmpty(compareMatch),
                 values: pathValue !== 'any' ? pathValue : []
             };
         },
@@ -400,10 +403,15 @@ define([
                 }
             });
 
-            if (name !== 'bool') {
-                reString = '(\\s|\\~)*(' + escapedOps.join('|') + ')(\\s|\\~)*'
-            } else {
-                reString = '\\s*(' + escapedOps.join('|') + ')\\s*'
+            switch (name) {
+                case 'compare':
+                    reString = '(\\s|\\~)*(' + escapedOps.join('|') + ')(\\s|\\~)*';
+                    break;
+                case 'bool':
+                    reString = '\\s+(' + escapedOps.join('|') + ')\\s+';
+                    break;
+                default:
+                    reString = '\\s*(' + escapedOps.join('|') + ')\\s*';
             }
 
             return new RegExp(reString, 'gi');
@@ -421,18 +429,25 @@ define([
             var string = hasCutPosition ? this.getStringPart(value, 0, caretPosition) : value;
 
             string = string.replace(/\[(.*?)\]/g, '');
+            string = string.replace(/(\(|\))/gi, ' ');
+
             string = string.replace(/\s*,\s*/g, ',');
 
             _.each(regex, function(re, name) {
-                if (name !== 'bool') {
-                    // string = string.replace(re, '~$1~');
-                    string = string.replace(re, function(match) {
-                        return '~' + match.replace(/\s+/g, '') + '~';
-                    });
+                switch (name) {
+                    case 'compare':
+                        string = string.replace(re, function(match) {
+                            return '~' + match.replace(/\s+/g, '') + '~';
+                        });
+                        break;
+                    case 'bool':
+                        string = string.replace(re, ' $1 ');
+                        break;
+                    default:
+                        string = string.replace(re, '$1');
                 }
             });
 
-            string = string.replace(this.bracketsRegExp, ' ');
             string = string.replace(/\s+/g, ' ');
             string = string.trim();
 
