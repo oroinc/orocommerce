@@ -7,9 +7,7 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\EntityListener\CategoryEntityListener;
-use Oro\Bundle\CatalogBundle\Event\AfterProductRecalculateVisibility;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class CategoryEntityListenerTest extends \PHPUnit_Framework_TestCase
@@ -72,17 +70,5 @@ class CategoryEntityListenerTest extends \PHPUnit_Framework_TestCase
         $event = new PreUpdateEventArgs($category, $emMock, $changesSet);
         $this->productIndexScheduler->expects($this->never())->method('scheduleProductsReindex');
         $this->listener->preUpdate($category, $event);
-    }
-
-    public function testafterProductRecalculateVisibility()
-    {
-        $product1 = $this->getEntity(Product::class, ['id' => 777]);
-
-        $event = new AfterProductRecalculateVisibility($product1);
-        $this->productIndexScheduler->expects($this->once())
-            ->method('triggerReindexationRequestEvent')
-            ->with([777]);
-
-        $this->listener->afterProductRecalculateVisibility($event);
     }
 }

@@ -169,10 +169,3 @@ services:
             - '@event_dispatcher'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
-
-    oro_catalog.event_listener.reindex_products_change_relation:
-        class: 'Oro\Bundle\CatalogBundle\Entity\EntityListener\CategoryEntityListener'
-        arguments:
-            - '@oro_catalog.manager.product_index_scheduler'
-        tags:
-            - {name: kernel.event_listener, event: oro_catalog.event.after_product_recalculate_visibility, method: afterProductRecalculateVisibility }

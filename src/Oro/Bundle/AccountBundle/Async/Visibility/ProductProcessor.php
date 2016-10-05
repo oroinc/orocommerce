@@ -5,7 +5,6 @@ namespace Oro\Bundle\AccountBundle\Async\Visibility;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
-use Oro\Bundle\CatalogBundle\Event\AfterProductRecalculateVisibility;
 use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Model\ProductMessageFactory;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
@@ -15,7 +14,6 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductProcessor implements MessageProcessorInterface
 {
@@ -40,11 +38,6 @@ class ProductProcessor implements MessageProcessorInterface
     protected $logger;
 
     /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
      * @var string
      */
     protected $resolvedVisibilityClassName = '';
@@ -54,20 +47,17 @@ class ProductProcessor implements MessageProcessorInterface
      * @param ProductMessageFactory $messageFactory
      * @param LoggerInterface $logger
      * @param CacheBuilderInterface $cacheBuilder
-     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         RegistryInterface $registry,
         ProductMessageFactory $messageFactory,
         LoggerInterface $logger,
-        CacheBuilderInterface $cacheBuilder,
-        EventDispatcherInterface $eventDispatcher
+        CacheBuilderInterface $cacheBuilder
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
         $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -84,8 +74,6 @@ class ProductProcessor implements MessageProcessorInterface
 
             $this->resolveVisibilityByEntity($visibilityEntity);
             $em->commit();
-            $event = new AfterProductRecalculateVisibility($visibilityEntity);
-            $this->eventDispatcher->dispatch(AfterProductRecalculateVisibility::NAME, $event);
         } catch (InvalidArgumentException $e) {
             $em->rollback();
             $this->logger->error(
