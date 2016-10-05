@@ -74,7 +74,8 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
         }
         fclose($handler);
         $manager->flush();
-        $this->container->get('oro_visibility.visibility.cache.product.category.cache_builder')->buildCache();
+//        todo BB 4506
+//        $this->container->get('oro_visibility.visibility.cache.product.category.cache_builder')->buildCache();
     }
     /**
      * @param ObjectManager $manager

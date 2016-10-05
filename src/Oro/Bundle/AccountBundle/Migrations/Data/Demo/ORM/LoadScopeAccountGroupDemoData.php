@@ -12,6 +12,8 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class LoadScopeAccountGroupDemoData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
+
+
     /**
      * {@inheritdoc}
      */
@@ -31,8 +33,7 @@ class LoadScopeAccountGroupDemoData extends AbstractFixture implements FixtureIn
         $accountGroups = $manager->getRepository('OroAccountBundle:AccountGroup')->findAll();
         foreach ($accountGroups as $accountGroup) {
             $scope = new Scope();
-            $scope
-                ->setAccountGroup($accountGroup);
+            $scope->setAccountGroup($accountGroup);
             $this->addReference($accountGroup->getName(), $scope);
             $manager->persist($scope);
         }

@@ -31,8 +31,7 @@ class LoadScopeAccountDemoData extends AbstractFixture implements FixtureInterfa
         $accounts = $manager->getRepository('OroAccountBundle:Account')->findAll();
         foreach ($accounts as $account) {
             $scope = new Scope();
-            $scope
-                ->setAccount($account);
+            $scope->setAccount($account);
             $this->addReference($account->getName(), $scope);
             $manager->persist($scope);
         }
