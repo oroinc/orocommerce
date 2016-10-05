@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\Strategy;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -131,20 +134,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
      */
     protected function findEntityByIdentityValues($entityName, array $identityValues)
     {
-        if (is_a($entityName, $this->unitPrecisionClass, true)) {
-            if ($this->databaseHelper->getIdentifier($this->product)) {
-                $product = $this->product;
-            } else {
-                $existingEntity = $this->findExistingEntity($this->product);
-
-                if (!$existingEntity) {
-                    return null;
-                }
-
-                $product = $existingEntity;
-            }
-            $identityValues['product'] = $product;
-        }
         if (is_a($entityName, $this->variantLinkClass, true)) {
             $newIdentityValues = [];
             foreach ($identityValues as $entityFieldName => $entity) {
@@ -165,4 +154,138 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
 
         return parent::findEntityByIdentityValues($entityName, $identityValues);
     }
+
+
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @param object $entity
+     * @param array|null $itemData
+     */
+    protected function updateRelations($entity, array $itemData = null)
+    {
+        $entityName = ClassUtils::getClass($entity);
+        $fields     = $this->fieldHelper->getFields($entityName, true);
+
+        foreach ($fields as $field) {
+            if ($this->fieldHelper->isRelation($field)) {
+                $fieldName         = $field['name'];
+                $isFullRelation    = $this->fieldHelper->getConfigValue($entityName, $fieldName, 'full', false);
+                $isPersistRelation = $this->databaseHelper->isCascadePersist($entityName, $fieldName);
+                $inversedFieldName = $this->getInversedFieldName($entityName, $fieldName);
+
+                // additional search parameters to find only related entities
+                $searchContext = [];
+                if ($inversedFieldName) {
+                    $searchContext[$inversedFieldName] = $entity;
+                }
+
+                if ($this->fieldHelper->isSingleRelation($field)) {
+                    // single relation
+                    $relationEntity = $this->fieldHelper->getObjectValue($entity, $fieldName);
+                    if ($relationEntity) {
+                        $relationItemData = $this->fieldHelper->getItemData($itemData, $fieldName);
+                        $relationEntity   = $this->processEntity(
+                            $relationEntity,
+                            $isFullRelation,
+                            $isPersistRelation,
+                            $relationItemData,
+                            $searchContext,
+                            true
+                        );
+                    }
+                    $this->fieldHelper->setObjectValue($entity, $fieldName, $relationEntity);
+                } elseif ($this->fieldHelper->isMultipleRelation($field)) {
+                    // multiple relation
+                    $relationCollection = $this->fieldHelper->getObjectValue($entity, $fieldName);
+                    if ($relationCollection instanceof Collection) {
+                        $collectionItemData = $this->fieldHelper->getItemData($itemData, $fieldName);
+                        $collectionEntities = new ArrayCollection();
+
+                        foreach ($relationCollection as $collectionEntity) {
+                            $entityItemData   = $this->fieldHelper->getItemData(array_shift($collectionItemData));
+                            $collectionEntity = $this->processEntity(
+                                $collectionEntity,
+                                $isFullRelation,
+                                $isPersistRelation,
+                                $entityItemData,
+                                $searchContext
+                            );
+
+                            if ($collectionEntity) {
+                                $collectionEntities->add($collectionEntity);
+                            }
+                        }
+
+                        $relationCollection->clear();
+                        $this->fieldHelper->setObjectValue($entity, $fieldName, $collectionEntities);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Get additional search parameter name to find only related entities
+     *
+     * @param string $entityName
+     * @param string $fieldName
+     * @return string|null
+     */
+    protected function getInversedFieldName($entityName, $fieldName)
+    {
+        $inversedFieldName = $this->databaseHelper->getInversedRelationFieldName($entityName, $fieldName);
+        if ($inversedFieldName && $this->databaseHelper->isCascadePersist($entityName, $fieldName)
+            && $this->databaseHelper->isSingleInversedRelation($entityName, $fieldName)
+        ) {
+            return $inversedFieldName;
+        } elseif (!$inversedFieldName && $fieldName === 'primaryUnitPrecision') {
+            return 'product';
+        }
+        return null;
+    }
+
+    /**
+     * Combines identity values for entity search on local new entities storage
+     * (which are not yet saved in db)
+     * from search context and not empty identity fields or required identity fields
+     * which could be null if configured.
+     * At least one not null and not empty value must be present for search
+     *
+     * @param       $entity
+     * @param       $entityClass
+     * @param array $searchContext
+     *
+     * @return array|null
+     */
+    protected function combineIdentityValues($entity, $entityClass, array $searchContext)
+    {
+        if (is_a($entityClass, $this->localizedFallbackValueClass, true)) {
+            return null;
+        }
+
+        $identityValues = $searchContext;
+        $identityValues += $this->fieldHelper->getIdentityValues($entity);
+        $notEmptyValues     = [];
+        $nullRequiredValues = [];
+        foreach ($identityValues as $fieldName => $value) {
+            if (null !== $value) {
+                if ('' !== $value) {
+                    if ($value instanceof Product) {
+                        $notEmptyValues[$fieldName] = $value->getSku();
+                    } elseif (is_object($value)) {
+                        $notEmptyValues[$fieldName] = $this->databaseHelper->getIdentifier($value);
+                    } else {
+                        $notEmptyValues[$fieldName] = $value;
+                    }
+                }
+            } elseif ($this->fieldHelper->isRequiredIdentityField($entityClass, $fieldName)) {
+                $nullRequiredValues[$fieldName] = null;
+            }
+        }
+
+        return !empty($notEmptyValues)
+            ? array_merge($notEmptyValues, $nullRequiredValues)
+            : null;
+    }
+
 }

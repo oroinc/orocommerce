@@ -660,7 +660,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
         foreach ($this->unitPrecisions as $unitPrecision) {
             if ($unit = $unitPrecision->getUnit()) {
-                if ($unit->getCode() == $unitCode) {
+                if ($unit->getCode() === $unitCode) {
                     $result = $unitPrecision;
                     break;
                 }
