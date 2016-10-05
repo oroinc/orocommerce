@@ -1,3 +1,11 @@
+{% block _orders_container_widget %}
+    <div class="orders-history">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _orders_title_widget %}
-    <h1 class="page-title">{{ block_widget(block) }}</h1>
+    <h1 class="orders-history__title page-title">
+        {{ block_widget(block) }}
+    </h1>
 {% endblock %}
