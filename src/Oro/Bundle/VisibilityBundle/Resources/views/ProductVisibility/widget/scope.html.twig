@@ -7,12 +7,12 @@
     </div>
     <h5 class="widget-subtitle indented">{{ 'oro.visibility.accountgroupproductvisibility.entity_label'|trans }}</h5>
     <div id="product-visibility-account-group">
-        {{ form_row(form.accountGroup, {'id': 'accountgroup-product-visibility-changeset'~'-'~website.id}) }}
-        {{ dataGrid.renderGrid('account-group-product-visibility-grid', {target_entity_id: entity.id}) }}
+        {{ form_row(form.accountGroup, {'id': 'accountgroup-product-visibility-changeset'~'-'~scope.id}) }}
+        {{ dataGrid.renderGrid('account-group-product-visibility-grid', {target_entity_id: entity.id, scope_id: scope.id}) }}
     </div>
     <h5 class="widget-subtitle indented">{{ 'oro.visibility.accountproductvisibility.entity_label'|trans }}</h5>
     <div id="product-visibility-account">
-        {{ form_row(form.account, {'id': 'account-product-visibility-changeset'~'-'~website.id}) }}
-        {{ dataGrid.renderGrid('account-product-visibility-grid', {target_entity_id: entity.id}) }}
+        {{ form_row(form.account, {'id': 'account-product-visibility-changeset'~'-'~scope.id}) }}
+        {{ dataGrid.renderGrid('account-product-visibility-grid', {target_entity_id: entity.id, scope_id: scope.id}) }}
     </div>
 </div>

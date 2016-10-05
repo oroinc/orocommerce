@@ -14,6 +14,8 @@ use Oro\Component\PropertyAccess\PropertyAccessor;
 
 class ScopeManager
 {
+    const BASE_SCOPE = 'base_scope';
+
     /**
      * @var ManagerRegistry
      */
@@ -52,12 +54,23 @@ class ScopeManager
     /**
      * @param string $scopeType
      * @param array|object|null $context
-     * @return Scope: if context is null scope is found for current request context
+     * @return Scope
      */
     public function find($scopeType, $context = null)
     {
         $criteria = $this->getCriteria($scopeType, $context);
         return $this->getScopeRepository()->findOneByCriteria($criteria);
+    }
+
+    /**
+     * @param $scopeType
+     * @param null $context
+     * @return BufferedQueryResultIterator|\Oro\Bundle\ScopeBundle\Entity\Scope[]
+     */
+    public function findBy($scopeType, $context = null)
+    {
+        $criteria = $this->getCriteria($scopeType, $context);
+        return $this->getScopeRepository()->findByCriteria($criteria);
     }
 
     /**
@@ -76,6 +89,7 @@ class ScopeManager
      */
     public function findRelatedScopes($scopeType, $context = null)
     {
+        // todo review this method
         /** @var ScopeRepository $scopeRepository */
         $scopeRepository = $this->registry->getManagerForClass(Scope::class)
             ->getRepository(Scope::class);
@@ -88,7 +102,7 @@ class ScopeManager
             if (count($criteria) === 0) {
                 $localCriteria = [$provider->getCriteriaField() => ScopeCriteria::IS_NOT_NULL];
             }
-            $criteria = array_merge($criteria, $localCriteria);
+            $context = array_merge($context, $localCriteria);
         }
 
         return $scopeRepository->findByCriteria($criteria);
@@ -157,13 +171,18 @@ class ScopeManager
     public function getCriteria($scopeType, $context = null)
     {
         $criteria = $this->getNullContext();
-        /** @var ScopeCriteriaProviderInterface[] $providers */
-        $providers = $this->getProviders($scopeType);
-        foreach ($providers as $provider) {
-            if (null === $context) {
-                $criteria = array_merge($criteria, $provider->getCriteriaForCurrentScope());
-            } else {
-                $criteria = array_merge($criteria, $provider->getCriteriaByContext($context));
+        // todo: add support for object as context
+        if (self::BASE_SCOPE == $scopeType && is_array($context)) {
+            $criteria = array_replace($criteria, $context);
+        } else {
+            /** @var ScopeCriteriaProviderInterface[] $providers */
+            $providers = $this->getProviders($scopeType);
+            foreach ($providers as $provider) {
+                if (null === $context) {
+                    $criteria = array_merge($criteria, $provider->getCriteriaForCurrentScope());
+                } else {
+                    $criteria = array_merge($criteria, $provider->getCriteriaByContext($context));
+                }
             }
         }
 

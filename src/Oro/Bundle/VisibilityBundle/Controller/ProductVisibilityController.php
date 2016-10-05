@@ -79,7 +79,7 @@ class ProductVisibilityController extends Controller
         return [
             'form' => $form->createView()[$scope->getId()],
             'entity' => $product,
-            'website' => $scope
+            'scope' => $scope
         ];
     }
 
@@ -96,6 +96,7 @@ class ProductVisibilityController extends Controller
             [
                 'ownership_disabled' => true,
                 'preloaded_scopes' => $preloadedScopes,
+                'scopes' => $this->get('oro_visibility.root_scopes_provider')->getScopes(),
                 'type' => EntityVisibilityType::NAME,
                 'options' => [
                     'targetEntityField' => 'product',

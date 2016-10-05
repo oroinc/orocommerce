@@ -61,6 +61,7 @@ class ScopedDataType extends AbstractType
         $resolver->setDefaults(
             [
                 'preloaded_scopes' => [],
+                'scopes' => [],
                 'options' => null,
             ]
         );
@@ -72,18 +73,19 @@ class ScopedDataType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!empty($options['preloaded_scopes'])) {
-            $loadedWebsites = $options['preloaded_scopes'];
+            $loadedScopes = $options['preloaded_scopes'];
         } else {
-            $loadedWebsites = $this->getScopes();
+            $loadedScopes = $options['scopes'];
         }
 
         $options['options']['data'] = $options['data'];
         $options['options']['ownership_disabled'] = true;
 
-        foreach ($loadedWebsites as $website) {
-            $options['options'][self::SCOPE_OPTION] = $website;
+        /** @var Scope $scope */
+        foreach ($loadedScopes as $scope) {
+            $options['options'][self::SCOPE_OPTION] = $scope;
             $builder->add(
-                $website->getId(),
+                $scope->getId(),
                 $options['type'],
                 $options['options']
             );
@@ -109,8 +111,8 @@ class ScopedDataType extends AbstractType
         if (!$data) {
             return;
         }
-        foreach ($data as $websiteId => $value) {
-            if ($form->has($websiteId)) {
+        foreach ($data as $scopeId => $value) {
+            if ($form->has($scopeId)) {
                 continue;
             }
 
@@ -118,10 +120,10 @@ class ScopedDataType extends AbstractType
             $em = $this->registry->getManagerForClass(Scope::class);
 
             $formOptions['options'][self::SCOPE_OPTION] = $em
-                ->getReference(Scope::class, $websiteId);
+                ->getReference(Scope::class, $scopeId);
 
             $form->add(
-                $websiteId,
+                $scopeId,
                 $formOptions['type'],
                 $formOptions['options']
             );
@@ -164,20 +166,6 @@ class ScopedDataType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['scopes'] = $this->getScopes();
-    }
-
-    /**
-     * @return Scope[]
-     */
-    protected function getScopes()
-    {
-//        todo: 4710 create scope provider, redefine in website bundle
-//        if (null === $this->s) {
-//            $this->websites = $this->websiteProvider->getWebsites();
-//        }
-//
-//        return $this->websites;
-        return [];
+        $view->vars['scopes'] = $form->getConfig()->getOption('scopes');
     }
 }

@@ -45,7 +45,7 @@
                 {% endif %}
             {% else %}
                 {% set tabs = [] %}
-                {% for scope in scopes %}
+                {% for label, scope in scopes %}
                     {% set content = '' %}
                     {% if form.children[scope.id] is defined  %}
                         {% set content %}
@@ -53,11 +53,10 @@
                         {% endset %}
                     {% endif %}
 
-                    {# todo: fix label in 4710 #}
                     {% set tab = {
                         'alias': scope.id,
                         'widgetType': 'block',
-                        'label': scope.id,
+                        'label': label,
                         'url': path(
                             'oro_product_visibility_scoped',
                             { productId: entity.id,  id: scope.id}

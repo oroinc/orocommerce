@@ -72,7 +72,7 @@ abstract class AbstractAffectVisibilityListener
      */
     public function preUpdate($entity)
     {
-        //TODO: remove after form will work
+        //TODO: remove after form will work BB 4506
         $scopeType = 'product_visibility';
         if ($entity instanceof AccountProductVisibility) {
             $scopeType = 'account_product_visibility';
