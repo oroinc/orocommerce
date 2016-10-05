@@ -96,18 +96,26 @@ class FrontendShoppingListProductsProvider
     }
 
     /**
-     * Returns array where Shopping List id is a key and array of last added product names is a value
+     * Returns array where Shopping List id is a key and array of last added products is a value
+     *
+     * Example:
+     * [
+     *   74 => [
+     *     ['name' => '220 Lumen Rechargeable Headlamp'],
+     *     ['name' => 'Credit Card Pin Pad Reader']
+     *   ]
+     * ]
      *
      * @param ShoppingList[] $shoppingLists
      * @param int $productCount
      *
      * @return array
      */
-    public function getLastProductNamesGroupedByShoppingList($shoppingLists, $productCount)
+    public function getLastProductsGroupedByShoppingList($shoppingLists, $productCount)
     {
         /** @var LineItemRepository $lineItemRepository */
         $lineItemRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->lineItemClass);
 
-        return $lineItemRepository->getLastProductNamesGroupedByShoppingList($shoppingLists, $productCount);
+        return $lineItemRepository->getLastProductsGroupedByShoppingList($shoppingLists, $productCount);
     }
 }

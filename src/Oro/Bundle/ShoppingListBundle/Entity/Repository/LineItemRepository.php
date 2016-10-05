@@ -107,14 +107,22 @@ class LineItemRepository extends EntityRepository
     }
 
     /**
-     * Returns array where Shopping List id is a key and array of last added product names is a value
+     * Returns array where Shopping List id is a key and array of last added products is a value
+     *
+     * Example:
+     * [
+     *   74 => [
+     *     ['name' => '220 Lumen Rechargeable Headlamp'],
+     *     ['name' => 'Credit Card Pin Pad Reader']
+     *   ]
+     * ]
      *
      * @param ShoppingList[] $shoppingLists
      * @param int $productCount
      *
      * @return array
      */
-    public function getLastProductNamesGroupedByShoppingList($shoppingLists, $productCount)
+    public function getLastProductsGroupedByShoppingList($shoppingLists, $productCount)
     {
         $sql = <<<SQL
 SELECT
@@ -183,7 +191,9 @@ SQL;
             $shoppingListId = $lineItem->getShoppingList()->getId();
             $productName = $lineItem->getProduct()->getName()->getString();
 
-            $result[$shoppingListId][] = $productName;
+            $result[$shoppingListId][] = [
+                'name' => $productName
+            ];
         }
 
         return $result;

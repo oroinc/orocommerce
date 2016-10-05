@@ -153,7 +153,7 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCa
         ];
     }
 
-    public function testGetLastProductNamesGroupedByShoppingList()
+    public function testGetLastProductsGroupedByShoppingList()
     {
         $lineItemRepository = $this
             ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
@@ -168,9 +168,9 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCa
         $productCount = 1;
 
         $lineItemRepository->expects($this->once())
-            ->method('getLastProductNamesGroupedByShoppingList')
+            ->method('getLastProductsGroupedByShoppingList')
             ->with($shoppingLists, $productCount);
 
-        $this->provider->getLastProductNamesGroupedByShoppingList($shoppingLists, $productCount);
+        $this->provider->getLastProductsGroupedByShoppingList($shoppingLists, $productCount);
     }
 }

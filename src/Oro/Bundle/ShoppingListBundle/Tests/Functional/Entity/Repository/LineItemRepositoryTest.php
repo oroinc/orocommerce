@@ -120,27 +120,34 @@ class LineItemRepositoryTest extends WebTestCase
         $this->assertTrue(in_array($shoppingList->getLabel(), $shoppingListLabelList));
     }
 
-    public function testGetLastProductNamesGroupedByShoppingList()
+    public function testGetLastProductsGroupedByShoppingList()
     {
         $shoppingLists = [
             $this->getReference(LoadShoppingLists::SHOPPING_LIST_1),
             $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)
         ];
 
-        $productName1 = $this->getReference(LoadProductData::PRODUCT_1)->getName();
-        $productName5 = $this->getReference(LoadProductData::PRODUCT_5)->getName();
+        $productName1 = $this->getReference(LoadProductData::PRODUCT_1)->getName()->getString();
+        $productName5 = $this->getReference(LoadProductData::PRODUCT_5)->getName()->getString();
 
         $shoppingListId1 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1)->getId();
         $shoppingListId5 = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5)->getId();
 
         /** @var LineItem[] $lineItems */
-        $result = $this->getLineItemRepository()->getLastProductNamesGroupedByShoppingList($shoppingLists, 1);
+        $result = $this->getLineItemRepository()->getLastProductsGroupedByShoppingList($shoppingLists, 1);
 
-        $this->assertCount(2, $result);
         $this->assertEquals(
             [
-                $shoppingListId1 => [$productName1],
-                $shoppingListId5 => [$productName5]
+                $shoppingListId1 => [
+                    [
+                        'name' => $productName1
+                    ]
+                ],
+                $shoppingListId5 => [
+                    [
+                        'name' => $productName5
+                    ]
+                ]
             ],
             $result
         );
