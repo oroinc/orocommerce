@@ -167,6 +167,17 @@ class ProductImage extends ExtendProductImage
         $this->updatedAt = $updatedAt;
     }
 
+    /**
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));

@@ -921,6 +921,7 @@ services:
             - '@oro_account.product_visibility_message_factory'
             - '@logger'
             - '@oro_account.visibility.cache.product.cache_builder'
+            - '@oro_entity.database_exception_helper'
         calls:
             - [setResolvedVisibilityClassName, ['%oro_account.entity.account_product_visibility_resolved.class%']]
         tags:
@@ -933,6 +934,7 @@ services:
             - '@oro_account.category_visibility_message_factory'
             - '@logger'
             - '@oro_account.visibility.cache.product.category.cache_builder'
+            - '@oro_entity.database_exception_helper'
             - '@oro_product.model.product_message_handler'
         calls:
             - [setResolvedVisibilityClassName, ['%oro_account.entity.category_visibility_resolved.class%']]
@@ -946,6 +948,7 @@ services:
             - '@oro_product.model.product_message_factory'
             - '@logger'
             - '@oro_account.visibility.cache.product.cache_builder'
+            - '@oro_entity.database_exception_helper'
         calls:
             - [setResolvedVisibilityClassName, ['%oro_account.entity.account_product_visibility_resolved.class%']]
         tags:
@@ -959,6 +962,7 @@ services:
             - '@logger'
             - '@oro_catalog.model.category_message_factory'
             - '@oro_account.visibility.cache.product.category.cache_builder'
+            - '@oro_entity.database_exception_helper'
         tags:
             - { name: oro_message_queue.client.message_processor, topicName: 'oro_account.visibility.category_remove' }
             - { name: oro_message_queue.client.message_processor, topicName: 'oro_account.visibility.category_position_change' }
