@@ -12,6 +12,8 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class LoadScopeAccountDemoData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
+    const SCOPE_ACCOUNT_REFERENCE_PREFIX = 'scope_account_demo_data';
+
     /**
      * {@inheritdoc}
      */
@@ -32,7 +34,7 @@ class LoadScopeAccountDemoData extends AbstractFixture implements FixtureInterfa
         foreach ($accounts as $account) {
             $scope = new Scope();
             $scope->setAccount($account);
-            $this->addReference($account->getName(), $scope);
+            $this->addReference(static::SCOPE_ACCOUNT_REFERENCE_PREFIX . $account->getName(), $scope);
             $manager->persist($scope);
         }
 

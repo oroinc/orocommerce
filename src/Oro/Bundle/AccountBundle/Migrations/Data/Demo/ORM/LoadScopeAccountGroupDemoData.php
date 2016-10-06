@@ -12,7 +12,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class LoadScopeAccountGroupDemoData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
-
+    const SCOPE_ACCOUNT_GROUP_REFERENCE_PREFIX = 'scope_account_group_demo_data';
 
     /**
      * {@inheritdoc}
@@ -34,7 +34,7 @@ class LoadScopeAccountGroupDemoData extends AbstractFixture implements FixtureIn
         foreach ($accountGroups as $accountGroup) {
             $scope = new Scope();
             $scope->setAccountGroup($accountGroup);
-            $this->addReference($accountGroup->getName(), $scope);
+            $this->addReference(static::SCOPE_ACCOUNT_GROUP_REFERENCE_PREFIX . $accountGroup->getName(), $scope);
             $manager->persist($scope);
         }
 
