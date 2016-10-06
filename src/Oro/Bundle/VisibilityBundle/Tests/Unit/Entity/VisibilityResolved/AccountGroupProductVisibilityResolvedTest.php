@@ -3,13 +3,12 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\Visibility;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class AccountGroupProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,14 +17,11 @@ class AccountGroupProductVisibilityResolvedTest extends \PHPUnit_Framework_TestC
     /** @var AccountGroupProductVisibilityResolved */
     protected $entity;
 
-    /** @var AccountGroup */
-    protected $accountGroup;
-
     /** @var Product */
     protected $product;
 
-    /** @var Website */
-    protected $website;
+    /** @var Scope */
+    protected $scope;
 
     /**
      * {@inheritdoc}
@@ -33,9 +29,8 @@ class AccountGroupProductVisibilityResolvedTest extends \PHPUnit_Framework_TestC
     protected function setUp()
     {
         $this->product = new Product();
-        $this->accountGroup = new AccountGroup();
-        $this->website = new Website();
-        $this->entity = new AccountGroupProductVisibilityResolved($this->website, $this->product, $this->accountGroup);
+        $this->scope = new Scope();
+        $this->entity = new AccountGroupProductVisibilityResolved($this->scope, $this->product);
     }
 
     /**
@@ -43,7 +38,7 @@ class AccountGroupProductVisibilityResolvedTest extends \PHPUnit_Framework_TestC
      */
     protected function tearDown()
     {
-        unset($this->entity, $this->accountGroup, $this->product, $this->website);
+        unset($this->entity, $this->product, $this->scope);
     }
 
     /**
@@ -62,14 +57,9 @@ class AccountGroupProductVisibilityResolvedTest extends \PHPUnit_Framework_TestC
         );
     }
 
-    public function testGetWebsite()
+    public function testGetScope()
     {
-        $this->assertEquals($this->website, $this->entity->getWebsite());
-    }
-
-    public function testGetAccountGroup()
-    {
-        $this->assertEquals($this->accountGroup, $this->entity->getAccountGroup());
+        $this->assertEquals($this->scope, $this->entity->getScope());
     }
 
     public function testGetProduct()

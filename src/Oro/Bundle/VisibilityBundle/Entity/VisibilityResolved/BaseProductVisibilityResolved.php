@@ -24,7 +24,7 @@ abstract class BaseProductVisibilityResolved extends BaseVisibilityResolved
      *
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
-     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $scope;
 

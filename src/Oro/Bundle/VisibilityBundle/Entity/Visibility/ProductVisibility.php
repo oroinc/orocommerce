@@ -6,8 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository")
@@ -16,13 +14,13 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="oro_prod_vis_uidx",
- *              columns={"website_id", "product_id"}
+ *              columns={"product_id", "scope_id"}
  *          )
  *      }
  * )
  * @Config
  */
-class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
+class ProductVisibility implements VisibilityInterface
 {
     const CATEGORY = 'category';
     const CONFIG = 'config';
@@ -45,18 +43,10 @@ class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
     protected $product;
 
     /**
-    * @var Website
-    *
-    * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-    * @ORM\JoinColumn(name="website_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
-    */
-    protected $website;
-
-    /**
      * @var Scope
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
-     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $scope;
 
@@ -156,24 +146,6 @@ class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
     public function setTargetEntity($product)
     {
         $this->setProduct($product);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getWebsite()
-    {
-        return $this->website;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setWebsite(Website $website)
-    {
-        $this->website = $website;
 
         return $this;
     }

@@ -4,8 +4,8 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\Visibility;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class AccountGroupCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,8 +23,8 @@ class AccountGroupCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
             [
                 ['id', 1],
                 ['category', $category],
-                ['accountGroup', new AccountGroup()],
                 ['visibility', AccountGroupCategoryVisibility::CATEGORY],
+                ['scope', new Scope()]
             ]
         );
         $entity->setTargetEntity($category);

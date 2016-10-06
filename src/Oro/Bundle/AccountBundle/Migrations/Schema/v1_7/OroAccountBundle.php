@@ -10,10 +10,9 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
-use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroAccountBundle implements Migration, RenameExtensionAwareInterface, OrderedMigrationInterface
+class OroAccountBundle implements Migration, RenameExtensionAwareInterface
 {
     use MigrationConstraintTrait;
 
@@ -21,14 +20,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
      * @var RenameExtension
      */
     private $renameExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
-    {
-        return 1;
-    }
 
     /**
      * {@inheritdoc}
@@ -44,8 +35,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
 
         $this->renameEntityTables($schema, $queries);
         $this->renameIndexes($schema, $queries);
-
-        $this->dropVisibilityTables($schema);
 
         $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_account', 'oro_account'));
     }
@@ -89,19 +78,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface, Orde
 
         $extension->renameTable($schema, $queries, 'orob2b_account_sales_reps', 'oro_account_sales_reps');
         $extension->renameTable($schema, $queries, 'orob2b_account_user_sales_reps', 'oro_account_user_sales_reps');
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    private function dropVisibilityTables(Schema $schema)
-    {
-        $schema->dropTable('orob2b_category_visibility');
-        $schema->dropTable('orob2b_acc_category_visibility');
-        $schema->dropTable('orob2b_acc_grp_ctgr_visibility');
-        $schema->dropTable('orob2b_product_visibility');
-        $schema->dropTable('orob2b_acc_product_visibility');
-        $schema->dropTable('orob2b_acc_grp_prod_visibility');
     }
 
     /**

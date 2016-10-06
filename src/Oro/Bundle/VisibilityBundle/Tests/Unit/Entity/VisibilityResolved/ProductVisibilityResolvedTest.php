@@ -8,7 +8,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityR
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class ProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,17 +20,17 @@ class ProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
     /** @var Product */
     protected $product;
 
-    /** @var Website */
-    protected $website;
+    /** @var Scope */
+    protected $scope;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->website = new Website();
         $this->product = new Product();
-        $this->entity = new ProductVisibilityResolved($this->website, $this->product);
+        $this->scope = new Scope();
+        $this->entity = new ProductVisibilityResolved($this->scope, $this->product);
     }
 
     /**
@@ -38,7 +38,7 @@ class ProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
      */
     protected function tearDown()
     {
-        unset($this->entity, $this->website, $this->product);
+        unset($this->entity, $this->product, $this->scope);
     }
 
     /**
@@ -46,7 +46,7 @@ class ProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
      */
     public function testAccessors()
     {
-        $entity = new ProductVisibilityResolved(new Website(), new Product());
+        $entity = new ProductVisibilityResolved(new Scope, new Product());
 
         $this->assertPropertyAccessors(
             $entity,
@@ -59,9 +59,9 @@ class ProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetWebsite()
+    public function testGetScope()
     {
-        $this->assertEquals($this->website, $this->entity->getWebsite());
+        $this->assertEquals($this->scope, $this->entity->getScope());
     }
 
     public function testGetProduct()

@@ -32,7 +32,7 @@ abstract class BaseCategoryVisibilityResolved extends BaseVisibilityResolved
      * @var Scope
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
-     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $scope;
 

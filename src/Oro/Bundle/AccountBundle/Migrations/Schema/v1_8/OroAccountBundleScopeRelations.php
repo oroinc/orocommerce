@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Migrations\Schema\v1_7;
+namespace Oro\Bundle\AccountBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\AccountBundle\Migrations\Schema\OroAccountBundleInstaller;
@@ -9,11 +9,10 @@ use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
-use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\ScopeBundle\Migrations\Schema\OroScopeBundleInstaller;
 
-class OroAccountBundleScopeRelations implements Migration, ExtendExtensionAwareInterface, OrderedMigrationInterface
+class OroAccountBundleScopeRelations implements Migration, ExtendExtensionAwareInterface
 {
     /**
      * @var ExtendExtension
@@ -34,14 +33,8 @@ class OroAccountBundleScopeRelations implements Migration, ExtendExtensionAwareI
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addRelationsToScope($schema);
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrder()
-    {
-        return 2;
+        $this->dropVisibilityTables($schema);
     }
 
     /**
@@ -82,5 +75,18 @@ class OroAccountBundleScopeRelations implements Migration, ExtendExtensionAwareI
             ],
             RelationType::MANY_TO_ONE
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function dropVisibilityTables(Schema $schema)
+    {
+        $schema->dropTable('orob2b_category_visibility');
+        $schema->dropTable('orob2b_acc_category_visibility');
+        $schema->dropTable('orob2b_acc_grp_ctgr_visibility');
+        $schema->dropTable('orob2b_product_visibility');
+        $schema->dropTable('orob2b_acc_product_visibility');
+        $schema->dropTable('orob2b_acc_grp_prod_visibility');
     }
 }
