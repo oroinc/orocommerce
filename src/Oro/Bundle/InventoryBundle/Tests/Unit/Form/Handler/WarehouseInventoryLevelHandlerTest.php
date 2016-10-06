@@ -138,7 +138,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager->expects($this->any())
             ->method('persist')
-            ->with($this->isInstanceOf('Oro\Bundle\WarehouseProBundle\Entity\InventoryLevel'))
+            ->with($this->isInstanceOf('Oro\Bundle\WarehouseBundle\Entity\InventoryLevel'))
             ->willReturnCallback(
                 function ($entity) use (&$persistedEntities) {
                     $persistedEntities[] = $entity;
@@ -146,7 +146,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
             );
         $this->manager->expects($this->any())
             ->method('remove')
-            ->with($this->isInstanceOf('Oro\Bundle\WarehouseProBundle\Entity\InventoryLevel'))
+            ->with($this->isInstanceOf('Oro\Bundle\WarehouseBundle\Entity\InventoryLevel'))
             ->willReturnCallback(
                 function ($entity) use (&$removedEntities) {
                     $removedEntities[] = $entity;
@@ -272,7 +272,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function createWarehouse($id)
     {
-        return $this->getEntity('Oro\Bundle\WarehouseProBundle\Entity\Warehouse', ['id' => $id]);
+        return $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => $id]);
     }
 
     /**

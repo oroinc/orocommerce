@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\SystemConfig;
 
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
-use Oro\Bundle\WarehouseProBundle\SystemConfig\WarehouseConfig;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class WarehouseConfigTest extends \PHPUnit_Framework_TestCase

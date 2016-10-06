@@ -7,10 +7,10 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseSelectWithPriorityType;
-use Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseSelectType;
+use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseSelectWithPriorityType;
+use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseSelectType;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Form\Type\Stub\WarehouseSelectTypeStub;
 
 class WarehouseSelectWithPriorityTypeTest extends FormIntegrationTestCase

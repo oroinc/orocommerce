@@ -5,9 +5,9 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\Event\ValueRenderEvent;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\WarehouseProBundle\Entity\Helper\WarehouseCounter;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
-use Oro\Bundle\WarehouseProBundle\EventListener\OrderWarehouseBeforeRenderListener;
+use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\EventListener\OrderWarehouseBeforeRenderListener;
 
 class OrderWarehouseBeforeRenderListenerTest extends \PHPUnit_Framework_TestCase
 {

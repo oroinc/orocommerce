@@ -3,7 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class WarehouseTest extends \PHPUnit_Framework_TestCase
 {

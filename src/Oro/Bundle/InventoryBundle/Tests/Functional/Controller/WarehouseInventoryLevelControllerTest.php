@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
 /**
@@ -135,7 +135,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
     protected function assertLevelsGridData(Product $product, array $data)
     {
         /** @var Warehouse[] $warehouses */
-        $warehouses = $this->getRepository('OroWarehouseProBundle:Warehouse')->findAll();
+        $warehouses = $this->getRepository('OroWarehouseBundle:Warehouse')->findAll();
 
         $expectedCombinedIds = [];
         foreach ($warehouses as $warehouse) {

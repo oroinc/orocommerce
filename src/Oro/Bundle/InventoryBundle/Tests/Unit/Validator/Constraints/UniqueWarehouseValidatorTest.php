@@ -5,10 +5,10 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator\Constraints;
 use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
-use Oro\Bundle\WarehouseProBundle\SystemConfig\WarehouseConfig;
-use Oro\Bundle\WarehouseProBundle\Validator\Constraints\UniqueWarehouse;
-use Oro\Bundle\WarehouseProBundle\Validator\Constraints\UniqueWarehouseValidator;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
+use Oro\Bundle\WarehouseBundle\Validator\Constraints\UniqueWarehouse;
+use Oro\Bundle\WarehouseBundle\Validator\Constraints\UniqueWarehouseValidator;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class UniqueWarehouseValidatorTest extends \PHPUnit_Framework_TestCase

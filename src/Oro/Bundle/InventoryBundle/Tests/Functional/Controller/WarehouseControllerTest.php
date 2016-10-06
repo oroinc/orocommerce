@@ -7,7 +7,7 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 /**
  * @dbIsolation
@@ -159,8 +159,8 @@ class WarehouseControllerTest extends WebTestCase
     {
         /** @var Warehouse $warehouse */
         $warehouse = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroWarehouseProBundle:Warehouse')
-            ->getRepository('OroWarehouseProBundle:Warehouse')
+            ->getManagerForClass('OroWarehouseBundle:Warehouse')
+            ->getRepository('OroWarehouseBundle:Warehouse')
             ->findOneBy(['name' => $name]);
         $this->assertNotEmpty($warehouse);
 
