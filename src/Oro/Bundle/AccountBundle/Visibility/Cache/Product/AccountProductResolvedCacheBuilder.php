@@ -13,7 +13,7 @@ use Oro\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountProductResolvedCacheBuilder extends AbstractProductResolvedCacheBuilder implements
+class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements
     ProductCaseCacheBuilderInterface
 {
     /**

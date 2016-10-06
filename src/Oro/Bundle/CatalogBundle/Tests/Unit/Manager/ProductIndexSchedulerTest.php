@@ -59,7 +59,7 @@ class ProductIndexSchedulerTest extends \PHPUnit_Framework_TestCase
             ->method('dispatch')
             ->with(ReindexationRequestEvent::EVENT_NAME, $event);
 
-        $this->productIndexScheduler->scheduleProductsReindex($categories, $websiteId);
+        $this->productIndexScheduler->scheduleCategoryProductsReindex($categories, $websiteId);
     }
 
     public function testScheduleProductsReindexNoProducts()
@@ -73,6 +73,6 @@ class ProductIndexSchedulerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($productIds);
 
         $this->eventDispatcher->expects($this->never())->method('dispatch');
-        $this->productIndexScheduler->scheduleProductsReindex($categories, $websiteId);
+        $this->productIndexScheduler->scheduleCategoryProductsReindex($categories, $websiteId);
     }
 }
