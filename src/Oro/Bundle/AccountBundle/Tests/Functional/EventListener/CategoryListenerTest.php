@@ -45,7 +45,6 @@ class CategoryListenerTest extends WebTestCase
         $this->messageProducer = $this->getContainer()->get('oro_message_queue.client.message_producer');
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
         $this->messageProducer->clear();
-        $this->messageProducer->enable();
     }
 
     public function testChangeProductCategory()
