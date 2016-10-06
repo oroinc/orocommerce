@@ -8,6 +8,9 @@ layout:
         - '@move':
             id: sticky_panel
             parentId: wrapper
+        - @move:
+            id: login_page_wrapper
+            parentId: wrapper_content
         - '@remove':
             id: main
         - '@setOption':
