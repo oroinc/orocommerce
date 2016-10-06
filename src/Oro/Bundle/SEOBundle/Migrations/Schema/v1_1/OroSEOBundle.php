@@ -47,5 +47,22 @@ class OroSEOBundle implements Migration
                 )
             );
         }
+
+        $fieldNames = ['metaTitles', 'metaDescriptions', 'metaKeywords'];
+        $classes = [Product::class, Category::class, Page::class];
+
+        foreach ($classes as $class) {
+            foreach ($fieldNames as $fieldName) {
+                $queries->addQuery(
+                    new UpdateEntityConfigFieldValueQuery(
+                        $class,
+                        $fieldName,
+                        'importexport',
+                        'excluded',
+                        true
+                    )
+                );
+            }
+        }
     }
 }
