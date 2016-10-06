@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\ResultSetMappingBuilder;
 
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -122,7 +121,7 @@ class LineItemRepository extends EntityRepository
      *
      * @return array
      */
-    public function getLastProductsGroupedByShoppingList($shoppingLists, $productCount)
+    public function getLastProductsGroupedByShoppingList(array $shoppingLists, $productCount)
     {
         $dql = <<<DQL
 SELECT partial li.{id}, partial list.{id}, partial product.{id}, names

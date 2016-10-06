@@ -111,7 +111,7 @@ class FrontendShoppingListProductsProvider
      *
      * @return array
      */
-    public function getLastProductsGroupedByShoppingList($shoppingLists, $productCount)
+    public function getLastProductsGroupedByShoppingList(array $shoppingLists, $productCount)
     {
         /** @var LineItemRepository $lineItemRepository */
         $lineItemRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->lineItemClass);
