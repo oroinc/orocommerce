@@ -4,10 +4,10 @@ namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 class LineItemRepository extends EntityRepository
 {
@@ -103,5 +103,64 @@ class LineItemRepository extends EntityRepository
             ->setParameter('accountUser', $accountUser);
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Returns array where Shopping List id is a key and array of last added products is a value
+     *
+     * Example:
+     * [
+     *   74 => [
+     *     ['name' => '220 Lumen Rechargeable Headlamp'],
+     *     ['name' => 'Credit Card Pin Pad Reader']
+     *   ]
+     * ]
+     *
+     * @param ShoppingList[] $shoppingLists
+     * @param int $productCount
+     *
+     * @return array
+     */
+    public function getLastProductsGroupedByShoppingList(array $shoppingLists, $productCount)
+    {
+        $dql = <<<DQL
+SELECT partial li.{id}, partial list.{id}, partial product.{id}, names
+FROM OroShoppingListBundle:LineItem AS li
+INNER JOIN li.shoppingList list
+INNER JOIN li.product product
+INNER JOIN product.names names
+WHERE li.shoppingList IN (:shoppingLists) AND (
+    SELECT COUNT(li2.id) FROM OroShoppingListBundle:LineItem AS li2
+    WHERE li2.shoppingList = li.shoppingList AND li2.id >= li.id
+    ORDER BY li2.id DESC
+) <= :productCount
+ORDER BY li.shoppingList DESC, li.id DESC
+DQL;
+
+        $shoppingListIds = array_map(
+            function (ShoppingList $shoppingList) {
+                return $shoppingList->getId();
+            },
+            $shoppingLists
+        );
+
+        /** @var LineItem[] $lineItems */
+        $lineItems = $this->getEntityManager()
+            ->createQuery($dql)
+            ->setParameter('shoppingLists', $shoppingListIds)
+            ->setParameter('productCount', $productCount)
+            ->getResult();
+
+        $result = [];
+        foreach ($lineItems as $lineItem) {
+            $shoppingListId = $lineItem->getShoppingList()->getId();
+            $productName = $lineItem->getProduct()->getName()->getString();
+
+            $result[$shoppingListId][] = [
+                'name' => $productName
+            ];
+        }
+
+        return $result;
     }
 }
