@@ -22,12 +22,10 @@
         '~class': "input input--full"
     }) %}
 
-    <div class="grid__row">
-        {{ block_row(block, {
-            attr: attr,
-            label_attr: label_attr
-        }) }}
-    </div>
+    {{ block_row(block, {
+        attr: attr,
+        label_attr: label_attr
+    }) }}
 {% endblock %}
 
 {% block _login_form_remember_item_widget %}
@@ -49,12 +47,11 @@
         '~class': "input input--full"
     }) %}
 
-    <div class="grid__row">
-        {{ block_row(block, {
-            attr: attr,
-            label_attr: label_attr
-        }) }}
-    </div>
+
+    {{ block_row(block, {
+        attr: attr,
+        label_attr: label_attr
+    }) }}
 {% endblock %}
 
 {% block _login_form_forgot_item_widget %}
