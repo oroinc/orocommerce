@@ -11,7 +11,7 @@ use Oro\Bundle\NavigationBundle\Entity\MenuUpdateInterface;
 use Oro\Bundle\NavigationBundle\Entity\MenuUpdateTrait;
 
 /**
- * @ORM\Entity(repositoryClass="Oro\Bundle\FrontendNavigationBundle\Entity\Repository\MenuUpdateRepository")
+ * @ORM\Entity
  * @ORM\Table(name="oro_front_nav_menu_upd")
  * @ORM\AssociationOverrides({
  *      @ORM\AssociationOverride(
