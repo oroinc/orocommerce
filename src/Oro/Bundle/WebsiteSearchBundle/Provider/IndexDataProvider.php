@@ -137,8 +137,8 @@ class IndexDataProvider
         foreach ($fieldsData as $field => $value) {
             $fieldConfig = $this->getFieldConfig($fieldsConfig, $field);
             $type = $fieldConfig['type'];
-            $field = $fieldConfig['name'];
-            $this->preparedIndexData[$entityId][$type][$field] = $this->clearTextValue($type, $value);
+            $name = $fieldConfig['name'];
+            $this->preparedIndexData[$entityId][$type][$name] = $this->clearTextValue($type, $value);
         }
     }
 
