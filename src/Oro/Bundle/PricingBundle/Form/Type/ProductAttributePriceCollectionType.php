@@ -4,16 +4,13 @@ namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
-
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class ProductAttributePriceCollectionType extends FormType
+class ProductAttributePriceCollectionType extends AbstractType
 {
     const NAME = 'oro_pricing_product_attribute_price_collection';
 
@@ -23,16 +20,16 @@ class ProductAttributePriceCollectionType extends FormType
     protected $objectManager;
 
     /**
-     * @var RegistryInterface
+     * @var TranslatorInterface
      */
-    protected $registry;
+    protected $translator;
 
     /**
-     * @param RegistryInterface $registry
+     * @param TranslatorInterface $translator
      */
-    public function __construct(RegistryInterface $registry)
+    public function __construct(TranslatorInterface $translator)
     {
-        $this->registry = $registry;
+        $this->translator = $translator;
     }
 
     /**
@@ -45,40 +42,32 @@ class ProductAttributePriceCollectionType extends FormType
         $priceAttribute = null;
         $currencies = [];
         $units = [];
+        $unitsLabels = [];
 
         if ($price) {
             $priceAttribute = $price->getPriceList();
             $currencies = $priceAttribute->getCurrencies();
-            $units = $price->getProduct()->getAvailableUnitCodes();
+            $units = $price->getProduct()->getAvailableUnits();
+            $unitsLabels = array_combine(array_keys($units), array_keys($units));
         }
 
-        $priceAttributesUnits = [];
-        /** @var PriceAttributeProductPrice $value */
+        $unitsWithPriceAttributes = [];
+        /** @var PriceAttributeProductPrice $v */
         foreach ($view->vars['value'] as $v) {
             $unitCode = $v->getUnit()->getCode();
-            $priceAttributesUnits[$unitCode] = $unitCode;
-        }
-        $addedUnit = array_diff($units, $priceAttributesUnits);
-        $removedUnit = array_diff($priceAttributesUnits, $units);
-        if (0 < count($removedUnit) && 0 < count($addedUnit)) {
-            foreach ($view->vars['value'] as &$value) {
-                if ($value->getUnit()->getCode() === reset($removedUnit)) {
-                    $newUnit = $this->getManager()
-                        ->getRepository(ProductUnit::class)
-                        ->findOneBy(['code' => reset($addedUnit)]);
-                    if (null === $value->getPrice()->getValue()) {
-                        $value->setUnit($newUnit);
-                    } else {
-                        unset($units[reset($addedUnit)]);
-                        $units[reset($removedUnit)] = reset($removedUnit) . ' - removed';
-                    }
+            $unitsWithPriceAttributes[$unitCode] = true;
+            if (!array_key_exists($unitCode, $units)) {
+                if ($v->getPrice() && $v->getPrice()->getValue()) {
+                    $unitsLabels[$unitCode] = $this->translator
+                        ->trans('oro.product.productunit.removed', ['{title}' => $unitCode]);
+                } else {
+                    $v->setUnit($units[$unitCode]);
                 }
             }
-            unset($value);
         }
 
         $view->vars['currencies'] = $currencies;
-        $view->vars['units'] = $units;
+        $view->vars['units'] = array_intersect_key($unitsLabels, $unitsWithPriceAttributes);
         $view->vars['label'] = $priceAttribute->getName();
     }
 
@@ -116,17 +105,5 @@ class ProductAttributePriceCollectionType extends FormType
     public function getBlockPrefix()
     {
         return self::NAME;
-    }
-
-
-    /**
-     * @return ObjectManager|null
-     */
-    protected function getManager()
-    {
-        if (!$this->objectManager) {
-            $this->objectManager = $this->registry->getManagerForClass(Product::class);
-        }
-        return $this->objectManager;
     }
 }

@@ -152,7 +152,7 @@ services:
        class: Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType
        public: true
        arguments:
-           - '@doctrine'
+           - '@translator'
        tags:
            - { name: form.type, alias: oro_pricing_product_attribute_price_collection }
 
