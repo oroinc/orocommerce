@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Entity\Manager;
 
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\SearchBundle\Query\AbstractSearchQuery;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -44,7 +45,7 @@ class ProductManager
      * @param Query $query
      * @return Query
      */
-    public function restrictSearchQuery(Query $query)
+    public function restrictSearchQuery(AbstractSearchQuery $query)
     {
         $ProductSearchQueryEvent = new ProductSearchQueryRestrictionEvent($query);
         $this->eventDispatcher->dispatch(ProductSearchQueryRestrictionEvent::NAME, $ProductSearchQueryEvent);

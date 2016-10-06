@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Event;
 
+use Oro\Bundle\SearchBundle\Query\AbstractSearchQuery;
 use Symfony\Component\EventDispatcher\Event;
 
 use Oro\Bundle\SearchBundle\Query\Query;
@@ -22,9 +23,9 @@ class ProductSearchQueryRestrictionEvent extends Event
     private $query;
 
     /**
-     * @param Query $query
+     * @param AbstractSearchQuery $query
      */
-    public function __construct(Query $query)
+    public function __construct(AbstractSearchQuery $query)
     {
         $this->query = $query;
     }

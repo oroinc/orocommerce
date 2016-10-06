@@ -2,12 +2,19 @@
 
 namespace Oro\Bundle\ProductBundle\Autocomplete;
 
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractEngine;
+use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
+use Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+
 
 class ProductVisibilityLimitedSearchHandler extends SearchHandler
 {
@@ -19,6 +26,12 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
 
     /** @var  ProductManager */
     protected $productManager;
+    /** @var  FrontendHelper */
+    protected $frontendHelper;
+    /** @var \Oro\Bundle\ProductBundle\Search\ProductRepository */
+    protected $searchRepository;
+    /** @var  AbstractEngine */
+    protected $engine;
 
     /**
      * @param string $entityName
@@ -31,7 +44,8 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         array $properties,
         RequestStack $requestStack,
         ProductManager $productManager
-    ) {
+    )
+    {
         $this->requestStack = $requestStack;
         $this->productManager = $productManager;
         parent::__construct($entityName, $properties);
@@ -48,20 +62,41 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     }
 
     /**
+     * @param FrontendHelper $frontendHelper
+     */
+    public function setFrontendHelper(FrontendHelper $frontendHelper)
+    {
+        $this->frontendHelper = $frontendHelper;
+    }
+
+    /**
+     * @param \Oro\Bundle\ProductBundle\Search\ProductRepository $searchRepository
+     */
+    public function setSearchRepository(\Oro\Bundle\ProductBundle\Search\ProductRepository $searchRepository)
+    {
+        $this->searchRepository = $searchRepository;
+    }
+    /**
      * {@inheritdoc}
      */
     protected function searchEntities($search, $firstResult, $maxResults)
     {
         $request = $this->requestStack->getCurrentRequest();
-        $queryBuilder = $this->entityRepository->getSearchQueryBuilder($search, $firstResult, $maxResults);
 
-        if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
-            $params = [];
+        if(is_null($this->frontendHelper) || (false === $this->frontendHelper->isFrontendRequest($request))) {
+            $queryBuilder = $this->entityRepository->getSearchQueryBuilder($search, $firstResult, $maxResults);
+
+            if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
+                $params = [];
+            }
+            $this->productManager->restrictQueryBuilder($queryBuilder, $params);
+            $query = $this->aclHelper->apply($queryBuilder);
+            return $query->getResult();
+        } else {
+            $searchQuery = $this->searchRepository->getProductSearchQuery($search, $firstResult, $maxResults);
+            $this->productManager->restrictSearchQuery($searchQuery);
+            $result = $searchQuery->getResult();
+            return $result->getElements();
         }
-        $this->productManager->restrictQueryBuilder($queryBuilder, $params);
-
-        $query = $this->aclHelper->apply($queryBuilder);
-
-        return $query->getResult();
     }
 }

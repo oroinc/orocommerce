@@ -267,6 +267,8 @@ services:
         calls:
             - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
             - [setAclHelper,["@oro_security.acl_helper"]]
+            - [setFrontendHelper,["@oro_frontend.request.frontend_helper"]]
+            - [setSearchRepository,["@oro_product.search.repository.product"]]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited" }
 
