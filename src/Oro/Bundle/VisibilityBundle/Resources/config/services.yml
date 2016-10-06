@@ -390,6 +390,7 @@ services:
         arguments:
             - '@oro_scope.scope_manager'
 
+    #todo remove
     oro_visibility.product_visibility_grid_listener:
         class: Oro\Bundle\VisibilityBundle\Datagrid\ProductVisibilityGridListener
         tags:

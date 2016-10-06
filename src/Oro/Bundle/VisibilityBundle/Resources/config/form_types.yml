@@ -18,10 +18,6 @@ services:
         class: 'Oro\Bundle\VisibilityBundle\Form\Extension\CategoryFormExtension'
         tags:
             - { name: form.type_extension, alias: oro_catalog_category }
-        calls:
-            - [setVisibilityToAllClass, ['%oro_visibility.entity.category_visibility.class%']]
-            - [setVisibilityToAccountGroupClass,['%oro_visibility.entity.account_group_category_visibility.class%']]
-            - [setVisibilityToAccountClass,['%oro_visibility.entity.account_category_visibility.class%']]
 
     oro_visibility.form.type.catalog_visibility:
         class: 'Oro\Bundle\VisibilityBundle\Form\Type\CatalogVisibilityType'

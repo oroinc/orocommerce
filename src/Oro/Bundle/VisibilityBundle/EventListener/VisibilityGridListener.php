@@ -9,8 +9,8 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
+use Oro\Bundle\ScopeBundle\Entity\ScopeAwareInterface;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
-use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 class VisibilityGridListener
 {
@@ -69,16 +69,16 @@ class VisibilityGridListener
             $params->get('target_entity_id'),
             $this->subscribedGridConfig[$datagridName]['targetEntityClass']
         );
-        if (is_a($visibilityClass, 'Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface', true)) {
+        if (is_a($visibilityClass, ScopeAwareInterface::class, true)) {
             $selectorPath = '[options][cellSelection][selector]';
             $scopePath = '[scope]';
-            $websiteId = $params->get('website_id');
+            $scopeId = $params->get('scope_id');
             $config->offsetSetByPath(
                 $selectorPath,
                 sprintf(
                     '%s-%d',
                     $config->offsetGetByPath($selectorPath),
-                    $websiteId
+                    $scopeId
                 )
             );
             $config->offsetSetByPath(
@@ -86,7 +86,7 @@ class VisibilityGridListener
                 sprintf(
                     '%s-%d',
                     $config->offsetGetByPath($scopePath),
-                    $websiteId
+                    $scopeId
                 )
             );
         }
