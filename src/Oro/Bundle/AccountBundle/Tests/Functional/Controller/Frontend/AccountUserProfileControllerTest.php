@@ -16,11 +16,12 @@ class AccountUserProfileControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
+        $this->client->useHashNavigation(true);
     }
 
     public function testViewProfile()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_profile'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_profile'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -29,12 +30,12 @@ class AccountUserProfileControllerTest extends WebTestCase
 
     public function testEditProfile()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_profile_update'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_profile_update'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Save')->form();
-        $form->offsetSet('orob2b_account_frontend_account_user_profile[firstName]', 'AccountUserUpdated');
+        $form->offsetSet('oro_account_frontend_account_user_profile[firstName]', 'AccountUserUpdated');
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -47,13 +48,13 @@ class AccountUserProfileControllerTest extends WebTestCase
 
     public function testEditProfilePasswordMismatch()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_profile_update'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_profile_update'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Save')->form();
         $form->offsetSet(
-            'orob2b_account_frontend_account_user_profile[changePassword]',
+            'oro_account_frontend_account_user_profile[changePassword]',
             [
                 'currentPassword' => LoadAccountUserData::AUTH_PW,
                 'plainPassword' => [
@@ -74,13 +75,13 @@ class AccountUserProfileControllerTest extends WebTestCase
 
     public function testEditProfileWithoutCurrentPassword()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_profile_update'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_frontend_account_user_profile_update'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Save')->form();
         $form->offsetSet(
-            'orob2b_account_frontend_account_user_profile[changePassword]',
+            'oro_account_frontend_account_user_profile[changePassword]',
             [
                 'currentPassword' => '123456',
                 'plainPassword' => [

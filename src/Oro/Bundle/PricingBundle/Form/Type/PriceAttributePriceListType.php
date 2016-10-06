@@ -11,7 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 
 class PriceAttributePriceListType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_price_attribute_price_list';
+    const NAME = 'oro_pricing_price_attribute_price_list';
 
     /**
      * @var string

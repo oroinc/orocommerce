@@ -51,7 +51,7 @@ class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAw
             $invoicesData[$row['invoice']][] = $row;
         }
 
-        $subtotalProvider = $this->container->get('orob2b_pricing.subtotal_processor.provider.subtotal_line_item');
+        $subtotalProvider = $this->container->get('oro_pricing.subtotal_processor.provider.subtotal_line_item');
 
         foreach ($invoicesData as $invoiceNumber => $invoiceData) {
             /** @var Invoice $invoice */

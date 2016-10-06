@@ -15,9 +15,10 @@ class ShoppingListFormProviderTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
 
         $this->dataProvider = $this->getContainer()
-            ->get('orob2b_shopping_list.layout.data_provider.shopping_list_form');
+            ->get('oro_shopping_list.layout.data_provider.shopping_list_form');
     }
 
     public function testGetShoppingListForm()

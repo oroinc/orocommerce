@@ -18,7 +18,7 @@ use Oro\Bundle\MenuBundle\Entity\Repository\MenuItemRepository;
  */
 class DatabaseMenuProvider implements MenuProviderInterface
 {
-    const CACHE_NAMESPACE = 'orob2b_menu_instance';
+    const CACHE_NAMESPACE = 'oro_menu_instance';
 
     /**
      * @var array

@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Crawler;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @dbIsolation
@@ -17,12 +19,13 @@ class AjaxOrderControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses'
+                LoadOrders::class,
+                LoadAccountAddresses::class,
+                LoadAccountUserAddresses::class
             ]
         );
     }
@@ -31,7 +34,7 @@ class AjaxOrderControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_order_create')
+            $this->getUrl('oro_order_create')
         );
 
         $this->assertTotal($crawler);
@@ -43,7 +46,7 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_order_update', ['id' => $order->getId()])
+            $this->getUrl('oro_order_update', ['id' => $order->getId()])
         );
 
         $this->assertTotal($crawler, $order->getId());
@@ -57,7 +60,7 @@ class AjaxOrderControllerTest extends WebTestCase
     {
         $form = $crawler->selectButton('Save and Close')->form();
 
-        $form->getFormNode()->setAttribute('action', $this->getUrl('orob2b_order_entry_point', ['id' => $id]));
+        $form->getFormNode()->setAttribute('action', $this->getUrl('oro_order_entry_point', ['id' => $id]));
 
         $this->client->submit($form);
 
@@ -87,12 +90,15 @@ class AjaxOrderControllerTest extends WebTestCase
         /** @var AccountUser $order */
         $accountUserEntity = $accountUser ? $this->getReference($accountUser) : null;
 
+        $website = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
+
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_order_entry_point'),
+            $this->getUrl('oro_order_entry_point'),
             [
                 OrderType::NAME => [
                     'account' => $accountEntity->getId(),
+                    'website' => $website->getId(),
                     'accountUser' => $accountUserEntity ? $accountUserEntity->getId() : null
                 ]
             ]

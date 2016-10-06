@@ -16,7 +16,7 @@ class AccountUserRoleDeleteOperationTest extends ActionTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
@@ -36,8 +36,8 @@ class AccountUserRoleDeleteOperationTest extends ActionTestCase
 
         $this->assertDeleteOperation(
             $id,
-            'orob2b_account.entity.account_user_role.class',
-            'orob2b_account_account_user_role_index'
+            'oro_account.entity.account_user_role.class',
+            'oro_account_account_user_role_index'
         );
 
         $this->getObjectManager()->clear();

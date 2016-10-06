@@ -2,26 +2,24 @@
 
 namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 class AjaxCheckoutController extends Controller
 {
     /**
      * @Route(
      *      "/get-totals-for-checkout/{entityId}",
-     *      name="orob2b_checkout_frontend_totals",
+     *      name="oro_checkout_frontend_totals",
      *      requirements={"entityId"="\d+"}
      * )
-     * @AclAncestor("orob2b_checkout_frontend_checkout")
+     * @AclAncestor("oro_checkout_frontend_checkout")
      *
      * @param Request $request
      * @param integer $entityId
@@ -38,7 +36,7 @@ class AjaxCheckoutController extends Controller
         }
 
         $checkout->setShippingCost($this->getShippingCost($checkout, $request));
-        return new JsonResponse($this->get('orob2b_checkout.provider.checkout_totals')->getTotalsArray($checkout));
+        return new JsonResponse($this->get('oro_checkout.provider.checkout_totals')->getTotalsArray($checkout));
     }
 
     /**
@@ -49,15 +47,19 @@ class AjaxCheckoutController extends Controller
     protected function getShippingCost(Checkout $checkout, Request $request)
     {
         $workflowTransitionData = $request->request->get('oro_workflow_transition');
-        if (!is_array($workflowTransitionData) || !array_key_exists('shipping_rule_config', $workflowTransitionData)) {
+        if (!is_array($workflowTransitionData)
+            || !array_key_exists('shipping_method', $workflowTransitionData)
+            || !array_key_exists('shipping_method_type', $workflowTransitionData)
+        ) {
             return $checkout->getShippingCost();
         }
-        $shippingRuleConfigId = $workflowTransitionData['shipping_rule_config'];
-        $shippingRuleConfig = $this->getDoctrine()->getManagerForClass('OroShippingBundle:ShippingRuleConfiguration')
-            ->getRepository('OroShippingBundle:ShippingRuleConfiguration')->find($shippingRuleConfigId);
-        if (!$shippingRuleConfig) {
-            return $checkout->getShippingCost();
-        }
-        return $this->get('orob2b_checkout.shipping_cost.calculator')->calculatePrice($checkout, $shippingRuleConfig);
+
+        $shippingContextProviderFactory = $this->get('oro_checkout.factory.shipping_context_provider_factory');
+
+        return $this->get('oro_shipping.shipping_price.provider')->getPrice(
+            $shippingContextProviderFactory->create($checkout),
+            $workflowTransitionData['shipping_method'],
+            $workflowTransitionData['shipping_method_type']
+        );
     }
 }

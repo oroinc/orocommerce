@@ -29,7 +29,7 @@ class DefaultCurrencyTest extends \PHPUnit_Framework_TestCase
 
     public function testConfiguration()
     {
-        $this->assertEquals('orob2b_pricing_default_currency_validator', $this->constraint->validatedBy());
+        $this->assertEquals('oro_pricing_default_currency_validator', $this->constraint->validatedBy());
         $this->assertEquals('oro.pricing.validators.default_currency.message', $this->constraint->message);
     }
 }

@@ -53,6 +53,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
             }
             unset($data['unitPrecisions']);
         }
+
         if ($this->eventDispatcher) {
             $event = new ProductNormalizerEvent($object, $data, $context);
             $this->eventDispatcher->dispatch(ProductNormalizerEvent::NORMALIZE, $event);
@@ -75,7 +76,11 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
             }
             unset($unitPrecisionData);
         }
-        
+
+        if (array_key_exists('hasVariants', $data) && $data['hasVariants'] == null) {
+            $data['hasVariants'] = false;
+        }
+
         /**
          * @var Product $object
          */

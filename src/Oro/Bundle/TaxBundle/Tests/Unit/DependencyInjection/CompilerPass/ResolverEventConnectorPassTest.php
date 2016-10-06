@@ -59,7 +59,7 @@ class ResolverEventConnectorPassTest extends \PHPUnit_Framework_TestCase
         $this->containerBuilder
             ->expects($this->once())
             ->method('findTaggedServiceIds')
-            ->willReturn(['orob2b_tax.resolver.total' => $tags]);
+            ->willReturn(['oro_tax.resolver.total' => $tags]);
 
         $this->containerBuilder
             ->expects($this->never())
@@ -84,7 +84,7 @@ class ResolverEventConnectorPassTest extends \PHPUnit_Framework_TestCase
 
     public function testTag()
     {
-        $id = 'orob2b_tax.resolver.total';
+        $id = 'oro_tax.resolver.total';
         $class = 'Oro\Bundle\TaxBundle\Event\ResolverEventConnector';
 
         $this->containerBuilder

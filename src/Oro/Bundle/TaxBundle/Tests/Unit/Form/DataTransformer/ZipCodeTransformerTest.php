@@ -62,7 +62,6 @@ class ZipCodeTransformerTest extends \PHPUnit_Framework_TestCase
     public function testReverseTransform($value, $expected)
     {
         $this->assertEquals($expected, $this->transformer->reverseTransform($value));
-
     }
 
     /**

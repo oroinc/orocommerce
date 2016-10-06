@@ -50,7 +50,7 @@ class CombinedPriceListsBuilder
     protected $priceResolver;
 
     /**
-     * @var array
+     * @var bool
      */
     protected $built = false;
 
@@ -150,7 +150,10 @@ class CombinedPriceListsBuilder
 
         return $this;
     }
-    
+
+    /**
+     * @return bool
+     */
     public function isBuilt()
     {
         return $this->built;

@@ -1,18 +1,17 @@
 <?php
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
-
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
-use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\UserBundle\Entity\User;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 
 /**
  * @dbIsolation
@@ -65,8 +64,8 @@ class OrderControllerTest extends WebTestCase
     {
         $submittedData = [
             'input_action' => 'save_and_stay',
-            'orob2b_order_type' => [
-                '_token' => $form['orob2b_order_type[_token]']->getValue(),
+            'oro_order_type' => [
+                '_token' => $form['oro_order_type[_token]']->getValue(),
                 'owner' => $this->getCurrentUser()->getId(),
                 'account' => $orderAccount->getId(),
                 'poNumber' => self::ORDER_PO_NUMBER,
@@ -89,8 +88,8 @@ class OrderControllerTest extends WebTestCase
     {
         $submittedData = [
             'input_action' => 'save_and_stay',
-            'orob2b_order_type' => [
-                '_token' => $form['orob2b_order_type[_token]']->getValue(),
+            'oro_order_type' => [
+                '_token' => $form['oro_order_type[_token]']->getValue(),
                 'owner' => $this->getCurrentUser()->getId(),
                 'account' => $orderAccount->getId(),
                 'poNumber' => self::ORDER_PO_NUMBER_UPDATED,
@@ -105,6 +104,7 @@ class OrderControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -120,7 +120,7 @@ class OrderControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('orders-grid', $crawler->html());
@@ -144,7 +144,7 @@ class OrderControllerTest extends WebTestCase
      */
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_create'));
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -183,7 +183,7 @@ class OrderControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals(
             self::ORDER_PO_NUMBER,
-            $crawler->filter('input[name="orob2b_order_type[poNumber]"]')->extract('value')[0]
+            $crawler->filter('input[name="oro_order_type[poNumber]"]')->extract('value')[0]
         );
 
         $this->assertNotEquals('N/A', $crawler->filter('.user-name')->text());
@@ -233,7 +233,7 @@ class OrderControllerTest extends WebTestCase
      */
     public function testUpdateDiscountAndLineItems($id)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -274,7 +274,7 @@ class OrderControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         // Check updated line items
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
 
@@ -329,7 +329,7 @@ class OrderControllerTest extends WebTestCase
      */
     protected function assertUpdateAddress($id, $addressType)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -340,7 +340,7 @@ class OrderControllerTest extends WebTestCase
         // Save order
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'orob2b_order_type['. $addressType .'][accountAddress]' => 'a_'. $orderAccountAddress->getId(),
+                'oro_order_type['. $addressType .'][accountAddress]' => 'a_'. $orderAccountAddress->getId(),
             ]
         );
 
@@ -361,7 +361,7 @@ class OrderControllerTest extends WebTestCase
         $this->assertContains(strtoupper($orderAccountAddress->getCity()), $html);
 
         // Check address on edit
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
@@ -370,20 +370,20 @@ class OrderControllerTest extends WebTestCase
         $formValues = $form->getValues();
         $this->assertContains(
             $orderAccountAddress->getPostalCode(),
-            $formValues['orob2b_order_type['. $addressType .'][postalCode]']
+            $formValues['oro_order_type['. $addressType .'][postalCode]']
         );
         $this->assertContains(
             $orderAccountAddress->getStreet(),
-            $formValues['orob2b_order_type['. $addressType .'][street]']
+            $formValues['oro_order_type['. $addressType .'][street]']
         );
         $this->assertContains(
             $orderAccountAddress->getCity(),
-            $formValues['orob2b_order_type['. $addressType .'][city]']
+            $formValues['oro_order_type['. $addressType .'][city]']
         );
 
         // Check address disabled
         foreach ($this->disabledAddressInputs as $input) {
-            $crawler->filter('input[name="orob2b_order_type['. $addressType .']['. $input .']"][readonly="readonly"]');
+            $crawler->filter('input[name="oro_order_type['. $addressType .']['. $input .']"][readonly="readonly"]');
         }
     }
 
@@ -393,12 +393,12 @@ class OrderControllerTest extends WebTestCase
      */
     public function testUpdateShippingCost($id)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
-        $form['orob2b_order_type[shippingCost][value]'] = self::$shippingCostAmount;
-        $form['orob2b_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
+        $form['oro_order_type[shippingCost][value]'] = self::$shippingCostAmount;
+        $form['oro_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -406,7 +406,7 @@ class OrderControllerTest extends WebTestCase
         $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
         self::assertEquals('Shipping Information', $titleBlock);
 
-        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->eq(1)->html();
+        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
         self::assertEquals('$999.99', $value);
 
         $result = $this->client->getResponse();
@@ -419,12 +419,12 @@ class OrderControllerTest extends WebTestCase
      */
     public function testUpdateShippingCostEmpty($id)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
-        $form['orob2b_order_type[shippingCost][value]'] = '';
-        $form['orob2b_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
+        $form['oro_order_type[shippingCost][value]'] = '';
+        $form['oro_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -445,12 +445,12 @@ class OrderControllerTest extends WebTestCase
      */
     public function testUpdateShippingCostZero($id)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
-        $form['orob2b_order_type[shippingCost][value]'] = '0';
-        $form['orob2b_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
+        $form['oro_order_type[shippingCost][value]'] = '0';
+        $form['oro_order_type[shippingCost][currency]'] = self::$shippingCostCurrency;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -458,7 +458,7 @@ class OrderControllerTest extends WebTestCase
         $titleBlock = $crawler->filter('.responsive-section')->eq(2)->filter('.scrollspy-title')->html();
         self::assertEquals('Shipping Information', $titleBlock);
 
-        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->eq(1)->html();
+        $value  = $crawler->filter('.responsive-section')->eq(2)->filter('.controls .control-label')->html();
         self::assertEquals('$0.00', $value);
 
         $result = $this->client->getResponse();
@@ -474,7 +474,7 @@ class OrderControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_order_view', ['id' => $id])
+            $this->getUrl('oro_order_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -503,27 +503,27 @@ class OrderControllerTest extends WebTestCase
 
         for ($i = 0; $i < $count; $i++) {
             $result[] = [
-                'product' => $crawler->filter('input[name="orob2b_order_type[lineItems]['. $i .'][product]"]')
+                'product' => $crawler->filter('input[name="oro_order_type[lineItems]['. $i .'][product]"]')
                     ->extract('value')[0],
                 'freeFormProduct' => $crawler
-                    ->filter('input[name="orob2b_order_type[lineItems]['. $i .'][freeFormProduct]"]')
+                    ->filter('input[name="oro_order_type[lineItems]['. $i .'][freeFormProduct]"]')
                     ->extract('value')[0],
-                'quantity' => $crawler->filter('input[name="orob2b_order_type[lineItems]['. $i .'][quantity]"]')
+                'quantity' => $crawler->filter('input[name="oro_order_type[lineItems]['. $i .'][quantity]"]')
                     ->extract('value')[0],
                 'productUnit' => $crawler
-                    ->filter('select[name="orob2b_order_type[lineItems]['. $i .'][productUnit]"] :selected')
+                    ->filter('select[name="oro_order_type[lineItems]['. $i .'][productUnit]"] :selected')
                     ->html(),
                 'price' => [
-                    'value' => $crawler->filter('input[name="orob2b_order_type[lineItems]['. $i .'][price][value]"]')
+                    'value' => $crawler->filter('input[name="oro_order_type[lineItems]['. $i .'][price][value]"]')
                         ->extract('value')[0],
                     'currency' => $crawler
-                        ->filter('input[name="orob2b_order_type[lineItems]['. $i .'][price][currency]"]')
+                        ->filter('input[name="oro_order_type[lineItems]['. $i .'][price][currency]"]')
                         ->extract('value')[0],
                 ],
                 'priceType' => $crawler
-                    ->filter('input[name="orob2b_order_type[lineItems]['. $i .'][priceType]"]')
+                    ->filter('input[name="oro_order_type[lineItems]['. $i .'][priceType]"]')
                     ->extract('value')[0],
-                'shipBy' => $crawler->filter('input[name="orob2b_order_type[lineItems]['. $i .'][shipBy]"]')
+                'shipBy' => $crawler->filter('input[name="oro_order_type[lineItems]['. $i .'][shipBy]"]')
                     ->extract('value')[0]
             ];
         }
@@ -542,17 +542,17 @@ class OrderControllerTest extends WebTestCase
 
         for ($i = 0; $i < $count; $i++) {
             $result[] = [
-                'value' => $crawler->filter('input[name="orob2b_order_type[discounts]['. $i .'][value]"]')
+                'value' => $crawler->filter('input[name="oro_order_type[discounts]['. $i .'][value]"]')
                     ->extract('value')[0],
                 'percent' => $crawler
-                    ->filter('input[name="orob2b_order_type[discounts]['. $i .'][percent]"]')
+                    ->filter('input[name="oro_order_type[discounts]['. $i .'][percent]"]')
                     ->extract('value')[0],
-                'amount' => $crawler->filter('input[name="orob2b_order_type[discounts]['. $i .'][amount]"]')
+                'amount' => $crawler->filter('input[name="oro_order_type[discounts]['. $i .'][amount]"]')
                     ->extract('value')[0],
                 'type' => $crawler
-                    ->filter('select[name="orob2b_order_type[discounts]['. $i .'][type]"] :selected')
+                    ->filter('select[name="oro_order_type[discounts]['. $i .'][type]"] :selected')
                     ->html(),
-                'description' => $crawler->filter('input[name="orob2b_order_type[discounts]['. $i .'][description]"]')
+                'description' => $crawler->filter('input[name="oro_order_type[discounts]['. $i .'][description]"]')
                     ->extract('value')[0]
             ];
         }

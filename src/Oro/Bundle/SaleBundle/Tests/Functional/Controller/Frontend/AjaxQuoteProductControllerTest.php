@@ -21,6 +21,7 @@ class AjaxQuoteProductControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -62,7 +63,7 @@ class AjaxQuoteProductControllerTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_sale_quote_frontend_quote_product_match_offer',
+                'oro_sale_quote_frontend_quote_product_match_offer',
                 ['id' => $quoteProduct->getId(), 'unit' => $unitCode, 'qty' => $quantity]
             )
         );

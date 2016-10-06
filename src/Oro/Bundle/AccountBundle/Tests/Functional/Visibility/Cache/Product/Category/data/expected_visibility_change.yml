@@ -168,6 +168,10 @@
                 - category_1_2
                 - category_1_2_3
                 - category_1_2_3_4
+                - category_1_5_6
+                - category_1_5_6_7
+            account_group.group2:
+                - category_1_2
             account_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4

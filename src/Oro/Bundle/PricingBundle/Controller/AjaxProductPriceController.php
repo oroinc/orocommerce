@@ -18,7 +18,7 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
     /**
-     * @Route("/get-product-prices-by-account", name="orob2b_pricing_price_by_account")
+     * @Route("/get-product-prices-by-account", name="oro_pricing_price_by_account")
      * @Method({"GET"})
      *
      * {@inheritdoc}
@@ -31,10 +31,10 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     /**
      * Edit product form
      *
-     * @Route("/update/{id}", name="orob2b_product_price_update_widget", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_product_price_update_widget", requirements={"id"="\d+"})
      * @Template("OroPricingBundle:ProductPrice:widget/update.html.twig")
      * @Acl(
-     *      id="orob2b_pricing_product_price_update",
+     *      id="oro_pricing_product_price_update",
      *      type="entity",
      *      class="OroPricingBundle:ProductPrice",
      *      permission="EDIT"
@@ -51,18 +51,18 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @Route("/get-matching-price", name="orob2b_pricing_matching_price")
+     * @Route("/get-matching-price", name="oro_pricing_matching_price")
      * @Method({"GET"})
-     * @AclAncestor("orob2b_pricing_product_price_view")
+     * @AclAncestor("oro_pricing_product_price_view")
      *
      * {@inheritdoc}
      */
     public function getMatchingPriceAction(Request $request)
     {
         $lineItems = $request->get('items', []);
-        $matchedPrices = $this->get('orob2b_pricing.provider.matching_price')->getMatchingPrices(
+        $matchedPrices = $this->get('oro_pricing.provider.matching_price')->getMatchingPrices(
             $lineItems,
-            $this->get('orob2b_pricing.model.price_list_request_handler')->getPriceListByAccount()
+            $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByAccount()
         );
 
         return new JsonResponse($matchedPrices);

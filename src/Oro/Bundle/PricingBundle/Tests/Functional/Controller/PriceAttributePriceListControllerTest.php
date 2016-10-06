@@ -22,12 +22,13 @@ class PriceAttributePriceListControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadPriceAttributePriceLists::class]);
     }
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_pricing_price_attribute_price_list_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_pricing_price_attribute_price_list_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('pricing-price-attribute-price-list-grid', $crawler->html());
@@ -52,13 +53,13 @@ class PriceAttributePriceListControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_pricing_price_attribute_price_list_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_pricing_price_attribute_price_list_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Save and Close')->form([
-            'orob2b_pricing_price_attribute_price_list[name]' => self::PRICE_ATTRIBUTE_PRICE_LIST_NAME,
-            'orob2b_pricing_price_attribute_price_list[fieldName]' => self::PRICE_ATTRIBUTE_PRICE_LIST_FIELD_NAME,
+            'oro_pricing_price_attribute_price_list[name]' => self::PRICE_ATTRIBUTE_PRICE_LIST_NAME,
+            'oro_pricing_price_attribute_price_list[fieldName]' => self::PRICE_ATTRIBUTE_PRICE_LIST_FIELD_NAME,
         ]);
 
         $this->client->followRedirects(true);
@@ -84,7 +85,7 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $priceAttributePriceList = $this->getReference('price_attribute_price_list_4');
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_pricing_price_attribute_price_list_view', ['id' => $priceAttributePriceList->getId()])
+            $this->getUrl('oro_pricing_price_attribute_price_list_view', ['id' => $priceAttributePriceList->getId()])
         );
 
         $result = $this->client->getResponse();
@@ -100,17 +101,17 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_pricing_price_attribute_price_list_update',
+                'oro_pricing_price_attribute_price_list_update',
                 ['id' => $priceAttributePriceList->getId()]
             )
         );
 
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'orob2b_pricing_price_attribute_price_list[name]' => self::PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT,
-                'orob2b_pricing_price_attribute_price_list[fieldName]'
+                'oro_pricing_price_attribute_price_list[name]' => self::PRICE_ATTRIBUTE_PRICE_LIST_NAME_EDIT,
+                'oro_pricing_price_attribute_price_list[fieldName]'
                     => self::PRICE_ATTRIBUTE_PRICE_LIST_FIELD_NAME_EDIT,
-                'orob2b_pricing_price_attribute_price_list[currencies]' => 'CAD',
+                'oro_pricing_price_attribute_price_list[currencies]' => 'CAD',
             ]
         );
 
@@ -131,7 +132,7 @@ class PriceAttributePriceListControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_pricing_price_attribute_price_list_info',
+                'oro_pricing_price_attribute_price_list_info',
                 ['id' => $priceAttributePriceList->getId()]
             ),
             ['_widgetContainer' => 'widget']

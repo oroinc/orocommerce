@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ProductShoppingListsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductUnitsQuantityProvider;
 
-class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_Framework_TestCase
+class FrontendShoppingListProductUnitsQuantityProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -38,66 +38,69 @@ class FrontendShoppingListProductUnitsQuantityDataProviderTest extends \PHPUnit_
     }
 
     /**
-     * @dataProvider getDataDataProvider
+     * @dataProvider getByProductDataProvider
      *
      * @param Product|null $product
      * @param array|null $expected
      */
-    public function testGetProductUnitsQuantity(Product $product = null, array $expected = null)
+    public function testGetByProduct(Product $product = null, array $expected = null)
     {
         $this->productShoppingListsDataProvider
             ->expects($this->any())
-            ->method('getProductUnitsQuantity')
-            ->willReturn($expected);
+            ->method('getProductsUnitsQuantity')
+            ->willReturn($expected ? [$expected] : $expected);
 
-        $this->assertEquals($expected, $this->provider->getProductUnitsQuantity($product));
+        $this->assertEquals($expected, $this->provider->getByProduct($product));
     }
 
     /**
      * @return array
      */
-    public function getDataDataProvider()
+    public function getByProductDataProvider()
     {
+        $product = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Product')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $product->expects($this->any())->method('getId')->willReturn(0);
         return [
             'no_product' => [
                 'product' => null,
             ],
             'no_prices' => [
-                'product' => new Product(),
-                'expected' => []
+                'product' => new Product()
             ],
             'single_shopping_list' => [
-                'product' => new Product(),
+                'product' => $product,
                 'expected' => [
                     [
-                        'shopping_list_id' => 1,
-                        'shopping_list_label' => 'ShoppingList 1',
+                        'id' => 1,
+                        'label' => 'ShoppingList 1',
                         'is_current' => true,
                         'line_items' => [
-                            ['line_item_id' => 1, 'unit' => 'code1', 'quantity' => 42],
-                            ['line_item_id' => 2, 'unit' => 'code2', 'quantity' => 100],
+                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
+                            ['id' => 2, 'unit' => 'code2', 'quantity' => 100],
                         ]
                     ]
                 ]
             ],
             'a_few_shopping_lists' => [
-                'product' => new Product(),
+                'product' => $product,
                 'expected' => [
                     [
-                        'shopping_list_id' => 1,
-                        'shopping_list_label' => 'ShoppingList 1',
+                        'id' => 1,
+                        'label' => 'ShoppingList 1',
                         'is_current' => true,
                         'line_items' => [
-                            ['line_item_id' => 1, 'unit' => 'code1', 'quantity' => 42],
-                            ['line_item_id' => 2,'unit' => 'code2', 'quantity' => 100],
+                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
+                            ['id' => 2,'unit' => 'code2', 'quantity' => 100],
                         ]
                     ],
                     [
-                        'shopping_list_id' => 2,
-                        'shopping_list_label' => 'ShoppingList 2',
+                        'id' => 2,
+                        'label' => 'ShoppingList 2',
                         'is_current' => false,
                         'line_items' => [
-                            ['line_item_id' => 3, 'unit' => 'code3', 'quantity' => 30],
+                            ['id' => 3, 'unit' => 'code3', 'quantity' => 30],
                         ]
                     ]
                 ]

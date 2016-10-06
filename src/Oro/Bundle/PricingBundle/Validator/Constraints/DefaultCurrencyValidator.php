@@ -30,11 +30,10 @@ class DefaultCurrencyValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        $currencies = $this->configManager->get('oro_b2b_pricing.enabled_currencies', []);
+        $currencies = $this->configManager->get('oro_pricing.enabled_currencies', []);
 
         if (!in_array($value, $currencies, true)) {
             $this->context->addViolation($constraint->message, ['%invalidCurrency%' => $value]);
         }
-
     }
 }

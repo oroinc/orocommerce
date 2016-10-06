@@ -1,0 +1,78 @@
+layout:
+    imports:
+        - oro_account_menu
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroSaleBundle:layouts:default/oro_sale_quote_frontend_view/layout.html.twig'
+
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.account.menu.account_user.label'
+                - 'oro.frontend.sale.quote.entity_plural_label'
+                -
+                    label: 'oro.frontend.sale.quote.title.label'
+                    parameters:
+                        '%id%': '=data["entity"].getQid()'
+
+        - '@setOption':
+            id: page_title
+            optionName: class_prefix
+            optionValue: 'account'
+
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue:
+                label: 'oro.frontend.sale.quote.title.label'
+                parameters:
+                    '%id%': '=data["entity"].getQid()'
+
+        - '@addTree':
+            items:
+                quote_view_page:
+                    blockType: container
+                quote_view_controls_list:
+                    blockType: block
+                    options:
+                        visible: '=false'
+                quote_view_information:
+                    blockType: quote_view_information
+                    options:
+                        quote: '=data["entity"]'
+                quote_view_line_items:
+                    blockType: quote_products_container
+                    options:
+                        quoteProducts: '=data["entity"].getQuoteProducts()'
+                quote_view_line_items_mobile:
+                    blockType: quote_products_container
+                    options:
+                        quoteProducts: '=data["entity"].getQuoteProducts()'
+                quote_view_accept_button:
+                    blockType: action_combined_buttons
+                    options:
+                        visible: '=data["entity"].hasOfferVariants()!==null && data["entity"].isAcceptable()==true'
+                        actions: '=data["actions"].getAll(data["entity"])'
+                        entityId: '=data["action_buttons"].getEntityId(data["quote"])'
+                        entityClass: '=data["action_buttons"].getEntityClass(data["quote"])'
+                        dialogRoute: '=data["action_buttons"].getDialogRoute()'
+                        executionRoute: '=data["action_buttons"].getExecutionRoute()'
+                quote_view_accept_container:
+                    blockType: container
+                quote_shipping_address:
+                    blockType: address
+                    options:
+                        address: '=data["entity"].getShippingAddress()'
+                        label: 'oro.sale.quote.shipping_address.label'
+                        additional_block_prefixes: ['quote_body_column_element']
+            tree:
+                content:
+                    quote_view_page:
+                        quote_view_controls_list: ~
+                        quote_view_information:
+                            quote_shipping_address: ~
+                        quote_view_line_items: ~
+                        quote_view_line_items_mobile: ~
+                        quote_view_accept_container:
+                            quote_view_accept_button: ~

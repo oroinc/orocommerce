@@ -14,6 +14,7 @@ class ShippingRuleControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([]);
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules',
@@ -28,7 +29,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $shippingRule = $this->getReference('shipping_rule.1');
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_disable_shippingrules', ['id' => $shippingRule->getId()]),
+            $this->getUrl('oro_api_disable_shippingrules', ['id' => $shippingRule->getId()]),
             [],
             [],
             static::generateWsseAuthHeader(LoadUserData::USER_EDITOR, LoadUserData::USER_EDITOR)
@@ -47,7 +48,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $shippingRule = $this->getReference('shipping_rule.1');
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_enable_shippingrules', ['id' => $shippingRule->getId()]),
+            $this->getUrl('oro_api_enable_shippingrules', ['id' => $shippingRule->getId()]),
             [],
             [],
             static::generateWsseAuthHeader(LoadUserData::USER_EDITOR, LoadUserData::USER_EDITOR)
@@ -63,7 +64,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $shippingRule = $this->getReference('shipping_rule.1');
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_delete_shippingrules', ['id' => $shippingRule->getId()]),
+            $this->getUrl('oro_api_delete_shippingrules', ['id' => $shippingRule->getId()]),
             [],
             [],
             static::generateWsseAuthHeader()
@@ -78,7 +79,7 @@ class ShippingRuleControllerTest extends WebTestCase
         $shippingRule = $this->getReference('shipping_rule.1');
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_delete_shippingrules', ['id' => $shippingRule->getId()]),
+            $this->getUrl('oro_api_delete_shippingrules', ['id' => $shippingRule->getId()]),
             [],
             [],
             static::generateWsseAuthHeader(LoadUserData::USER_VIEWER, LoadUserData::USER_VIEWER)

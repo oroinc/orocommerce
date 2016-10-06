@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="orob2b_plist_curr_combined")
+ * @ORM\Table(name="oro_plist_curr_combined")
  * @ORM\Entity()
  */
 class CombinedPriceListCurrency extends BasePriceListCurrency

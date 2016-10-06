@@ -1,0 +1,14 @@
+search:
+    Oro\Bundle\WarehouseBundle\Entity\Warehouse:
+        alias:                          oro_warehouse
+        title_fields:                   [name]
+        route:
+            name:                       oro_warehouse_view
+            parameters:
+                id:                     id
+        search_template:                OroWarehouseBundle:Warehouse:searchResult.html.twig
+        fields:
+            -
+                name:                   name
+                target_type:            text
+                target_fields:          [name]

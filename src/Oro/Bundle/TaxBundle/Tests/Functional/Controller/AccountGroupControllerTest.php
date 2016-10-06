@@ -17,6 +17,7 @@ class AccountGroupControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -28,7 +29,7 @@ class AccountGroupControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_group_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_group_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -37,8 +38,8 @@ class AccountGroupControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'orob2b_account_group_type[name]' => self::ACCOUNT_GROUP_NAME,
-                'orob2b_account_group_type[taxCode]' => $accountTaxCode->getId(),
+                'oro_account_group_type[name]' => self::ACCOUNT_GROUP_NAME,
+                'oro_account_group_type[taxCode]' => $accountTaxCode->getId(),
             ]
         );
 
@@ -49,7 +50,7 @@ class AccountGroupControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Account group has been saved', $html);
+        $this->assertContains('Customer group has been saved', $html);
         $this->assertContains(self::ACCOUNT_GROUP_NAME, $html);
         $this->assertContains($accountTaxCode->getCode(), $html);
 
@@ -71,7 +72,7 @@ class AccountGroupControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_group_view', ['id' => $id])
+            $this->getUrl('oro_account_group_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -95,7 +96,7 @@ class AccountGroupControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_account_tax_code_view', ['id' => $accountTaxCode->getId()])
+            $this->getUrl('oro_tax_account_tax_code_view', ['id' => $accountTaxCode->getId()])
         );
 
         $result = $this->client->getResponse();

@@ -10,7 +10,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 
 class OrderAddressSecurityProvider
 {
-    const MANUAL_EDIT_ACTION = 'orob2b_order_address_%s_allow_manual';
+    const MANUAL_EDIT_ACTION = 'oro_order_address_%s_allow_manual';
 
     /** @var SecurityFacade */
     protected $securityFacade;

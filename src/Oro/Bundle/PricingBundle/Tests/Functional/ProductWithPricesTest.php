@@ -45,19 +45,20 @@ class ProductWithPricesTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
     }
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
         $form = $crawler->selectButton('Continue')->form();
         $formValues = $form->getPhpValues();
-        $formValues['input_action'] = 'orob2b_product_create';
-        $formValues['orob2b_product_step_one']['category'] = self::CATEGORY_ID;
+        $formValues['input_action'] = 'oro_product_create';
+        $formValues['oro_product_step_one']['category'] = self::CATEGORY_ID;
 
         $this->client->followRedirects(true);
-        $crawler = $this->client->request('POST', $this->getUrl('orob2b_product_create'), $formValues);
+        $crawler = $this->client->request('POST', $this->getUrl('oro_product_create'), $formValues);
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
@@ -70,7 +71,7 @@ class ProductWithPricesTest extends WebTestCase
         $localizations = $this->getLocalizations();
 
         $formData = [
-            '_token' => $form['orob2b_product[_token]']->getValue(),
+            '_token' => $form['oro_product[_token]']->getValue(),
             'owner'  => $this->getBusinessUnitId(),
             'sku'    => self::TEST_SKU,
             'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
@@ -106,7 +107,7 @@ class ProductWithPricesTest extends WebTestCase
 
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
             'input_action'        => 'save_and_stay',
-            'orob2b_product' => $formData
+            'oro_product' => $formData
         ]);
 
         $result = $this->client->getResponse();
@@ -116,23 +117,23 @@ class ProductWithPricesTest extends WebTestCase
 
         $this->assertEquals(
             $priceList->getId(),
-            $crawler->filter('input[name="orob2b_product[prices][0][priceList]"]')->extract('value')[0]
+            $crawler->filter('input[name="oro_product[prices][0][priceList]"]')->extract('value')[0]
         );
         $this->assertEquals(
             self::FIRST_QUANTITY,
-            $crawler->filter('input[name="orob2b_product[prices][0][quantity]"]')->extract('value')[0]
+            $crawler->filter('input[name="oro_product[prices][0][quantity]"]')->extract('value')[0]
         );
         $this->assertEquals(
             self::FIRST_UNIT_FULL_NAME,
-            $crawler->filter('select[name="orob2b_product[prices][0][unit]"] :selected')->html()
+            $crawler->filter('select[name="oro_product[prices][0][unit]"] :selected')->html()
         );
         $this->assertEquals(
             self::FIRST_PRICE_VALUE,
-            $crawler->filter('input[name="orob2b_product[prices][0][price][value]"]')->extract('value')[0]
+            $crawler->filter('input[name="oro_product[prices][0][price][value]"]')->extract('value')[0]
         );
         $this->assertEquals(
             self::FIRST_PRICE_CURRENCY,
-            $crawler->filter('select[name="orob2b_product[prices][0][price][currency]"] :selected')
+            $crawler->filter('select[name="oro_product[prices][0][price][currency]"] :selected')
                 ->extract('value')[0]
         );
 
@@ -153,19 +154,19 @@ class ProductWithPricesTest extends WebTestCase
      */
     public function testUpdate($id)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference(self::PRICE_LIST_NAME);
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_product[sku]'] = self::TEST_SKU;
-        $form['orob2b_product[prices][0][priceList]'] = $priceList->getId();
-        $form['orob2b_product[prices][0][quantity]'] = self::SECOND_QUANTITY;
-        $form['orob2b_product[prices][0][unit]'] = self::SECOND_UNIT_CODE;
-        $form['orob2b_product[prices][0][price][value]'] = self::SECOND_PRICE_VALUE;
-        $form['orob2b_product[prices][0][price][currency]'] = self::SECOND_PRICE_CURRENCY;
+        $form['oro_product[sku]'] = self::TEST_SKU;
+        $form['oro_product[prices][0][priceList]'] = $priceList->getId();
+        $form['oro_product[prices][0][quantity]'] = self::SECOND_QUANTITY;
+        $form['oro_product[prices][0][unit]'] = self::SECOND_UNIT_CODE;
+        $form['oro_product[prices][0][price][value]'] = self::SECOND_PRICE_VALUE;
+        $form['oro_product[prices][0][price][currency]'] = self::SECOND_PRICE_CURRENCY;
 
         $this->client->followRedirects(true);
 
@@ -175,27 +176,27 @@ class ProductWithPricesTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Product has been saved', $crawler->html());
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
 
         $this->assertEquals(
             $priceList->getId(),
-            $crawler->filter('input[name="orob2b_product[prices][0][priceList]"]')->extract('value')[0]
+            $crawler->filter('input[name="oro_product[prices][0][priceList]"]')->extract('value')[0]
         );
         $this->assertEquals(
             self::EXPECTED_SECOND_QUANTITY,
-            $crawler->filter('input[name="orob2b_product[prices][0][quantity]"]')->extract('value')[0]
+            $crawler->filter('input[name="oro_product[prices][0][quantity]"]')->extract('value')[0]
         );
         $this->assertEquals(
             self::SECOND_UNIT_FULL_NAME,
-            $crawler->filter('select[name="orob2b_product[prices][0][unit]"] :selected')->html()
+            $crawler->filter('select[name="oro_product[prices][0][unit]"] :selected')->html()
         );
         $this->assertEquals(
             self::SECOND_PRICE_VALUE,
-            $crawler->filter('input[name="orob2b_product[prices][0][price][value]"]')->extract('value')[0]
+            $crawler->filter('input[name="oro_product[prices][0][price][value]"]')->extract('value')[0]
         );
         $this->assertEquals(
             self::SECOND_PRICE_CURRENCY,
-            $crawler->filter('select[name="orob2b_product[prices][0][price][currency]"] :selected')
+            $crawler->filter('select[name="oro_product[prices][0][price][currency]"] :selected')
                 ->extract('value')[0]
         );
 
@@ -208,12 +209,12 @@ class ProductWithPricesTest extends WebTestCase
      */
     public function testDelete($id)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
-        unset($form['orob2b_product[prices]']);
+        unset($form['oro_product[prices]']);
 
         $this->client->followRedirects(true);
 
@@ -223,10 +224,10 @@ class ProductWithPricesTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Product has been saved', $crawler->html());
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
 
-        $this->assertContains('orob2b_product[additionalUnitPrecisions][0]', $crawler->html());
-        $this->assertNotContains('orob2b_product[prices][0]', $crawler->html());
+        $this->assertContains('oro_product[additionalUnitPrecisions][0]', $crawler->html());
+        $this->assertNotContains('oro_product[prices][0]', $crawler->html());
     }
 
     /**

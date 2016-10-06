@@ -9,11 +9,12 @@ class CountryRegionsControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
     }
 
     public function testGetAction()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_api_frontend_country_get_regions', ['country' => 'US']));
+        $this->client->request('GET', $this->getUrl('oro_api_frontend_country_get_regions', ['country' => 'US']));
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
 

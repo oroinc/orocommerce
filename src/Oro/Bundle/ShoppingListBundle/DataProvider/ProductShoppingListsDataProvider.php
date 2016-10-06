@@ -50,59 +50,65 @@ class ProductShoppingListsDataProvider
             return null;
         }
 
-        $shoppingList = $this->shoppingListManager->getCurrent();
+        $shoppingLists = $this->getProductsUnitsQuantity([$product]);
+        return isset($shoppingLists[$product->getId()]) ? $shoppingLists[$product->getId()] : null;
+    }
 
-        if (!$shoppingList) {
-            return null;
+    /**
+     * @param Product[] $products
+     * @return array
+     */
+    public function getProductsUnitsQuantity($products)
+    {
+        $currentShoppingList = $this->shoppingListManager->getCurrent();
+        if (!$currentShoppingList) {
+            return [];
         }
+        $currentShoppingListId = $currentShoppingList->getId();
 
         /** @var AccountUser $accountUser */
         $accountUser = $this->securityFacade->getLoggedUser();
         $lineItems = $this->lineItemRepository
-            ->getOneProductLineItemsWithShoppingListNames($product, $accountUser);
-
-        $groupedUnits = [];
-        $shoppingListLabels = [];
-
+            ->getProductItemsWithShoppingListNames($products, $accountUser);
         if (!count($lineItems)) {
             return [];
         }
 
+        $shoppingLists = [];
         foreach ($lineItems as $lineItem) {
-            if (null === $itemShoppingList = $lineItem->getShoppingList()) {
-                continue;
+            $shoppingList = $lineItem->getShoppingList();
+            $shoppingListId = $shoppingList->getId();
+            $product = $lineItem->getProduct();
+            $productId = $product->getId();
+
+            $productShoppingLists = isset($shoppingLists[$productId]) ? $shoppingLists[$productId] : [];
+            if (!isset($productShoppingLists[$shoppingListId])) {
+                $productShoppingLists[$shoppingListId] = [
+                    'id' => $shoppingListId,
+                    'label' => $shoppingList->getLabel(),
+                    'is_current' => $shoppingList->isCurrent(),
+                    'line_items' => [],
+                ];
             }
-            $shoppingListId = $itemShoppingList->getId();
-            $groupedUnits[$shoppingListId][] = [
-                'line_item_id' => $lineItem->getId(),
+
+            $productShoppingLists[$shoppingListId]['line_items'][] = [
+                'id' => $lineItem->getId(),
                 'unit' => $lineItem->getProductUnitCode(),
                 'quantity' => $lineItem->getQuantity()
             ];
-            if (!isset($shoppingListLabels[$shoppingListId])) {
-                $shoppingListLabels[$shoppingListId] = $lineItem->getShoppingList()->getLabel();
+
+            $shoppingLists[$productId] = $productShoppingLists;
+        }
+
+        foreach ($shoppingLists as $productId => $productShoppingLists) {
+            if (isset($productShoppingLists[$currentShoppingListId])) {
+                $currentShoppingList = $productShoppingLists[$currentShoppingListId];
+                unset($productShoppingLists[$currentShoppingListId]);
+                array_unshift($productShoppingLists, $currentShoppingList);
             }
+            $shoppingLists[$productId] = array_values($productShoppingLists);
         }
 
-        $shoppingListUnits = [];
-        $activeShoppingListId = $shoppingList->getId();
-        if (isset($groupedUnits[$activeShoppingListId])) {
-            $shoppingListUnits[] = [
-                'shopping_list_id' => $activeShoppingListId,
-                'shopping_list_label' => $shoppingListLabels[$activeShoppingListId],
-                'is_current' => true,
-                'line_items' => $groupedUnits[$activeShoppingListId],
-            ];
-        }
-        unset($groupedUnits[$activeShoppingListId]);
-        foreach ($groupedUnits as $shoppingListId => $lineItems) {
-            $shoppingListUnits[] = [
-                'shopping_list_id' => $shoppingListId,
-                'shopping_list_label' => $shoppingListLabels[$shoppingListId],
-                'is_current' => false,
-                'line_items' => $lineItems,
-            ];
-        }
-
-        return $shoppingListUnits;
+        return $shoppingLists;
     }
 }

@@ -14,6 +14,7 @@ class RedirectControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader());
+        $this->client->useHashNavigation(true);
     }
 
     /**
@@ -27,7 +28,7 @@ class RedirectControllerTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_slugify_slug', ['string' => $string])
+            $this->getUrl('oro_api_slugify_slug', ['string' => $string])
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), Response::HTTP_OK);

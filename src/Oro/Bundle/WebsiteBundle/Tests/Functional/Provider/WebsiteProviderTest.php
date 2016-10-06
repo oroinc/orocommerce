@@ -14,12 +14,13 @@ class WebsiteProviderTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadWebsiteData::class ]);
     }
 
     public function testGetWebsites()
     {
-        $websites = $this->getContainer()->get('orob2b_website.website.provider')->getWebsites();
+        $websites = $this->getContainer()->get('oro_website.website.provider')->getWebsites();
         $this->assertCount(1, $websites);
     }
 }

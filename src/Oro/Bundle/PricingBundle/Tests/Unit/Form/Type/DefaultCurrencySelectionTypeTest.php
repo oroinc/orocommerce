@@ -64,7 +64,7 @@ class DefaultCurrencySelectionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    'orob2b_pricing_default_currency_selection' => new DefaultCurrencySelectionType(
+                    'oro_pricing_default_currency_selection' => new DefaultCurrencySelectionType(
                         $this->configManager,
                         $this->localeSettings,
                         $this->translator,
@@ -106,7 +106,7 @@ class DefaultCurrencySelectionTypeTest extends FormIntegrationTestCase
             ->method('getCurrentRequest')
             ->willReturn($currentRequest);
 
-        $form = $this->factory->create('orob2b_pricing_default_currency_selection');
+        $form = $this->factory->create('oro_pricing_default_currency_selection');
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $parentForm */
         $rootForm = $this->getMock('Symfony\Component\Form\FormInterface');

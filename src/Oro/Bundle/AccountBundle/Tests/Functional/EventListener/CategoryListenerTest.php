@@ -3,20 +3,17 @@
 namespace Oro\Bundle\AccountBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class CategoryListenerTest extends WebTestCase
 {
@@ -31,28 +28,54 @@ class CategoryListenerTest extends WebTestCase
     protected $categoryRepository;
 
     /**
-     * @var Website
+     * @var MessageCollector
      */
-    protected $firstWebsite;
-
-    /**
-     * @var Website
-     */
-    protected $secondWebsite;
+    protected $messageProducer;
 
     protected function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->categoryManager = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroCatalogBundle:Category');
+            ->getManagerForClass(Category::class);
         $this->categoryRepository = $this->categoryManager
-            ->getRepository('OroCatalogBundle:Category');
+            ->getRepository(Category::class);
 
-        $this->loadFixtures(['Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
+        $this->loadFixtures([LoadProductVisibilityData::class]);
 
-        $this->firstWebsite = $this->getReference(LoadWebsiteData::WEBSITE1);
-        $this->secondWebsite = $this->getReference(LoadWebsiteData::WEBSITE2);
+        $this->messageProducer = $this->getContainer()->get('oro_message_queue.client.message_producer');
+        $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
+        $this->messageProducer->clear();
+        $this->messageProducer->enable();
+    }
+
+    public function testCreateProduct()
+    {
+        $em = $this->getContainer()->get('doctrine')->getManager();
+
+        $product = new Product();
+        $product->setSku('TestSKU02');
+
+        $em->persist($product);
+
+        /** @var $category Category */
+        $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
+        $em->refresh($category);
+
+        $category->addProduct($product);
+        $em->flush();
+
+        $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
+        $messages = $this->messageProducer->getSentMessages();
+        $visibilityMessages = array_filter(
+            $messages,
+            function ($message) {
+                return array_key_exists('topic', $message)
+                    && $message['topic'] === 'oro_account.visibility.change_product_category';
+            }
+        );
+
+        $this->assertEmpty($visibilityMessages);
     }
 
     public function testChangeProductCategory()
@@ -61,10 +84,6 @@ class CategoryListenerTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $previousCategory = $this->categoryRepository->findOneByProduct($product);
 
-        // default value is categort fallback
-        $this->assertProductVisibility($this->firstWebsite, $product, null, $previousCategory);
-        $this->assertProductVisibility($this->secondWebsite, $product, null, $previousCategory);
-
         /** @var $newCategory Category */
         $newCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $this->categoryManager->refresh($newCategory);
@@ -72,10 +91,16 @@ class CategoryListenerTest extends WebTestCase
         $previousCategory->removeProduct($product);
         $newCategory->addProduct($product);
         $this->categoryManager->flush();
-
-        // category has been changed
-        $this->assertProductVisibility($this->firstWebsite, $product, null, $newCategory);
-        $this->assertProductVisibility($this->secondWebsite, $product, null, $newCategory);
+        $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
+        $messages = $this->messageProducer->getSentMessages();
+        $expectedMessages[] = [
+            'topic' => 'oro_account.visibility.change_product_category',
+            'message' => ['id' => $product->getId()],
+        ];
+        $this->assertEquals(
+            $expectedMessages,
+            $messages
+        );
     }
 
     public function testRemoveProductFromCategoryAndAddProductToCategory()
@@ -84,98 +109,30 @@ class CategoryListenerTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_2);
         $category = $this->categoryRepository->findOneByProduct($product);
 
-        // default value is category fallback
-        $this->assertProductVisibility($this->firstWebsite, $product, null, $category);
-        $this->assertProductVisibility($this->secondWebsite, $product, null, $category);
-
         $category->removeProduct($product);
         $this->categoryManager->flush();
-
-        // fallback changed to config
-        $this->assertProductVisibility($this->firstWebsite, $product, ProductVisibility::CONFIG);
-        $this->assertProductVisibility($this->secondWebsite, $product, ProductVisibility::CONFIG);
-
+        $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
+        $messages = $this->messageProducer->getSentMessages();
+        $expectedMessages[] = [
+            'topic' => 'oro_account.visibility.change_product_category',
+            'message' => ['id' => $product->getId()],
+        ];
+        $this->assertEquals(
+            $expectedMessages,
+            $messages
+        );
         $category->addProduct($product);
         $this->categoryManager->flush();
 
-        // fallback didn't return back because it was changed during category removal
-        $this->assertProductVisibility($this->firstWebsite, $product, ProductVisibility::CONFIG);
-        $this->assertProductVisibility($this->secondWebsite, $product, ProductVisibility::CONFIG);
-    }
-
-    /**
-     * @param Website $website
-     * @param Product $product
-     * @param string|null $visibilityCode
-     * @param Category|null $category
-     */
-    protected function assertProductVisibility(
-        Website $website,
-        Product $product,
-        $visibilityCode = null,
-        Category $category = null
-    ) {
-        $visibility = $this->getVisibility($website, $product);
-        if ($visibilityCode) {
-            $this->assertNotNull($visibility);
-            $this->assertEquals($visibilityCode, $visibility->getVisibility());
-        } else {
-            $this->assertNull($visibility);
-        }
-
-        $resolvedVisibility = $this->getResolvedVisibility($website, $product);
-        if ($category) {
-            $this->assertNotNull($resolvedVisibility);
-            $this->assertEquals(ProductVisibilityResolved::SOURCE_CATEGORY, $resolvedVisibility->getSource());
-            $this->assertEquals($category->getId(), $resolvedVisibility->getCategory()->getId());
-        } else {
-            $this->assertNull($resolvedVisibility);
-        }
-
-    }
-
-    /**
-     * @param Website $website
-     * @param Product $product
-     * @return ProductVisibility|null
-     */
-    protected function getVisibility(Website $website, Product $product)
-    {
-        $entityManager = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:Visibility\ProductVisibility');
-
-        $qb = $entityManager->getRepository('OroAccountBundle:Visibility\ProductVisibility')
-            ->createQueryBuilder('v')
-            ->andWhere('v.website = :website')
-            ->andWhere('v.product = :product')
-            ->setParameter('website', $website)
-            ->setParameter('product', $product);
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    /**
-     * @param Website $website
-     * @param Product $product
-     * @return ProductVisibilityResolved|null
-     */
-    protected function getResolvedVisibility(Website $website, Product $product)
-    {
-        $entityManager = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved');
-
-        $qb = $entityManager->getRepository('OroAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-            ->createQueryBuilder('v')
-            ->andWhere('v.website = :website')
-            ->andWhere('v.product = :product')
-            ->setParameter('website', $website)
-            ->setParameter('product', $product);
-
-        $entity = $qb->getQuery()->getOneOrNullResult();
-        if ($entity) {
-            $entityManager->refresh($entity);
-        }
-
-        return $entity;
+        $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
+        $messages = $this->messageProducer->getSentMessages();
+        $expectedMessages[] = [
+            'topic' => 'oro_account.visibility.change_product_category',
+            'message' => ['id' => $product->getId()],
+        ];
+        $this->assertEquals(
+            $expectedMessages,
+            $messages
+        );
     }
 }

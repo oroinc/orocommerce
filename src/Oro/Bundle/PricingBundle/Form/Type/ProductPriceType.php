@@ -15,7 +15,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 class ProductPriceType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_product_price';
+    const NAME = 'oro_pricing_product_price';
 
     /** @var string */
     protected $dataClass;
@@ -78,7 +78,6 @@ class ProductPriceType extends AbstractType
             }
         );
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
-
     }
 
     /**

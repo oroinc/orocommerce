@@ -19,6 +19,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
     }
 
     /**
@@ -258,7 +259,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
      */
     public function testSupportsNormalization($data, $expected, array $context = [])
     {
-        if (!$this->getContainer()->hasParameter('orob2b_product.entity.product.class')) {
+        if (!$this->getContainer()->hasParameter('oro_product.entity.product.class')) {
             $this->markTestSkipped('ProductBundle required');
         }
 
@@ -311,7 +312,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
      */
     public function testSupportsDenormalization($data, $class, $expected, array $context = [])
     {
-        if (!$this->getContainer()->hasParameter('orob2b_product.entity.product.class')) {
+        if (!$this->getContainer()->hasParameter('oro_product.entity.product.class')) {
             $this->markTestSkipped('ProductBundle required');
         }
 

@@ -5,8 +5,9 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\DependencyInjection;
 use Symfony\Component\Config\Definition\Processor;
 
 use Oro\DBAL\Types\MoneyType;
+
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
@@ -41,10 +42,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 ],
                 'precision' => [
                     'value' => MoneyType::TYPE_SCALE,
-                    'scope' => 'app'
-                ],
-                'price_lists_update_mode' => [
-                    'value' => 'real_time',
                     'scope' => 'app'
                 ],
                 'offset_of_processing_cpl_prices' => [

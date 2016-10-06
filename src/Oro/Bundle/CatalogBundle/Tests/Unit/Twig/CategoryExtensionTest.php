@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Twig;
 
-use Symfony\Bridge\Twig\Tests\Extension\Fixtures\StubTranslator;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 use Oro\Bundle\CatalogBundle\Twig\CategoryExtension;
@@ -15,24 +15,25 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
     protected $categoryTreeHandler;
 
     /**
-     * @var StubTranslator
-     */
-    protected $translator;
-
-    /**
      * @var CategoryExtension
      */
     protected $extension;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ContainerInterface
+     */
+    protected $container;
+
     public function setUp()
     {
+        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+
         $this->categoryTreeHandler = $this->getMockBuilder('Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->translator = new StubTranslator();
-
-        $this->extension = new CategoryExtension($this->categoryTreeHandler, $this->translator);
+        $this->extension = new CategoryExtension();
+        $this->extension->setContainer($this->container);
     }
 
     public function testGetName()
@@ -51,8 +52,8 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
         /** @var \Twig_SimpleFunction $function */
         $function = $functions[0];
         $this->assertInstanceOf('\Twig_SimpleFunction', $function);
-        $this->assertEquals('orob2b_category_list', $function->getName());
-        $this->assertEquals([$this->extension, 'getCategoryList'], $function->getCallable());
+        $this->assertEquals('oro_category_list', $function->getName());
+        $this->assertInstanceOf(\Closure::class, $function->getCallable());
     }
 
     public function testGetCategoryList()
@@ -72,7 +73,13 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('createTree')
             ->will($this->returnValue($tree));
 
-        $result = $this->extension->getCategoryList();
+        $functions = $this->extension->getFunctions();
+        $function = reset($functions);
+        $this->container->expects($this->once())->method('get')->willReturn($this->categoryTreeHandler);
+        $callable = $function->getCallable();
+        $callable->bindTo($this->extension);
+        $result = call_user_func_array($callable, []);
+
         $this->assertEquals($tree, $result);
     }
 
@@ -82,7 +89,7 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
             [
                 'id' => 1,
                 'parent' => '#',
-                'text' => '[trans]oro.catalog.frontend.category.master_category.label[/trans]',
+                'text' => 'oro.catalog.frontend.category.master_category.label',
                 'state' => [
                     'opened' => true,
                 ],
@@ -93,7 +100,14 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('createTree')
             ->will($this->returnValue($tree));
 
-        $result = $this->extension->getCategoryList('oro.catalog.frontend.category.master_category.label');
+        $functions = $this->extension->getFunctions();
+        $function = reset($functions);
+        $this->container->expects($this->once())->method('get')->willReturn($this->categoryTreeHandler);
+
+        $callable = $function->getCallable();
+        $callable->bindTo($this->extension);
+        $result = call_user_func_array($callable, ['oro.catalog.frontend.category.master_category.label']);
+
         $this->assertEquals($tree, $result);
     }
 }

@@ -3,10 +3,10 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\ORM\EntityManagerInterface;
-
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
-use Oro\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 
 /**
@@ -14,16 +14,18 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
  */
 class PriceRuleEntityListenerTest extends WebTestCase
 {
+    use MessageQueueTrait;
+
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient();
         $this->loadFixtures([
             LoadPriceRules::class
         ]);
-        $this->cleanTriggers();
+        $this->cleanScheduledMessages();
     }
 
     public function testPreUpdate()
@@ -37,11 +39,15 @@ class PriceRuleEntityListenerTest extends WebTestCase
         $em->persist($rule);
         $em->flush();
 
-        $triggers = $this->getTriggers();
-        $this->assertCount(1, $triggers);
+        $this->sendScheduledMessages();
 
-        $trigger = $triggers[0];
-        $this->assertEquals($trigger->getPriceList()->getId(), $rule->getPriceList()->getId());
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_RULES,
+            [
+                PriceListTriggerFactory::PRICE_LIST => $rule->getPriceList()->getId(),
+                PriceListTriggerFactory::PRODUCT => null
+            ]
+        );
     }
 
     public function testPreRemove()
@@ -54,31 +60,14 @@ class PriceRuleEntityListenerTest extends WebTestCase
         $em->remove($rule);
         $em->flush();
 
-        $triggers = $this->getTriggers();
-        $this->assertCount(1, $triggers);
+        $this->sendScheduledMessages();
 
-        $trigger = $triggers[0];
-        $this->assertEquals($trigger->getPriceList()->getId(), $rule->getPriceList()->getId());
-    }
-
-    protected function cleanTriggers()
-    {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(PriceRuleChangeTrigger::class);
-        $em->createQueryBuilder()
-            ->delete(PriceRuleChangeTrigger::class)
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
-     * @return PriceRuleChangeTrigger[]
-     */
-    protected function getTriggers()
-    {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass(PriceRuleChangeTrigger::class)
-            ->getRepository(PriceRuleChangeTrigger::class)
-            ->findAll();
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_RULES,
+            [
+                PriceListTriggerFactory::PRICE_LIST => $rule->getPriceList()->getId(),
+                PriceListTriggerFactory::PRODUCT => null
+            ]
+        );
     }
 }

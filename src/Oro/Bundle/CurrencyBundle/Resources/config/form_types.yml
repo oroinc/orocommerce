@@ -14,7 +14,7 @@ services:
     oro_currency.form.type.price:
         class: %oro_currency.form.type.price.class%
         arguments:
-            - '@orob2b_pricing.rounding.price_rounding_service'
+            - '@oro_currency.rounding.price_rounding_service'
         calls:
             - [setDataClass, [%oro_currency.price.model%]]
         tags:

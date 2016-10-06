@@ -37,7 +37,7 @@ class ThemeSelectTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_frontend_theme_select', $this->type->getName());
+        $this->assertEquals('oro_frontend_theme_select', $this->type->getName());
     }
 
     public function testGetParent()

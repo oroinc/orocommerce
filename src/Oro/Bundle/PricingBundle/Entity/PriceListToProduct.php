@@ -8,15 +8,14 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository")
  * @ORM\Table(
- *      name="orob2b_price_list_to_product",
+ *      name="oro_price_list_to_product",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="orob2b_price_list_to_product_uidx",
+ *              name="oro_price_list_to_product_uidx",
  *              columns={"product_id", "price_list_id"}
  *          )
  *      }
  * )
- * @ORM\EntityListeners({ "Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListProductEntityListener" })
  */
 class PriceListToProduct
 {

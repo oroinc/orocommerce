@@ -1,10 +1,9 @@
 services:
     # Twig extensions
-    orob2b_catalog.twig.category_extension:
+    oro_catalog.twig.category_extension:
         class: 'Oro\Bundle\CatalogBundle\Twig\CategoryExtension'
         public: false
-        arguments:
-            - '@orob2b_catalog.category_tree_handler'
-            - '@translator'
+        calls:
+            - [setContainer, ["@service_container"]]
         tags:
             - { name: twig.extension }

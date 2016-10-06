@@ -27,6 +27,7 @@ class AccountGroupControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->entityManager = $this->getContainer()
             ->get('doctrine')
             ->getManagerForClass('OroAccountBundle:AccountGroup');
@@ -41,7 +42,7 @@ class AccountGroupControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_group_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_group_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('account-groups-grid', $crawler->html());
@@ -49,7 +50,7 @@ class AccountGroupControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_group_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_account_group_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -71,7 +72,7 @@ class AccountGroupControllerTest extends WebTestCase
         $id = $this->getGroupId(self::NAME);
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_group_update', ['id' => $id])
+            $this->getUrl('oro_account_group_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -97,13 +98,13 @@ class AccountGroupControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_group_view', ['id' => $id])
+            $this->getUrl('oro_account_group_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
-        $this->assertContains(self::UPDATED_NAME . ' - Account Groups - Customers', $html);
+        $this->assertContains(self::UPDATED_NAME . ' - Customer Groups - Customers', $html);
         $this->assertContains(self::ADD_NOTE_BUTTON, $html);
         $this->assertViewPage($html, self::UPDATED_NAME);
     }
@@ -134,9 +135,9 @@ class AccountGroupControllerTest extends WebTestCase
         );
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'orob2b_account_group_type[name]' => $name,
-                'orob2b_account_group_type[appendAccounts]' => implode(',', $appendAccountIds),
-                'orob2b_account_group_type[removeAccounts]' => implode(',', $removeAccountIds)
+                'oro_account_group_type[name]' => $name,
+                'oro_account_group_type[appendAccounts]' => implode(',', $appendAccountIds),
+                'oro_account_group_type[removeAccounts]' => implode(',', $removeAccountIds)
             ]
         );
 
@@ -147,7 +148,7 @@ class AccountGroupControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Account group has been saved', $html);
+        $this->assertContains('Customer group has been saved', $html);
         $this->assertViewPage($html, $name);
 
         foreach ($appendAccounts as $account) {

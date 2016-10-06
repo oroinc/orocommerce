@@ -137,7 +137,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->container->expects($this->once())
             ->method('get')
-            ->with('orob2b_rfp.form.type.extension.frontend_request_data_storage')
+            ->with('oro_rfp.form.type.extension.frontend_request_data_storage')
             ->willReturn($this->storageExtension);
 
         $this->assertNull($this->processor->process($data, new Request()));
@@ -168,7 +168,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->container->expects($this->once())
             ->method('get')
-            ->with('orob2b_rfp.form.type.extension.frontend_request_data_storage')
+            ->with('oro_rfp.form.type.extension.frontend_request_data_storage')
             ->willReturn($this->storageExtension);
 
         $this->processor->setRedirectRouteName($redirectRouteName);
@@ -258,7 +258,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
         } else {
             $this->container->expects($this->once())
                 ->method('get')
-                ->with('orob2b_rfp.form.type.extension.frontend_request_data_storage')
+                ->with('oro_rfp.form.type.extension.frontend_request_data_storage')
                 ->willReturn($this->storageExtension);
 
             $this->assertNull($this->processor->process($data, new Request()));
@@ -377,7 +377,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->container->expects($this->once())
             ->method('get')
-            ->with('orob2b_rfp.form.type.extension.frontend_request_data_storage')
+            ->with('oro_rfp.form.type.extension.frontend_request_data_storage')
             ->willReturn($this->storageExtension);
 
         $this->assertNull($this->processor->process($data, new Request()));
@@ -435,7 +435,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->container->expects($this->once())
             ->method('get')
-            ->with('orob2b_rfp.form.type.extension.frontend_request_data_storage')
+            ->with('oro_rfp.form.type.extension.frontend_request_data_storage')
             ->willReturn($this->storageExtension);
 
         if ($isRedirectRoute) {
@@ -538,7 +538,7 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->container->expects($this->once())
             ->method('get')
-            ->with('orob2b_rfp.form.type.extension.frontend_request_data_storage')
+            ->with('oro_rfp.form.type.extension.frontend_request_data_storage')
             ->willReturn($this->storageExtension);
 
         $response = $this->processor->process($data, new Request());

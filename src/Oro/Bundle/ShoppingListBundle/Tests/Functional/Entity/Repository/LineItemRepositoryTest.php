@@ -22,6 +22,7 @@ class LineItemRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -55,7 +56,7 @@ class LineItemRepositoryTest extends WebTestCase
         /** @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
 
-        $lineItems = $this->getLineItemRepository()->getItemsByShoppingListAndProduct($shoppingList, $product);
+        $lineItems = $this->getLineItemRepository()->getItemsByShoppingListAndProducts($shoppingList, [$product]);
 
         $this->assertCount(1, $lineItems);
         $this->assertContains($lineItem, $lineItems);

@@ -68,7 +68,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
             new AccountUserRoleSelectType($this->createTranslator())
         );
         $addressEntityType = new EntityType($this->getAddresses(), 'test_address_entity');
-        $accountSelectType = new AccountSelectTypeStub($this->getAccounts(), 'orob2b_account_select');
+        $accountSelectType = new AccountSelectTypeStub($this->getAccounts(), 'oro_account_select');
 
         $accountUserType = new AccountUserType($this->securityFacade);
         $accountUserType->setDataClass(self::DATA_CLASS);

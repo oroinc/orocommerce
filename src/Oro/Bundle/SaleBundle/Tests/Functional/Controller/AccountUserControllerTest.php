@@ -18,6 +18,7 @@ class AccountUserControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], static::generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
             'Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
@@ -33,7 +34,7 @@ class AccountUserControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_account_account_user_view',
+                'oro_account_account_user_view',
                 ['id' => $accountUser->getId()]
             )
         );

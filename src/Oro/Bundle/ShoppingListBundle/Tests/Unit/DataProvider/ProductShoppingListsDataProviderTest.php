@@ -86,8 +86,8 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
         $accountUser = new AccountUser();
 
         $this->lineItemRepository->expects($product && $shoppingList ? $this->once() : $this->never())
-            ->method('getOneProductLineItemsWithShoppingListNames')
-            ->with($product, $accountUser)
+            ->method('getProductItemsWithShoppingListNames')
+            ->with([$product], $accountUser)
             ->willReturn($lineItems);
 
         $this->securityFacade->expects($this->any())
@@ -103,11 +103,11 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
     public function getProductUnitsQuantityDataProvider()
     {
         /** @var  ShoppingList $activeShoppingList */
-        $activeShoppingList = $this->createShoppingList(1, 'ShoppingList 1');
+        $activeShoppingList = $this->createShoppingList(1, 'ShoppingList 1', true);
         /** @var  ShoppingList $activeShoppingListSecond */
-        $activeShoppingListSecond = $this->createShoppingList(1, 'ShoppingList 1');
+        $activeShoppingListSecond = $this->createShoppingList(1, 'ShoppingList 1', true);
         /** @var  ShoppingList $otherShoppingList */
-        $otherShoppingList = $this->createShoppingList(2, 'ShoppingList 2');
+        $otherShoppingList = $this->createShoppingList(2, 'ShoppingList 2', false);
         return [
             'no_product_no_shopping_list' => [
                 'product' => null,
@@ -120,8 +120,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
             'no_prices' => [
                 'product' => new Product(),
                 'shoppingList' => new ShoppingList(),
-                'lineItems' => [],
-                'expected' => []
+                'lineItems' => []
             ],
             'single_shopping_list' => [
                 'product' => new Product(),
@@ -132,12 +131,12 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => [
                     [
-                        'shopping_list_id' => 1,
-                        'shopping_list_label' => 'ShoppingList 1',
+                        'id' => 1,
+                        'label' => 'ShoppingList 1',
                         'is_current' => true,
                         'line_items' => [
-                            ['line_item_id' => 1, 'unit' => 'code1', 'quantity' => 42],
-                            ['line_item_id' => 2, 'unit' => 'code2', 'quantity' => 100],
+                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
+                            ['id' => 2, 'unit' => 'code2', 'quantity' => 100],
                         ]
                     ]
                 ]
@@ -152,20 +151,20 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => [
                     [
-                        'shopping_list_id' => 1,
-                        'shopping_list_label' => 'ShoppingList 1',
+                        'id' => 1,
+                        'label' => 'ShoppingList 1',
                         'is_current' => true,
                         'line_items' => [
-                            ['line_item_id' => 1, 'unit' => 'code1', 'quantity' => 42],
-                            ['line_item_id' => 2,'unit' => 'code2', 'quantity' => 100],
+                            ['id' => 1, 'unit' => 'code1', 'quantity' => 42],
+                            ['id' => 2,'unit' => 'code2', 'quantity' => 100],
                         ]
                     ],
                     [
-                        'shopping_list_id' => 2,
-                        'shopping_list_label' => 'ShoppingList 2',
+                        'id' => 2,
+                        'label' => 'ShoppingList 2',
                         'is_current' => false,
                         'line_items' => [
-                            ['line_item_id' => 3, 'unit' => 'code3', 'quantity' => 30],
+                            ['id' => 3, 'unit' => 'code3', 'quantity' => 30],
                         ]
                     ]
                 ]
@@ -184,7 +183,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
     {
         $lineItem = $this
             ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\LineItem')
-            ->setMethods(['getId', 'getUnit', 'getQuantity', 'getShoppingList'])
+            ->setMethods(['getId', 'getUnit', 'getQuantity', 'getShoppingList', 'getProduct'])
             ->getMock();
         $lineItem ->expects($this->any())
             ->method('getId')
@@ -198,6 +197,9 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
         $lineItem ->expects($this->any())
             ->method('getShoppingList')
             ->will($this->returnValue($shoppingList));
+        $lineItem ->expects($this->any())
+            ->method('getProduct')
+            ->willReturn(new Product());
 
         return $lineItem;
     }
@@ -205,15 +207,17 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param int $id
      * @param string $label
+     * @param boolean $isCurrent
      * @return ShoppingList|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createShoppingList($id, $label)
+    protected function createShoppingList($id, $label, $isCurrent)
     {
         $shoppingList = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingList->expects($this->any())->method('getId')->willReturn($id);
         $shoppingList->expects($this->any())->method('getLabel')->willReturn($label);
+        $shoppingList->expects($this->any())->method('isCurrent')->willReturn($isCurrent);
 
         return $shoppingList;
     }

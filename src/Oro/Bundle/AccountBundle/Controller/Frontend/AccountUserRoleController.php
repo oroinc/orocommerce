@@ -17,10 +17,10 @@ use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
 class AccountUserRoleController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_account_frontend_account_user_role_index")
+     * @Route("/", name="oro_account_frontend_account_user_role_index")
      * @Layout(vars={"entity_class"})
      * @Acl(
-     *      id="orob2b_account_frontend_account_user_role_index",
+     *      id="oro_account_frontend_account_user_role_index",
      *      type="entity",
      *      class="OroAccountBundle:AccountUserRole",
      *      permission="VIEW",
@@ -31,12 +31,12 @@ class AccountUserRoleController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_account.entity.account_user_role.class'),
+            'entity_class' => $this->container->getParameter('oro_account.entity.account_user_role.class'),
         ];
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_account_frontend_account_user_role_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_account_frontend_account_user_role_view", requirements={"id"="\d+"})
      * @Layout()
      *
      * @param AccountUserRole $role
@@ -46,7 +46,7 @@ class AccountUserRoleController extends Controller
     public function viewAction(AccountUserRole $role)
     {
         $isGranted = $role->isPredefined()
-            ? $this->getSecurityFacade()->isGranted('orob2b_account_frontend_account_user_role_view')
+            ? $this->getSecurityFacade()->isGranted('oro_account_frontend_account_user_role_view')
             : $this->getSecurityFacade()->isGranted('FRONTEND_ACCOUNT_ROLE_VIEW', $role);
 
         if (!$isGranted || !$role->isSelfManaged() || !$role->isPublic()) {
@@ -61,10 +61,10 @@ class AccountUserRoleController extends Controller
     }
 
     /**
-     * @Route("/create", name="orob2b_account_frontend_account_user_role_create")
+     * @Route("/create", name="oro_account_frontend_account_user_role_create")
      * @Layout()
      * @Acl(
-     *      id="orob2b_account_frontend_account_user_role_create",
+     *      id="oro_account_frontend_account_user_role_create",
      *      type="entity",
      *      class="OroAccountBundle:AccountUserRole",
      *      permission="CREATE",
@@ -79,7 +79,7 @@ class AccountUserRoleController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_account_frontend_account_user_role_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_account_frontend_account_user_role_update", requirements={"id"="\d+"})
      * @Layout()
      * @param AccountUserRole $role
      * @param Request $request
@@ -88,7 +88,7 @@ class AccountUserRoleController extends Controller
     public function updateAction(AccountUserRole $role, Request $request)
     {
         $isGranted = $role->isPredefined()
-            ? $this->getSecurityFacade()->isGranted('orob2b_account_frontend_account_user_role_create')
+            ? $this->getSecurityFacade()->isGranted('oro_account_frontend_account_user_role_create')
             : $this->getSecurityFacade()->isGranted('FRONTEND_ACCOUNT_ROLE_UPDATE', $role);
 
         if (!$isGranted || !$role->isSelfManaged() || !$role->isPublic()) {
@@ -112,7 +112,7 @@ class AccountUserRoleController extends Controller
      */
     protected function update(AccountUserRole $role)
     {
-        $handler = $this->get('orob2b_account.form.handler.update_account_user_role_frontend');
+        $handler = $this->get('oro_account.form.handler.update_account_user_role_frontend');
         $form = $handler->createForm($role);
 
         $response = $this->get('oro_form.model.update_handler')->handleUpdate(
@@ -120,13 +120,13 @@ class AccountUserRoleController extends Controller
             $form,
             function (AccountUserRole $role) {
                 return [
-                    'route' => 'orob2b_account_frontend_account_user_role_update',
+                    'route' => 'oro_account_frontend_account_user_role_update',
                     'parameters' => ['id' => $role->getId()],
                 ];
             },
             function (AccountUserRole $role) {
                 return [
-                    'route' => 'orob2b_account_frontend_account_user_role_view',
+                    'route' => 'oro_account_frontend_account_user_role_view',
                     'parameters' => ['id' => $role->getId()],
                 ];
             },

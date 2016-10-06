@@ -1,105 +1,108 @@
-orob2b_account:
+# Prefix `customer` is temporary solution to remove route duplication
+# with OroCRMAccountBundle/Controller/AccountController.php
+# @todo: all routes prefix will be chnaged in scope of BB-2679
+oro_account:
     resource:     "@OroAccountBundle/Controller/AccountController.php"
     type:         annotation
-    prefix:       /account
+    prefix:       /customer
 
-orob2b_account_address:
+oro_account_address:
     resource:     "@OroAccountBundle/Controller/AccountAddressController.php"
     type:         annotation
     prefix:       /account/address
 
-orob2b_account_account_user_address:
+oro_account_account_user_address:
     resource:     "@OroAccountBundle/Controller/AccountUserAddressController.php"
     type:         annotation
     prefix:       /account/user/address
 
-orob2b_account_group:
+oro_account_group:
     resource:     "@OroAccountBundle/Controller/AccountGroupController.php"
     type:         annotation
     prefix:       /account/group
 
-orob2b_account_account_user:
+oro_account_account_user:
     resource: "@OroAccountBundle/Controller/AccountUserController.php"
     type: annotation
     prefix: /account/user
 
-orob2b_account_account_user_ajax:
+oro_account_account_user_ajax:
     resource: "@OroAccountBundle/Controller/AjaxAccountUserController.php"
     type: annotation
     prefix: /account/user
 
-orob2b_account_frontend_account_user_ajax:
+oro_account_frontend_account_user_ajax:
     resource: "@OroAccountBundle/Controller/Frontend/AjaxAccountUserController.php"
     type: annotation
     prefix: /account/user
     options:
         frontend: true
 
-orob2b_account_account_user_role:
+oro_account_account_user_role:
     resource: "@OroAccountBundle/Controller/AccountUserRoleController.php"
     type: annotation
     prefix: /account/user/role
 
-orob2b_account_acl_permission:
+oro_account_acl_permission:
     resource: "@OroAccountBundle/Controller/AclPermissionController.php"
     type: annotation
     prefix: /account/acl
 
-orob2b_account_product_visibility:
+oro_account_product_visibility:
     resource: "@OroAccountBundle/Controller/ProductVisibilityController.php"
     type: annotation
     prefix: /product/visibility
 
-orob2b_account_frontend_account_user_profile:
+oro_account_frontend_account_user_profile:
     resource: "@OroAccountBundle/Controller/Frontend/AccountUserProfileController.php"
     type: annotation
     prefix: /account/profile
     options:
         frontend: true
 
-orob2b_account_frontend_account_user_register:
+oro_account_frontend_account_user_register:
     resource: "@OroAccountBundle/Controller/Frontend/AccountUserRegisterController.php"
     type: annotation
     prefix: /account/user
     options:
         frontend: true
 
-orob2b_account_frontend_account_user:
+oro_account_frontend_account_user:
     resource: "@OroAccountBundle/Controller/Frontend/AccountUserController.php"
     type: annotation
     prefix: /account/user
     options:
         frontend: true
 
-orob2b_account_frontend_account_user_address:
+oro_account_frontend_account_user_address:
     resource: "@OroAccountBundle/Controller/Frontend/AccountUserAddressController.php"
     type: annotation
     prefix: /account/user/address
     options:
         frontend: true
 
-orob2b_account_frontend_account_address:
+oro_account_frontend_account_address:
     resource: "@OroAccountBundle/Controller/Frontend/AccountAddressController.php"
     type: annotation
     prefix: /account/user/address/account/
     options:
         frontend: true
 
-orob2b_account_user_security:
+oro_account_user_security:
     resource: "@OroAccountBundle/Controller/SecurityController.php"
     type: annotation
     prefix: /account/user
     options:
         frontend: true
 
-orob2b_account_user_password_reset:
+oro_account_user_password_reset:
     resource: "@OroAccountBundle/Controller/Frontend/ResetController.php"
     type: annotation
     prefix: /account/user
     options:
         frontend: true
 
-orob2b_account_bundle_api:
+oro_account_bundle_api:
     resource:     "@OroAccountBundle/Resources/config/oro/routing_api.yml"
     prefix:       api/rest/{version}/
     requirements:
@@ -108,20 +111,20 @@ orob2b_account_bundle_api:
     defaults:
         version:  latest
 
-orob2b_account_pinbar_help:
-    pattern: /pinbar/help
+oro_account_pinbar_help:
+    path: /pinbar/help
     defaults: { _controller: FrameworkBundle:Template:template, template: "OroNavigationBundle:Pinbar:help.html.twig" }
     options:
         frontend: true
 
-orob2b_account_frontend_account_user_role:
+oro_account_frontend_account_user_role:
     resource: "@OroAccountBundle/Controller/Frontend/AccountUserRoleController.php"
     type:     annotation
     prefix:   /account/roles
     options:
         frontend: true
 
-orob2b_account_frontend_acl_access_levels:
+oro_account_frontend_acl_access_levels:
     path: /account/roles/acl-access-levels/{oid}
     defaults:
         _controller: OroAccountBundle:AclPermission:aclAccessLevels
@@ -131,37 +134,37 @@ orob2b_account_frontend_acl_access_levels:
     options:
         frontend: true
 
-orob2b_frontend_autocomplete_search:
-    pattern: /autocomplete/search
+oro_frontend_autocomplete_search:
+    path: /autocomplete/search
     defaults: { _controller: OroFormBundle:Autocomplete:search }
     options:
         frontend: true
 
-orob2b_account_frontend_entity_pagination_first:
-    pattern: /entity-pagination/first/{_entityName}/{_scope}/{_routeName}"
+oro_account_frontend_entity_pagination_first:
+    path: /entity-pagination/first/{_entityName}/{_scope}/{_routeName}"
     defaults: { _controller: OroEntityPaginationBundle:EntityPagination:first }
     options:
         frontend: true
 
-orob2b_account_frontend_entity_pagination_previous:
-    pattern: /entity-pagination/previous/{_entityName}/{_scope}/{_routeName}"
+oro_account_frontend_entity_pagination_previous:
+    path: /entity-pagination/previous/{_entityName}/{_scope}/{_routeName}"
     defaults: { _controller: OroEntityPaginationBundle:EntityPagination:previous }
     options:
         frontend: true
 
-orob2b_account_frontend_entity_pagination_next:
-    pattern: /entity-pagination/next/{_entityName}/{_scope}/{_routeName}"
+oro_account_frontend_entity_pagination_next:
+    path: /entity-pagination/next/{_entityName}/{_scope}/{_routeName}"
     defaults: { _controller: OroEntityPaginationBundle:EntityPagination:next }
     options:
         frontend: true
 
-orob2b_account_frontend_entity_pagination_last:
-    pattern: /entity-pagination/last/{_entityName}/{_scope}/{_routeName}"
+oro_account_frontend_entity_pagination_last:
+    path: /entity-pagination/last/{_entityName}/{_scope}/{_routeName}"
     defaults: { _controller: OroEntityPaginationBundle:EntityPagination:last }
     options:
         frontend: true
 
-orob2b_account_audit:
+oro_account_audit:
     resource:     "@OroAccountBundle/Controller/AuditController.php"
     type:         annotation
     options:

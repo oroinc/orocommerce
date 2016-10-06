@@ -2,12 +2,9 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
 use Oro\Bundle\AccountBundle\Entity\Visibility\Repository\AccountGroupProductVisibilityRepository;
-use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * @dbIsolation
@@ -26,7 +23,7 @@ class AccountGroupProductVisibilityRepositoryTest extends AbstractProductVisibil
     protected function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->registry = $this->getContainer()->get('doctrine');
         $this->repository = $this->registry->getRepository(
             'OroAccountBundle:Visibility\AccountGroupProductVisibility'
@@ -38,7 +35,6 @@ class AccountGroupProductVisibilityRepositoryTest extends AbstractProductVisibil
         $this->repository = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroAccountBundle:Visibility\AccountGroupProductVisibility');
-
     }
 
     /**

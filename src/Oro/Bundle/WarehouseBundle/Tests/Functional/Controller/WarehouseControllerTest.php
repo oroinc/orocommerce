@@ -20,11 +20,12 @@ class WarehouseControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
     }
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_warehouse_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_warehouse_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('warehouse-grid', $crawler->html());
@@ -36,7 +37,7 @@ class WarehouseControllerTest extends WebTestCase
      */
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_warehouse_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_warehouse_create'));
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -45,8 +46,8 @@ class WarehouseControllerTest extends WebTestCase
 
         $submittedData = [
             'input_action' => 'save_and_stay',
-            'orob2b_warehouse' => [
-                '_token' => $form['orob2b_warehouse[_token]']->getValue(),
+            'oro_warehouse' => [
+                '_token' => $form['oro_warehouse[_token]']->getValue(),
                 'owner' => $this->getCurrentUser()->getId(),
                 'name' => self::WAREHOUSE_TEST_NAME
             ]
@@ -73,7 +74,7 @@ class WarehouseControllerTest extends WebTestCase
      */
     public function testUpdate($id)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_warehouse_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_warehouse_update', ['id' => $id]));
 
         $html = $crawler->html();
         $this->assertContains(self::WAREHOUSE_TEST_NAME, $html);
@@ -86,8 +87,8 @@ class WarehouseControllerTest extends WebTestCase
 
         $submittedData = [
             'input_action' => 'save_and_stay',
-            'orob2b_warehouse' => [
-                '_token' => $form['orob2b_warehouse[_token]']->getValue(),
+            'oro_warehouse' => [
+                '_token' => $form['oro_warehouse[_token]']->getValue(),
                 'owner' => $this->getCurrentUser()->getId(),
                 'name' => self::WAREHOUSE_UPDATED_TEST_NAME
             ]
@@ -117,7 +118,7 @@ class WarehouseControllerTest extends WebTestCase
                 [
                     'operationName' => 'DELETE',
                     'entityId' => $id,
-                    'entityClass' => $this->getContainer()->getParameter('orob2b_warehouse.entity.warehouse.class'),
+                    'entityClass' => $this->getContainer()->getParameter('oro_warehouse.entity.warehouse.class'),
                 ]
             ),
             [],
@@ -130,12 +131,12 @@ class WarehouseControllerTest extends WebTestCase
                 'success' => true,
                 'message' => '',
                 'messages' => [],
-                'redirectUrl' => $this->getUrl('orob2b_warehouse_index')
+                'redirectUrl' => $this->getUrl('oro_warehouse_index')
             ],
             json_decode($this->client->getResponse()->getContent(), true)
         );
 
-        $this->client->request('GET', $this->getUrl('orob2b_warehouse_view', ['id' => $id]));
+        $this->client->request('GET', $this->getUrl('oro_warehouse_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
 

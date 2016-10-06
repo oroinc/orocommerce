@@ -212,7 +212,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
      * @param mixed $defaultData
      * @param array $formErrors
      * @param array $groupedAddresses
-     * @dataProvider submitWithPermissionProvider
+     * @dataProvider submitWithoutPermissionProvider
      */
     public function testSubmitWithoutManualPermission(
         $isValid,
@@ -281,7 +281,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function submitWithPermissionProvider()
+    public function submitWithoutPermissionProvider()
     {
         $country = new Country('US');
 

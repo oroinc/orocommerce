@@ -7,10 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\MinimalProductPriceRepository")
  * @ORM\Table(
- *      name="orob2b_price_product_minimal",
+ *      name="oro_price_product_minimal",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="orob2b_minimal_price_uidx",
+ *              name="oro_minimal_price_uidx",
  *              columns={"product_id", "combined_price_list_id", "currency"}
  *          )
  *      }

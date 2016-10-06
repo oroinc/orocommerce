@@ -13,12 +13,12 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity
- * @ORM\Table("orob2b_tax_jurisdiction")
+ * @ORM\Table("oro_tax_jurisdiction")
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *     mode="hidden",
- *     routeName="orob2b_tax_jurisdiction_index",
- *     routeUpdate="orob2b_tax_jurisdiction_update"
+ *     routeName="oro_tax_jurisdiction_index",
+ *     routeUpdate="oro_tax_jurisdiction_update"
  * )
  */
 class TaxJurisdiction
