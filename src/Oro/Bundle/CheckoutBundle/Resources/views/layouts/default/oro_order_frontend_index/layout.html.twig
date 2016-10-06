@@ -1,7 +1,10 @@
 {% block _order_history_widget %}
-    <div class="page-title">
-        {{ block_widget(block) }}
-    </div>
+    <h1 class="section-title">
+        <span class="badge badge_sm badge_circle badge_orange badge_has-inline-sibling">
+            <i class="cf-basket"></i>
+        </span>
+        <span class="section-title__text">{{ block_widget(block) }}</span>
+    </h1>
 {% endblock %}
 
 {% block _checkouts_container_widget %}
