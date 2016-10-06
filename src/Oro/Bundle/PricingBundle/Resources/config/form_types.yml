@@ -151,6 +151,8 @@ services:
     oro_pricing.form.type.product_attribute_price_collection:
        class: Oro\Bundle\PricingBundle\Form\Type\ProductAttributePriceCollectionType
        public: true
+       arguments:
+           - '@doctrine'
        tags:
            - { name: form.type, alias: oro_pricing_product_attribute_price_collection }
 
