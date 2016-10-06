@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseType;
+use Oro\Bundle\InventoryBundle\Form\Type\WarehouseType;
 
 class WarehouseTypeTest extends FormIntegrationTestCase
 {

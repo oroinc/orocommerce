@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityExtendBundle\Event\ValueRenderEvent;

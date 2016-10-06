@@ -1,12 +1,12 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
-use Oro\Bundle\WarehouseBundle\DependencyInjection\OroWarehouseExtension;
+use Oro\Bundle\InventoryBundle\DependencyInjection\OroWarehouseExtension;
 
 class OroWarehouseExtensionTest extends ExtensionTestCase
 {

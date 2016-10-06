@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Functional\Controller\Api\Rest;
+namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller\Api\Rest;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
 
 /**
  * @dbIsolation
@@ -22,14 +22,14 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
         );
         $this->loadFixtures(
             [
-                'Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels',
+                'Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels',
             ]
         );
     }
 
     public function testDeleteAction()
     {
-        /** @var WarehouseInventoryLevel $entity */
+        /** @var InventoryLevel $entity */
         $entity = $this->getWarehouseInventoryLevelReference(
             LoadWarehousesAndInventoryLevels::WAREHOUSE1,
             'product_unit_precision.product.1.liter'
@@ -45,7 +45,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
     /**
      * @param string $warehouseReference
      * @param string $precisionReference
-     * @return WarehouseInventoryLevel
+     * @return InventoryLevel
      */
     protected function getWarehouseInventoryLevelReference($warehouseReference, $precisionReference)
     {

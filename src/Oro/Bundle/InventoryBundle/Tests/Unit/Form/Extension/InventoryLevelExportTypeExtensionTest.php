@@ -1,11 +1,11 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-use Oro\Bundle\WarehouseBundle\Form\Extension\InventoryLevelExportTypeExtension;
-use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\InventoryBundle\Form\Extension\InventoryLevelExportTypeExtension;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
 class InventoryLevelExportTypeExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,7 +29,7 @@ class InventoryLevelExportTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->inventoryLevelExportTypeExtension->buildForm(
             $builder,
-            ['entityName' => WarehouseInventoryLevel::class]
+            ['entityName' => InventoryLevel::class]
         );
     }
 
@@ -59,7 +59,7 @@ class InventoryLevelExportTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->inventoryLevelExportTypeExtension->buildForm(
             $builder,
-            ['entityName' => WarehouseInventoryLevel::class]
+            ['entityName' => InventoryLevel::class]
         );
     }
 

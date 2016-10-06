@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -16,7 +16,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType;
+use Oro\Bundle\InventoryBundle\Form\Type\WarehouseInventoryLevelGridType;
 
 class WarehouseInventoryLevelGridTypeTest extends FormIntegrationTestCase
 {

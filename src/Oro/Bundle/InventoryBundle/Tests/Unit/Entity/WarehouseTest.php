@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;

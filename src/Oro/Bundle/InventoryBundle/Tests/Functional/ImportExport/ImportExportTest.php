@@ -1,6 +1,7 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Functional\ImportExport;
+namespace Oro\Bundle\InventoryBundle\Tests\Functional\ImportExport;
+
 
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\File;
@@ -8,11 +9,11 @@ use Symfony\Component\Yaml\Yaml;
 
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
 
 /**
  * @dbIsolation
@@ -37,7 +38,6 @@ class ImportExportTest extends AbstractImportExportTestCase
         'SKU',
         'Product',
         'Inventory Status',
-        'Warehouse',
         'Quantity',
         'Unit',
     ];
@@ -114,7 +114,7 @@ class ImportExportTest extends AbstractImportExportTestCase
             $this->getUrl(
                 'oro_importexport_import_form',
                 [
-                    'entity' => WarehouseInventoryLevel::class,
+                    'entity' => InventoryLevel::class,
                     '_widgetContainer' => 'dialog',
                 ]
             )
@@ -200,7 +200,7 @@ class ImportExportTest extends AbstractImportExportTestCase
 
         $expectedRows = count(
             $this->client->getContainer()->get('oro_entity.doctrine_helper')
-                ->getEntityRepository(WarehouseInventoryLevel::class)
+                ->getEntityRepository(InventoryLevel::class)
                 ->findAll()
         );
 
@@ -217,12 +217,12 @@ class ImportExportTest extends AbstractImportExportTestCase
         }
 
         $inventoryLevels = $this->client->getContainer()->get('oro_api.doctrine_helper')
-            ->getEntityRepository(WarehouseInventoryLevel::class)
+            ->getEntityRepository(InventoryLevel::class)
             ->findAll();
         $formatter = $this->client->getContainer()->get('oro_product.formatter.product_unit_label');
         $actualUnits = [];
         foreach ($inventoryLevels as $inventoryLevel) {
-            /** @var WarehouseInventoryLevel $inventoryLevel */
+            /** @var InventoryLevel $inventoryLevel */
             $precisionUnit = $inventoryLevel->getProductUnitPrecision()->getUnit();
             $actualUnits[] = $formatter->format(
                 $precisionUnit ? $precisionUnit->getCode() : null,
@@ -343,7 +343,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         return [
             '_widgetContainer' => 'dialog',
             '_wid' => uniqid('abc', true),
-            'entity' => WarehouseInventoryLevel::class,
+            'entity' => InventoryLevel::class,
             'processorAlias' => 'oro_warehouse_detailed_inventory_levels'
         ];
     }
@@ -363,7 +363,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $configuration = [
             'import_validation' => [
                 'processorAlias' => 'oro_warehouse.warehouse_inventory_level',
-                'entityName' => WarehouseInventoryLevel::class,
+                'entityName' => InventoryLevel::class,
                 'filePath' => $filePath,
             ],
         ];

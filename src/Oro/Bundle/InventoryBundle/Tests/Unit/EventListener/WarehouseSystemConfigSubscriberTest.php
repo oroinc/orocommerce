@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
-use Oro\Bundle\WarehouseBundle\EventListener\WarehouseSystemConfigSubscriber;
-use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfigConverter;
+use Oro\Bundle\InventoryBundle\EventListener\WarehouseSystemConfigSubscriber;
+use Oro\Bundle\InventoryBundle\SystemConfig\WarehouseConfigConverter;
 
 class WarehouseSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
 {

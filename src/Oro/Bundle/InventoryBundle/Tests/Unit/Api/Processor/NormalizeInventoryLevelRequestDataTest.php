@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Api\Processor;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Api\Processor;
 
 use Doctrine\ORM\EntityRepository;
 
@@ -10,10 +10,10 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\WarehouseBundle\Api\Processor\NormalizeInventoryLevelRequestData;
+use Oro\Bundle\InventoryBundle\Api\Processor\NormalizeInventoryLevelRequestData;
 use Oro\Bundle\WarehouseProBundle\Entity\Helper\WarehouseCounter;
 use Oro\Bundle\WarehouseProBundle\Entity\Repository\WarehouseRepository;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\InventoryBundle\Entity\Warehouse;
 
 class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
 {

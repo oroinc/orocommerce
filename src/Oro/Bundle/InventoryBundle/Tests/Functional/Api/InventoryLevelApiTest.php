@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Functional\Api;
+namespace Oro\Bundle\InventoryBundle\Tests\Functional\Api;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -8,9 +8,9 @@ use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Functional\Api\ApiResponseContentTrait;
-use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
-use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesInventoryLevelWithPrimaryUnit;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesInventoryLevelWithPrimaryUnit;
 
 /**
  * @dbIsolation
@@ -41,7 +41,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
      */
     public function testCgetEntity(array $filters, $expectedCount, array $expectedContent)
     {
-        $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
+        $entityType = $this->getEntityType(InventoryLevel::class);
 
         $params = ['include' => 'product,productUnitPrecision'];
         foreach ($filters as $filter) {
@@ -828,7 +828,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
 
     public function testUpdateEntity()
     {
-        /** @var WarehouseInventoryLevel $inventoryLevel */
+        /** @var InventoryLevel $inventoryLevel */
         $inventoryLevel = $this->getReference(
             sprintf(
                 'warehouse_inventory_level.%s',
@@ -837,7 +837,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         );
         $this->assertEquals('10', $inventoryLevel->getQuantity());
 
-        $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
+        $entityType = $this->getEntityType(InventoryLevel::class);
         $data = [
             'data' => [
                 'type' => $entityType,
@@ -865,7 +865,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
 
     public function testUpdateEntityWithDefaultUnit()
     {
-        $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
+        $entityType = $this->getEntityType(InventoryLevel::class);
         $data = [
             'data' => [
                 'type' => $entityType,
@@ -892,7 +892,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
 
     public function testCreateEntity()
     {
-        $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
+        $entityType = $this->getEntityType(InventoryLevel::class);
 
         $data = [
             'data' => [
@@ -926,7 +926,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
 
     public function testCreateEntityWithDefaultUnit()
     {
-        $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
+        $entityType = $this->getEntityType(InventoryLevel::class);
 
         $data = [
             'data' => [
@@ -954,7 +954,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
 
     public function testDeleteEntity()
     {
-        /** @var WarehouseInventoryLevel $inventoryLevel */
+        /** @var InventoryLevel $inventoryLevel */
         $inventoryLevel = $this->getReference(
             sprintf(
                 'warehouse_inventory_level.%s',
@@ -962,7 +962,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
             )
         );
 
-        $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
+        $entityType = $this->getEntityType(InventoryLevel::class);
         $response = $this->request(
             'DELETE',
             $this->getUrl('oro_rest_api_delete', ['entity' => $entityType, 'id' => $inventoryLevel->getId()])
@@ -974,7 +974,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
 
     public function testDeleteEntityUsingFilters()
     {
-        /** @var WarehouseInventoryLevel $inventoryLevel */
+        /** @var InventoryLevel $inventoryLevel */
         $inventoryLevel = $this->getReference(
             sprintf(
                 'warehouse_inventory_level.%s',
@@ -989,7 +989,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
             ]
         ];
 
-        $entityType = $this->getEntityType(WarehouseInventoryLevel::class);
+        $entityType = $this->getEntityType(InventoryLevel::class);
         $response = $this->request(
             'DELETE',
             $this->getUrl('oro_rest_api_cdelete', ['entity' => $entityType]),
@@ -1048,8 +1048,8 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
     protected function assertUpdatedInventoryLevel(array $result, $inventoryLevelId, $quantity)
     {
         $doctrineHelper = $this->getContainer()->get('oro_api.doctrine_helper');
-        /** @var WarehouseInventoryLevel $inventoryLevel */
-        $inventoryLevel = $doctrineHelper->getEntity(WarehouseInventoryLevel::class, $inventoryLevelId);
+        /** @var InventoryLevel $inventoryLevel */
+        $inventoryLevel = $doctrineHelper->getEntity(InventoryLevel::class, $inventoryLevelId);
 
         $this->assertEquals($quantity, $result['data']['attributes']['quantity']);
         $this->assertEquals($quantity, $inventoryLevel->getQuantity());
@@ -1065,7 +1065,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         $doctrineHelper = $this->getContainer()->get('oro_api.doctrine_helper');
         $productRepository = $this->doctrineHelper->getEntityRepository(Product::class);
         $productUnitPrecisionRepository = $this->doctrineHelper->getEntityRepository(ProductUnitPrecision::class);
-        $inventoryLevelRepository = $doctrineHelper->getEntityRepository(WarehouseInventoryLevel::class);
+        $inventoryLevelRepository = $doctrineHelper->getEntityRepository(InventoryLevel::class);
 
         /** @var Product $product */
         $product = $productRepository->findOneBy(['sku' => $productSku]);
@@ -1073,7 +1073,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         $productUnitPrecision = $unit
             ? $productUnitPrecisionRepository->findOneBy(['product' => $product, 'unit' => $unit])
             : $product->getPrimaryUnitPrecision();
-        /** @var WarehouseInventoryLevel $inventoryLevel */
+        /** @var InventoryLevel $inventoryLevel */
         $inventoryLevel = $inventoryLevelRepository->findOneBy(
             [
                 'product' => $product->getId(),
@@ -1081,7 +1081,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
             ]
         );
 
-        $this->assertInstanceOf(WarehouseInventoryLevel::class, $inventoryLevel);
+        $this->assertInstanceOf(InventoryLevel::class, $inventoryLevel);
         $this->assertEquals($quantity, $inventoryLevel->getQuantity());
     }
 
@@ -1091,7 +1091,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
     protected function assertDeletedInventorLevel($inventoryLevelId)
     {
         $doctrineHelper = $this->getContainer()->get('oro_api.doctrine_helper');
-        $inventoryLevelRepository = $doctrineHelper->getEntityRepository(WarehouseInventoryLevel::class);
+        $inventoryLevelRepository = $doctrineHelper->getEntityRepository(InventoryLevel::class);
         $result = $inventoryLevelRepository->findOneBy(['id' => $inventoryLevelId]);
         $this->assertNull($result);
     }

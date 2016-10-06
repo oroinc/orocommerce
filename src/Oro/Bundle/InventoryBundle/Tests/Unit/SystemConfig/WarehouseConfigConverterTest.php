@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\SystemConfig;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\SystemConfig;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\InventoryBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseProBundle\SystemConfig\WarehouseConfig;
 use Oro\Bundle\WarehouseProBundle\SystemConfig\WarehouseConfigConverter;
 use Oro\Component\Testing\Unit\EntityTrait;

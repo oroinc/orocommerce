@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
@@ -8,8 +8,8 @@ use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\OrderBundle\Form\Section\SectionProvider;
 use Oro\Bundle\OrderBundle\Form\Type\OrderLineItemType;
-use Oro\Bundle\WarehouseBundle\Entity\Helper\WarehouseCounter;
-use Oro\Bundle\WarehouseBundle\Form\Extension\OrderLineItemFormExtension;
+use Oro\Bundle\InventoryBundle\Entity\Helper\WarehouseCounter;
+use Oro\Bundle\InventoryBundle\Form\Extension\OrderLineItemFormExtension;
 
 class OrderLineItemFormExtensionTest extends \PHPUnit_Framework_TestCase
 {

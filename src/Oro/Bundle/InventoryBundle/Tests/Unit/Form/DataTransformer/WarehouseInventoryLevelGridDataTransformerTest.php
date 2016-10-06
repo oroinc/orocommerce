@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Form\DataTransformer;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\DataTransformer;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -8,7 +8,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\WarehouseBundle\Form\DataTransformer\WarehouseInventoryLevelGridDataTransformer;
+use Oro\Bundle\InventoryBundle\Form\DataTransformer\WarehouseInventoryLevelGridDataTransformer;
 
 class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit_Framework_TestCase
 {

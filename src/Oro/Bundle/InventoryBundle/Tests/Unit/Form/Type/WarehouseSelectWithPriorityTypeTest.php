@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
@@ -11,7 +11,7 @@ use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseSelectWithPriorityType;
 use Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseSelectType;
-use Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Type\Stub\WarehouseSelectTypeStub;
+use Oro\Bundle\InventoryBundle\Tests\Unit\Form\Type\Stub\WarehouseSelectTypeStub;
 
 class WarehouseSelectWithPriorityTypeTest extends FormIntegrationTestCase
 {

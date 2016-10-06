@@ -1,11 +1,11 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
-use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
-use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesWithOrders;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesWithOrders;
 
 /**
  * @dbIsolation

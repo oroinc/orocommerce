@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Api\Processor;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Api\Processor;
 
 use Doctrine\ORM\QueryBuilder;
 
@@ -11,8 +11,8 @@ use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfigExtra;
 use Oro\Bundle\ApiBundle\Config\FiltersConfigExtra;
 use Oro\Bundle\ApiBundle\Util\CriteriaConnector;
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
-use Oro\Bundle\WarehouseBundle\Api\Processor\BuildSingleWarehouseInventoryLevelQuery;
-use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\InventoryBundle\Api\Processor\BuildSingleWarehouseInventoryLevelQuery;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
 class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelatedTestCase
 {
@@ -89,7 +89,7 @@ class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelated
             ->method('applyCriteria');
 
         $this->context->setCriteria($criteria);
-        $this->context->setClassName(WarehouseInventoryLevel::class);
+        $this->context->setClassName(InventoryLevel::class);
 
         $this->processor->process($this->context);
 

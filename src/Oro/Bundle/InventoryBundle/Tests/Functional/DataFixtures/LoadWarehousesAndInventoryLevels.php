@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -9,7 +9,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
 class LoadWarehousesAndInventoryLevels extends AbstractFixture implements DependentFixtureInterface
 {
@@ -49,7 +49,7 @@ class LoadWarehousesAndInventoryLevels extends AbstractFixture implements Depend
         /** @var ProductUnitPrecision $precision */
         $precision = $this->getReference($precisionReference);
 
-        $level = new WarehouseInventoryLevel();
+        $level = new InventoryLevel();
         $level
             ->setProductUnitPrecision($precision)
             ->setQuantity($quantity);

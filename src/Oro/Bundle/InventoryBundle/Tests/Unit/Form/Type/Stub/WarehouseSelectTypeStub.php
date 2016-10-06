@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Type\Stub;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Type\Stub;
 
 use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseProBundle\Form\Type\WarehouseSelectType;

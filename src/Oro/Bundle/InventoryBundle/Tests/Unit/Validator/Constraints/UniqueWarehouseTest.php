@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-use Oro\Bundle\WarehouseBundle\Validator\Constraints\UniqueWarehouse;
+use Oro\Bundle\InventoryBundle\Validator\Constraints\UniqueWarehouse;
 
 class UniqueWarehouseTest extends \PHPUnit_Framework_TestCase
 {

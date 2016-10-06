@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Model\Data;
+namespace Oro\Bundle\InventoryBundle\Tests\Model\Data;
 
 use Oro\Bundle\ProductBundle\Provider\ProductUnitsProvider;
-use Oro\Bundle\WarehouseBundle\Model\Data\ProductUnitTransformer;
+use Oro\Bundle\InventoryBundle\Model\Data\ProductUnitTransformer;
 
 class ProductUnitTransformerTest extends \PHPUnit_Framework_TestCase
 {

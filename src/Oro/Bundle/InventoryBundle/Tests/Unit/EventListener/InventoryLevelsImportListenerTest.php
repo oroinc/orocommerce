@@ -1,15 +1,15 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Akeneo\Bundle\BatchBundle\Entity\JobExecution;
 use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
 use Akeneo\Bundle\BatchBundle\Event\StepExecutionEvent;
 use Akeneo\Bundle\BatchBundle\Item\ExecutionContext;
 
-use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
-use Oro\Bundle\WarehouseBundle\EventListener\InventoryLevelsImportListener;
-use Oro\Bundle\WarehouseBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategy;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\EventListener\InventoryLevelsImportListener;
+use Oro\Bundle\InventoryBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategy;
 
 class InventoryLevelsImportListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -38,7 +38,7 @@ class InventoryLevelsImportListenerTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->getEvent(
             InventoryLevelsImportListener::INVENTORY_IMPORT_PROCESSOR_ALIAS,
-            WarehouseInventoryLevel::class
+            InventoryLevel::class
         );
 
         $this->warehouseInventoryLevelStrategy->expects($this->exactly(1))

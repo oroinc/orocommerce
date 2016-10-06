@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Functional\ImportExport;
+namespace Oro\Bundle\InventoryBundle\Tests\Functional\ImportExport;
 
 use Symfony\Component\Yaml\Yaml;
 
@@ -13,9 +13,7 @@ use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\WarehouseProBundle\Entity\Repository\WarehouseRepository;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
-use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
 abstract class AbstractImportExportTestCase extends WebTestCase
 {
@@ -38,7 +36,7 @@ abstract class AbstractImportExportTestCase extends WebTestCase
      */
     public function inventoryStatusDataProvider()
     {
-        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . $this->getImportStatusFile();
+        $filePath = $this->getFilePath() . $this->getImportStatusFile();
 
         return Yaml::parse(file_get_contents($filePath));
     }
@@ -48,9 +46,18 @@ abstract class AbstractImportExportTestCase extends WebTestCase
      */
     public function inventoryLevelsDataProvider()
     {
-        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . $this->getImportLevelFile();
+        $filePath = $this->getFilePath() . $this->getImportLevelFile();
 
         return Yaml::parse(file_get_contents($filePath));
+    }
+
+    /**
+     * Return bundle relative path where test data is found
+     * @return string
+     */
+    protected function getFilePath()
+    {
+        return __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -64,7 +71,7 @@ abstract class AbstractImportExportTestCase extends WebTestCase
         $configuration = [
             'import' => [
                 'processorAlias' => 'oro_warehouse.warehouse_inventory_level',
-                'entityName' => WarehouseInventoryLevel::class,
+                'entityName' => InventoryLevel::class,
                 'filePath' => $filePath,
             ],
         ];
@@ -89,7 +96,6 @@ abstract class AbstractImportExportTestCase extends WebTestCase
             'SKU' => 'product:sku',
             'Inventory Status' => 'product:inventoryStatus:name',
             'Quantity' => 'quantity',
-            'Warehouse' => 'warehouse:name',
             'Unit' => 'productUnitPrecision:unit:code'
         ];
     }
@@ -97,7 +103,7 @@ abstract class AbstractImportExportTestCase extends WebTestCase
     /**
      * @param array $values
      *
-     * @return null|WarehouseInventoryLevel
+     * @return null|InventoryLevel
      */
     protected function getInventoryLevelEntity($values = [])
     {
@@ -109,22 +115,12 @@ abstract class AbstractImportExportTestCase extends WebTestCase
         $productUnitPrecisionRepository = $this->client->getContainer()->get('oro_entity.doctrine_helper')
             ->getEntityRepository(ProductUnitPrecision::class);
 
-        /** @var WarehouseRepository $warehouseRepository */
-        $warehouseRepository = $this->client->getContainer()->get('oro_entity.doctrine_helper')
-            ->getEntityRepository(Warehouse::class);
 
         /** @var EntityRepository $warehouseInventoryRepository */
         $warehouseInventoryRepository = $this->client->getContainer()->get('oro_entity.doctrine_helper')
-            ->getEntityRepository(WarehouseInventoryLevel::class);
+            ->getEntityRepository(InventoryLevel::class);
 
         $product = $productRepository->findOneBy(['sku' => $values['SKU']]);
-
-        $warehouse = isset($values['Warehouse']) ? $values['Warehouse'] : null;
-        if (!$warehouse) {
-            $warehouse = $warehouseRepository->getSingularWarehouse();
-        } else {
-            $warehouse = $warehouseRepository->findOneBy(['name' => $warehouse]);
-        }
 
         $unit = isset($values['Unit']) ? $values['Unit'] : null;
         if (!$unit) {
@@ -141,7 +137,6 @@ abstract class AbstractImportExportTestCase extends WebTestCase
         return $warehouseInventoryRepository->findOneBy(
             [
                 'product' => $product,
-                'warehouse' => $warehouse,
                 'productUnitPrecision' => $productUnitPrecision
             ]
         );

@@ -1,5 +1,5 @@
 inventory_status_only:
-    fileName: A2.csv
+    fileName: A1.csv
 
 inventory_status_minimal:
-    fileName: D2.csv
+    fileName: D1.csv

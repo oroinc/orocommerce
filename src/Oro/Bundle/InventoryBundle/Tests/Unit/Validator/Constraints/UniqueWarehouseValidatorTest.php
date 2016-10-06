@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;

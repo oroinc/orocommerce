@@ -1,11 +1,11 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
-use Oro\Bundle\WarehouseBundle\Form\Type\WarehouseSelectType;
+use Oro\Bundle\InventoryBundle\Form\Type\WarehouseSelectType;
 
 class WarehouseSelectTypeTest extends \PHPUnit_Framework_TestCase
 {

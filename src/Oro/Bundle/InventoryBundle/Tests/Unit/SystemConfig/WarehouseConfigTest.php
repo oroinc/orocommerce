@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\SystemConfig;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\SystemConfig;
 
 use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 use Oro\Bundle\WarehouseProBundle\SystemConfig\WarehouseConfig;

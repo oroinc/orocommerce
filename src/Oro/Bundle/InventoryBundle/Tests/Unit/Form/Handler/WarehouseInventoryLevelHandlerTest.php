@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,12 +9,14 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Component\Testing\Unit\EntityTrait;
+
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\InventoryBundle\Form\Handler\InventoryLevelHandler;
+use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WarehouseBundle\Form\Handler\WarehouseInventoryLevelHandler;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
-use Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel;
+
 
 class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,7 +43,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
     protected $request;
 
     /**
-     * @var WarehouseInventoryLevelHandler
+     * @var InventoryLevelHandler
      */
     protected $handler;
 
@@ -52,7 +54,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
         $this->roundingService = $this->getMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
         $this->request = new Request();
 
-        $this->handler = new WarehouseInventoryLevelHandler(
+        $this->handler = new InventoryLevelHandler(
             $this->form,
             $this->manager,
             $this->request,
@@ -86,7 +88,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param mixed $formData
-     * @param WarehouseInventoryLevel[] $existingLevels
+     * @param InventoryLevel[] $existingLevels
      * @param array $expectedLevels
      * @dataProvider processDataProvider
      */
@@ -127,7 +129,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager->expects($this->any())
             ->method('getRepository')
-            ->with('OroWarehouseBundle:WarehouseInventoryLevel')
+            ->with('OroWarehouseBundle:InventoryLevel')
             ->willReturn($repository);
 
         // mock remove and persist behaviour
@@ -136,7 +138,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager->expects($this->any())
             ->method('persist')
-            ->with($this->isInstanceOf('Oro\Bundle\WarehouseProBundle\Entity\WarehouseInventoryLevel'))
+            ->with($this->isInstanceOf('Oro\Bundle\WarehouseProBundle\Entity\InventoryLevel'))
             ->willReturnCallback(
                 function ($entity) use (&$persistedEntities) {
                     $persistedEntities[] = $entity;
@@ -144,7 +146,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
             );
         $this->manager->expects($this->any())
             ->method('remove')
-            ->with($this->isInstanceOf('Oro\Bundle\WarehouseProBundle\Entity\WarehouseInventoryLevel'))
+            ->with($this->isInstanceOf('Oro\Bundle\WarehouseProBundle\Entity\InventoryLevel'))
             ->willReturnCallback(
                 function ($entity) use (&$removedEntities) {
                     $removedEntities[] = $entity;
@@ -161,7 +163,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler->process();
 
         foreach ($expectedLevels as $expectedLevel) {
-            /** @var WarehouseInventoryLevel $entity */
+            /** @var InventoryLevel $entity */
             $entity = $expectedLevel['entity'];
             if (!empty($expectedLevel['persisted'])) {
                 $this->assertEquals($entity, $this->findLevelById($persistedEntities, $entity->getId()));
@@ -291,12 +293,12 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
      * @param int $precisionId
      * @param int|float $quantity
      * @param int $precision
-     * @return WarehouseInventoryLevel
+     * @return InventoryLevel
      */
     protected function createLevel($id, $warehouseId, $precisionId, $quantity, $precision = 0)
     {
         return $this->getEntity(
-            'Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel',
+            'Oro\Bundle\InventoryBundle\Entity\InventoryLevel',
             [
                 'id' => $id,
                 'warehouse' => $this->createWarehouse($warehouseId),
@@ -307,9 +309,9 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param WarehouseInventoryLevel[] $levels
+     * @param InventoryLevel[] $levels
      * @param int $id
-     * @return WarehouseInventoryLevel|null
+     * @return InventoryLevel|null
      */
     protected function findLevelById(array $levels, $id)
     {

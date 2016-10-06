@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller;
 
 use Symfony\Component\Routing\RouterInterface;
 
@@ -19,7 +19,7 @@ class WarehouseInventoryLevelControllerNoProductUnitsTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels'
+                'Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels'
             ]
         );
     }
