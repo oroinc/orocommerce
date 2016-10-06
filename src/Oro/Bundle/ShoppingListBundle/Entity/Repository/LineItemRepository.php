@@ -124,67 +124,33 @@ class LineItemRepository extends EntityRepository
      */
     public function getLastProductsGroupedByShoppingList($shoppingLists, $productCount)
     {
-        $sql = <<<SQL
-SELECT
-  li.id AS lineItemId,
-  li.shopping_list_id AS shoppingListId,
-  product.id AS productId,
-  product_name_loc.id AS productNameLocId,
-  product_name_loc.fallback AS productNameLocFallback,
-  product_name_loc.string AS productNameLocString,
-  product_name_loc.text AS productNameLocText,
-  product_name_loc.localization_id AS productNameLocLocalizationId
-FROM orob2b_shopping_list_line_item li
-INNER JOIN orob2b_product product ON product.id = li.product_id
-INNER JOIN orob2b_product_name product_name ON product.id = product_name.product_id
-INNER JOIN oro_fallback_localization_val product_name_loc ON product_name_loc.id = product_name.localized_value_id
-WHERE li.shopping_list_id IN (?) AND (
-	SELECT COUNT(*) FROM orob2b_shopping_list_line_item AS li2
-	WHERE li2.shopping_list_id = li.shopping_list_id AND li2.id >= li.id
-	ORDER BY li2.id DESC
-) <= ?
-ORDER BY li.shopping_list_id DESC, li.id DESC
-SQL;
-
-        $rsm = new ResultSetMappingBuilder($this->_em);
-        $rsm
-            ->addEntityResult('Oro\Bundle\ShoppingListBundle\Entity\LineItem', 'li')
-            ->addFieldResult('li', 'lineItemId', 'id')
-            ->addJoinedEntityResult('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList', 'list', 'li', 'shoppingList')
-            ->addFieldResult('list', 'shoppingListId', 'id')
-            ->addJoinedEntityResult('Oro\Bundle\ProductBundle\Entity\Product', 'product', 'li', 'product')
-            ->addFieldResult('product', 'productId', 'id')
-            ->addJoinedEntityResult(
-                'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                'names',
-                'product',
-                'names'
-            )
-            ->addFieldResult('names', 'productNameLocId', 'id')
-            ->addFieldResult('names', 'productNameLocFallback', 'fallback')
-            ->addFieldResult('names', 'productNameLocString', 'string')
-            ->addFieldResult('names', 'productNameLocText', 'text')
-            ->addJoinedEntityResult(
-                'Oro\Bundle\LocaleBundle\Entity\Localization',
-                'localization',
-                'names',
-                'localization'
-            )
-            ->addFieldResult('localization', 'productNameLocLocalizationId', 'id')
-        ;
+        $dql = <<<DQL
+SELECT partial li.{id}, partial list.{id}, partial product.{id}, names
+FROM OroShoppingListBundle:LineItem AS li
+INNER JOIN li.shoppingList list
+INNER JOIN li.product product
+INNER JOIN product.names names
+WHERE li.shoppingList IN (:shoppingLists) AND (
+    SELECT COUNT(li2.id) FROM OroShoppingListBundle:LineItem AS li2
+    WHERE li2.shoppingList = li.shoppingList AND li2.id >= li.id
+    ORDER BY li2.id DESC
+) <= :productCount
+ORDER BY li.shoppingList DESC, li.id DESC
+DQL;
 
         $shoppingListIds = array_map(
-            function ($shoppingList) {
+            function (ShoppingList $shoppingList) {
                 return $shoppingList->getId();
             },
             $shoppingLists
         );
 
-        $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
-        $query->setParameter(1, $shoppingListIds);
-        $query->setParameter(2, $productCount);
-
-        $lineItems = $query->getResult();
+        /** @var LineItem[] $lineItems */
+        $lineItems = $this->getEntityManager()
+            ->createQuery($dql)
+            ->setParameter('shoppingLists', $shoppingListIds)
+            ->setParameter('productCount', $productCount)
+            ->getResult();
 
         $result = [];
         foreach ($lineItems as $lineItem) {
