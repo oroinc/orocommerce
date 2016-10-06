@@ -154,8 +154,7 @@ datagrids:
                 sku:
                     data_name: product.sku
                     type: string
-            default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+            disable_default_sorting: true
             toolbar_sorting: true
         filters:
             columns:
@@ -373,6 +372,7 @@ datagrids:
                 params: [ id ]
         sorters:
             toolbar_sorting: true
+            disable_default_sorting: true
             columns:
                 sku:
                     data_name: sku
