@@ -47,7 +47,7 @@ oro:
             select_existing_or_create_new: 'Please select a category on the left or create new one.'
         frontend:
             category.master_category.label: 'Master catalog'
-            welcome.label: 'Welcome'
+            root.title: 'Welcome'
 
         system_configuration:
             groups:

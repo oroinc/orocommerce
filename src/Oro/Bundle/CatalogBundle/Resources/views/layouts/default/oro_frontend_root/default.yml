@@ -5,7 +5,7 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: 'oro.catalog.frontend.welcome.label'
+            optionValue: 'oro.catalog.frontend.root.title'
         - '@addTree':
             items:
                 hero_promo_container:
