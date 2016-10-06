@@ -163,7 +163,6 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
-
             continue_to_shipping_method:
                 label: Continue
                 step_to: enter_shipping_method
@@ -271,7 +270,7 @@ workflows:
             back_to_billing_address:
                 label: Edit Billing Information
                 step_to: enter_billing_address
-                transition_definition: back_to_billing_address_definition
+                transition_definition: clear_payment_and_shipping_abd_recalculate_state_definition
                 is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
@@ -279,7 +278,7 @@ workflows:
             back_to_shipping_address:
                 label: Edit Shipping Information
                 step_to: enter_shipping_address
-                transition_definition: clear_payment_method_and_recalculate_state_definition
+                transition_definition: clear_payment_and_shipping_abd_recalculate_state_definition
                 is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
@@ -293,7 +292,7 @@ workflows:
             back_to_shipping_method:
                 label: Edit Shipping Method
                 step_to: enter_shipping_method
-                transition_definition: clear_payment_method_and_recalculate_state_definition
+                transition_definition: clear_payment_and_shipping_abd_recalculate_state_definition
                 is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
@@ -424,6 +423,7 @@ workflows:
                                     state2: $.result.savedCheckoutState
                 actions:
                     - '@assign_constant_value': [$.result.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
+                    - '@assign_value': [$shipping_method, null]
                     - '@call_method':
                         conditions:
                             '@not_empty': $checkout.billingAddress.accountAddress
@@ -607,10 +607,6 @@ workflows:
                                     entity: $checkout
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
-                        - '@shipping_method_supports':
-                            message: oro.checkout.workflow.condition.shipping_method_supports.message
-                            parameters:
-                                entity: $checkout
                 actions:
                     - '@call_service_method':
                         service: oro_checkout.factory.shipping_context_provider_factory
@@ -640,7 +636,6 @@ workflows:
                         entity: $checkout
                         token: $state_token
                         attribute: $.result.tokenCheckoutState
-
                     - '@tree':
                         conditions:
                             '@not':
@@ -649,6 +644,16 @@ workflows:
                                     state1: $.result.currentCheckoutState
                                     state2: $.result.tokenCheckoutState
                         actions:
+                            - '@call_service_method':
+                                service: oro_checkout.factory.shipping_context_provider_factory
+                                method: create
+                                method_parameters: [$checkout]
+                                attribute: $.result.shippingContext
+                            - '@call_service_method':
+                                service: oro_shipping.shipping_price.provider
+                                method: getPrice
+                                method_parameters: [$.result.shippingContext, $shipping_method, $shipping_method_type]
+                                attribute: $checkout.shippingCost
                             - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
                             - '@delete_checkout_state':
                                 entity: $checkout
@@ -668,10 +673,6 @@ workflows:
                             entity: $checkout
                 conditions:
                     '@and':
-                        - '@shipping_method_supports':
-                            message: oro.checkout.workflow.condition.shipping_method_supports.message
-                            parameters:
-                                entity: $checkout
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -748,11 +749,6 @@ workflows:
                                     is_ajax: true
                                     expected_key: transition
                                     expected_value: continue_to_order_review
-                conditions:
-                    '@shipping_method_supports':
-                        message: oro.checkout.workflow.condition.shipping_method_supports.message
-                        parameters:
-                            entity: $checkout
                 actions:
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -784,6 +780,16 @@ workflows:
                                             state1: $.result.currentCheckoutState
                                             state2: $.result.tokenCheckoutState
                                 actions:
+                                    - '@call_service_method':
+                                        service: oro_checkout.factory.shipping_context_provider_factory
+                                        method: create
+                                        method_parameters: [$checkout]
+                                        attribute: $.result.shippingContext
+                                    - '@call_service_method':
+                                        service: oro_shipping.shipping_price.provider
+                                        method: getPrice
+                                        method_parameters: [$.result.shippingContext, $shipping_method, $shipping_method_type]
+                                        attribute: $checkout.shippingCost
                                     - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
                                     - '@delete_checkout_state':
                                         entity: $checkout
@@ -807,10 +813,6 @@ workflows:
                                   entity: $checkout
                                   state1: $.result.initCheckoutState
                                   state2: $.result.savedCheckoutState
-                      - '@shipping_method_supports':
-                          message: oro.checkout.workflow.condition.shipping_method_supports.message
-                          parameters:
-                              entity: $checkout
                 actions:
                     - '@assign_value':
                         conditions:
@@ -916,7 +918,6 @@ workflows:
                         route_parameters:
                             id: $.id
                             transition: finish_checkout
-
                     - '@redirect':
                         conditions:
                             '@and':
@@ -1079,12 +1080,14 @@ workflows:
                         state: $.result.actualCheckoutState
                         attribute: $state_token
                     - '@assign_value': [$internal_state_token, $state_token]
+
             clear_payment_method_and_recalculate_state_definition:
                 preconditions:
                     '@not_equal': [$payment_in_progress, true]
                 actions:
                     - '@assign_value': [$payment_method, null]
                     - '@assign_value': [$shipping_method, null]
+                    - '@assign_value': [$checkout.shippingCost, null]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.actualCheckoutState
@@ -1098,6 +1101,7 @@ workflows:
                 actions:
                     - '@assign_value': [$payment_method, null]
                     - '@assign_value': [$shipping_method, null]
+                    - '@assign_value': [$checkout.shippingCost, null]
                     - '@assign_value': [$payment_in_progress, false]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout

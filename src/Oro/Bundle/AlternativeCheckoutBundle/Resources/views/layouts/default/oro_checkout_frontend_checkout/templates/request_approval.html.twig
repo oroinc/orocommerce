@@ -9,5 +9,9 @@
         </div>
     </fieldset>
 
+    {% if form.state_token is defined %}
+        {{ form_row(form.state_token) }}
+    {% endif %}
+
     {{ block_widget(block) }}
 {%- endblock %}
