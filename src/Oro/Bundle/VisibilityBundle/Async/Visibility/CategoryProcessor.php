@@ -3,14 +3,17 @@
 namespace Oro\Bundle\VisibilityBundle\Async\Visibility;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Model\CategoryMessageFactory;
 use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CacheBuilder;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -52,12 +55,18 @@ class CategoryProcessor implements MessageProcessorInterface
     protected $scopeManager;
 
     /**
+     * @var DatabaseExceptionHelper
+     */
+    protected $databaseExceptionHelper;
+
+    /**
      * @param ManagerRegistry $registry
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      * @param LoggerInterface $logger
      * @param CategoryMessageFactory $messageFactory
      * @param CacheBuilder $cacheBuilder
      * @param ScopeManager $scopeManager
+     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
         ManagerRegistry $registry,
@@ -65,7 +74,8 @@ class CategoryProcessor implements MessageProcessorInterface
         LoggerInterface $logger,
         CategoryMessageFactory $messageFactory,
         CacheBuilder $cacheBuilder,
-        ScopeManager $scopeManager
+        ScopeManager $scopeManager,
+        DatabaseExceptionHelper $databaseExceptionHelper
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
@@ -73,6 +83,7 @@ class CategoryProcessor implements MessageProcessorInterface
         $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
         $this->scopeManager = $scopeManager;
+        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
     /**
@@ -108,13 +119,15 @@ class CategoryProcessor implements MessageProcessorInterface
         } catch (\Exception $e) {
             $em->rollback();
             $this->logger->error(
-                sprintf(
-                    'Transaction aborted wit error: %s.',
-                    $e->getMessage()
-                )
+                'Unexpected exception occurred during Category visibility resolve',
+                ['exception' => $e]
             );
 
-            return self::REQUEUE;
+            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
+                return self::REQUEUE;
+            } else {
+                return self::REJECT;
+            }
         }
 
         return self::ACK;
@@ -132,9 +145,10 @@ class CategoryProcessor implements MessageProcessorInterface
 
     protected function setToDefaultAccountGroupProductVisibilityWithoutCategory()
     {
-        $this->registry->getManagerForClass(AccountGroupProductVisibility::class)
-            ->getRepository(AccountGroupProductVisibility::class)
-            ->setToDefaultWithoutCategory();
+        /** @var AccountProductVisibilityRepository $repository */
+        $repository = $this->registry->getManagerForClass(AccountGroupProductVisibility::class)
+            ->getRepository(AccountGroupProductVisibility::class);
+        $repository->setToDefaultWithoutCategory();
     }
 
     protected function setToDefaultAccountProductVisibilityWithoutCategory()

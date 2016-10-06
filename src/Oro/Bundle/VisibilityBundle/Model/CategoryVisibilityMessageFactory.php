@@ -95,6 +95,9 @@ class CategoryVisibilityMessageFactory implements MessageFactoryInterface
         $category = $this->registry->getManagerForClass(Category::class)
             ->getRepository(Category::class)
             ->find($data[self::CATEGORY_ID]);
+        $scope = $this->registry->getManagerForClass(Scope::class)
+            ->getRepository(Scope::class)
+            ->find($data[self::SCOPE_ID]);
         if (!$category) {
             throw new InvalidArgumentException('Category object was not found.');
         }

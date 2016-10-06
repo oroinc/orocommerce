@@ -65,15 +65,20 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getRecalculateTotalProvider
      *
-     * @param $entityClassName
+     * @param $originalClassName
      * @param $entityId
      */
-    public function testRecalculateTotalsWithoutEntityID($entityClassName, $entityId)
+    public function testRecalculateTotalsWithoutEntityID($originalClassName, $entityId)
     {
-        $this->entityRoutingHelper->expects($this->once())->method('resolveEntityClass')->willReturn($entityClassName);
+        $correctEntityClass = str_replace('_', '\\', $originalClassName);
+
+        $this->entityRoutingHelper->expects($this->once())
+            ->method('resolveEntityClass')
+            ->with($originalClassName)
+            ->willReturn($correctEntityClass);
 
         if ($entityId > 0) {
-            $entity = new $entityClassName();
+            $entity = new $correctEntityClass();
 
             $repository = $this->initRepository($entity);
             $manager = $this->initManager($repository);
@@ -81,7 +86,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
             $this->doctrine->expects($this->once())->method('getManager')->willReturn($manager);
             $this->securityFacade->expects($this->once())->method('isGranted')->willReturn(true);
         } else {
-            $entity = new $entityClassName();
+            $entity = new $correctEntityClass();
         }
 
         $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
@@ -98,7 +103,7 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('enableRecalculation');
 
-        $totals = $this->requestHandler->recalculateTotals($entityClassName, $entityId, $request);
+        $totals = $this->requestHandler->recalculateTotals($originalClassName, $entityId, $request);
         $expectedTotals = $this->getExpectedTotal();
 
         self::assertEquals($expectedTotals, $totals);
@@ -111,13 +116,21 @@ class RequestHandlerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'test with entityId = 0' => [
-                'entityClassName' => 'Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub',
+                'originalClassName' => 'Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub',
+                'entityId' => 0
+            ],
+            'test with URL safe class and entityId = 0' => [
+                'originalClassName' => 'Oro_Bundle_PricingBundle_Tests_Unit_SubtotalProcessor_Stub_EntityStub',
                 'entityId' => 0
             ],
             'test with entityId > 0' => [
-                'entityClassName' => 'Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub',
+                'originalClassName' => 'Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub\EntityStub',
                 'entityId' => 1
-            ]
+            ],
+            'test with URL safe class and entityId > 0' => [
+                'originalClassName' => 'Oro_Bundle_PricingBundle_Tests_Unit_SubtotalProcessor_Stub_EntityStub',
+                'entityId' => 1
+            ],
         ];
     }
 
