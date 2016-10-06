@@ -16,7 +16,9 @@
         {% set attr = layout_attr_defaults(attr, {
             '~class': " topbar__navigation topbar__navigation--has-sibling"
         }) %}
-        <nav {{ block('block_attributes') }}>
+
+        <nav {{ block('block_attributes') }}
+        >
             {{ block_widget(block) }}
         </nav>
     {% endspaceless %}
@@ -36,8 +38,20 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': " col-md-5 col-sm-5"
     }) %}
+    {% set dom_relocation_options =  {
+        responsive: [
+            {
+                breakpoint: 990,
+                moveTo: '[data-main-menu-container]'
+            }
+        ]}|json_encode
+    %}
+
     <div {{ block('block_attributes') }}>
-        <nav class="topbar__navigation">
+        <nav class="topbar__navigation"
+             data-dom-relocation
+             data-dom-relocation-options="{{ dom_relocation_options }}"
+        >
             <ul>
                 {{ block_widget(block) }}
             </ul>

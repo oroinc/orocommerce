@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\InventoryBundle\ImportExport\Serializer;
 
+use Oro\Bundle\CurrencyBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\ImportExportBundle\Event\Events;
 use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ConfigurableEntityNormalizer;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
-use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
 class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
 {

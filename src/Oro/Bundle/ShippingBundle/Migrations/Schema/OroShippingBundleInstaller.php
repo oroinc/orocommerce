@@ -9,6 +9,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class OroShippingBundleInstaller implements Installation
 {
@@ -31,16 +32,17 @@ class OroShippingBundleInstaller implements Installation
         $this->createOroShippingProductOptsTable($schema);
         $this->createOroShippingWeightUnitTable($schema);
         $this->createOroShippingRuleTable($schema);
+        $this->createOroShippingRuleMthdConfigTable($schema);
+        $this->createOroShippingRuleMthdTpCnfgTable($schema);
         $this->createOroShippingRuleDestinationTable($schema);
-        $this->createOroShippingRuleConfigTable($schema);
-        $this->createOroShipFlatRateRuleCnfTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroShippingRuleConfigForeignKeys($schema);
-        $this->addOroShipFlatRateRuleCnfForeignKeys($schema);
         $this->addOroShippingProductOptsForeignKeys($schema);
+        $this->addOroShippingRuleMthdConfigForeignKeys($schema);
+        $this->addOroShippingRuleMthdTpCnfgForeignKeys($schema);
         $this->addOroShippingRuleDestinationForeignKeys($schema);
     }
+
     /**
      * Create oro_shipping_freight_class table
      *
@@ -92,43 +94,6 @@ class OroShippingBundleInstaller implements Installation
     }
 
     /**
-     * Create oro_shipping_rule_config table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroShippingRuleConfigTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_shipping_rule_config');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('rule_id', 'integer', []);
-        $table->addColumn('type', 'string', ['length' => 255]);
-        $table->addColumn('method', 'string', ['length' => 255]);
-        $table->addColumn('entity_name', 'string', ['length' => 255]);
-        $table->addColumn('enabled', 'boolean', []);
-        $table->setPrimaryKey(['id']);
-    }
-
-    /**
-     * Create oro_ship_flat_rate_rule_cnf table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroShipFlatRateRuleCnfTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_ship_flat_rate_rule_cnf');
-        $table->addColumn('id', 'integer', []);
-        $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
-        $table->addColumn('handling_fee_value', 'money', [
-            'notnull' => false,
-            'precision' => 19,
-            'scale' => 4,
-            'comment' => '(DC2Type:money)'
-        ]);
-        $table->addColumn('processing_type', 'string', ['length' => 255]);
-        $table->setPrimaryKey(['id']);
-    }
-
-    /**
      * Create oro_shipping_weight_unit table
      *
      * @param Schema $schema
@@ -150,30 +115,61 @@ class OroShippingBundleInstaller implements Installation
     {
         $table = $schema->createTable('oro_shipping_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('name', 'text', ['notnull' => true]);
-        $table->addColumn('enabled', 'boolean', ['notnull' => true, 'default' => true]);
-        $table->addColumn('priority', 'integer', ['notnull' => true]);
+        $table->addColumn('name', 'text', []);
+        $table->addColumn('enabled', 'boolean', ['default' => true]);
+        $table->addColumn('priority', 'integer', []);
         $table->addColumn('conditions', 'text', ['notnull' => false]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('stop_processing', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['enabled', 'currency'], 'oro_shipping_rl_en_cur_idx', []);
+        $table->addIndex(['enabled', 'currency'], 'oro_shipping_rule_en_cur_idx', []);
     }
 
     /**
-     * Create oro_shipping_rl_destination table
+     * Create oro_shipping_rule_mthd_config table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroShippingRuleMthdConfigTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_shipping_rule_mthd_config');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('rule_id', 'integer', []);
+        $table->addColumn('method', 'string', ['length' => 255]);
+        $table->addColumn('options', 'array', ['comment' => '(DC2Type:array)']);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create oro_shipping_rule_mthd_tp_cnfg table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroShippingRuleMthdTpCnfgTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_shipping_rule_mthd_tp_cnfg');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('method_config_id', 'integer', []);
+        $table->addColumn('type', 'string', ['length' => 255]);
+        $table->addColumn('options', 'array', ['comment' => '(DC2Type:array)']);
+        $table->addColumn('enabled', 'boolean', ['default' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create oro_shipping_rule_destination table
      *
      * @param Schema $schema
      */
     protected function createOroShippingRuleDestinationTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_shipping_rl_destination');
+        $table = $schema->createTable('oro_shipping_rule_destination');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('rule_id', 'integer', []);
         $table->addColumn('country_code', 'string', ['length' => 2]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('postal_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('rule_id', 'integer', []);
         $table->setPrimaryKey(['id']);
     }
 
@@ -218,62 +214,62 @@ class OroShippingBundleInstaller implements Installation
     }
 
     /**
-     * Add oro_shipping_rl_destination foreign keys.
+     * Add oro_shipping_rule_mthd_config foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroShippingRuleMthdConfigForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_shipping_rule_mthd_config');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_shipping_rule'),
+            ['rule_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add oro_shipping_rule_mthd_tp_cnfg foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroShippingRuleMthdTpCnfgForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_shipping_rule_mthd_tp_cnfg');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_shipping_rule_mthd_config'),
+            ['method_config_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add oro_shipping_rule_destination foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroShippingRuleDestinationForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_shipping_rl_destination');
+        $table = $schema->getTable('oro_shipping_rule_destination');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_shipping_rule'),
+            ['rule_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_dictionary_country'),
             ['country_code'],
             ['iso2_code'],
-            ['onDelete' => null, 'onUpdate' => null]
+            ['onUpdate' => null, 'onDelete' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_dictionary_region'),
             ['region_code'],
             ['combined_code'],
-            ['onDelete' => null, 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_shipping_rule'),
-            ['rule_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * Add oro_shipping_rule_config foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroShippingRuleConfigForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_shipping_rule_config');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_shipping_rule'),
-            ['rule_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-    }
-
-    /**
-     * Add oro_ship_flat_rate_rule_cnf foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroShipFlatRateRuleCnfForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_ship_flat_rate_rule_cnf');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_shipping_rule_config'),
-            ['id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            ['onUpdate' => null, 'onDelete' => null]
         );
     }
 }

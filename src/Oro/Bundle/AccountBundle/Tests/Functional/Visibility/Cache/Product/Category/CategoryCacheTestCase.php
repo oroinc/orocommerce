@@ -4,10 +4,10 @@ namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Cat
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
-
+use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryData;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationQueryTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 
 abstract class CategoryCacheTestCase extends WebTestCase
 {
@@ -16,10 +16,11 @@ abstract class CategoryCacheTestCase extends WebTestCase
     public function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryData'
+            LoadProductVisibilityFallbackCategoryData::class
         ]);
+        $this->getContainer()->get('oro_account.visibility.cache.cache_builder')->buildCache();
     }
 
     /**
@@ -112,6 +113,8 @@ abstract class CategoryCacheTestCase extends WebTestCase
             ->getRepository('OroAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('agcvr')
             ->select('accountGroup.name as account_group_name')
+            ->addSelect('accountGroup.id')
+            ->addSelect('agcvr.visibility')
             ->join('agcvr.accountGroup', 'accountGroup')
             ->orderBy('accountGroup.name');
         $this->selectHiddenCategoryTitles($queryBuilder, 'agcvr');
@@ -203,6 +206,7 @@ abstract class CategoryCacheTestCase extends WebTestCase
     {
         $queryBuilder
             ->join($alias . '.category', 'category')
+            ->addSelect('category.id as catId')
             ->andWhere($queryBuilder->expr()->eq(
                 $alias . '.visibility',
                 BaseVisibilityResolved::VISIBILITY_HIDDEN

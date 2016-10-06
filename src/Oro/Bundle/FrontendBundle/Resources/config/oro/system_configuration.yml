@@ -12,7 +12,7 @@ system_configuration:
             icon:  icon-shopping-cart
 
     fields:
-        oro_b2b_frontend.frontend_theme:
+        oro_frontend.frontend_theme:
             data_type: string
             type: oro_frontend_theme_select
             priority: 100
@@ -30,4 +30,4 @@ system_configuration:
                                 children:
                                     theme_settings:
                                         children:
-                                            - oro_b2b_frontend.frontend_theme
+                                            - oro_frontend.frontend_theme

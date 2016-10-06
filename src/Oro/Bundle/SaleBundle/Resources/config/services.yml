@@ -58,7 +58,7 @@ services:
         parent: oro_product.event_listener.abstract_product_select_db_query
         calls:
             - [setScope, ['quote']]
-            - [setBackendSystemConfigurationPath, ['oro_b2b_sale.backend_product_visibility']]
+            - [setBackendSystemConfigurationPath, ['oro_sale.backend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
 

@@ -70,6 +70,7 @@ class ProductControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
     }
 
     public function testIndex()
@@ -714,7 +715,7 @@ class ProductControllerTest extends WebTestCase
      */
     private function createUploadedFile($fileName)
     {
-        return new UploadedFile(__DIR__ . '/files/example.gif', $fileName);
+        return new UploadedFile(__DIR__ . '/../DataFixtures/files/example.gif', $fileName);
     }
 
     /**

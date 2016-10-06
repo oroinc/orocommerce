@@ -1,7 +1,10 @@
+# Prefix `customer` is temporary solution to remove route duplication
+# with OroCRMAccountBundle/Controller/AccountController.php
+# @todo: all routes prefix will be chnaged in scope of BB-2679
 oro_account:
     resource:     "@OroAccountBundle/Controller/AccountController.php"
     type:         annotation
-    prefix:       /account
+    prefix:       /customer
 
 oro_account_address:
     resource:     "@OroAccountBundle/Controller/AccountAddressController.php"
@@ -109,7 +112,7 @@ oro_account_bundle_api:
         version:  latest
 
 oro_account_pinbar_help:
-    pattern: /pinbar/help
+    path: /pinbar/help
     defaults: { _controller: FrameworkBundle:Template:template, template: "OroNavigationBundle:Pinbar:help.html.twig" }
     options:
         frontend: true
@@ -132,31 +135,31 @@ oro_account_frontend_acl_access_levels:
         frontend: true
 
 oro_frontend_autocomplete_search:
-    pattern: /autocomplete/search
+    path: /autocomplete/search
     defaults: { _controller: OroFormBundle:Autocomplete:search }
     options:
         frontend: true
 
 oro_account_frontend_entity_pagination_first:
-    pattern: /entity-pagination/first/{_entityName}/{_scope}/{_routeName}"
+    path: /entity-pagination/first/{_entityName}/{_scope}/{_routeName}"
     defaults: { _controller: OroEntityPaginationBundle:EntityPagination:first }
     options:
         frontend: true
 
 oro_account_frontend_entity_pagination_previous:
-    pattern: /entity-pagination/previous/{_entityName}/{_scope}/{_routeName}"
+    path: /entity-pagination/previous/{_entityName}/{_scope}/{_routeName}"
     defaults: { _controller: OroEntityPaginationBundle:EntityPagination:previous }
     options:
         frontend: true
 
 oro_account_frontend_entity_pagination_next:
-    pattern: /entity-pagination/next/{_entityName}/{_scope}/{_routeName}"
+    path: /entity-pagination/next/{_entityName}/{_scope}/{_routeName}"
     defaults: { _controller: OroEntityPaginationBundle:EntityPagination:next }
     options:
         frontend: true
 
 oro_account_frontend_entity_pagination_last:
-    pattern: /entity-pagination/last/{_entityName}/{_scope}/{_routeName}"
+    path: /entity-pagination/last/{_entityName}/{_scope}/{_routeName}"
     defaults: { _controller: OroEntityPaginationBundle:EntityPagination:last }
     options:
         frontend: true

@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Tests\Unit\Entity\Stub\CustomShippingRuleConfiguration;
+use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
 
 class ShippingRuleTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,27 +27,30 @@ class ShippingRuleTest extends \PHPUnit_Framework_TestCase
 
         $rule = new ShippingRule();
         $this->assertPropertyAccessors($rule, $properties);
-        $this->assertPropertyCollection($rule, 'configurations', new CustomShippingRuleConfiguration());
+        $this->assertPropertyCollection($rule, 'methodConfigs', new ShippingRuleMethodConfig());
+        $this->assertPropertyCollection($rule, 'destinations', new ShippingRuleDestination());
     }
 
-    public function testLineItemsSetter()
+    public function testAddMethodConfig()
     {
-        $configurations = new ArrayCollection([new CustomShippingRuleConfiguration()]);
+        $config = new ShippingRuleMethodConfig();
         $shippingRule = new ShippingRule();
-        $this->assertEmpty($shippingRule->getConfigurations());
-        $shippingRule->setConfigurations($configurations);
-        $result = $shippingRule->getConfigurations();
-        $this->assertEquals($configurations, $result);
-        foreach ($result as $configuration) {
-            $this->assertEquals($configuration->getRule()->getId(), $shippingRule->getId());
-        }
+        $this->assertEmpty($shippingRule->getMethodConfigs());
+        $shippingRule->addMethodConfig($config);
+        $result = $shippingRule->getMethodConfigs();
+        $this->assertCount(1, $result);
+        $this->assertEquals($config->getRule()->getId(), $shippingRule->getId());
     }
 
-    public function testRelations()
+    public function testAddDestination()
     {
-        $this->assertPropertyCollections(new ShippingRule(), [
-            ['destinations', new ShippingRuleDestination()],
-        ]);
+        $destination = new ShippingRuleDestination();
+        $shippingRule = new ShippingRule();
+        $this->assertEmpty($shippingRule->getDestinations());
+        $shippingRule->addDestination($destination);
+        $result = $shippingRule->getDestinations();
+        $this->assertCount(1, $result);
+        $this->assertEquals($destination->getRule()->getId(), $shippingRule->getId());
     }
 
     public function testToString()

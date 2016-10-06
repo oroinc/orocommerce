@@ -23,6 +23,11 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
 
+    oro_shipping.factory.shipping_context_factory:
+        class: 'Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory'
+        arguments:
+            - '@oro_shipping.shipping_origin.provider'
+
     oro_shipping.event_listener.config.shipping_origin:
         class: 'Oro\Bundle\ShippingBundle\EventListener\Config\ShippingOriginEventListener'
         arguments:
@@ -157,10 +162,10 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_shipping_unique_product_unit_shipping_options_validator }
 
-    oro_shipping.validator.enabled_configuration_validation_group:
-        class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledConfigurationValidationGroupValidator'
+    oro_shipping.validator.enabled_type_config_validation_group:
+        class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator'
         tags:
-            - { name: validator.constraint_validator, alias: oro_shipping_enabled_configuration_validation_group_validator }
+            - { name: validator.constraint_validator, alias: oro_shipping_enabled_type_config_validation_group_validator }
 
     oro_shipping.form.data_transformer.measure:
         class: 'Oro\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer'
@@ -193,3 +198,24 @@ services:
             - [setProductShippingOptionsClass, ['%oro_shipping.entity.product_shipping_options.class%']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }
+
+    oro_shipping.shipping_price.provider:
+        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.form.handler.shipping_rule:
+        class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingRuleHandler'
+        scope: request
+        arguments:
+            - '@request'
+            - '@doctrine.orm.entity_manager'
+
+    oro_shipping.layout.data_provider.shipping_methods:
+          class: 'Oro\Bundle\ShippingBundle\Layout\DataProvider\ShippingMethodsProvider'
+          arguments:
+              - '@oro_shipping.shipping_price.provider'
+              - '@oro_shipping.shipping_method.registry'
+          tags:
+              - { name: layout.data_provider, alias: shipping_methods }

@@ -15,6 +15,7 @@ class WarehouseRepositoryTest extends WebTestCase
     public function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 LoadWarehousesAndInventoryLevels::class
