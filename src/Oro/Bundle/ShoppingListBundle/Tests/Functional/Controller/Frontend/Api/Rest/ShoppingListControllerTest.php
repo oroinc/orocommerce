@@ -31,7 +31,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->client->request(
             'PUT',
-            $this->getUrl('orob2b_api_set_shoppinglist_current', ['id' => $shoppingList->getId()])
+            $this->getUrl('oro_api_set_shoppinglist_current', ['id' => $shoppingList->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
@@ -52,7 +52,7 @@ class ShoppingListControllerTest extends WebTestCase
     {
         $this->client->request(
             'PUT',
-            $this->getUrl('orob2b_api_set_shoppinglist_current', ['id' => -1])
+            $this->getUrl('oro_api_set_shoppinglist_current', ['id' => -1])
         );
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 404);

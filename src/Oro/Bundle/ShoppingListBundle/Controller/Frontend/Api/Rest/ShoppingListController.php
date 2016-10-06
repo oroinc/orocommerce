@@ -30,7 +30,7 @@ class ShoppingListController extends RestController implements ClassResourceInte
      *      description="Set current Shopping List",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_shopping_list_frontend_update")
+     * @AclAncestor("oro_shopping_list_frontend_update")
      *
      * @param int $id
      *
@@ -39,7 +39,7 @@ class ShoppingListController extends RestController implements ClassResourceInte
     public function setCurrentAction($id)
     {
         /** @var ShoppingListManager $manager */
-        $manager = $this->get('orob2b_shopping_list.shopping_list.manager');
+        $manager = $this->get('oro_shopping_list.shopping_list.manager');
 
         $shoppingList = $this->getDoctrine()
             ->getManagerForClass('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')
