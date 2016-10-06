@@ -30,7 +30,7 @@
                         {% endif %}
                     </span>
                     <h3 class="checkout-navigation__title">
-                        <span data-role="transition-trigger">{{ step.label }}</span>
+                        <span data-role="transition-trigger">{{ step.label|trans({},'workflows') }}</span>
                         {% if isComplete and editTransitions[step.name] is defined and block.step_edit_button is defined %}
                             {% set editTransitionData = editTransitions[step.name] %}
                             {{ block_widget(block.step_edit_button,

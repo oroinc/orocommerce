@@ -73,7 +73,7 @@
     {% if transitionData is defined and transitionData %}
     {{ _self.conditionMessagesStart(transitionData) }}
     <button type="submit" class="btn {% if transitionData.isAllowed %}btn-orange{% endif %} btn_lg checkout__form__submit" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
-        {{ transitionData.transition.label }}&nbsp;<i class="cf-right-open-mini va-m_md"></i>
+        {{ transitionData.transition.label|trans({},'workflows') }}&nbsp;<i class="cf-right-open-mini va-m_md"></i>
     </button>
     {{ _self.conditionMessagesEnd(transitionData) }}
     {% endif %}
@@ -96,7 +96,7 @@
                 {% if transitionData.errors|length > 0 %}
                     {{ _self.transitionConditionMessages(transitionData) }}
                 {% else %}
-                    {{ transitionData.transition.label }}
+                    {{ transitionData.transition.label|trans({},'workflows') }}
                 {% endif %}
             </span>
           </span>
