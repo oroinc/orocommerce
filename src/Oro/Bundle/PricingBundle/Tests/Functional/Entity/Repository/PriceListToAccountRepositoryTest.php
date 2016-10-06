@@ -363,9 +363,9 @@ class PriceListToAccountRepositoryTest extends WebTestCase
                 ],
                 'expectsResult' => [
                     ['account.level_1.2', 'US', 'priceList2'],
-                    ['account.level_1.3', 'US', 'priceList6'],
-                    ['account.level_1.3', 'US', 'priceList2'],
                     ['account.level_1.3', 'US', 'priceList4'],
+                    ['account.level_1.3', 'US', 'priceList2'],
+                    ['account.level_1.3', 'US', 'priceList6'],
                 ],
             ],
         ];

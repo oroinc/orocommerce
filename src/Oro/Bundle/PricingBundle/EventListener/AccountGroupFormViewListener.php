@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
+use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
@@ -38,7 +39,10 @@ class AccountGroupFormViewListener extends AbstractAccountFormViewListener
         /** @var PriceListToAccountGroup[] $priceLists */
         $priceLists = $this->doctrineHelper
             ->getEntityRepository('OroPricingBundle:PriceListToAccountGroup')
-            ->findBy(['accountGroup' => $accountGroup, 'website' => $this->websiteProvider->getWebsites()]);
+            ->findBy(
+                ['accountGroup' => $accountGroup, 'website' => $this->websiteProvider->getWebsites()],
+                ['priority' => Criteria::ASC]
+            );
         
         /** @var PriceListAccountGroupFallback $fallbackEntity */
         $fallbackEntity = $this->doctrineHelper

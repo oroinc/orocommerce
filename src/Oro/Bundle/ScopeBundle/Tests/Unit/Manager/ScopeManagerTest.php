@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Tree\Strategy\ORM\Closure;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
+use Oro\Bundle\ScopeBundle\Entity\Repository\ScopeRepository;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Manager\ScopeProviderInterface;
@@ -48,8 +49,8 @@ class ScopeManagerTest extends \PHPUnit_Framework_TestCase
         $provider = $this->getMock(ScopeProviderInterface::class);
         $provider->method('getCriteriaForCurrentScope')->willReturn(['fieldName' => 1]);
 
-        $repository = $this->getMock(ObjectRepository::class);
-        $repository->method('findOneBy')->with(['fieldName' => 1, 'fieldName2' => null])->willReturn($scope);
+        $repository = $this->getMockBuilder(ScopeRepository::class)->disableOriginalConstructor()->getMock();
+        $repository->method('findOneByCriteria')->with(['fieldName' => 1, 'fieldName2' => null])->willReturn($scope);
 
         $em = $this->getMock(EntityManagerInterface::class);
         $em->method('getRepository')->willReturn($repository);
