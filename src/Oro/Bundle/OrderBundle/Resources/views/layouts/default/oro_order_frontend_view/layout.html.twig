@@ -105,23 +105,31 @@
 {% endblock %}
 
 {% block _order_po_number_widget %}
-    {{ text|default('oro.ui.empty'|trans) }}
+    {% set text = text|default('oro.ui.empty'|trans) %}
+
+    {{ parent_block_widget(block) }}
 {% endblock %}
 
 {% block _order_payment_method_widget %}
-    {% if text is not empty %}
-        {% for paymentMethod in text %}
-            {{ get_payment_method_label(paymentMethod) }}{% if not loop.last %},{% endif %}
-        {% endfor %}
-    {% else %}
-        {{ 'oro.ui.empty'|trans }}
-    {% endif %}
+    {% set text %}
+        {% if text is not empty %}
+            {% for paymentMethod in text %}
+                {{ get_payment_method_label(paymentMethod) }}{% if not loop.last %},{% endif %}
+            {% endfor %}
+        {% else %}
+            {{ 'oro.ui.empty'|trans }}
+        {% endif %}
+    {% endset %}
+
+    {{ parent_block_widget(block) }}
 {% endblock %}
 
 {% block _order_payment_status_widget %}
     {% if text is not empty %}
-        {{ get_payment_status_label(text) }}
+        {% set text = get_payment_status_label(text) %}
     {% else %}
-        {{ 'oro.ui.empty'|trans }}
+        {% set text = 'oro.ui.empty'|trans %}
     {% endif %}
+
+    {{ parent_block_widget(block) }}
 {% endblock %}
