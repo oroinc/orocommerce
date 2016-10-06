@@ -28,28 +28,30 @@ services:
     oro_website_search.placeholder.registry:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry'
         public: false
-        calls:
-            - [addPlaceholder, ['@oro_website_search.website_id.placeholder']]
-            - [addPlaceholder, ['@oro_website_search.localization_id.placeholder']]
-            - [addPlaceholder, ['@oro_website_search.account_id.placeholder']]
-
-    oro_website_search.account_id.placeholder:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder'
-        public: false
-        arguments:
-            - '@security.token_storage'
 
     oro_website_search.website_id.placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder'
         public: false
         arguments:
             - '@oro_website.manager'
+        tags:
+            - { name: website_search.placeholder }
 
     oro_website_search.localization_id.placeholder:
         class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder'
         public: false
         arguments:
             - '@oro_frontend_localization.manager.user_localization'
+        tags:
+            - { name: website_search.placeholder }
+
+    oro_website_search.account_id.placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder'
+        public: false
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: website_search.placeholder }
 
     oro_website_search.loader.mapping_configuration_loader:
         public: false
@@ -191,3 +193,17 @@ services:
             - '@event_dispatcher'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
+    oro_website_search.provider.placeholder_fields_provider:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider'
+        arguments:
+            - '@oro_website_search.placeholder.visitor_replace'
+            - '@oro_website_search.provider.search_mapping'
+
+    oro_website_search.driver.orm_account_partial_update_driver:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Driver\OrmAccountPartialUpdateDriver'
+        arguments:
+            - '@oro_website_search.provider.placeholder_fields_provider'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@oro_account.visibility.provider.product_visibility_provider'

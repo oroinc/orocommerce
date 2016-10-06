@@ -74,6 +74,11 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     protected function setUp()
     {
         parent::setUp();
+
+        if ($this->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
+            $this->markTestSkipped('Should be tested only with ORM search engine');
+        }
+
         $this->doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
         $this->mappingProviderMock = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
             ->disableOriginalConstructor()

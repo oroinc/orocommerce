@@ -570,6 +570,13 @@ services:
             - [setProductVisibilitySystemConfigurationPath, ['oro_account.product_visibility']]
             - [setCategoryVisibilitySystemConfigurationPath, ['oro_account.category_visibility']]
 
+    oro_account.model.product_visibility_search_query_modifier:
+        class: 'Oro\Bundle\AccountBundle\Model\ProductVisibilitySearchQueryModifier'
+        public: false
+        arguments:
+            - '@security.token_storage'
+            - '@oro_website_search.provider.placeholder_fields_provider'
+
     oro_account.visibility.cache.product.cache_builder.abstract:
         class: 'Oro\Bundle\AccountBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder'
         public: false
@@ -836,6 +843,7 @@ services:
     oro_account.event_listener.restrict_products_index:
         class: 'Oro\Bundle\AccountBundle\EventListener\RestrictProductsIndexEventListener'
         arguments:
+            - '@oro_entity.doctrine_helper'
             - '@oro_config.global'
             - 'oro_account.product_visibility'
             - 'oro_account.category_visibility'
