@@ -20,7 +20,6 @@ services:
         calls:
             - [setSecurityFacade, ['@oro_security.security_facade']]
             - [setVariantLinkClass, ['%oro_product.entity.product_variant_link.class%']]
-            - [setUnitPrecisionClass, ['%oro_product.entity.product_unit_precision.class%']]
 
     oro_product.importexport.normalizer.product:
         class: 'Oro\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer'

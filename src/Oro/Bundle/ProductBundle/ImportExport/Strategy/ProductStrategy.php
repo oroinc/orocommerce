@@ -30,16 +30,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     protected $variantLinkClass;
 
     /**
-     * @var string
-     */
-    protected $unitPrecisionClass;
-
-    /**
-     * @var Product
-     */
-    protected $product;
-
-    /**
      * @param SecurityFacade $securityFacade
      */
     public function setSecurityFacade($securityFacade)
@@ -53,14 +43,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     public function setVariantLinkClass($variantLinkClass)
     {
         $this->variantLinkClass = $variantLinkClass;
-    }
-
-    /**
-     * @param string $unitPrecisionClass
-     */
-    public function setUnitPrecisionClass($unitPrecisionClass)
-    {
-        $this->unitPrecisionClass = $unitPrecisionClass;
     }
 
     /**
@@ -80,11 +62,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
         $this->eventDispatcher->dispatch(ProductStrategyEvent::PROCESS_BEFORE, $event);
 
-        $processedEntity = parent::beforeProcessEntity($entity);
-        if ($processedEntity instanceof Product) {
-            $this->product = $processedEntity;
-        }
-        return $processedEntity;
+        return parent::beforeProcessEntity($entity);
     }
 
     /**
@@ -283,9 +261,8 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
             }
         }
 
-        return !empty($notEmptyValues)
+        return 0 !== count($notEmptyValues)
             ? array_merge($notEmptyValues, $nullRequiredValues)
             : null;
     }
-
 }
