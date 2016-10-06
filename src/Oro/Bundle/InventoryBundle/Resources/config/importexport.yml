@@ -37,7 +37,6 @@ services:
         public: false
         parent: oro_importexport.serializer.configurable_entity_normalizer
         arguments:
-            - '@oro_importexport.field.field_helper'
             - '@oro_product.formatter.product_unit_label'
             - '@oro_currency.service.quantity_rounding'
         calls:

@@ -47,7 +47,7 @@ abstract class AbstractInventoryLevelStrategyHelper implements InventoryLevelStr
             $classNamespace = explode('\\', $class);
             $shortClassName = end($classNamespace);
             $this->addError(
-                'oro.warehouse.import.error.not_found_entity',
+                'oro.inventory.import.error.not_found_entity',
                 ['%entity%' => $alternaiveClassName ?: $shortClassName]
             );
         }
