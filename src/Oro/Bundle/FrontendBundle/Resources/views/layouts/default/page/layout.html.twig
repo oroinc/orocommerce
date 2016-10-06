@@ -61,6 +61,7 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' wrapper'
     }) %}
+
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>

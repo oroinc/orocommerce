@@ -1,3 +1,10 @@
++{% block block_row -%}
+    <div class="form-row">
+        <div class="form-row__label">{{ block_label(block) -}}</div>
+        <div class="form-row__content">{{ block_widget(block) -}}</div>
+    </div>
+{%- endblock %}
+
 {% block _login_page_widget %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -39,7 +46,7 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' notifications'
     }) %}
-    <div class="grid__row">
+    <div class="form-row">
         <p  class="notifications notifications--error">{{ block_widget(block) }}</p>
     </div>
 
@@ -47,7 +54,7 @@
 
 {% block _login_form_remember_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' grid__row'
+        '~class': ' form-row'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -57,7 +64,7 @@
 
 {% block _login_form_submit_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' grid__row'
+        '~class': ' form-row'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -68,7 +75,7 @@
 
 {% block _login_form_forgot_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' grid__row'
+        '~class': ' form-row'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -78,7 +85,7 @@
 
 {% block _login_form_register_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' grid__row grid__row--offset-none'
+        '~class': ' form-row form-row--offset-none'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -115,12 +122,10 @@
         class: label_attr.class|default('') ~ " label"
     }) %}
 
-    <div class="grid__row">
-        {{ block_row(block, {
-            attr: attr,
-            label_attr: label_attr
-        }) }}
-    </div>
+    {{ block_row(block, {
+        attr: attr,
+        label_attr: label_attr
+    }) }}
 {% endblock %}
 
 {% block _login_form_password_widget %}
@@ -136,10 +141,9 @@
         class: label_attr.class|default('') ~ " label"
     }) %}
 
-    <div class="grid__row">
-        {{ block_row(block, {
-            attr: attr,
-            label_attr: label_attr
-        }) }}
-    </div>
+
+    {{ block_row(block, {
+        attr: attr,
+        label_attr: label_attr
+    }) }}
 {% endblock %}

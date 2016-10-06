@@ -9,7 +9,7 @@ layout:
         - '@addTree':
             items:
                 login_page_wrapper:
-                    blockType: centered_container
+                    blockType: vertical_container
                 login_page:
                     blockType: login_page
                     options:
@@ -90,7 +90,7 @@ layout:
                         route_name: oro_account_frontend_account_user_register
                         text: oro.account.accountuser.profile.create_an_account
             tree:
-                body:
+                wrapper:
                     login_page_wrapper:
                         login_page:
                             login_form:
