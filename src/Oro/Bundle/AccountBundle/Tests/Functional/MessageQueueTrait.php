@@ -16,14 +16,13 @@ trait MessageQueueTrait
     protected function cleanScheduledMessages()
     {
         $this->sendScheduledMessages();
-        $this->getMessageCollector()->enable();
         $this->getMessageCollector()->clear();
     }
 
     /**
      * @return ProductMessageHandler
      */
-    abstract function getMessageHandler();
+    abstract public function getMessageHandler();
 
     protected function sendScheduledMessages()
     {
