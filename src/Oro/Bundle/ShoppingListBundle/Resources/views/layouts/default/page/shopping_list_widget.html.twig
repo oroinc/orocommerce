@@ -78,7 +78,7 @@
 
     <div {{ block('block_attributes') }}>
         <div class="order-widget__order-name text-uppercase">
-            <span class="shopping-list-label order-widget__order-name-span-{{ shoppingList.id }}">{{ shoppingList.label }}</span>
+            <span class="shopping-list-label order-widget__order-name-span-{{ shoppingList.id }}">{{ shoppingList.label|escape }}</span>
         </div>
         <table class="order-widget__table">
             <tbody>

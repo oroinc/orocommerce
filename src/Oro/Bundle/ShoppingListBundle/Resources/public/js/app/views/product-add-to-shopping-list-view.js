@@ -289,14 +289,14 @@ define(function(require) {
                 $button.data('intention', 'update');
             }
 
-            $button.attr('title', label);
+            $button.attr('title', _.escape(label));
 
             if (this.dropdownWidget.options.truncateLength &&
                 $button.get(0) === this.dropdownWidget.main.get(0)) {
                 label = _.trunc(label, this.dropdownWidget.options.truncateLength, false, '...');
             }
 
-            $button.html(label);
+            $button.html(_.escape(label));
         },
 
         toggleRemoveButton: function() {

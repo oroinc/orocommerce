@@ -36,7 +36,7 @@
                         <i class="cf-basket"></i>
                     </span>
                     <span {% if shoppingList.id == selectedShoppingList.id %}class="current-title"{% endif %}>
-                        {{ shoppingList.label }}
+                        {{ shoppingList.label|escape|raw }}
                     </span>
                 </span>
                 {% set itemsCount = shoppingList.lineItems.count %}
