@@ -2,6 +2,10 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'default.html.twig'
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue: 'oro.catalog.frontend.welcome.label'
         - '@addTree':
             items:
                 hero_promo_container:
