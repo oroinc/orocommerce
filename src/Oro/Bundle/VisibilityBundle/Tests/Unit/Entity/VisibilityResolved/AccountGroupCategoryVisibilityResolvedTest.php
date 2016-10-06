@@ -3,11 +3,11 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\Visibility;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class AccountGroupCategoryVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,19 +16,19 @@ class AccountGroupCategoryVisibilityResolvedTest extends \PHPUnit_Framework_Test
     /** @var AccountGroupCategoryVisibilityResolved */
     protected $accountGroupCategoryVisibilityResolved;
 
-    /** @var AccountGroup */
-    protected $accountGroup;
-
     /** @var Category */
     protected $category;
+
+    /** @var Scope */
+    protected $scope;
 
     protected function setUp()
     {
         $this->category = new Category();
-        $this->accountGroup = new AccountGroup();
+        $this->scope = new Scope();
         $this->accountGroupCategoryVisibilityResolved = new AccountGroupCategoryVisibilityResolved(
             $this->category,
-            $this->accountGroup
+            $this->scope
         );
     }
 
@@ -37,7 +37,7 @@ class AccountGroupCategoryVisibilityResolvedTest extends \PHPUnit_Framework_Test
      */
     protected function tearDown()
     {
-        unset($this->accountGroupCategoryVisibilityResolved, $this->accountGroup, $this->category);
+        unset($this->accountGroupCategoryVisibilityResolved, $this->category, $this->scope);
     }
 
     /**
@@ -55,9 +55,9 @@ class AccountGroupCategoryVisibilityResolvedTest extends \PHPUnit_Framework_Test
         );
     }
 
-    public function testGetAccountGroup()
+    public function testGetScope()
     {
-        $this->assertEquals($this->accountGroup, $this->accountGroupCategoryVisibilityResolved->getAccountGroup());
+        $this->assertEquals($this->scope, $this->accountGroupCategoryVisibilityResolved->getScope());
     }
 
     public function testGetCategory()

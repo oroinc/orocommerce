@@ -3,13 +3,12 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\Visibility;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class AccountProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,14 +17,11 @@ class AccountProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
     /** @var AccountProductVisibilityResolved */
     protected $entity;
 
-    /** @var Account */
-    protected $account;
-
     /** @var Product */
     protected $product;
 
-    /** @var Website */
-    protected $website;
+    /** @var  @var Scope */
+    protected $scope;
 
     /**
      * {@inheritdoc}
@@ -33,14 +29,13 @@ class AccountProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->product = new Product();
-        $this->account = new Account();
-        $this->website = new Website();
-        $this->entity = new AccountProductVisibilityResolved($this->website, $this->product, $this->account);
+        $this->scope = new Scope();
+        $this->entity = new AccountProductVisibilityResolved($this->scope, $this->product);
     }
 
     protected function tearDown()
     {
-        unset($this->entity, $this->product, $this->website, $this->account);
+        unset($this->entity, $this->product, $this->scope);
     }
 
     /**
@@ -59,14 +54,9 @@ class AccountProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetWebsite()
+    public function testGetScope()
     {
-        $this->assertEquals($this->website, $this->entity->getWebsite());
-    }
-
-    public function testGetAccount()
-    {
-        $this->assertEquals($this->account, $this->entity->getAccount());
+        $this->assertEquals($this->scope, $this->entity->getScope());
     }
 
     public function testGetProduct()

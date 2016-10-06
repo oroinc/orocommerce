@@ -3,11 +3,11 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\Visibility;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class AccountCategoryVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,25 +16,25 @@ class AccountCategoryVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
     /** @var AccountCategoryVisibilityResolved */
     protected $accountCategoryVisibilityResolved;
 
-    /** @var Account */
-    protected $account;
-
     /** @var Category */
     protected $category;
+
+    /** @var Scope */
+    protected $scope;
 
     protected function setUp()
     {
         $this->category = new Category();
-        $this->account = new Account();
+        $this->scope = new Scope();
         $this->accountCategoryVisibilityResolved = new AccountCategoryVisibilityResolved(
             $this->category,
-            $this->account
+            $this->scope
         );
     }
 
     protected function tearDown()
     {
-        unset($this->accountCategoryVisibilityResolved, $this->category, $this->account);
+        unset($this->accountCategoryVisibilityResolved, $this->category, $this->scope);
     }
 
     /**
@@ -52,9 +52,9 @@ class AccountCategoryVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetAccount()
+    public function testGetScope()
     {
-        $this->assertEquals($this->account, $this->accountCategoryVisibilityResolved->getAccount());
+        $this->assertEquals($this->scope, $this->accountCategoryVisibilityResolved->getScope());
     }
 
     public function testGetCategory()

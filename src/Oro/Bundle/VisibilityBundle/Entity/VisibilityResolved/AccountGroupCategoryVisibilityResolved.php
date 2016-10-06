@@ -3,9 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
  * @ORM\Entity(
@@ -16,13 +16,13 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility
 class AccountGroupCategoryVisibilityResolved extends BaseCategoryVisibilityResolved
 {
     /**
-     * @var AccountGroup
+     * @var Scope
      *
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountGroup")
-     * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
+     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
-    protected $accountGroup;
+    protected $scope;
 
     /**
      * @var AccountGroupCategoryVisibility
@@ -32,22 +32,23 @@ class AccountGroupCategoryVisibilityResolved extends BaseCategoryVisibilityResol
      */
     protected $sourceCategoryVisibility;
 
+
     /**
      * @param Category $category
-     * @param AccountGroup $accountGroup
+     * @param Scope $scope
      */
-    public function __construct(Category $category, AccountGroup $accountGroup)
+    public function __construct(Category $category, Scope $scope)
     {
-        $this->accountGroup = $accountGroup;
+        $this->scope = $scope;
         parent::__construct($category);
     }
 
     /**
-     * @return AccountGroup
+     * @return Scope
      */
-    public function getAccountGroup()
+    public function getScope()
     {
-        return $this->accountGroup;
+        return $this->scope;
     }
 
     /**

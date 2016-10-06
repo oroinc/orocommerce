@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
@@ -18,14 +17,6 @@ class AccountProductVisibilityResolved extends BaseProductVisibilityResolved
 {
     const VISIBILITY_FALLBACK_TO_ALL = 2;
 
-    /**
-     * @var Account
-     *
-     * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $account;
 
     /**
      * @var AccountProductVisibility
@@ -41,16 +32,7 @@ class AccountProductVisibilityResolved extends BaseProductVisibilityResolved
      */
     public function __construct(Scope $scope, Product $product)
     {
-        $this->account = $scope->getAccount();
         parent::__construct($scope, $product);
-    }
-
-    /**
-     * @return Account
-     */
-    public function getAccount()
-    {
-        return $this->account;
     }
 
     /**
