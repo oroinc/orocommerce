@@ -4,7 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Model;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
+use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryMaterializedPathModifier

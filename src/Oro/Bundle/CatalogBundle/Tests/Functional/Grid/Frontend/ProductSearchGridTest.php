@@ -36,6 +36,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
         // load image filters for grid images
         $this->getContainer()->get('oro_layout.loader.image_filter')->load();
 
+        $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
         // TODO: trigger immediate reindexation event instead
         $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
