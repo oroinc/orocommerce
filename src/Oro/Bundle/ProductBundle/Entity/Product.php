@@ -695,7 +695,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         $result = [];
 
         foreach ($this->unitPrecisions as $unitPrecision) {
-            $result[] = $unitPrecision->getUnit();
+            $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getUnit();
         }
 
         return $result;
