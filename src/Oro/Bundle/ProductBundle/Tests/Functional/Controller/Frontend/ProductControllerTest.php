@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
@@ -44,9 +45,10 @@ class ProductControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-                                LoadProductData::class,
-                                LoadCombinedPriceLists::class,
-                            ]);
+            LoadProductData::class,
+            LoadCombinedPriceLists::class,
+            LoadProductVisibilityData::class,
+        ]);
 
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
 
@@ -60,7 +62,8 @@ class ProductControllerTest extends WebTestCase
 
         $this->translator = $this->getContainer()->get('translator');
 
-        // TODO: trigger immediate reindexation event instead
+        // TODO: trigger immediate reindexation event instead;
+        $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
         $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 
