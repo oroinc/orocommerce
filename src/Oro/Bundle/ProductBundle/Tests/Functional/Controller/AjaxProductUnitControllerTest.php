@@ -14,13 +14,14 @@ class AjaxProductUnitControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions']);
     }
 
     public function testGetAllProductUnitsAction()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_product_unit_all_product_units'));
+        $this->client->request('GET', $this->getUrl('oro_product_unit_all_product_units'));
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
@@ -46,7 +47,7 @@ class AjaxProductUnitControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_product_unit_product_units', ['id' => $product->getId(), 'short' => $isShort])
+            $this->getUrl('oro_product_unit_product_units', ['id' => $product->getId(), 'short' => $isShort])
         );
 
         $result = $this->client->getResponse();

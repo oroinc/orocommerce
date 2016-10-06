@@ -10,7 +10,7 @@ use Oro\Bundle\LocaleBundle\Form\DataTransformer\MultipleValueTransformer;
 
 class WebsitePropertyType extends AbstractType
 {
-    const NAME = 'orob2b_fallback_website_property';
+    const NAME = 'oro_fallback_website_property';
 
     const FIELD_DEFAULT  = 'default';
     const FIELD_WEBSITES = 'websites';

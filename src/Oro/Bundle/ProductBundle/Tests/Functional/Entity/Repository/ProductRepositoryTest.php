@@ -20,6 +20,7 @@ class ProductRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
             'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
@@ -27,7 +28,7 @@ class ProductRepositoryTest extends WebTestCase
         ]);
 
         $this->repository = $this->getContainer()->get('doctrine')->getRepository(
-            $this->getContainer()->getParameter('orob2b_product.entity.product.class')
+            $this->getContainer()->getParameter('oro_product.entity.product.class')
         );
     }
 

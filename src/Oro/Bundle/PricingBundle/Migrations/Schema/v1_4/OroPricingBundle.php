@@ -4,11 +4,18 @@ namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroPricingBundle implements Migration
+class OroPricingBundle implements Migration, RenameExtensionAwareInterface
 {
+    /**
+     * @var RenameExtension
+     */
+    protected $renameExtension;
+
     /**
      * @inheritDoc
      */
@@ -22,11 +29,10 @@ class OroPricingBundle implements Migration
 
         /** Foreign keys generation **/
         $this->addOroPriceAttributeCurrencyForeignKeys($schema);
-        $this->addOroPriceAttributeProductPriceForeignKeys($schema);
-        $this->addOroriceListToProductForeignKeys($schema);
+        $this->addOroPriceAttributeProductPriceForeignKeys($schema, $queries);
+        $this->addOroriceListToProductForeignKeys($schema, $queries);
 
         $queries->addPostQuery(new FillPriceListToProduct());
-
     }
 
     /**
@@ -91,8 +97,9 @@ class OroPricingBundle implements Migration
 
     /**
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function addOroPriceAttributeProductPriceForeignKeys(Schema $schema)
+    protected function addOroPriceAttributeProductPriceForeignKeys(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_price_attribute_price');
         $table->addForeignKeyConstraint(
@@ -101,14 +108,20 @@ class OroPricingBundle implements Migration
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_price_attribute_price',
+            'oro_product',
             ['product_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product_unit'),
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_price_attribute_price',
+            'oro_product_unit',
             ['unit_code'],
             ['code'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -135,21 +148,33 @@ class OroPricingBundle implements Migration
      * Add orob2b_price_list_to_product foreign keys.
      *
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function addOroriceListToProductForeignKeys(Schema $schema)
+    protected function addOroriceListToProductForeignKeys(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_price_list_to_product');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
-            ['product_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list'),
             ['price_list_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+        $this->renameExtension->addForeignKeyConstraint(
+            $schema,
+            $queries,
+            'orob2b_price_list_to_product',
+            'oro_product',
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRenameExtension(RenameExtension $renameExtension)
+    {
+        $this->renameExtension = $renameExtension;
     }
 }

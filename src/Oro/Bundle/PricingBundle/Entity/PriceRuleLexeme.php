@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="orob2b_price_rule_lexeme")
+ * @ORM\Table(name="oro_price_rule_lexeme")
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository")
  */
 class PriceRuleLexeme

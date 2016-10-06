@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
 
 class PaymentStatusExtension extends \Twig_Extension
 {
-    const PAYMENT_STATUS_EXTENSION_NAME = 'orob2b_payment_status';
+    const PAYMENT_STATUS_EXTENSION_NAME = 'oro_payment_status';
 
     /** @var PaymentStatusLabelFormatter */
     protected $paymentStatusLabelFormatter;

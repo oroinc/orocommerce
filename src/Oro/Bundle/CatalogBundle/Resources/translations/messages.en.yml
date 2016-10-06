@@ -51,3 +51,11 @@ oro:
         system_configuration:
             groups:
                 catalog.title: 'Catalog'
+
+        featured_categories:
+            view:
+                items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
+
+        fallback:
+            category.label: 'Category Defaults'
+            parent_category.label: 'Parent Category'

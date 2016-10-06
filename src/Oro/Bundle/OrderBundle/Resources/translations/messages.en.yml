@@ -8,7 +8,7 @@ oro:
         identifier.short_label: 'Order #'
         owner.label: Owner
         account.label: Account
-        account_user.label: Account User
+        account_user.label: Customer User
         organization.label: Organization
         currency.label: Currency
         website.label: Website
@@ -45,6 +45,7 @@ oro:
         discounts.label: Discounts
         discountitem.add_label: Add Discount
         order_history.label: Order History
+        top_selling_items.label: Top Selling Items
 
         orderdiscount:
             entity_label: Order Discount
@@ -60,8 +61,8 @@ oro:
             entity_label: Order Address
             entity_plural_label: Order Addresses
             id.label: ID
-            account_address.label: Account address
-            account_user_address.label: Account user address
+            account_address.label: Customer address
+            account_user_address.label: Customer user address
             label.label: Label
             first_name.label: First Name
             middle_name.label: Middle Name
@@ -115,8 +116,6 @@ oro:
             column:
                 product: 'Product'
 
-            frontend.order.view.label: Item#
-
         orderdiscountitem:
             columns:
                 title: Discount
@@ -153,15 +152,15 @@ oro:
 
         security:
             permission:
-                address_shipping_account_use_any: Use any shipping address from the account address book
-                address_shipping_account_user_use_default: Use the default shipping address from the account user's address book
-                address_shipping_account_user_use_any: Use any shipping address from the account user's address book
+                address_shipping_account_use_any: Use any shipping address from the customer address book
+                address_shipping_account_user_use_default: Use the default shipping address from the customer user's address book
+                address_shipping_account_user_use_any: Use any shipping address from the customer user's address book
                 address_shipping_allow_manual: Enter the shipping address manually
-                address_billing_account_use_any: Use any billing address from the account address book
-                address_billing_account_user_use_default: Use the default billing address from the account user's address book
-                address_billing_account_user_use_any: Use any billing address from the account user's address book
+                address_billing_account_use_any: Use any billing address from the customer address book
+                address_billing_account_user_use_default: Use the default billing address from the customer user's address book
+                address_billing_account_user_use_any: Use any billing address from the customer user's address book
                 address_billing_allow_manual: Enter the billing address manually
-                payment_term_account_can_override: Override account payment term
+                payment_term_account_can_override: Override customer payment term
 
         form:
             payment.label: Payment
@@ -170,8 +169,8 @@ oro:
                 choose_or_create: Select an existing address or enter a new address below
                 manual: Enter other address
                 group_label:
-                    account: Account Address Book
-                    account_user: Account User Address Book
+                    account: Customer Address Book
+                    account_user: Customer User Address Book
 
         subtotals:
             shipping_cost: Shipping

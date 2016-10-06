@@ -23,8 +23,7 @@ class PriceListRepositoryTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->initClient();
         $this->loadFixtures([
             LoadPriceRules::class,
             LoadProductPrices::class,
@@ -109,6 +108,16 @@ class PriceListRepositoryTest extends WebTestCase
         $currencies = $this->getRepository()->getInvalidCurrenciesByPriceList($priceList);
 
         $this->assertEquals(['EUR'], $currencies);
+    }
+
+    public function testUpdatePriceListsActuality()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
+        $this->getRepository()->updatePriceListsActuality([$priceList], false);
+        $priceList = $this->getRepository()->find($priceList->getId());
+        $this->getManager()->refresh($priceList);
+        $this->assertFalse($priceList->isActual());
     }
 
     /**

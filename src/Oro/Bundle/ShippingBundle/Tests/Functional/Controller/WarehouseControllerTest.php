@@ -17,6 +17,7 @@ class WarehouseControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels'
@@ -38,7 +39,7 @@ class WarehouseControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_warehouse_update', ['id' => $warehouse->getId()])
+            $this->getUrl('oro_warehouse_update', ['id' => $warehouse->getId()])
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
@@ -53,7 +54,7 @@ class WarehouseControllerTest extends WebTestCase
             ArrayUtil::arrayMergeRecursiveDistinct(
                 $form->getPhpValues(),
                 [
-                    'orob2b_warehouse' => [
+                    'oro_warehouse' => [
                         'shipping_origin_warehouse' => $data
                     ]
                 ]
@@ -119,7 +120,7 @@ class WarehouseControllerTest extends WebTestCase
     {
         $this->setSystemConfig(!$setSystemConfig);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_warehouse_view', ['id' => $warehouse->getId()]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_warehouse_view', ['id' => $warehouse->getId()]));
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -154,7 +155,7 @@ class WarehouseControllerTest extends WebTestCase
     protected function getShippingOriginWarehouse(Warehouse $warehouse)
     {
         return $this->getContainer()
-            ->get('orob2b_shipping.shipping_origin.provider')
+            ->get('oro_shipping.shipping_origin.provider')
             ->getShippingOriginByWarehouse($warehouse);
     }
 
@@ -167,7 +168,7 @@ class WarehouseControllerTest extends WebTestCase
 
         if (!$reset) {
             $configManager->set(
-                'orob2b_shipping.shipping_origin',
+                'oro_shipping.shipping_origin',
                 [
                     'country' => 'US',
                     'region' => 'US-LA',
@@ -179,7 +180,7 @@ class WarehouseControllerTest extends WebTestCase
                 ]
             );
         } else {
-            $configManager->reset('orob2b_shipping.shipping_origin');
+            $configManager->reset('oro_shipping.shipping_origin');
         }
 
         $configManager->flush();

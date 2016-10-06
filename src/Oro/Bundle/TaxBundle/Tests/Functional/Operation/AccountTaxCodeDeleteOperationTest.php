@@ -13,6 +13,7 @@ class AccountTaxCodeDeleteOperationTest extends ActionTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -27,8 +28,8 @@ class AccountTaxCodeDeleteOperationTest extends ActionTestCase
 
         $this->assertDeleteOperation(
             $accountTaxCode->getId(),
-            'orob2b_tax.entity.account_tax_code.class',
-            'orob2b_tax_account_tax_code_index'
+            'oro_tax.entity.account_tax_code.class',
+            'oro_tax_account_tax_code_index'
         );
     }
 }

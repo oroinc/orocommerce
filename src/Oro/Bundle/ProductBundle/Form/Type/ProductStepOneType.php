@@ -7,7 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductStepOneType extends AbstractType
 {
-    const NAME = 'orob2b_product_step_one';
+    const NAME = 'oro_product_step_one';
 
     /**
      * {@inheritdoc}

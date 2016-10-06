@@ -7,8 +7,6 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
-use Oro\Bundle\PricingBundle\Builder\CombinedPriceListQueueConsumer;
-use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 
 /**
  * @dbIsolation
@@ -18,12 +16,12 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     /**
      * @var string
      */
-    protected $pricesByAccountActionUrl = 'orob2b_pricing_price_by_account';
+    protected $pricesByAccountActionUrl = 'oro_pricing_price_by_account';
 
     /**
      * @var string
      */
-    protected $matchingPriceActionUrl = 'orob2b_pricing_matching_price';
+    protected $matchingPriceActionUrl = 'oro_pricing_matching_price';
 
     protected function setUp()
     {
@@ -57,12 +55,10 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.bottle');
 
-        $this->disableRealTimeModeCalculate();
-
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_product_price_update_widget',
+                'oro_product_price_update_widget',
                 [
                     'id' => $productPrice->getId(),
                     '_widgetContainer' => 'dialog',
@@ -75,10 +71,10 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
         $form = $crawler->selectButton('Save')->form(
             [
-                'orob2b_pricing_price_list_product_price[quantity]' => 10,
-                'orob2b_pricing_price_list_product_price[unit]' => $unit->getCode(),
-                'orob2b_pricing_price_list_product_price[price][value]' => 20,
-                'orob2b_pricing_price_list_product_price[price][currency]' => 'USD'
+                'oro_pricing_price_list_product_price[quantity]' => 10,
+                'oro_pricing_price_list_product_price[unit]' => $unit->getCode(),
+                'oro_pricing_price_list_product_price[price][value]' => 20,
+                'oro_pricing_price_list_product_price[price][currency]' => 'USD'
             ]
         );
 
@@ -97,7 +93,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_product_price_update_widget',
+                'oro_product_price_update_widget',
                 [
                     'id' => $productPriceEUR->getId(),
                     '_widgetContainer' => 'dialog',
@@ -110,10 +106,10 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
         $form = $crawler->selectButton('Save')->form(
             [
-                'orob2b_pricing_price_list_product_price[quantity]' => $productPrice->getQuantity(),
-                'orob2b_pricing_price_list_product_price[unit]' => $productPrice->getUnit()->getCode(),
-                'orob2b_pricing_price_list_product_price[price][value]' => $productPrice->getPrice()->getValue(),
-                'orob2b_pricing_price_list_product_price[price][currency]' => $productPrice->getPrice()->getCurrency(),
+                'oro_pricing_price_list_product_price[quantity]' => $productPrice->getQuantity(),
+                'oro_pricing_price_list_product_price[unit]' => $productPrice->getUnit()->getCode(),
+                'oro_pricing_price_list_product_price[price][value]' => $productPrice->getPrice()->getValue(),
+                'oro_pricing_price_list_product_price[price][currency]' => $productPrice->getPrice()->getCurrency(),
             ]
         );
 
@@ -190,20 +186,5 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             ],
 
         ];
-    }
-
-    /**
-     * Disable realtime price calculate mode
-     */
-    protected function disableRealTimeModeCalculate()
-    {
-        $configManager = $this->getContainer()->get('oro_config.scope.global');
-        $configManager->set(
-            Configuration::getConfigKeyByName(
-                Configuration::PRICE_LISTS_UPDATE_MODE
-            ),
-            CombinedPriceListQueueConsumer::MODE_SCHEDULED
-        );
-        $configManager->flush();
     }
 }

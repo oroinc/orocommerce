@@ -23,14 +23,14 @@ use Oro\Bundle\SaleBundle\Model\ExtendQuote;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Table(name="orob2b_sale_quote")
+ * @ORM\Table(name="oro_sale_quote")
  * @ORM\Entity(repositoryClass="Oro\Bundle\SaleBundle\Entity\Repository\QuoteRepository")
  * @ORM\EntityListeners({"Oro\Bundle\SaleBundle\Entity\Listener\QuoteListener"})
  * @ORM\HasLifecycleCallbacks()
  * @Config(
- *      routeName="orob2b_sale_quote_index",
- *      routeView="orob2b_sale_quote_view",
- *      routeUpdate="orob2b_sale_quote_update",
+ *      routeName="oro_sale_quote_index",
+ *      routeView="oro_sale_quote_view",
+ *      routeUpdate="oro_sale_quote_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-list-alt"
@@ -57,6 +57,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * )
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */

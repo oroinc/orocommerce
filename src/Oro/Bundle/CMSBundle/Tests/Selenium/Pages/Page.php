@@ -33,7 +33,7 @@ class Page extends AbstractPageEntity
      */
     public function setTitle($title)
     {
-        $element = $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_title')]");
+        $element = $this->test->byXpath("//input[starts-with(@id,'oro_cms_page_title')]");
         $element->clear();
         $element->value($title);
 
@@ -46,7 +46,7 @@ class Page extends AbstractPageEntity
      */
     public function setSlug($slug)
     {
-        $element = $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_slug_slug')]");
+        $element = $this->test->byXpath("//input[starts-with(@id,'oro_cms_page_slug_slug')]");
         $element->clear();
         $element->value($slug);
 
@@ -61,10 +61,10 @@ class Page extends AbstractPageEntity
     {
         switch ($slugMode) {
             case self::SLUG_MODE_NEW:
-                $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_slug_mode_1')]")->click();
+                $this->test->byXpath("//input[starts-with(@id,'oro_cms_page_slug_mode_1')]")->click();
                 break;
             case self::SLUG_MODE_OLD:
-                $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_slug_mode_0')]")->click();
+                $this->test->byXpath("//input[starts-with(@id,'oro_cms_page_slug_mode_0')]")->click();
                 break;
         }
 
@@ -76,7 +76,7 @@ class Page extends AbstractPageEntity
      */
     public function setSlugRedirect()
     {
-        $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_slug_redirect')]")->click();
+        $this->test->byXpath("//input[starts-with(@id,'oro_cms_page_slug_redirect')]")->click();
 
         return $this;
     }
@@ -173,14 +173,14 @@ class Page extends AbstractPageEntity
 
     public function clickLeaveAsIsRadioButton()
     {
-        $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_slug_mode_0')]")->click();
+        $this->test->byXpath("//input[starts-with(@id,'oro_cms_page_slug_mode_0')]")->click();
 
         return $this;
     }
 
     public function clickUpdateRadioButton()
     {
-        $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_slug_mode_1')]")->click();
+        $this->test->byXpath("//input[starts-with(@id,'oro_cms_page_slug_mode_1')]")->click();
 
         return $this;
     }

@@ -3,7 +3,7 @@
 
 {% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
 
-{% set formAction = entity.id ? path('orob2b_account_group_update', {id: entity.id}) : path('orob2b_account_group_create') %}
+{% set formAction = entity.id ? path('oro_account_group_update', {id: entity.id}) : path('oro_account_group_create') %}
 
 {% oro_title_set({params : {"%accountGroupName%": entity.name|default('N/A'|trans), '%entityName%': 'oro.account.accountgroup.entity_label'|trans} }) %}
 
@@ -12,8 +12,8 @@
 {% block navButtons %}
     {% if entity.id and resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_account_delete_account_group', {'id': entity.id}),
-            'dataRedirect': path('orob2b_account_group_index'),
+            'dataUrl': path('oro_api_account_delete_account_group', {'id': entity.id}),
+            'dataRedirect': path('oro_account_group_index'),
             'aCss': 'no-hash remove-button',
             'dataId': entity.id,
             'id': 'btn-remove-attribute',
@@ -21,9 +21,9 @@
         }) }}
         {{ UI.buttonSeparator() }}
     {% endif %}
-    {{ UI.cancelButton(path('orob2b_account_group_index')) }}
+    {{ UI.cancelButton(path('oro_account_group_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_account_group_update') %}
+    {% if entity.id or resource_granted('oro_account_group_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -33,7 +33,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_account_group_index'),
+            'indexPath':   path('oro_account_group_index'),
             'indexLabel': 'oro.account.accountgroup.entity_plural_label'|trans,
             'entityTitle': entity.name|default('N/A'|trans)
         } %}

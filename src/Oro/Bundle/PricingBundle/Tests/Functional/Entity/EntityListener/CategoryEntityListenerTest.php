@@ -2,36 +2,37 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceRuleChangeTrigger;
+use Oro\Bundle\PricingBundle\Async\Topics;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCategoryPriceRuleLexemes;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
  */
 class CategoryEntityListenerTest extends WebTestCase
 {
+    use MessageQueueTrait;
+
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient();
         $this->loadFixtures([
             LoadCategoryPriceRuleLexemes::class,
             LoadPriceLists::class,
             LoadProductData::class,
             LoadCategoryProductData::class
         ]);
-        $this->cleanTriggers();
+        $this->cleanScheduledMessages();
     }
 
     public function testOnDelete()
@@ -40,11 +41,25 @@ class CategoryEntityListenerTest extends WebTestCase
         $em->remove($this->getReference(LoadCategoryData::SECOND_LEVEL2));
         $em->flush();
 
-        $actual = $this->getActualTriggersPriceListIds();
-        $this->assertCount(3, $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(), $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(), $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_3)->getId(), $actual);
+        $this->sendScheduledMessages();
+
+        self::assertMessagesSent(
+            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            [
+                [
+                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
+                    PriceListTriggerFactory::PRODUCT => null
+                ],
+                [
+                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
+                    PriceListTriggerFactory::PRODUCT => null
+                ],
+                [
+                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_3)->getId(),
+                    PriceListTriggerFactory::PRODUCT => null
+                ],
+            ]
+        );
     }
 
     public function testOnUpdateCategoryParentChanged()
@@ -55,11 +70,25 @@ class CategoryEntityListenerTest extends WebTestCase
         $em = $this->getContainer()->get('doctrine')->getManager();
         $em->flush();
 
-        $actual = $this->getActualTriggersPriceListIds();
-        $this->assertCount(3, $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(), $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(), $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_3)->getId(), $actual);
+        $this->sendScheduledMessages();
+
+        self::assertMessagesSent(
+            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            [
+                [
+                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
+                    PriceListTriggerFactory::PRODUCT => null
+                ],
+                [
+                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
+                    PriceListTriggerFactory::PRODUCT => null
+                ],
+                [
+                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_3)->getId(),
+                    PriceListTriggerFactory::PRODUCT => null
+                ],
+            ]
+        );
     }
 
     public function testOnUpdateCategoryField()
@@ -70,9 +99,17 @@ class CategoryEntityListenerTest extends WebTestCase
         $em = $this->getContainer()->get('doctrine')->getManager();
         $em->flush();
 
-        $actual = $this->getActualTriggersPriceListIds();
-        $this->assertCount(1, $actual);
-        $this->assertContains($this->getReference(LoadPriceLists::PRICE_LIST_3)->getId(), $actual);
+        $this->sendScheduledMessages();
+
+        self::assertMessagesSent(
+            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            [
+                [
+                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_3)->getId(),
+                    PriceListTriggerFactory::PRODUCT => null
+                ],
+            ]
+        );
     }
 
     public function testProductAdd()
@@ -86,20 +123,27 @@ class CategoryEntityListenerTest extends WebTestCase
         $em = $this->getContainer()->get('doctrine')->getManager();
         $em->flush();
 
-        $expectedPriceLists = [
-            $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-            $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId()
-        ];
-        $triggers = $this->getTriggers();
-        $this->assertCount(2, $triggers);
-        foreach ($triggers as $trigger) {
-            $this->assertEquals($product->getId(), $trigger->getProduct()->getId());
-            $this->assertContains($trigger->getPriceList()->getId(), $expectedPriceLists);
-        }
+        $this->sendScheduledMessages();
+
+        self::assertMessagesSent(
+            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            [
+                [
+                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
+                    PriceListTriggerFactory::PRODUCT => $product->getId()
+                ],
+                [
+                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
+                    PriceListTriggerFactory::PRODUCT => $product->getId()
+                ],
+            ]
+        );
     }
 
     public function testProductRemove()
     {
+        $this->cleanScheduledMessages();
+
         /** @var Category $category */
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
         $product = $category->getProducts()->first();
@@ -108,49 +152,20 @@ class CategoryEntityListenerTest extends WebTestCase
         $em = $this->getContainer()->get('doctrine')->getManager();
         $em->flush();
 
-        $expectedPriceLists = [
-            $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
-            $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId()
-        ];
-        $triggers = $this->getTriggers();
-        $this->assertCount(2, $triggers);
-        foreach ($triggers as $trigger) {
-            $this->assertEquals($product->getId(), $trigger->getProduct()->getId());
-            $this->assertContains($trigger->getPriceList()->getId(), $expectedPriceLists);
-        }
-    }
+        $this->sendScheduledMessages();
 
-    /**
-     * @return PriceList[]
-     */
-    protected function getActualTriggersPriceListIds()
-    {
-        return array_map(
-            function (PriceRuleChangeTrigger $trigger) {
-                return $trigger->getPriceList()->getId();
-            },
-            $this->getTriggers()
+        self::assertMessagesSent(
+            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            [
+                [
+                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_1)->getId(),
+                    PriceListTriggerFactory::PRODUCT => $product->getId()
+                ],
+                [
+                    PriceListTriggerFactory::PRICE_LIST => $this->getReference(LoadPriceLists::PRICE_LIST_2)->getId(),
+                    PriceListTriggerFactory::PRODUCT => $product->getId()
+                ],
+            ]
         );
-    }
-
-    protected function cleanTriggers()
-    {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(PriceRuleChangeTrigger::class);
-        $em->createQueryBuilder()
-            ->delete(PriceRuleChangeTrigger::class)
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
-     * @return PriceRuleChangeTrigger[]
-     */
-    protected function getTriggers()
-    {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass(PriceRuleChangeTrigger::class)
-            ->getRepository(PriceRuleChangeTrigger::class)
-            ->findAll();
     }
 }

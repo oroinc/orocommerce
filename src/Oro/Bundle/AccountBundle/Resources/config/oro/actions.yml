@@ -1,9 +1,9 @@
 operations:
-    orob2b_account_accountuser_disable:
+    oro_account_accountuser_disable:
         label: oro.account.action.account_user.disable
         applications: [default]
         routes:
-            - orob2b_account_account_user_view
+            - oro_account_account_user_view
         datagrids:
             - account-account-user-grid
         order: 30
@@ -14,7 +14,7 @@ operations:
             '@equal': [$enabled, true]
         actions:
             - '@run_action_group':
-                action_group: orob2b_account_accountuser_set_enabled
+                action_group: oro_account_accountuser_set_enabled
                 parameters_mapping:
                     data: $.data
                     value: false
@@ -22,11 +22,11 @@ operations:
                 message: oro.account.controller.accountuser.disabled.message
                 type: 'success'
 
-    orob2b_account_accountuser_enable:
+    oro_account_accountuser_enable:
         label: oro.account.action.account_user.enable
         applications: [default]
         routes:
-            - orob2b_account_account_user_view
+            - oro_account_account_user_view
         datagrids:
             - account-account-user-grid
         order: 30
@@ -37,7 +37,7 @@ operations:
             '@equal': [$enabled, false]
         actions:
             - '@run_action_group':
-                action_group: orob2b_account_accountuser_set_enabled
+                action_group: oro_account_accountuser_set_enabled
                 parameters_mapping:
                     data: $.data
                     value: true
@@ -45,11 +45,11 @@ operations:
                 message: oro.account.controller.accountuser.enabled.message
                 type: 'success'
 
-    orob2b_account_frontend_accountuser_disable:
+    oro_account_frontend_accountuser_disable:
         label: oro.account.action.account_user.disable
         applications: [commerce]
         routes:
-            - orob2b_account_frontend_account_user_view
+            - oro_account_frontend_account_user_view
         order: 10
         button_options:
             icon: icon-remove
@@ -62,33 +62,33 @@ operations:
                 - '@not_equal': [$id, $.currentUser.id]
         actions:
             - '@run_action_group':
-                action_group: orob2b_account_frontend_accountuser_set_enabled
+                action_group: oro_account_frontend_accountuser_set_enabled
                 parameters_mapping:
                     data: $.data
                     value: false
                     current_user: $.currentUser
             - '@redirect':
                 parameters:
-                    route: orob2b_account_frontend_account_user_view
+                    route: oro_account_frontend_account_user_view
                     route_parameters:
                         id: $id
             - '@flash_message':
                 message: oro.account.controller.accountuser.disabled.message
                 type: 'success'
 
-    orob2b_account_frontend_accountuser_disable_datagrid:
-        extends: orob2b_account_frontend_accountuser_disable
+    oro_account_frontend_accountuser_disable_datagrid:
+        extends: oro_account_frontend_accountuser_disable
         routes: ~
         datagrids:
             - frontend-account-account-user-grid
         actions:
             - '@refresh_grid': frontend-account-account-user-grid
 
-    orob2b_account_frontend_accountuser_enable:
+    oro_account_frontend_accountuser_enable:
         label: oro.account.action.account_user.enable
         applications: [commerce]
         routes:
-            - orob2b_account_frontend_account_user_view
+            - oro_account_frontend_account_user_view
         order: 10
         button_options:
             icon: icon-ok
@@ -101,33 +101,33 @@ operations:
                 - '@not_equal': [$id, $.currentUser.id]
         actions:
             - '@run_action_group':
-                action_group: orob2b_account_frontend_accountuser_set_enabled
+                action_group: oro_account_frontend_accountuser_set_enabled
                 parameters_mapping:
                     data: $.data
                     value: true
                     current_user: $.currentUser
             - '@redirect':
                 parameters:
-                    route: orob2b_account_frontend_account_user_view
+                    route: oro_account_frontend_account_user_view
                     route_parameters:
                         id: $id
             - '@flash_message':
                 message: oro.account.controller.accountuser.enabled.message
                 type: 'success'
 
-    orob2b_account_frontend_accountuser_enable_datagrid:
-        extends: orob2b_account_frontend_accountuser_enable
+    oro_account_frontend_accountuser_enable_datagrid:
+        extends: oro_account_frontend_accountuser_enable
         routes: ~
         datagrids:
             - frontend-account-account-user-grid
         actions:
             - '@refresh_grid': frontend-account-account-user-grid
 
-    orob2b_account_accountuser_confirm:
+    oro_account_accountuser_confirm:
         label: oro.account.action.account_user.confirm
         routes:
-            - orob2b_account_account_user_view
-            - orob2b_account_frontend_account_user_view
+            - oro_account_account_user_view
+            - oro_account_frontend_account_user_view
         order: 20
         button_options:
             class: back no-hash icons-holder-text
@@ -137,18 +137,18 @@ operations:
             '@equal': [$confirmed, false]
         actions:
             - '@run_action_group':
-                action_group: orob2b_account_accountuser_confirm
+                action_group: oro_account_accountuser_confirm
                 parameters_mapping:
                     data: $.data
             - '@flash_message':
                 message: oro.account.controller.accountuser.confirmed.message
                 type: 'success'
 
-    orob2b_account_accountuser_sendconfirmation:
+    oro_account_accountuser_sendconfirmation:
         label: oro.account.action.account_user.send_confirmation
         routes:
-            - orob2b_account_account_user_view
-            - orob2b_account_frontend_account_user_view
+            - oro_account_account_user_view
+            - oro_account_frontend_account_user_view
         order: 30
         button_options:
             class: back no-hash icons-holder-text
@@ -158,43 +158,43 @@ operations:
             '@equal': [$confirmed, false]
         actions:
             - '@run_action_group':
-                action_group: orob2b_account_accountuser_sendconfirmation
+                action_group: oro_account_accountuser_sendconfirmation
                 parameters_mapping:
                     data: $.data
             - '@flash_message':
                 message: oro.account.controller.accountuser.confirmation_sent.message
                 type: 'success'
 
-    orob2b_account_frontend_create:
+    oro_account_frontend_create:
         label: oro.account.action.account_user.create
         applications: [commerce]
         routes:
-           - orob2b_account_frontend_account_user_index
+           - oro_account_frontend_account_user_index
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\AccountBundle\Entity\AccountUser]
         order: 10
         actions:
            - '@redirect':
                parameters:
-                   route: orob2b_account_frontend_account_user_create
+                   route: oro_account_frontend_account_user_create
 
-    orob2b_account_frontend_create_role:
+    oro_account_frontend_create_role:
         label: oro.account.action.account_user_role.create
         applications: [commerce]
         routes:
-            - orob2b_account_frontend_account_user_role_index
+            - oro_account_frontend_account_user_role_index
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\AccountBundle\Entity\AccountUserRole]
         order: 10
         actions:
             - '@redirect':
                 parameters:
-                    route: orob2b_account_frontend_account_user_role_create
+                    route: oro_account_frontend_account_user_role_create
 
-    orob2b_account_frontend_delete_user:
+    oro_account_frontend_delete_user:
         label: oro.account.action.account_user.delete
         applications: [commerce]
         routes:
-            - orob2b_account_frontend_account_user_view
-            - orob2b_account_frontend_account_user_update
+            - oro_account_frontend_account_user_view
+            - oro_account_frontend_account_user_update
         acl_resource: [DELETE, $.data]
         order: 20
         button_options:
@@ -218,13 +218,13 @@ operations:
                 type: 'success'
                 message_parameters:
                     entityLabel: $.entityLabel
-            - '@redirect': {route: orob2b_account_frontend_account_user_index}
+            - '@redirect': {route: oro_account_frontend_account_user_index}
 
-    orob2b_account_frontend_edit_user:
+    oro_account_frontend_edit_user:
         label: oro.account.action.account_user.edit
         applications: [commerce]
         routes:
-            - orob2b_account_frontend_account_user_view
+            - oro_account_frontend_account_user_view
         acl_resource: [EDIT, $.data]
         order: 5
         button_options:
@@ -232,15 +232,15 @@ operations:
         actions:
             - '@redirect':
                 parameters:
-                    route: orob2b_account_frontend_account_user_update
+                    route: oro_account_frontend_account_user_update
                     route_parameters:
                         id: $id
 
-    orob2b_account_frontend_profile_user:
+    oro_account_frontend_profile_user:
         label: oro.account.action.account_user.edit
         applications: [commerce]
         routes:
-            - orob2b_account_frontend_account_user_profile
+            - oro_account_frontend_account_user_profile
         acl_resource: [EDIT, $.data]
         order: 5
         button_options:
@@ -248,13 +248,13 @@ operations:
         actions:
             - '@redirect':
                 parameters:
-                    route: orob2b_account_frontend_account_user_profile_update
+                    route: oro_account_frontend_account_user_profile_update
 
-    orob2b_account_frontend_edit_role:
+    oro_account_frontend_edit_role:
         label: oro.account.frontend.action.account_user_role.edit
         applications: [commerce]
         routes:
-            - orob2b_account_frontend_account_user_role_view
+            - oro_account_frontend_account_user_role_view
         acl_resource: [EDIT, entity:commerce@Oro\Bundle\AccountBundle\Entity\AccountUserRole]
         order: 10
         button_options:
@@ -262,16 +262,16 @@ operations:
         actions:
             - '@redirect':
                 parameters:
-                    route: orob2b_account_frontend_account_user_role_update
+                    route: oro_account_frontend_account_user_role_update
                     route_parameters:
                         id: $id
 
-    orob2b_account_frontend_delete_role:
+    oro_account_frontend_delete_role:
         label: oro.account.action.account_user_role.delete
         applications: [commerce]
         routes:
-            - orob2b_account_frontend_account_user_role_view
-            - orob2b_account_frontend_account_user_role_update
+            - oro_account_frontend_account_user_role_view
+            - oro_account_frontend_account_user_role_update
         acl_resource: [DELETE, $.data]
         order: 20
         button_options:
@@ -296,7 +296,7 @@ operations:
                 type: 'success'
                 message_parameters:
                     entityLabel: $.entityLabel
-            - '@redirect': {route: orob2b_account_frontend_account_user_role_index}
+            - '@redirect': {route: oro_account_frontend_account_user_role_index}
     UPDATE:
         exclude_datagrids:
             - account-account-user-select-grid
@@ -327,7 +327,7 @@ operations:
             - account-user-by-account-grid
 
 action_groups:
-    orob2b_account_accountuser_set_enabled:
+    oro_account_accountuser_set_enabled:
         parameters:
             data:
                 type: Oro\Bundle\AccountBundle\Entity\AccountUser
@@ -339,11 +339,11 @@ action_groups:
         actions:
             - '@assign_value': [$.data.enabled, $.value]
             - '@call_service_method':
-                service: orob2b_account_user.manager
+                service: oro_account_user.manager
                 method: updateUser
                 method_parameters: [$.data]
 
-    orob2b_account_frontend_accountuser_set_enabled:
+    oro_account_frontend_accountuser_set_enabled:
         parameters:
             data:
                 type: Oro\Bundle\AccountBundle\Entity\AccountUser
@@ -359,11 +359,11 @@ action_groups:
         actions:
             - '@assign_value': [$.data.enabled, $.value]
             - '@call_service_method':
-                service: orob2b_account_user.manager
+                service: oro_account_user.manager
                 method: updateUser
                 method_parameters: [$.data]
 
-    orob2b_account_accountuser_confirm:
+    oro_account_accountuser_confirm:
         parameters:
             data:
                 type: Oro\Bundle\AccountBundle\Entity\AccountUser
@@ -372,15 +372,15 @@ action_groups:
             '@equal': [$.data.confirmed, false]
         actions:
             - '@call_service_method':
-                service: orob2b_account_user.manager
+                service: oro_account_user.manager
                 method: confirmRegistration
                 method_parameters: [$.data]
             - '@call_service_method':
-                service: orob2b_account_user.manager
+                service: oro_account_user.manager
                 method: updateUser
                 method_parameters: [$.data]
 
-    orob2b_account_accountuser_sendconfirmation:
+    oro_account_accountuser_sendconfirmation:
         parameters:
             data:
                 type: Oro\Bundle\AccountBundle\Entity\AccountUser
@@ -389,6 +389,6 @@ action_groups:
             '@equal': [$.data.confirmed, false]
         actions:
             - '@call_service_method':
-                service: orob2b_account_user.manager
+                service: oro_account_user.manager
                 method: sendConfirmationEmail
                 method_parameters: [$.data]

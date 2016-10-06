@@ -2,18 +2,17 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
-use Oro\Bundle\PricingBundle\TriggersFiller\PriceRuleTriggerFiller;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 abstract class AbstractRuleEntityListener
 {
     /**
-     * @var PriceRuleTriggerFiller
+     * @var PriceRuleLexemeTriggerHandler
      */
-    protected $priceRuleTriggersFiller;
+    protected $priceRuleLexemeTriggerHandler;
 
     /**
      * @var PriceRuleFieldsProvider
@@ -26,16 +25,16 @@ abstract class AbstractRuleEntityListener
     protected $registry;
 
     /**
-     * @param PriceRuleTriggerFiller $priceRuleTriggersFiller
+     * @param PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
      * @param PriceRuleFieldsProvider $fieldsProvider
      * @param RegistryInterface $registry
      */
     public function __construct(
-        PriceRuleTriggerFiller $priceRuleTriggersFiller,
+        PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler,
         PriceRuleFieldsProvider $fieldsProvider,
         RegistryInterface $registry
     ) {
-        $this->priceRuleTriggersFiller = $priceRuleTriggersFiller;
+        $this->priceRuleLexemeTriggerHandler = $priceRuleLexemeTriggerHandler;
         $this->fieldsProvider = $fieldsProvider;
         $this->registry = $registry;
     }
@@ -44,43 +43,6 @@ abstract class AbstractRuleEntityListener
      * @return string
      */
     abstract protected function getEntityClassName();
-
-    /**
-     * @param PriceRuleLexeme[] $lexemes
-     * @param Product|null $product
-     */
-    protected function addTriggersByLexemes(array $lexemes, Product $product = null)
-    {
-        $priceLists = [];
-
-        foreach ($lexemes as $lexeme) {
-            $priceList = $lexeme->getPriceList();
-            $priceLists[$priceList->getId()] = $priceList;
-        }
-
-        $this->priceRuleTriggersFiller->addTriggersForPriceLists($priceLists, $product);
-    }
-
-    /**
-     * @param array $updatedFields
-     * @param null|int $relationId
-     * @return array|\Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme[]
-     */
-    protected function findEntityLexemes(array $updatedFields = [], $relationId = null)
-    {
-        $criteria = ['className' => $this->getEntityClassName()];
-        if ($updatedFields) {
-            $criteria['fieldName'] = $updatedFields;
-        }
-        if ($relationId) {
-            $criteria['relationId'] = $relationId;
-        }
-        $lexemes = $this->registry->getManagerForClass(PriceRuleLexeme::class)
-            ->getRepository(PriceRuleLexeme::class)
-            ->findBy($criteria);
-
-        return $lexemes;
-    }
 
     /**
      * @param array $changeSet
@@ -93,8 +55,12 @@ abstract class AbstractRuleEntityListener
         $updatedFields = array_intersect($fields, array_keys($changeSet));
 
         if ($updatedFields) {
-            $lexemes = $this->findEntityLexemes($updatedFields, $relationId);
-            $this->addTriggersByLexemes($lexemes, $product);
+            $lexemes = $this->priceRuleLexemeTriggerHandler->findEntityLexemes(
+                $this->getEntityClassName(),
+                $updatedFields,
+                $relationId
+            );
+            $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product);
         }
     }
 
@@ -104,8 +70,9 @@ abstract class AbstractRuleEntityListener
      */
     protected function recalculateByEntity(Product $product = null, $relationId = null)
     {
-        $lexemes = $this->findEntityLexemes([], $relationId);
-        $this->addTriggersByLexemes($lexemes, $product);
+        $lexemes = $this->priceRuleLexemeTriggerHandler
+            ->findEntityLexemes($this->getEntityClassName(), [], $relationId);
+        $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product);
     }
 
     /**

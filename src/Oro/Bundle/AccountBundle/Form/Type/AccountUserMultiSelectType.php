@@ -9,7 +9,7 @@ use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
 class AccountUserMultiSelectType extends AbstractType
 {
-    const NAME = 'orob2b_account_account_user_multiselect';
+    const NAME = 'oro_account_account_user_multiselect';
 
     /**
      * {@inheritdoc}
@@ -26,7 +26,7 @@ class AccountUserMultiSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'orob2b_account_account_user',
+                'autocomplete_alias' => 'oro_account_account_user',
                 'configs' => [
                     'multiple' => true,
                     'component' => 'autocomplete-accountuser',

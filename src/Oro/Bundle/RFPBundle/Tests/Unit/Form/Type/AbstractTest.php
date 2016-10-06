@@ -101,14 +101,13 @@ abstract class AbstractTest extends FormIntegrationTestCase
             [
                 'data_parameters' => [],
                 'grid_name' => 'products-select-grid-frontend',
-                'grid_widget_route' => 'orob2b_account_frontend_datagrid_widget',
-                'grid_view_widget_route' => 'orob2b_frontend_datagrid_widget',
+                'grid_widget_route' => 'oro_account_frontend_datagrid_widget',
+                'grid_view_widget_route' => 'oro_frontend_datagrid_widget',
                 'configs'         => [
                     'placeholder' => null,
                 ],
             ]
         );
-
     }
 
     /**

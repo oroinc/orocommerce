@@ -24,7 +24,7 @@ define(function(require) {
         initialize: function() {
             this.options = $.extend(true, {
                 currency: null,
-                unitLoaderRouteName: 'orob2b_pricing_frontend_units_by_pricelist',
+                unitLoaderRouteName: 'oro_pricing_frontend_units_by_pricelist',
                 selectors: {
                     priceValueText: 'div.order-line-item-price-value'
                 }

@@ -13,6 +13,7 @@ class OrderDeleteOperationTest extends ActionTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -27,6 +28,6 @@ class OrderDeleteOperationTest extends ActionTestCase
         /** @var Order $order */
         $order = $this->getReference('simple_order');
 
-        $this->assertDeleteOperation($order->getId(), 'orob2b_order.entity.order.class', 'orob2b_order_index');
+        $this->assertDeleteOperation($order->getId(), 'oro_order.entity.order.class', 'oro_order_index');
     }
 }

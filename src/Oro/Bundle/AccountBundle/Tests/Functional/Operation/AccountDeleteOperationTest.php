@@ -13,7 +13,7 @@ class AccountDeleteOperationTest extends ActionTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
@@ -26,6 +26,6 @@ class AccountDeleteOperationTest extends ActionTestCase
         /** @var Account $account */
         $account = $this->getReference('account.orphan');
 
-        $this->assertDeleteOperation($account->getId(), 'orob2b_account.entity.account.class', 'orob2b_account_index');
+        $this->assertDeleteOperation($account->getId(), 'oro_account.entity.account.class', 'oro_account_index');
     }
 }

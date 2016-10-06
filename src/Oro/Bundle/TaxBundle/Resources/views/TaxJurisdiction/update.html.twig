@@ -2,16 +2,16 @@
 
 {% form_theme form with ['OroTaxBundle:Form:fields.html.twig'] %}
 
-{% set formAction = entity.id ? path('orob2b_tax_jurisdiction_update', {id: entity.id}) : path('orob2b_tax_jurisdiction_create') %}
+{% set formAction = entity.id ? path('oro_tax_jurisdiction_update', {id: entity.id}) : path('oro_tax_jurisdiction_create') %}
 
 {% oro_title_set({params : {"%taxCode%": entity.code|default('N/A'|trans), '%entityName%': 'oro.tax.taxjurisdiction.entity_label'|trans} }) %}
 
 {% block navButtons %}
     {{ parent() }}
 
-    {{ UI.cancelButton(path('orob2b_tax_jurisdiction_index')) }}
+    {{ UI.cancelButton(path('oro_tax_jurisdiction_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_tax_jurisdiction_update') %}
+    {% if entity.id or resource_granted('oro_tax_jurisdiction_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -21,7 +21,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_tax_jurisdiction_index'),
+            'indexPath':   path('oro_tax_jurisdiction_index'),
             'indexLabel': 'oro.tax.taxjurisdiction.entity_plural_label'|trans,
             'entityTitle': entity.code|default('N/A'|trans)
         } %}

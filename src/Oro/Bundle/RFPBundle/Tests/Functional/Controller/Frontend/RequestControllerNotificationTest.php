@@ -3,12 +3,14 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @dbIsolation
@@ -28,27 +30,31 @@ class RequestControllerNotificationTest extends WebTestCase
     protected $configManager;
 
     /**
+     * @var Website
+     */
+    protected $website;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         $this->initClient([], [], true);
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
-                'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                LoadRequestData::class,
+                LoadProductPrices::class,
             ]
         );
 
         $this->client->enableProfiler();
 
-        $this->em = $this
-            ->client
-            ->getContainer()
-            ->get('oro_entity.doctrine_helper')
-            ->getEntityManager('Oro\Bundle\UserBundle\Entity\User');
+        $this->em = $this->client->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass(User::class);
+        $this->website = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
 
         $this->configManager = $this->client->getContainer()->get('oro_config.manager');
     }
@@ -89,8 +95,12 @@ class RequestControllerNotificationTest extends WebTestCase
         $accountUser->addSalesRepresentative($saleRep2);
         $this->em->flush();
 
-        $this->configManager->set('oro_b2b_rfp.notify_assigned_sales_reps_of_the_account', 'noSaleReps');
-        $this->configManager->flush();
+        $this->configManager->set(
+            'oro_rfp.notify_assigned_sales_reps_of_the_account',
+            'noSaleReps',
+            $this->website
+        );
+        $this->configManager->flush($this->website);
 
         $this->createRequest();
         $this->assertEmailSent([$saleRep2], 3);
@@ -118,8 +128,12 @@ class RequestControllerNotificationTest extends WebTestCase
         $accountUser->addSalesRepresentative($saleRepresentative);
         $this->em->flush();
 
-        $this->configManager->set('oro_b2b_rfp.notify_owner_of_account', 'noSaleReps');
-        $this->configManager->flush();
+        $this->configManager->set(
+            'oro_rfp.notify_owner_of_account',
+            'noSaleReps',
+            $this->website
+        );
+        $this->configManager->flush($this->website);
 
         $this->createRequest();
         // should notify only sale representative, not owner
@@ -148,13 +162,21 @@ class RequestControllerNotificationTest extends WebTestCase
         $accountUser->addSalesRepresentative($saleRep);
         $this->em->flush();
 
-        $this->configManager->set('oro_b2b_rfp.notify_owner_of_account_user_record', 'noSaleReps');
-        $this->configManager->flush();
+        $this->configManager->set(
+            'oro_rfp.notify_owner_of_account_user_record',
+            'noSaleReps',
+            $this->website
+        );
+        $this->configManager->flush($this->website);
 
         $this->createRequest();
         $this->assertEmailSent([$saleRep], 2);
     }
 
+    /**
+     * @param array $usersToSendTo
+     * @param int $numberOfMessagesExpected
+     */
     protected function assertEmailSent(array $usersToSendTo, $numberOfMessagesExpected)
     {
         /** @var \Swift_Plugins_MessageLogger $emailLogging */
@@ -174,20 +196,20 @@ class RequestControllerNotificationTest extends WebTestCase
         $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
         $this->initClient([], $authParams);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
         $form = $crawler->selectButton('Submit Request For Quote')->form();
 
-        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('orob2b_rfp_frontend_request');
+        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('oro_rfp_frontend_request');
 
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.1');
 
         $parameters = [
             'input_action' => 'save_and_stay',
-            'orob2b_rfp_frontend_request' => $this->getFormData()
+            'oro_rfp_frontend_request' => $this->getFormData()
         ];
-        $parameters['orob2b_rfp_frontend_request']['_token'] = $crfToken;
-        $parameters['orob2b_rfp_frontend_request']['requestProducts'] = [
+        $parameters['oro_rfp_frontend_request']['_token'] = $crfToken;
+        $parameters['oro_rfp_frontend_request']['requestProducts'] = [
             [
                 'product' => $productPrice->getProduct()->getId(),
                 'requestProductItems' => [
@@ -206,6 +228,9 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->client->request($form->getMethod(), $form->getUri(), $parameters);
     }
 
+    /**
+     * @return array
+     */
     protected function getFormData()
     {
         return [

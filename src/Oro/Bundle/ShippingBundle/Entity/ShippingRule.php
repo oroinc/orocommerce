@@ -13,17 +13,17 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingRule;
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository")
  * @ORM\Table(
- *     name="orob2b_shipping_rule",
+ *     name="oro_shipping_rule",
  *     indexes={
- *         @ORM\Index(name="orob2b_shipping_rl_en_cur_idx", columns={"enabled", "currency"}),
+ *         @ORM\Index(name="oro_shipping_rule_en_cur_idx", columns={"enabled", "currency"}),
  *     }
  * )
  * @ORM\HasLifecycleCallbacks()
  * @Config(
- *      routeName="orob2b_shipping_rule_index",
- *      routeView="orob2b_shipping_rule_view",
- *      routeCreate="orob2b_shipping_rule_create",
- *      routeUpdate="orob2b_shipping_rule_update",
+ *      routeName="oro_shipping_rule_index",
+ *      routeView="oro_shipping_rule_view",
+ *      routeCreate="oro_shipping_rule_create",
+ *      routeUpdate="oro_shipping_rule_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
@@ -139,16 +139,17 @@ class ShippingRule extends ExtendShippingRule
     protected $destinations;
 
     /**
-     * @var Collection|ShippingRuleConfiguration[]
+     * @var Collection|ShippingRuleMethodConfig[]
      *
      * @ORM\OneToMany(
-     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRuleConfiguration",
+     *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig",
      *     mappedBy="rule",
      *     cascade={"ALL"},
-     *     fetch="EAGER"
+     *     fetch="EAGER",
+     *     orphanRemoval=true
      * )
      */
-    protected $configurations;
+    protected $methodConfigs;
 
     /**
      * @var string
@@ -191,7 +192,7 @@ class ShippingRule extends ExtendShippingRule
     {
         parent::__construct();
         $this->destinations = new ArrayCollection();
-        $this->configurations = new ArrayCollection();
+        $this->methodConfigs = new ArrayCollection();
     }
 
     /**
@@ -280,22 +281,22 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @param ShippingRuleConfiguration $lineItem
+     * @param ShippingRuleMethodConfig $lineItem
      * @return bool
      */
-    public function hasConfiguration(ShippingRuleConfiguration $lineItem)
+    public function hasMethodConfig(ShippingRuleMethodConfig $lineItem)
     {
-        return $this->configurations->contains($lineItem);
+        return $this->methodConfigs->contains($lineItem);
     }
 
     /**
-     * @param ShippingRuleConfiguration $configuration
+     * @param ShippingRuleMethodConfig $configuration
      * @return $this
      */
-    public function addConfiguration(ShippingRuleConfiguration $configuration)
+    public function addMethodConfig(ShippingRuleMethodConfig $configuration)
     {
-        if (!$this->hasConfiguration($configuration)) {
-            $this->configurations[] = $configuration;
+        if (!$this->hasMethodConfig($configuration)) {
+            $this->methodConfigs[] = $configuration;
             $configuration->setRule($this);
         }
 
@@ -303,38 +304,24 @@ class ShippingRule extends ExtendShippingRule
     }
 
     /**
-     * @param ShippingRuleConfiguration $configuration
+     * @param ShippingRuleMethodConfig $configuration
      * @return $this
      */
-    public function removeConfiguration(ShippingRuleConfiguration $configuration)
+    public function removeMethodConfig(ShippingRuleMethodConfig $configuration)
     {
-        if ($this->hasConfiguration($configuration)) {
-            $this->configurations->removeElement($configuration);
+        if ($this->hasMethodConfig($configuration)) {
+            $this->methodConfigs->removeElement($configuration);
         }
 
         return $this;
     }
 
     /**
-     * @param Collection|ShippingRuleConfiguration[] $configurations
-     * @return $this
+     * @return Collection|ShippingRuleMethodConfig[]
      */
-    public function setConfigurations(Collection $configurations)
+    public function getMethodConfigs()
     {
-        foreach ($configurations as $configuration) {
-            $configuration->setRule($this);
-        }
-        $this->configurations = $configurations;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|ShippingRuleConfiguration[]
-     */
-    public function getConfigurations()
-    {
-        return $this->configurations;
+        return $this->methodConfigs;
     }
 
     /**

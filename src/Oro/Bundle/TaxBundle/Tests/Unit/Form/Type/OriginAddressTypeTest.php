@@ -27,7 +27,7 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_tax_origin_address', $this->formType->getName());
+        $this->assertEquals('oro_tax_origin_address', $this->formType->getName());
     }
 
     public function testConfigureOptions()

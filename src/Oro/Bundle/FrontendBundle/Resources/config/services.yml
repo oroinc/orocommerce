@@ -2,7 +2,7 @@ parameters:
     oro_action.helper.applications.class: Oro\Bundle\FrontendBundle\Helper\ActionApplicationsHelper
 
 services:
-    orob2b_frontend.listener.frontend_route_collection:
+    oro_frontend.listener.frontend_route_collection:
         class: 'Oro\Bundle\FrontendBundle\EventListener\FrontendRouteCollectionListener'
         arguments:
             -
@@ -12,7 +12,7 @@ services:
             - { name: kernel.event_listener, event: oro_distribution.route_collection.autoload, method: onCollectionAutoload, priority: 130 }
         lazy: true
 
-    orob2b_frontend.listener.route_collection:
+    oro_frontend.listener.route_collection:
         class: 'Oro\Bundle\FrontendBundle\EventListener\RouteCollectionListener'
         arguments:
             - '%web_backend_prefix%'
@@ -21,99 +21,114 @@ services:
             - { name: kernel.event_listener, event: oro_distribution.route_collection.autoload, method: onCollectionAutoload, priority: 120 }
         lazy: true
 
-    orob2b_frontend.menu.breadcrumb_manager:
+    oro_frontend.menu.breadcrumb_manager:
         class: 'Oro\Bundle\FrontendBundle\Menu\BreadcrumbManager'
         public: false
         parent: oro_navigation.breadcrumb_manager
         tags:
             - {name: oro_breadcrumbs.provider}
 
-    orob2b_frontend.listener.theme:
+    oro_frontend.listener.theme:
         class: 'Oro\Bundle\FrontendBundle\EventListener\ThemeListener'
         arguments:
             - '@oro_theme.registry'
-            - '@orob2b_frontend.request.frontend_helper'
+            - '@oro_frontend.request.frontend_helper'
             - '@oro_config.manager'
             - '%installed%'
         tags:
             - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest}
             - {name: kernel.event_listener, event: kernel.view, method: onKernelView, priority: 20 }
 
-    orob2b_frontend.assetic.configuration:
+    oro_frontend.assetic.configuration:
         class: '%oro_assetic.configuration.class%'
         public: false
         arguments:
             - '@event_dispatcher'
             - '%oro_assetic.raw_configuration%'
 
-    orob2b_frontend.twig_extension.demo_frontend_theme:
+    oro_frontend.twig_extension.demo_frontend_theme:
         class: 'Oro\Bundle\FrontendBundle\Twig\DemoThemeExtension'
         public: false
         arguments:
             - '@assetic.asset_factory'
-            - '@orob2b_frontend.assetic.configuration'
+            - '@oro_frontend.assetic.configuration'
             - '@oro_theme.registry'
         tags:
             - { name: twig.extension }
 
-    orob2b_frontend.placeholder.theme_filter:
+    oro_frontend.placeholder.theme_filter:
         class: 'Oro\Bundle\FrontendBundle\Placeholder\ThemeFilter'
         arguments:
             - '@oro_theme.registry'
 
-    orob2b_frontend.placeholder.filter:
+    oro_frontend.placeholder.filter:
         class: 'Oro\Bundle\FrontendBundle\Placeholder\FrontendFilter'
         arguments:
-            - '@orob2b_frontend.request.frontend_helper'
+            - '@oro_frontend.request.frontend_helper'
             - '@request_stack'
 
-    orob2b_frontend.request.frontend_helper:
+    oro_frontend.request.frontend_helper:
         class: 'Oro\Bundle\FrontendBundle\Request\FrontendHelper'
         arguments:
             - '%web_backend_prefix%'
             - '@service_container'
 
-    orob2b_frontend.activity_list.placeholder.filter:
+    oro_frontend.activity_list.placeholder.filter:
         class: 'Oro\Bundle\FrontendBundle\Placeholder\ActivityListPlaceholderFilter'
         arguments:
             - '@oro_activity_list.placeholder.filter'
-            - '@orob2b_frontend.request.frontend_helper'
+            - '@oro_frontend.request.frontend_helper'
             - '@request_stack'
         tags:
             - { name: kernel.event_listener, event: oro.ui.grouping_chain_widget.before, method: isAllowedButton, priority: 10 }
 
-    orob2b_frontend.form.type.install_configuration.web:
+    oro_frontend.form.type.install_configuration.web:
         class: 'Oro\Bundle\FrontendBundle\Form\Type\Configuration\WebType'
         public: true
         tags:
-            - { name: form.type, alias: orob2b_frontend_install_configuration_web }
+            - { name: form.type, alias: oro_frontend_install_configuration_web }
 
-    orob2b_frontend.form.type.extension.configuration.web:
+    oro_frontend.form.type.extension.configuration.web:
         class: 'Oro\Bundle\FrontendBundle\Form\Extension\ConfigurationTypeExtension'
         public: true
         tags:
             - { name: form.type_extension, alias: oro_installer_configuration }
 
-    orob2b_frontend.listener.datagrid.bottom_toolbar:
+    oro_frontend.listener.datagrid.bottom_toolbar:
         class: 'Oro\Bundle\FrontendBundle\EventListener\DatagridBottomToolbarListener'
         arguments:
-            - '@orob2b_frontend.request.frontend_helper'
+            - '@oro_frontend.request.frontend_helper'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore, priority: 10 }
 
-    orob2b_frontend.listener.datagrid.fields:
+    oro_frontend.listener.datagrid.fields:
         class: 'Oro\Bundle\FrontendBundle\EventListener\DatagridFieldsListener'
         arguments:
-            - '@orob2b_frontend.request.frontend_helper'
+            - '@oro_frontend.request.frontend_helper'
         tags:
             # Must be executed after all listeners to disable custom fields
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore, priority: -255 }
 
-    orob2b_frontend.listener.update_migration_namespaces:
+    oro_frontend.listener.update_migration_namespaces:
         class: 'Oro\Bundle\FrontendBundle\CacheWarmer\UpdateNamespacesWarmer'
         arguments:
-            - '@doctrine.dbal.default_connection'
+            - '@oro_frontend.class_migration'
+        tags:
+            - { name: oro_entity_extend.warmer }
+
+    oro_frontend.class_migration:
+        class: 'Oro\Bundle\FrontendBundle\CacheWarmer\ClassMigration'
+        arguments:
+            - '@doctrine'
             - '@oro_entity_config.config_manager'
             - '%installed%'
+        calls:
+            - ['append', ['OroB2B', 'Oro']]
+            - ['append', ['orob2b', 'oro']]
+
+    oro_frontend.listener.load_class_metadata:
+        class: 'Oro\Bundle\FrontendBundle\EventListener\LoadClassMetadataEventListener'
+        arguments:
+            - '@oro_frontend.class_migration'
         tags:
-            - { name: kernel.cache_warmer, priority: 35 }
+            - { name: doctrine.event_listener, event: loadClassMetadata }

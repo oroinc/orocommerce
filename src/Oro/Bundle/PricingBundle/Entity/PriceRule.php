@@ -5,11 +5,10 @@ namespace Oro\Bundle\PricingBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
- * @ORM\Table(name="orob2b_price_rule")
+ * @ORM\Table(name="oro_price_rule")
  * @ORM\Entity()
  */
 class PriceRule
@@ -31,6 +30,13 @@ class PriceRule
     protected $currency;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="currency_expression", type="text", nullable=true)
+     */
+    protected $currencyExpression;
+
+    /**
      * @var float
      *
      * @ORM\Column(name="quantity", type="float", nullable=true)
@@ -38,12 +44,26 @@ class PriceRule
     protected $quantity;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="quantity_expression", type="text", nullable=true)
+     */
+    protected $quantityExpression;
+
+    /**
      * @var ProductUnit
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL", nullable=true)
      */
     protected $productUnit;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="product_unit_expression", type="text", nullable=true)
+     */
+    protected $productUnitExpression;
 
     /**
      * @var string
@@ -152,7 +172,7 @@ class PriceRule
      * @param ProductUnit $productUnit
      * @return $this
      */
-    public function setProductUnit(ProductUnit $productUnit)
+    public function setProductUnit(ProductUnit $productUnit = null)
     {
         $this->productUnit = $productUnit;
 
@@ -274,6 +294,63 @@ class PriceRule
     {
         $this->lexemes->removeElement($lexeme);
 
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrencyExpression()
+    {
+        return $this->currencyExpression;
+    }
+
+    /**
+     * @param string $currencyExpression
+     * @return $this
+     */
+    public function setCurrencyExpression($currencyExpression)
+    {
+        $this->currencyExpression = $currencyExpression;
+        
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getQuantityExpression()
+    {
+        return $this->quantityExpression;
+    }
+
+    /**
+     * @param string $quantityExpression
+     * @return $this
+     */
+    public function setQuantityExpression($quantityExpression)
+    {
+        $this->quantityExpression = $quantityExpression;
+        
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProductUnitExpression()
+    {
+        return $this->productUnitExpression;
+    }
+
+    /**
+     * @param string $productUnitExpression
+     * @return $this
+     */
+    public function setProductUnitExpression($productUnitExpression)
+    {
+        $this->productUnitExpression = $productUnitExpression;
+        
         return $this;
     }
 }

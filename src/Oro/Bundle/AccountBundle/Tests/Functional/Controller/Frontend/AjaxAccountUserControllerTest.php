@@ -23,6 +23,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadLoginAccountUserData::AUTH_USER, LoadLoginAccountUserData::AUTH_PW)
         );
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
@@ -38,7 +39,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
         $id = $user->getId();
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_frontend_account_user_get_account', ['id' => $id])
+            $this->getUrl('oro_account_frontend_account_user_get_account', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);

@@ -11,7 +11,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteProductDemandOfferChoiceType extends AbstractType
 {
-    const NAME = 'orob2b_sale_quote_product_demand_offer_choice';
+    const NAME = 'oro_sale_quote_product_demand_offer_choice';
 
     /**
      * @var ProductUnitValueFormatter

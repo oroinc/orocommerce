@@ -12,7 +12,7 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
- * @ORM\Table(name="orob2b_acc_pagestate")
+ * @ORM\Table(name="oro_acc_pagestate")
  */
 class PageState extends AbstractPageState
 {

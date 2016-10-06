@@ -10,6 +10,10 @@
   &__navigation {
     display: inline-block;
 
+    @media (max-width: $screen-md) {
+      padding: 0 0 20px 15px;
+    }
+
     ul {
       @include list-normalize();
 
@@ -27,8 +31,13 @@
           margin-right: 30px;
         }
 
-        @media (max-width: 983px) {
+        @media (max-width: $screen-md) {
+          display: block;
           margin-right: 20px;
+          padding: 5px 0;
+
+          text-transform: uppercase;
+
         }
       }
     }

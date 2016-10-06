@@ -15,6 +15,7 @@ class AjaxPriceListControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
     }
@@ -26,7 +27,7 @@ class AjaxPriceListControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_pricing_price_list_default', ['id' => $priceList->getId()])
+            $this->getUrl('oro_pricing_price_list_default', ['id' => $priceList->getId()])
         );
 
         $result = $this->client->getResponse();
@@ -52,7 +53,7 @@ class AjaxPriceListControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_pricing_price_list_currency_list', ['id' => $priceList->getId()])
+            $this->getUrl('oro_pricing_price_list_currency_list', ['id' => $priceList->getId()])
         );
 
         $result = $this->client->getResponse();

@@ -70,11 +70,12 @@ class ProductControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
     }
 
     public function testIndex()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('products-grid', $crawler->html());
@@ -82,17 +83,17 @@ class ProductControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
         $this->assertEquals(1, $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_NAME."')]")->count());
         $form = $crawler->selectButton('Continue')->form();
         $formValues = $form->getPhpValues();
-        $formValues['input_action'] = 'orob2b_product_create';
-        $formValues['orob2b_product_step_one']['category'] = self::CATEGORY_ID;
+        $formValues['input_action'] = 'oro_product_create';
+        $formValues['oro_product_step_one']['category'] = self::CATEGORY_ID;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request(
             'POST',
-            $this->getUrl('orob2b_product_create'),
+            $this->getUrl('oro_product_create'),
             $formValues
         );
 
@@ -105,27 +106,27 @@ class ProductControllerTest extends WebTestCase
         $this->assertDefaultProductUnit($form);
 
         $formValues = $form->getPhpValues();
-        $formValues['orob2b_product']['sku'] = self::TEST_SKU;
-        $formValues['orob2b_product']['owner'] = $this->getBusinessUnitId();
-        $formValues['orob2b_product']['inventoryStatus'] = Product::INVENTORY_STATUS_IN_STOCK;
-        $formValues['orob2b_product']['status'] = Product::STATUS_DISABLED;
-        $formValues['orob2b_product']['names']['values']['default'] = self::DEFAULT_NAME;
-        $formValues['orob2b_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
-        $formValues['orob2b_product']['shortDescriptions']['values']['default'] = self::DEFAULT_SHORT_DESCRIPTION;
-        $formValues['orob2b_product']['additionalUnitPrecisions'][] = [
+        $formValues['oro_product']['sku'] = self::TEST_SKU;
+        $formValues['oro_product']['owner'] = $this->getBusinessUnitId();
+        $formValues['oro_product']['inventoryStatus'] = Product::INVENTORY_STATUS_IN_STOCK;
+        $formValues['oro_product']['status'] = Product::STATUS_DISABLED;
+        $formValues['oro_product']['names']['values']['default'] = self::DEFAULT_NAME;
+        $formValues['oro_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
+        $formValues['oro_product']['shortDescriptions']['values']['default'] = self::DEFAULT_SHORT_DESCRIPTION;
+        $formValues['oro_product']['additionalUnitPrecisions'][] = [
             'unit' => self::FIRST_UNIT_CODE,
             'precision' => self::FIRST_UNIT_PRECISION,
             'conversionRate' => 10,
             'sell' => true,
         ];
 
-        $formValues['orob2b_product']['images'][] = [
+        $formValues['oro_product']['images'][] = [
             'main' => 1,
             'listing' => 1,
             'additional' => 1
         ];
 
-        $filesData['orob2b_product']['images'][] = [
+        $filesData['oro_product']['images'][] = [
             'image' => [
                 'file' => $this->createUploadedFile(self::FIRST_IMAGE_FILENAME)
             ]
@@ -165,15 +166,15 @@ class ProductControllerTest extends WebTestCase
         $localization = $this->getLocalization();
         $localizedName = $this->getLocalizedName($product, $localization);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
         $this->assertEquals(1, $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_NAME."')]")->count());
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $submittedData = [
             'input_action' => 'save_and_stay',
-            'orob2b_product' => [
-                '_token' => $form['orob2b_product[_token]']->getValue(),
+            'oro_product' => [
+                '_token' => $form['oro_product[_token]']->getValue(),
                 'sku' => self::UPDATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
@@ -221,7 +222,7 @@ class ProductControllerTest extends WebTestCase
         ];
 
         $filesData = [
-            'orob2b_product' => [
+            'oro_product' => [
                 'images' => [
                     1 => [
                         'image' => [
@@ -238,7 +239,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         // Check product unit precisions
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
 
         $actualAdditionalUnitPrecisions = [
             $this->getActualAdditionalUnitPrecision($crawler, 0),
@@ -265,7 +266,7 @@ class ProductControllerTest extends WebTestCase
      */
     public function testView($id)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -350,21 +351,21 @@ class ProductControllerTest extends WebTestCase
         $localization = $this->getLocalization();
         $localizedName = $this->getLocalizedName($product, $localization);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $submittedData = [
             'input_action' => 'save_and_duplicate',
-            'orob2b_product' => [
-                '_token' => $form['orob2b_product[_token]']->getValue(),
+            'oro_product' => [
+                '_token' => $form['oro_product[_token]']->getValue(),
                 'sku' => self::FIRST_DUPLICATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'status' => Product::STATUS_ENABLED,
-                'primaryUnitPrecision' => $form->getPhpValues()['orob2b_product']['primaryUnitPrecision'],
-                'additionalUnitPrecisions' => $form->getPhpValues()['orob2b_product']['additionalUnitPrecisions'],
+                'primaryUnitPrecision' => $form->getPhpValues()['oro_product']['primaryUnitPrecision'],
+                'additionalUnitPrecisions' => $form->getPhpValues()['oro_product']['additionalUnitPrecisions'],
                 'names' => [
                     'values' => [
                         'default' => self::DEFAULT_NAME_ALTERED,
@@ -427,18 +428,18 @@ class ProductControllerTest extends WebTestCase
     {
         $product = $this->getProductDataBySku(self::UPDATED_SKU);
         $id = $product->getId();
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
 
-        $additionalUnit = array_pop($formValues['orob2b_product']['additionalUnitPrecisions']);
-        $primaryUnit = $formValues['orob2b_product']['primaryUnitPrecision'];
-        $formValues['orob2b_product']['additionalUnitPrecisions'][2] =
+        $additionalUnit = array_pop($formValues['oro_product']['additionalUnitPrecisions']);
+        $primaryUnit = $formValues['oro_product']['primaryUnitPrecision'];
+        $formValues['oro_product']['additionalUnitPrecisions'][2] =
             $primaryUnit;
 
-        $formValues['orob2b_product']['primaryUnitPrecision'] =
+        $formValues['oro_product']['primaryUnitPrecision'] =
             ['unit' => $additionalUnit['unit'], 'precision' => $additionalUnit['precision']];
 
         $this->client->request($form->getMethod(), $form->getUri(), $formValues);
@@ -446,20 +447,20 @@ class ProductControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         // Check product unit precisions
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
         $actualUnitPrecisions = [
             [
                 'unit' => $crawler
-                    ->filter('select[name="orob2b_product[primaryUnitPrecision][unit]"] :selected')
+                    ->filter('select[name="oro_product[primaryUnitPrecision][unit]"] :selected')
                     ->html(),
                 'precision' => $crawler
-                    ->filter('input[name="orob2b_product[primaryUnitPrecision][precision]"]')
+                    ->filter('input[name="oro_product[primaryUnitPrecision][precision]"]')
                     ->extract('value')[0],
                 'conversionRate' => $crawler
-                    ->filter('input[name="orob2b_product[primaryUnitPrecision][conversionRate]"]')
+                    ->filter('input[name="oro_product[primaryUnitPrecision][conversionRate]"]')
                     ->extract('value')[0],
                 'sell' => $crawler
-                    ->filter('input[name="orob2b_product[primaryUnitPrecision][sell]"]')
+                    ->filter('input[name="oro_product[primaryUnitPrecision][sell]"]')
                     ->extract('value')[0],
             ],
             $this->getActualAdditionalUnitPrecision($crawler, 0),
@@ -488,21 +489,21 @@ class ProductControllerTest extends WebTestCase
     {
         $product = $this->getProductDataBySku(self::UPDATED_SKU);
         $id = $product->getId();
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formValues = $form->getPhpValues();
 
-        $additionalUnit = array_pop($formValues['orob2b_product']['additionalUnitPrecisions']);
-        $formValues['orob2b_product']['additionalUnitPrecisions'][2] = $additionalUnit;
+        $additionalUnit = array_pop($formValues['oro_product']['additionalUnitPrecisions']);
+        $formValues['oro_product']['additionalUnitPrecisions'][2] = $additionalUnit;
 
         $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         // Check product unit precisions
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
         $actualUnitPrecisions = [
             $this->getActualAdditionalUnitPrecision($crawler, 0),
             $this->getActualAdditionalUnitPrecision($crawler, 1),
@@ -533,7 +534,7 @@ class ProductControllerTest extends WebTestCase
                 [
                     'operationName' => 'DELETE',
                     'entityId'      => $id,
-                    'entityClass'   => $this->getContainer()->getParameter('orob2b_product.entity.product.class'),
+                    'entityClass'   => $this->getContainer()->getParameter('oro_product.entity.product.class'),
                 ]
             ),
             [],
@@ -546,12 +547,12 @@ class ProductControllerTest extends WebTestCase
                 'success'     => true,
                 'message'     => '',
                 'messages'    => [],
-                'redirectUrl' => $this->getUrl('orob2b_product_index')
+                'redirectUrl' => $this->getUrl('oro_product_index')
             ],
             json_decode($this->client->getResponse()->getContent(), true)
         );
 
-        $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $id]));
+        $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
@@ -693,18 +694,18 @@ class ProductControllerTest extends WebTestCase
     protected function assertDefaultProductUnit($form)
     {
         $configManager = $this->client->getContainer()->get('oro_config.manager');
-        $expectedDefaultProductUnit = $configManager->get('orob2b_product.default_unit');
-        $expectedDefaultProductUnitPrecision = $configManager->get('orob2b_product.default_unit_precision');
+        $expectedDefaultProductUnit = $configManager->get('oro_product.default_unit');
+        $expectedDefaultProductUnitPrecision = $configManager->get('oro_product.default_unit_precision');
 
         $formValues = $form->getValues();
 
         $this->assertEquals(
             $expectedDefaultProductUnit,
-            $formValues['orob2b_product[primaryUnitPrecision][unit]']
+            $formValues['oro_product[primaryUnitPrecision][unit]']
         );
         $this->assertEquals(
             $expectedDefaultProductUnitPrecision,
-            $formValues['orob2b_product[primaryUnitPrecision][precision]']
+            $formValues['oro_product[primaryUnitPrecision][precision]']
         );
     }
 
@@ -714,7 +715,7 @@ class ProductControllerTest extends WebTestCase
      */
     private function createUploadedFile($fileName)
     {
-        return new UploadedFile(__DIR__ . '/files/example.gif', $fileName);
+        return new UploadedFile(__DIR__ . '/../DataFixtures/files/example.gif', $fileName);
     }
 
     /**
@@ -762,16 +763,16 @@ class ProductControllerTest extends WebTestCase
     {
         return [
             'unit' => $crawler
-                ->filter('select[name="orob2b_product[additionalUnitPrecisions][' . $position . '][unit]"] :selected')
+                ->filter('select[name="oro_product[additionalUnitPrecisions][' . $position . '][unit]"] :selected')
                 ->html(),
             'precision' => $crawler
-                ->filter('input[name="orob2b_product[additionalUnitPrecisions][' . $position . '][precision]"]')
+                ->filter('input[name="oro_product[additionalUnitPrecisions][' . $position . '][precision]"]')
                 ->extract('value')[0],
             'conversionRate' => $crawler
-                ->filter('input[name="orob2b_product[additionalUnitPrecisions][' . $position . '][conversionRate]"]')
+                ->filter('input[name="oro_product[additionalUnitPrecisions][' . $position . '][conversionRate]"]')
                 ->extract('value')[0],
             'sell' => (bool)$crawler
-                ->filter('input[name="orob2b_product[additionalUnitPrecisions][' . $position . '][sell]"]')
+                ->filter('input[name="oro_product[additionalUnitPrecisions][' . $position . '][sell]"]')
                 ->extract('checked')[0],
         ];
     }

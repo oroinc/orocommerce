@@ -49,6 +49,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -56,7 +57,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules',
             ]
         );
-        $this->resolver = $this->getContainer()->get('orob2b_pricing.resolver.combined_product_schedule_resolver');
+        $this->resolver = $this->getContainer()->get('oro_pricing.resolver.combined_product_schedule_resolver');
         $this->configManager = $this->getContainer()->get('oro_config.global');
         $this->saveDefaultConfigValue();
     }

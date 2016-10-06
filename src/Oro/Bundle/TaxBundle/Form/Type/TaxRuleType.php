@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TaxRuleType extends AbstractType
 {
-    const NAME = 'orob2b_tax_rule_type';
+    const NAME = 'oro_tax_rule_type';
 
     /**
      * @var string

@@ -17,10 +17,10 @@ use Oro\Bundle\CMSBundle\Form\Type\PageType;
 class PageController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_cms_page_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="oro_cms_page_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_cms_page_view",
+     *      id="oro_cms_page_view",
      *      type="entity",
      *      class="OroCMSBundle:Page",
      *      permission="VIEW"
@@ -37,9 +37,9 @@ class PageController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_cms_page_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="oro_cms_page_info", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_cms_page_view")
+     * @AclAncestor("oro_cms_page_view")
      *
      * @param Page $page
      * @return array
@@ -52,24 +52,24 @@ class PageController extends Controller
     }
 
     /**
-     * @Route("/", name="orob2b_cms_page_index")
+     * @Route("/", name="oro_cms_page_index")
      * @Template
-     * @AclAncestor("orob2b_cms_page_view")
+     * @AclAncestor("oro_cms_page_view")
      *
      * @return array
      */
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_cms.entity.page.class')
+            'entity_class' => $this->container->getParameter('oro_cms.entity.page.class')
         ];
     }
 
     /**
-     * @Route("/create/{id}", name="orob2b_cms_page_create", requirements={"id"="\d+"}, defaults={"id"=null})
+     * @Route("/create/{id}", name="oro_cms_page_create", requirements={"id"="\d+"}, defaults={"id"=null})
      * @Template("OroCMSBundle:Page:update.html.twig")
      * @Acl(
-     *      id="orob2b_cms_page_create",
+     *      id="oro_cms_page_create",
      *      type="entity",
      *      class="OroCMSBundle:Page",
      *      permission="CREATE"
@@ -93,10 +93,10 @@ class PageController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_cms_page_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="oro_cms_page_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_cms_page_update",
+     *      id="oro_cms_page_update",
      *      type="entity",
      *      class="OroCMSBundle:Page",
      *      permission="EDIT"
@@ -120,7 +120,7 @@ class PageController extends Controller
             $form,
             $this->getRequest(),
             $this->getDoctrine()->getManagerForClass('OroCMSBundle:Page'),
-            $this->get('orob2b_redirect.slug.manager')
+            $this->get('oro_redirect.slug.manager')
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
@@ -128,13 +128,13 @@ class PageController extends Controller
             $form,
             function (Page $page) {
                 return [
-                    'route' => 'orob2b_cms_page_update',
+                    'route' => 'oro_cms_page_update',
                     'parameters' => ['id' => $page->getId()]
                 ];
             },
             function (Page $page) {
                 return [
-                    'route' => 'orob2b_cms_page_view',
+                    'route' => 'oro_cms_page_view',
                     'parameters' => ['id' => $page->getId()]
                 ];
             },

@@ -13,6 +13,7 @@ class ShoppingListControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -23,7 +24,7 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_shopping_list_index'));
+        $this->client->request('GET', $this->getUrl('oro_shopping_list_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }
@@ -34,7 +35,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shopping_list_view', ['id' => $shoppingList->getId()])
+            $this->getUrl('oro_shopping_list_view', ['id' => $shoppingList->getId()])
         );
 
         $result = $this->client->getResponse();

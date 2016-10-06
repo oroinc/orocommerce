@@ -4,8 +4,8 @@ namespace Oro\Bundle\OrderBundle\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
@@ -14,7 +14,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements SubtotalProviderInterface
 {
     const TYPE = 'shipping_cost';
-    const NAME = 'orob2b_order.subtotal_shipping_cost';
+    const NAME = 'oro_order.subtotal_shipping_cost';
 
     /**
      * @var TranslatorInterface

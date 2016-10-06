@@ -1,5 +1,5 @@
 services:
-    orob2b_cms.layout.block_type.login_page_logo:
+    oro_cms.layout.block_type.login_page_logo:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
             - [setOptionsConfig, [{logo: {required: true}}]]
@@ -7,7 +7,7 @@ services:
         tags:
             - { name: layout.block_type, alias: login_page_logo }
 
-    orob2b_cms.layout.block_type.extension.login_page:
+    oro_cms.layout.block_type.extension.login_page:
         parent: oro_layout.block_type.extension.abstract_configurable
         calls:
             - [setOptionsConfig, [{loginPage: ~}]]
