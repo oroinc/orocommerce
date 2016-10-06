@@ -26,7 +26,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
 
     /**
      * InventoryLevelNormalizer constructor.
-     *
+     * @param FieldHelper $fieldHelper
      * @param ProductUnitLabelFormatter $formatter
      * @param QuantityRoundingService $roundingService
      */

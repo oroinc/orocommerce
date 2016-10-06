@@ -43,7 +43,7 @@ class ProductManageInventoryFormViewListener
         }
 
         $template = $event->getEnvironment()->render(
-            'OroWarehouseBundle:Product:manageInventory.html.twig',
+            'OroInventoryBundle:Product:manageInventory.html.twig',
             ['entity' => $product]
         );
 
@@ -56,7 +56,7 @@ class ProductManageInventoryFormViewListener
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroWarehouseBundle:Product:manageInventoryFormWidget.html.twig',
+            'OroInventoryBundle:Product:manageInventoryFormWidget.html.twig',
             ['form' => $event->getFormView()]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);

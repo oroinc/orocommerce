@@ -64,7 +64,7 @@ class CategoryManageInventoryFormViewListener
         }
 
         $template = $event->getEnvironment()->render(
-            'OroWarehouseBundle:Category:editManageInventory.html.twig',
+            'OroInventoryBundle:Category:editManageInventory.html.twig',
             ['form' => $event->getFormView()]
         );
 
