@@ -31,7 +31,6 @@ class AccountOwnershipProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->tokenStorage = $this->getMock(TokenStorageInterface::class);
         $this->entityRepository = $this->getMockBuilder(EntityRepository::class)
-            ->setMethods(['getMenuUpdates'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->provider = new AccountOwnershipProvider($this->entityRepository, $this->tokenStorage);
