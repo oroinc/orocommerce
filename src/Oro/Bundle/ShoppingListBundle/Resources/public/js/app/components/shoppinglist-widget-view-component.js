@@ -5,7 +5,6 @@ define(function(require) {
 
     var ViewComponent = require('oroui/js/app/components/view-component');
     var mediator = require('oroui/js/mediator');
-    var _ = require('underscore');
     var ShoppingListWidgetViewComponent;
 
     ShoppingListWidgetViewComponent = ViewComponent.extend({

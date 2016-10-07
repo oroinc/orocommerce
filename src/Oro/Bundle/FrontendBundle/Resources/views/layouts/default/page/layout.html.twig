@@ -155,18 +155,6 @@
         <% if (type === "error" || type === "warning") {
             iconClass = 'cf-attention';
         }%>
-        <%
-            var startTagPosition = message.indexOf('>');
-
-            if (startTagPosition > 0) {
-                var endTagPosition = message.lastIndexOf('<');
-                var startTag = message.substring(0, startTagPosition + 1);
-                var endTag =  message.substring(endTagPosition, message.length);
-                var content = message.substring(startTagPosition + 1, endTagPosition);
-
-                message = startTag + _.escape(content) + endTag;
-            }
-        %>
         <div class="container-fluid alert notification notification_<%= type %> notification_lg">
             <span class="badge badge_sm_xs badge_<%= type %>"><i class="<%= iconClass %>"></i></span>
             <span class="fs16 ml1-sm"><%= message %></span>
