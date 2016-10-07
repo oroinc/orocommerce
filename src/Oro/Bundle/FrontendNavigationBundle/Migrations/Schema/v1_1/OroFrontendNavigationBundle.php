@@ -27,7 +27,8 @@ class OroFrontendNavigationBundle implements Migration
     protected function updateOroNavigationMenuUpdateTable(Schema $schema)
     {
         $table = $schema->getTable('oro_front_nav_menu_upd');
-        $table->addColumn('is_active', 'boolean', []);
+        $table->addColumn('is_divider', 'boolean', []);
+        $table->addColumn('is_custom', 'boolean', []);
         $table->changeColumn('ownership_type', ['type' => StringType::getType('string')]);
         $table->dropColumn('website_id');
     }

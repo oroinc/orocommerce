@@ -64,7 +64,6 @@ class OroFrontendNavigationBundle implements
         $table->addColumn('ownership_type', 'integer', []);
         $table->addColumn('owner_id', 'integer', ['notnull' => true]);
         $table->addColumn('is_active', 'boolean', []);
-        $table->addColumn('is_divider', 'boolean', []);
         $table->addColumn('priority', 'integer', ['notnull' => false]);
         $table->addColumn('condition', 'string', ['length' => 512, 'notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
