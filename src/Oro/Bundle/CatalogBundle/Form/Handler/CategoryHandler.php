@@ -86,7 +86,7 @@ class CategoryHandler
         if ($category->getDefaultProductOptions()) {
             $category->getDefaultProductOptions()->updateUnitPrecision();
         }
-        $category->setUpdatedAt(new \DateTime());
+        $category->preUpdate();
         $this->manager->persist($category);
         $this->manager->flush();
     }

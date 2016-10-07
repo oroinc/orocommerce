@@ -32,7 +32,7 @@ class CategoryEntityListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return Category
      */
-    private function setSchedulerExpectation()
+    private function getCategoryAndSetSchedulerExpectation()
     {
         $category = new Category();
 
@@ -45,17 +45,19 @@ class CategoryEntityListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPreRemove()
     {
-        $this->listener->preRemove($this->setSchedulerExpectation());
+        $category = $this->getCategoryAndSetSchedulerExpectation();
+        $this->listener->preRemove($category);
     }
 
     public function testPostPersist()
     {
-        $this->listener->postPersist($this->setSchedulerExpectation());
+        $category = $this->getCategoryAndSetSchedulerExpectation();
+        $this->listener->postPersist($category);
     }
 
     public function testPreUpdate()
     {
-        $category = $this->setSchedulerExpectation();
+        $category = $this->getCategoryAndSetSchedulerExpectation();
         $emMock = $this->getMockBuilder(EntityManagerInterface::class)->getMock();
         $changesSet = ['some_changes' => 1];
         $event = new PreUpdateEventArgs($category, $emMock, $changesSet);

@@ -3,6 +3,8 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Event;
 
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
 use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
 
 class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
@@ -10,7 +12,7 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
     public function testGetEntityIds()
     {
         $entities = [new \stdClass(), new \stdClass()];
-        $event = new IndexEntityEvent($entities, []);
+        $event    = new IndexEntityEvent($entities, []);
 
         $this->assertEquals($entities, $event->getEntities());
     }
@@ -46,10 +48,10 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
         $expectedData = [
             1 => [
                 IndexDataProvider::STANDARD_VALUES_KEY => [
-                    'title' => 'Product title',
+                    'title'       => 'Product title',
                     'description' => 'Product description',
-                    'price' => 100.00,
-                    'categoryId' => 3
+                    'price'       => 100.00,
+                    'categoryId'  => 3
                 ]
             ],
             2 => [
@@ -60,5 +62,42 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertEquals($expectedData, $event->getEntitiesData());
+    }
+
+    public function testGettingFieldValues()
+    {
+        $event = new IndexEntityEvent([1, 2], []);
+
+        $event->addField(1, 'all_text', 'Product title');
+
+        $this->assertEquals('Product title', $event->getFieldValue(1, 'all_text'));
+    }
+
+    public function testGettingPlaceholderFieldValues()
+    {
+        $event = new IndexEntityEvent([1, 2], []);
+
+        $placeholders = [LocalizationIdPlaceholder::NAME => 1];
+        $event->addPlaceholderField(
+            1,
+            'all_text',
+            'Product title',
+            $placeholders
+        );
+
+        $value = new ValueWithPlaceholders('Product title', $placeholders);
+        $this->assertEquals([$value], $event->getPlaceholderFieldValue(1, 'all_text'));
+    }
+
+    public function testAppendToPlaceholderField()
+    {
+        $event = new IndexEntityEvent([1, 2], []);
+
+        $placeholders = [LocalizationIdPlaceholder::NAME => 3];
+        $event->addPlaceholderField(1, 'all_text', 'Product title', $placeholders);
+        $event->appendToPlaceholderField(1, 'all_text', 'appended', LocalizationIdPlaceholder::NAME, 3);
+
+        $value = new ValueWithPlaceholders('Product title appended', $placeholders);
+        $this->assertEquals([$value], $event->getPlaceholderFieldValue(1, 'all_text'));
     }
 }
