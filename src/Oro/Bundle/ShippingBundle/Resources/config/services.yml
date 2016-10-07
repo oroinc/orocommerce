@@ -219,3 +219,9 @@ services:
               - '@oro_shipping.shipping_method.registry'
           tags:
               - { name: layout.data_provider, alias: shipping_methods }
+
+    oro_shipping.shipping_origin.provider:
+        class: Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider
+        arguments:
+            - '@oro_config.global'
+            - '@oro_shipping.factory.shipping_origin_model_factory'
