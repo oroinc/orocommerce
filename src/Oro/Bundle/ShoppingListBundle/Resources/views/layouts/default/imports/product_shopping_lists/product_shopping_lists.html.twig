@@ -112,7 +112,7 @@
             <% _.each(shoppingLists, function(list) { %>
             <tr class="shopping-lists-popup__item">
                 <td class="shopping-lists-popup__list">
-                    <a class="shopping-lists-popup__link" href="#"><%= _.(list.label) %></a>
+                    <a class="shopping-lists-popup__link" href="#"><%= _.escape(list.label) %></a>
                 </td>
                 <td class="shopping-lists-popup__quantity">
                     <% var ListLineItems = list.line_items; %>
