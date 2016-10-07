@@ -90,14 +90,20 @@
     {{ form_errors(form.requestProducts) }}
 {% endblock %}
 
+{% block __oro_rfp_frontend_request_edit__rfp_form_actions_widget %}
+    <div class="request-form-actions">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block __oro_rfp_frontend_request_edit__rfp_form_actions_create_widget %}
-    <div class="rfq-widget_block text-right">
+    <div class="request-form-actions__item">
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block __oro_rfp_frontend_request_edit__rfp_form_actions_back_widget %}
-    <div class="rfq-widget_block text-right">
+    <div class="request-form-actions__item">
         {{ block_widget(block) }}
     </div>
 {% endblock %}

@@ -1,0 +1,7 @@
+.request-form-actions {
+    text-align: right;
+
+    &__item {
+        @extend %form-actions__item;
+    }
+}

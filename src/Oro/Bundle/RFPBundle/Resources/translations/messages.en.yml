@@ -148,6 +148,7 @@ oro:
 
         frontend:
             request:
+                title.label: 'Products'
                 lineitem:
                     product: 'Product'
                     requested:
@@ -191,6 +192,7 @@ oro:
                 assigned_account_users.label: 'Assigned To'
                 create_form.back.label: 'Back'
                 create_form.submit.label: 'Submit Request For Quote'
+                create_form.send.label: 'Submit Request'
                 page_title.label: 'RFQ #%id%: %firstName% %lastName%'
                 title.label: 'Request For Quote #%id%'
                 cancellation_reason.label: 'Cancelation Reason'
