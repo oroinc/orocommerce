@@ -22,6 +22,7 @@ services:
             - '@oro_ups.provider.transport'
             - '@doctrine'
             - '@oro_ups.factory.price_request_factory'
+            - '@oro_locale.helper.localization'
         tags:
             - { name: oro_shipping_method_provider }
 
