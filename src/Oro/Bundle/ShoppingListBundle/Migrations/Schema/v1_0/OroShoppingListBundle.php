@@ -33,7 +33,6 @@ class OroShoppingListBundle implements Migration
         $table = $schema->createTable('orob2b_shopping_list');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
-        $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('label', 'string', ['length' => 255]);
@@ -55,7 +54,6 @@ class OroShoppingListBundle implements Migration
         $table = $schema->createTable('orob2b_shopping_list_line_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
-        $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('shopping_list_id', 'integer');
         $table->addColumn('product_id', 'integer');
@@ -84,12 +82,6 @@ class OroShoppingListBundle implements Migration
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_user'),
-            ['user_owner_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
-        );
-        $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_user'),
             ['account_user_id'],
             ['id'],
@@ -116,12 +108,6 @@ class OroShoppingListBundle implements Migration
             ['organization_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_user'),
-            ['user_owner_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_user'),
