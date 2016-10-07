@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -26,7 +27,7 @@ class PriceListCurrencyEntityListenerTest extends WebTestCase
         $this->loadFixtures([
             LoadPriceRules::class
         ]);
-        $this->cleanQueueMessageTraces();
+        $this->cleanScheduledMessages();
     }
 
     public function testPostPersist()
@@ -39,10 +40,15 @@ class PriceListCurrencyEntityListenerTest extends WebTestCase
         $priceList->addCurrencyByCode('UAH');
         $em->flush();
 
-        $traces = $this->getQueueMessageTraces(Topics::RESOLVE_PRICE_RULES);
-        $this->assertCount(1, $traces);
+        $this->sendScheduledMessages();
 
-        $this->assertEquals($priceList->getId(), $this->getPriceListIdFromTrace($traces[0]));
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_RULES,
+            [
+                PriceListTriggerFactory::PRICE_LIST => $priceList->getId(),
+                PriceListTriggerFactory::PRODUCT => null
+            ]
+        );
     }
 
     public function testPreRemove()
@@ -55,9 +61,14 @@ class PriceListCurrencyEntityListenerTest extends WebTestCase
         $priceList->removeCurrencyByCode('USD');
         $em->flush();
 
-        $traces = $this->getQueueMessageTraces(Topics::RESOLVE_PRICE_RULES);
-        $this->assertCount(1, $traces);
+        $this->sendScheduledMessages();
 
-        $this->assertEquals($priceList->getId(), $this->getPriceListIdFromTrace($traces[0]));
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_RULES,
+            [
+                PriceListTriggerFactory::PRICE_LIST => $priceList->getId(),
+                PriceListTriggerFactory::PRODUCT => null
+            ]
+        );
     }
 }
