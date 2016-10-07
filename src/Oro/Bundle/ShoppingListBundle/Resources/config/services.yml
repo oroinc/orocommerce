@@ -233,17 +233,3 @@ services:
             - '@oro_rfp.form.type.extension.frontend_request_data_storage'
         tags:
             - { name: oro_action.condition, alias: 'rfp_allowed' }
-
-    oro_shopping_list.condition.rfp_route_exists:
-        class: 'Oro\Bundle\ShoppingListBundle\Condition\RfpRouteExists'
-        arguments:
-            - '@router'
-        tags:
-            - { name: oro_action.condition, alias: 'rfp_route_exists' }
-
-    oro_shopping_list.condition.rfp_service_exists:
-        class: 'Oro\Bundle\ShoppingListBundle\Condition\RfpServiceExists'
-        arguments:
-            - '@service_container'
-        tags:
-            - { name: oro_action.condition, alias: 'rfp_service_exists' }

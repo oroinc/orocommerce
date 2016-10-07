@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class Processor extends DataStorageAwareComponentProcessor
+class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
 {
     /** @var RequestDataStorageExtension */
     protected $requestDataStorageExtension;
@@ -39,9 +39,7 @@ class Processor extends DataStorageAwareComponentProcessor
     }
 
     /**
-     * @param array $data
-     * @param Request $request
-     * @return bool|null|\Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * {@inheritdoc}
      */
     public function process(array $data, Request $request)
     {
@@ -49,13 +47,13 @@ class Processor extends DataStorageAwareComponentProcessor
             ->isAllowedRFP($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
         ;
 
-        if ($isAllowedRFP === false) {
+        if (!$isAllowedRFP) {
             $this->session->getFlashBag()->add(
                 'warning',
                 $this->translator->trans('oro.frontend.rfp.data_storage.no_products_be_added_to_rfq')
             );
 
-            return false;
+            return null;
         }
 
         return parent::process($data, $request);

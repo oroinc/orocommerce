@@ -53,7 +53,17 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
             );
         }
 
-        return $this->isAllowedRFP($lineItems);
+        if (!empty($lineItems)) {
+            $products = [];
+            foreach ($lineItems as $lineItem) {
+                /** @var LineItem $lineItem */
+                $products[]['productSku'] = $lineItem->getProduct()->getSku();
+            }
+
+            return $this->requestDataStorageExtension->isAllowedRFP($products);
+        }
+
+        return false;
     }
 
     /**
@@ -97,24 +107,5 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->propertyPath], $factoryAccessor);
-    }
-
-    /**
-     * @param LineItem[]|ArrayCollection $lineItems
-     * @return boolean
-     */
-    private function isAllowedRFP($lineItems)
-    {
-        if (!empty($lineItems)) {
-            $products = [];
-            foreach ($lineItems as $lineItem) {
-                /** @var LineItem $lineItem */
-                $products[]['productSku'] = $lineItem->getProduct()->getSku();
-            }
-
-            return $this->requestDataStorageExtension->isAllowedRFP($products);
-        }
-
-        return false;
     }
 }

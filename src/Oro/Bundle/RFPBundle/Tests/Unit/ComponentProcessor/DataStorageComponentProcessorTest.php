@@ -2,18 +2,17 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\ComponentProcessor;
 
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\RFPBundle\ComponentProcessor\DataStorageComponentProcessor;
 use Oro\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
-use Oro\Bundle\RFPBundle\ComponentProcessor\Processor;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class ProcessorTest extends \PHPUnit_Framework_TestCase
+class DataStorageComponentProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -46,7 +45,7 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
     protected $requestDataStorageExtension;
 
     /**
-     * @var Processor
+     * @var DataStorageComponentProcessor
      */
     protected $processor;
 
@@ -72,7 +71,7 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->processor = new Processor(
+        $this->processor = new DataStorageComponentProcessor(
             $this->router,
             $this->storage,
             $this->securityFacade,
@@ -114,7 +113,7 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
         $this->requestDataStorageExtension->expects($this->once())->method('isAllowedRFP')->willReturn(false);
         $this->session->expects($this->once())->method('getFlashBag')->willReturn($flashBag);
 
-        $this->assertFalse($this->processor->process($data, $request));
+        $this->assertNull($this->processor->process($data, $request));
     }
 
     public function testProcessAllowedRFP()

@@ -44,7 +44,6 @@ class OroProductBundle extends Bundle
                     'description' => 'descriptions',
                     'shortDescription' => 'shortDescriptions'
                 ],
-            ]))
-        ;
+            ]));
     }
 }

@@ -234,8 +234,8 @@ operations:
             icon: icon-briefcase
         preconditions:
             '@and':
-                - '@rfp_route_exists': oro_rfp_frontend_request_create
-                - '@rfp_service_exists': oro_rfp.form.type.extension.frontend_request_data_storage
+                - '@route_exists': oro_rfp_frontend_request_create
+                - '@service_exists': oro_rfp.form.type.extension.frontend_request_data_storage
                 - '@has_elements': $lineItems
                 - '@rfp_allowed': $lineItems
         actions:
