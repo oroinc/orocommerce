@@ -247,7 +247,7 @@
                         <option value="0">{{ 'oro.shoppinglist.actions.choose_list'|trans }}</option>
                         <% if (!_.isEmpty(shoppingListsCollection)) { %>
                         <% _.each(shoppingListsCollection, function(list) { %>
-                        <option value="<%= list.id %>"><%= list.label %></option>
+                        <option value="<%= list.id %>"><%= _.escape(list.label) %></option>
                         <% }); %>
                         <% } %>
                     </select>

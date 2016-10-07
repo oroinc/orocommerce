@@ -34,7 +34,7 @@ define(function(require) {
                 return; // no ID, no update possible
             }
             this.$el.find('.order-widget__order-name-span-' + this.shoppingListId)
-                .text(_.escape(updateData.label));
+                .text(updateData.label);
         },
 
         /**
