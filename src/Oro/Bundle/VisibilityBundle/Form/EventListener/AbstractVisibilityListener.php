@@ -3,11 +3,13 @@
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
-use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
@@ -103,14 +105,24 @@ abstract class AbstractVisibilityListener
      */
     protected function mapVisibilitiesById($visibilities)
     {
-        // todo: BB-4506
+        // todo: check BB-4506
         $visibilitiesById = [];
-        /** @var VisibilityInterface|AccountGroupAwareInterface|AccountAwareInterface $visibilityEntity */
+        /** @var VisibilityInterface $visibilityEntity */
         foreach ($visibilities as $visibilityEntity) {
-            if ($visibilityEntity instanceof AccountGroupAwareInterface) {
-                $visibilitiesById[$visibilityEntity->getAccountGroup()->getId()] = $visibilityEntity;
-            } elseif ($visibilityEntity instanceof AccountAwareInterface) {
-                $visibilitiesById[$visibilityEntity->getAccount()->getId()] = $visibilityEntity;
+            $scope = $visibilityEntity->getScope();
+
+            /** @var Account $account */
+            /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
+            $account = $scope->getAccount();
+
+            /** @var AccountGroup $accountGroup */
+            /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
+            $accountGroup = $scope->getAccountGroup();
+
+            if (null !== $accountGroup) {
+                $visibilitiesById[$accountGroup->getId()] = $visibilityEntity;
+            } elseif (null !== $account) {
+                $visibilitiesById[$account->getId()] = $visibilityEntity;
             }
         }
 
@@ -139,7 +151,7 @@ abstract class AbstractVisibilityListener
 
     /**
      * @param string $className
-     * @return EntityRepository
+     * @return EntityRepository|ObjectRepository
      */
     protected function getEntityRepository($className)
     {
@@ -148,7 +160,7 @@ abstract class AbstractVisibilityListener
 
     /**
      * @param Object $targetEntity
-     * @return EntityManager
+     * @return EntityManager|ObjectManager
      */
     protected function getEntityManager($targetEntity)
     {
