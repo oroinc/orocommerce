@@ -6,7 +6,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 use Oro\Bundle\FrontendBundle\DependencyInjection\OroFrontendExtension;
-use Oro\Bundle\FrontendBundle\DependencyInjection\CompilerPass\ExceptionControllerCompilerPass;
 
 class OroFrontendBundle extends Bundle
 {
@@ -17,7 +16,6 @@ class OroFrontendBundle extends Bundle
     {
         parent::build($container);
 
-        $container->addCompilerPass(new ExceptionControllerCompilerPass());
     }
 
     /**
