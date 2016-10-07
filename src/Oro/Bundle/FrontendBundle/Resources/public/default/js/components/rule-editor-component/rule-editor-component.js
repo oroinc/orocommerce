@@ -30,6 +30,7 @@ define([
                     name: 'any',
                     role: 'any'
                 },
+                pricelist: {},
                 products: {
                     type: 'array',
                     entity: 'product'
@@ -52,7 +53,7 @@ define([
 
         /**
          *
-         * @property {Array}
+         * @property {Object}
          */
         opsRegEx: {},
 
@@ -76,11 +77,22 @@ define([
 
         /**
          *
+         * @property {Object}
+         */
+        error: {},
+
+        /**
+         *
          * @param options
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.$element = this.options._sourceElement;
+
+            this.allowedCompare = _.contains(this.options.allowedOperations, 'compare');
+            this.allowedInclusion = _.contains(this.options.allowedOperations, 'inclusion');
+            this.allowedMath = _.contains(this.options.allowedOperations, 'math');
+            this.allowedBool = _.contains(this.options.allowedOperations, 'bool');
 
             var _this = this;
 
@@ -127,12 +139,16 @@ define([
             var words = this.splitString(normalized.string, ' ');
             var groups = this.getGroups(words);
 
+            if (!this.allowedBool && groups.bool.length) {
+                return false;
+            }
+
             var logicIsValid = _.last(groups.bool) !== _.last(words) && _.every(groups.bool, function(item) {
                     return _this.contains(_this.options.operations.bool, item);
                 });
 
-            var dataWordsAreValid = _.every(groups.expr, function(item) {
-                return _this.isDataExpression(item).isFull;
+            var dataWordsAreValid = _.every(groups.expr, function(item, i) {
+                return _this.checkWord(item);
             });
 
             return logicIsValid && dataWordsAreValid;
@@ -210,6 +226,19 @@ define([
                     }
                 }
             });
+
+            _.each(value, function(char) {
+                if (nestingLevel >= 0) {
+                    if (char === '[') {
+                        nestingLevel++;
+                    }
+                    if (char === ']') {
+                        nestingLevel--;
+                    }
+                }
+            });
+
+            this.error.brackets = nestingLevel !== 0 ? 'Wrong balance of brackets' : '';
 
             return nestingLevel === 0;
         },
@@ -343,51 +372,136 @@ define([
 
         /**
          *
+         * @param term
+         * @returns {*}
+         */
+        checkTerm: function(term) {
+            var isCorrect = term ? this.contains(this.dataWordCases, term) : false;
+
+            this.error.term = !isCorrect ? 'Wrong term is \'' + term + '\'' : '';
+
+            return isCorrect;
+        },
+
+        /**
+         *
+         * @param string
+         * @param splitter
+         * @returns {*}
+         */
+        checkCompare: function(string, splitter) {
+            var matchSplit = this.getTermAndExpr(string, splitter),
+                pathValue = this.getValueByPath(this.options.data, matchSplit.term);
+
+            return this.checkTerm(matchSplit.term) && this.checkExpression(matchSplit.expr, pathValue);
+        },
+
+        /**
+         *
+         * @param string
+         * @param match
+         * @returns {*}
+         */
+        checkInclusion: function(string, match) {
+            var matchSplit = this.getTermAndExpr(string, match);
+
+            return this.checkTerm(matchSplit.term) && this.getArray(matchSplit.expr).is && this.checkValues(matchSplit.expr.split(','));
+        },
+
+        checkValues: function(arr) {
+            var _this = this;
+
+            return _.every(arr, function(item) {
+                var num = Number(item);
+                return (_.isNumber(num) && !_.isNaN(num)) || _.contains(_this.dataWordCases, item);
+            })
+        },
+        /**
+         *
+         * @param string
+         * @param match
+         * @returns {{term: *, expr: *}}
+         */
+        getTermAndExpr: function(string, match) {
+            var matchSplit = this.splitString(string, match);
+
+            return {
+                term: !_.isEmpty(matchSplit[0]) ? matchSplit[0].replace(/\[(.*?)\]/g, '') : null,
+                expr: !_.isEmpty(matchSplit[1]) ? matchSplit[1].replace(/(^\[)|(\]$)/g, '').replace(/\[(.*?)\]/g, '') : null
+            };
+        },
+
+        getArray: function(arr) {
+            return {
+                is: !_.isEmpty(arr) && !_.isEmpty(_.last(arr)),
+                array: arr
+            };
+        },
+
+        /**
+         *
+         * @param expr
+         * @param keyData
+         * @returns {*}
+         */
+        checkExpression: function(expr, keyData) {
+            if (!expr) {
+                return false;
+            }
+
+            var _this = this;
+
+            var mathMatch = expr.match(this.opsRegEx['math']);
+
+            var hasArray = this.getArray(expr);
+            var isArray = hasArray.is && !_.isEmpty(_.last(hasArray.array)) && !mathMatch;
+
+            if (!_.isEmpty(keyData) && keyData !== 'any' && !hasArray) {
+                var isAssigned = this.contains(keyData, expr);
+            } else if (mathMatch) {
+                var values = _.reduce(mathMatch, function(values, match) {
+                    return values.replace(match, ' ');
+                }, expr).split(' ');
+
+                var isExpression = !hasBool(values) && !_.contains(values, '') &&
+                    this.checkValues(values);
+            }
+
+            var isCorrect = isExpression || isArray || isAssigned;
+
+            this.error.expr = !isCorrect ? 'Wrong expression is \'' + expr + '\'' : '';
+
+            return isCorrect;
+
+            function hasBool(data) {
+                return _.every(_.flatten([data]), function(value) {
+                    return _.contains(_this.operationsCases.bool, value);
+                });
+            }
+        },
+
+        /**
+         *
          * @param string
          * @returns {*}
          */
-        isDataExpression: function(string) {
-            var _this = this;
-
+        checkWord: function(string) {
             var compareMatch = string.match(this.opsRegEx['compare']);
             var inclusionMatch = string.match(this.opsRegEx['inclusion']);
 
-            var isCompare = !_.isNull(compareMatch) && compareMatch.length === 1;
-            var isInclusion = !_.isNull(inclusionMatch) && inclusionMatch.length === 1;
+            var doCompare = compareMatch && compareMatch.length === 1 && this.allowedCompare;
+            var doInclusion = inclusionMatch && inclusionMatch.length === 1 && this.allowedInclusion;
+            var doMath = this.allowedMath && !this.allowedCompare && !this.allowedInclusion;
 
-            if ((!isCompare && !isInclusion) || (isCompare && isInclusion)) {
-                return false;
+            if (doCompare) {
+                var hasValidCompare = this.checkCompare(string, compareMatch);
+            } else if (doInclusion) {
+                var hasValidInclusion = this.checkInclusion(string, inclusionMatch);
+            } else if (doMath) {
+                var hasValidExpression = this.checkExpression(string);
             }
 
-            var matchSplit = this.splitString(string, compareMatch[0] || inclusionMatch[0]);
-            var word = matchSplit[0];
-            var expr = matchSplit[1];
-
-            var isValidWord = this.contains(this.dataWordCases, word);
-            var pathValue = this.getValueByPath(this.options.data, word);
-
-            if (_.isEmpty(expr)) {
-                return false;
-            }
-
-            var exprInValues = this.contains(pathValue, expr);
-
-            var arrayValues = expr ? expr.split(',') : [];
-            var isValidArray = pathValue.type === 'array' && !_.isEmpty(arrayValues).length && !_.isEmpty(_.last(arrayValues));
-
-            var expressionValues = expr.replace(this.opsRegEx['math'], ' ').split(' ');
-            var valueIsNotBool = _.every(expressionValues, function(value) {
-                return !_.contains(_this.operationsCases.bool, value);
-            });
-            var isValidExpression = valueIsNotBool && pathValue === 'any' && !_.contains(expressionValues, '') && !_.isEmpty(_.last(expressionValues));
-            var isValidValue = isValidExpression || exprInValues || isValidArray;
-            var isFullValid = isValidWord && isValidValue;
-
-            return {
-                isFull: isFullValid,
-                hasExpression: !_.isEmpty(compareMatch),
-                values: pathValue !== 'any' ? pathValue : []
-            };
+            return hasValidCompare || hasValidInclusion || hasValidExpression;
         },
 
         /**
@@ -413,7 +527,7 @@ define([
 
             switch (name) {
                 case 'inclusion':
-                    reString = '(\\s|\\~)*(' + escapedOps.join('|') + ')(\\s|\\~)*';
+                    reString = '(\\s+|\\~*)(' + escapedOps.join('|') + ')(\\s+|\\~*)';
                     break;
                 case 'bool':
                     reString = '\\s+(' + escapedOps.join('|') + ')\\s+';
@@ -436,7 +550,6 @@ define([
             var hasCutPosition = !_.isUndefined(caretPosition);
             var string = hasCutPosition ? this.getStringPart(value, 0, caretPosition) : value;
 
-            string = string.replace(/\[(.*?)\]/g, '');
             string = string.replace(/(\(|\))/gi, ' ');
 
             string = string.replace(/\s*,\s*/g, ',');
