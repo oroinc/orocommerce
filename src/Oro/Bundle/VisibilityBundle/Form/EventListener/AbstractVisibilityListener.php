@@ -11,6 +11,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Symfony\Component\Form\FormInterface;
 
@@ -39,10 +40,9 @@ abstract class AbstractVisibilityListener
     /**
      * @param FormInterface $form
      * @param string $field
-     * @param string $type
      * @return VisibilityInterface|\Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface[]
      */
-    protected function findFormFieldData($form, $field, $type)
+    protected function findFormFieldData($form, $field)
     {
         $targetEntity = $form->getData();
         $config = $form->getConfig();
@@ -58,6 +58,7 @@ abstract class AbstractVisibilityListener
             ->where(sprintf('v.%1$s = :%1$s', $targetEntityField))
             ->setParameter($targetEntityField, $targetEntity);
 
+        $type = $this->getVisibilityScopeType($form, $field);
         $context = $this->getFormScopeContext($form, $type);
         $criteria = $this->scopeManager->getCriteria($type, $context);
         $criteria->applyWhere($qb, 'scope');
@@ -65,7 +66,8 @@ abstract class AbstractVisibilityListener
         if ($field === 'all') {
             return $qb->getQuery()->getOneOrNullResult();
         } else {
-            return $qb->getQuery()->getResult();
+            $result = $qb->getQuery()->getResult();
+            return $result;
         }
     }
 
@@ -151,5 +153,29 @@ abstract class AbstractVisibilityListener
     protected function getEntityManager($targetEntity)
     {
         return $this->registry->getManagerForClass(ClassUtils::getClass($targetEntity));
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param $field
+     * @return string
+     */
+    protected function getVisibilityScopeType(FormInterface $form, $field)
+    {
+        switch ($field) {
+            case 'all':
+                $className = $form->getConfig()->getOption('allClass');
+                break;
+            case 'account':
+                $className = $form->getConfig()->getOption('accountClass');
+                break;
+            case 'accountGroup':
+                $className = $form->getConfig()->getOption('accountGroupClass');
+                break;
+            default:
+                throw new InvalidArgumentException();
+        }
+
+        return call_user_func([$className, 'getScopeType']);
     }
 }

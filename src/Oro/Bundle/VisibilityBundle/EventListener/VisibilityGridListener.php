@@ -4,6 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Doctrine\ORM\Query;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
@@ -155,7 +156,9 @@ class VisibilityGridListener
                 $parts
             )
         );
-        $event->getQuery()->setDQL($dataSource->getQueryBuilder()->getQuery()->getDQL());
+        /** @var Query $query */
+        $query = $event->getQuery();
+        $query->setDQL($dataSource->getQueryBuilder()->getQuery()->getDQL());
     }
 
     /**

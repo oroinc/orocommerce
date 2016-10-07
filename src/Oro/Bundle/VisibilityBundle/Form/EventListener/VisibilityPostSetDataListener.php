@@ -31,7 +31,7 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
      */
     protected function setFormAllData(FormInterface $form)
     {
-        $visibility = $this->findFormFieldData($form, 'all', 'product_visibility');
+        $visibility = $this->findFormFieldData($form, 'all');
 
         if ($visibility instanceof VisibilityInterface) {
             $data = $visibility->getVisibility();
@@ -46,7 +46,7 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
      */
     protected function setFormAccountGroupData(FormInterface $form)
     {
-        $visibilities = $this->findFormFieldData($form, 'accountGroup', 'account_group_product_visibility');
+        $visibilities = $this->findFormFieldData($form, 'accountGroup');
 
         $data = array_map(
             function ($visibility) {
@@ -69,7 +69,7 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
      */
     protected function setFormAccountData(FormInterface $form)
     {
-        $visibilities = $this->findFormFieldData($form, 'account', 'account_product_visibility');
+        $visibilities = $this->findFormFieldData($form, 'account');
 
         $data = array_map(
             function ($visibility) {

@@ -16,6 +16,11 @@ interface VisibilityInterface
     public static function getDefault($target);
 
     /**
+     * @return string
+     */
+    public static function getScopeType();
+
+    /**
      * @param string $visibility
      * @return $this
      */

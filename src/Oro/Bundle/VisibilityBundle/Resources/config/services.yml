@@ -392,9 +392,3 @@ services:
         class: 'Oro\Bundle\VisibilityBundle\Provider\VisibilityRootScopesProvider'
         arguments:
             - '@oro_scope.scope_manager'
-
-    #todo remove
-    oro_visibility.product_visibility_grid_listener:
-        class: Oro\Bundle\VisibilityBundle\Datagrid\ProductVisibilityGridListener
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.account-product-visibility-grid, method: onBuildAfter }

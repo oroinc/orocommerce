@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Entity\ScopeAwareInterface;
 
 /**
  * @ORM\Entity()
@@ -20,11 +21,12 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  * )
  * @Config
  */
-class AccountCategoryVisibility implements VisibilityInterface
+class AccountCategoryVisibility implements VisibilityInterface, ScopeAwareInterface
 {
     const PARENT_CATEGORY = 'parent_category';
     const CATEGORY = 'category';
     const ACCOUNT_GROUP = 'account_group';
+    const CATEGORY_VISIBILITY = 'category_visibility';
 
     /**
      * @var integer
@@ -166,5 +168,13 @@ class AccountCategoryVisibility implements VisibilityInterface
     public function getScope()
     {
         return $this->scope;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getScopeType()
+    {
+        return self::CATEGORY_VISIBILITY;
     }
 }

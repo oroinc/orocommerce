@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Entity\ScopeAwareInterface;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository")
@@ -20,10 +21,11 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  * )
  * @Config
  */
-class ProductVisibility implements VisibilityInterface
+class ProductVisibility implements VisibilityInterface, ScopeAwareInterface
 {
     const CATEGORY = 'category';
     const CONFIG = 'config';
+    const PRODUCT_VISIBILITY = 'product_visibility';
 
     /**
      * @var integer
@@ -167,5 +169,13 @@ class ProductVisibility implements VisibilityInterface
         $this->scope = $scope;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getScopeType()
+    {
+        return self::PRODUCT_VISIBILITY;
     }
 }
