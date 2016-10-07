@@ -10,7 +10,6 @@ class OroUPSBundle implements Migration
 {
     /**
      * {@inheritdoc}
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -96,6 +95,7 @@ class OroUPSBundle implements Migration
 
     /**
      * @param Schema $schema
+     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addOroUpsTransportShipServiceForeignKeys(Schema $schema)
     {
