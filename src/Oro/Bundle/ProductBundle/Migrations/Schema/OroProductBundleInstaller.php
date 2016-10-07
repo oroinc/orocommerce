@@ -399,6 +399,7 @@ class OroProductBundleInstaller implements
         $table = $schema->createTable(self::PRODUCT_IMAGE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => true]);
+        $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
     }
 

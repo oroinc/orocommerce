@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
+use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
@@ -17,6 +18,11 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     protected $expressionParser;
 
     /**
+     * @var ExpressionPreprocessorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $preprocessor;
+
+    /**
      * @var LogicalExpressionValidator
      */
     protected $validator;
@@ -26,7 +32,8 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $this->expressionParser = $this->getMockBuilder(ExpressionParser::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->validator = new LogicalExpressionValidator($this->expressionParser);
+        $this->preprocessor = $this->getMock(ExpressionPreprocessorInterface::class);
+        $this->validator = new LogicalExpressionValidator($this->expressionParser, $this->preprocessor);
     }
 
     public function testValidateValid()
@@ -46,9 +53,16 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $node->expects($this->once())
             ->method('isBoolean')
             ->willReturn(true);
+
+        $processedValue = 'test < 10';
+        $this->preprocessor->expects($this->once())
+            ->method('process')
+            ->with($value)
+            ->willReturn($processedValue);
+
         $this->expressionParser->expects($this->once())
             ->method('parse')
-            ->with($value)
+            ->with($processedValue)
             ->willReturn($node);
 
         $this->validator->validate($value, $constraint);
@@ -71,9 +85,16 @@ class LogicalExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $node->expects($this->once())
             ->method('isBoolean')
             ->willReturn(false);
+
+        $processedValue = 'test < 10';
+        $this->preprocessor->expects($this->once())
+            ->method('process')
+            ->with($value)
+            ->willReturn($processedValue);
+
         $this->expressionParser->expects($this->once())
             ->method('parse')
-            ->with($value)
+            ->with($processedValue)
             ->willReturn($node);
 
         $this->validator->validate($value, $constraint);

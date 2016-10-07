@@ -2,25 +2,24 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
-use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 
 /**
  * @method static ContainerInterface getContainer
  */
 trait MessageQueueTrait
 {
-    /**
-     * @var string
-     */
-    protected $topic;
+    use MessageQueueAssertTrait;
 
-    protected function cleanQueueMessageTraces()
+    protected function cleanScheduledMessages()
     {
         $this->sendScheduledMessages();
-        $this->getMessageProducer()->enable();
-        $this->getMessageProducer()->clear();
+        $this->getMessageCollector()->enable();
+        $this->getMessageCollector()->clear();
     }
 
     /**

@@ -4,10 +4,6 @@
 
   background: $base-topbar-background-color;
 
-  @media (max-width: $screen-md) {
-    display: none;
-  }
-
   &__tab {
     .checkout-order-summary__tab__content {
       display: block;
@@ -167,7 +163,7 @@
 
 .form-input_datepicker_icon {
   position: absolute;
-  top: 8px;
+  top: 4px;
   left: 10px;
 
   font-size: 22px;

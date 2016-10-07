@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\PreloadedExtension;
 
 class PriceRuleTypeTest extends FormIntegrationTestCase
 {
@@ -49,7 +47,10 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
             PriceRuleType::QUANTITY => 10,
             PriceRuleType::RULE => 'rule as a string',
             PriceRuleType::RULE_CONDITION => 'condition as a string',
-            PriceRuleType::PRODUCT_UNIT => 'item'
+            PriceRuleType::PRODUCT_UNIT => 'item',
+            PriceRuleType::PRODUCT_UNIT_EXPRESSION => 'product.unit',
+            PriceRuleType::CURRENCY_EXPRESSION => 'product.msrp.currency',
+            PriceRuleType::QUANTITY_EXPRESSION => 'product.quantity',
         ]);
 
         $expected = new PriceRule();
@@ -57,6 +58,9 @@ class PriceRuleTypeTest extends FormIntegrationTestCase
             ->setPriority(1)
             ->setQuantity(10)
             ->setRule('rule as a string')
+            ->setCurrencyExpression('product.msrp.currency')
+            ->setQuantityExpression('product.quantity')
+            ->setProductUnitExpression('product.unit')
             ->setRuleCondition('condition as a string')
             ->setProductUnit((new ProductUnit())->setCode('item'));
 

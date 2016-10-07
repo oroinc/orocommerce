@@ -26,7 +26,7 @@ class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient();
         $className = 'Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule';
         $this->manager = $this->getContainer()->get('doctrine')
             ->getManagerForClass($className);

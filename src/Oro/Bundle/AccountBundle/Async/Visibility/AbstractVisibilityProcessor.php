@@ -2,22 +2,24 @@
 
 namespace Oro\Bundle\AccountBundle\Async\Visibility;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\AccountBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\AccountBundle\Model\VisibilityMessageFactory;
 use Oro\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
 {
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -37,31 +39,36 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
     protected $logger;
 
     /**
+     * @var DatabaseExceptionHelper
+     */
+    protected $databaseExceptionHelper;
+    
+    /**
      * @var string
      */
     protected $resolvedVisibilityClassName = '';
 
     /**
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param MessageFactoryInterface $messageFactory
      * @param LoggerInterface $logger
      * @param CacheBuilderInterface $cacheBuilder
+     * @param DatabaseExceptionHelper $databaseExceptionHelper
      */
     public function __construct(
-        RegistryInterface $registry,
+        ManagerRegistry $registry,
         MessageFactoryInterface $messageFactory,
         LoggerInterface $logger,
-        CacheBuilderInterface $cacheBuilder
+        CacheBuilderInterface $cacheBuilder,
+        DatabaseExceptionHelper $databaseExceptionHelper
     ) {
         $this->registry = $registry;
         $this->logger = $logger;
         $this->messageFactory = $messageFactory;
         $this->cacheBuilder = $cacheBuilder;
+        $this->databaseExceptionHelper = $databaseExceptionHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     /**
      * {@inheritdoc}
      */
@@ -89,14 +96,17 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
             return self::REJECT;
         } catch (\Exception $e) {
             $em->rollback();
+
             $this->logger->error(
-                sprintf(
-                    'Transaction aborted wit error: %s.',
-                    $e->getMessage()
-                )
+                'Unexpected exception occurred during Product Visibility resolve',
+                ['exception' => $e]
             );
 
-            return self::REQUEUE;
+            if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
+                return self::REQUEUE;
+            } else {
+                return self::REJECT;
+            }
         }
 
         return self::ACK;

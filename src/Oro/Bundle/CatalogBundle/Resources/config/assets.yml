@@ -1,4 +1,0 @@
-css:
-    'orocatalog':
-        - 'bundles/orocatalog/css/less/categories.less'
-        - 'bundles/orocatalog/css/less/product-grid-sidebar.less'

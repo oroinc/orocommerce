@@ -19,6 +19,7 @@ use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesInven
  * @dbIsolation
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
 {
@@ -32,6 +33,7 @@ class WarehouseInventoryLevelApiTest extends RestJsonApiTestCase
     protected function setUp()
     {
         parent::setUp();
+        $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadWarehousesInventoryLevelWithPrimaryUnit::class]);
     }
 

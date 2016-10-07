@@ -51,7 +51,6 @@
     padding: 10px 0 0 50px;
 
     @media (max-width: $screen-md) {
-      display: none;
       padding: 10px 0 0;
     }
   }
@@ -123,10 +122,6 @@
         float: none;
         width: 100%;
       }
-    }
-
-    .checkbox_custom i {
-      margin-left: auto;
     }
   }
 }

@@ -12,7 +12,7 @@
                                 <input type="radio" name="paymentMethod" data-choice="{{ name }}" value="{{ name }}" {% if selected%}checked="checked"{% endif %} />
                                 <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
                                 <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
-                                <span class="checkbox_custom__text fs13">{{ view.label }}</span>
+                                <span class="fs13">{{ view.label }}</span>
                             </label>
                             <div class="{{ class_prefix }}__form__payment-container" data-form-container {% if not selected %} style="display: none;" {% endif %}>
                                 {{ block(view.block) }}
