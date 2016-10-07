@@ -156,13 +156,13 @@
             iconClass = 'cf-attention';
         }%>
         <%
-            var startTafPosition = message.indexOf('>');
+            var startTagPosition = message.indexOf('>');
 
-            if (startTafPosition > 0) {
+            if (startTagPosition > 0) {
                 var endTagPosition = message.lastIndexOf('<');
-                var startTag = message.substring(0, startTafPosition + 1);
+                var startTag = message.substring(0, startTagPosition + 1);
                 var endTag =  message.substring(endTagPosition, message.length);
-                var content = message.substring(startTafPosition + 1, endTagPosition);
+                var content = message.substring(startTagPosition + 1, endTagPosition);
 
                 message = startTag + _.escape(content) + endTag;
             }
