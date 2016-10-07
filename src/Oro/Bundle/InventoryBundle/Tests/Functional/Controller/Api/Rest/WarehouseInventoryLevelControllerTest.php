@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 
 /**
  * @dbIsolation
@@ -22,7 +22,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
         );
         $this->loadFixtures(
             [
-                'Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels',
+                'Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels',
             ]
         );
     }
@@ -31,7 +31,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
     {
         /** @var InventoryLevel $entity */
         $entity = $this->getWarehouseInventoryLevelReference(
-            LoadWarehousesAndInventoryLevels::WAREHOUSE1,
+            LoadInventoryLevels::WAREHOUSE1,
             'product_unit_precision.product.1.liter'
         );
         $this->client->request(

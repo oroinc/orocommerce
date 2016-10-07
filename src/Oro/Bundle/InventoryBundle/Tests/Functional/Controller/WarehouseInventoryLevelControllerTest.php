@@ -21,7 +21,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            'Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels'
+            'Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels'
         ]);
     }
 

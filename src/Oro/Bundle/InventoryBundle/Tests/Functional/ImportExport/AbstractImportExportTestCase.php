@@ -70,7 +70,7 @@ abstract class AbstractImportExportTestCase extends WebTestCase
 
         $configuration = [
             'import' => [
-                'processorAlias' => 'oro_warehouse.warehouse_inventory_level',
+                'processorAlias' => 'oro_inventory.inventory_level',
                 'entityName' => InventoryLevel::class,
                 'filePath' => $filePath,
             ],

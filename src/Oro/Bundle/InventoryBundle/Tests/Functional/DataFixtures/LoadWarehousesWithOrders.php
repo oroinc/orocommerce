@@ -27,7 +27,7 @@ class LoadWarehousesWithOrders extends AbstractFixture implements DependentFixtu
     public function getDependencies()
     {
         return [
-            LoadWarehousesAndInventoryLevels::class,
+            LoadInventoryLevels::class,
             LoadOrders::class,
             LoadProductData::class
         ];
@@ -65,7 +65,7 @@ class LoadWarehousesWithOrders extends AbstractFixture implements DependentFixtu
         $order1->addLineItem($orderLineItem);
         $orderLineItem->setOrder($order1);
 
-        $warehouse1 = $this->getReference(LoadWarehousesAndInventoryLevels::WAREHOUSE1);
+        $warehouse1 = $this->getReference(LoadInventoryLevels::WAREHOUSE1);
         $order1->setWarehouse($warehouse1);
 
         $manager->persist($orderLineItem);

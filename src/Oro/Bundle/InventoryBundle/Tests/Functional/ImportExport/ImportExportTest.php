@@ -10,7 +10,7 @@ use Symfony\Component\Yaml\Yaml;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -51,7 +51,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([LoadWarehousesAndInventoryLevels::class]);
+        $this->loadFixtures([LoadInventoryLevels::class]);
     }
 
     /**
@@ -158,7 +158,7 @@ class ImportExportTest extends AbstractImportExportTestCase
             ->get('oro_importexport.handler.export')
             ->getExportResult(
                 JobExecutor::JOB_EXPORT_TEMPLATE_TO_CSV,
-                'oro_warehouse.detailed_inventory_levels_template',
+                'oro_inventory.detailed_inventory_levels_template',
                 ProcessorRegistry::TYPE_EXPORT_TEMPLATE
             );
 
@@ -194,7 +194,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     public function testExportDetailedInventoryLevel()
     {
         $fileContent = $this->assertExportInfluencedByProcessorChoice(
-            'oro_warehouse.detailed_inventory_levels',
+            'oro_inventory.detailed_inventory_levels',
             $this->inventoryLevelHeader
         );
 
@@ -270,7 +270,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     {
         $this->client->useHashNavigation(false);
         $parameters = $this->getDefaultRequestParameters();
-        $parameters['processorAlias'] = 'oro_warehouse.detailed_inventory_levels_template';
+        $parameters['processorAlias'] = 'oro_inventory.detailed_inventory_levels_template';
 
         $crawler = $this->client->request(
             'GET',
@@ -297,7 +297,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     {
         return [
             ['oro_product.inventory_status_only_template', $this->inventoryStatusOnlyHeader],
-            ['oro_warehouse.detailed_inventory_levels_template', $this->inventoryLevelHeader]
+            ['oro_inventory.detailed_inventory_levels_template', $this->inventoryLevelHeader]
         ];
     }
 
@@ -344,7 +344,7 @@ class ImportExportTest extends AbstractImportExportTestCase
             '_widgetContainer' => 'dialog',
             '_wid' => uniqid('abc', true),
             'entity' => InventoryLevel::class,
-            'processorAlias' => 'oro_warehouse_detailed_inventory_levels'
+            'processorAlias' => 'oro_inventory.detailed_inventory_levels'
         ];
     }
 
@@ -362,7 +362,7 @@ class ImportExportTest extends AbstractImportExportTestCase
 
         $configuration = [
             'import_validation' => [
-                'processorAlias' => 'oro_warehouse.warehouse_inventory_level',
+                'processorAlias' => 'oro_inventory.inventory_level',
                 'entityName' => InventoryLevel::class,
                 'filePath' => $filePath,
             ],

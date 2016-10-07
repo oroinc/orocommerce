@@ -4,7 +4,7 @@ namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
-use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesWithOrders;
 
 /**
@@ -38,7 +38,7 @@ class OrderControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $order->getId()]));
 
         $form = $crawler->selectButton('Save')->form();
-        $warehouse2 = $this->getReference(LoadWarehousesAndInventoryLevels::WAREHOUSE2);
+        $warehouse2 = $this->getReference(LoadInventoryLevels::WAREHOUSE2);
         $form['oro_order_type[warehouse]'] = $warehouse2->getId();
         $this->client->submit($form);
 

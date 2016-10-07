@@ -9,14 +9,14 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
-class LoadWarehousesInventoryLevelWithPrimaryUnit extends AbstractFixture implements DependentFixtureInterface
+class LoadInventoryLevelWithPrimaryUnit extends AbstractFixture implements DependentFixtureInterface
 {
     /**
      * {@inheritdoc}
      */
     public function getDependencies()
     {
-        return [LoadWarehousesAndInventoryLevels::class];
+        return [LoadInventoryLevels::class];
     }
 
     /**

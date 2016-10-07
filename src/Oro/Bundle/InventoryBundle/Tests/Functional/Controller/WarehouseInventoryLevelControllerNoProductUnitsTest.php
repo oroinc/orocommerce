@@ -19,7 +19,7 @@ class WarehouseInventoryLevelControllerNoProductUnitsTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels'
+                'Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels'
             ]
         );
     }

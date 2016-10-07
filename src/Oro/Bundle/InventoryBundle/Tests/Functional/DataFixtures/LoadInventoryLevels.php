@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
-class LoadWarehousesAndInventoryLevels extends AbstractFixture implements DependentFixtureInterface
+class LoadInventoryLevels extends AbstractFixture implements DependentFixtureInterface
 {
     use UserUtilityTrait;
 
@@ -30,11 +30,11 @@ class LoadWarehousesAndInventoryLevels extends AbstractFixture implements Depend
      */
     public function load(ObjectManager $manager)
     {
-        $this->createWarehouseInventoryLevel($manager, 'product_unit_precision.product.1.liter', 10);
-        $this->createWarehouseInventoryLevel($manager, 'product_unit_precision.product.1.bottle', 99);
-        $this->createWarehouseInventoryLevel($manager, 'product_unit_precision.product.2.liter', 12.345);
-        $this->createWarehouseInventoryLevel($manager, 'product_unit_precision.product.2.bottle', 98);
-        $this->createWarehouseInventoryLevel($manager, 'product_unit_precision.product.2.box', 42);
+        $this->createInventoryLevel($manager, 'product_unit_precision.product.1.liter', 10);
+        $this->createInventoryLevel($manager, 'product_unit_precision.product.1.bottle', 99);
+        $this->createInventoryLevel($manager, 'product_unit_precision.product.2.liter', 12.345);
+        $this->createInventoryLevel($manager, 'product_unit_precision.product.2.bottle', 98);
+        $this->createInventoryLevel($manager, 'product_unit_precision.product.2.box', 42);
 
         $manager->flush();
     }
@@ -44,7 +44,7 @@ class LoadWarehousesAndInventoryLevels extends AbstractFixture implements Depend
      * @param string $precisionReference
      * @param int|float $quantity
      */
-    protected function createWarehouseInventoryLevel(ObjectManager $manager, $precisionReference, $quantity)
+    protected function createInventoryLevel(ObjectManager $manager, $precisionReference, $quantity)
     {
         /** @var ProductUnitPrecision $precision */
         $precision = $this->getReference($precisionReference);

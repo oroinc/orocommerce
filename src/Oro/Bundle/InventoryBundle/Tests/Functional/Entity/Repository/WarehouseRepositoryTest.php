@@ -5,7 +5,7 @@ namespace Oro\Bundle\InventoryBundle\Tests\Entity\Repository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WarehouseBundle\Entity\Repository\WarehouseRepository;
 use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
-use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 
 /**
  * @dbIsolation
@@ -18,7 +18,7 @@ class WarehouseRepositoryTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                LoadWarehousesAndInventoryLevels::class
+                LoadInventoryLevels::class
             ]
         );
     }
