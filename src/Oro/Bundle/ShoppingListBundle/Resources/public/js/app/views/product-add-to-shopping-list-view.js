@@ -296,7 +296,7 @@ define(function(require) {
                 label = _.trunc(label, this.dropdownWidget.options.truncateLength, false, '...');
             }
 
-            $button.html(label);
+            $button.text(label);
         },
 
         toggleRemoveButton: function() {

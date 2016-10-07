@@ -652,41 +652,10 @@
 
 .action-selectbox_custom_in-pager {
   display: inline-block;
-  max-width: 165px;
-  &.sorting {
-    max-width: none;
-    line-height: 24px;
-  }
+
   .select2-container {
     a.select2-choice {
       padding: 8px !important;
-    }
-  }
-  .b2b-sorting-select-control {
-    margin-right: 12px;
-    font-size: 14px;
-    .select2-container a.select2-choice {
-      line-height: 30px;
-      padding: 0 0 0 8px !important;
-      outline: 0 none;
-    }
-    a[class^="icon-"] {
-      text-decoration: none;
-      font-size: 12px;
-      height: 14px;
-      vertical-align: middle;
-      padding-left: 8px;
-      margin-left: 0;
-      color: #666;
-      cursor: pointer;
-      &:before {
-        vertical-align: middle;
-      }
-    }
-    .sorting-label {
-      display: inline-block;
-      line-height: 23px;
-      vertical-align: middle;
     }
   }
 }
