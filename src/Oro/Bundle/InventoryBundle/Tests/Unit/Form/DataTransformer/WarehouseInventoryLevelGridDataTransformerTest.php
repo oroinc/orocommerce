@@ -5,10 +5,10 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\Form\DataTransformer;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\InventoryBundle\Form\DataTransformer\InventoryLevelGridDataTransformer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\InventoryBundle\Form\DataTransformer\WarehouseInventoryLevelGridDataTransformer;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,7 +36,7 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit_Framework_
             ->getMock();
         $this->product = new Product();
 
-        $this->transformer = new WarehouseInventoryLevelGridDataTransformer(
+        $this->transformer = new InventoryLevelGridDataTransformer(
             $this->doctrineHelper,
             $this->product
         );
@@ -64,7 +64,7 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit_Framework_
         $doctrineHelper = $doctrineHelper ?: $this->doctrineHelper;
         $product = $product ?: $this->product;
 
-        $transformer = new WarehouseInventoryLevelGridDataTransformer($doctrineHelper, $product);
+        $transformer = new InventoryLevelGridDataTransformer($doctrineHelper, $product);
         $this->assertEquals($expected, $transformer->reverseTransform($value));
     }
 
@@ -73,19 +73,9 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit_Framework_
      */
     public function reverseTransformDataProvider()
     {
-        $firstWarehouse = $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 1]);
-        $secondWarehouse = $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 2]);
-
-        $warehouseClass = 'OroWarehouseBundle:Warehouse';
         $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
-        $doctrineHelper->expects($this->any())
-            ->method('getEntityReference')
-            ->willReturnMap([
-                [$warehouseClass, 1, $firstWarehouse],
-                [$warehouseClass, 2, $secondWarehouse],
-            ]);
 
         /** @var ProductUnitPrecision $firstPrecision */
         $firstPrecision = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 11]);
@@ -107,20 +97,16 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit_Framework_
             ],
             [
                 'value' => new ArrayCollection([
-                    '1_11' => ['data' => ['levelQuantity' => '42']],
-                    '2_12' => ['data' => ['levelQuantity' => null]],
-                    '1_13' => ['data' => ['levelQuantity' => '1']],
-                    '3_11' => ['data' => ['levelQuantity' => '2']],
+                    '11' => ['data' => ['levelQuantity' => '42']],
+                    '12' => ['data' => ['levelQuantity' => null]],
                 ]),
                 'expected' => new ArrayCollection([
-                    '1_11' => [
+                    '11' => [
                         'data' => ['levelQuantity' => '42'],
-                        'warehouse' => $firstWarehouse,
                         'precision' => $firstPrecision,
                     ],
-                    '2_12' => [
+                    '12' => [
                         'data' => ['levelQuantity' => null],
-                        'warehouse' => $secondWarehouse,
                         'precision' => $secondPrecision,
                     ]
                 ]),

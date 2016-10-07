@@ -9,14 +9,14 @@ use Akeneo\Bundle\BatchBundle\Item\ExecutionContext;
 
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\EventListener\InventoryLevelsImportListener;
-use Oro\Bundle\InventoryBundle\ImportExport\Strategy\WarehouseInventoryLevelStrategy;
+use Oro\Bundle\InventoryBundle\ImportExport\Strategy\InventoryLevelStrategy;
 
 class InventoryLevelsImportListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var WarehouseInventoryLevelStrategy|\PHPUnit_Framework_MockObject_MockObject
+     * @var InventoryLevelStrategy|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $warehouseInventoryLevelStrategy;
+    protected $inventoryLevelStrategy;
 
     /**
      * @var InventoryLevelsImportListener
@@ -25,12 +25,12 @@ class InventoryLevelsImportListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->warehouseInventoryLevelStrategy = $this->getMockBuilder(WarehouseInventoryLevelStrategy::class)
+        $this->inventoryLevelStrategy = $this->getMockBuilder(InventoryLevelStrategy::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->inventoryLevelsImportListener = new InventoryLevelsImportListener(
-            $this->warehouseInventoryLevelStrategy
+            $this->inventoryLevelStrategy
         );
     }
 
@@ -41,7 +41,7 @@ class InventoryLevelsImportListenerTest extends \PHPUnit_Framework_TestCase
             InventoryLevel::class
         );
 
-        $this->warehouseInventoryLevelStrategy->expects($this->exactly(1))
+        $this->inventoryLevelStrategy->expects($this->exactly(1))
             ->method('clearCache');
 
         $this->inventoryLevelsImportListener->onBatchStepCompleted($event);
@@ -54,7 +54,7 @@ class InventoryLevelsImportListenerTest extends \PHPUnit_Framework_TestCase
             'some class'
         );
 
-        $this->warehouseInventoryLevelStrategy->expects($this->exactly(0))
+        $this->inventoryLevelStrategy->expects($this->exactly(0))
             ->method('clearCache');
 
         $this->inventoryLevelsImportListener->onBatchStepCompleted($event);

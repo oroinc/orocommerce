@@ -17,8 +17,7 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-
-class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
+class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -49,9 +48,9 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $this->roundingService = $this->getMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
+        $this->form = $this->getMock(FormInterface::class);
+        $this->manager = $this->getMock(ObjectManager::class);
+        $this->roundingService = $this->getMock(RoundingServiceInterface::class);
         $this->request = new Request();
 
         $this->handler = new InventoryLevelHandler(
@@ -113,13 +112,11 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(
                 function (array $criteria) use ($existingLevels) {
                     /** @var Warehouse $warehouse */
-                    $warehouse = $criteria['warehouse'];
+                    //$warehouse = $criteria['warehouse'];
                     /** @var ProductUnitPrecision $precision */
                     $precision = $criteria['productUnitPrecision'];
                     foreach ($existingLevels as $level) {
-                        if ($level->getWarehouse()->getId() === $warehouse->getId() &&
-                            $level->getProductUnitPrecision()->getId() === $precision->getId()
-                        ) {
+                        if ($level->getProductUnitPrecision()->getId() === $precision->getId()) {
                             return $level;
                         }
                     }
@@ -129,7 +126,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager->expects($this->any())
             ->method('getRepository')
-            ->with('OroWarehouseBundle:InventoryLevel')
+            ->with('OroInventoryBundle:InventoryLevel')
             ->willReturn($repository);
 
         // mock remove and persist behaviour
@@ -138,7 +135,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager->expects($this->any())
             ->method('persist')
-            ->with($this->isInstanceOf('Oro\Bundle\WarehouseBundle\Entity\InventoryLevel'))
+            ->with($this->isInstanceOf('Oro\Bundle\InventoryBundle\Entity\InventoryLevel'))
             ->willReturnCallback(
                 function ($entity) use (&$persistedEntities) {
                     $persistedEntities[] = $entity;
@@ -146,7 +143,7 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
             );
         $this->manager->expects($this->any())
             ->method('remove')
-            ->with($this->isInstanceOf('Oro\Bundle\WarehouseBundle\Entity\InventoryLevel'))
+            ->with($this->isInstanceOf('Oro\Bundle\InventoryBundle\Entity\InventoryLevel'))
             ->willReturnCallback(
                 function ($entity) use (&$removedEntities) {
                     $removedEntities[] = $entity;
@@ -194,85 +191,69 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
             'updated entities' => [
                 'formData' => new ArrayCollection([
                     '1_1' => [
-                        'warehouse' => $this->createWarehouse(1),
                         'precision' => $this->createPrecision(1),
                         'data' => ['levelQuantity' => 11],
                     ],
                     '2_2' => [
-                        'warehouse' => $this->createWarehouse(2),
                         'precision' => $this->createPrecision(2),
                         'data' => ['levelQuantity' => 21],
                     ],
                     '3_3' => [
-                        'warehouse' => $this->createWarehouse(3),
                         'precision' => $this->createPrecision(3),
                         'data' => ['levelQuantity' => 30],
                     ],
                 ]),
                 'existingLevels' => [
-                    $this->createLevel(101, 1, 1, 10),
-                    $this->createLevel(102, 2, 2, 20),
-                    $this->createLevel(103, 3, 3, 30),
+                    $this->createLevel(101, 1, 10),
+                    $this->createLevel(102, 2, 20),
+                    $this->createLevel(103, 3, 30),
                 ],
                 'expectedLevels' => [
-                    ['entity' => $this->createLevel(101, 1, 1, 11)],
-                    ['entity' => $this->createLevel(102, 2, 2, 21)],
-                    ['entity' => $this->createLevel(103, 3, 3, 30)],
+                    ['entity' => $this->createLevel(101, 1, 11)],
+                    ['entity' => $this->createLevel(102, 2, 21)],
+                    ['entity' => $this->createLevel(103, 3, 30)],
                 ]
             ],
             'removed and persisted entities' => [
                 'formData' => new ArrayCollection([
                     '1_1' => [
-                        'warehouse' => $this->createWarehouse(1),
                         'precision' => $this->createPrecision(1),
                         'data' => ['levelQuantity' => null],
                     ],
                     '2_2' => [
-                        'warehouse' => $this->createWarehouse(2),
                         'precision' => $this->createPrecision(2),
                         'data' => ['levelQuantity' => 0],
                     ],
                     '3_3' => [
-                        'warehouse' => $this->createWarehouse(3),
                         'precision' => $this->createPrecision(3),
                         'data' => ['levelQuantity' => 31],
                     ],
                 ]),
                 'existingLevels' => [
-                    $this->createLevel(101, 1, 1, 10),
-                    $this->createLevel(102, 2, 2, 20),
+                    $this->createLevel(101, 1, 10),
+                    $this->createLevel(102, 2, 20),
                 ],
                 'expectedLevels' => [
-                    ['entity' => $this->createLevel(101, 1, 1, 0), 'removed' => true],
-                    ['entity' => $this->createLevel(102, 2, 2, 0), 'removed' => true],
-                    ['entity' => $this->createLevel(null, 3, 3, 31), 'persisted' => true],
+                    ['entity' => $this->createLevel(101, 1, 0), 'removed' => true],
+                    ['entity' => $this->createLevel(102, 2, 0), 'removed' => true],
+                    ['entity' => $this->createLevel(null, 3, 31), 'persisted' => true],
                 ]
             ],
             'quantity rounding' => [
                 'formData' => new ArrayCollection([
                     '1_1' => [
-                        'warehouse' => $this->createWarehouse(1),
                         'precision' => $this->createPrecision(1, 2),
                         'data' => ['levelQuantity' => 10.1234],
                     ],
                 ]),
                 'existingLevels' => [
-                    $this->createLevel(101, 1, 1, 10, 2),
+                    $this->createLevel(101, 1, 10, 2),
                 ],
                 'expectedLevels' => [
-                    ['entity' => $this->createLevel(101, 1, 1, 10.12, 2)],
+                    ['entity' => $this->createLevel(101, 1, 10.12, 2)],
                 ]
             ],
         ];
-    }
-
-    /**
-     * @param int $id
-     * @return Warehouse
-     */
-    protected function createWarehouse($id)
-    {
-        return $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => $id]);
     }
 
     /**
@@ -295,13 +276,12 @@ class WarehouseInventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
      * @param int $precision
      * @return InventoryLevel
      */
-    protected function createLevel($id, $warehouseId, $precisionId, $quantity, $precision = 0)
+    protected function createLevel($id, $precisionId, $quantity, $precision = 0)
     {
         return $this->getEntity(
             'Oro\Bundle\InventoryBundle\Entity\InventoryLevel',
             [
                 'id' => $id,
-                'warehouse' => $this->createWarehouse($warehouseId),
                 'productUnitPrecision' => $this->createPrecision($precisionId, $precision),
                 'quantity' => $quantity,
             ]

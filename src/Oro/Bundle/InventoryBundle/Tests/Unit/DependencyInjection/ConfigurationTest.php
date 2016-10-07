@@ -25,10 +25,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $expected = [
             'settings' => [
                 'resolved' => true,
-                'enabled_warehouses' => [
-                    'scope' => 'app',
-                    'value' => [],
-                ],
                 'manage_inventory' => [
                     'value' => false,
                     'scope' => 'app'

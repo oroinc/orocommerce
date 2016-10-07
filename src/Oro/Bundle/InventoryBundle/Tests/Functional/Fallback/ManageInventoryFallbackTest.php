@@ -129,8 +129,8 @@ class ManageInventoryFallbackTest extends WebTestCase
         );
         $form = $crawler->selectButton('Save settings')->form();
         $formValues = $form->getPhpValues();
-        $formValues['product_options']['oro_warehouse___manage_inventory']['use_parent_scope_value'] = false;
-        $formValues['product_options']['oro_warehouse___manage_inventory']['value'] = $systemValue;
+        $formValues['product_options']['oro_inventory___manage_inventory']['use_parent_scope_value'] = false;
+        $formValues['product_options']['oro_inventory___manage_inventory']['value'] = $systemValue;
         $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));

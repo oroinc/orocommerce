@@ -6,7 +6,6 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
 class InventoryLevelNormalizerTest extends BaseInventoryLevelNormalizerTestCase
 {
-
     /**
      * @dataProvider getNormalizerData
      * @param int $quantity
@@ -22,8 +21,7 @@ class InventoryLevelNormalizerTest extends BaseInventoryLevelNormalizerTestCase
             ->method('roundQuantity')
             ->willReturn($quantity);
 
-        $results = $this->warehouseInventoryLevelNormalizer->normalize($object);
-        $this->assertArrayHasKey('warehouse', $results);
+        $results = $this->inventoryLevelNormalizer->normalize($object);
         $this->assertEquals('testCode', $results['productUnitPrecision']['unit']['code']);
         $this->assertEquals($object->getQuantity(), $results['quantity']);
     }
@@ -38,7 +36,7 @@ class InventoryLevelNormalizerTest extends BaseInventoryLevelNormalizerTestCase
     public function testNormalizeShouldIgnoreZeroQuantity()
     {
         $object = new InventoryLevel();
-        $results = $this->warehouseInventoryLevelNormalizer->normalize($object);
+        $results = $this->inventoryLevelNormalizer->normalize($object);
         $this->assertNull($results['quantity']);
     }
 }
