@@ -419,16 +419,10 @@ workflows:
             do_nothing: ~
             go_back_definition:
                 actions:
-                    - '@call_service_method':
-                        service: oro_checkout.factory.shipping_context_provider_factory
-                        method: create
-                        method_parameters: [$checkout]
-                        attribute: $.result.shippingContext
-                    - '@call_service_method':
-                        service: oro_shipping.shipping_price.provider
-                        method: getPrice
-                        method_parameters: [$.result.shippingContext, $shipping_method, $shipping_method_type]
-                        attribute: $checkout.shippingCost
+                    - '@run_action_group':
+                        action_group: oro_update_shipping_price
+                        parameters_mapping:
+                            checkout: $checkout
                     - '@assign_value':
                         conditions:
                             '@equal': [$allowed, true]
@@ -691,16 +685,10 @@ workflows:
                                     state1: $.result.initCheckoutState
                                     state2: $.result.savedCheckoutState
                 actions:
-                    - '@call_service_method':
-                        service: oro_checkout.factory.shipping_context_provider_factory
-                        method: create
-                        method_parameters: [$checkout]
-                        attribute: $.result.shippingContext
-                    - '@call_service_method':
-                        service: oro_shipping.shipping_price.provider
-                        method: getPrice
-                        method_parameters: [$.result.shippingContext, $shipping_method, $shipping_method_type]
-                        attribute: $checkout.shippingCost
+                    - '@run_action_group':
+                        action_group: oro_update_shipping_price
+                        parameters_mapping:
+                            checkout: $checkout
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.actualCheckoutState
@@ -926,16 +914,10 @@ workflows:
                                     state1: $.result.currentCheckoutState
                                     state2: $.result.tokenCheckoutState
                         actions:
-                            - '@call_service_method':
-                                service: oro_checkout.factory.shipping_context_provider_factory
-                                method: create
-                                method_parameters: [$checkout]
-                                attribute: $.result.shippingContext
-                            - '@call_service_method':
-                                service: oro_shipping.shipping_price.provider
-                                method: getPrice
-                                method_parameters: [$.result.shippingContext, $shipping_method, $shipping_method_type]
-                                attribute: $checkout.shippingCost
+                            - '@run_action_group':
+                                action_group: oro_update_shipping_price
+                                parameters_mapping:
+                                    checkout: $checkout
                             - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
                             - '@delete_checkout_state':
                                 entity: $checkout
@@ -988,16 +970,10 @@ workflows:
                                     state1: $.result.currentCheckoutState
                                     state2: $.result.tokenCheckoutState
                         actions:
-                            - '@call_service_method':
-                                service: oro_checkout.factory.shipping_context_provider_factory
-                                method: create
-                                method_parameters: [$checkout]
-                                attribute: $.result.shippingContext
-                            - '@call_service_method':
-                                service: oro_shipping.shipping_price.provider
-                                method: getPrice
-                                method_parameters: [$.result.shippingContext, $shipping_method, $shipping_method_type]
-                                attribute: $checkout.shippingCost
+                            - '@run_action_group':
+                                action_group: oro_update_shipping_price
+                                parameters_mapping:
+                                    checkout: $checkout
                             - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
                             - '@delete_checkout_state':
                                 entity: $checkout
@@ -1032,16 +1008,10 @@ workflows:
 
             approve_order_definition:
                 preactions:
-                    - '@call_service_method':
-                        service: oro_checkout.factory.shipping_context_provider_factory
-                        method: create
-                        method_parameters: [$checkout]
-                        attribute: $.result.shippingContext
-                    - '@call_service_method':
-                        service: oro_shipping.shipping_price.provider
-                        method: getPrice
-                        method_parameters: [$.result.shippingContext, $shipping_method, $shipping_method_type]
-                        attribute: $checkout.shippingCost
+                    - '@run_action_group':
+                        action_group: oro_update_shipping_price
+                        parameters_mapping:
+                            checkout: $checkout
                 preconditions:
                     '@and':
                         - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
@@ -1071,16 +1041,10 @@ workflows:
                                     state1: $.result.currentCheckoutState
                                     state2: $.result.tokenCheckoutState
                         actions:
-                            - '@call_service_method':
-                                service: oro_checkout.factory.shipping_context_provider_factory
-                                method: create
-                                method_parameters: [$checkout]
-                                attribute: $.result.shippingContext
-                            - '@call_service_method':
-                                service: oro_shipping.shipping_price.provider
-                                method: getPrice
-                                method_parameters: [$.result.shippingContext, $shipping_method, $shipping_method_type]
-                                attribute: $checkout.shippingCost
+                            - '@run_action_group':
+                                action_group: oro_update_shipping_price
+                                parameters_mapping:
+                                    checkout: $checkout
                             - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
                             - '@delete_checkout_state':
                                 entity: $checkout
