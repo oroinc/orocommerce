@@ -49,7 +49,6 @@ class OroFrontendNavigationBundleInstaller implements
         $this->createOroFrontendNavigationMenuUpdateTitleTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroFrontendNavigationMenuUpdateForeignKeys($schema);
         $this->addOroFrontendNavigationMenuUpdateTitleForeignKeys($schema);
 
         /** Associations */
@@ -69,13 +68,12 @@ class OroFrontendNavigationBundleInstaller implements
         $table->addColumn('parent_key', 'string', ['length' => 100, 'notnull' => false]);
         $table->addColumn('uri', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('menu', 'string', ['length' => 100]);
-        $table->addColumn('ownership_type', 'integer', []);
+        $table->addColumn('ownership_type', 'string', []);
         $table->addColumn('owner_id', 'integer', ['notnull' => true]);
         $table->addColumn('is_active', 'boolean', []);
         $table->addColumn('is_divider', 'boolean', []);
         $table->addColumn('priority', 'integer', ['notnull' => false]);
         $table->addColumn('condition', 'string', ['length' => 512, 'notnull' => false]);
-        $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['key', 'ownership_type'], 'unq_qroup');
     }
@@ -92,22 +90,6 @@ class OroFrontendNavigationBundleInstaller implements
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['menu_update_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id']);
-    }
-
-    /**
-     * Add oro_front_nav_menu_upd foreign keys
-     *
-     * @param Schema $schema
-     */
-    protected function addOroFrontendNavigationMenuUpdateForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME);
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_website'),
-            ['website_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
     }
 
     /**
