@@ -5,16 +5,14 @@ namespace Oro\Bundle\AccountBundle\Model;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\AccountBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 
 class ProductVisibilityQueryBuilderModifier
 {
@@ -123,38 +121,10 @@ class ProductVisibilityQueryBuilderModifier
      */
     protected function getAccountProductVisibilityResolvedTerm(QueryBuilder $queryBuilder, Account $account)
     {
-        $queryBuilder->leftJoin(
-            'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',
-            'account_product_visibility_resolved',
-            Join::WITH,
-            $queryBuilder->expr()->andX(
-                $queryBuilder->expr()->eq(
-                    $this->getRootAlias($queryBuilder),
-                    'account_product_visibility_resolved.product'
-                ),
-                $queryBuilder->expr()->eq('account_product_visibility_resolved.account', ':_account'),
-                $queryBuilder->expr()->eq('account_product_visibility_resolved.website', ':_website')
-            )
-        );
-
-        $queryBuilder->setParameter('_account', $account);
-        $queryBuilder->setParameter('_website', $this->websiteManager->getCurrentWebsite());
-
-        $productFallback = $this->addCategoryConfigFallback('product_visibility_resolved.visibility');
-        $accountFallback = $this->addCategoryConfigFallback('account_product_visibility_resolved.visibility');
-
-        $term = <<<TERM
-CASE WHEN account_product_visibility_resolved.visibility = %s
-    THEN (COALESCE(%s, %s) * 100)
-ELSE (COALESCE(%s, 0) * 100)
-END
-TERM;
-        return sprintf(
-            $term,
-            AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
-            $productFallback,
-            $this->getProductConfigValue(),
-            $accountFallback
+        return $this->getAccountProductVisibilityResolvedTermByWebsite(
+            $queryBuilder,
+            $account,
+            $this->websiteManager->getCurrentWebsite()
         );
     }
 }

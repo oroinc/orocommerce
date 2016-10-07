@@ -29,8 +29,10 @@ class ProductVisibilityProvider
      * @param DoctrineHelper $doctrineHelper
      * @param ConfigManager $configManager
      */
-    public function __construct(DoctrineHelper $doctrineHelper, ConfigManager $configManager)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        ConfigManager $configManager
+    ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->configManager = $configManager;
     }
@@ -105,6 +107,40 @@ class ProductVisibilityProvider
     }
 
     /**
+     * @param Account $account
+     * @param Website $website
+     * @return QueryBuilder
+     */
+    public function getAccountProductsVisibilitiesByWebsiteQueryBuilder(Account $account, Website $website)
+    {
+        $queryBuilder = $this->doctrineHelper->getEntityManagerForClass(Product::class)->createQueryBuilder();
+
+        $queryBuilder->from(Product::class, 'product');
+
+        $visibilities = [
+            $this->getProductVisibilityResolvedTermByWebsite($queryBuilder, $website),
+            $this->getAccountProductVisibilityResolvedTermByWebsite($queryBuilder, $account, $website)
+        ];
+
+        $accountGroup = $account->getGroup();
+        if ($accountGroup) {
+            $visibilities[] = $this->getAccountGroupProductVisibilityResolvedTermByWebsite(
+                $queryBuilder,
+                $accountGroup,
+                $website
+            );
+        }
+
+        $visibilityCondition = $this->getVisibilityConditionForVisibilityTerms($visibilities);
+
+        $queryBuilder
+            ->andWhere($queryBuilder->expr()->neq($visibilityCondition, $this->getCategoryConfigValue()))
+            ->addOrderBy('product.id', Query::ORDER_ASC);
+
+        return $queryBuilder;
+    }
+
+    /**
      * @param int $websiteId
      * @return Website
      */
@@ -140,9 +176,18 @@ class ProductVisibilityProvider
             $this->getAllAccountsProductVisibilityResolvedTerm($queryBuilder, $website)
         ];
 
+        return $this->getVisibilityConditionForVisibilityTerms($productVisibilityTerms);
+    }
+
+    /**
+     * @param array $visibilityTerms
+     * @return string
+     */
+    private function getVisibilityConditionForVisibilityTerms(array $visibilityTerms)
+    {
         return sprintf(
             'CASE WHEN %s > 0 THEN %s ELSE %s END',
-            implode('+', $productVisibilityTerms),
+            implode('+', $visibilityTerms),
             BaseVisibilityResolved::VISIBILITY_VISIBLE,
             BaseVisibilityResolved::VISIBILITY_HIDDEN
         );
