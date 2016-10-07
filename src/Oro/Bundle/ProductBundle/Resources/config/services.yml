@@ -307,8 +307,7 @@ services:
 
     oro_product.repository.product_image:
         class: 'Doctrine\ORM\EntityRepository'
-        public: false
-        factory:  ["@oro_entity.doctrine_helper", getEntityRepository]
+        parent: oro_entity.abstract_repository
         arguments:
             - '%oro_product.entity.product_image.class%'
 
