@@ -111,7 +111,7 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * {@inheritdoc}
      */
-    public function getClassesForReindex($class = null)
+    public function getClassesForReindex($class = null, array $context = [])
     {
         return $this->entityDependenciesResolver->getClassesForReindex($class);
     }

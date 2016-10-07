@@ -23,9 +23,7 @@ class PriceListRepositoryTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-        $this->client->useHashNavigation(true);
-
+        $this->initClient();
         $this->loadFixtures([
             LoadPriceRules::class,
             LoadProductPrices::class,

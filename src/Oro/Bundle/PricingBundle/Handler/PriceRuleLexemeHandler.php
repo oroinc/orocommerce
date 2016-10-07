@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Handler;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
@@ -55,7 +55,9 @@ class PriceRuleLexemeHandler
 
         // Remove all lexemes for priceList if price list exist
         if ($priceList->getId()) {
-            $em->getRepository(PriceRuleLexeme::class)->deleteByPriceList($priceList);
+            /** @var PriceRuleLexemeRepository $repository */
+            $repository = $em->getRepository(PriceRuleLexeme::class);
+            $repository->deleteByPriceList($priceList);
         }
 
         //Anew add lexemes for priceList
@@ -64,13 +66,13 @@ class PriceRuleLexemeHandler
         $lexemes = [];
 
         if ($assignmentRule) {
-            $assignmentRuleLexemes = $this->parser->getUsedLexemes($assignmentRule);
+            $assignmentRuleLexemes = $this->parser->getUsedLexemes($assignmentRule, true);
             $lexemes = $this->prepareLexemes($assignmentRuleLexemes, $priceList, null);
         }
 
         foreach ($priceRules as $rule) {
-            $conditionRules = $this->parser->getUsedLexemes($rule->getRuleCondition());
-            $priceRules = $this->parser->getUsedLexemes($rule->getRule());
+            $conditionRules = $this->parser->getUsedLexemes($rule->getRuleCondition(), true);
+            $priceRules = $this->parser->getUsedLexemes($rule->getRule(), true);
             $uniqueLexemes = $this->mergeLexemes($conditionRules, $priceRules);
             $lexemes = array_merge($this->prepareLexemes($uniqueLexemes, $priceList, $rule), $lexemes);
         }
@@ -91,11 +93,19 @@ class PriceRuleLexemeHandler
      * @param PriceRule|null $priceRule
      * @return PriceRuleLexeme[]
      */
-    protected function prepareLexemes($lexemes, PriceList $priceList, PriceRule $priceRule = null)
+    protected function prepareLexemes(array $lexemes, PriceList $priceList, PriceRule $priceRule = null)
     {
         $lexemeEntities = [];
+        /**
+         * @var string $class
+         * @var array $fieldNames
+         */
         foreach ($lexemes as $class => $fieldNames) {
-            $realClassName = $this->priceRuleProvider->getRealClassName($class);
+            $containerId = null;
+            if (strpos($class, '|') !== false) {
+                list($class, $containerId) = explode('|', $class);
+            }
+
             if (strpos($class, '::') !== false) {
                 list($containerClass, $fieldName) = explode('::', $class);
                 $lexeme = new PriceRuleLexeme();
@@ -103,24 +113,23 @@ class PriceRuleLexemeHandler
                 $lexeme->setPriceList($priceList);
                 $lexeme->setClassName($containerClass);
                 $lexeme->setFieldName($fieldName);
+                $lexeme->setRelationId($containerId);
                 $lexemeEntities[] = $lexeme;
             }
 
+            $realClassName = $this->priceRuleProvider->getRealClassName($class);
+            if ($realClassName === PriceAttributeProductPrice::class) {
+                $containerId = $this->getPriceAttributeRelationByClass($class)->getId();
+            }
             foreach ($fieldNames as $fieldName) {
                 $lexeme = new PriceRuleLexeme();
                 $lexeme->setPriceRule($priceRule);
                 $lexeme->setClassName($realClassName);
+                $lexeme->setRelationId($containerId);
                 $lexeme->setFieldName(
-                    $fieldName ? $fieldName : $this->doctrineHelper->getSingleEntityIdentifierFieldName($realClassName)
+                    $fieldName ? : $this->doctrineHelper->getSingleEntityIdentifierFieldName($realClassName)
                 );
                 $lexeme->setPriceList($priceList);
-
-                if ($realClassName ===  PriceAttributeProductPrice::class) {
-                    $relation = $this->getPriceAttributeRelationByClass($class);
-                    $lexeme->setRelationId($relation->getId());
-                } elseif ($realClassName ===  ProductPrice::class) {
-                    //@TODO set relation id for base price list BB-3273
-                }
 
                 $lexemeEntities[] = $lexeme;
             }
