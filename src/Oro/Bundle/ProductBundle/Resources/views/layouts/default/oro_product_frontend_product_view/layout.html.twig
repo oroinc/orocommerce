@@ -33,7 +33,7 @@
                              alt="{{ product.names|localized_value }}"
                              width="378"
                              height="378"
-                             {% if productImage %}
+                             {% if productImage and isDesktopVersion() %}
                                  data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
                                  {% set options = {
                                     widgetModule: 'oroproduct/js/vendors/elevatezoom/jquery-elevatezoom',

@@ -3,7 +3,7 @@ layout:
         - oro_account_menu
         -
             id: oro_order_grid
-            root: content
+            root: orders_container
             namespace: orders
 
     actions:
@@ -23,8 +23,15 @@ layout:
             optionValue: 'orders'
 
         - '@add':
-            id: orders_title
+            id: orders_container
             parentId: content
+            blockType: container
+
+        - '@add':
+            id: orders_title
+            parentId: orders_container
+            siblingId: orders_datagrid
+            prepend: true
             blockType: text
             options:
                 text: 'oro.frontend.order.past_orders.label'
