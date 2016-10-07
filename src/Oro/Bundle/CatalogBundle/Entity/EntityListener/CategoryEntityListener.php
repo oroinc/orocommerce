@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CatalogBundle\Entity\EntityListener;
 
+use Doctrine\ORM\Event\PreUpdateEventArgs;
+
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 
@@ -36,9 +38,12 @@ class CategoryEntityListener
 
     /**
      * @param Category $category
+     * @param PreUpdateEventArgs $eventArgs
      */
-    public function preUpdate(Category $category)
+    public function preUpdate(Category $category, PreUpdateEventArgs $eventArgs)
     {
-        $this->productIndexScheduler->scheduleProductsReindex([$category]);
+        if ($eventArgs->getEntityChangeSet()) {
+            $this->productIndexScheduler->scheduleProductsReindex([$category]);
+        }
     }
 }

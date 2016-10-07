@@ -2,12 +2,8 @@
 
 namespace Oro\Bundle\AccountBundle\EventListener;
 
-use Doctrine\ORM\Event\OnFlushEventArgs;
-use Doctrine\ORM\PersistentCollection;
-
-use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
 use Oro\Bundle\CatalogBundle\Model\CategoryMessageHandler;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
 
 class CategoryListener
@@ -18,6 +14,11 @@ class CategoryListener
     protected $categoryMessageHandler;
 
     /**
+     * @var string
+     */
+    protected $topic = '';
+
+    /**
      * @param ProductMessageHandler $productMessageHandler
      */
     public function __construct(ProductMessageHandler $productMessageHandler)
@@ -26,33 +27,24 @@ class CategoryListener
     }
 
     /**
-     * @param OnFlushEventArgs $event
+     * @param $topic
      */
-    public function onFlush(OnFlushEventArgs $event)
+    public function setTopic($topic)
     {
-        $this->handleProductsChange($event);
+        $this->topic = (string)$topic;
     }
 
     /**
-     * @param OnFlushEventArgs $event
+     * @param ProductsChangeRelationEvent $event
      */
-    protected function handleProductsChange(OnFlushEventArgs $event)
+    public function onProductsChangeRelation(ProductsChangeRelationEvent $event)
     {
-        $unitOfWork = $event->getEntityManager()->getUnitOfWork();
-        $collections = $unitOfWork->getScheduledCollectionUpdates();
-        foreach ($collections as $collection) {
-            if ($collection instanceof PersistentCollection
-                && $collection->getMapping()['fieldName'] === Category::FIELD_PRODUCTS
-                && $collection->isDirty() && $collection->isInitialized()
-            ) {
-                /** @var Product $product */
-                foreach (array_merge($collection->getInsertDiff(), $collection->getDeleteDiff()) as $product) {
-                    $this->productMessageHandler->addProductMessageToSchedule(
-                        'oro_account.visibility.change_product_category',
-                        $product
-                    );
-                }
-            }
+        $products = $event->getProducts();
+        foreach ($products as $product) {
+            $this->productMessageHandler->addProductMessageToSchedule(
+                $this->topic,
+                $product
+            );
         }
     }
 }
