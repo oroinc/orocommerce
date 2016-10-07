@@ -13,6 +13,7 @@ define(function(require) {
          * @property {jQuery}
          */
         $form: null,
+        $field: null,
 
         /**
          * {@inheritDoc}
@@ -20,6 +21,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.$form = this.options._sourceElement;
+            this.$field = this.$form.find('textarea');
 
             this.$form.on('submit', function(e) {
                 e.preventDefault();
@@ -47,6 +49,12 @@ define(function(require) {
                 widget.incrementalPosition = false;
                 widget.firstRun = false;
                 widget.loadContent(form.serialize(), form.attr('method'), form.attr('action'));
+            });
+
+            this.$field.on('keyup', function(e) {
+                var field = $(e.target);
+
+                field.val(field.val().replace(/^\s+/g, ''));
             });
         }
     });
