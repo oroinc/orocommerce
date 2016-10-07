@@ -63,9 +63,6 @@ class ProductProcessor implements MessageProcessorInterface
     /**
      * {@inheritdoc}
      */
-    /**
-     * {@inheritdoc}
-     */
     public function process(MessageInterface $message, SessionInterface $session)
     {
         $em = $this->getEntityManager();
