@@ -11,7 +11,7 @@ use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfigExtra;
 use Oro\Bundle\ApiBundle\Config\FiltersConfigExtra;
 use Oro\Bundle\ApiBundle\Util\CriteriaConnector;
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
-use Oro\Bundle\InventoryBundle\Api\Processor\BuildSingleWarehouseInventoryLevelQuery;
+use Oro\Bundle\InventoryBundle\Api\Processor\BuildSingleInventoryLevelQuery;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
 class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelatedTestCase
@@ -22,7 +22,7 @@ class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelated
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $criteriaConnector;
 
-    /** @var BuildSingleWarehouseInventoryLevelQuery */
+    /** @var BuildSingleInventoryLevelQuery */
     protected $processor;
 
     protected function setUp()
@@ -43,7 +43,7 @@ class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelated
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->processor = new BuildSingleWarehouseInventoryLevelQuery($this->doctrineHelper, $this->criteriaConnector);
+        $this->processor = new BuildSingleInventoryLevelQuery($this->doctrineHelper, $this->criteriaConnector);
     }
 
     public function testProcessWhenCriteriaObjectDoesNotExist()

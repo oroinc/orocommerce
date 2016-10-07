@@ -16,14 +16,14 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\InventoryBundle\Form\Type\WarehouseInventoryLevelGridType;
+use Oro\Bundle\InventoryBundle\Form\Type\InventoryLevelGridType;
 
-class WarehouseInventoryLevelGridTypeTest extends FormIntegrationTestCase
+class InventoryLevelGridTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
     /**
-     * @var WarehouseInventoryLevelGridType
+     * @var InventoryLevelGridType
      */
     protected $type;
 
@@ -46,7 +46,7 @@ class WarehouseInventoryLevelGridTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->type = new WarehouseInventoryLevelGridType($this->formFactory, $this->doctrineHelper);
+        $this->type = new InventoryLevelGridType($this->formFactory, $this->doctrineHelper);
     }
 
     /**
@@ -61,7 +61,7 @@ class WarehouseInventoryLevelGridTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(WarehouseInventoryLevelGridType::NAME, $this->type->getName());
+        $this->assertEquals(InventoryLevelGridType::NAME, $this->type->getName());
     }
 
     public function testGetParent()
@@ -79,7 +79,7 @@ class WarehouseInventoryLevelGridTypeTest extends FormIntegrationTestCase
     public function testSubmit(array $options, $submittedData, $expectedData, DoctrineHelper $doctrineHelper = null)
     {
         $type = $doctrineHelper
-            ? new WarehouseInventoryLevelGridType($this->formFactory, $doctrineHelper)
+            ? new InventoryLevelGridType($this->formFactory, $doctrineHelper)
             : $this->type;
 
         $form = $this->factory->create($type, null, $options);
@@ -90,19 +90,9 @@ class WarehouseInventoryLevelGridTypeTest extends FormIntegrationTestCase
 
     public function submitDataProvider()
     {
-        $firstWarehouse = $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 1]);
-        $secondWarehouse = $this->getEntity('Oro\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 2]);
-
-        $warehouseClass = 'OroWarehouseBundle:Warehouse';
         $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
-        $doctrineHelper->expects($this->any())
-            ->method('getEntityReference')
-            ->willReturnMap([
-                [$warehouseClass, 1, $firstWarehouse],
-                [$warehouseClass, 2, $secondWarehouse],
-            ]);
 
         /** @var ProductUnitPrecision $firstPrecision */
         $firstPrecision = $this->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 11]);
@@ -133,13 +123,9 @@ class WarehouseInventoryLevelGridTypeTest extends FormIntegrationTestCase
                 'expectedData' => new ArrayCollection([
                     '1_11' => [
                         'data' => ['levelQuantity' => '42'],
-                        'warehouse' => $firstWarehouse,
-                        'precision' => $firstPrecision,
                     ],
                     '2_12' => [
                         'data' => ['levelQuantity' => null],
-                        'warehouse' => $secondWarehouse,
-                        'precision' => $secondPrecision,
                     ]
 
                 ]),

@@ -4,5 +4,5 @@
 {% if manageInventory is not null %}
     {% set manageInventory = (manageInventory == true) ? 'true' : 'false' %}
 {% endif %}
-{% set manageInventoryValue = manageInventory is not null ? 'oro.warehouse.manage_inventory.choice.' ~ manageInventory : null %}
-{{ UI.renderHtmlProperty('oro.warehouse.manage_inventory.label'|trans, manageInventoryValue|trans) }}
+{% set manageInventoryValue = manageInventory is not null ? 'oro.inventory.manage_inventory.choice.' ~ manageInventory : null %}
+{{ UI.renderHtmlProperty('oro.inventory.manage_inventory.label'|trans, manageInventoryValue|trans) }}

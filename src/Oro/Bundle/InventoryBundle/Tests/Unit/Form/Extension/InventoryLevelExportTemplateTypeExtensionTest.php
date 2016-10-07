@@ -37,7 +37,7 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit_Framework_T
     {
         $processorAliases = [
             'oro_product.inventory_status_only_template',
-            'oro_warehouse.detailed_inventory_levels_template'
+            'oro_inventory.detailed_inventory_levels_template'
         ];
 
         $builder = $this->getBuilderMock();

@@ -5,10 +5,9 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\Entity;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
-class WarehouseInventoryLevelTest extends \PHPUnit_Framework_TestCase
+class InventoryLevelTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
 
@@ -17,13 +16,12 @@ class WarehouseInventoryLevelTest extends \PHPUnit_Framework_TestCase
         $properties = [
             ['id', '123'],
             ['quantity', 10.55],
-            ['warehouse', new Warehouse()],
             ['product', new Product()],
             ['productUnitPrecision', new ProductUnitPrecision()]
         ];
 
-        $warehouseInventoryLevel = new InventoryLevel();
-        $this->assertPropertyAccessors($warehouseInventoryLevel, $properties);
+        $inventoryLevel = new InventoryLevel();
+        $this->assertPropertyAccessors($inventoryLevel, $properties);
     }
 
     public function testSetProductUnitPrecision()

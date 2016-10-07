@@ -37,7 +37,7 @@ class InventoryLevelExportTypeExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $processorAliases = [
             'oro_product.inventory_status_only',
-            'oro_warehouse.detailed_inventory_levels'
+            'oro_inventory.detailed_inventory_levels'
         ];
 
         $builder = $this->getBuilderMock();

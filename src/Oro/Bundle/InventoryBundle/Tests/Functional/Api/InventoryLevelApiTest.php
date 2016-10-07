@@ -86,7 +86,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                 'expectedCount' => 3,
                 'expectedContent' => [
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 10,
                         ],
@@ -132,7 +132,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                         ],
                     ],
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 99,
                         ],
@@ -178,7 +178,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                         ],
                     ],
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 10,
                         ],
@@ -236,7 +236,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                 'expectedCount' => 6,
                 'expectedContent' => [
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 10,
                         ],
@@ -282,7 +282,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                         ],
                     ],
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 99,
                         ],
@@ -328,7 +328,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                         ],
                     ],
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 12.345,
                         ],
@@ -374,7 +374,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                         ],
                     ],
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 98,
                         ],
@@ -420,7 +420,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                         ],
                     ],
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 42,
                         ],
@@ -466,7 +466,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                         ],
                     ],
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 10,
                         ],
@@ -529,7 +529,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                 'expectedCount' => 2,
                 'expectedContent' => [
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 99,
                         ],
@@ -575,7 +575,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                         ],
                     ],
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 98,
                         ],
@@ -638,7 +638,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                 'expectedCount' => 4,
                 'expectedContent' => [
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 10,
                         ],
@@ -684,7 +684,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                         ],
                     ],
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 99,
                         ],
@@ -730,7 +730,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                         ],
                     ],
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 12.345,
                         ],
@@ -776,7 +776,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                         ],
                     ],
                     [
-                        'type' => 'warehouseinventorylevels',
+                        'type' => 'inventorylevels',
                         'attributes' => [
                             'quantity' => 98,
                         ],
@@ -920,7 +920,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
             $data
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_FOUND);
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
         $this->assertCreatedInventoryLevel('product.3', 'liter', 100);
     }
 
@@ -948,7 +948,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
             $data
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_FOUND);
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
         $this->assertCreatedInventoryLevel('product.2', null, 50);
     }
 

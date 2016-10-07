@@ -13,11 +13,6 @@ services:
         tags:
             - { name: form.type }
 
-    oro_shipping.form.type.shipping_origin_warehouse:
-        class: Oro\Bundle\WarehouseProBundle\Form\Type\ShippingOriginWarehouseType
-        tags:
-            - { name: form.type }
-
     oro_shipping.form.type.length_unit_select:
         class: Oro\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType
         arguments:

@@ -10,7 +10,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\FormBundle\Form\DataTransformer\DataChangesetTransformer;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Form\DataTransformer\InventoryLevelGridDataTransformer as LevelTransformer;
 
