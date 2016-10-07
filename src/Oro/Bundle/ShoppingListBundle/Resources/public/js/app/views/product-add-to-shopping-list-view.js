@@ -289,12 +289,14 @@ define(function(require) {
                 $button.data('intention', 'update');
             }
 
+            $button.attr('title', label);
+
             if (this.dropdownWidget.options.truncateLength &&
                 $button.get(0) === this.dropdownWidget.main.get(0)) {
                 label = _.trunc(label, this.dropdownWidget.options.truncateLength, false, '...');
             }
 
-            $button.attr('title', label).html(label);
+            $button.html(label);
         },
 
         toggleRemoveButton: function() {
