@@ -59,13 +59,17 @@ class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
         return '';
     }
 
-    /** {@inheritdoc} */
+    /**
+     * @param Checkout $entity
+     * @param mixed $state1
+     * @param mixed $state2
+     * @return bool
+     */
     public function isStatesEqual($entity, $state1, $state2)
     {
         if (!$entity->getShippingMethod()) {
             return true;
         }
-
 
         $shippingMethod = $entity->getShippingMethod();
         if ($shippingMethod) {
