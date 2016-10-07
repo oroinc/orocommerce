@@ -1,0 +1,13 @@
+.request-form-flexbox {
+    @extend .flexible-container;
+    
+    &__side {
+        @extend .flexible-container__side;
+        
+        padding-left: 5px;
+    }
+    
+    &__base {
+        @extend .flexible-container__base;
+    }
+}

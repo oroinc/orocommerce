@@ -1,0 +1,14 @@
+.request-form-grid {
+    @extend .grid;
+
+    &__row {
+        @extend .grid__row;
+        @extend .grid__row--offset-none;
+    }
+
+    &__column {
+        @extend .grid__column;
+
+        margin-bottom: 15px;
+    }
+}

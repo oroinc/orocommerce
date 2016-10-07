@@ -9,14 +9,6 @@
         margin-bottom: 20px;
     }
 
-    &__column {
-        &--offset {
-            &-y {
-                margin-bottom: $offset-y;
-            }
-        }
-    }
-
     &__group-column {
         padding-left: $offset-x;
     }

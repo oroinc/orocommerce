@@ -1,4 +1,4 @@
-{% extends 'OroFrontendBundle:layouts/default:form_theme.html.twig' %}
+{% extends 'form_div_layout.html.twig' %}
 
 {% block genemu_jqueryselect2_widget %}
     {% if configs.grid is defined and configs.grid.name is defined %}
@@ -18,7 +18,7 @@
         {% set configs = configs|merge({'selection_template': include(configs.selection_template_twig) }) %}
     {% endif %}
     {% set configs = configs|merge({
-        containerCssClass: 'oro-select2 oro-select2--size-m',
+        containerCssClass: 'oro-select2',
         dropdownCssClass: 'oro-select2__dropdown'
     }) %}
     {% if configs.component is defined %}
@@ -50,18 +50,36 @@
 {%- endblock -%}
 
 {% block form_widget_simple %}
+    {% set attr = attr|merge({ class: attr.class|default('input input--full input--size-m') }) %}
+    {{ parent() }}
+{% endblock %}
+
+{% block textarea_widget %}
     {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
     {% set attr = attr|merge({
         class: [
             attr.class|default(''),
             class_prefix ~ "__form__input",
-            "input input--full input--size-m"
+            "input input_block input_md",
         ]|join(' ')
     }) %}
     {{ parent() }}
 {% endblock %}
 
-{% block textarea_widget %}
-	{% set attr = attr|merge({class: "input input_sm input_block"}) %}
-    {{ parent() }}
+{% block oro_entity_flexible_container_widget %}
+    <div class="request-form-flexbox">
+        <div class="request-form-flexbox__base">
+            {{ form_widget(form) }}
+        </div>
+
+        {% if isButtonsEnabled %}
+            <div class="request-form-flexbox__side">
+                <button class="add-on btn btn-lg entity-select-btn"><i class="icon-reorder"></i></button>
+
+                {% if form.vars.create_enabled %}
+                    <button class="btn btn-lg entity-create-btn"><i class="icon-plus"></i></button>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
