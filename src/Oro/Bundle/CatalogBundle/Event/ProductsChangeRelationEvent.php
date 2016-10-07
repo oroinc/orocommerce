@@ -16,7 +16,7 @@ class ProductsChangeRelationEvent extends Event
     /**
      * @param Product[] $products
      */
-    public function __construct($products)
+    public function __construct(array $products)
     {
         if (!$products) {
             throw new \InvalidArgumentException('At least one product must be passed');

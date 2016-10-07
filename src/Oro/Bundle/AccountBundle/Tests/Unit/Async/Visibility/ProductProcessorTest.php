@@ -84,13 +84,13 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(ProductVisibilityResolved::class)
             ->willReturn($em);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($body);
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->getMock(SessionInterface::class);
 
         $product = new Product();
@@ -127,7 +127,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(ProductVisibilityResolved::class)
             ->willReturn($em);
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -137,7 +137,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('error')
             ->with('Transaction aborted wit error: Some error.');
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->getMock(SessionInterface::class);
 
         $this->assertEquals(
@@ -167,7 +167,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getProductFromMessage')
             ->will($this->throwException(new InvalidArgumentException('Wrong message')));
 
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
@@ -177,7 +177,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('error')
             ->with('Message is invalid: Wrong message. Original message: "[]"');
 
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->getMock(SessionInterface::class);
 
         $this->assertEquals(

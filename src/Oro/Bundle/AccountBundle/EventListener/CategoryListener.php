@@ -14,11 +14,24 @@ class CategoryListener
     protected $categoryMessageHandler;
 
     /**
+     * @var string
+     */
+    protected $topic = '';
+
+    /**
      * @param ProductMessageHandler $productMessageHandler
      */
     public function __construct(ProductMessageHandler $productMessageHandler)
     {
         $this->productMessageHandler = $productMessageHandler;
+    }
+
+    /**
+     * @param $topic
+     */
+    public function setTopic($topic)
+    {
+        $this->topic = (string)$topic;
     }
 
     /**
@@ -29,7 +42,7 @@ class CategoryListener
         $products = $event->getProducts();
         foreach ($products as $product) {
             $this->productMessageHandler->addProductMessageToSchedule(
-                'oro_account.visibility.change_product_category',
+                $this->topic,
                 $product
             );
         }

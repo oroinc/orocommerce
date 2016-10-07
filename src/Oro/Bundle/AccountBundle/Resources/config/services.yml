@@ -708,6 +708,8 @@ services:
         class: 'Oro\Bundle\AccountBundle\EventListener\CategoryListener'
         arguments:
             - '@oro_product.model.product_message_handler'
+        calls:
+            - [setTopic, ['oro_account.visibility.change_product_category']]
         tags:
             - { name: kernel.event_listener, event: oro_catalog.event.products_change_relation, method: onProductsChangeRelation, priority: 100 }
 
@@ -970,7 +972,6 @@ services:
             - '@oro_product.model.product_message_factory'
             - '@logger'
             - '@oro_account.visibility.cache.product.cache_builder'
-            - '@event_dispatcher'
         calls:
             - [setResolvedVisibilityClassName, ['%oro_account.entity.account_product_visibility_resolved.class%']]
         tags:
