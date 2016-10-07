@@ -2,6 +2,11 @@
     {% set methodConfigs = record.getValue('methodConfigs').toArray() %}
 
     {% for methodConfig in methodConfigs %}
-        {{ methodConfig.method }}
+        {{ get_shipping_method_label(methodConfig.method)|trans }}
+        <ul>
+        {% for typeConfig in methodConfig.typeConfigs %}
+            <li>{{ get_shipping_method_type_label(methodConfig.method, typeConfig.type)|trans }}</li>
+        {% endfor %}
+        </ul>
     {% endfor %}
 {% endspaceless %}
