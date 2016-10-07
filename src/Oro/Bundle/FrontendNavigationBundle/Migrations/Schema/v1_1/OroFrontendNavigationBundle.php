@@ -3,6 +3,7 @@
 namespace Oro\Bundle\FrontendNavigationBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Types\StringType;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -27,5 +28,7 @@ class OroFrontendNavigationBundle implements Migration
     {
         $table = $schema->getTable('oro_front_nav_menu_upd');
         $table->addColumn('is_active', 'boolean', []);
+        $table->changeColumn('ownership_type', ['type' => StringType::getType('string')]);
+        $table->dropColumn('website_id');
     }
 }
