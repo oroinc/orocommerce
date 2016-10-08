@@ -85,7 +85,7 @@ class VisibilityGridListener
             $params->get('target_entity_id'),
             $this->subscribedGridConfig[$datagridName]['targetEntityClass']
         );
-        if (is_a($visibilityClass, ScopeAwareInterface::class, true)) {
+        if (is_a($visibilityClass, ScopeAwareInterface::class, true) && $params->has('scope_id')) {
             $selectorPath = '[options][cellSelection][selector]';
             $scopePath = '[scope]';
             $scopeId = $params->get('scope_id');
@@ -140,7 +140,13 @@ class VisibilityGridListener
     {
         $parameters = $event->getDatagrid()->getParameters();
         $datagridName = $event->getDatagrid()->getName();
-        $rootScope = $this->registry->getRepository(Scope::class)->find($parameters->get('scope_id'));
+
+        if ($parameters->has('scope_id')) {
+            $rootScope = $this->registry->getRepository(Scope::class)->find($parameters->get('scope_id'));
+        } else {
+            $rootScope = $this->scopeManager->findDefaultScope();
+        }
+
         $type = call_user_func(
             [
                 $this->subscribedGridConfig[$datagridName]['visibilityEntityClass'],

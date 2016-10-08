@@ -137,7 +137,12 @@ abstract class AbstractVisibilityListener
         $config = $form->getConfig();
 
         $visibilityClassName = $config->getOption($field.'Class');
-        $rootScope = $config->getOption('scope');
+
+        if ($config->hasOption('scope_id')) {
+            $rootScope = $config->getOption('scope');
+        } else {
+            $rootScope = $this->scopeManager->findDefaultScope();
+        }
         $scopeType = $this->getVisibilityScopeType($form, $field);
 
         $context = $this->scopeManager->getCriteriaByScope(
