@@ -7,7 +7,6 @@ use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibility
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -30,11 +29,6 @@ class CategoryListenerTest extends WebTestCase
      */
     protected $categoryRepository;
 
-    /**
-     * @var MessageCollector
-     */
-    protected $messageProducer;
-
     protected function setUp()
     {
         $this->initClient();
@@ -46,10 +40,7 @@ class CategoryListenerTest extends WebTestCase
 
         $this->loadFixtures([LoadProductVisibilityData::class]);
 
-        $this->messageProducer = $this->getContainer()->get('oro_message_queue.client.message_producer');
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
-        $this->messageProducer->clear();
-        $this->messageProducer->enable();
     }
 
     public function testCreateProduct()
@@ -69,16 +60,8 @@ class CategoryListenerTest extends WebTestCase
         $em->flush();
 
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
-        $messages = $this->messageProducer->getSentMessages();
-        $visibilityMessages = array_filter(
-            $messages,
-            function ($message) {
-                return array_key_exists('topic', $message)
-                    && $message['topic'] === 'oro_account.visibility.change_product_category';
-            }
-        );
 
-        $this->assertEmpty($visibilityMessages);
+        self::assertEmptyMessages('oro_account.visibility.change_product_category');
     }
 
     public function testChangeProductCategory()

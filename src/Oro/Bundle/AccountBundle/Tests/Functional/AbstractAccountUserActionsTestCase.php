@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Functional;
 
-use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
