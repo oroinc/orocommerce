@@ -165,14 +165,13 @@ class ScopeManager
     }
 
     /**
-     * @param $scopeType
-     * @param $context
+     * @param string $scopeType
+     * @param array $context
      * @return ScopeCriteria
      */
     public function getCriteria($scopeType, $context = null)
     {
         $criteria = $this->getNullContext();
-        // todo: add support for object as context
         if (self::BASE_SCOPE == $scopeType && is_array($context)) {
             $criteria = array_replace($criteria, $context);
         } else {

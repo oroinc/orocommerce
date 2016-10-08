@@ -7,7 +7,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\AccountBundle\Provider\ScopeAccountCriteriaProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-class ScopeAccountProviderTest extends \PHPUnit_Framework_TestCase
+class ScopeAccountCriteriaProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ScopeAccountCriteriaProvider
