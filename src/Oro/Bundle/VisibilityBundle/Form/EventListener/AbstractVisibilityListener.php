@@ -14,7 +14,6 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Symfony\Component\Form\FormInterface;
 
 abstract class AbstractVisibilityListener
@@ -61,15 +60,14 @@ abstract class AbstractVisibilityListener
             ->setParameter($targetEntityField, $targetEntity);
 
         $type = $this->getVisibilityScopeType($form, $field);
-        $context = $this->getFormScopeContext($form, $type);
+        $context = $this->getFormScopeContext($form->get($field), $type);
         $criteria = $this->scopeManager->getCriteria($type, $context);
         $criteria->applyWhere($qb, 'scope');
 
         if ($field === 'all') {
             return $qb->getQuery()->getOneOrNullResult();
         } else {
-            $result = $qb->getQuery()->getResult();
-            return $result;
+            return $this->mapVisibilitiesById($qb->getQuery()->getResult());
         }
     }
 
@@ -105,7 +103,6 @@ abstract class AbstractVisibilityListener
      */
     protected function mapVisibilitiesById($visibilities)
     {
-        // todo: check BB-4506
         $visibilitiesById = [];
         /** @var VisibilityInterface $visibilityEntity */
         foreach ($visibilities as $visibilityEntity) {
@@ -132,19 +129,33 @@ abstract class AbstractVisibilityListener
     /**
      * @param FormInterface $form
      * @param string $field
-     * @return VisibilityInterface|WebsiteAwareInterface
+     * @param null|object $fieldData
+     * @return VisibilityInterface
      */
-    protected function createFormFieldData($form, $field)
+    protected function createFormFieldData($form, $field, $fieldData = null)
     {
-        $targetEntity = $form->getData();
         $config = $form->getConfig();
+
         $visibilityClassName = $config->getOption($field.'Class');
-        /** @var VisibilityInterface|WebsiteAwareInterface $visibility */
-        $visibility = new $visibilityClassName();
-        if ($visibility instanceof WebsiteAwareInterface) {
-            $visibility->setWebsite($config->getOption('website'));
+        $rootScope = $config->getOption('scope');
+        $scopeType = $this->getVisibilityScopeType($form, $field);
+
+        $context = $this->scopeManager->getCriteriaByScope(
+            $rootScope,
+            $scopeType
+        )->toArray();
+        if (null !== $fieldData && array_key_exists($field, $context)) {
+            $context[$field] = $fieldData;
         }
-        $visibility->setTargetEntity($targetEntity);
+
+        /** @var VisibilityInterface $visibility */
+        $visibility = new $visibilityClassName();
+        $scope = $this->scopeManager->findOrCreate(
+            $scopeType,
+            $context
+        );
+        $visibility->setScope($scope);
+        $visibility->setTargetEntity($form->getData());
 
         return $visibility;
     }

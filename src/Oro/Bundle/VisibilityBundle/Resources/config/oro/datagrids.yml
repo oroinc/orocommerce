@@ -12,7 +12,7 @@ datagrids:
                 join:
                     left:
                         - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.account = account' }
-                        - { join: %oro_visibility.entity.account_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: %oro_visibility.entity.account_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:
@@ -57,12 +57,13 @@ datagrids:
                 select:
                     - accountGroup.id
                     - accountGroup.name
+                    - visibilityAlias
                 from:
                     - { table: %oro_account.entity.account_group.class%, alias: accountGroup }
                 join:
                     left:
                         - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.accountGroup = accountGroup' }
-                        - { join: %oro_visibility.entity.account_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: %oro_visibility.entity.account_group_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:
@@ -165,7 +166,7 @@ datagrids:
                 join:
                     left:
                         - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.accountGroup = accountGroup' }
-                        - { join: %oro_visibility.entity.account_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: %oro_visibility.entity.account_group_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:

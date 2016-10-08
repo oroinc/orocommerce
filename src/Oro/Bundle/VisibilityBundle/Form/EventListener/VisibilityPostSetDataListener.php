@@ -51,8 +51,11 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
         $data = array_map(
             function ($visibility) {
                 /** @var VisibilityInterface|AccountGroupAwareInterface $visibility */
+                /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
+                $accountGroup = $visibility->getScope()->getAccountGroup();
+
                 return [
-                    'entity' => $visibility->getScope()->getAccountGroup(),
+                    'entity' => $accountGroup,
                     'data' => [
                         'visibility' => $visibility->getVisibility(),
                     ],
@@ -74,8 +77,11 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
         $data = array_map(
             function ($visibility) {
                 /** @var VisibilityInterface|AccountAwareInterface $visibility */
+                /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
+                $account = $visibility->getScope()->getAccount();
+
                 return [
-                    'entity' => $visibility->getScope()->getAccount(),
+                    'entity' => $account,
                     'data' => [
                         'visibility' => $visibility->getVisibility(),
                     ],

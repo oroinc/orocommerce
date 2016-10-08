@@ -5,7 +5,8 @@ namespace Oro\Bundle\ScopeBundle\Model;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
-class ScopeCriteria
+// todo: fix criteria should use proper conditions for all values including "is null"
+class ScopeCriteria implements \IteratorAggregate
 {
     const IS_NOT_NULL = 'IS_NOT_NULL';
 
@@ -133,5 +134,13 @@ class ScopeCriteria
     public function toArray()
     {
         return $this->context;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->context);
     }
 }

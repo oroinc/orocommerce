@@ -117,9 +117,10 @@ class ScopeManager
     {
         $criteria = $this->getCriteria($scopeType, $context);
 
-        $scope = $this->registry->getManagerForClass(Scope::class)
-            ->getRepository(Scope::class)
-            ->findOneBy($criteria->toArray());
+        /** @var ScopeRepository $repository */
+        $repository = $this->registry->getManagerForClass(Scope::class)
+            ->getRepository(Scope::class);
+        $scope = $repository->findOneByCriteria($criteria);
         if (!$scope) {
             $scope = new Scope();
             $propertyAccessor = $this->getPropertyAccessor();

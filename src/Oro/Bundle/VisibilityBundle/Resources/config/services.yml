@@ -272,26 +272,21 @@ services:
         public: false
         arguments:
             - '@oro_visibility.visibility_message_handler'
-            - '@oro_scope.scope_manager'
 
     oro_visibility.entity_listener.product_visibility_change:
         class: 'Oro\Bundle\VisibilityBundle\Entity\EntityListener\ProductVisibilityListener'
         public: false
         arguments:
             - '@oro_visibility.product_visibility_message_handler'
-            - '@oro_scope.scope_manager'
         calls:
             - [setTopic, ['oro_visibility.visibility.resolve_product_visibility']]
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.product_visibility.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.product_visibility.class%', event: preRemove }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.product_visibility.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.product_visibility.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_product_visibility.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_product_visibility.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_product_visibility.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_group_product_visibility.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_group_product_visibility.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_group_product_visibility.class%', event: postPersist }
 
     oro_visibility.entity_listener.category_visibility_change:
