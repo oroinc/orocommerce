@@ -6,6 +6,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\ScopeBundle\Entity\Repository\ScopeRepository;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
@@ -41,23 +43,28 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMessageForCategoryVisibility()
     {
-        $this->markTestSkipped('Should be fixed after BB-4755');
         $categoryId = 123;
         $categoryVisibilityId = 42;
+        $scopeId = 1;
 
         /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => $categoryId]);
 
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
+
         /** @var CategoryVisibility $categoryVisibility */
         $categoryVisibility = $this->getEntity(CategoryVisibility::class, ['id' => $categoryVisibilityId]);
         $categoryVisibility->setCategory($category);
+        $categoryVisibility->setScope($scope);
 
         $this->categoryVisibilityMessageFactory->createMessage($categoryVisibility);
 
         $expected = [
             CategoryVisibilityMessageFactory::ID => $categoryVisibilityId,
             CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => CategoryVisibility::class,
-            CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId
+            CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId,
+            CategoryVisibilityMessageFactory::SCOPE_ID => $scopeId
         ];
 
         $this->assertEquals($expected, $this->categoryVisibilityMessageFactory->createMessage($categoryVisibility));
@@ -65,12 +72,15 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMessageForAccountGroupCategoryVisibility()
     {
-        $this->markTestSkipped('Should be fixed after BB-4755');
+        $scopeId = 1;
         $categoryId = 123;
         $categoryVisibilityId = 42;
 
         /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => $categoryId]);
+
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
 
         /** @var AccountGroupCategoryVisibility $accountGroupCategoryVisibility */
         $accountGroupCategoryVisibility = $this->getEntity(
@@ -78,11 +88,13 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ['id' => $categoryVisibilityId]
         );
         $accountGroupCategoryVisibility->setCategory($category);
+        $accountGroupCategoryVisibility->setScope($scope);
 
         $expected = [
             CategoryVisibilityMessageFactory::ID => $categoryVisibilityId,
             CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupCategoryVisibility::class,
-            CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId
+            CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId,
+            CategoryVisibilityMessageFactory::SCOPE_ID => $scopeId
         ];
 
         $this->assertEquals(
@@ -93,12 +105,15 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateMessageForAccountCategoryVisibility()
     {
-        $this->markTestSkipped('Should be fixed after BB-4755');
+        $scopeId = 5;
         $categoryId = 123;
         $categoryVisibilityId = 42;
 
         /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => $categoryId]);
+
+        /** @var Scope $scope */
+        $scope = $this->getEntity(Scope::class, ['id' => $scopeId]);
 
         /** @var AccountCategoryVisibility $accountCategoryVisibility */
         $accountCategoryVisibility = $this->getEntity(
@@ -106,13 +121,15 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ['id' => $categoryVisibilityId]
         );
         $accountCategoryVisibility->setCategory($category);
+        $accountCategoryVisibility->setScope($scope);
 
         $this->categoryVisibilityMessageFactory->createMessage($accountCategoryVisibility);
 
         $expected = [
             CategoryVisibilityMessageFactory::ID => $categoryVisibilityId,
             CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountCategoryVisibility::class,
-            CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId
+            CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId,
+            CategoryVisibilityMessageFactory::SCOPE_ID => $scopeId
         ];
 
         $this->assertEquals(
@@ -127,7 +144,6 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateMessageUnsupportedClass()
     {
-        $this->markTestSkipped('Should be fixed after BB-4755');
         $this->categoryVisibilityMessageFactory->createMessage(new \stdClass());
     }
 
@@ -163,414 +179,6 @@ class CategoryVisibilityMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         $this->assertEquals($categoryVisibility, $this->categoryVisibilityMessageFactory->getEntityFromMessage($data));
-    }
-
-    public function testGetEntityFromMessageCategoryVisibilityWithoutVisibility()
-    {
-        $categoryVisibilityId = 123;
-        $categoryId = 42;
-
-        /** @var Category $category */
-        $category = $this->getEntity(Category::class, ['id' => $categoryId]);
-
-        $data =  [
-            CategoryVisibilityMessageFactory::ID => $categoryVisibilityId,
-            CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => CategoryVisibility::class,
-            CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId
-        ];
-
-        $categoryRepository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $categoryRepository->expects($this->once())
-            ->method('find')
-            ->with($categoryId)
-            ->willReturn($category);
-
-        $categoryVisibilityRepository = $this->getMockBuilder(CategoryVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $categoryVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($categoryVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [CategoryVisibility::class, $categoryVisibilityRepository],
-                [Category::class, $categoryRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $expectedVisibility = new CategoryVisibility();
-        $expectedVisibility->setCategory($category);
-        $expectedVisibility->setVisibility(CategoryVisibility::CONFIG);
-
-        $this->assertEquals($expectedVisibility, $this->categoryVisibilityMessageFactory->getEntityFromMessage($data));
-    }
-
-    /**
-     * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Category object was not found.
-     */
-    public function testGetEntityFromMessageCategoryVisibilityWithoutCategory()
-    {
-        $this->markTestSkipped('Should be fixed after BB-4755');
-        $categoryVisibilityId = 123;
-        $categoryId = 42;
-
-        $data =  [
-            CategoryVisibilityMessageFactory::ID => $categoryVisibilityId,
-            CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => CategoryVisibility::class,
-            CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId
-        ];
-
-        $categoryRepository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $categoryRepository->expects($this->once())
-            ->method('find')
-            ->with($categoryId)
-            ->willReturn(null);
-
-        $categoryVisibilityRepository = $this->getMockBuilder(CategoryVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $categoryVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($categoryVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [CategoryVisibility::class, $categoryVisibilityRepository],
-                [Category::class, $categoryRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->categoryVisibilityMessageFactory->getEntityFromMessage($data);
-    }
-
-    public function testGetEntityFromMessageAccountCategoryVisibilityWithoutVisibility()
-    {
-        $this->markTestSkipped('Should be fixed after BB-4755');
-        $accountCategoryVisibilityId = 123;
-        $categoryId = 42;
-
-        /** @var Category $category */
-        $category = $this->getEntity(Category::class, ['id' => $categoryId]);
-
-        $data =  [
-            CategoryVisibilityMessageFactory::ID => $accountCategoryVisibilityId,
-            CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountCategoryVisibility::class,
-            CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId
-        ];
-
-        $categoryRepository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $categoryRepository->expects($this->once())
-            ->method('find')
-            ->with($categoryId)
-            ->willReturn($category);
-
-        $accountCategoryVisibilityRepository = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountCategoryVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($accountCategoryVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AccountCategoryVisibility::class, $accountCategoryVisibilityRepository],
-                [Category::class, $categoryRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $expectedVisibility = new AccountCategoryVisibility();
-        $expectedVisibility->setCategory($category);
-        $expectedVisibility->setVisibility(AccountCategoryVisibility::ACCOUNT_GROUP);
-
-        $this->assertEquals($expectedVisibility, $this->categoryVisibilityMessageFactory->getEntityFromMessage($data));
-    }
-
-    /**
-     * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Category object was not found.
-     */
-    public function testGetEntityFromMessageAccountCategoryVisibilityWithoutCategory()
-    {
-        $this->markTestSkipped('Should be fixed after BB-4755');
-        $accountCategoryVisibilityId = 123;
-        $categoryId = 42;
-
-        $data =  [
-            CategoryVisibilityMessageFactory::ID => $accountCategoryVisibilityId,
-            CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountCategoryVisibility::class,
-            CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId
-        ];
-
-        $categoryRepository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $categoryRepository->expects($this->once())
-            ->method('find')
-            ->with($categoryId)
-            ->willReturn(null);
-
-        $accountCategoryVisibilityRepository = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountCategoryVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($accountCategoryVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AccountCategoryVisibility::class, $accountCategoryVisibilityRepository],
-                [Category::class, $categoryRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->categoryVisibilityMessageFactory->getEntityFromMessage($data);
-    }
-
-    /**
-     * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Account object was not found.
-     */
-    public function testGetEntityFromMessageAccountCategoryVisibilityWithoutAccount()
-    {
-        $this->markTestSkipped('Should be fixed after BB-4755');
-        $accountCategoryVisibilityId = 123;
-        $categoryId = 42;
-
-        /** @var Category $category */
-        $category = $this->getEntity(Category::class, ['id' => $categoryId]);
-
-        $data =  [
-            CategoryVisibilityMessageFactory::ID => $accountCategoryVisibilityId,
-            CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountCategoryVisibility::class,
-            CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId
-        ];
-
-        $categoryRepository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $categoryRepository->expects($this->once())
-            ->method('find')
-            ->with($categoryId)
-            ->willReturn($category);
-
-        $accountCategoryVisibilityRepository = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountCategoryVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($accountCategoryVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AccountCategoryVisibility::class, $accountCategoryVisibilityRepository],
-                [Category::class, $categoryRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->categoryVisibilityMessageFactory->getEntityFromMessage($data);
-    }
-
-    public function testGetEntityFromMessageAccountGroupCategoryVisibilityWithoutVisibility()
-    {
-        $this->markTestSkipped('Should be fixed after BB-4755');
-        $accountGroupCategoryVisibilityId = 123;
-        $categoryId = 42;
-
-        /** @var Category $category */
-        $category = $this->getEntity(Category::class, ['id' => $categoryId]);
-
-        $data =  [
-            CategoryVisibilityMessageFactory::ID => $accountGroupCategoryVisibilityId,
-            CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupCategoryVisibility::class,
-            CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId
-        ];
-
-        $categoryRepository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $categoryRepository->expects($this->once())
-            ->method('find')
-            ->with($categoryId)
-            ->willReturn($category);
-
-        $accountCategoryVisibilityRepository = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountCategoryVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($accountGroupCategoryVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AccountGroupCategoryVisibility::class, $accountCategoryVisibilityRepository],
-                [Category::class, $categoryRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $expectedVisibility = new AccountGroupCategoryVisibility();
-        $expectedVisibility->setCategory($category);
-        $expectedVisibility->setVisibility(AccountGroupCategoryVisibility::CATEGORY);
-
-        $this->assertEquals($expectedVisibility, $this->categoryVisibilityMessageFactory->getEntityFromMessage($data));
-    }
-
-    /**
-     * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage AccountGroup object was not found.
-     */
-    public function testGetEntityFromMessageAccountGroupCategoryVisibilityWithoutAccountGroup()
-    {
-        $this->markTestSkipped('Should be fixed after BB-4755');
-        $accountGroupCategoryVisibilityId = 123;
-        $categoryId = 42;
-
-        /** @var Category $category */
-        $category = $this->getEntity(Category::class, ['id' => $categoryId]);
-
-        $data =  [
-            CategoryVisibilityMessageFactory::ID => $accountGroupCategoryVisibilityId,
-            CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupCategoryVisibility::class,
-            CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId
-        ];
-
-        $categoryRepository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $categoryRepository->expects($this->once())
-            ->method('find')
-            ->with($categoryId)
-            ->willReturn($category);
-
-        $accountGroupCategoryVisibilityRepository = $this
-            ->getMockBuilder(AccountGroupCategoryVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountGroupCategoryVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($accountGroupCategoryVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AccountGroupCategoryVisibility::class, $accountGroupCategoryVisibilityRepository],
-                [Category::class, $categoryRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->categoryVisibilityMessageFactory->getEntityFromMessage($data);
-    }
-
-    /**
-     * @expectedException \Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Category object was not found.
-     */
-    public function testGetEntityFromMessageAccountGroupCategoryVisibilityWithoutCategory()
-    {
-        $this->markTestSkipped('Should be fixed after BB-4755');
-        $accountGroupCategoryVisibilityId = 123;
-        $categoryId = 42;
-
-        $data =  [
-            CategoryVisibilityMessageFactory::ID => $accountGroupCategoryVisibilityId,
-            CategoryVisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupCategoryVisibility::class,
-            CategoryVisibilityMessageFactory::CATEGORY_ID => $categoryId
-        ];
-
-        $categoryRepository = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $categoryRepository->expects($this->once())
-            ->method('find')
-            ->with($categoryId)
-            ->willReturn(null);
-
-        $accountGroupCategoryVisibilityRepository = $this
-            ->getMockBuilder(AccountGroupCategoryVisibilityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $accountGroupCategoryVisibilityRepository->expects($this->once())
-            ->method('find')
-            ->with($accountGroupCategoryVisibilityId)
-            ->willReturn(null);
-
-        $em = $this->getMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->willReturnMap([
-                [AccountGroupCategoryVisibility::class, $accountGroupCategoryVisibilityRepository],
-                [Category::class, $categoryRepository]
-            ]);
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->categoryVisibilityMessageFactory->getEntityFromMessage($data);
     }
 
     /**
