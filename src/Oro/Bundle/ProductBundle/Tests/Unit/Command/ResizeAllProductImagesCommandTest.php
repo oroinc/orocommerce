@@ -78,21 +78,13 @@ class ResizeAllProductImagesCommandTest extends \PHPUnit_Framework_TestCase
             new ProductImage()
         ]);
 
-        $asserter = $this;
-
         $this->eventDispatcher
             ->dispatch(ProductImageResizeEvent::NAME, Argument::type(ProductImageResizeEvent::class))
-            ->shouldBeCalledTimes(3)
-            ->will(function ($args) use ($asserter, $productImage1) {
-                /** @var ProductImageResizeEvent $event */
-                $event = $args[1];
-                $asserter->assertEquals($productImage1, $event->getProductImage());
-                $asserter->assertEquals(self::FORCE_OPTION, $event->getForceOption());
-            });
+            ->shouldBeCalledTimes(3);
 
         $this->command->run(
             $this->prepareInput(),
-            $this->prepareOutput('3 product images successfully queued for resize.')
+            $this->prepareOutput('3 product image(s) successfully queued for resize.')
         );
     }
 

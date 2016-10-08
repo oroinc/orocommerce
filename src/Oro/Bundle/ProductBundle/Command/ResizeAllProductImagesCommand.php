@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Command;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
@@ -34,30 +35,47 @@ DESC
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $forceOption = (bool) $input->getOption(self::OPTION_FORCE);
-
-        $container = $this->getContainer();
-        $productImageClass = $container->getParameter('oro_product.entity.product_image.class');
-
-        /** @var ProductImage[] $productImages */
-        $productImages = $container
-            ->get('oro_entity.doctrine_helper')
-            ->getEntityRepositoryForClass($productImageClass)
-            ->findAll();
-
-        if (!$productImageCount = count($productImages)) {
+        if (!$productImages = $this->getProductImages()) {
             $output->writeln('No product images found.');
 
             return;
         }
 
-        $eventDispatcher = $container->get('event_dispatcher');
         foreach ($productImages as $productImage) {
-            $eventDispatcher->dispatch(
+            $this->getEventDispatcher()->dispatch(
                 ProductImageResizeEvent::NAME,
-                new ProductImageResizeEvent($productImage, $forceOption)
+                new ProductImageResizeEvent($productImage, $this->getForceOption($input))
             );
         }
-        $output->writeln(sprintf('%d product images successfully queued for resize.', $productImageCount));
+
+        $output->writeln(sprintf('%d product image(s) successfully queued for resize.', count($productImages)));
+    }
+
+    /**
+     * @return EventDispatcherInterface
+     */
+    protected function getEventDispatcher()
+    {
+        return $this->getContainer()->get('event_dispatcher');
+    }
+
+    /**
+     * @return ProductImage[]
+     */
+    protected function getProductImages()
+    {
+        return $this->getContainer()
+            ->get('oro_entity.doctrine_helper')
+            ->getEntityRepositoryForClass($this->getContainer()->getParameter('oro_product.entity.product_image.class'))
+            ->findAll();
+    }
+
+    /**
+     * @param InputInterface $input
+     * @return bool
+     */
+    protected function getForceOption(InputInterface $input)
+    {
+        return (bool) $input->getOption(self::OPTION_FORCE);
     }
 }

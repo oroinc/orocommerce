@@ -102,7 +102,7 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
      * @param ProductImage $productImage
      * @return ThemeImageTypeDimension[]
      */
-    private function getDimensionsForProductImage(ProductImage $productImage)
+    protected function getDimensionsForProductImage(ProductImage $productImage)
     {
         $dimensions = [];
         $allImageTypes = $this->imageTypeProvider->getImageTypes();

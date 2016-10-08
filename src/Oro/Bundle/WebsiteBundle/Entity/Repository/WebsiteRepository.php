@@ -42,4 +42,17 @@ class WebsiteRepository extends EntityRepository implements BatchIteratorInterfa
 
         return ArrayUtil::arrayColumn($qb->getQuery()->getArrayResult(), 'id');
     }
+
+    /**
+     * @param int|null $id
+     * @return Website[]
+     */
+    public function getByIdOrAll($id = null)
+    {
+        if ($id) {
+            return ($website = $this->find($id)) ? [$website] : [];
+        }
+
+        return $this->findAll();
+    }
 }
