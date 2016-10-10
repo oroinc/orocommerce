@@ -13,8 +13,8 @@ class OroCommerceMenuBundleInstaller implements
     Installation,
     AttachmentExtensionAwareInterface
 {
-    const ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME = 'oro_front_nav_menu_upd';
-    const ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TITLE_TABLE_NAME = 'oro_front_nav_menu_upd_title';
+    const ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME = 'oro_commerce_menu_upd';
+    const ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TITLE_TABLE_NAME = 'oro_commerce_menu_upd_title';
     
     const MAX_MENU_UPDATE_IMAGE_SIZE_IN_MB = 10;
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
@@ -56,7 +56,7 @@ class OroCommerceMenuBundleInstaller implements
     }
 
     /**
-     * Create oro_front_nav_menu_upd table.
+     * Create oro_commerce_menu_upd table.
      *
      * @param Schema $schema
      */
@@ -79,7 +79,7 @@ class OroCommerceMenuBundleInstaller implements
     }
 
     /**
-     * Create oro_front_nav_menu_upd_title table
+     * Create oro_commerce_menu_upd_title table
      *
      * @param Schema $schema
      */
@@ -93,7 +93,7 @@ class OroCommerceMenuBundleInstaller implements
     }
 
     /**
-     * Add oro_front_nav_menu_upd_title foreign keys.
+     * Add oro_commerce_menu_upd_title foreign keys.
      *
      * @param Schema $schema
      */
