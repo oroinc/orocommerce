@@ -161,9 +161,6 @@ datagrids:
                 sku:
                     type:      string
                     data_name: product.sku
-                name:
-                    type:      string
-                    data_name: name
         actions:
             view:
                 type:          navigate

@@ -331,6 +331,10 @@
     max-width: $gallery-width_md;
     max-height: $gallery-width_md;
 
+    @media (max-width: $screen-md) {
+      max-height: inherit;
+    }
+
     &_md {
       width: $gallery-width_sm;
     }
@@ -340,6 +344,10 @@
       max-width: $gallery-width_md;
       max-height: $gallery-width_md;
       border: 1px solid $theme-lighter-gray-color;
+
+      @media (max-width: $screen-md) {
+        max-height: inherit;
+      }
 
       &:focus, &:visited {
         outline: 0;

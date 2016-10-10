@@ -106,7 +106,6 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertArrayHasKey('unit', $result['product']['shopping_lists'][0]['line_items'][0]);
         $this->assertArrayHasKey('quantity', $result['product']['shopping_lists'][0]['line_items'][0]);
         $this->assertArrayHasKey('id', $result['product']['shopping_lists'][0]['line_items'][0]);
-
     }
 
     /**

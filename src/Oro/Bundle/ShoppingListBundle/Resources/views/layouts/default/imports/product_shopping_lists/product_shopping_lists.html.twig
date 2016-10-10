@@ -43,7 +43,7 @@
                         {count: lineItem.quantity},
                         lineItem.quantity
                     ),
-                    shoppingList: currentShoppingList.label
+                    shoppingList: _.escape(currentShoppingList.label)
             }) %></span>
         </div>
         <div class="shopping-lists__ui-row">
@@ -112,7 +112,7 @@
             <% _.each(shoppingLists, function(list) { %>
             <tr class="shopping-lists-popup__item">
                 <td class="shopping-lists-popup__list">
-                    <a class="shopping-lists-popup__link" href="#"><%= list.label %></a>
+                    <a class="shopping-lists-popup__link" href="#"><%= _.escape(list.label) %></a>
                 </td>
                 <td class="shopping-lists-popup__quantity">
                     <% var ListLineItems = list.line_items; %>
@@ -247,7 +247,7 @@
                         <option value="0">{{ 'oro.shoppinglist.actions.choose_list'|trans }}</option>
                         <% if (!_.isEmpty(shoppingListsCollection)) { %>
                         <% _.each(shoppingListsCollection, function(list) { %>
-                        <option value="<%= list.id %>"><%= list.label %></option>
+                        <option value="<%= list.id %>"><%= _.escape(list.label) %></option>
                         <% }); %>
                         <% } %>
                     </select>
