@@ -59,7 +59,6 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         );
 
         $this->builder->setVisibilityChangeAccountSubtreeCacheBuilder($subtreeBuilder);
-
     }
 
     public function testChangeAccountCategoryVisibilityToHidden()

@@ -41,10 +41,12 @@ class CategoryListener
     {
         $products = $event->getProducts();
         foreach ($products as $product) {
-            $this->productMessageHandler->addProductMessageToSchedule(
-                $this->topic,
-                $product
-            );
+            if ($product->getId()) {
+                $this->productMessageHandler->addProductMessageToSchedule(
+                    $this->topic,
+                    $product
+                );
+            }
         }
     }
 }

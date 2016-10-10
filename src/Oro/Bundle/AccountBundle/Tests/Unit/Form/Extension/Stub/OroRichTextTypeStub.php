@@ -21,7 +21,6 @@ class OroRichTextTypeStub extends OroRichTextType
      */
     public function __construct()
     {
-
     }
 
     /**
