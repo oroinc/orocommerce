@@ -41,6 +41,8 @@ class CategoryListener
     {
         $products = $event->getProducts();
         foreach ($products as $product) {
+            // Message should be send only for already existing products
+            // New products has own queue message for visibility calculation
             if ($product->getId()) {
                 $this->productMessageHandler->addProductMessageToSchedule(
                     $this->topic,
