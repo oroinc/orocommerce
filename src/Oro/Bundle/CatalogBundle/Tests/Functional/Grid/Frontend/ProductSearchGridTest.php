@@ -8,6 +8,8 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * @dbIsolation
  */
@@ -25,6 +27,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW),
             true
         );
+        $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->setCurrentWebsite('default');
 
         $this->loadFixtures(
