@@ -30,9 +30,6 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
     /** @var RoundingServiceInterface */
     protected $rounding;
 
-    /** @var  [] */
-    protected $subtotals = [];
-
     /** @var bool */
     protected $recalculationEnabled = false;
 
@@ -127,20 +124,16 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         if (!is_object($entity)) {
             throw new \InvalidArgumentException('Function parameter "entity" should be object.');
         }
-        $hash = spl_object_hash($entity);
 
-        if (!array_key_exists($hash, $this->subtotals)) {
-            foreach ($this->subtotalProviderRegistry->getSupportedProviders($entity) as $provider) {
-                $subtotals = $this->getEntitySubtotal($provider, $entity);
-                $subtotals = is_object($subtotals) ? [$subtotals] : (array) $subtotals;
-                foreach ($subtotals as $subtotal) {
-                    $subtotalCollection->add($subtotal);
-                }
+        foreach ($this->subtotalProviderRegistry->getSupportedProviders($entity) as $provider) {
+            $subtotals = $this->getEntitySubtotal($provider, $entity);
+            $subtotals = is_object($subtotals) ? [$subtotals] : (array) $subtotals;
+            foreach ($subtotals as $subtotal) {
+                $subtotalCollection->add($subtotal);
             }
-            $this->subtotals[$hash] = $subtotalCollection;
         }
 
-        return $this->subtotals[$hash];
+        return $subtotalCollection;
     }
 
     /**
@@ -173,14 +166,6 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         }
 
         return $provider->getSubtotal($entity);
-    }
-
-    /**
-     * Clear subtotals cache
-     */
-    public function clearCache()
-    {
-        $this->subtotals = [];
     }
 
     /**

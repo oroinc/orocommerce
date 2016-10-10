@@ -7,11 +7,12 @@
     {% include 'OroImportExportBundle:ImportExport:buttons.html.twig' with {
         entity_class: entity_class,
         exportJob: 'warehouse_inventory_level_export_to_csv',
+        exportTitle: 'oro.warehouse.export.popup.title'|trans,
         exportProcessor: exportProcessors,
+        importTitle: 'oro.warehouse.import.popup.title'|trans,
         importProcessor: 'oro_warehouse.warehouse_inventory_level',
+        exportTemplateTitle: 'oro.warehouse.export.template_popup.title'|trans,
         exportTemplateProcessor: exportTemplateProcessors,
-        exportTemplatelabel: 'oro.warehouse.export.template_popup.title'|trans,
-        exportLabel: 'oro.warehouse.export.popup.title'|trans,
         datagridName: gridName
     } %}
 {% endblock %}
