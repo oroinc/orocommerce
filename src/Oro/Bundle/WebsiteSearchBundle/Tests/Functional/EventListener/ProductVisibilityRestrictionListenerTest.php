@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
 
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
-use Oro\Bundle\SearchBundle\Engine\EngineInterface;
+use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
@@ -18,7 +18,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
 {
     /**
-     * @var EngineInterface
+     * @var EngineV2Interface
      */
     private $engine;
 
@@ -38,7 +38,7 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
 
         $this->engine = $this->client->getContainer()->get('oro_website_search.engine');
 
-        self::$testValue = 'test_'.uniqid();
+        static::$testValue = 'test_' . uniqid();
 
         $this->listener = function (ProductSearchQueryRestrictionEvent $event) {
             $expr = Criteria::expr();
@@ -70,7 +70,7 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
 
         $where = $query->getCriteria()->getWhereExpression();
 
-        $foundSkuExpression = false;
+        $foundSkuExpression    = false;
         $foundCustomExpression = false;
 
         if ($where instanceof CompositeExpression) {
@@ -97,7 +97,7 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
 
         $where = $query->getCriteria()->getWhereExpression();
 
-        $foundSkuExpression = false;
+        $foundSkuExpression    = false;
         $foundCustomExpression = false;
 
         if ($where instanceof CompositeExpression) {
@@ -119,15 +119,13 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
 
         $where = $query->getCriteria()->getWhereExpression();
 
-        $foundSkuExpression = false;
+        $foundSkuExpression    = false;
         $foundCustomExpression = false;
 
         if ($where instanceof CompositeExpression) {
             foreach ($where->getExpressionList() as $mainExpr) {
                 if ($mainExpr instanceof CompositeExpression) {
-                    foreach ($mainExpr->getExpressionList() as $expr) {
-                        list($foundSkuExpression, $foundCustomExpression) = $this->checkCompositeExpression($expr);
-                    }
+                    list($foundSkuExpression, $foundCustomExpression) = $this->checkCompositeExpression($mainExpr);
                 }
             }
         }
@@ -137,14 +135,15 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
     }
 
     /**
-     * @param $where
+     * @param CompositeExpression $where
      * @return array
      */
-    protected function checkCompositeExpression($where)
+    protected function checkCompositeExpression(CompositeExpression $where)
     {
-        $foundSkuExpression= false;
+        $foundSkuExpression    = false;
         $foundCustomExpression = false;
 
+        /** @var Comparison $expr */
         foreach ($where->getExpressionList() as $expr) {
             if (($expr->getField() === 'sku') && ($expr->getValue()->getValue() === null)) {
                 $foundSkuExpression = true;
@@ -154,6 +153,7 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
                 $foundCustomExpression = true;
             }
         }
+
         return [$foundSkuExpression, $foundCustomExpression];
     }
 }
