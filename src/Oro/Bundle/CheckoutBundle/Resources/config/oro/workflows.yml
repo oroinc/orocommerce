@@ -786,15 +786,15 @@ workflows:
                         message: Payment process is running for this checkout
                         parameters: [$payment_in_progress, true]
                 conditions:
-                  '@and':
-                      - '@or':
-                          - '@empty': $.result.savedCheckoutState
-                          - '@check_checkout_states':
-                              message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                              parameters:
-                                  entity: $checkout
-                                  state1: $.result.initCheckoutState
-                                  state2: $.result.savedCheckoutState
+                    '@and':
+                        - '@or':
+                            - '@empty': $.result.savedCheckoutState
+                            - '@check_checkout_states':
+                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                                parameters:
+                                    entity: $checkout
+                                    state1: $.result.initCheckoutState
+                                    state2: $.result.savedCheckoutState
                 actions:
                     - '@assign_value':
                         conditions:

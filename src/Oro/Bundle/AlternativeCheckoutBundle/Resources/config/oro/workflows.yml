@@ -456,6 +456,7 @@ workflows:
             back_to_shipping_address_definition:
                 actions:
                     - '@assign_value': [$shipping_method, null]
+                    - '@assign_value': [$checkout.shippingCost, null]
                     - '@assign_value': [$allowed, false]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -469,6 +470,7 @@ workflows:
                 actions:
                     - '@assign_value': [$billing_address_has_shipping, true]
                     - '@assign_value': [$shipping_method, null]
+                    - '@assign_value': [$checkout.shippingCost, null]
                     - '@assign_value': [$allowed, false]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -716,6 +718,30 @@ workflows:
                     - '@assign_value': [$internal_state_token, $state_token]
 
             place_order_definition:
+                preactions:
+                    - '@generate_checkout_state_snapshot':
+                        entity: $checkout
+                        attribute: $.result.currentCheckoutState
+                    - '@get_checkout_state':
+                        entity: $checkout
+                        token: $state_token
+                        attribute: $.result.tokenCheckoutState
+                    - '@tree':
+                        conditions:
+                            '@not':
+                                - '@check_checkout_states':
+                                    entity: $checkout
+                                    state1: $.result.currentCheckoutState
+                                    state2: $.result.tokenCheckoutState
+                        actions:
+                            - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
+                            - '@delete_checkout_state':
+                                entity: $checkout
+                                token: $state_token
+                            - '@save_checkout_state':
+                                entity: $checkout
+                                state: $.result.currentCheckoutState
+                                token: $state_token
                 preconditions:
                     '@or':
                         message: "Pending approval"
@@ -723,6 +749,16 @@ workflows:
                             - '@less_order_total_limit': [$checkout, 5000]
                             - '@equal': [$allowed, true]
                             - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
+                conditions:
+                    '@and':
+                        - '@or':
+                            - '@empty': $.result.savedCheckoutState
+                            - '@check_checkout_states':
+                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                                parameters:
+                                    entity: $checkout
+                                    state1: $.result.initCheckoutState
+                                    state2: $.result.savedCheckoutState
                 actions:
                     - '@assign_value':
                         conditions:
@@ -913,6 +949,13 @@ workflows:
                                 route: oro_order_frontend_success
                                 route_parameters:
                                     id: $.result.order.id
+                    - '@generate_checkout_state_snapshot':
+                        entity: $checkout
+                        attribute: $.result.actualCheckoutState
+                    - '@save_checkout_state':
+                        entity: $checkout
+                        state: $.result.actualCheckoutState
+                        attribute: $state_token
 
             continue_to_request_approval_definition:
                 preactions:
