@@ -45,6 +45,7 @@ oro:
                 general.title: 'General'
                 merchant_location.title: 'Merchant Location'
                 payment_terms.title: 'Payment Terms'
+                display_options.title: 'Display Options'
             fields:
                 merchant_country.label: 'Merchant Country'
                 enabled.label: 'Enabled'
