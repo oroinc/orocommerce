@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Async;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
@@ -14,6 +15,7 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class PriceListAssignedProductsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
@@ -44,24 +46,32 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
     protected $translator;
 
     /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
      * @param PriceListTriggerFactory $triggerFactory
      * @param PriceListProductAssignmentBuilder $assignmentBuilder
      * @param LoggerInterface $logger
      * @param Messenger $messenger
      * @param TranslatorInterface $translator
+     * @param ManagerRegistry $registry
      */
     public function __construct(
         PriceListTriggerFactory $triggerFactory,
         PriceListProductAssignmentBuilder $assignmentBuilder,
         LoggerInterface $logger,
         Messenger $messenger,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        ManagerRegistry $registry
     ) {
         $this->logger = $logger;
         $this->assignmentBuilder = $assignmentBuilder;
         $this->triggerFactory = $triggerFactory;
         $this->messenger = $messenger;
         $this->translator = $translator;
+        $this->registry = $registry;
     }
 
     /**
@@ -77,6 +87,10 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
+        /** @var EntityManagerInterface $em */
+        $em = $this->registry->getManagerForClass(PriceList::class);
+        $em->beginTransaction();
+        
         $trigger = null;
         try {
             $messageData = JSON::decode($message->getBody());
@@ -90,7 +104,9 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
             );
 
             $this->assignmentBuilder->buildByPriceList($trigger->getPriceList(), $trigger->getProduct());
+            $em->commit();
         } catch (InvalidArgumentException $e) {
+            $em->rollback();
             $this->logger->error(
                 sprintf(
                     'Message is invalid: %s. Original message: "%s"',
@@ -101,6 +117,7 @@ class PriceListAssignedProductsProcessor implements MessageProcessorInterface, T
 
             return self::REJECT;
         } catch (\Exception $e) {
+            $em->rollback();
             $this->logger->error(
                 'Unexpected exception occurred during Price List Assigned Products build',
                 ['exception' => $e]

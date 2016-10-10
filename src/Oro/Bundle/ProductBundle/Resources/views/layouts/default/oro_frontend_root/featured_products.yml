@@ -19,6 +19,10 @@ layout:
             id: featured_products
             optionName: slider_options
             optionValue: {arrows: true, responsive: [{breakpoint: 1100, settings: {arrows: false}}, {breakpoint: 924, settings: {slidesToShow: 3, arrows: false}}, {breakpoint: 480, settings: {slidesToShow: 2, arrows: false}}]}
+        - '@setOption':
+            id: featured_product_line_item_form
+            optionName: instance_name
+            optionValue: featured_products
         - '@add':
             id: featured_products_container
             parentId: content

@@ -22,7 +22,6 @@ class OroAccountBundle implements Migration
     {
         $this->alterAccountAddressTable($schema);
         $this->alterAccountUserAddressTable($schema);
-
     }
 
     /**

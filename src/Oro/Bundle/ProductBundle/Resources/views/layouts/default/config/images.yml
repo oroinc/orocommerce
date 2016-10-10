@@ -26,4 +26,4 @@ dimensions:
     product_extra_large: { width: 378, height: 378 }
     product_large: { width: 268, height: 268 }
     product_medium: { width: 203, height: 203 }
-    product_small: { width: 56, height: 56 }
+    product_small: { width: 82, height: 82 }
