@@ -1,14 +1,19 @@
 <?php
+
 namespace Oro\Bundle\AccountBundle\Tests\Unit\Event;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-
+use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Event\RecordOwnerDataListener;
 use Oro\Bundle\AccountBundle\Tests\Unit\Fixtures\Entity\User;
-use Oro\Bundle\OrganizationBundle\Tests\Unit\Fixture\Entity\Entity;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
+use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\OrganizationBundle\Tests\Unit\Fixture\Entity\Entity;
+use Oro\Component\DependencyInjection\ServiceLink;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\SecurityContext;
 
 class RecordOwnerDataListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,20 +23,22 @@ class RecordOwnerDataListenerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $securityContext;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject */
+    /** @var ConfigProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $configProvider;
 
     protected function setUp()
     {
-        $serviceLink = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\DependencyInjection\Utils\ServiceLink')
+        /** @var ServiceLink|\PHPUnit_Framework_MockObject_MockObject $serviceLink */
+        $serviceLink = $this->getMockBuilder(ServiceLink::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->securityContext = $this->getMockBuilder('Symfony\Component\Security\Core\SecurityContext')
+        $this->securityContext = $this->getMockBuilder(SecurityContext::class)
             ->disableOriginalConstructor()
             ->getMock();
         $serviceLink->expects($this->any())->method('getService')
             ->will($this->returnValue($this->securityContext));
-        $this->configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
+
+        $this->configProvider = $this->getMockBuilder(ConfigProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -52,7 +59,7 @@ class RecordOwnerDataListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->will($this->returnValue($token));
 
-        $args = new LifecycleEventArgs($entity, $this->getMock('Doctrine\Common\Persistence\ObjectManager'));
+        $args = new LifecycleEventArgs($entity, $this->getMock(ObjectManager::class));
         $this->configProvider->expects($this->once())
             ->method('hasConfig')
             ->will($this->returnValue(true));
@@ -73,12 +80,16 @@ class RecordOwnerDataListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function preSetData()
     {
-        $entityConfigId = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId')
+        /** @var EntityConfigId $entityConfigId */
+        $entityConfigId = $this->getMockBuilder(EntityConfigId::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $user = new User();
         $user->setId(1);
+
+        $account = $this->getMock(Account::class);
+        $user->setAccount($account);
 
         $userConfig = new Config($entityConfigId);
         $userConfig->setValues(
@@ -91,7 +102,7 @@ class RecordOwnerDataListenerTest extends \PHPUnit_Framework_TestCase
         $buConfig = new Config($entityConfigId);
         $buConfig->setValues(
             [
-                "frontend_owner_type" => "FRONTEND_BUSINESS_UNIT",
+                "frontend_owner_type" => "FRONTEND_ACCOUNT",
                 "frontend_owner_field_name" => "owner",
                 "frontend_owner_column_name" => "owner_id"
             ]
@@ -111,11 +122,10 @@ class RecordOwnerDataListenerTest extends \PHPUnit_Framework_TestCase
                 $userConfig,
                 ['owner' => $user]
             ],
-            'OwnershipType BusinessUnit with UsernamePasswordToken' => [
+            'OwnershipType Account with UsernamePasswordToken' => [
                 new UsernamePasswordToken($user, 'admin', 'key'),
                 $buConfig,
-                []
-
+                ['owner' => $account]
             ],
             'OwnershipType Organization with UsernamePasswordToken' => [
                 new UsernamePasswordToken($user, 'admin', 'key'),
