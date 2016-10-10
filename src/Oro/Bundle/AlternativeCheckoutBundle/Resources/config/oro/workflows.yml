@@ -949,13 +949,6 @@ workflows:
                                 route: oro_order_frontend_success
                                 route_parameters:
                                     id: $.result.order.id
-                    - '@generate_checkout_state_snapshot':
-                        entity: $checkout
-                        attribute: $.result.actualCheckoutState
-                    - '@save_checkout_state':
-                        entity: $checkout
-                        state: $.result.actualCheckoutState
-                        attribute: $state_token
 
             continue_to_request_approval_definition:
                 preactions:

@@ -5,7 +5,7 @@ layout:
                 - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/right_buttons.html.twig'
                 - '../templates/approve_request.html.twig'
         - '@setFormTheme':
-             - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/form_theme.html.twig'
+            themes: 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/form_theme.html.twig'
         - '@setOption':
             id: checkout_information
             optionName: stepOrder
@@ -37,5 +37,5 @@ layout:
                 checkout_form_buttons:
                     checkout_button_continue_right: ~
                     checkout_button_back_right: ~
-    conditions: 'context["workflowStepName"]=="approve_request" && context["workflowName"]=="b2b_flow_alternative_checkout" && !context["widget_container"]'
 
+    conditions: 'context["workflowStepName"]=="approve_request" && context["workflowName"]=="b2b_flow_alternative_checkout" && !context["widget_container"]'
