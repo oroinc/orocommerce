@@ -18,16 +18,24 @@ class EntityVisibilityType extends AbstractType
 
     const VISIBILITY = 'visibility';
 
-    /** @var VisibilityPostSetDataListener */
+    /**
+     * @var VisibilityPostSetDataListener
+     */
     protected $visibilityPostSetDataListener;
 
-    /** @var VisibilityChoicesProvider */
+    /**
+     * @var VisibilityChoicesProvider
+     */
     protected $visibilityChoicesProvider;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $accountClass;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $accountGroupClass;
 
     /**

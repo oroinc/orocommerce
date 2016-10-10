@@ -31,9 +31,8 @@ class ProductVisibilityController extends Controller
      */
     public function editAction(Request $request, Product $product)
     {
-        $form = $this->createScopedDataForm($product, [
-            $this->get('oro_scope.scope_manager')->findDefaultScope()
-        ]);
+        $scopes = $this->get('oro_visibility.root_scopes_provider')->getScopes();
+        $form = $this->createScopedDataForm($product, [reset($scopes)]);
 
         $handler = new WebsiteScopedDataHandler($form, $request, $this->get('event_dispatcher'));
 
@@ -79,7 +78,7 @@ class ProductVisibilityController extends Controller
         return [
             'form' => $form->createView()[$scope->getId()],
             'entity' => $product,
-            'scope' => $scope
+            'scope' => $scope,
         ];
     }
 

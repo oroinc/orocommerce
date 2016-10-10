@@ -3,13 +3,12 @@
 namespace Oro\Bundle\AccountBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\AccountBundle\Provider\ScopeAccountGroupCriteriaProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-class ScopeAccountGroupProviderTest extends \PHPUnit_Framework_TestCase
+class ScopeAccountGroupCriteriaProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ScopeAccountGroupCriteriaProvider
@@ -59,11 +58,7 @@ class ScopeAccountGroupProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function contextDataProvider()
     {
-        $account = new Account();
         $accountGroup = new AccountGroup();
-        $account->setGroup($accountGroup);
-        $accountAware = $this->getMock(AccountAwareInterface::class);
-        $accountAware->method('getAccount')->willReturn($account);
         $accountGroupAware = new \stdClass();
         $accountGroupAware->accountGroup = $accountGroup;
 
@@ -84,11 +79,7 @@ class ScopeAccountGroupProviderTest extends \PHPUnit_Framework_TestCase
                 'context' => $accountGroupAware,
                 'criteria' => ['accountGroup' => $accountGroup],
             ],
-            'object_context_account_aware' => [
-                'context' => $accountAware,
-                'criteria' => ['accountGroup' => $accountGroup],
-            ],
-            'object_context_not_account_or_account_group_aware' => [
+            'object_context_not_account_group_aware' => [
                 'context' => new \stdClass(),
                 'criteria' => [],
             ],

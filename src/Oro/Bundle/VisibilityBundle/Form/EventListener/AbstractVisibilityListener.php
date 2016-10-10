@@ -3,16 +3,17 @@
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
-use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Symfony\Component\Form\FormInterface;
 
 abstract class AbstractVisibilityListener
@@ -59,15 +60,14 @@ abstract class AbstractVisibilityListener
             ->setParameter($targetEntityField, $targetEntity);
 
         $type = $this->getVisibilityScopeType($form, $field);
-        $context = $this->getFormScopeContext($form, $type);
+        $context = $this->getFormScopeContext($form->get($field), $type);
         $criteria = $this->scopeManager->getCriteria($type, $context);
         $criteria->applyWhere($qb, 'scope');
 
         if ($field === 'all') {
             return $qb->getQuery()->getOneOrNullResult();
         } else {
-            $result = $qb->getQuery()->getResult();
-            return $result;
+            return $this->mapVisibilitiesById($qb->getQuery()->getResult());
         }
     }
 
@@ -103,14 +103,23 @@ abstract class AbstractVisibilityListener
      */
     protected function mapVisibilitiesById($visibilities)
     {
-        // todo: BB-4506
         $visibilitiesById = [];
-        /** @var VisibilityInterface|AccountGroupAwareInterface|AccountAwareInterface $visibilityEntity */
+        /** @var VisibilityInterface $visibilityEntity */
         foreach ($visibilities as $visibilityEntity) {
-            if ($visibilityEntity instanceof AccountGroupAwareInterface) {
-                $visibilitiesById[$visibilityEntity->getAccountGroup()->getId()] = $visibilityEntity;
-            } elseif ($visibilityEntity instanceof AccountAwareInterface) {
-                $visibilitiesById[$visibilityEntity->getAccount()->getId()] = $visibilityEntity;
+            $scope = $visibilityEntity->getScope();
+
+            /** @var Account $account */
+            /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
+            $account = $scope->getAccount();
+
+            /** @var AccountGroup $accountGroup */
+            /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
+            $accountGroup = $scope->getAccountGroup();
+
+            if (null !== $accountGroup) {
+                $visibilitiesById[$accountGroup->getId()] = $visibilityEntity;
+            } elseif (null !== $account) {
+                $visibilitiesById[$account->getId()] = $visibilityEntity;
             }
         }
 
@@ -120,26 +129,45 @@ abstract class AbstractVisibilityListener
     /**
      * @param FormInterface $form
      * @param string $field
-     * @return VisibilityInterface|WebsiteAwareInterface
+     * @param null|object $fieldData
+     * @return VisibilityInterface
      */
-    protected function createFormFieldData($form, $field)
+    protected function createFormFieldData($form, $field, $fieldData = null)
     {
-        $targetEntity = $form->getData();
         $config = $form->getConfig();
+
         $visibilityClassName = $config->getOption($field.'Class');
-        /** @var VisibilityInterface|WebsiteAwareInterface $visibility */
-        $visibility = new $visibilityClassName();
-        if ($visibility instanceof WebsiteAwareInterface) {
-            $visibility->setWebsite($config->getOption('website'));
+
+        if ($config->hasOption('scope_id')) {
+            $rootScope = $config->getOption('scope');
+        } else {
+            $rootScope = $this->scopeManager->findDefaultScope();
         }
-        $visibility->setTargetEntity($targetEntity);
+        $scopeType = $this->getVisibilityScopeType($form, $field);
+
+        $context = $this->scopeManager->getCriteriaByScope(
+            $rootScope,
+            $scopeType
+        )->toArray();
+        if (null !== $fieldData && array_key_exists($field, $context)) {
+            $context[$field] = $fieldData;
+        }
+
+        /** @var VisibilityInterface $visibility */
+        $visibility = new $visibilityClassName();
+        $scope = $this->scopeManager->findOrCreate(
+            $scopeType,
+            $context
+        );
+        $visibility->setScope($scope);
+        $visibility->setTargetEntity($form->getData());
 
         return $visibility;
     }
 
     /**
      * @param string $className
-     * @return EntityRepository
+     * @return EntityRepository|ObjectRepository
      */
     protected function getEntityRepository($className)
     {
@@ -148,7 +176,7 @@ abstract class AbstractVisibilityListener
 
     /**
      * @param Object $targetEntity
-     * @return EntityManager
+     * @return EntityManager|ObjectManager
      */
     protected function getEntityManager($targetEntity)
     {

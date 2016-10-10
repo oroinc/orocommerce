@@ -30,20 +30,25 @@ services:
         arguments:
             - "@doctrine"
             - "@oro_visibility.provider.visibility_choices"
+            - "@oro_scope.scope_manager"
         calls:
-            - [ addSubscribedGridConfig, { datagrid: account-group-category-visibility-grid, visibilityEntityClass: '%oro_visibility.entity.account_group_category_visibility.class%', targetEntityClass: '%oro_catalog.entity.category.class%' }]
-            - [ addSubscribedGridConfig, { datagrid: account-category-visibility-grid, visibilityEntityClass: '%oro_visibility.entity.account_category_visibility.class%', targetEntityClass: '%oro_catalog.entity.category.class%' }]
-            - [ addSubscribedGridConfig, { datagrid: account-group-product-visibility-grid, visibilityEntityClass: '%oro_visibility.entity.account_group_product_visibility.class%', targetEntityClass: '%oro_product.entity.product.class%' }]
-            - [ addSubscribedGridConfig, { datagrid: account-product-visibility-grid, visibilityEntityClass: '%oro_visibility.entity.account_product_visibility.class%', targetEntityClass: '%oro_product.entity.product.class%' }]
+            - [ addSubscribedGridConfig, { datagrid: account-group-category-visibility-grid, scopeAttr: accountGroup, visibilityEntityClass: '%oro_visibility.entity.account_group_category_visibility.class%', targetEntityClass: '%oro_catalog.entity.category.class%' }]
+            - [ addSubscribedGridConfig, { datagrid: account-category-visibility-grid, scopeAttr: account, visibilityEntityClass: '%oro_visibility.entity.account_category_visibility.class%', targetEntityClass: '%oro_catalog.entity.category.class%' }]
+            - [ addSubscribedGridConfig, { datagrid: account-group-product-visibility-grid, scopeAttr: accountGroup, visibilityEntityClass: '%oro_visibility.entity.account_group_product_visibility.class%', targetEntityClass: '%oro_product.entity.product.class%' }]
+            - [ addSubscribedGridConfig, { datagrid: account-product-visibility-grid, scopeAttr: account, visibilityEntityClass: '%oro_visibility.entity.account_product_visibility.class%', targetEntityClass: '%oro_product.entity.product.class%' }]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-category-visibility-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-group-category-visibility-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.account-category-visibility-grid, method: onOrmResultBeforeQuery }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.account-group-category-visibility-grid, method: onOrmResultBeforeQuery }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-category-visibility-grid, method: onResultBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-group-category-visibility-grid, method: onResultBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-product-visibility-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-group-product-visibility-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-product-visibility-grid, method: onResultBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-group-product-visibility-grid, method: onResultBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.account-product-visibility-grid, method: onOrmResultBeforeQuery }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.account-group-product-visibility-grid, method: onOrmResultBeforeQuery }
 
     oro_visibility.event_listener.product_duplicate_listener:
         class: 'Oro\Bundle\VisibilityBundle\EventListener\ProductDuplicateListener'
@@ -267,26 +272,21 @@ services:
         public: false
         arguments:
             - '@oro_visibility.visibility_message_handler'
-            - '@oro_scope.scope_manager'
 
     oro_visibility.entity_listener.product_visibility_change:
         class: 'Oro\Bundle\VisibilityBundle\Entity\EntityListener\ProductVisibilityListener'
         public: false
         arguments:
             - '@oro_visibility.product_visibility_message_handler'
-            - '@oro_scope.scope_manager'
         calls:
             - [setTopic, ['oro_visibility.visibility.resolve_product_visibility']]
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.product_visibility.class%', event: preUpdate }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.product_visibility.class%', event: preRemove }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.product_visibility.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.product_visibility.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_product_visibility.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_product_visibility.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_product_visibility.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_group_product_visibility.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_group_product_visibility.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_group_product_visibility.class%', event: postPersist }
 
     oro_visibility.entity_listener.category_visibility_change:

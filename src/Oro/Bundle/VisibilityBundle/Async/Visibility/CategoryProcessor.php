@@ -108,7 +108,18 @@ class CategoryProcessor implements MessageProcessorInterface
         } catch (InvalidArgumentException $e) {
             $em->rollback();
             $this->logger->error(
-                'Unexpected exception occurred during Product Visibility resolve',
+                sprintf(
+                    'Message is invalid: %s. Original message: "%s"',
+                    $e->getMessage(),
+                    $message->getBody()
+                )
+            );
+
+            return self::REJECT;
+        } catch (\Exception $e) {
+            $em->rollback();
+            $this->logger->error(
+                'Unexpected exception occurred during Category visibility resolve',
                 ['exception' => $e]
             );
 

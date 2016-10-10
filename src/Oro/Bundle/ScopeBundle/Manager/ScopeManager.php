@@ -117,9 +117,10 @@ class ScopeManager
     {
         $criteria = $this->getCriteria($scopeType, $context);
 
-        $scope = $this->registry->getManagerForClass(Scope::class)
-            ->getRepository(Scope::class)
-            ->findOneBy($criteria->toArray());
+        /** @var ScopeRepository $repository */
+        $repository = $this->registry->getManagerForClass(Scope::class)
+            ->getRepository(Scope::class);
+        $scope = $repository->findOneByCriteria($criteria);
         if (!$scope) {
             $scope = new Scope();
             $propertyAccessor = $this->getPropertyAccessor();
@@ -164,14 +165,13 @@ class ScopeManager
     }
 
     /**
-     * @param $scopeType
-     * @param $context
+     * @param string $scopeType
+     * @param array $context
      * @return ScopeCriteria
      */
     public function getCriteria($scopeType, $context = null)
     {
         $criteria = $this->getNullContext();
-        // todo: add support for object as context
         if (self::BASE_SCOPE == $scopeType && is_array($context)) {
             $criteria = array_replace($criteria, $context);
         } else {

@@ -3,9 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
 use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
@@ -14,7 +12,9 @@ use Symfony\Component\Form\FormInterface;
 
 abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityListener
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $visibilityField = EntityVisibilityType::VISIBILITY;
 
     /**
@@ -86,18 +86,14 @@ abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityLi
                 continue;
             }
 
-            /** @var AccountGroup|Account $visibilityToEntity */
+            /** @var Account|AccountGroup $visibilityToEntity */
             $visibilityToEntity = $visibilityData['entity'];
 
+            // todo skip saving if visibility wasn't changed BB-4506
             if (isset($visibilitiesEntity[$visibilityToEntity->getId()])) {
                 $visibilityEntity = $visibilitiesEntity[$visibilityToEntity->getId()];
             } else {
-                $visibilityEntity = $this->createFormFieldData($form, $field);
-                if ($visibilityEntity instanceof AccountGroupAwareInterface) {
-                    $visibilityEntity->setAccountGroup($visibilityToEntity);
-                } elseif ($visibilityEntity instanceof AccountAwareInterface) {
-                    $visibilityEntity->setAccount($visibilityToEntity);
-                }
+                $visibilityEntity = $this->createFormFieldData($form, $field, $visibilityToEntity);
             }
 
             $this->saveVisibility($targetEntity, $visibilityEntity, $visibility);
