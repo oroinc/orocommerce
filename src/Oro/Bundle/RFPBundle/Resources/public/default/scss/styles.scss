@@ -1,11 +1,12 @@
 @import 'form.scss';
-@import './components/request-form-items/request-form-items';
+@import './components/form-actions/form-actions';
+@import './components/request-form/request-form';
+@import './components/request-form-actions/request-form-actions';
+@import './components/request-form-note/request-form-note';
 @import './components/request-form-product/request-form-product';
 @import './components/request-form-link/request-form-link';
 @import './components/request-form-quantity/request-form-quantity';
 @import './components/request-form-amount/request-form-amount';
-@import './components/request-form-actions/request-form-actions';
-@import './components/request-form-note/request-form-note';
 
 .account-rfp_request-assigned_users {
   ul {

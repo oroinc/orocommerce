@@ -2,10 +2,6 @@
     text-align: right;
 
     &__item {
-        display: inline-block;
-
-        margin-left: 24px;
-
-        vertical-align: middle;
+        @extend %form-actions__item;
     }
 }
