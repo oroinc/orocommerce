@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Provider;
 
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 
 class CheckoutTotalsProvider
@@ -20,15 +20,23 @@ class CheckoutTotalsProvider
     protected $totalsProvider;
 
     /**
+     * @var MapperInterface
+     */
+    protected $mapper;
+
+    /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
      * @param TotalProcessorProvider $totalsProvider
+     * @param MapperInterface $mapper
      */
     public function __construct(
         CheckoutLineItemsManager $checkoutLineItemsManager,
-        TotalProcessorProvider $totalsProvider
+        TotalProcessorProvider $totalsProvider,
+        MapperInterface $mapper
     ) {
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
         $this->totalsProvider = $totalsProvider;
+        $this->mapper = $mapper;
     }
 
     /**
@@ -37,10 +45,10 @@ class CheckoutTotalsProvider
      */
     public function getTotalsArray(Checkout $checkout)
     {
-        $order = new Order();
-        $order->setShippingCost($checkout->getShippingCost());
-        $order->setLineItems($this->checkoutLineItemsManager->getData($checkout));
+        $data = ['lineItems' => $this->checkoutLineItemsManager->getData($checkout)];
+        $order = $this->mapper->map($checkout, $data);
         $this->totalsProvider->enableRecalculation();
+
         return $this->totalsProvider->getTotalWithSubtotalsAsArray($order);
     }
 }

@@ -362,6 +362,7 @@ services:
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_checkout.mapper.order_mapper'
 
     oro_checkout.action.default_shipping_method_setter:
         class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter'
@@ -380,3 +381,19 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Provider\PrivilegeCategoryProvider'
         tags:
             - { name: oro_user.privilege_category}
+
+    oro_checkout.mapper.order_mapper:
+        class: 'Oro\Bundle\CheckoutBundle\Mapper\OrderMapper'
+        public: false
+        arguments:
+            - '@oro_entity.entity_field_provider'
+            - '@property_accessor'
+
+    oro_checkout.model.action.create_order:
+        class: 'Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder'
+        arguments:
+            - '@oro_action.context_accessor'
+            - '@oro_checkout.mapper.order_mapper'
+        tags:
+            - { name: oro_workflow.action, alias: create_order }
+            - { name: oro_action.action, alias: create_order }
