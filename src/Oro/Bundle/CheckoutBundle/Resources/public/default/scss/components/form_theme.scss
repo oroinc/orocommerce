@@ -32,20 +32,8 @@
       }
     }
 
-    &.col-country {
-      select {
-        @include input();
-
-        width: 100%;
-      }
-    }
-
     &.col-state {
       width: 80px;
-
-      select {
-        @include input();
-      }
 
       @media (max-width: $screen-md) {
         width: 100px;
@@ -100,12 +88,6 @@
   }
 
   &__select {
-    select {
-      @include input();
-
-      width: 100%;
-    }
-
     &--exp-month {
       display: inline-block;
       width: 130px;
@@ -119,43 +101,6 @@
     &--exp-year {
       display: inline-block;
       width: 90px;
-    }
-  }
-
-  &__label {
-    display: block;
-    margin: 0 0 10px;
-
-    font-weight: 400;
-    text-transform: uppercase;
-
-    &.notification {
-      text-transform: none;
-    }
-
-    &--additional {
-      text-transform: none;
-    }
-  }
-
-  &__input {
-    @include input();
-
-    &.checkout__form__input_ccv {
-      width: 75px;
-    }
-
-    &:focus {
-      border-color: #4597ca;
-      outline: 0;
-      box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
-    }
-
-    &::-webkit-input-placeholder,
-    &::-moz-placeholder,
-    &:-moz-placeholder,
-    &:-ms-input-placeholder {
-      color: $base-font-color-lightest;
     }
   }
 

@@ -117,20 +117,8 @@
         }
       }
 
-      &.col-country {
-        select {
-          width: 100%;
-
-          @include input();
-        }
-      }
-
       &.col-state {
         width: 80px;
-
-        select {
-          @include input();
-        }
 
         @media (max-width: $screen-md) {
           width: 100px;

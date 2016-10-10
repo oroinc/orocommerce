@@ -207,100 +207,6 @@
     white-space: nowrap;
   }
 
-  input[type="text"] {
-    @include input();
-
-    &:focus {
-      outline: 0;
-      border-color: $base-link-color;
-      box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
-                        0 0 7px rgba(102,175,233,.6);
-    }
-
-    &.input_with-btn {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-
-      text-align: right;
-
-      + .input-group-btn {
-        border: 1px solid $theme-lighter-gray-color;
-        border-left: 0;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-
-        background: $base-background-color;
-        text-align: center;
-
-        > .form-input_has-btn__dropdown {
-          left: auto;
-          right: 0;
-
-          margin: 0;
-          padding: 10px 0;
-          border: 1px solid $theme-lighter-gray-color;
-
-          .table {
-            margin: 0;
-
-            tbody {
-              tr {
-                cursor: pointer;
-
-                td {
-                  padding: 10px 6px !important;
-
-                  &:first-child {
-                    padding-left: 25px !important;
-                  }
-
-                  &:last-child {
-                    padding-right: 15px !important;
-                  }
-                }
-
-                &:hover {
-                  td {
-                    background: $theme-slight-lightest-gray-color;
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        button {
-          width: 30px;
-          padding: 0;
-          border: 0;
-          box-shadow: none;
-
-          background: none;
-
-          cursor: pointer;
-        }
-      }
-    }
-  }
-
-  .form-label {
-    display: block;
-    margin: 0 0 5px;
-
-    font-weight: 400;
-  }
-
-  textarea {
-    @include input();
-
-    &:focus {
-      outline: 0;
-      border-color: $base-link-color;
-      box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
-                        0 0 8px rgba(102,175,233,.6);
-    }
-  }
-
   .input-group-addon {
     border-color: $theme-lighter-gray-color;
     background: $theme-lightest-gray-color;
@@ -617,7 +523,7 @@
   }
 }
 .input-append {
-  .select2-container.input.input_block {
+  .select2-container.input {
     display: inline-block;
     width: auto;
     height: auto;
@@ -696,8 +602,6 @@
 }
 
 .action-select  {
-  @include input();
-
   position: relative;
 
   padding: 6px 9px 6px !important;
