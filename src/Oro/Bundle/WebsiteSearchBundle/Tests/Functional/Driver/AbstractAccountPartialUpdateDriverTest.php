@@ -105,14 +105,12 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
             ->setOwner($owner)
             ->setOrganization($owner->getOrganization());
 
-        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Account::class);
-        $manager->persist($account);
-        $manager->flush();
-
         $searchResult = $this->searchVisibilitiesForAccount($account);
         $this->assertEquals(0, $searchResult->getRecordsCount());
 
-        $this->driver->createAccountWithoutAccountGroupVisibility($account);
+        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Account::class);
+        $manager->persist($account);
+        $manager->flush();
 
         $searchResult = $this->searchVisibilitiesForAccount($account);
         $values = $searchResult->getElements();
@@ -184,7 +182,9 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
         $this->assertEquals('product.2', $values[0]->getRecordTitle());
         $this->assertEquals('product.3', $values[1]->getRecordTitle());
 
-        $this->driver->deleteAccountVisibility($account);
+        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Account::class);
+        $manager->remove($account);
+        $manager->flush();
 
         $searchResult = $this->searchVisibilitiesForAccount($account);
 
