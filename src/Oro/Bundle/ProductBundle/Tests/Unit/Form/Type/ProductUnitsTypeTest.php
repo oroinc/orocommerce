@@ -79,7 +79,6 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->isValid());
 
         $this->assertEquals($expectedData, $form->getViewData());
-
     }
 
     /**
