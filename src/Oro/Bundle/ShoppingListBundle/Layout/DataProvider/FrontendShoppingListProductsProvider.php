@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider;
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
@@ -12,14 +11,9 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 class FrontendShoppingListProductsProvider
 {
     /**
-     * @var DoctrineHelper
+     * @var LineItemRepository
      */
-    protected $doctrineHelper;
-
-    /**
-     * @var string
-     */
-    protected $lineItemClass;
+    protected $lineItemRepository;
 
     /**
      * @var FrontendProductPricesDataProvider
@@ -37,29 +31,21 @@ class FrontendShoppingListProductsProvider
     protected $productPriceFormatter;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
+     * @param LineItemRepository $lineItemRepository
      * @param FrontendProductPricesDataProvider $productPriceProvider
      * @param $shoppingListLineItemsDataProvider $shoppingListLineItemsDataProvider
      * @param ProductPriceFormatter $productPriceFormatter
      */
     public function __construct(
-        DoctrineHelper $doctrineHelper,
+        LineItemRepository $lineItemRepository,
         FrontendProductPricesDataProvider $productPriceProvider,
         ShoppingListLineItemsDataProvider $shoppingListLineItemsDataProvider,
         ProductPriceFormatter $productPriceFormatter
     ) {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->lineItemRepository = $lineItemRepository;
         $this->productPriceProvider = $productPriceProvider;
         $this->shoppingListLineItemsDataProvider = $shoppingListLineItemsDataProvider;
         $this->productPriceFormatter = $productPriceFormatter;
-    }
-
-    /**
-     * @param string $lineItemClass
-     */
-    public function setLineItemClass($lineItemClass)
-    {
-        $this->lineItemClass = $lineItemClass;
     }
 
     /**
@@ -113,9 +99,6 @@ class FrontendShoppingListProductsProvider
      */
     public function getLastProductsGroupedByShoppingList(array $shoppingLists, $productCount)
     {
-        /** @var LineItemRepository $lineItemRepository */
-        $lineItemRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->lineItemClass);
-
-        return $lineItemRepository->getLastProductsGroupedByShoppingList($shoppingLists, $productCount);
+        return $this->lineItemRepository->getLastProductsGroupedByShoppingList($shoppingLists, $productCount);
     }
 }

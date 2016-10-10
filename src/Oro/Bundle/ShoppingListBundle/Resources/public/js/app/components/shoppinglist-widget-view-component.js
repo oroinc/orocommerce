@@ -33,7 +33,7 @@ define(function(require) {
             mediator.on('shopping-list-event:' + this.eventChannelId + ':shopping-list-id', this.getShoppingListId, this);
             mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateTitle, this);
 
-            this.$el.on('change', this.elements.radio, _.bind(this._onCurrentShoppingListChange, this));
+            this.$el.on('change' + this.eventNamespace(), this.elements.radio, _.bind(this._onCurrentShoppingListChange, this));
         },
 
         /**
@@ -59,7 +59,7 @@ define(function(require) {
 
             $.ajax({
                 method: 'POST',
-                url: routing.generate('orob2b_product_frontend_product_index'),
+                url: routing.generate('oro_product_frontend_product_index'),
                 data: {
                     id: shoppingListId
                 },
@@ -91,9 +91,8 @@ define(function(require) {
                 return;
             }
 
-            this.$el.off();
-            mediator.off('shopping-list-event:' + this.eventChannelId + ':shopping-list-id', this.getShoppingListId, this);
-            mediator.off('shopping-list-event:' + this.eventChannelId + ':update', this.updateTitle, this);
+            this.$el.off(this.eventNamespace());
+            mediator.off(null, null, this);
 
             ShoppingListWidgetViewComponent.__super__.dispose.call(this);
         }

@@ -1,16 +1,15 @@
 {% block _main_menu_shopping_lists_wrapper_widget %}
-    {% set attr = {
+    {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroshoppinglist/js/app/components/shoppinglist-widget-view-component',
-        'data-page-component-options': {
+        '~data-page-component-options': {
             view: 'oroui/js/app/views/layout-subtree-view',
             rootId : block.vars.id,
             reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete'],
             eventChannelId: 'shopping-list-title'
         },
         'data-dropdown-trigger': true
-    }|merge(attr|merge({
-        class: attr.class|default('') ~ " main-menu__item main-menu__item--nested shopping-lists-frontend-widget"
-    })) %}
+        '~class': " main-menu__item main-menu__item--nested shopping-lists-frontend-widget"
+    }) %}
 
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -31,9 +30,9 @@
 {% endblock %}
 
 {% block _main_menu_shopping_lists_dropdown_content_widget %}
-    {% set attr = attr|merge({
+    {% set attr = layout_attr_defaults(attr, {
         id: 'order-widget-dropdown',
-        class: attr.class|default('') ~ " order-widget order-widget--dropdown-mode shopping-list-dropdown"
+        '~class': " order-widget order-widget--dropdown-mode shopping-list-dropdown"
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -42,8 +41,8 @@
 {% endblock %}
 
 {% block _main_menu_shopping_lists_dropdown_container_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " widget__container"
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " widget__container"
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -57,8 +56,8 @@
 {% endblock %}
 
 {% block _main_menu_shopping_lists_dropdown_container_sync_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " widget__container"
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " widget__container"
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -72,8 +71,8 @@
 {% endblock %}
 
 {% block shopping_list_dropdown_item_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " shopping-list-dropdown__item"
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " shopping-list-dropdown__item"
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="shopping-list-dropdown__radio">
@@ -82,7 +81,7 @@
                 <span class="custom-radio__text"></span>
             </label>
         </div>
-        <a class="shopping-list-dropdown__link" href="{{ path('orob2b_shopping_list_frontend_view', {id: shoppingList.id}) }}">
+        <a class="shopping-list-dropdown__link" href="{{ path('oro_shopping_list_frontend_view', {id: shoppingList.id}) }}">
             <span class="shopping-list-dropdown__title">
                 <span class="shopping-list-dropdown__name">
                     <span class="shopping-list-dropdown__name-inner shopping-list-dropdown__name-inner--{{ shoppingList.id }}" title="{{ shoppingList.label }}">{{ shoppingList.label }}</span>

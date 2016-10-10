@@ -41,10 +41,7 @@ class ShoppingListController extends RestController implements ClassResourceInte
         /** @var ShoppingListManager $manager */
         $manager = $this->get('oro_shopping_list.shopping_list.manager');
 
-        $shoppingList = $this->getDoctrine()
-            ->getManagerForClass('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')
-            ->getRepository('OroShoppingListBundle:ShoppingList')
-            ->find($id);
+        $shoppingList = $this->get('oro_shopping_list.repository.shopping_list')->find($id);
 
         if ($shoppingList === null) {
             throw $this->createNotFoundException('Can\'t find shopping list with id ' . $id);
