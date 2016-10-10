@@ -209,13 +209,13 @@
 
     &_in-cart {
       float: left;
-      width: 56px;
-      height: 56px;
+      width: 84px;
+      height: 84px;
 
       a {
         display: block;
-        width: 56px;
-        height: 56px;
+        width: 84px;
+        height: 84px;
         overflow: hidden;
         border: 1px solid $theme-lighter-gray-color;
         border-radius: 5px;
@@ -792,7 +792,7 @@
     position: relative;
 
     &_in-cart {
-      padding: 0 0 0 76px;
+      padding: 0 0 0 104px;
     }
   }
 
