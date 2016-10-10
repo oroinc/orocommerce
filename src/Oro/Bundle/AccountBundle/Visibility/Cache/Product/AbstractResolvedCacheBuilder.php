@@ -186,6 +186,6 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
      */
     protected function triggerCategoryReindexation(Category $category)
     {
-        $this->indexScheduler->scheduleCategoryProductsReindex([$category], null, false);
+        $this->indexScheduler->scheduleProductsReindex([$category], null, false);
     }
 }
