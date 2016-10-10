@@ -616,18 +616,6 @@
     display: none !important;
   }
 }
-.input-append {
-  .select2-container.input.input_block {
-    display: inline-block;
-    width: auto;
-    height: auto;
-    padding: 7px;
-
-    .select2-choice {
-      max-width: 255px;
-    }
-  }
-}
 
 .select2-container {
   a.select2-choice {
