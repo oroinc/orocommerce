@@ -3,34 +3,33 @@
         '~class': ' account-menu'
     }) %}
     <div {{ block('block_attributes') }}>
-        <div class="collapse-view"
-            {% if isMobileVersion() %}
-                 data-page-component-module="oroui/js/app/components/jquery-widget-component"
-                 data-page-component-options="{{ {
-                     widgetModule: 'oroui/js/widget/collapse-widget',
-                     storageKey: id
-                 }|json_encode() }}"
-            {% endif %}
-        >
-            <div class="account-menu__section">
-                <h3 class="account-menu__title" data-collapse-trigger>
-                    {{ 'oro.account.frontend.menu.account_user_profile.label'|trans }}
-                    {% if isMobileVersion() %}
+        {% if isMobileVersion() %}
+            <div class="collapse-view"
+                data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                data-page-component-options="{{ {
+                    widgetModule: 'oroui/js/widget/collapse-widget',
+                    storageKey: id
+                }|json_encode() }}"
+            >
+                <div class="account-menu__section">
+                    <h3 class="account-menu__title" data-collapse-trigger>
+                        {{ 'oro.account.frontend.menu.account_user_profile.label'|trans }}
                         <i class="icon-plus"></i>
                         <i class="icon-minus"></i>
-                    {% endif %}
-                </h3>
-                {% if isMobileVersion() %}
+                    </h3>
                     <div class="collapse-view__container" data-collapse-container>
-                {% endif %}
-
-                    {{ block_widget(block) }}
-
-                {% if isMobileVersion() %}
+                        {{ block_widget(block) }}
                     </div>
-                {% endif %}
+                </div>
             </div>
-        </div>
+        {% else %}
+            <div class="account-menu__section">
+                <h3 class="account-menu__title">
+                    {{ 'oro.account.frontend.menu.account_user_profile.label'|trans }}
+                </h3>
+                {{ block_widget(block) }}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 

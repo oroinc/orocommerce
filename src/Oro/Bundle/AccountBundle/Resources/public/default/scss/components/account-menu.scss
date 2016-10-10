@@ -2,8 +2,8 @@
     margin-top: 35px;
     padding: 25px 30px;
 
+    background: get-color('additional', 'base');
     border-radius: 3px;
-    background: $theme-lightest-gray-color;
 
     &__section:not(:first-child) {
         margin-top: 18px;
@@ -38,7 +38,7 @@
                 height: 7px;
 
                 border-radius: 50%;
-                background: $theme-orange-color;
+                background: get-color('primary', 'base');
 
                 @include after();
             }
@@ -67,10 +67,6 @@
         .icon-minus,
         .icon-plus {
             opacity: 0;
-        }
-
-        .collapse-view__container {
-            display: block !important;
         }
     }
 }
@@ -108,14 +104,14 @@
         padding: 0;
         margin: 35px -15px 0;
 
-        border-top: $theme-lighter-gray-color 1px solid;
-        border-bottom: $theme-lighter-gray-color 1px solid;
+        border-top: 1px solid get-color('additional', 'light');
+        border-bottom: 1px solid get-color('additional', 'light');
 
         &__title {
             padding: 14px 13px;
             margin: 0;
 
-            font-size: 14px;
+            font-size: $base-font-size;
         }
 
         &__list {
@@ -127,7 +123,7 @@
             padding: 13px 0;
             margin: 0;
 
-            border-top: $theme-lighter-gray-color 1px solid;
+            border-top: 1px solid get-color('additional', 'light');
 
             &--current {
                 &:before {
@@ -141,7 +137,7 @@
         }
 
         &__link {
-            color: $theme-middle-gray-color;
+            color: get-color('additional', 'dark');
         }
 
         .icon-minus,
