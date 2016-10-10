@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Autocomplete;
 
-use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\HttpFoundation\RequestStack;
+
+use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
@@ -21,8 +21,10 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
 
     /** @var  ProductManager */
     protected $productManager;
+
     /** @var  FrontendHelper */
     protected $frontendHelper;
+
     /** @var \Oro\Bundle\ProductBundle\Search\ProductRepository */
     protected $searchRepository;
 
@@ -85,11 +87,10 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
             $this->productManager->restrictQueryBuilder($queryBuilder, $params);
             $query = $this->aclHelper->apply($queryBuilder);
             return $query->getResult();
-        } else {
-            $searchQuery = $this->searchRepository->getProductSearchQuery($search, $firstResult, $maxResults);
-            $this->productManager->restrictSearchQuery($searchQuery);
-            $result = $searchQuery->getResult();
-            return $result->getElements();
         }
+        $searchQuery = $this->searchRepository->getProductSearchQuery($search, $firstResult, $maxResults);
+        $this->productManager->restrictSearchQuery($searchQuery);
+        $result = $searchQuery->getResult();
+        return $result->getElements();
     }
 }
