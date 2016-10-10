@@ -55,7 +55,7 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
         ProductVisibilityProvider $productVisibilityProvider
     ) {
         parent::__construct($placeholderProvider);
-        
+
         $this->doctrineHelper = $doctrineHelper;
         $this->insertExecutor = $insertExecutor;
         $this->productVisibilityProvider = $productVisibilityProvider;

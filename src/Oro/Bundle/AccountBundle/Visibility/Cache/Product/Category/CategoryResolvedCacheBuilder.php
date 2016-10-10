@@ -93,6 +93,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
         $this->executeDbQuery($repository, $insert, $delete, $update, $where);
 
         $this->visibilityChangeCategorySubtreeCacheBuilder->resolveVisibilitySettings($category, $visibility);
+        $this->triggerCategoryReindexation($category);
     }
 
     /**

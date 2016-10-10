@@ -19,7 +19,7 @@ class ProductIndexSchedulerTest extends \PHPUnit_Framework_TestCase
     /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $eventDispatcher;
 
-    /** @var ProductIndexScheduler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ProductIndexScheduler */
     private $productIndexScheduler;
 
     /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject */
@@ -35,11 +35,6 @@ class ProductIndexSchedulerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
-            ->with(Category::class)
-            ->willReturn($this->categoryRepository);
-
         $this->eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)->getMock();
 
         $this->productIndexScheduler = new ProductIndexScheduler($this->doctrineHelper, $this->eventDispatcher);
@@ -47,6 +42,11 @@ class ProductIndexSchedulerTest extends \PHPUnit_Framework_TestCase
 
     public function testScheduleProductsReindex()
     {
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(Category::class)
+            ->willReturn($this->categoryRepository);
+
         $categories[] = new Category();
         $productIds = [1, 2, 3];
         $websiteId = 777;
@@ -64,6 +64,11 @@ class ProductIndexSchedulerTest extends \PHPUnit_Framework_TestCase
 
     public function testScheduleProductsReindexNoProducts()
     {
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(Category::class)
+            ->willReturn($this->categoryRepository);
+
         $categories[] = new Category();
         $productIds = [];
         $websiteId = 777;
@@ -74,5 +79,16 @@ class ProductIndexSchedulerTest extends \PHPUnit_Framework_TestCase
 
         $this->eventDispatcher->expects($this->never())->method('dispatch');
         $this->productIndexScheduler->scheduleProductsReindex($categories, $websiteId);
+    }
+    
+    public function testTriggerReindexationRequestEvent()
+    {
+        $productIds = [1, 2, 3];
+        $websiteId = 777;
+        $event = new ReindexationRequestEvent(Product::class, $websiteId, $productIds);
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(ReindexationRequestEvent::EVENT_NAME, $event);
+        $this->productIndexScheduler->triggerReindexationRequestEvent($productIds, $websiteId);
     }
 }
