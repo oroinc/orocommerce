@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Provider;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\DependencyInjection\ServiceLink;
+use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Component\Expression\FieldsProviderInterface;
 
 class PriceRuleFieldsProvider implements FieldsProviderInterface
@@ -19,9 +19,9 @@ class PriceRuleFieldsProvider implements FieldsProviderInterface
     ];
 
     /**
-     * @var ServiceLink
+     * @var EntityFieldProvider
      */
-    protected $entityFieldProviderLink;
+    protected $entityFieldProvider;
 
     /**
      * @var DoctrineHelper
@@ -34,12 +34,12 @@ class PriceRuleFieldsProvider implements FieldsProviderInterface
     protected $entityFields = [];
 
     /**
-     * @param ServiceLink $entityFieldProviderLink
+     * @param EntityFieldProvider $entityFieldProvider
      * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(ServiceLink $entityFieldProviderLink, DoctrineHelper $doctrineHelper)
+    public function __construct(EntityFieldProvider $entityFieldProvider, DoctrineHelper $doctrineHelper)
     {
-        $this->entityFieldProviderLink = $entityFieldProviderLink;
+        $this->entityFieldProvider = $entityFieldProvider;
         $this->doctrineHelper = $doctrineHelper;
     }
 
@@ -107,7 +107,7 @@ class PriceRuleFieldsProvider implements FieldsProviderInterface
     {
         $cacheKey = $this->getCacheKey($className, $numericOnly, $withRelations);
         if (!array_key_exists($cacheKey, $this->entityFields)) {
-            $fields = $this->entityFieldProviderLink->getService()->getFields(
+            $fields = $this->entityFieldProvider->getFields(
                 $className,
                 $withRelations,
                 $withRelations,
