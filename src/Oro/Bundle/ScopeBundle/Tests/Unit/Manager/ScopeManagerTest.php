@@ -10,6 +10,7 @@ use Oro\Bundle\ScopeBundle\Entity\Repository\ScopeRepository;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Manager\ScopeCriteriaProviderInterface;
+use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
 class ScopeManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,9 +48,9 @@ class ScopeManagerTest extends \PHPUnit_Framework_TestCase
         $scope = new Scope();
         $provider = $this->getMock(ScopeCriteriaProviderInterface::class);
         $provider->method('getCriteriaForCurrentScope')->willReturn(['fieldName' => 1]);
-
+        $scopeCriteria = new ScopeCriteria(['fieldName' => 1, 'fieldName2' => null]);
         $repository = $this->getMockBuilder(ScopeRepository::class)->disableOriginalConstructor()->getMock();
-        $repository->method('findOneByCriteria')->with(['fieldName' => 1, 'fieldName2' => null])->willReturn($scope);
+        $repository->method('findOneByCriteria')->with($scopeCriteria)->willReturn($scope);
 
         $em = $this->getMock(EntityManagerInterface::class);
         $em->method('getRepository')->willReturn($repository);
