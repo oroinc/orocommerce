@@ -15,7 +15,7 @@ use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 
-class ProductResolvedCacheBuilder extends AbstractProductResolvedCacheBuilder implements
+class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements
     ProductCaseCacheBuilderInterface
 {
     /**

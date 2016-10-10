@@ -35,23 +35,25 @@ class ProductIndexScheduler
     /**
      * @param Category[] $categories
      * @param int|null $websiteId
+     * @param bool $isScheduled
      */
-    public function scheduleProductsReindex(array $categories, $websiteId = null)
+    public function scheduleProductsReindex(array $categories, $websiteId = null, $isScheduled = true)
     {
         /** @var CategoryRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(Category::class);
         $productIds = $repository->getProductIdsByCategories($categories);
-        $this->triggerReindexationRequestEvent($productIds, $websiteId);
+        $this->triggerReindexationRequestEvent($productIds, $websiteId, $isScheduled);
     }
 
     /**
      * @param array $productIds
      * @param int|null $websiteId
+     * @param bool $isScheduled
      */
-    public function triggerReindexationRequestEvent(array $productIds, $websiteId = null)
+    public function triggerReindexationRequestEvent(array $productIds, $websiteId = null, $isScheduled = true)
     {
         if ($productIds) {
-            $event = new ReindexationRequestEvent(Product::class, $websiteId, $productIds);
+            $event = new ReindexationRequestEvent(Product::class, $websiteId, $productIds, $isScheduled);
             $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
         }
     }

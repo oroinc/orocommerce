@@ -109,6 +109,7 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
             $account,
             $visibility
         );
+        $this->triggerCategoryReindexation($category);
     }
 
     /**

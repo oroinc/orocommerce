@@ -14,7 +14,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountGroupProductResolvedCacheBuilder extends AbstractProductResolvedCacheBuilder implements
+class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements
     ProductCaseCacheBuilderInterface
 {
     /**
