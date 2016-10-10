@@ -1,0 +1,78 @@
+oro:
+    workflow:
+        b2b_flow_alternative_checkout:
+            label: 'Alternative Checkout'
+            step:
+                enter_billing_address:
+                    label: 'Billing Information'
+                enter_shipping_address:
+                    label: 'Shipping Information'
+                enter_shipping_method:
+                    label: 'Shipping Method'
+                enter_payment:
+                    label: Payment
+                order_review:
+                    label: 'Order Review'
+                request_approval:
+                    label: 'Request Approval'
+                approve_request:
+                    label: 'Order Approval'
+            attribute:
+                request_approval_notes:
+                    label: Notes
+                billing_address_has_shipping:
+                    label: 'If billing address also shipping'
+                allow_manual_source_remove:
+                    label: 'Allow manual source entity removal'
+                disallow_billing_address_edit:
+                    label: 'Disallow billing address edit'
+                disallow_shipping_address_edit:
+                    label: 'Disallow shipping address edit'
+                disallow_shipping_method_edit:
+                    label: 'Disallow shipping method edit'
+                remove_source:
+                    label: 'Remove Source Entity'
+                auto_remove_source:
+                    label: 'Always remove source entity automatically'
+                source_remove_label:
+                    label: 'Label for remove source'
+                edit_order_link:
+                    label: 'Edit Order Link'
+                allowed:
+                    label: 'Is checkout approved'
+                allow_request_date:
+                    label: 'Data of approving'
+                requested_for_approve:
+                    label: 'Is requested for approve'
+            transition:
+                continue_to_shipping_address:
+                    label: Continue
+                continue_to_shipping_method:
+                    label: Continue
+                continue_to_payment:
+                    label: Continue
+                continue_to_order_review:
+                    label: Continue
+                continue_to_request_approval:
+                    label: 'Request Approval'
+                continue_to_approve_request:
+                    label: 'Request Approval'
+                    warning_message: 'You exceeded the allowable amount of $5,000.00. <br/> To proceed please request manager approval. <br/>'
+                back_to_billing_address:
+                    label: 'Edit Billing Information'
+                back_to_shipping_address:
+                    label: 'Edit Shipping Information'
+                back_to_shipping_method:
+                    label: 'Edit Shipping Method'
+                back_to_payment:
+                    label: 'Edit Payment'
+                back_to_order_review:
+                    label: 'Back To Order Review'
+                back_to_request_approval:
+                    label: 'Back To Request Approval'
+                place_order:
+                    label: 'Submit Order'
+                place_order_with_inactive_possibility:
+                    label: 'Submit Order'
+                approve_order:
+                    label: 'Approve Order'
