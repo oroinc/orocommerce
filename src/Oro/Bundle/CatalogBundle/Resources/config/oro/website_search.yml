@@ -1,5 +1,4 @@
 Oro\Bundle\ProductBundle\Entity\Product:
-    alias: oro_product_WEBSITE_ID
     fields:
         category_id:
             name: cat_id
