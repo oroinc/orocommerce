@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\AccountBundle\Async\Visibility;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManagerInterface;
-
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\AccountBundle\Model\MessageFactoryInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebsiteSearchBundle\Driver\AccountPartialUpdateDriverInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -20,9 +18,9 @@ use Psr\Log\LoggerInterface;
 class AccountProcessor implements MessageProcessorInterface
 {
     /**
-     * @var ManagerRegistry
+     * @var DoctrineHelper
      */
-    protected $registry;
+    protected $doctrineHelper;
 
     /**
      * @var LoggerInterface
@@ -40,18 +38,18 @@ class AccountProcessor implements MessageProcessorInterface
     protected $partialUpdateDriver;
 
     /**
-     * @param ManagerRegistry $registry
+     * @param DoctrineHelper $doctrineHelper
      * @param LoggerInterface $logger
      * @param MessageFactoryInterface $messageFactory
      * @param AccountPartialUpdateDriverInterface $partialUpdateDriver
      */
     public function __construct(
-        ManagerRegistry $registry,
+        DoctrineHelper $doctrineHelper,
         LoggerInterface $logger,
         MessageFactoryInterface $messageFactory,
         AccountPartialUpdateDriverInterface $partialUpdateDriver
     ) {
-        $this->registry = $registry;
+        $this->doctrineHelper = $doctrineHelper;
         $this->logger = $logger;
         $this->messageFactory = $messageFactory;
         $this->partialUpdateDriver = $partialUpdateDriver;
@@ -62,8 +60,7 @@ class AccountProcessor implements MessageProcessorInterface
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->registry->getManagerForClass(BaseVisibilityResolved::class);
+        $em = $this->doctrineHelper->getEntityManagerForClass(BaseVisibilityResolved::class);
         $em->beginTransaction();
         try {
             $messageData = JSON::decode($message->getBody());

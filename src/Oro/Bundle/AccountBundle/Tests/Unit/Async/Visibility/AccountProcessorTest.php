@@ -9,6 +9,7 @@ use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\AccountBundle\Model\MessageFactoryInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebsiteSearchBundle\Driver\AccountPartialUpdateDriverInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -17,14 +18,12 @@ use Oro\Component\MessageQueue\Util\JSON;
 
 use Psr\Log\LoggerInterface;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
 class AccountProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $registry;
+    protected $doctrineHelper;
 
     /**
      * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -48,7 +47,8 @@ class AccountProcessorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMockBuilder(RegistryInterface::class)
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $this->logger = $this->getMockBuilder(LoggerInterface::class)
             ->getMock();
@@ -57,7 +57,7 @@ class AccountProcessorTest extends \PHPUnit_Framework_TestCase
         $this->driver = $this->getMockBuilder(AccountPartialUpdateDriverInterface::class)
             ->getMock();
         $this->processor = new AccountProcessor(
-            $this->registry,
+            $this->doctrineHelper,
             $this->logger,
             $this->messageFactory,
             $this->driver
@@ -78,8 +78,8 @@ class AccountProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('rollback');
         $em->expects(($this->once()))
             ->method('commit');
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManagerForClass')
             ->with(BaseVisibilityResolved::class)
             ->willReturn($em);
 
@@ -121,8 +121,8 @@ class AccountProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('rollback');
         $em->expects(($this->never()))
             ->method('commit');
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManagerForClass')
             ->with(BaseVisibilityResolved::class)
             ->willReturn($em);
         $this->logger->expects($this->once())
@@ -163,8 +163,8 @@ class AccountProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('rollback');
         $em->expects(($this->never()))
             ->method('commit');
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManagerForClass')
             ->with(BaseVisibilityResolved::class)
             ->willReturn($em);
         $this->logger->expects($this->once())

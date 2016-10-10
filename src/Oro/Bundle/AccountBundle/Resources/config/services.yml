@@ -1033,7 +1033,7 @@ services:
     oro_account.async.visibility.account_processor:
         class: Oro\Bundle\AccountBundle\Async\Visibility\AccountProcessor
         arguments:
-            - '@doctrine'
+            - '@oro_entity.doctrine_helper'
             - '@logger'
             - '@oro_account.account_message_factory'
             - '@oro_website_search.driver.orm_account_partial_update_driver'
