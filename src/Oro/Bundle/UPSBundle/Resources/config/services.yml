@@ -37,16 +37,12 @@ services:
 
     oro_ups.entity_listener.channel:
         class: 'Oro\Bundle\UPSBundle\EventListener\UPSChannelEntityListener'
-        arguments:
-            - "@oro_shipping.shipping_method.registry"
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: preRemove }
 
 
     oro_ups.entity_listener.transport:
         class: 'Oro\Bundle\UPSBundle\EventListener\UPSTransportEntityListener'
-        arguments:
-            - "@oro_shipping.shipping_method.registry"
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\UPSBundle\Entity\UPSTransport', event: postUpdate }
 

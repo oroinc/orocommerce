@@ -4,7 +4,6 @@ namespace Oro\Bundle\UPSBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\PersistentCollection;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
@@ -12,19 +11,6 @@ use Oro\Bundle\UPSBundle\Provider\ChannelType;
 
 class UPSTransportEntityListener
 {
-    /**
-     * @var ShippingMethodRegistry
-     */
-    protected $registry;
-
-    /**
-     * @param ShippingMethodRegistry $registry
-     */
-    public function __construct(ShippingMethodRegistry $registry)
-    {
-        $this->registry = $registry;
-    }
-
     /**
      * @param UPSTransport $transport
      * @param LifecycleEventArgs $args
@@ -47,19 +33,17 @@ class UPSTransportEntityListener
 
             if (null !== $channel) {
                 $shippingMethodIdentifier = UPSShippingMethod::IDENTIFIER . '_' . $channel->getId();
-                if (null !== $this->registry->getShippingMethod($shippingMethodIdentifier)) {
-                    $configuredMethods = $entityManager
-                        ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
-                        ->findBy(['method' => $shippingMethodIdentifier ]);
-                    if (0 < count($configuredMethods)) {
-                        $types = $entityManager
-                            ->getRepository('OroShippingBundle:ShippingRuleMethodTypeConfig')
-                            ->findBy(['methodConfig' => $configuredMethods, 'type' => $deleted]);
+                $configuredMethods = $entityManager
+                    ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
+                    ->findBy(['method' => $shippingMethodIdentifier ]);
+                if (0 < count($configuredMethods)) {
+                    $types = $entityManager
+                        ->getRepository('OroShippingBundle:ShippingRuleMethodTypeConfig')
+                        ->findBy(['methodConfig' => $configuredMethods, 'type' => $deleted]);
 
-                        foreach ($types as $type) {
-                            $entityManager->getRepository('OroShippingBundle:ShippingRuleMethodTypeConfig')
-                                ->deleteByMethodAndType($type->getMethodConfig(), $type->getType());
-                        }
+                    foreach ($types as $type) {
+                        $entityManager->getRepository('OroShippingBundle:ShippingRuleMethodTypeConfig')
+                            ->deleteByMethodAndType($type->getMethodConfig(), $type->getType());
                     }
                 }
             }
