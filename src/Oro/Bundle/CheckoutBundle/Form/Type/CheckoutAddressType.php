@@ -38,10 +38,10 @@ class CheckoutAddressType extends AbstractOrderAddressType
     }
 
     /**
-     * @param array $data
+     * @param array|null $data
      * @return array
      */
-    private function clearCustomFields(array $data)
+    private function clearCustomFields($data)
     {
         if (isset($data['accountAddress']) && $data['accountAddress']) {
             return [

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Async;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -92,6 +93,10 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
+        /** @var EntityManagerInterface $em */
+        $em = $this->registry->getManagerForClass(PriceList::class);
+        $em->beginTransaction();
+        
         $trigger = null;
         try {
             $messageData = JSON::decode($message->getBody());
@@ -108,7 +113,9 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $startTime = $priceList->getUpdatedAt();
             $this->priceBuilder->buildByPriceList($priceList, $trigger->getProduct());
             $this->updatePriceListActuality($priceList, $startTime);
+            $em->commit();
         } catch (InvalidArgumentException $e) {
+            $em->rollback();
             $this->logger->error(
                 sprintf(
                     'Message is invalid: %s. Original message: "%s"',
@@ -119,6 +126,7 @@ class PriceRuleProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
             return self::REJECT;
         } catch (\Exception $e) {
+            $em->rollback();
             $this->logger->error(
                 'Unexpected exception occurred during Price Rule build',
                 ['exception' => $e]

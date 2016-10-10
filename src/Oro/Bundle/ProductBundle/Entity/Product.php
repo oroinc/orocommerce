@@ -613,7 +613,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
             $existingUnitPrecision
                 ->setPrecision($unitPrecision->getPrecision())
                 ->setConversionRate($unitPrecision->getConversionRate())
-                ->setSell($unitPrecision->isSell());
+                ->setSell($unitPrecision->isSell())
+                ->setProduct($this);
         } else {
             $unitPrecision->setProduct($this);
             $this->unitPrecisions->add($unitPrecision);
@@ -659,7 +660,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
 
         foreach ($this->unitPrecisions as $unitPrecision) {
             if ($unit = $unitPrecision->getUnit()) {
-                if ($unit->getCode() == $unitCode) {
+                if ($unit->getCode() === $unitCode) {
                     $result = $unitPrecision;
                     break;
                 }
@@ -695,7 +696,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface, \Json
         $result = [];
 
         foreach ($this->unitPrecisions as $unitPrecision) {
-            $result[] = $unitPrecision->getUnit();
+            $result[$unitPrecision->getUnit()->getCode()] = $unitPrecision->getUnit();
         }
 
         return $result;
