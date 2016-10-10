@@ -1,17 +1,14 @@
 Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
-    constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
-#            fields:     [ warehouse, productUnitPrecision ]
-            fields:     [ productUnitPrecision ]
-            ignoreNull: false
+#    constraints:
+#        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+#            fields:     [ productUnitPrecision ]
+#            ignoreNull: false
     properties:
         quantity:
             - NotBlank: ~
             - Range:
                 min: 0
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-#        warehouse:
-#            - NotBlank: ~
         product:
             - NotBlank: ~
         productUnitPrecision:
