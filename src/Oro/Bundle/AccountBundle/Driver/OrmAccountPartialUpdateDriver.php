@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Driver;
+namespace Oro\Bundle\AccountBundle\Driver;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query as OrmQuery;

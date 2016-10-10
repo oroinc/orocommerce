@@ -1019,7 +1019,7 @@ services:
         arguments:
             - '@oro_account.account_message_factory'
             - '@oro_message_queue.client.message_producer'
-            - '@oro_website_search.driver.orm_account_partial_update_driver'
+            - '@oro_account.driver.orm_account_partial_update_driver'
         calls:
             - [setTopic, ['oro_account.visibility.change_account']]
         tags:
@@ -1033,6 +1033,14 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@logger'
             - '@oro_account.account_message_factory'
-            - '@oro_website_search.driver.orm_account_partial_update_driver'
+            - '@oro_account.driver.orm_account_partial_update_driver'
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_account.visibility.change_account' }
+
+    oro_account.driver.orm_account_partial_update_driver:
+        class: 'Oro\Bundle\AccountBundle\Driver\OrmAccountPartialUpdateDriver'
+        arguments:
+            - '@oro_website_search.provider.placeholder_provider'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@oro_account.visibility.provider.product_visibility_provider'

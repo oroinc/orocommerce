@@ -199,11 +199,3 @@ services:
         arguments:
             - '@oro_website_search.placeholder.visitor_replace'
             - '@oro_website_search.provider.search_mapping'
-
-    oro_website_search.driver.orm_account_partial_update_driver:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Driver\OrmAccountPartialUpdateDriver'
-        arguments:
-            - '@oro_website_search.provider.placeholder_provider'
-            - '@oro_entity.doctrine_helper'
-            - '@oro_entity.orm.insert_from_select_query_executor'
-            - '@oro_account.visibility.provider.product_visibility_provider'

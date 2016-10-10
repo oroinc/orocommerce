@@ -1,7 +1,9 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Driver;
+namespace Oro\Bundle\AccountBundle\Tests\Functional\Driver;
 
+use Oro\Bundle\AccountBundle\Driver\AccountPartialUpdateDriverInterface;
+use Oro\Bundle\AccountBundle\Driver\OrmAccountPartialUpdateDriver;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
@@ -11,8 +13,6 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
-use Oro\Bundle\WebsiteSearchBundle\Driver\AccountPartialUpdateDriverInterface;
-use Oro\Bundle\WebsiteSearchBundle\Driver\OrmAccountPartialUpdateDriver;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 
 /**

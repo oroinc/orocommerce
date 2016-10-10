@@ -4,11 +4,11 @@ namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
+use Oro\Bundle\AccountBundle\Driver\AccountPartialUpdateDriverInterface;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\EntityListener\AccountListener;
 use Oro\Bundle\AccountBundle\Model\MessageFactoryInterface;
-use Oro\Bundle\WebsiteSearchBundle\Driver\AccountPartialUpdateDriverInterface;
 use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
