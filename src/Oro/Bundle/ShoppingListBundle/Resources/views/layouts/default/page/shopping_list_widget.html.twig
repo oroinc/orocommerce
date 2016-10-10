@@ -7,7 +7,7 @@
             reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete'],
             eventChannelId: 'shopping-list-title'
         },
-        'data-dropdown-trigger': true
+        'data-dropdown-trigger': true,
         '~class': " main-menu__item main-menu__item--nested shopping-lists-frontend-widget"
     }) %}
 
@@ -48,7 +48,8 @@
     <div {{ block('block_attributes') }}>
         {% for shoppingList in shoppingLists -%}
             {% do block|merge_context({
-                shoppingList: shoppingList
+                shoppingList: shoppingList,
+                shoppingListProducts: shoppingListProducts,
             }) %}
             {{ block('container_widget') }}
         {%- endfor %}
@@ -63,7 +64,8 @@
     <div {{ block('block_attributes') }}>
         {% for shoppingList in shoppingLists -%}
             {% do block|merge_context({
-                shoppingList: shoppingList
+                shoppingList: shoppingList,
+                shoppingListProducts: shoppingListProducts
             }) %}
             {{ block('container_widget') }}
         {%- endfor %}
@@ -76,8 +78,9 @@
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="shopping-list-dropdown__radio">
-            <label class="custom-radio" data-toggle="tooltip" title="Set as default">
-                <input class="custom-radio__control" type="radio" name="shopping-list-dropdown-radio" value="{{ shoppingList.id }}" {% if shoppingList.isCurrent %}checked{% endif %}>
+            <label class="custom-radio {{ shoppingList.isCurrent ? 'checked' }}" data-toggle="tooltip" title="Set as default">
+                <input class="custom-radio__control" type="radio" name="shopping-list-dropdown-radio" {{ shoppingList.isCurrent ? 'checked' }}
+                       value="{{ shoppingList.id }}" data-label="{{ shoppingList.label }}">
                 <span class="custom-radio__text"></span>
             </label>
         </div>
@@ -91,9 +94,10 @@
                 | {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}</span>
             </span>
             <span class="shopping-list-dropdown__desc">
-                220 Lumen Rechargeable Headlamp
-                Credit Card Pin Pad Reader
-                Women’s Slip-On Clog
+                {% for product in shoppingListProducts[shoppingList.id]|default([]) %}
+                    {{ loop.index == 3 ? '...' : product.name }}
+                    {{ loop.last ?'': '<br/>'|raw }}
+                {% endfor %}
             </span>
             <span class="shopping-list-dropdown__info">{{ 'oro.frontend.shoppinglist.view.view_details.label'|trans }} <i class="cf-right-open-mini"></i></span>
         </a>

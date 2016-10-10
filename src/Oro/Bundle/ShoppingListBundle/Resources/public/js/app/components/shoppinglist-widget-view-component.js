@@ -1,5 +1,3 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
@@ -33,7 +31,7 @@ define(function(require) {
             mediator.on('shopping-list-event:' + this.eventChannelId + ':shopping-list-id', this.getShoppingListId, this);
             mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateTitle, this);
 
-            this.$el.on('change' + this.eventNamespace(), this.elements.radio, _.bind(this._onCurrentShoppingListChange, this));
+            this.$el.on('change', this.elements.radio, _.bind(this._onCurrentShoppingListChange, this));
         },
 
         /**
@@ -55,20 +53,20 @@ define(function(require) {
          * @param e
          */
         _onCurrentShoppingListChange: function(e) {
-            var shoppingListId = parseInt($(e.target).val(), 10);
+            var shoppingListId = $(e.target).val();
+            var shoppingListLabel = $(e.target).data('label');
 
             $.ajax({
-                method: 'POST',
-                url: routing.generate('oro_product_frontend_product_index'),
-                data: {
+                method: 'PUT',
+                url: routing.generate('oro_api_set_shoppinglist_current', {
                     id: shoppingListId
-                },
-                success: function(response) {
+                }),
+                success: function() {
                     mediator.trigger('shopping-list:change-current', shoppingListId);
-
-                    if (response && response.message) {
-                        mediator.execute('showFlashMessage', (response.successful ? 'success' : 'error'), response.message);
-                    }
+                    var message = _.__('oro.shoppinglist.actions.shopping_list_set_as_default', {
+                        shoppingList: shoppingListLabel
+                    });
+                    mediator.execute('showFlashMessage', 'success', message);
                 },
                 error: function(xhr) {
                     mediator.trigger('shopping-list:updated');
@@ -91,7 +89,7 @@ define(function(require) {
                 return;
             }
 
-            this.$el.off(this.eventNamespace());
+            this.$el.off();
             mediator.off(null, null, this);
 
             ShoppingListWidgetViewComponent.__super__.dispose.call(this);
