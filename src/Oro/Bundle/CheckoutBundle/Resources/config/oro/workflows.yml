@@ -270,7 +270,7 @@ workflows:
             back_to_billing_address:
                 label: Edit Billing Information
                 step_to: enter_billing_address
-                transition_definition: clear_payment_and_shipping_abd_recalculate_state_definition
+                transition_definition: clear_payment_method_and_recalculate_state_definition
                 is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
@@ -278,7 +278,7 @@ workflows:
             back_to_shipping_address:
                 label: Edit Shipping Information
                 step_to: enter_shipping_address
-                transition_definition: clear_payment_and_shipping_abd_recalculate_state_definition
+                transition_definition: clear_payment_method_and_recalculate_state_definition
                 is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
@@ -292,7 +292,7 @@ workflows:
             back_to_shipping_method:
                 label: Edit Shipping Method
                 step_to: enter_shipping_method
-                transition_definition: clear_payment_and_shipping_abd_recalculate_state_definition
+                transition_definition: clear_payment_method_and_recalculate_state_definition
                 is_unavailable_hidden: true
                 frontend_options:
                     is_checkout_back: true
