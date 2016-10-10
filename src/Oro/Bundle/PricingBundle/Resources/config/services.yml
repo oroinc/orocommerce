@@ -932,6 +932,7 @@ services:
             - '@logger'
             - '@oro_pricing.notification_message.messenger'
             - '@translator'
+            - '@doctrine'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -945,6 +946,8 @@ services:
             - '@event_dispatcher'
             - '@logger'
             - '@oro_pricing.price_list_change_trigger_factory'
+            - '@doctrine'
+            - '@oro_entity.database_exception_helper'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -956,6 +959,7 @@ services:
             - '@oro_pricing.resolver.combined_product_price_resolver'
             - '@event_dispatcher'
             - '@logger'
+            - '@oro_entity.database_exception_helper'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 

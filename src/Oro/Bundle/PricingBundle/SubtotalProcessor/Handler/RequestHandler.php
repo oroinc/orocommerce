@@ -62,7 +62,7 @@ class RequestHandler
      */
     public function recalculateTotals($entityClassName, $entityId, $request = null)
     {
-        $this->existClassName($entityClassName);
+        $entityClassName = $this->resolveClassName($entityClassName);
 
         if ($entityId) {
             $entity = $this->getExistEntity($entityClassName, $entityId);
@@ -129,15 +129,18 @@ class RequestHandler
 
     /**
      * @param string $entityClassName
+     * @return string
      *
      * @throws EntityNotFoundException
      */
-    protected function existClassName($entityClassName)
+    protected function resolveClassName($entityClassName)
     {
         $entityClass = $this->entityRoutingHelper->resolveEntityClass($entityClassName);
 
         if (!class_exists($entityClass)) {
             throw new EntityNotFoundException();
         }
+
+        return $entityClass;
     }
 }
