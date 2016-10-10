@@ -630,6 +630,10 @@ workflows:
                         entity: $checkout
                         token: $state_token
                         attribute: $.result.tokenCheckoutState
+                    - '@run_action_group':
+                        action_group: oro_update_shipping_price
+                        parameters_mapping:
+                            checkout: $checkout
                     - '@tree':
                         conditions:
                             '@not':
@@ -638,10 +642,6 @@ workflows:
                                     state1: $.result.currentCheckoutState
                                     state2: $.result.tokenCheckoutState
                         actions:
-                            - '@run_action_group':
-                                action_group: oro_update_shipping_price
-                                parameters_mapping:
-                                    checkout: $checkout
                             - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
                             - '@delete_checkout_state':
                                 entity: $checkout
@@ -760,6 +760,10 @@ workflows:
                                 entity: $checkout
                                 token: $state_token
                                 attribute: $.result.tokenCheckoutState
+                            - '@run_action_group':
+                                action_group: oro_update_shipping_price
+                                parameters_mapping:
+                                    checkout: $checkout
                             - '@tree':
                                 conditions:
                                     '@not':
@@ -768,10 +772,6 @@ workflows:
                                             state1: $.result.currentCheckoutState
                                             state2: $.result.tokenCheckoutState
                                 actions:
-                                    - '@run_action_group':
-                                        action_group: oro_update_shipping_price
-                                        parameters_mapping:
-                                            checkout: $checkout
                                     - '@assign_value': [$.result.savedCheckoutState, $.result.tokenCheckoutState]
                                     - '@delete_checkout_state':
                                         entity: $checkout
