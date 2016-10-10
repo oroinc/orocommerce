@@ -39,6 +39,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
     const TEST_FIRST_RESULT = 30;
     const TEST_MAX_RESULTS = 10;
     const TEST_BACKEND_PREFIX = '/admin';
+    const TEST_RESULTS = [1,2,3,4];
 
     /**
      * @var array
@@ -208,7 +209,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
             ->setMethods(['apply'])
             ->getMock();
         $this->results = $this->getMockBuilder('Oro\Bundle\SearchBundle\Query\Result')->disableOriginalConstructor()->setMethods(['getElements'])->getMock();
-        $this->results->method('getElements')->willReturn([1,2,3,4]);
+        $this->results->method('getElements')->willReturn(self::TEST_RESULTS);
 
         $this->searchQuery = $this->getMockBuilder('Oro\Bundle\SearchBundle\Query\SearchQueryInterface')
             ->disableOriginalConstructor()
@@ -301,10 +302,11 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
 
     public function testSearchEntities()
     {
-        $this->searchHandler->search('test', 0, 10);
+        $result = $this->searchHandler->search('test', 0, 10);
+
+        $this->assertArrayHasKey('results', $result, 'Results key not found');
+        $this->assertEquals(count($result['results']), count(self::TEST_RESULTS), sprintf('Search result should containe %d elements', count(self::TEST_RESULTS)));
+
     }
-
-
-
 
 }
