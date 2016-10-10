@@ -67,7 +67,7 @@ define([
          *
          * @property {Array}
          */
-        logicWordCases: [],
+        boolCases: [],
 
         /**
          *
@@ -97,7 +97,6 @@ define([
             var _this = this;
 
             this.dataWordCases = this.getStrings(options.data);
-            this.logicWordCases = this.getStrings(options.grouping);
 
             _.each(this.options.allowedOperations, function(item) {
                 _this.operationsCases[item] = _this.getStrings(_this.options.operations[item]);
@@ -116,7 +115,7 @@ define([
                 });
             });
 
-            // this.initAutocomplete();
+            this.initAutocomplete();
         },
 
         /**
@@ -150,6 +149,8 @@ define([
             var dataWordsAreValid = _.every(groups.expr, function(item) {
                 return _this.checkWord(item);
             });
+
+            console.log('isValid', normalized, logicIsValid && dataWordsAreValid, this.error);
 
             return logicIsValid && dataWordsAreValid;
         },
@@ -345,26 +346,39 @@ define([
             }
 
             if (isCheckedWord.dataExpression) { // previous word is a complete data expression
-                result = this.getFilteredSuggests(this.logicWordCases, wordUnderCaret);
+                result = this.getFilteredSuggests(this.boolCases, wordUnderCaret);
             } else if (isCheckedWord.dataWord) { // previous word is a data expression word
                 result = this.getFilteredSuggests(this.operationsCases, wordUnderCaret);
             } else if (isCheckedWord.operation) { // previous word is an operation (=, !=, etc.)
                 result = this.getFilteredSuggests(isCheckedWord.hasValues, wordUnderCaret);
-            } else if (isCheckedWord.logic || wordsLength === 1) {
+            } else if (isCheckedWord.compare || wordsLength === 1) {
                 result = this.getFilteredSuggests(this.dataWordCases, wordUnderCaret);
             }
 
             return result;
 
             function wordIs(word) {
-                var isDataExpression = _this.isDataExpression(word);
+                var isDataExpression = _this.checkTerm(word, _this.dataWordCases);
+                var isMath = _this.checkTerm(word, _this.operationsCases.math);
+                var isBool = _this.checkTerm(word, _this.operationsCases.bool);
+                var isCompare = _this.checkTerm(word, _this.operationsCases.compare);
+                var isInclusion = _this.checkTerm(word, _this.operationsCases.inclusion);
+
+                console.log(word,
+                    'isDataExpression', isDataExpression,
+                    'isMath', isMath,
+                    'isBool', isBool,
+                    'isCompare', isCompare,
+                    'isInclusion', isInclusion);
 
                 return {
-                    logic: !_.isEmpty(groups.logicWords) && _this.contains(_this.logicWordCases, word),
-                    dataWord: !_.isEmpty(groups.dataWords) && _this.contains(_this.dataWordCases, word),
-                    dataExpression: !_.isEmpty(groups.dataWords) && _this.isDataExpression(word).isFull,
-                    operation: isDataExpression.hasExpression,
-                    hasValues: isDataExpression.values
+                    /*
+                     compare: isBool,
+                     dataWord: isDataExpression,
+                     dataExpression: !_.isEmpty(groups.dataWords) && _this.isDataExpression(word).isFull,
+                     operation: isDataExpression.hasExpression,
+                     hasValues: isDataExpression.values
+                     */
 
                 };
             }
@@ -373,10 +387,18 @@ define([
         /**
          *
          * @param term
+         * @param base
          * @returns {*}
          */
-        checkTerm: function(term) {
-            var isCorrect = term ? this.contains(this.dataWordCases, this.removeBracketsWithContent(term, '[]')) : false;
+        checkTerm: function(term, base) {
+            var bracketsMatch = term.match(/\[(.*?)\]/g)[0];
+
+            var clearedTerm = this.replaceBetween(term, '[]', 'wipe');
+
+            console.log(term, clearedTerm);
+
+            var validBrackets = bracketsMatch && bracketsMatch.length ? this.checkArray(this.replaceBetween(bracketsMatch, '[]').split(',')) : true;
+            var isCorrect = term && validBrackets ? this.contains(base, clearedTerm) : false;
 
             this.error.term = !isCorrect ? '\'' + term + '\'' + ' is wrong' : undefined;
 
@@ -393,7 +415,7 @@ define([
             var matchSplit = this.splitTermAndExpr(string, match),
                 pathValue = this.getValueByPath(this.options.data, matchSplit.term);
 
-            return this.checkTerm(matchSplit.term) && this.checkExpression(matchSplit.expr, pathValue);
+            return this.checkTerm(matchSplit.term, this.dataWordCases) && this.checkExpression(matchSplit.expr, pathValue);
         },
 
         /**
@@ -403,11 +425,10 @@ define([
          * @returns {*}
          */
         checkInclusion: function(string, match) {
-            var matchSplit = this.splitTermAndExpr(string, match);
+            var matchSplit = this.splitTermAndExpr(string, match),
+                expr = this.replaceBetween(matchSplit.expr, '[]', 'trim');
 
-            var expr = this.trimBrackets(matchSplit.expr, '[]');
-
-            return this.checkTerm(matchSplit.term) && (this.checkArray(expr.split(',')) || this.checkTerm(expr));
+            return this.checkTerm(matchSplit.term, this.dataWordCases) && (this.checkArray(expr.split(',')) || this.checkTerm(expr, this.dataWordCases));
         },
 
         /**
@@ -434,9 +455,8 @@ define([
          * @returns {boolean}
          */
         checkValue: function(value) {
-            var num = Number(value);
-
-            var isCorrect = !_.isEmpty(value) && ((_.isNumber(num) && !_.isNaN(num)) || _.contains(this.dataWordCases, value));
+            var num = Number(value),
+                isCorrect = !_.isEmpty(value) && ((_.isNumber(num) && !_.isNaN(num)) || _.contains(this.dataWordCases, value));
 
             this.error.value = !isCorrect ? 'Wrong value is \'' + value + '\'' : undefined;
 
@@ -469,7 +489,7 @@ define([
                 return false;
             }
 
-            expr = this.removeBracketsWithContent(this.trimBrackets(expr, '[]'), '[]');
+            expr = this.replaceBetween(this.replaceBetween(expr, '[]', 'trim'), '[]', 'wipe');
 
             var _this = this;
 
@@ -503,27 +523,44 @@ define([
         /**
          *
          * @param string
+         * @returns {{compare: (*|boolean), inclusion: (*|boolean), math: (*|boolean), match: undefined}}
+         */
+        getOperationType: function(string) {
+            var compareMatch = string.match(this.opsRegEx['compare']),
+                inclusionMatch = string.match(this.opsRegEx['inclusion']),
+                mathMatch = string.match(this.opsRegEx['math']),
+                doCompare = compareMatch && compareMatch.length === 1 && this.allowedCompare,
+                doInclusion = inclusionMatch && inclusionMatch.length === 1 && this.allowedInclusion,
+                doMath = this.allowedMath && !this.allowedCompare && !this.allowedInclusion,
+                match = doCompare ? compareMatch : (doInclusion ? inclusionMatch : (doMath ? mathMatch : undefined));
+
+            return {
+                compare: doCompare,
+                inclusion: doInclusion,
+                math: doMath,
+                match: match
+            };
+        },
+
+        /**
+         *
+         * @param string
          * @returns {*}
          */
         checkWord: function(string) {
-            var compareMatch = string.match(this.opsRegEx['compare']);
-            var inclusionMatch = string.match(this.opsRegEx['inclusion']);
+            var operationType = this.getOperationType(string);
 
-            var doCompare = compareMatch && compareMatch.length === 1 && this.allowedCompare;
-            var doInclusion = inclusionMatch && inclusionMatch.length === 1 && this.allowedInclusion;
-            var doMath = this.allowedMath && !this.allowedCompare && !this.allowedInclusion;
-
-            if (doCompare) {
-                var validCompare = this.checkCompare(string, compareMatch);
-            } else if (doInclusion) {
-                var validInclusion = this.checkInclusion(string, inclusionMatch);
-            } else if (doMath) {
+            if (operationType.compare) {
+                var validCompare = this.checkCompare(string, operationType.match);
+            } else if (operationType.inclusion) {
+                var validInclusion = this.checkInclusion(string, operationType.match);
+            } else if (operationType.math) {
                 var validExpression = this.checkExpression(string);
             }
 
             var isValid = validCompare || validInclusion || validExpression;
 
-            if (isValid){
+            if (isValid) {
                 this.error = {};
             } else {
                 this.error.word = 'Wrong part in \'' + string + '\'';
@@ -543,15 +580,14 @@ define([
                 return null;
             }
 
-            var reString;
-
-            var escapedOps = opsArr.map(function(item) {
-                if (!item.match(/\s|\w/gi)) {
-                    return '\\' + item.split('').join('\\');
-                } else {
-                    return item.replace(/\s+/gi, '\\s?');
-                }
-            });
+            var reString,
+                escapedOps = opsArr.map(function(item) {
+                    if (!item.match(/\s|\w/gi)) {
+                        return '\\' + item.split('').join('\\');
+                    } else {
+                        return item.replace(/\s+/gi, '\\s?');
+                    }
+                });
 
             switch (name) {
                 case 'inclusion':
@@ -575,10 +611,12 @@ define([
          * @returns {{string: string, position: number}}
          */
         getNormalized: function(value, regex, caretPosition) {
-            var hasCutPosition = !_.isUndefined(caretPosition);
-            var string = hasCutPosition ? this.getStringPart(value, 0, caretPosition) : value;
+            var hasCutPosition = !_.isUndefined(caretPosition),
+                string = hasCutPosition ? this.getStringPart(value, 0, caretPosition) : value;
 
-            string = this.removeBrackets(string, '()', ' ');
+            string = this.replaceBetween(string, '()', ' ');
+
+            string = string.replace(/\s*\]/g, ']').replace(/\[\s*/g, '[');
 
             string = string.replace(/\s*,\s*/g, ',');
 
@@ -632,8 +670,8 @@ define([
          * @returns {Array}
          */
         getStrings: function(src, baseName, baseData) {
-            var _this = this;
-            var arr = [];
+            var _this = this,
+                arr = [];
 
             if (_.isArray(src) && !baseName) {
                 arr = _.union(arr, src);
@@ -705,6 +743,13 @@ define([
                 });
             }
         },
+
+        /**
+         *
+         * @param arr
+         * @param value
+         * @returns {Boolean}
+         */
         contains: function(arr, value) {
             if (!_.isArray(arr)) {
                 return false;
@@ -714,6 +759,13 @@ define([
                 return value.toLowerCase() === item.toLowerCase();
             });
         },
+
+        /**
+         *
+         * @param obj
+         * @param path
+         * @returns {*}
+         */
         getValueByPath: function(obj, path) {
             var result = obj;
 
@@ -725,68 +777,47 @@ define([
 
             return result;
         },
+
         /**
          *
-         * @param arr
-         * @param name
-         * @param output
+         * @param input
+         * @param brackets
+         * @param type
          * @param replace
+         * @returns {String}
          */
-        callRecursively: function(arr, name, output, replace) {
+        replaceBetween: function(input, brackets, type, replace) {
             var _this = this;
 
-            if (_.isArray(arr)) {
-                _.each(arr, function(item) {
-                    output = _this[name].call(_this, output, item, replace);
-                })
-            }
-        },
-
-        /**
-         *
-         * @param string
-         * @param brackets
-         * @param replace
-         * @returns {String}
-         */
-        removeBracketsWithContent: function(string, brackets, replace) {
-            if (_.isArray(brackets)) {
-                this.callRecursively(brackets, 'removeBracketsWithContent', string, replace);
+            if (_.isArray(input)) {
+                _.each(input, function(string, i) {
+                    input[i] = _this.replaceBetween(string, brackets, type, replace);
+                });
+            } else if (_.isArray(brackets)) {
+                _.each(brackets, function(item) {
+                    input = _this.replaceBetween(input, item, type, replace);
+                });
+            } else {
+                input = _replace(input, brackets, type, replace).trim();
             }
 
-            return string.replace(new RegExp('\\' + brackets.split('').join('(.*?)\\'), 'g'), replace || '')
-        },
+            console.log(input);
 
-        /**
-         *
-         * @param string
-         * @param brackets
-         * @param replace
-         * @returns {String}
-         */
-        removeBrackets: function(string, brackets, replace) {
-            if (_.isArray(brackets)) {
-                this.callRecursively(brackets, 'removeBrackets', string, replace);
+            return input;
+
+            function _replace(string, brackets, type, replace) {
+                switch (type) {
+                    case 'trim':
+                        return string.replace(new RegExp('^' + '\\' + brackets.split('').join('|\\') + '$', 'g'), replace || '');
+                        break;
+                    case 'wipe':
+                        return string.replace(new RegExp('\\' + brackets.split('').join('(.*?)\\'), 'g'), replace || '');
+                        break;
+                    default:
+                        return string.replace(new RegExp('\\' + brackets.split('').join('|\\'), 'g'), replace || '');
+                }
             }
-
-            return string.replace(new RegExp('\\' + brackets.split('').join('|\\'), 'g'), replace || '')
-        },
-
-        /**
-         *
-         * @param string
-         * @param brackets
-         * @param replace
-         * @returns {String}
-         */
-        trimBrackets: function(string, brackets, replace) {
-            if (_.isArray(brackets)) {
-                this.callRecursively(brackets, 'trimBrackets', string, replace);
-            }
-
-            return string.replace(new RegExp('^' + '\\' + brackets.split('').join('|\\') + '$', 'g'), replace || '')
         }
-
     });
 
     return RuleEditorComponent;
