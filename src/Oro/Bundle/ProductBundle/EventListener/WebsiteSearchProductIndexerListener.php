@@ -77,7 +77,7 @@ class WebsiteSearchProductIndexerListener
             );
 
             foreach ($localizations as $localization) {
-                $localizationId =  $localization->getId();
+                $localizationId = $localization->getId();
                 $placeholders = [LocalizationIdPlaceholder::NAME => $localizationId];
                 $event->addPlaceholderField(
                     $product->getId(),
