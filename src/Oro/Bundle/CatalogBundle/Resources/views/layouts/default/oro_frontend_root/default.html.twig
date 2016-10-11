@@ -23,40 +23,41 @@
     }) }}
 {% endblock %}
 
+
 {% block _hero_promo_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' hero-promo-item'
+    '~class': ' hero-promo-item'
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <div class="hero-promo-item__picture">
-            <img class="hero-promo-item__img"
-                src="{% image '@OroCatalogBundle/Resources/public/default/scss/components/hero-promo-item/hero-promo-item-1.png' %}{{ asset_url }}{% endimage %}"
-                alt="Ololo">
-        </div>
-        <div class="hero-promo-item__info">
-            <img class="hero-promo-item__img"
-                src="{% image '@OroCatalogBundle/Resources/public/default/scss/components/hero-promo-item/hero-promo-item-2.png' %}{{ asset_url }}{% endimage %}"
-                alt="Ololo">
-            <div class="hero-promo-item__cover">
-                <div class="hero-promo-item__desc">
-                    {% if item.prelabel|default('') %}
-                        <span class="hero-promo-item__pretitle">{{ item.prelabel }}</span>
-                    {% endif %}
-                    {% if item.label|default('') %}
-                        <h2 class="hero-promo-item__title">{{ item.label }}</h2>
-                    {% endif %}
-                    {% if item.link|default('') and item.link_label|default('') %}
-                        <a href="{{ app.request.getUriForPath(item.link) }}" class="btn theme-btn btn-dark hero-promo-item__view-btn">
-                            {{ item.link_label }} <i class="cf-right-open-mini"></i>
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-            {% endif %}
-        </div>
         {% if item.link|default('') %}
-            </a>
+        <a href="{{ app.request.getUriForPath(item.link) }}">
+            {% endif %}
+            <div class="hero-promo-item__picture">
+                <img class="hero-promo-item__img"
+                     src="{{ item.image }}">
+            </div>
+            <div class="hero-promo-item__info">
+                {% if item.prelabel|default('') or item.label|default('') or item.link|default('') %}
+                    <div class="hero-promo-item__cover">
+                        <div class="hero-promo-item__desc">
+                            {% if item.prelabel|default('') %}
+                                <span class="hero-promo-item__pretitle">{{ item.prelabel }}</span>
+                            {% endif %}
+                            {% if item.label|default('') %}
+                                <h2 class="hero-promo-item__title">{{ item.label }}</h2>
+                            {% endif %}
+                            {% if item.link|default('') and item.link_label|default('') %}
+                                <a href="{{ app.request.getUriForPath(item.link) }}" class="btn theme-btn btn-dark hero-promo-item__view-btn">
+                                    {{ item.link_label }} <i class="cf-right-open-mini"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            {% if item.link|default('') %}
+        </a>
         {% endif %}
     </div>
 {% endblock %}
