@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
@@ -60,27 +61,44 @@ class WebsiteSearchProductIndexerListener
 
 
             // Localized fields
+            $placeholders = [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION];
+            $event->addPlaceholderField($product->getId(), 'title', (string)$product->getDefaultName(), $placeholders);
+
+            $event->addPlaceholderField(
+                $product->getId(),
+                'description',
+                (string)$product->getDefaultDescription(),
+                $placeholders
+            );
+
+            $event->addPlaceholderField(
+                $product->getId(),
+                'short_desc',
+                (string)$product->getDefaultShortDescription(),
+                $placeholders
+            );
+
             foreach ($localizations as $localization) {
                 $localizationId = $localization ? $localization->getId() : 0;
                 $placeholders = [LocalizationIdPlaceholder::NAME => $localizationId];
                 $event->addPlaceholderField(
                     $product->getId(),
                     'title',
-                    $product->getName($localization),
+                    (string)$product->getName($localization),
                     $placeholders
                 );
 
                 $event->addPlaceholderField(
                     $product->getId(),
                     'description',
-                    $product->getDescription($localization),
+                    (string)$product->getDescription($localization),
                     $placeholders
                 );
 
                 $event->addPlaceholderField(
                     $product->getId(),
                     'short_desc',
-                    $product->getShortDescription($localization),
+                    (string)$product->getShortDescription($localization),
                     $placeholders
                 );
             }

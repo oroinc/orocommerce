@@ -5,22 +5,22 @@ namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 /**
  * This class is DTO for passing value with placeholders needed to replace
  */
-class ValueWithPlaceholders
+class PlaceholderValue
 {
-    /** @var array */
-    private $placeholders;
-
     /** @var string */
     private $value;
+
+    /** @var array */
+    private $placeholders = [];
 
     /**
      * @param string $value
      * @param array $placeholders
      */
-    public function __construct($value, array $placeholders)
+    public function __construct($value, array $placeholders = [])
     {
+        $this->value = (string)$value;
         $this->placeholders = $placeholders;
-        $this->value = $value;
     }
 
     /**
@@ -37,5 +37,13 @@ class ValueWithPlaceholders
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->value;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
+namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;

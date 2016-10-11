@@ -77,12 +77,7 @@ class OrmEngineTest extends AbstractSearchWebTestCase
                 'phone' => [
                     'name' => 'phone',
                     'type' => 'text'
-                ],
-                'all_text' => [
-                    'name' => 'all_text_LOCALIZATION_ID',
-                    'type' => 'text'
                 ]
-
             ],
         ]
     ];
@@ -126,8 +121,8 @@ class OrmEngineTest extends AbstractSearchWebTestCase
             $this->getContainer()->get('oro_entity.doctrine_helper'),
             $this->mappingProviderMock,
             $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
-            $this->getContainer()->get('oro_website_search.provider.index_data'),
-            $this->getContainer()->get('oro_website_search.placeholder.visitor_replace')
+            $this->getContainer()->get('oro_website_search.engine.index_data'),
+            $this->getContainer()->get('oro_website_search.placeholder_decorator')
         );
         $indexer->setDriver($driver);
 
@@ -194,15 +189,15 @@ class OrmEngineTest extends AbstractSearchWebTestCase
         $query->getCriteria()->orderBy(['stringValue' => Query::ORDER_ASC]);
         $items = $this->getSearchItems($query);
 
-        $this->assertEquals('item1@mail.com', $items[0]->getRecordTitle());
-        $this->assertEquals('item2@mail.com', $items[1]->getRecordTitle());
-        $this->assertEquals('item3@mail.com', $items[2]->getRecordTitle());
-        $this->assertEquals('item4@mail.com', $items[3]->getRecordTitle());
-        $this->assertEquals('item5@mail.com', $items[4]->getRecordTitle());
-        $this->assertEquals('item6@mail.com', $items[5]->getRecordTitle());
-        $this->assertEquals('item7@mail.com', $items[6]->getRecordTitle());
-        $this->assertEquals('item8@mail.com', $items[7]->getRecordTitle());
-        $this->assertEquals('item9@mail.com', $items[8]->getRecordTitle());
+        $this->assertStringStartsWith('item1@mail.com', $items[0]->getRecordTitle());
+        $this->assertStringStartsWith('item2@mail.com', $items[1]->getRecordTitle());
+        $this->assertStringStartsWith('item3@mail.com', $items[2]->getRecordTitle());
+        $this->assertStringStartsWith('item4@mail.com', $items[3]->getRecordTitle());
+        $this->assertStringStartsWith('item5@mail.com', $items[4]->getRecordTitle());
+        $this->assertStringStartsWith('item6@mail.com', $items[5]->getRecordTitle());
+        $this->assertStringStartsWith('item7@mail.com', $items[6]->getRecordTitle());
+        $this->assertStringStartsWith('item8@mail.com', $items[7]->getRecordTitle());
+        $this->assertStringStartsWith('item9@mail.com', $items[8]->getRecordTitle());
     }
 
     public function testSearchByAliasWithSelect()
@@ -215,15 +210,15 @@ class OrmEngineTest extends AbstractSearchWebTestCase
         $items = $this->getSearchItems($query);
 
         $this->assertCount(9, $items);
-        $this->assertEquals('item1@mail.com', $items[0]->getRecordTitle());
-        $this->assertEquals('item2@mail.com', $items[1]->getRecordTitle());
-        $this->assertEquals('item3@mail.com', $items[2]->getRecordTitle());
-        $this->assertEquals('item4@mail.com', $items[3]->getRecordTitle());
-        $this->assertEquals('item5@mail.com', $items[4]->getRecordTitle());
-        $this->assertEquals('item6@mail.com', $items[5]->getRecordTitle());
-        $this->assertEquals('item7@mail.com', $items[6]->getRecordTitle());
-        $this->assertEquals('item8@mail.com', $items[7]->getRecordTitle());
-        $this->assertEquals('item9@mail.com', $items[8]->getRecordTitle());
+        $this->assertStringStartsWith('item1@mail.com', $items[0]->getRecordTitle());
+        $this->assertStringStartsWith('item2@mail.com', $items[1]->getRecordTitle());
+        $this->assertStringStartsWith('item3@mail.com', $items[2]->getRecordTitle());
+        $this->assertStringStartsWith('item4@mail.com', $items[3]->getRecordTitle());
+        $this->assertStringStartsWith('item5@mail.com', $items[4]->getRecordTitle());
+        $this->assertStringStartsWith('item6@mail.com', $items[5]->getRecordTitle());
+        $this->assertStringStartsWith('item7@mail.com', $items[6]->getRecordTitle());
+        $this->assertStringStartsWith('item8@mail.com', $items[7]->getRecordTitle());
+        $this->assertStringStartsWith('item9@mail.com', $items[8]->getRecordTitle());
     }
 
     public function testSearchByAliasWithCriteria()
@@ -238,6 +233,6 @@ class OrmEngineTest extends AbstractSearchWebTestCase
         $items = $this->getSearchItems($query);
 
         $this->assertCount(1, $items);
-        $this->assertEquals('item5@mail.com', $items[0]->getRecordTitle());
+        $this->assertStringStartsWith('item5@mail.com', $items[0]->getRecordTitle());
     }
 }
