@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -30,7 +30,7 @@ class EntityStub implements LineItemsAwareInterface
     }
 
     /**
-     * @return \stdClass
+     * @return AbstractAddress
      */
     public function getShippingAddress()
     {

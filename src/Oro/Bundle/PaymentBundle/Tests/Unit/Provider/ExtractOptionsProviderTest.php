@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PayPalBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Provider;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -9,8 +9,8 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\PaymentBundle\Event\ExtractLineItemPaymentOptionsEvent;
 use Oro\Bundle\PaymentBundle\Event\ExtractAddressOptionsEvent;
-use Oro\Bundle\PayPalBundle\Provider\ExtractOptionsProvider;
-use Oro\Bundle\PayPalBundle\Tests\Unit\Method\EntityStub;
+use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\EntityStub;
 
 class ExtractOptionsProviderTest extends \PHPUnit_Framework_TestCase
 {
