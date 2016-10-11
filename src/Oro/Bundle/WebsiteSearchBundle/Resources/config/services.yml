@@ -100,13 +100,6 @@ services:
             - '@oro_website_search.query_factory.inner'
             - '@oro_website_search.engine'
 
-    oro_website_search.product_visibility_restriction_listener:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener'
-        arguments:
-            - '@oro_product.product.manager'
-        tags:
-            - { name: kernel.event_listener, event: oro_website_search.before_search, method: process }
-
     oro_website_search.website_reindexation_on_create_delete_listener:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\WebsiteReindexationOnCreateDeleteListener'
         arguments:
