@@ -5,9 +5,11 @@ namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingRules;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Symfony\Component\DomCrawler\Form;
 
 /**
@@ -20,11 +22,23 @@ class ShippingRuleControllerTest extends WebTestCase
 {
     const NAME = 'New rule';
 
+    /**
+     * @var ShippingMethodRegistry
+     */
+    protected $registry;
+
+    /**
+     * @var Translator;
+     */
+    protected $translator;
+
     protected function setUp()
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadShippingRules::class, LoadUserData::class]);
+        $this->registry = static::getContainer()->get('oro_shipping.shipping_method.registry');
+        $this->translator = static::getContainer()->get('translator');
     }
 
     public function testIndex()
@@ -50,6 +64,15 @@ class ShippingRuleControllerTest extends WebTestCase
         /** @var ShippingRule $shippingRule */
         $shippingRule = $this->getReference('shipping_rule.1');
 
+        $shipMethods = $shippingRule->getMethodConfigs()->getValues();
+        $shipMethodsLabels = [];
+        foreach ($shipMethods as $method) {
+            $label = $this->registry->getShippingMethod($method->getMethod())->getLabel();
+            if (strlen($label) > 0) {
+                $shipMethodsLabels[] = '<li>' . $this->translator->trans($label) . '</li>';
+            }
+        }
+
         $expectedData = [
             'data' => [
                 [
@@ -59,7 +82,7 @@ class ShippingRuleControllerTest extends WebTestCase
                     'priority' => $shippingRule->getPriority(),
                     'currency' => $shippingRule->getCurrency(),
                     'conditions' => $shippingRule->getConditions(),
-                    'methodConfigs' => implode('</br>', $shippingRule->getMethodConfigs()->getValues()),
+                    'methodConfigs' => '<ol>'. implode('</br>', $shipMethodsLabels) . '</ol>',
                     'destinations' => implode('</br>', $shippingRule->getDestinations()->getValues()),
                 ],
             ],
@@ -94,7 +117,7 @@ class ShippingRuleControllerTest extends WebTestCase
         for ($i = 0; $i < $expectedDataCount; $i++) {
             foreach ($expectedData['data'][$i] as $key => $value) {
                 $this->assertArrayHasKey($key, $data[$i]);
-                $this->assertEquals($value, $data[$i][$key]);
+                $this->assertEquals(trim($value), trim($data[$i][$key]));
             }
         }
     }
@@ -191,7 +214,8 @@ class ShippingRuleControllerTest extends WebTestCase
         $destination = $shippingRule->getDestinations();
         $this->assertContains((string)$destination[0], $html);
         $methodConfigs = $shippingRule->getMethodConfigs();
-        $this->assertContains($methodConfigs[0]->getMethod(), $html);
+        $label = $this->registry->getShippingMethod($methodConfigs[0]->getMethod())->getLabel();
+        $this->assertContains($this->translator->trans($label), $html);
     }
 
     /**
@@ -303,7 +327,8 @@ class ShippingRuleControllerTest extends WebTestCase
         $destination = $shippingRule->getDestinations();
         $this->assertContains((string)$destination[0], $html);
         $methodConfigs = $shippingRule->getMethodConfigs();
-        $this->assertContains($methodConfigs[0]->getMethod(), $html);
+        $label = $this->registry->getShippingMethod($methodConfigs[0]->getMethod())->getLabel();
+        $this->assertContains($this->translator->trans($label), $html);
     }
 
     /**
