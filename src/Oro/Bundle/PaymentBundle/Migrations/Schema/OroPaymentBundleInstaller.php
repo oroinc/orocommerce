@@ -30,7 +30,7 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     public function getMigrationVersion()
     {
-        return 'v1_4';
+        return 'v1_5';
     }
 
     /**
@@ -124,6 +124,7 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
         $table->addColumn('transaction_options', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('frontend_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
@@ -194,6 +195,12 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['user_owner_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );

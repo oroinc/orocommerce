@@ -4,6 +4,7 @@ oro:
             label: UPS
         transport:
             label: UPS API
+            labels.label: Label
             base_url.label: Base URL
             api_user.label: API User
             api_password.label: API Password

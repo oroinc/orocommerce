@@ -2,21 +2,23 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Method;
 
-use Oro\Component\Testing\Unit\EntityTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
+use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodType;
 use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Model\PriceResponse;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,6 +49,11 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
      */
     protected $upsShippingMethod;
 
+    /**
+     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $localizationHelper;
+
     protected function setUp()
     {
         $this->transportProvider = $this->getMockBuilder(UPSTransportProvider::class)
@@ -72,8 +79,18 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
             ['id' => 1, 'name' => 'ups_channel_1', 'transport' => $this->transport]
         );
 
+        $this->localizationHelper = $this
+            ->getMockBuilder(LocalizationHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->upsShippingMethod =
-            new UPSShippingMethod($this->transportProvider, $this->channel, $this->priceRequestFactory);
+            new UPSShippingMethod(
+                $this->transportProvider,
+                $this->channel,
+                $this->priceRequestFactory,
+                $this->localizationHelper
+            );
     }
 
     public function testIsGrouped()
@@ -88,6 +105,13 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLabel()
     {
+        $this->transport
+            ->expects(self::any())
+            ->method('getLabels')->willReturn(new ArrayCollection());
+
+        $this->localizationHelper
+            ->expects(self::once())
+            ->method('getLocalizedValue')->willReturn('ups_channel_1');
         static::assertEquals('ups_channel_1', $this->upsShippingMethod->getLabel());
     }
 
