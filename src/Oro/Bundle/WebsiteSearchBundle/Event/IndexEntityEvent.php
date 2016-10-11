@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
-use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 
 use Symfony\Component\EventDispatcher\Event;
 
@@ -28,11 +27,11 @@ class IndexEntityEvent extends Event
 
     /**
      * @param object[] $entities
-     * @param array    $context
+     * @param array $context
      */
     public function __construct(array $entities, array $context)
     {
-        $this->context  = $context;
+        $this->context = $context;
         $this->entities = $entities;
     }
 
@@ -53,89 +52,50 @@ class IndexEntityEvent extends Event
     }
 
     /**
-     * @param int              $entityId
-     * @param string           $fieldName
-     * @param string|int|float $value
+     * @param int $entityId
+     * @param string $fieldName
+     * @param string|int|float|\DateTime $value
      * @return $this
+     * @throws \InvalidArgumentException if value is array
      */
     public function addField($entityId, $fieldName, $value)
     {
-        $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] = $value;
+        if (!is_scalar($value) && !$value instanceof \DateTime) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Scalars and \DateTime are supported only, "%s" given',
+                    is_object($value) ? get_class($value) : gettype($value)
+                )
+            );
+        }
+
+        $this->entitiesData[$entityId][$fieldName] = $value;
 
         return $this;
     }
 
     /**
-     * @param int    $entityId
+     * @param int $entityId
      * @param string $fieldName
-     * @param string|int|float
-     * @param array  $placeholders
+     * @param string $value
+     * @param array $placeholders
      * @return $this
+     * @throws \InvalidArgumentException if value is array
      */
     public function addPlaceholderField($entityId, $fieldName, $value, $placeholders)
     {
-        $this->entitiesData[$entityId][IndexDataProvider::PLACEHOLDER_VALUES_KEY][$fieldName][] =
-            new ValueWithPlaceholders($value, $placeholders);
+        if (!is_string($value)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Strings are supported only, "%s" given',
+                    is_object($value) ? get_class($value) : gettype($value)
+                )
+            );
+        }
+
+        $this->entitiesData[$entityId][$fieldName][$value] = new PlaceholderValue($value, $placeholders);
 
         return $this;
-    }
-
-    /**
-     * @param int    $entityId
-     * @param string $fieldName
-     * @param string $string
-     * @param string $placeholderKey
-     * @param string $placeholderValue
-     */
-    public function appendToPlaceholderField($entityId, $fieldName, $string, $placeholderKey, $placeholderValue)
-    {
-        $placeholderData = $this->getPlaceholderFieldValue($entityId, $fieldName);
-
-        if (null === $placeholderData) {
-            return;
-        }
-
-        $resultPlaceholderData = [];
-
-        foreach ($placeholderData as $valueWithPlaceholders) {
-            $placeholders = $valueWithPlaceholders->getPlaceholders();
-            $value        = $valueWithPlaceholders->getValue();
-            $isMatching   = array_key_exists($placeholderKey, $placeholders) &&
-                $placeholderValue === $placeholders[$placeholderKey];
-            if (true === $isMatching) {
-                $newValue                 = $value . ' ' . $string;
-                $newValueWithPlaceholders = new ValueWithPlaceholders($newValue, $placeholders);
-                $resultPlaceholderData[]  = $newValueWithPlaceholders;
-            } else {
-                $resultPlaceholderData[] = $valueWithPlaceholders;
-            }
-        }
-
-        $this->entitiesData[$entityId][IndexDataProvider::PLACEHOLDER_VALUES_KEY][$fieldName] = $resultPlaceholderData;
-    }
-
-    /**
-     * @param int    $entityId
-     * @param string $fieldName
-     * @return string|object|null
-     */
-    public function getFieldValue($entityId, $fieldName)
-    {
-        return isset($this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName]) ?
-            $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] :
-            null;
-    }
-
-    /**
-     * @param int    $entityId
-     * @param string $fieldName
-     * @return ValueWithPlaceholders[]|null
-     */
-    public function getPlaceholderFieldValue($entityId, $fieldName)
-    {
-        return isset($this->entitiesData[$entityId][IndexDataProvider::PLACEHOLDER_VALUES_KEY][$fieldName]) ?
-            $this->entitiesData[$entityId][IndexDataProvider::PLACEHOLDER_VALUES_KEY][$fieldName] :
-            null;
     }
 
     /**

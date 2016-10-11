@@ -450,3 +450,11 @@ services:
         class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
         calls:
             - [setEntityName, ['%oro_product.entity.product.class%']]
+
+    oro_product.product_visibility_restriction_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener'
+        arguments:
+            - '@oro_product.product.manager'
+#        @todo: BB-4191
+#        tags:
+#            - { name: kernel.event_listener, event: oro_website_search.before_search, method: process }

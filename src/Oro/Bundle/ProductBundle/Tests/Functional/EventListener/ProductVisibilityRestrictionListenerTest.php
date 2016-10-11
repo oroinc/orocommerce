@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\EventListener;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 
 use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\Common\Collections\Expr\CompositeExpression;

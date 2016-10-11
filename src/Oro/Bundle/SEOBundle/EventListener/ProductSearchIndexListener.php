@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\EventListener;
 
+use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
@@ -55,11 +56,11 @@ class ProductSearchIndexListener
             // Localized fields
             foreach ($localizations as $localization) {
                 $metaStrings = $this->getMetaStringsFromProduct($product, $localization);
-                $this->appendToPlaceholderField(
-                    $event,
+                $event->addPlaceholderField(
                     $product->getId(),
-                    $localization,
-                    $metaStrings
+                    IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                    $metaStrings,
+                    [LocalizationIdPlaceholder::NAME => $localization->getId()]
                 );
             }
         }
@@ -90,31 +91,5 @@ class ProductSearchIndexListener
     private function cleanUpString($string)
     {
         return preg_replace('/[[:cntrl:]]/', '', $string);
-    }
-
-    /**
-     * @param IndexEntityEvent $event
-     * @param integer          $entityId
-     * @param Localization     $localization
-     * @param string           $metaStrings
-     * @param string           $fieldName
-     */
-    private function appendToPlaceholderField(
-        IndexEntityEvent $event,
-        $entityId,
-        Localization $localization,
-        $metaStrings,
-        $fieldName = 'all_text'
-    ) {
-        $placeholderKey   = LocalizationIdPlaceholder::NAME;
-        $placeholderValue = $localization->getId();
-
-        $event->appendToPlaceholderField(
-            $entityId,
-            $fieldName,
-            $metaStrings,
-            $placeholderKey,
-            $placeholderValue
-        );
     }
 }
