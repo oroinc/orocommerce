@@ -10,6 +10,7 @@ use Symfony\Component\DependencyInjection\Loader;
 class OroInventoryExtension extends Extension
 {
     const ALIAS = 'oro_inventory';
+    const VALIDATION_CONFIG = 'oro_inventory.validation.config_path';
 
     /**
      * {@inheritDoc}
@@ -25,6 +26,11 @@ class OroInventoryExtension extends Extension
         $loader->load('services.yml');
         $loader->load('form_types.yml');
         $loader->load('importexport.yml');
+
+        $container->setParameter(
+            self::VALIDATION_CONFIG,
+            __DIR__ . '/../Resources/config/inventory_level_validation.yml'
+        );
     }
 
     /**

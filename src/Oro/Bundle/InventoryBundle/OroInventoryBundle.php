@@ -5,6 +5,7 @@ namespace Oro\Bundle\InventoryBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+use Oro\Bundle\InventoryBundle\DependencyInjection\Compiler\InventoryLevelConstraintPass;
 use Oro\Bundle\InventoryBundle\DependencyInjection\Compiler\InventoryLevelMigrationPass;
 
 class OroInventoryBundle extends Bundle
@@ -17,5 +18,6 @@ class OroInventoryBundle extends Bundle
         parent::build($container);
 
         $container->addCompilerPass(new InventoryLevelMigrationPass());
+        $container->addCompilerPass(new InventoryLevelConstraintPass());
     }
 }

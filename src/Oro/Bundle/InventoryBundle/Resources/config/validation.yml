@@ -1,8 +1,4 @@
 Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
-#    constraints:
-#        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
-#            fields:     [ productUnitPrecision ]
-#            ignoreNull: false
     properties:
         quantity:
             - NotBlank: ~
