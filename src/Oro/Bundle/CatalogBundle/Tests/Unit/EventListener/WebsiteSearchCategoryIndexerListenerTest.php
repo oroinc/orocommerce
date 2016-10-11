@@ -125,8 +125,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
 
     public function testOnWebsiteSearchIndexProductClass()
     {
-        /** @var Localization $defaultLocale */
-        $defaultLocale = $this->getEntity(Localization::class, ['id' => 1]);
+        $defaultLocale = null;
 
         /** @var Localization $customLocale */
         $customLocale = $this->getEntity(Localization::class, ['id' => 2]);
@@ -134,10 +133,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
         $this->websiteLocalizationProvider
             ->expects($this->once())
             ->method('getLocalizationsByWebsiteId')
-            ->willReturn([
-                $defaultLocale,
-                $customLocale
-            ]);
+            ->willReturn([$customLocale]);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
@@ -164,32 +160,32 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
             IndexDataProvider::PLACEHOLDER_VALUES_KEY => [
                 'category_title' => [
                     new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($defaultLocale, self::NAME_DEFAULT_LOCALE, null),
-                        [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
-                    ),
-                    new ValueWithPlaceholders(
                         $this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null),
                         [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                    ),
+                    new ValueWithPlaceholders(
+                        $this->prepareLocalizedValue($defaultLocale, self::NAME_DEFAULT_LOCALE, null),
+                        [LocalizationIdPlaceholder::NAME => 0]
                     ),
                 ],
                 'category_description' => [
                     new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($defaultLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
-                        [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
-                    ),
-                    new ValueWithPlaceholders(
                         $this->prepareLocalizedValue($customLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
                         [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                    ),
+                    new ValueWithPlaceholders(
+                        $this->prepareLocalizedValue($defaultLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
+                        [LocalizationIdPlaceholder::NAME => 0]
                     ),
                 ],
                 'category_short_desc' => [
                     new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($defaultLocale, null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE),
-                        [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
-                    ),
-                    new ValueWithPlaceholders(
                         $this->prepareLocalizedValue($customLocale, null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE),
                         [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                    ),
+                    new ValueWithPlaceholders(
+                        $this->prepareLocalizedValue($defaultLocale, null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE),
+                        [LocalizationIdPlaceholder::NAME => 0]
                     ),
                 ],
             ]
