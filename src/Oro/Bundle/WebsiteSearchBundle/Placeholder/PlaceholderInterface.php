@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
-interface WebsiteSearchPlaceholderInterface
+interface PlaceholderInterface
 {
     /**
      * Return placeholder name
@@ -13,18 +13,19 @@ interface WebsiteSearchPlaceholderInterface
     public function getPlaceholder();
 
     /**
-     * Return value of the placeholder
+     * Returns string with replaced placeholder key on needed value
      *
+     * @param string $string
      * @return string
      */
-    public function getValue();
+    public function replaceDefault($string);
 
     /**
      * Returns string with replaced placeholder key on needed value
      *
      * @param string $string
-     * @param string $replaceValue
+     * @param array $values
      * @return string
      */
-    public function replace($string, $replaceValue);
+    public function replace($string, array $values);
 }

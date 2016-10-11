@@ -11,8 +11,7 @@ use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
-use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCase
@@ -63,10 +62,11 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
      * @param string|null $text
      * @return LocalizedFallbackValue
      */
-    private function prepareLocalizedValue($localization, $string = null, $text = null)
+    private function prepareLocalizedValue($localization = null, $string = null, $text = null)
     {
         $value = new LocalizedFallbackValue();
-        $value->setString($string)
+        $value
+            ->setString($string)
             ->setText($text)
             ->setLocalization($localization);
 
@@ -74,40 +74,53 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
     }
 
     /**
-     * @param Localization $defaultLocale
-     * @param Localization $customLocale
+     * @param Localization $firstLocale
+     * @param Localization $secondLocale
      * @return Product
      */
-    private function prepareProduct($defaultLocale, $customLocale)
+    private function prepareProduct($firstLocale, $secondLocale)
     {
         $inventoryStatus = $this->getMockBuilder(AbstractEnumValue::class)
             ->disableOriginalConstructor()
             ->getMock();
         $inventoryStatus->expects($this->once())->method('getId')->willReturn(Product::INVENTORY_STATUS_IN_STOCK);
 
-        $product = $this->getEntity(Product::class, [
-            'id' => 777,
-            'sku' => 'sku123',
-            'status' => Product::STATUS_ENABLED,
-            'inventoryStatus' => $inventoryStatus
-        ]);
+        $product = $this->getEntity(
+            Product::class,
+            [
+                'id' => 777,
+                'sku' => 'sku123',
+                'status' => Product::STATUS_ENABLED,
+                'inventoryStatus' => $inventoryStatus,
+            ]
+        );
 
-        $product->addName($this->prepareLocalizedValue($defaultLocale, self::NAME_DEFAULT_LOCALE, null))
-            ->addName($this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null))
-            ->addDescription($this->prepareLocalizedValue($defaultLocale, null, self::DESCRIPTION_DEFAULT_LOCALE))
-            ->addDescription($this->prepareLocalizedValue($customLocale, null, self::DESCRIPTION_CUSTOM_LOCALE))
+        $product
+            ->addName($this->prepareLocalizedValue($firstLocale, self::NAME_DEFAULT_LOCALE, null))
+            ->addName($this->prepareLocalizedValue($secondLocale, self::NAME_CUSTOM_LOCALE, null))
+            ->addName($this->prepareLocalizedValue(null, 'Default name', null))
+            ->addDescription($this->prepareLocalizedValue($firstLocale, null, self::DESCRIPTION_DEFAULT_LOCALE))
+            ->addDescription($this->prepareLocalizedValue($secondLocale, null, self::DESCRIPTION_CUSTOM_LOCALE))
+            ->addDescription($this->prepareLocalizedValue(null, 'Default description', null))
             ->addShortDescription(
                 $this->prepareLocalizedValue(
-                    $defaultLocale,
+                    $firstLocale,
                     null,
                     self::SHORT_DESCRIPTION_DEFAULT_LOCALE
                 )
             )
             ->addShortDescription(
                 $this->prepareLocalizedValue(
-                    $customLocale,
+                    $secondLocale,
                     null,
                     self::SHORT_DESCRIPTION_CUSTOM_LOCALE
+                )
+            )
+            ->addShortDescription(
+                $this->prepareLocalizedValue(
+                    null,
+                    'Default short description',
+                    null
                 )
             );
 
@@ -116,64 +129,74 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
 
     public function testOnWebsiteSearchIndexProductClass()
     {
-        /** @var Localization $defaultLocale */
-        $defaultLocale = $this->getEntity(Localization::class, ['id' => 1]);
+        /** @var Localization $firstLocale */
+        $firstLocale = $this->getEntity(Localization::class, ['id' => 1]);
 
-        /** @var Localization $customLocale */
-        $customLocale = $this->getEntity(Localization::class, ['id' => 2]);
+        /** @var Localization $secondLocale */
+        $secondLocale = $this->getEntity(Localization::class, ['id' => 2]);
 
         $this->websiteLocalizationProvider
             ->expects($this->once())
             ->method('getLocalizationsByWebsiteId')
-            ->willReturn([
-                $defaultLocale,
-                $customLocale
-            ]);
+            ->willReturn(
+                [
+                    $firstLocale,
+                    $secondLocale,
+                ]
+            );
 
-        $product = $this->prepareProduct($defaultLocale, $customLocale);
+        $product = $this->prepareProduct($firstLocale, $secondLocale);
 
         $event = new IndexEntityEvent([$product], []);
 
         $this->listener->onWebsiteSearchIndex($event);
 
         $expected[$product->getId()] = [
-            IndexDataProvider::STANDARD_VALUES_KEY => [
-                'sku' => 'sku123',
-                'status' => Product::STATUS_ENABLED,
-                'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK
+            'sku' => 'sku123',
+            'status' => Product::STATUS_ENABLED,
+            'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
+            'title' => [
+                self::NAME_DEFAULT_LOCALE => new PlaceholderValue(
+                    $this->prepareLocalizedValue($firstLocale, self::NAME_DEFAULT_LOCALE, null),
+                    [LocalizationIdPlaceholder::NAME => $firstLocale->getId()]
+                ),
+                self::NAME_CUSTOM_LOCALE => new PlaceholderValue(
+                    $this->prepareLocalizedValue($secondLocale, self::NAME_CUSTOM_LOCALE, null),
+                    [LocalizationIdPlaceholder::NAME => $secondLocale->getId()]
+                ),
+                'Default name' => new PlaceholderValue(
+                    $this->prepareLocalizedValue(null, 'Default name', null),
+                    [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
+                ),
             ],
-            IndexDataProvider::PLACEHOLDER_VALUES_KEY => [
-                'title' => [
-                    new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($defaultLocale, self::NAME_DEFAULT_LOCALE, null),
-                        [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
-                    ),
-                    new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null),
-                        [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
-                    ),
-                ],
-                'description' => [
-                    new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($defaultLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
-                        [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
-                    ),
-                    new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($customLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
-                        [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
-                    ),
-                ],
-                'short_desc' => [
-                    new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($defaultLocale, null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE),
-                        [LocalizationIdPlaceholder::NAME => $defaultLocale->getId()]
-                    ),
-                    new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($customLocale, null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE),
-                        [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
-                    ),
-                ],
-            ]
+            'description' => [
+                self::DESCRIPTION_DEFAULT_LOCALE => new PlaceholderValue(
+                    $this->prepareLocalizedValue($firstLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
+                    [LocalizationIdPlaceholder::NAME => $firstLocale->getId()]
+                ),
+                self::DESCRIPTION_CUSTOM_LOCALE => new PlaceholderValue(
+                    $this->prepareLocalizedValue($secondLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
+                    [LocalizationIdPlaceholder::NAME => $secondLocale->getId()]
+                ),
+                'Default description' => new PlaceholderValue(
+                    $this->prepareLocalizedValue(null, 'Default description', null),
+                    [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
+                ),
+            ],
+            'short_desc' => [
+                self::SHORT_DESCRIPTION_DEFAULT_LOCALE => new PlaceholderValue(
+                    $this->prepareLocalizedValue($firstLocale, null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE),
+                    [LocalizationIdPlaceholder::NAME => $firstLocale->getId()]
+                ),
+                self::SHORT_DESCRIPTION_CUSTOM_LOCALE => new PlaceholderValue(
+                    $this->prepareLocalizedValue($secondLocale, null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE),
+                    [LocalizationIdPlaceholder::NAME => $secondLocale->getId()]
+                ),
+                'Default short description' => new PlaceholderValue(
+                    $this->prepareLocalizedValue(null, 'Default short description', null),
+                    [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
+                ),
+            ],
         ];
 
         $this->assertEquals($expected, $event->getEntitiesData());

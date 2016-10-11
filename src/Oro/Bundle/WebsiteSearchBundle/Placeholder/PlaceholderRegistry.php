@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
-class WebsiteSearchPlaceholderRegistry
+class PlaceholderRegistry
 {
     /**
      * @var array
@@ -10,17 +10,16 @@ class WebsiteSearchPlaceholderRegistry
     private $placeholders = [];
 
     /**
-     * @param WebsiteSearchPlaceholderInterface $placeholder
-     * @return array
+     * @param PlaceholderInterface $placeholder
      */
-    public function addPlaceholder(WebsiteSearchPlaceholderInterface $placeholder)
+    public function addPlaceholder(PlaceholderInterface $placeholder)
     {
         $this->placeholders[$placeholder->getPlaceholder()] = $placeholder;
     }
 
     /**
      * @param string $placeholderName
-     * @return WebsiteSearchPlaceholderInterface
+     * @return PlaceholderInterface
      */
     public function getPlaceholder($placeholderName)
     {
@@ -32,7 +31,7 @@ class WebsiteSearchPlaceholderRegistry
     }
 
     /**
-     * @return WebsiteSearchPlaceholderInterface[]
+     * @return PlaceholderInterface[]
      */
     public function getPlaceholders()
     {

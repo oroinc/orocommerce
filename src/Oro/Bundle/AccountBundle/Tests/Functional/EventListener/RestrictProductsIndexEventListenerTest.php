@@ -52,12 +52,12 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
         $values = $result->getElements();
 
         $this->assertEquals(6, $result->getRecordsCount());
-        $this->assertEquals('product.1', $values[0]->getRecordTitle());
-        $this->assertEquals('product.4', $values[1]->getRecordTitle());
-        $this->assertEquals('product.5', $values[2]->getRecordTitle());
-        $this->assertEquals('product.6', $values[3]->getRecordTitle());
-        $this->assertEquals('product.7', $values[4]->getRecordTitle());
-        $this->assertEquals('product.8', $values[5]->getRecordTitle());
+        $this->assertStringStartsWith('product.1', $values[0]->getRecordTitle());
+        $this->assertStringStartsWith('product.4', $values[1]->getRecordTitle());
+        $this->assertStringStartsWith('product.5', $values[2]->getRecordTitle());
+        $this->assertStringStartsWith('product.6', $values[3]->getRecordTitle());
+        $this->assertStringStartsWith('product.7', $values[4]->getRecordTitle());
+        $this->assertStringStartsWith('product.8', $values[5]->getRecordTitle());
 
         $configManager->reset('oro_account.product_visibility');
     }

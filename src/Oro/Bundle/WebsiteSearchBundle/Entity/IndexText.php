@@ -12,5 +12,4 @@ use Oro\Bundle\SearchBundle\Entity\AbstractIndexText;
  */
 class IndexText extends AbstractIndexText
 {
-    
 }

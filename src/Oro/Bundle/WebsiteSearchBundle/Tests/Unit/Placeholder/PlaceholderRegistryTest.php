@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
 
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderInterface;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderRegistry;
 
-class WebsiteSearchPlaceholderRegistryTest extends \PHPUnit_Framework_TestCase
+class PlaceholderRegistryTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var WebsiteSearchPlaceholderRegistry */
+    /** @var PlaceholderRegistry */
     private $registry;
 
     protected function setUp()
     {
-        $this->registry = new WebsiteSearchPlaceholderRegistry();
+        $this->registry = new PlaceholderRegistry();
     }
 
     protected function tearDown()
@@ -82,11 +82,11 @@ class WebsiteSearchPlaceholderRegistryTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $placeholderName
-     * @return WebsiteSearchPlaceholderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return PlaceholderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private function preparePlaceholder($placeholderName)
     {
-        $placeholder = $this->getMock(WebsiteSearchPlaceholderInterface::class);
+        $placeholder = $this->getMock(PlaceholderInterface::class);
 
         $placeholder->expects($this->any())
             ->method('getPlaceholder')

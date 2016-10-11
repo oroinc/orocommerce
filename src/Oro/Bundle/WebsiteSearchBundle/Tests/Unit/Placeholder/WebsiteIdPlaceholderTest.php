@@ -37,7 +37,7 @@ class WebsiteIdPlaceholderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('WEBSITE_ID', $this->placeholder->getPlaceholder());
     }
 
-    public function testGetValueWithWebsiteId()
+    public function testReplaceDefaultWithWebsiteId()
     {
         /** @var Website $website */
         $website = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', ['id' => 1]);
@@ -46,22 +46,45 @@ class WebsiteIdPlaceholderTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
-        $value = $this->placeholder->getValue();
+        $value = $this->placeholder->replaceDefault('string_WEBSITE_ID');
 
         $this->assertInternalType('string', $value);
-        $this->assertEquals('1', $value);
+        $this->assertEquals('string_1', $value);
     }
 
     /**
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Current website is not defined.
      */
-    public function testGetValueWithoutWebsiteId()
+    public function testReplaceWithoutWebsiteId()
     {
         $this->websiteManager->expects($this->once())
             ->method('getCurrentWebsite')
             ->willReturn(null);
 
-        $this->placeholder->getValue();
+        $this->assertEquals(
+            'string_WEBSITE_ID',
+            $this->placeholder->replaceDefault('string_WEBSITE_ID')
+        );
+    }
+
+    public function testReplace()
+    {
+        $this->websiteManager->expects($this->never())->method($this->anything());
+
+        $this->assertEquals(
+            'string_1',
+            $this->placeholder->replace('string_WEBSITE_ID', ['WEBSITE_ID' => '1'])
+        );
+    }
+
+    public function testReplaceWithoutValue()
+    {
+        $this->websiteManager->expects($this->never())->method($this->anything());
+
+        $this->assertEquals(
+            'string_WEBSITE_ID',
+            $this->placeholder->replace('string_WEBSITE_ID', ['NON_WEBSITE_ID' => '1'])
+        );
     }
 }
