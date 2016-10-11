@@ -9,6 +9,7 @@ use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 
 
 class ProductVisibilityLimitedSearchHandler extends SearchHandler
@@ -39,8 +40,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         array $properties,
         RequestStack $requestStack,
         ProductManager $productManager
-    )
-    {
+    ) {
         $this->requestStack = $requestStack;
         $this->productManager = $productManager;
         parent::__construct($entityName, $properties);
@@ -67,7 +67,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     /**
      * @param \Oro\Bundle\ProductBundle\Search\ProductRepository $searchRepository
      */
-    public function setSearchRepository(\Oro\Bundle\ProductBundle\Search\ProductRepository $searchRepository)
+    public function setSearchRepository(ProductSearchRepository $searchRepository)
     {
         $this->searchRepository = $searchRepository;
     }

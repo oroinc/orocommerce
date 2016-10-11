@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mgz
- * Date: 06.10.16
- * Time: 12:37
- */
-
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Search;
 
 

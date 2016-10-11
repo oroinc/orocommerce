@@ -1,12 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: emgiezet <mmalecki@oroinc.com>
- * Date: 06.10.16
- * Time: 16:00
- */
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Autocomplete;
+
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Oro\Bundle\ProductBundle\Search\ProductRepository;
+use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\AbstractQuery;
@@ -24,11 +27,6 @@ use Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\SearchBundle\Query\SearchRepository;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
-
 
 class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,7 +37,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
     const TEST_FIRST_RESULT = 30;
     const TEST_MAX_RESULTS = 10;
     const TEST_BACKEND_PREFIX = '/admin';
-    const TEST_RESULTS = [1,2,3,4];
+    const TEST_RESULTS = [1, 2, 3, 4];
 
     /**
      * @var array
@@ -116,30 +114,22 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
     protected $results;
 
     /**
-     * @var Symfony\Component\EventDispatcher\EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $eventDsipatcher;
-
-    /**
      * @var SearchRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $searchRepository;
     /**
-     * @var Symfony\Component\DependencyInjection\Container|\PHPUnit_Framework_MockObject_MockObject
+     * @var Container|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $container;
 
-
-
-
     protected function setUp()
     {
-        $this->indexer = $this->getMockBuilder('Oro\Bundle\SearchBundle\Engine\Indexer')
+        $this->indexer = $this->getMockBuilder(Indexer::class)
             ->setMethods(['simpleSearch'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->entityRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+        $this->entityRepository = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
             ->setMethods(['createQueryBuilder', 'getSearchQueryBuilder'])
             ->getMock();
@@ -147,7 +137,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
             ->method('createQueryBuilder')->will($this->returnValue($this->queryBuilder));
 
 
-        $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
+        $metadata = $this->getMockBuilder(ClassMetadata::class)
             ->setMethods(['getSingleIdentifierFieldName'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -155,7 +145,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
             ->method('getSingleIdentifierFieldName')
             ->will($this->returnValue(self::TEST_ID_FIELD));
 
-        $metadataFactory = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadataFactory')
+        $metadataFactory = $this->getMockBuilder(ClassMetadataFactory::class)
             ->setMethods(['getMetadataFor'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -164,7 +154,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
             ->with(self::TEST_ENTITY_CLASS)
             ->will($this->returnValue($metadata));
 
-        $this->entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+        $this->entityManager = $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->setMethods(['getRepository', 'getMetadataFactory'])
             ->getMock();
@@ -177,77 +167,77 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
             ->method('getMetadataFactory')
             ->will($this->returnValue($metadataFactory));
 
-        $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->managerRegistry = $this->getMock(ManagerRegistry::class);
         $this->managerRegistry->expects($this->once())
             ->method('getManagerForClass')
             ->with(self::TEST_ENTITY_CLASS)
             ->will($this->returnValue($this->entityManager));
 
-        $this->queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
+        $this->queryBuilder = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->setMethods(['expr', 'getQuery', 'where'])
             ->getMock();
 
-
-        $this->query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
+        $this->query = $this->getMockBuilder(AbstractQuery::class)
             ->disableOriginalConstructor()
             ->setMethods(['getResult', 'getAST'])
             ->getMockForAbstractClass();
 
-        $this->expr = $this->getMockBuilder('Doctrine\ORM\Query\Expr')
+        $this->expr = $this->getMockBuilder(Expr::class)
             ->disableOriginalConstructor()
             ->setMethods(['in'])
             ->getMock();
 
-        $this->searchResult = $this->getMockBuilder('Oro\Bundle\SearchBundle\Query\Result')
+        $this->searchResult = $this->getMockBuilder(Result::class)
             ->setMethods(['getElements'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->aclHelper = $this->getMockBuilder('Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
+        $this->aclHelper = $this->getMockBuilder(AclHelper::class)
             ->disableOriginalConstructor()
             ->setMethods(['apply'])
             ->getMock();
-        $this->results = $this->getMockBuilder('Oro\Bundle\SearchBundle\Query\Result')->disableOriginalConstructor()->setMethods(['getElements'])->getMock();
+        $this->results = $this->getMockBuilder(Result::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getElements'])
+            ->getMock();
         $this->results->method('getElements')->willReturn(self::TEST_RESULTS);
 
-        $this->searchQuery = $this->getMockBuilder('Oro\Bundle\SearchBundle\Query\SearchQueryInterface')
+        $this->searchQuery = $this->getMockBuilder(SearchQueryInterface::class)
             ->disableOriginalConstructor()
             ->setMethods([
-                'addSelect',
-                'getSelect', 'getSelectAliases',  'getQuery', 'getSelectDataFields', 'setFrom', 'addWhere', 'setOrderBy', 'getSortBy',
-                'execute', 'getResult', 'getTotalCount', 'getSortOrder', 'setFirstResult', 'getFirstResult', 'setMaxResults', 'getMaxResults' ])
+                'addSelect', 'getSelect', 'getSelectAliases',
+                'getQuery', 'getSelectDataFields', 'setFrom',
+                'addWhere', 'setOrderBy', 'getSortBy',
+                'execute', 'getResult', 'getTotalCount',
+                'getSortOrder', 'setFirstResult', 'getFirstResult',
+                'setMaxResults', 'getMaxResults' ])
             ->getMock();
         $this->searchQuery->method('getResult')->withAnyParameters()->willReturn($this->results);
 
-        $this->eventDsipatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')->disableOriginalConstructor()->getMock();
-        $this->productManager = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Manager\ProductManager')->setConstructorArgs([$this->eventDsipatcher ])
+        $this->productManager = $this->getMockBuilder(ProductManager::class)
+            ->disableOriginalConstructor()
             ->setMethods(['restrictQueryBuilder', 'restrictSearchQuery'])
             ->getMock();
         $this->productManager->method('restrictSearchQuery')->with($this->searchQuery)->willReturn($this->searchQuery);
 
-
         $this->searchRepository = $this
-            ->getMockBuilder('Oro\Bundle\ProductBundle\Search\ProductRepository')
+            ->getMockBuilder(ProductRepository::class)
             ->disableOriginalConstructor()
             ->setMethods(['getProductSearchQuery'])
             ->getMock();
         $this->searchRepository->method('getProductSearchQuery')->withAnyParameters()->willReturn($this->searchQuery);
-
-
-
 
         $fakeRequest = Request::create('/', 'GET');
         $fakeRequest->setSession(new Session(new MockArraySessionStorage()));
         $requestStack = new RequestStack();
         $requestStack->push($fakeRequest);
 
-        $this->container = $this->getMockBuilder('Symfony\Component\DependencyInjection\Container')
+        $this->container = $this->getMockBuilder(Container::class)
             ->setMethods(['get', 'getParameter'])->getMock();
         $this->container->method('get')->willReturn($this->returnValue($requestStack));
         $this->container->method('getParameter')->willReturn(self::TEST_BACKEND_PREFIX);
         $this->frontendHelper = new FrontendHelper(self::TEST_BACKEND_PREFIX, $this->container);
-
 
         $this->searchHandler = new ProductVisibilityLimitedSearchHandler(
             self::TEST_ENTITY_CLASS,
@@ -259,6 +249,10 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
         $this->searchHandler->initDoctrinePropertiesByManagerRegistry($this->managerRegistry);
         $this->searchHandler->initDoctrinePropertiesByEntityManager($this->entityManager);
         $this->searchHandler->setFrontendHelper($this->frontendHelper);
+
+//        var_dump($this->searchRepository);
+//        die;
+
         $this->searchHandler->setSearchRepository($this->searchRepository);
         $this->searchHandler->initSearchIndexer($this->indexer, $this->testSearchConfig);
         $this->searchHandler->setAclHelper($this->aclHelper);
@@ -305,8 +299,11 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
         $result = $this->searchHandler->search('test', 0, 10);
 
         $this->assertArrayHasKey('results', $result, 'Results key not found');
-        $this->assertEquals(count($result['results']), count(self::TEST_RESULTS), sprintf('Search result should containe %d elements', count(self::TEST_RESULTS)));
-
+        $this->assertEquals(
+            count($result['results']),
+            count(self::TEST_RESULTS),
+            sprintf('Search result should containe %d elements', count(self::TEST_RESULTS))
+        );
     }
 
 }
