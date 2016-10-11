@@ -93,7 +93,7 @@ class IndexEntityEvent extends Event
             );
         }
 
-        $this->entitiesData[$entityId][$fieldName][$value] = new PlaceholderValue($value, $placeholders);
+        $this->entitiesData[$entityId][$fieldName][] = new PlaceholderValue($value, $placeholders);
 
         return $this;
     }

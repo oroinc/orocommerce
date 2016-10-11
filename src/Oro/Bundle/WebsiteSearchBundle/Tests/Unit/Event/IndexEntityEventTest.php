@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Event;
 
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 
 class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
 {
@@ -53,7 +54,7 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
             ],
             2 => [
                 'title' => 'Another product title',
-                'date' => $date
+                'date' => $date,
             ],
         ];
 
@@ -88,5 +89,17 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
     {
         $event = new IndexEntityEvent([], []);
         $event->addPlaceholderField(1, 'sku', [], []);
+    }
+
+    public function testSamePlaceholderValueDoestOverridePrevious()
+    {
+        $event = new IndexEntityEvent([], []);
+        $event->addPlaceholderField(1, 'sku', 'value1', []);
+        $event->addPlaceholderField(1, 'sku', 'value2', []);
+
+        $this->assertEquals(
+            [1 => ['sku' => [new PlaceholderValue('value1'), new PlaceholderValue('value2')]]],
+            $event->getEntitiesData()
+        );
     }
 }
