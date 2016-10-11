@@ -30,12 +30,15 @@ class MenuUpdateTest extends \PHPUnit_Framework_TestCase
         $update
             ->setImage($image)
             ->setCondition('test condition')
-            ->setPriority($priority);
+            ->setPriority($priority)
+            ->setExistsInNavigationYml(true)
+            ->setDivider(true);
 
         $expected = [
             'image' => $image,
             'condition' => 'test condition',
-            'existsInNavigationYml' => false,
+            'existsInNavigationYml' => true,
+            'divider' => true,
             'position' => $priority
         ];
 

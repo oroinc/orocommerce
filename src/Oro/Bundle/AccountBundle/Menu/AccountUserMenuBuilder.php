@@ -4,8 +4,6 @@ namespace Oro\Bundle\AccountBundle\Menu;
 
 use Knp\Menu\ItemInterface;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\NavigationBundle\Menu\BuilderInterface;
 
 class AccountUserMenuBuilder implements BuilderInterface
@@ -18,9 +16,9 @@ class AccountUserMenuBuilder implements BuilderInterface
         $menu->setExtra('type', 'dropdown');
 
         $menu
-            ->addChild('divider-' . rand(1, 99999))
+            ->addChild('divider-account-user-before-logout')
             ->setLabel('')
-            ->setAttribute('class', 'divider');
+            ->setExtra('divider', true);
 
         $menu
             ->addChild(

@@ -3,7 +3,7 @@ parameters:
 
 services:
     oro_frontend_navigation.repository.menu_update:
-        class: 'Oro\Bundle\FrontendNavigationBundle\Entity\Repository\MenuUpdateRepository'
+        class: 'Doctrine\ORM\EntityRepository'
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_frontend_navigation.entity.menu_update.class%'

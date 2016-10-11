@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\FrontendNavigationBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 use Oro\Bundle\FrontendNavigationBundle\DependencyInjection\OroFrontendNavigationExtension;
@@ -12,7 +12,7 @@ class OroFrontendNavigationExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroFrontendNavigationExtension());
 
         $expectedServices = [
-            'oro_frontend_navigation.menu_update_provider.frontend',
+            'oro_frontend_navigation.ownership_provider.account',
         ];
         $this->assertDefinitionsLoaded($expectedServices);
     }
