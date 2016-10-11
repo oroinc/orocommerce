@@ -101,7 +101,7 @@ services:
             - '@oro_website_search.engine'
 
     oro_website_search.product_visibility_restriction_listener:
-        class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\ProductVisibilityRestrictionListener'
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener'
         arguments:
             - '@oro_product.product.manager'
         tags:
