@@ -1,0 +1,9 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes:
+                - 'OroPayPalBundle:layouts:default/templates/payment.html.twig'
+        - '@setFormTheme':
+            themes:
+                - 'OroPayPalBundle:layouts:default/templates/form.html.twig'
+    conditions: 'context["workflowStepName"]=="enter_payment"'

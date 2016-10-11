@@ -1,0 +1,71 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue: oro_frontend.home_page.title
+        - '@addTree':
+            items:
+                wrapper:
+                    blockType: container
+                    options:
+                        attr:
+                          id: 'container'
+                wrapper_content:
+                    blockType: container
+                header:
+                    blockType: container
+                sticky_panel:
+                    blockType: container
+                sticky_panel_content:
+                    blockType: container
+                notification:
+                    blockType: block
+                main:
+                    blockType: container
+                content:
+                    blockType: container
+                sidebar_left:
+                    blockType: container
+                page_title_container:
+                    blockType: container
+                page_title:
+                    blockType: text
+                    options:
+                        text: ~
+            tree:
+                body:
+                    wrapper:
+                        wrapper_content:
+                            header: ~
+                            sticky_panel:
+                                sticky_panel_content: ~
+                            main:
+                                notification: ~
+                                content:
+                                    page_title_container:
+                                        page_title: ~
+                                sidebar_left: ~
+        - '@add':
+            id: require_js_config
+            parentId: require_js
+            blockType: block
+
+        - '@add':
+            id: sticky_header_row
+            parentId: sticky_panel_content
+            blockType: block
+        - '@add':
+            id: sticky_element_notification
+            parentId: sticky_panel_content
+            blockType: block
+        - '@setOption':
+            id: title
+            optionName: separator
+            optionValue: ' - '
+        - '@setOption':
+            id: title
+            optionName: reverse
+            optionValue: true

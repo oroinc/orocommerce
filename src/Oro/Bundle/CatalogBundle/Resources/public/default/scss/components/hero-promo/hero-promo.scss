@@ -1,0 +1,21 @@
+.hero-promo {
+    .embedded-list__container--slider {
+        margin-left: 0;
+    }
+
+    .embedded-list__container--slider::before {
+        display: none;
+    }
+
+    .slick-dots {
+        bottom: $offset-y-m;
+    }
+
+    .embedded-list__item {
+        &:not(:first-child)&:not(.slick-slide) {
+            //hide until slick not loaded
+            display: none;
+        }
+        width: 100%;
+    }
+}

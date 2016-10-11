@@ -1,0 +1,25 @@
+.page-title {
+    line-height: 1.1;
+
+    &--decreased {
+        font-size: $page-title-font-size - 1;
+    }
+}
+
+@include breakpoint('tablet') {
+    .page-title {
+        margin: $page-title-offset--s;
+
+        &--decreased {
+            margin: $page-title-offset--m;
+        }
+    }
+}
+
+@include breakpoint('mobile') {
+    .page-title {
+        &--decreased {
+            margin: $page-title-offset--s;
+        }
+    }
+}

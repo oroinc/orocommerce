@@ -1,0 +1,165 @@
+services:
+    oro_shipping.form.type.shipping_origin:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginType
+        arguments:
+            - '@oro_address.form.listener.address'
+        calls:
+            - [setDataClass, ['%oro_shipping.model.shipping_origin.class%']]
+        tags:
+            - { name: form.type }
+
+    oro_shipping.form.type.shipping_origin_config:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginConfigType
+        tags:
+            - { name: form.type }
+
+    oro_shipping.form.type.shipping_origin_warehouse:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingOriginWarehouseType
+        tags:
+            - { name: form.type }
+
+    oro_shipping.form.extension.warehouse_shipping_origin:
+        class: Oro\Bundle\ShippingBundle\Form\Extension\WarehouseShippingOriginExtension
+        arguments:
+            - '@oro_shipping.shipping_origin.provider'
+            - '@doctrine'
+        tags:
+            - { name: form.type_extension, alias: oro_warehouse }
+
+    oro_shipping.form.type.length_unit_select:
+        class: Oro\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType
+        arguments:
+            - '@oro_shipping.provider.measure_units.length'
+            - '@oro_shipping.formatter.length_unit_label'
+        calls:
+            - [setEntityClass, ['%oro_shipping.entity.length_unit.class%']]
+        tags:
+            - { name: form.type, alias: oro_shipping_length_unit_select }
+
+    oro_shipping.form.type.weight_unit_select:
+        class: Oro\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType
+        arguments:
+            - '@oro_shipping.provider.measure_units.weight'
+            - '@oro_shipping.formatter.weight_unit_label'
+        calls:
+            - [setEntityClass, ['%oro_shipping.entity.weight_unit.class%']]
+        tags:
+            - { name: form.type, alias: oro_shipping_weight_unit_select }
+
+    oro_shipping.form.type.freight_class_select:
+        class: Oro\Bundle\ShippingBundle\Form\Type\FreightClassSelectType
+        arguments:
+            - '@oro_shipping.provider.measure_units.freight'
+            - '@oro_shipping.formatter.freight_class_label'
+        calls:
+            - [setEntityClass, ['%oro_shipping.entity.freight_class.class%']]
+        tags:
+            - { name: form.type, alias: oro_shipping_freight_class_select }
+
+    oro_shipping.form.type.weight:
+        class: Oro\Bundle\ShippingBundle\Form\Type\WeightType
+        calls:
+            - [setDataClass, ['%oro_shipping.model.weight.class%']]
+        tags:
+            - { name: form.type, alias: oro_shipping_weight }
+
+    oro_shipping.form.type.rule:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleType
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
+            - '@translator'
+        tags:
+            - { name: form.type }
+
+    oro_shipping.form.type.rule_method_type_config_collection:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodTypeConfigCollectionType
+        arguments:
+            - '@oro_shipping.form_event_subscriber.rule_method_type_config_collection_subscriber'
+        tags:
+            - { name: form.type }
+
+    oro_shipping.form.type.rule_destination:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleDestinationType
+        arguments:
+            - '@oro_shipping.form.listener.rule_destination'
+        tags:
+            - { name: form.type}
+
+    oro_shipping.form.type.flat_rate_rule_method_type_config_options:
+        class: Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType
+        arguments:
+            - '@oro_currency.rounding.price_rounding_service'
+        tags:
+            - { name: form.type }
+
+    oro_shipping.form.type.shipping_rule_method_config:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodConfigType
+        arguments:
+            - '@oro_shipping.form_event_subscriber.rule_method_config_subscriber'
+            - '@oro_shipping.shipping_method.registry'
+        tags:
+            - { name: form.type }
+
+    oro_shipping.form.listener.rule_destination:
+        class: Oro\Bundle\AddressBundle\Form\EventListener\AddressCountryAndRegionSubscriber
+        arguments:
+            - '@doctrine.orm.entity_manager'
+            - '@form.factory'
+
+    oro_shipping.form_event_subscriber.rule_method_type_config_collection_subscriber:
+        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodTypeConfigCollectionSubscriber'
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.form_event_subscriber.rule_method_config_collection_subscriber:
+        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubscriber'
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.form_event_subscriber.rule_method_config_subscriber:
+        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleMethodConfigSubscriber'
+        arguments:
+            - '@form.factory'
+            - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.form.type.dimensions:
+        class: Oro\Bundle\ShippingBundle\Form\Type\DimensionsType
+        calls:
+            - [setDataClass, ['%oro_shipping.model.dimensions.class%']]
+        tags:
+            - { name: form.type, alias: oro_shipping_dimensions }
+
+    oro_shipping.form.type.dimensions_value:
+        class: Oro\Bundle\ShippingBundle\Form\Type\DimensionsValueType
+        calls:
+            - [setDataClass, ['%oro_shipping.model.dimensions_value.class%']]
+        tags:
+            - { name: form.type, alias: oro_shipping_dimensions_value }
+
+    oro_shipping.form.product_shipping_option:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsType
+        calls:
+            - [setDataClass, ['%oro_shipping.entity.product_shipping_options.class%']]
+        tags:
+            - { name: form.type, alias: oro_shipping_product_shipping_options }
+
+    oro_shipping.form.product_shipping_option_collection:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ProductShippingOptionsCollectionType
+        calls:
+            - [setDataClass, ['%oro_shipping.entity.product_shipping_options.class%']]
+        tags:
+            - { name: form.type, alias: oro_shipping_product_shipping_options_collection }
+
+    oro_shipping.form.extension.product_type:
+        class: 'Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension'
+        arguments:
+            - "@doctrine"
+        tags:
+            - { name: form.type_extension, alias: oro_product }
+
+    oro_shipping.form.type.rule_method_config_collection:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ShippingRuleMethodConfigCollectionType
+        arguments:
+            - '@oro_shipping.form_event_subscriber.rule_method_config_collection_subscriber'
+        tags:
+            - { name: form.type }

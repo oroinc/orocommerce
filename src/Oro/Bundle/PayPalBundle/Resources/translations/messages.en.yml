@@ -1,0 +1,70 @@
+oro:
+    paypal:
+        methods:
+            credit_card.label: 'Credit Card'
+            whats_this: "What's this?"
+            tooltip: |
+                The verification number is a 3-digit number printed on the back of your card.
+                The American Express security code is a 4-digit number printed on the front of your card.
+        system_configuration:
+            groups:
+                paypal_payments_pro.title: 'PayPal Payments Pro'
+                payflow_gateway.title: 'Payflow Gateway'
+                display_options.title: 'Display Options'
+                integration.title: 'Integration'
+                connection.title: 'Connection Options'
+                advanced_settings.title: 'Advanced Settings'
+                payflow_express_checkout.title: 'Express Checkout'
+            fields:
+                partner.label: 'Partner'
+                user.label: 'User'
+                vendor.label: 'Vendor'
+                password.label: 'Password'
+                payment_action:
+                    label: 'Payment Action'
+                    authorize: 'Authorize'
+                    charge: 'Authorize and Charge'
+                allowed_cc_types:
+                    label: 'Allowed Credit Card Types'
+                    visa: 'Visa'
+                    mastercard: 'Mastercard'
+                    discover: 'Discover'
+                    american_express: 'American Express'
+                test_mode.label: 'Test Mode'
+                use_proxy.label: 'Use Proxy'
+                proxy_host.label: 'Proxy Host'
+                proxy_port.label: 'Proxy Port'
+                debug_mode.label: 'Debug Mode'
+                enable_ssl_verification.label: 'Enable SSL Verification'
+                require_cvv.label: 'Require CVV Entry'
+                zero_amount_authorization:
+                    label: 'Zero Amount Authorization'
+                    tooltip: |
+                        If enabled it provides additional convenience to your customers, so that they do not need to re-enter credit card details every time they return back to checkout.
+                        Please note that zero dollar authorizations are subject to the transaction fees.
+                authorization_for_required_amount.label: 'Authorization For Required Amount'
+
+        result:
+            token_expired: Authorization token expired, please try one more time
+            incorrect_shipping_address_error: Incorrect shipping address
+
+        credit_card:
+            card_number.label: Credit Card Number
+            expiration_date.label: Expiration Date
+            cvv2.label: Credit Card Verification Number
+            save_for_later.label: Save this card for later use
+
+        payflow:
+            authorized_card: 'Credit Card  **** **** **** {{ last4 }}'
+            use_different_card: 'Use a different card >'
+            use_authorized_card: '< Use an existing card'
+
+        payflow_express_checkout:
+            redirect_to_paypal: 'You will be redirected to PayPal website to complete your purchase after the order review step.'
+
+    payment:
+        admin:
+            paypal_payments_pro.label: 'PayPal Payments Pro'
+            payflow_gateway.label: 'Payflow Gateway'
+            payflow_express_checkout.label: 'Payflow Express Checkout'
+            paypal_payments_pro_express_checkout.label: 'PayPal Payments Pro Express Checkout'

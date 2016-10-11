@@ -1,0 +1,86 @@
+Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse:
+    properties:
+        country:
+            - NotBlank: ~
+            - Valid: ~
+        region:
+            - NotBlank: ~
+            - Valid: ~
+        postalCode:
+            - NotBlank: ~
+        city:
+            - NotBlank: ~
+        street:
+            - NotBlank: ~
+        warehouse:
+            - NotBlank: ~
+
+Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields:  [ product, productUnit ]
+            message: oro.shipping.validators.product_unit_shipping_options.unique_entity.message
+    properties:
+        product:
+            - NotBlank: ~
+        productUnit:
+            - NotBlank: ~
+            - Valid: ~
+        weight:
+            - Valid: ~
+        dimensions:
+            - Valid: ~
+        freightClass:
+            - Valid: ~
+
+Oro\Bundle\ShippingBundle\Model\DimensionsValue:
+    properties:
+        length:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        width:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        height:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+
+Oro\Bundle\ShippingBundle\Model\Weight:
+    properties:
+        value:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+
+Oro\Bundle\ShippingBundle\Entity\ShippingRule:
+    properties:
+        name:
+            - NotBlank: ~
+        priority:
+            - NotBlank: ~
+        destinations:
+            - Valid: ~
+        methodConfigs:
+            - Valid: ~
+            - Count:
+                min: 1
+                minMessage: oro.shipping.shippingrule.method.config.count.message
+        currency:
+            - Currency: ~
+            - NotBlank: ~
+
+Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
+    properties:
+        country:
+            - NotBlank: ~
+            - Valid: ~
+        region:
+            - Valid: ~
+
+Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig:
+    properties:
+        method:
+            - NotBlank: ~
+        typeConfigs:
+            - Valid: ~
+            - Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup: ~
+
+Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig:
+    properties:
+        type:
+            - NotBlank: ~

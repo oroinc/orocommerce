@@ -4,8 +4,7 @@ namespace Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type;
 
 use Oro\DBAL\Types\MoneyType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 
 class PriceTypeGenerator
 {
@@ -27,7 +26,7 @@ class PriceTypeGenerator
     {
         $generator = new \PHPUnit_Framework_MockObject_Generator();
         $roundingService = $generator
-            ->getMock('OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService', [], [], '', false);
+            ->getMock('Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService', [], [], '', false);
 
         $roundingService->expects(new \PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount())
             ->method('getRoundType')

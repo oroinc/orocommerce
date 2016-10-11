@@ -1,0 +1,30 @@
+oro_catalog_category:
+    resource:     "@OroCatalogBundle/Controller/CategoryController.php"
+    type:         annotation
+    prefix:       /catalog/category
+
+oro_catalog_product:
+    resource:     "@OroCatalogBundle/Controller/ProductController.php"
+    type:         annotation
+    prefix:       /catalog/product
+
+oro_catalog_product_frontend:
+    resource:     "@OroCatalogBundle/Controller/Frontend/ProductController.php"
+    type:         annotation
+    prefix:       /catalog/product
+    options:
+        frontend: true
+
+oro_catalog_ajax:
+    resource:     "@OroCatalogBundle/Controller/AjaxCatalogController.php"
+    type:         annotation
+    prefix:       /catalog/ajax
+
+oro_catalog_bundle_api:
+    resource:     "@OroCatalogBundle/Resources/config/oro/routing_api.yml"
+    prefix:       api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest

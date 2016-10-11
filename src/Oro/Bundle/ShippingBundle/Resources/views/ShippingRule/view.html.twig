@@ -1,0 +1,68 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+
+{% oro_title_set({params : {"%label%": entity.name|default('N/A') }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+    'entity': entity,
+    'indexPath': path('oro_shipping_rule_index'),
+    'indexLabel': 'oro.shipping.shippingrule.entity_plural_label'|trans,
+    'entityTitle': entity.name|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+
+    {%- set shippingRuleInformation -%}
+        <div class="row-fluid form-horizontal">
+            <div class="responsive-block">
+                {{ UI.renderProperty('oro.shipping.shippingrule.name.label'|trans, entity.name) }}
+                {{ UI.renderProperty('oro.shipping.shippingrule.enabled.label'|trans, entity.enabled ?
+                'oro.shipping.shippingrule.enabled_yes.label'|trans
+                :
+                'oro.shipping.shippingrule.enabled_no.label'|trans
+                ) }}
+                {{ UI.renderProperty('oro.shipping.shippingrule.priority.label'|trans, entity.priority) }}
+                {{ UI.renderProperty('oro.shipping.shippingrule.currency.label'|trans, entity.currency) }}
+                {{ UI.renderProperty('oro.shipping.shippingrule.conditions.label'|trans, entity.conditions) }}
+
+                {% if entity.destinations.count %}
+                    {{ UI.renderHtmlProperty(
+                    'oro.shipping.shippingrule.destinations.label'|trans,
+                    UI.renderList(entity.destinations)) }}
+                {% endif %}
+
+                {% if entity.methodConfigs.count %}
+                    {{ UI.renderHtmlProperty(
+                    'oro.shipping.shippingrule.method_configs.label'|trans,
+                    UI.renderList(entity.methodConfigs)) }}
+                {% endif %}
+            </div>
+            <div class="responsive-block">
+                {{ entityConfig.renderDynamicFields(entity) }}
+            </div>
+        </div>
+    {%- endset -%}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.entity_config.block_titles.general.label'|trans,
+            'class': 'active',
+            'subblocks': [
+                {'data' : [shippingRuleInformation]}
+            ]
+        }
+    ] %}
+
+    {% set id = 'shipping-rule-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}
+
+{% block stats %}
+    {# Must be empty, because parent view uses this block to render dates, which are not implemented in this entity #}
+{% endblock stats %}

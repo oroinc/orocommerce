@@ -1,0 +1,159 @@
+oro.tax:
+    code.label: 'Code'
+    description.label: 'Description'
+    entity_label: 'Tax'
+    entity_plural_label: 'Taxes'
+    id.label: 'id'
+    rate.label: 'Rate'
+    taxcode.label: 'Tax Code'
+    taxcode.accountgroup.label: 'Account Group Tax Code'
+
+    subtotals.tax: 'Tax'
+
+    form:
+        choose: 'Choose a tax'
+        tooltip.zip_codes: 'If you want to type only one zip code, you can fill any field in the row'
+
+    producttaxcode:
+        entity_label: 'Product Tax Code'
+        entity_plural_label: 'Product Tax Codes'
+        description: 'List of Product Tax Codes'
+        products.label: 'Products'
+        id.label: 'ID'
+        code.label: 'Code'
+        description.label: 'Description'
+
+    accounttaxcode:
+        entity_label: 'Account Tax Code'
+        entity_plural_label: 'Customer Tax Codes'
+        description: 'List of Customer Tax Codes'
+        accounts.label: 'Accounts'
+        account_groups.label: 'Account Groups'
+        id.label: 'ID'
+        code.label: 'Code'
+        description.label: 'Description'
+        account_group.view.label: 'Defined for Customer Group'
+        account_groups.label: 'Account Groups'
+
+    taxrule:
+        entity_label: 'Tax Rule'
+        entity_plural_label: 'Tax Rules'
+        description: 'List of Tax Rules'
+        description.label: 'Description'
+        id.label: 'ID'
+        account_tax_code.label: 'Account Tax Code'
+        product_tax_code.label: 'Product Tax Code'
+        tax.label: 'Tax'
+        tax_jurisdiction.label: 'Tax Jurisdiction'
+
+    taxjurisdiction:
+        entity_label: 'Tax Jurisdiction'
+        entity_plural_label: 'Tax Jurisdictions'
+        description: 'List of Tax Jurisdictions'
+        id.label: 'ID'
+        code.label: 'Code'
+        description.label: 'Description'
+        country.label: 'Country'
+        region.label: 'State'
+        region_text.label: 'State'
+        form.choose: 'Choose Tax Jurisdiction'
+        zip_codes.label: 'Zip Codes'
+
+    zipcode:
+        entity_label: 'Zip Code'
+        entity_plural_label: 'Zip Codes'
+        id.label: 'ID'
+        zip_code.label: 'Zip Code'
+        zip_range_start.label: 'Range start'
+        zip_range_end.label: 'Range end'
+
+    menu:
+        taxes_tab.label: 'Taxes'
+
+    sections:
+        general: 'General Information'
+
+    controller:
+        account_tax_code:
+            saved.message: 'Account Tax Code has been saved'
+        product_tax_code:
+            saved.message: 'Product Tax Code has been saved'
+        tax:
+            saved.message: 'Tax has been saved'
+        taxrule:
+            saved.message: 'Tax Rule has been saved'
+        tax_jurisdiction:
+            saved.message: 'Tax Jurisdiction has been saved'
+
+    system_configuration:
+        groups:
+            taxation.title: 'Taxation'
+            tax_calculation.title: 'Tax Calculation'
+            tax_provider.title: 'Tax Provider'
+            tax_enable.title: 'Enable Taxation'
+            tax_calculator.title: 'Calculator'
+            tax_matcher.title: 'Matcher'
+            tax_digital_products.title: 'Digital Products'
+            us_sales_tax.title: 'US Sales Tax'
+            eu_vat_tax.title: 'EU VAT tax'
+            origin_address.title: 'Origin'
+        fields:
+            tax_provider.label: 'Provider'
+            tax_enable.label: 'Enabled'
+            start_calculation_with:
+                label: 'Start Calculation With'
+                unit_price.label: 'Unit Price'
+                row_total.label: 'Row Total'
+            start_calculation_on:
+                label: 'Start Calculation On'
+                item.label: 'Item'
+                total.label: 'Total'
+            product_prices_include_tax.label: 'Product Prices Include Tax'
+            use_as_base:
+                default.label: 'Use as Base by Default'
+                exclusions.label: 'Use as Base Exclusions'
+                shipping_origin.label: 'Shipping Origin'
+                destination.label: 'Destination'
+                option.label: 'Option'
+            destination:
+                label: 'Destination'
+                billing_address.label: 'Billing Address'
+                shipping_addressl.label: 'Shipping Address'
+            digital_products_us.label: 'Digital Products Tax Codes'
+            digital_products_eu.label: 'Digital Products Tax Codes'
+            origin_address.label: 'Origin Address'
+
+    providers:
+        built_in.label: Built-In Table Rates
+
+    result:
+        unit: Unit Price
+        row: Row Total
+        total: Total
+        shipping: Shipping
+        taxes: Applied Taxes
+
+        includingTax: Including Tax
+        excludingTax: Excluding Tax
+        taxAmount: Tax Amount
+        adjustment: Adjustment
+
+        tax: Tax
+        rate: Rate
+        taxableAmount: Taxable Amount
+
+        short:
+            includingTax: Incl. Tax
+            excludingTax: Excl. Tax
+            taxAmount: Tax Amount
+
+    order_line_item:
+        unitPrice:
+            includingTax.label: Unit Price (Including Tax)
+            excludingTax.label: Unit Price (Excluding Tax)
+            taxAmount.label: Unit Price (Tax Amount)
+        rowTotal:
+            includingTax.label: Row Total (Including Tax)
+            excludingTax.label: Row Total (Excluding Tax)
+            taxAmount.label: Row Total (Tax Amount)
+        taxes.label: Taxes

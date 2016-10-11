@@ -1,0 +1,32 @@
+oro:
+    privilege:
+        category.commerce.label: 'Commerce'
+
+oro_frontend:
+    widget_form_component:
+        save_flash_success: Saved successfully
+    form:
+        install_configuration:
+            web:
+                header: Web settings
+                backend_prefix: Backend prefix
+    theme:
+        demo.title: 'OroPlatform theme'
+    system_configuration:
+        groups:
+            design.title: 'Design'
+            theme.title: 'Theme'
+            theme_settings.title: 'Theme Settings'
+            commerce.title: 'Commerce'
+        fields:
+            frontend_theme.label: 'Theme'
+    copyright: '&copy; 2016 Oro.Inc. All Rights Reserved.'
+
+    home_page:
+        title: 'Home page'
+
+    exception:
+        default: 'The System is currently under maintenance and should be available in a few minutes.'
+        code.403: "You don't have permission to access this page."
+        code.404: 'The page you requested could not be found. Please make sure the path you used is correct.'
+        back: 'Click to go back'

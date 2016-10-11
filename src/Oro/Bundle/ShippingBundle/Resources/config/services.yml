@@ -1,0 +1,232 @@
+parameters:
+    oro_shipping.model.shipping_origin.class: Oro\Bundle\ShippingBundle\Model\ShippingOrigin
+    oro_shipping.model.weight.class: Oro\Bundle\ShippingBundle\Model\Weight
+    oro_shipping.model.dimensions.class: Oro\Bundle\ShippingBundle\Model\Dimensions
+    oro_shipping.model.dimensions_value.class: Oro\Bundle\ShippingBundle\Model\DimensionsValue
+    oro_shipping.entity.shipping_origin_warehouse.class: Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse
+    oro_shipping.entity.length_unit.class: Oro\Bundle\ShippingBundle\Entity\LengthUnit
+    oro_shipping.entity.freight_class.class: Oro\Bundle\ShippingBundle\Entity\FreightClass
+    oro_shipping.entity.weight_unit.class: Oro\Bundle\ShippingBundle\Entity\WeightUnit
+    oro_shipping.entity.product_shipping_options.class: Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions
+    oro_shipping.entity.shipping_rule.class: Oro\Bundle\ShippingBundle\Entity\ShippingRule
+
+services:
+    oro_shipping.shipping_rule.manager.api:
+            class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+            parent: oro_soap.manager.entity_manager.abstract
+            arguments:
+                - '%oro_shipping.entity.shipping_rule.class%'
+                - "@doctrine.orm.entity_manager"
+
+    oro_shipping.factory.shipping_origin_model_factory:
+        class: 'Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+
+    oro_shipping.factory.shipping_context_factory:
+        class: 'Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory'
+        arguments:
+            - '@oro_shipping.shipping_origin.provider'
+
+    oro_shipping.event_listener.config.shipping_origin:
+        class: 'Oro\Bundle\ShippingBundle\EventListener\Config\ShippingOriginEventListener'
+        arguments:
+            - '@oro_shipping.factory.shipping_origin_model_factory'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+
+    oro_shipping.shipping_origin.provider:
+        class: Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.global'
+            - '@oro_shipping.factory.shipping_origin_model_factory'
+
+    oro_shipping.event_listener.form_view:
+        class: Oro\Bundle\ShippingBundle\EventListener\FormViewListener
+        arguments:
+            - '@translator'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_shipping.shipping_origin.provider'
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-view, method: onWarehouseView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-edit, method: onWarehouseEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
+
+    oro_shipping.event_listener.product_shipping_options_datagrid:
+        class: 'Oro\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        calls:
+            - [setProductShippingOptionsClass, ['%oro_shipping.entity.product_shipping_options.class%']]
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
+
+    # formatters
+    oro_shipping.formatter.length_unit_label:
+        parent: oro_product.formatter.unit_label
+        calls:
+            - [setTranslationPrefix, ['oro.length_unit']]
+
+    oro_shipping.formatter.weight_unit_label:
+        parent: oro_product.formatter.unit_label
+        calls:
+            - [setTranslationPrefix, ['oro.weight_unit']]
+
+    oro_shipping.formatter.freight_class_label:
+        parent: oro_product.formatter.unit_label
+        calls:
+            - [setTranslationPrefix, ['oro.freight_class']]
+
+    oro_shipping.formatter.weight_unit_value:
+        parent: oro_product.formatter.unit_value
+        calls:
+            - [setTranslationPrefix, ['oro.weight_unit']]
+
+    oro_shipping.formatter.dimensions_unit_value:
+        parent: oro_product.formatter.unit_value
+        class: 'Oro\Bundle\ShippingBundle\Formatter\DimensionsValueFormatter'
+        calls:
+            - [setTranslationPrefix, ['oro.length_unit']]
+
+    # twig extensions
+    oro_shipping.twig.shipping_option_label:
+        class: Oro\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension
+        public: false
+        arguments:
+            - '@oro_shipping.formatter.length_unit_label'
+            - '@oro_shipping.formatter.weight_unit_label'
+            - '@oro_shipping.formatter.freight_class_label'
+        tags:
+            - { name: twig.extension }
+
+    oro_shipping.twig.weight_unit_value:
+        class: Oro\Bundle\ShippingBundle\Twig\WeightUnitValueExtension
+        public: false
+        arguments:
+            - '@oro_shipping.formatter.weight_unit_value'
+        tags:
+            - { name: twig.extension }
+
+    oro_shipping.twig.dimensions_unit_value:
+        class: Oro\Bundle\ShippingBundle\Twig\DimensionsUnitValueExtension
+        public: false
+        arguments:
+            - '@oro_shipping.formatter.dimensions_unit_value'
+        tags:
+            - { name: twig.extension }
+
+    oro_shipping.repository.product_shipping_options:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_shipping.entity.product_shipping_options.class%'
+
+    oro_shipping.repository.length_unit:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_shipping.entity.length_unit.class%'
+
+    oro_shipping.repository.weight_unit:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_shipping.entity.weight_unit.class%'
+
+    oro_shipping.repository.freight_class:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_shipping.entity.freight_class.class%'
+
+    oro_shipping.provider.measure_units.weight:
+        class: 'Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider'
+        arguments:
+            - '@oro_shipping.repository.weight_unit'
+            - '@oro_config.manager'
+            - 'oro_shipping.weight_units'
+
+    oro_shipping.provider.measure_units.length:
+        class: 'Oro\Bundle\ShippingBundle\Provider\MeasureUnitProvider'
+        arguments:
+            - '@oro_shipping.repository.length_unit'
+            - '@oro_config.manager'
+            - 'oro_shipping.length_units'
+
+    oro_shipping.provider.measure_units.freight:
+        class: 'Oro\Bundle\ShippingBundle\Provider\FreightClassesProvider'
+        arguments:
+            - '@oro_shipping.repository.freight_class'
+            - '@oro_config.manager'
+            - 'oro_shipping.freight_classes'
+
+    oro_shipping.extension.freight_classes:
+        class: 'Oro\Bundle\ShippingBundle\Extension\FreightClassesExtension'
+        tags:
+            - { name: oro_shipping.extension.freight_classes }
+
+    oro_shipping.validator.unique_product_unit_shipping_options:
+        class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\UniqueProductUnitShippingOptionsValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_shipping_unique_product_unit_shipping_options_validator }
+
+    oro_shipping.validator.enabled_type_config_validation_group:
+        class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_shipping_enabled_type_config_validation_group_validator }
+
+    oro_shipping.form.data_transformer.measure:
+        class: 'Oro\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer'
+        public: false
+        abstract: true
+
+    oro_shipping.form.data_transformer.length_unit:
+        parent: 'oro_shipping.form.data_transformer.measure'
+        public: true
+        arguments:
+            - '@oro_shipping.repository.length_unit'
+
+    oro_shipping.form.data_transformer.weight_unit:
+        parent: 'oro_shipping.form.data_transformer.measure'
+        public: true
+        arguments:
+            - '@oro_shipping.repository.weight_unit'
+
+    oro_shipping.form.data_transformer.freight_class:
+        parent: 'oro_shipping.form.data_transformer.measure'
+        public: true
+        arguments:
+            - '@oro_shipping.repository.freight_class'
+
+    oro_shipping.event_listener.product_duplicate:
+        class: 'Oro\Bundle\ShippingBundle\EventListener\ProductDuplicateListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        calls:
+            - [setProductShippingOptionsClass, ['%oro_shipping.entity.product_shipping_options.class%']]
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }
+
+    oro_shipping.shipping_price.provider:
+        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.form.handler.shipping_rule:
+        class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingRuleHandler'
+        scope: request
+        arguments:
+            - '@request'
+            - '@doctrine.orm.entity_manager'
+
+    oro_shipping.layout.data_provider.shipping_methods:
+          class: 'Oro\Bundle\ShippingBundle\Layout\DataProvider\ShippingMethodsProvider'
+          arguments:
+              - '@oro_shipping.shipping_price.provider'
+              - '@oro_shipping.shipping_method.registry'
+          tags:
+              - { name: layout.data_provider, alias: shipping_methods }

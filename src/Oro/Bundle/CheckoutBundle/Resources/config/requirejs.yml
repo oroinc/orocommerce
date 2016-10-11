@@ -1,0 +1,11 @@
+config:
+    paths:
+        'orocheckout/js/app/components/transition-button-component': 'bundles/orocheckout/js/app/components/transition-button-component.js'
+        'orocheckout/js/app/components/payment-transition-button-component': 'bundles/orocheckout/js/app/components/payment-transition-button-component.js'
+        'orocheckout/js/app/components/shipping-transition-button-component': 'bundles/orocheckout/js/app/components/shipping-transition-button-component.js'
+        'orocheckout/js/app/views/address-view': 'bundles/orocheckout/js/app/views/address-view.js'
+        'orocheckout/js/app/components/clear-field-data-component': 'bundles/orocheckout/js/app/components/clear-field-data-component.js'
+        'orocheckout/js/app/components/payment-save-for-later-component': 'bundles/orocheckout/js/app/components/payment-save-for-later-component.js'
+        'orocheckout/js/app/components/payment-validate-component': 'bundles/orocheckout/js/app/components/payment-validate-component.js'
+        'orocheckout/js/app/views/checkout-content-view': 'bundles/orocheckout/js/app/views/checkout-content-view.js'
+        'orocheckout/js/app/views/checkout-inner-content-view': 'bundles/orocheckout/js/app/views/checkout-inner-content-view.js'

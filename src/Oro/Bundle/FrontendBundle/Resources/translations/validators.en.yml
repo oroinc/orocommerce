@@ -1,0 +1,3 @@
+oro_frontend:
+    regex:
+        backend_prefix: Prefix must start with / and contain alphanumeric symbols

@@ -1,0 +1,44 @@
+services:
+    oro_catalog.form.type.category:
+        class: 'Oro\Bundle\CatalogBundle\Form\Type\CategoryType'
+        calls:
+            - [setDataClass, ['%oro_catalog.entity.category.class%']]
+            - [setProductClass, ['%oro_product.entity.product.class%']]
+        tags:
+            - { name: form.type, alias: oro_catalog_category }
+
+    oro_catalog.form.type.category_default_product_options:
+        class: 'Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType'
+        calls:
+            - [setDataClass, ['%oro_catalog.entity.category_default_product_options.class%']]
+        tags:
+            - { name: form.type, alias: oro_catalog_category_default_product_options }
+
+    oro_catalog.form.type.category_unit_precision:
+        class: 'Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType'
+        calls:
+            - [setDataClass, ['%oro_catalog.entity.category_unit_precision.class%']]
+        tags:
+            - { name: form.type, alias: oro_catalog_category_unit_precision }
+
+    oro_catalog.form.type.category_tree:
+        class: 'Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType'
+        calls:
+            - [setEntityClass, ['%oro_catalog.entity.category.class%']]
+        tags:
+            - { name: form.type, alias: oro_catalog_category_tree }
+
+    oro_catalog.form.extension.product_type:
+        class: 'Oro\Bundle\CatalogBundle\Form\Extension\ProductFormExtension'
+        arguments:
+            - "@doctrine"
+        tags:
+            - { name: form.type_extension, alias: oro_product }
+
+    oro_catalog.form.extension.product_step_one_type:
+        class: 'Oro\Bundle\CatalogBundle\Form\Extension\ProductStepOneFormExtension'
+        arguments:
+            - "@oro_catalog.provider.default_product_unit_provider.category"
+        public: true
+        tags:
+            - { name: form.type_extension, alias: oro_product_step_one }

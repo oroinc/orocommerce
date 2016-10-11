@@ -1,0 +1,324 @@
+{% block _product_container_widget %}
+    <!-- START Product -->
+    {% set attr = {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        'data-page-component-options': {
+            view: 'oroproduct/js/app/views/base-product-view',
+            modelAttr: product
+        }|json_encode,
+        'data-layout': 'separate'
+    }|merge(attr|merge({
+        class: attr.class|default('') ~ ' product clearfix'
+    })) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+    <!-- END Product -->
+{% endblock %}
+
+{% block _product_title_mobile_widget %}
+    <h1 class="product-title product-title_mobile">{{ text }}</h1>
+{% endblock %}
+
+{% block _product_image_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+    <!-- START Product Gallery -->
+    <div class="product-gallery-widget product-gallery-widget_vertical product-gallery-widget_l_floated">
+        <div class="product-gallery product-gallery_vertical">
+            <div class="product-gallery__image-holder">
+                <div class="product-gallery__image-holder__carousel" data-product-gallery>
+                    <div class="product-gallery__image-holder__container">
+                        {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
+                        <img src="{{ Image.url(productImage, 'product_extra_large') }}"
+                             alt="{{ product.names|localized_value }}"
+                             width="378"
+                             height="378"
+                             {% if productImage and isDesktopVersion() %}
+                                 data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
+                                 {% set options = {
+                                    widgetModule: 'oroproduct/js/vendors/elevatezoom/jquery-elevatezoom',
+                                    widgetName: 'elevateZoom',
+                                    scrollZoom: true,
+                                    zoomWindowWidth: 630,
+                                    zoomWindowHeight: 376,
+                                    borderSize: 1,
+                                    borderColour: '#ebebeb',
+                                    lensBorderColour: '#7d7d7d',
+                                    lensColour: '#000',
+                                    lensOpacity: 0.22
+                                 }|json_encode() %}
+                                 data-page-component-module="oroui/js/app/components/jquery-widget-component"
+                                 data-page-component-options="{{ options }}"
+                             {% endif %}
+                            />
+                    </div>
+                    {% for productImage in product.imagesByType('additional') %}
+                        <img src="{{ Image.url(productImage.image, 'product_small') }}"
+                             width="82"
+                             height="82"/>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END Product Gallery -->
+{% endblock %}
+
+{% block _product_description_container_widget %}
+    <!-- START Product Description -->
+    <div class="product__description-container product__description-container_md product__description-container_l_floated">
+        {{ block_widget(block) }}
+    </div>
+    <!-- END Product Description -->
+{% endblock %}
+
+{% block _product_title_container_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " product__title-container"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _page_title_widget %}
+    <h3 class="product-title">{{ text }}</h3>
+{% endblock %}
+
+{% block _product_rating_widget %}
+    <div class="product-review-widget product-review-widget__bmargin not-implemented">
+        <span class="product-review__rating" data-rating></span>
+        <span class="product-review__count">(2)</span>
+        <a href="#" class="product-review__add-link">Add Your Review</a>
+    </div>
+{% endblock %}
+
+{% block _product_specification_container_widget %}
+    <div class="product__specification-container product__specification-container_l_floated">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_specification_widget %}
+    <div class="product__specification">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_specification_sku_widget %}
+    <div>
+        {{ 'oro.product.frontend.index.item'|trans }} <span class="red">{{ block_widget(block) }}</span>
+    </div>
+{% endblock %}
+
+{% block _product_specification_mfg_widget %}
+    <tr class="not-implemented">
+        <td>MFG Model #:</td>
+        <td><span class="red">{{ block_widget(block) }}</span></td>
+    </tr>
+{% endblock %}
+
+{% block _order_with_matrix_widget %}
+    <div class="product__matrix not-implemented">
+        <a href="#" class="product__matrix__link">
+            <i class="cf-list"></i>
+            <span>Order With Matrix Grid</span>
+            <i class="cf-right-open-mini"></i>
+        </a>
+    </div>
+{% endblock %}
+
+{% block _product_variants_widget %}
+    <div class="product__colors not-implemented">
+        <label>Select Colors</label>
+        <span class="badge badge_sm product__colors__item color-item_red">
+            <input type="checkbox" name="product_red"/>
+        </span>
+        <span class="badge badge_sm product__colors__item color-item_blue">
+            <input type="checkbox" name="product_blue"/>
+        </span>
+        <span class="badge badge_sm product__colors__item color-item_purple">
+            <input type="checkbox" name="product_purple"/>
+        </span>
+        <span class="badge badge_sm product__colors__item color-item_green">
+            <input type="checkbox" name="product_green"/>
+        </span>
+        <span class="badge badge_sm product__colors__item color-item_light-green">
+            <input type="checkbox" name="product_green"/>
+        </span>
+        <span class="badge badge_sm product__colors__item color-item_gray">
+            <input type="checkbox" name="product_gray"/>
+        </span>
+    </div>
+{% endblock %}
+
+{% block _product_description_content_widget %}
+    <div class="product__description-content product__description-content_l_floated">
+        <div class="product__description">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _attachments_widget %}
+    <ul class="product__docs not-implemented">
+        <li>
+            <a href="#">
+                <i class="cf-description"></i>
+                Item Manual
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <i class="cf-description"></i>
+                Item Warranty Information
+            </a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block _share_widget %}
+    <p class="not-implemented">
+        <a href="#">
+            <i class="cf-share"></i>
+            Share This product
+        </a>
+    </p>
+{% endblock %}
+
+{% block _product_tabs_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " oro-grid__tabs-container not-implemented"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <!-- START Product Tabs -->
+        <div class="oro-grid__tabs">
+            <div class="oro-grid__tab active" data-tab>
+                <div class="oro-grid__tab__header text-uppercase" data-tab-trigger><i
+                            class="cf-play hidden-lg hidden-md"></i>Specifications
+                </div>
+                <div class="oro-grid__tab__content">
+                    <p>Your best scrub value: essential, traditional pieces made of a high-quality 65% polyester/35%
+                        cotton blend and double-stitch construction to last wear after wear. This premium scrub set
+                        features a V-neck scrub top with one roomy patch pocket at the chest and drawstring scrub pants
+                        with a roomy back pocket.</p>
+
+                    <ul class="product__features-list">
+                        <li>Unisex scrub set</li>
+                        <li>65% polyester / 35% cotton poplin</li>
+                        <li>V-neck scrub top</li>
+                        <li>Patch pocket at left chest</li>
+                        <li>Scrub top 28" long</li>
+                        <li>Drawstring scrub pant</li>
+                        <li>Back pants pocket</li>
+                        <li>Pants inseam: 30"</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="oro-grid__tab" data-tab>
+                <div class="oro-grid__tab__header text-uppercase" data-tab-trigger><i
+                            class="cf-play hidden-lg hidden-md"></i>Size Chart
+                </div>
+                <div class="oro-grid__tab__content">
+                    <p>Your best scrub value: essential, traditional pieces made of a high-quality 65% polyester/35%
+                        cotton blend and double-stitch construction to last wear after wear. This premium scrub set
+                        features a V-neck scrub top with one roomy patch pocket at the chest and drawstring scrub pants
+                        with a roomy back pocket.</p>
+                </div>
+            </div>
+            <div class="oro-grid__tab" data-tab>
+                <div class="oro-grid__tab__header text-uppercase" data-tab-trigger><i
+                            class="cf-play hidden-lg hidden-md"></i>Reviews (2)
+                </div>
+                <div class="oro-grid__tab__content">
+                    <div class="product__review">
+                        <h2 class="oro-grid__tab__content__title">Reviews <span>(2)</span></h2>
+                        <ul class="reviews-list">
+                            <li class="reviews-list__item">
+                                <h3 class="reviews-list__item__title">Lorem ipsum dolor sit amet</h3>
+                                <p>Consectetur adipiscing elit. Suspendisse ultricies vel ligula sit amet malesuada.
+                                    Aliquam vitae leo enim. In id tortor hendrerit, cursus augue sed, malesuada quam.
+                                    Curabitur ac sodales dui. Cum sociis natoque penatibus et magnis dis parturient
+                                    montes, nascetur ridiculus mus.</p>
+                                <div class="reviews-list__item__rating">
+                              <span class="review-rating__item">
+                                <span class="review-rating__item__text">Price</span>
+                                <span data-rated></span>
+                              </span>
+                              <span class="review-rating__item">
+                                <span class="review-rating__item__text">Value</span>
+                                <span data-rated></span>
+                              </span>
+                              <span class="review-rating__item">
+                                <span class="review-rating__item__text">Quality</span>
+                                <span data-rated></span>
+                              </span>
+                                </div>
+                                <div class="reviews-list__item__date blue">Review by Adam Johnson 7/28/2015</div>
+                            </li>
+                            <li class="reviews-list__item">
+                                <h3 class="reviews-list__item__title">Lorem ipsum dolor sit amet</h3>
+                                <p>Consectetur adipiscing elit. Suspendisse ultricies vel ligula sit amet malesuada.
+                                    Aliquam vitae leo enim. In id tortor hendrerit, cursus augue sed, malesuada quam.
+                                    Curabitur ac sodales dui. Cum sociis natoque penatibus et magnis dis parturient
+                                    montes, nascetur ridiculus mus.</p>
+                                <div class="reviews-list__item__rating">
+                              <span class="review-rating__item">
+                                <span class="review-rating__item__text">Price</span>
+                                <span data-rated></span>
+                              </span>
+                              <span class="review-rating__item">
+                                <span class="review-rating__item__text">Value</span>
+                                <span data-rated></span>
+                              </span>
+                              <span class="review-rating__item">
+                                <span class="review-rating__item__text">Quality</span>
+                                <span data-rated></span>
+                              </span>
+                                </div>
+                                <div class="reviews-list__item__date blue">Review by Adam Johnson 7/28/2015</div>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-default theme-btn btn-dark"> Write a Review</a>
+                    </div>
+                </div>
+            </div>
+            <div class="oro-grid__tab" data-tab>
+                <div class="oro-grid__tab__header text-uppercase" data-tab-trigger><i
+                            class="cf-play hidden-lg hidden-md"></i>Notes (2)
+                </div>
+                <div class="oro-grid__tab__content">
+                    <div class="product__review">
+                        <h2 class="oro-grid__tab__content__title">Notes <span>(2)</span></h2>
+                        <ul class="reviews-list">
+                            <li class="reviews-list__item">
+                                <h3 class="reviews-list__item__title">
+                                    John Smith <span class="blue">7/29/2105</span>
+                                    <button class="delete-note-btn delete-note-btn_abs"><i class="cf-trash"></i>
+                                    </button>
+                                </h3>
+                                <p>Consectetur adipiscing elit. Suspendisse ultricies vel ligula sit amet malesuada.
+                                    Aliquam vitae leo enim. In id tortor hendrerit, cursus augue sed, malesuada quam.
+                                    Curabitur ac sodales dui. Cum sociis natoque penatibus et magnis dis parturient
+                                    montes, nascetur ridiculus mus.</p>
+                            </li>
+                            <li class="reviews-list__item">
+                                <h3 class="reviews-list__item__title">
+                                    John Smith <span class="blue">7/29/2105</span>
+                                    <button class="delete-note-btn delete-note-btn_abs"><i class="cf-trash"></i>
+                                    </button>
+                                </h3>
+                                <p>Consectetur adipiscing elit. Suspendisse ultricies vel ligula sit amet malesuada.
+                                    Aliquam vitae leo enim. In id tortor hendrerit, cursus augue sed, malesuada quam.
+                                    Curabitur ac sodales dui. Cum sociis natoque penatibus et magnis dis parturient
+                                    montes, nascetur ridiculus mus.</p>
+                            </li>
+                        </ul>
+                        <a href="#" class="btn btn-default theme-btn btn-dark">Add a Note</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END Product Tabs -->
+    </div>
+{% endblock %}

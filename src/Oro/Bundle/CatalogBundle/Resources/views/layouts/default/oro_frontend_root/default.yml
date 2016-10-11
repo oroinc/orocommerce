@@ -1,0 +1,62 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'default.html.twig'
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue: 'oro.catalog.frontend.root.title'
+        - '@addTree':
+            items:
+                hero_promo_container:
+                    blockType: container
+                    prepend: true
+                hero_promo:
+                    blockType: embedded_list
+                    options:
+                        items:
+                            -
+                                image: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-1.png'
+                                prelabel: 'New items in stock'
+                                label: 'For Medical Professionals'
+                                link: /product/
+                                link_label: View items
+                            -
+                                image: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-2.png'
+                                link: /product/?categoryId=2&includeSubcategories=1
+                            -
+                                image: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-3.png'
+                                link: /product/?categoryId=7&includeSubcategories=1
+                        use_slider: true
+                        slider_options: {slidesToShow: 1}
+                hero_promo_item:
+                    blockType: container
+                featured_categories:
+                    blockType: embedded_list
+                    siblingId: hero_promo_container
+                    options:
+                        item_key: 'category'
+                        items: '=data["featured_categories"].getAll()'
+                        items_data:
+                            categoryProductsCount: '=data["categories_products"].getCountByCategories(items)'
+                featured_category:
+                    blockType: container
+                featured_category_image:
+                    blockType: block
+                featured_category_desc:
+                    blockType: container
+                featured_category_label:
+                    blockType: block
+                featured_category_products:
+                    blockType: block
+            tree:
+                content:
+                    hero_promo_container:
+                        hero_promo:
+                            hero_promo_item: ~
+                    featured_categories:
+                        featured_category:
+                            featured_category_image: ~
+                            featured_category_desc:
+                                featured_category_label: ~
+                                featured_category_products: ~

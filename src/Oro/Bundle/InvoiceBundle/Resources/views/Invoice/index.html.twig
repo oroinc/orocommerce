@@ -1,0 +1,12 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set pageTitle = 'oro.invoice.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('oro_invoice_create') %}
+        {{ UI.addButton({
+            'path': path('oro_invoice_create'),
+            'entity_label': 'oro.invoice.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}

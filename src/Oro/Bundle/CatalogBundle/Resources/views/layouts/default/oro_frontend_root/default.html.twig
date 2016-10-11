@@ -1,0 +1,126 @@
+{% block _hero_promo_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' hero-promo'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _hero_promo_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~data-page-component-options': {
+            autoplay: true,
+            autoplaySpeed: 4000,
+            arrows: false,
+            dots: true
+        }
+    }) %}
+
+    {{ block_widget(block, {
+        attr: attr
+    }) }}
+{% endblock %}
+
+{% block _hero_promo_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' hero-promo-item'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {% if item.link|default('') %}
+            <a href="{{ app.request.getUriForPath(item.link) }}">
+        {% endif %}
+        <div class="hero-promo-item__picture">
+            <img class="hero-promo-item__img"
+                src="{{ item.image }}">
+        </div>
+        <div class="hero-promo-item__info">
+            {% if item.prelabel|default('') or item.label|default('') or item.link|default('') %}
+            <div class="hero-promo-item__cover">
+                <div class="hero-promo-item__desc">
+                    {% if item.prelabel|default('') %}
+                        <span class="hero-promo-item__pretitle">{{ item.prelabel }}</span>
+                    {% endif %}
+                    {% if item.label|default('') %}
+                        <h2 class="hero-promo-item__title">{{ item.label }}</h2>
+                    {% endif %}
+                    {% if item.link|default('') and item.link_label|default('') %}
+                        <a href="{{ app.request.getUriForPath(item.link) }}" class="btn theme-btn btn-dark hero-promo-item__view-btn">
+                            {{ item.link_label }} <i class="cf-right-open-mini"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% if item.link|default('') %}
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block _featured_categories_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-categories'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _featured_category_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category'
+    }) %}
+    <a {{ block('block_attributes') }}
+        href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}">
+        {{ block_widget(block) }}
+    </a>
+{% endblock %}
+
+{% block _featured_category_image_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__image',
+        alt: category.defaultTitle
+    }) %}
+
+    {% if category.smallImage %}
+        {% set attr = layout_attr_defaults(attr, {
+            src: Image.url(category.smallImage, 'product_large')
+        }) %}
+    {% else %}
+        {% set attr = layout_attr_defaults(attr, {
+            src: '/bundles/orocatalog/default/images/no_image.png'
+        }) %}
+    {% endif %}
+
+    <img {{ block('block_attributes') }}>
+{% endblock %}
+
+{% block _featured_category_desc_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__desc'
+    }) %}
+    <dl {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </dl>
+{% endblock %}
+
+{% block _featured_category_label_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__name'
+    }) %}
+    <dt {{ block('block_attributes') }}>{{ category.defaultTitle }}</dt>
+{% endblock %}
+
+{% block _featured_category_products_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' featured-category__qty'
+    }) %}
+    <dd {{ block('block_attributes') }}>{{ 'oro.catalog.featured_categories.view.items.label'|transchoice(categoryProductsCount) }}</dd>
+{% endblock %}

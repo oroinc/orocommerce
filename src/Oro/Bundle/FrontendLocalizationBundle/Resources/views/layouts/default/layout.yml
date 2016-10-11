@@ -1,0 +1,4 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroFrontendLocalizationBundle:layouts:default/layout.html.twig'

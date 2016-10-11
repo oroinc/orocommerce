@@ -1,0 +1,7 @@
+{% spaceless %}
+    {% set methodConfigs = record.getValue('methodConfigs').toArray() %}
+
+    {% for methodConfig in methodConfigs %}
+        {{ methodConfig.method }}
+    {% endfor %}
+{% endspaceless %}

@@ -1,0 +1,11 @@
+@import 'orofrontend/default/scss/shared/_vars.scss';
+@import 'orofrontend/default/scss/shared/_mixins.scss';
+@import 'orofrontend/default/scss/components/commerce/partials/variables';
+@import 'orofrontend/default/scss/components/commerce/partials/mixins';
+
+@import 'components/categories';
+
+@import 'components/hero-promo/hero-promo.scss';
+@import 'components/hero-promo-item/hero-promo-item.scss';
+@import 'components/featured-categories/featured-categories.scss';
+@import 'components/featured-category/featured-category.scss';

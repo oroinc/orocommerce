@@ -1,0 +1,25 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'oro_product_line_item_form.html.twig'
+        - '@addTree':
+            items:
+                __line_item_form:
+                    blockType: form
+                    options:
+                        preferred_fields: [quantity]
+                        form: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"], instance_name)'
+                __line_item_form_buttons:
+                    blockType: container
+            tree:
+                __root:
+                    __line_item_form:
+                        __line_item_form_buttons: ~
+        - '@move':
+            id: __line_item_form_buttons
+            parentId: __line_item_form
+            siblingId: __line_item_form_fields
+        - '@setOption':
+            id: __line_item_form_fields
+            optionName: class_prefix
+            optionValue: line_item_form_fields

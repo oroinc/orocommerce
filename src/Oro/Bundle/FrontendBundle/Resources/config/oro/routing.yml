@@ -1,0 +1,57 @@
+oro_frontend:
+    resource:     "@OroFrontendBundle/Controller/FrontendController.php"
+    type:         annotation
+    options:
+        frontend: true
+
+oro_frontend_datagrid:
+    resource:     "@OroFrontendBundle/Controller/GridController.php"
+    type:         annotation
+    options:
+        frontend: true
+
+oro_installer:
+    resource: "@OroInstallerBundle/Resources/config/oro/routing.yml"
+    options:
+        frontend: true
+
+oro_frontend_dictionary_search:
+    path: /dictionary/{dictionary}/search
+    defaults: { _controller: OroEntityBundle:Dictionary:search }
+    options:
+        frontend: true
+
+oro_frontend_dictionary_value:
+    path: /dictionary/{dictionary}/values
+    defaults: { _controller: OroEntityBundle:Dictionary:values }
+    options:
+        frontend: true
+
+oro_frontend_datagrid_index:
+    path: /datagrid/{gridName}
+    defaults: { _controller: OroDataGridBundle:Grid:get }
+    requirements:
+        gridName: '[\w\:-]+'
+    options:
+        frontend: true
+
+oro_frontend_action:
+    resource: "@OroFrontendBundle/Resources/config/oro/routing_action.yml"
+
+oro_filtered_attachment:
+    path: "media/cache/attachment/resize/{id}/{filter}/{filename}"
+    defaults: { _controller: OroAttachmentBundle:File:getFilteredImage}
+    requirements:
+        id: '\d+'
+    options:
+        frontend: true
+
+oro_resize_attachment:
+    path: "media/cache/attachment/resize/{id}/{width}/{height}/{filename}"
+    defaults: { _controller: OroAttachmentBundle:File:getResizedAttachmentImage}
+    requirements:
+        id: '\d+'
+        width: '\d+'
+        height: '\d+'
+    options:
+        frontend: true

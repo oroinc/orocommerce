@@ -1,0 +1,34 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroCatalogBundle:layouts:default/page/main_menu.html.twig'
+        - '@addTree':
+            items:
+                categories_main_menu:
+                    blockType: category_list
+                    siblingId: ~
+                    prepend: true
+                    options:
+                        categories: '=data["category"].getCategoryTree(data["current_user"].getCurrentUser())'
+                        max_size: 4
+                categories_main_menu_first_level_item:
+                    blockType: container
+                categories_main_menu_second_level:
+                    blockType: container
+                categories_main_menu_second_level_item:
+                    blockType: container
+                categories_main_menu_third_level:
+                    blockType: container
+                categories_main_menu_third_level_item:
+                    blockType: block
+#                categories_main_menu_second_level_sales:
+#                    blockType: block
+            tree:
+                main_menu_container:
+                    categories_main_menu:
+                        categories_main_menu_first_level_item:
+                            categories_main_menu_second_level:
+                                categories_main_menu_second_level_item:
+                                    categories_main_menu_third_level:
+                                        categories_main_menu_third_level_item: ~
+                            #categories_main_menu_second_level_sales: ~

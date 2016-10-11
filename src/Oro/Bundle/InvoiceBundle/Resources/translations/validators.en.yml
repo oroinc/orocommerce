@@ -1,0 +1,6 @@
+oro:
+    invoice:
+        validation:
+            payment_due_date_error.label: 'Payment due date should be greater that invoice date'
+        invoicelineitem:
+            count: 'Please add at least one Line Item'
