@@ -50,7 +50,7 @@ class OroRFPBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_6';
+        return 'v1_7';
     }
 
     /**
@@ -115,6 +115,7 @@ class OroRFPBundleInstaller implements
         $table = $schema->createTable('oro_rfp_request');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('status_id', 'integer', ['notnull' => false]);
@@ -266,6 +267,12 @@ class OroRFPBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['user_owner_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
