@@ -37,15 +37,15 @@ class OroCommerceMenuBundle implements
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOroFrontendNavigationMenuUpdateTable($schema);
-        $this->createOroFrontendNavigationMenuUpdateTitleTable($schema);
+        $this->createOroCommerceMenuUpdateTable($schema);
+        $this->createOroCommerceMenuUpdateTitleTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroFrontendNavigationMenuUpdateForeignKeys($schema);
-        $this->addOroFrontendNavigationMenuUpdateTitleForeignKeys($schema);
+        $this->addOroCommerceMenuUpdateForeignKeys($schema);
+        $this->addOroCommerceMenuUpdateTitleForeignKeys($schema);
 
         /** Associations */
-        $this->addOroFrontendNavigationMenuUpdateImageAssociation($schema);
+        $this->addOroCommerceMenuUpdateImageAssociation($schema);
     }
 
     /**
@@ -53,7 +53,7 @@ class OroCommerceMenuBundle implements
      *
      * @param Schema $schema
      */
-    protected function createOroFrontendNavigationMenuUpdateTable(Schema $schema)
+    protected function createOroCommerceMenuUpdateTable(Schema $schema)
     {
         $table = $schema->createTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -77,7 +77,7 @@ class OroCommerceMenuBundle implements
      *
      * @param Schema $schema
      */
-    protected function createOroFrontendNavigationMenuUpdateTitleTable(Schema $schema)
+    protected function createOroCommerceMenuUpdateTitleTable(Schema $schema)
     {
         $table = $schema->createTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TITLE_TABLE_NAME);
         $table->addColumn('menu_update_id', 'integer', []);
@@ -91,7 +91,7 @@ class OroCommerceMenuBundle implements
      *
      * @param Schema $schema
      */
-    protected function addOroFrontendNavigationMenuUpdateForeignKeys(Schema $schema)
+    protected function addOroCommerceMenuUpdateForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME);
         $table->addForeignKeyConstraint(
@@ -107,7 +107,7 @@ class OroCommerceMenuBundle implements
      *
      * @param Schema $schema
      */
-    protected function addOroFrontendNavigationMenuUpdateTitleForeignKeys(Schema $schema)
+    protected function addOroCommerceMenuUpdateTitleForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TITLE_TABLE_NAME);
         $table->addForeignKeyConstraint(
@@ -127,7 +127,7 @@ class OroCommerceMenuBundle implements
     /**
      * @param Schema $schema
      */
-    public function addOroFrontendNavigationMenuUpdateImageAssociation(Schema $schema)
+    public function addOroCommerceMenuUpdateImageAssociation(Schema $schema)
     {
         $this->attachmentExtension->addImageRelation(
             $schema,

@@ -1,5 +1,5 @@
 oro:
-    frontendnavigation:
+    commercemenu:
         menuupdate:
             entity_label: Menu Update
             entity_plural_label: Menu Update
