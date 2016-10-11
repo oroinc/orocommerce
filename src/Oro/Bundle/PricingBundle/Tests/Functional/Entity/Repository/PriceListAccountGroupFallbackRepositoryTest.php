@@ -49,7 +49,6 @@ class PriceListAccountGroupFallbackRepositoryTest extends AbstractFallbackReposi
             'case2' => [
                 'website' => 'Canada',
                 'expectedAccounts' => [
-                    'account.level_1_1',
                     'account.level_1.3',
                     'account.orphan',
                     'AccountUser AccountUser',

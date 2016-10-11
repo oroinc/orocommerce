@@ -50,23 +50,6 @@ class ShoppingListController extends Controller
         if ($shoppingList) {
             $title = $shoppingList->getLabel();
             $totalWithSubtotalsAsArray = $this->getTotalProcessor()->getTotalWithSubtotalsAsArray($shoppingList);
-
-            $lineItems = $shoppingList->getLineItems();
-
-            if (!empty($lineItems)) {
-                $products = [];
-                foreach ($lineItems as $lineItem) {
-                    /** @var LineItem $lineItem */
-                    $products[]['productSku'] = $lineItem->getProduct()->getSku();
-                }
-                if (!empty($this->container)) {
-                    $shoppingList->setIsAllowedRFP(
-                        $this->container
-                            ->get('oro_rfp.form.type.extension.frontend_request_data_storage')
-                            ->isAllowedRFP($products)
-                    );
-                }
-            }
         } else {
             $title = null;
             $totalWithSubtotalsAsArray = [];

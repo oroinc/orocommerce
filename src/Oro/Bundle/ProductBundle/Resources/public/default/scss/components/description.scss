@@ -411,10 +411,10 @@
   max-width: 205px;
   margin: 0 0 20px;
 
-  @media (max-width: 360px) {
+  @media (max-width: $screen-md) {
     max-width: 100%;
   }
- 
+
   &_gallery-view {
     display: none;
   }
@@ -476,6 +476,10 @@
   border-radius: 5px;
 
   background: $theme-lightest-gray-color;
+
+  @media (max-width: $screen-md) {
+    max-width: 100%;
+  }
 
   .table {
     margin-bottom: 5px;

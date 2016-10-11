@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension\Stub\RoundingServiceStub;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductAttributePriceCollectionTypeTest extends FormIntegrationTestCase
 {
@@ -22,10 +23,17 @@ class ProductAttributePriceCollectionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $translator = $this->getMockForAbstractClass(TranslatorInterface::class);
+        $translator->expects(static::any())
+            ->method('trans')
+            ->will(static::returnCallback(function ($string) {
+                return $string . '_translated';
+            }));
+
         $extensions = [
             new PreloadedExtension(
                 [
-                    ProductAttributePriceCollectionType::NAME => new ProductAttributePriceCollectionType(),
+                    ProductAttributePriceCollectionType::NAME => new ProductAttributePriceCollectionType($translator),
                     ProductAttributePriceType::NAME => new ProductAttributePriceType(new RoundingServiceStub())
                 ],
                 []
@@ -62,21 +70,32 @@ class ProductAttributePriceCollectionTypeTest extends FormIntegrationTestCase
         $product = new Product();
         $product->addUnitPrecision((new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('item')));
 
+        $productUnit1 = new ProductUnit();
+        $productUnit1->setCode('item');
+
         $price1 = (new PriceAttributeProductPrice())
             ->setPrice(Price::create('100', 'USD'))
             ->setProduct($product)
-            ->setPriceList($attributePriceList);
+            ->setPriceList($attributePriceList)
+            ->setUnit($productUnit1);
+
+        $productUnit2 = new ProductUnit();
+        $productUnit2->setCode('set');
 
         $price2 = (new PriceAttributeProductPrice())
             ->setPrice(Price::create('80', 'EUR'))
             ->setProduct($product)
-            ->setPriceList($attributePriceList);
+            ->setPriceList($attributePriceList)
+            ->setUnit($productUnit2);
 
         $form = $this->factory->create(ProductAttributePriceCollectionType::NAME, [$price1, $price2], []);
         $view = $form->createView();
 
         $this->assertSame(['EUR', 'USD'], $view->vars['currencies']);
-        $this->assertSame(['item'], $view->vars['units']);
+        $this->assertSame([
+            'item' => 'item',
+            'set' => 'oro.product.productunit.removed_translated',
+        ], $view->vars['units']);
         $this->assertSame($attributePriceList->getName(), $view->vars['label']);
     }
 }

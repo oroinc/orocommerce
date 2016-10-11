@@ -108,7 +108,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
                 ],
             ]
         );
-
     }
 
     /**

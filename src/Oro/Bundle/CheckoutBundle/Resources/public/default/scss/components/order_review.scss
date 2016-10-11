@@ -4,10 +4,6 @@
 
   background: $base-topbar-background-color;
 
-  @media (max-width: $screen-md) {
-    display: none;
-  }
-
   &__tab {
     .checkout-order-summary__tab__content {
       display: block;
