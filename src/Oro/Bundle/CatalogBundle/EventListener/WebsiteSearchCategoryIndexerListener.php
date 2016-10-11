@@ -56,6 +56,8 @@ class WebsiteSearchCategoryIndexerListener
             : null;
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
+        //For fetching default localization
+        $localizations[] = null;
         $categoryMap = $this->getRepository()->getCategoryMapByProducts($products, $localizations);
 
         foreach ($products as $product) {
@@ -75,11 +77,13 @@ class WebsiteSearchCategoryIndexerListener
                     ];
 
                     foreach ($localizedFields as $fieldName => $fieldValue) {
+                        $localizationId = $localization ? $localization->getId() : 0;
+                        $placeholders = [LocalizationIdPlaceholder::NAME => $localizationId];
                         $event->addPlaceholderField(
                             $product->getId(),
                             $fieldName,
                             $fieldValue,
-                            [LocalizationIdPlaceholder::NAME => $localization->getId()]
+                            $placeholders
                         );
                     }
                 }
