@@ -11,7 +11,7 @@
       transition: all 200ms linear;
 
       &:hover {
-        color: $base-font-color;
+        color: get-color('additional', 'dark');
       }
     }
 

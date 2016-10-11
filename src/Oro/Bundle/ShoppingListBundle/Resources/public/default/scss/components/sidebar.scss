@@ -32,13 +32,13 @@
     display: block;
     padding: 15px 10px 15px 40px;
 
-    color: $base-font-color;
+    color: get-color('additional', 'dark');
     text-decoration: none;
 
     &:hover,
     &:focus,
     &:active {
-      color: $base-font-color;
+      color: get-color('additional', 'dark');
       text-decoration: none;
     }
   }

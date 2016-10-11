@@ -14,7 +14,7 @@
   &.ui-widget-content {
     border: 0;
 
-    color: $base-font-color;
+    color: get-color('additional', 'dark');
   }
 
   .ui-dialog-titlebar {
@@ -22,7 +22,7 @@
     border: 0;
 
     background: transparent;
-    color: $base-font-color;
+    color: get-color('additional', 'dark');
     font-weight: 400;
 
     &.ui-draggable-handle {
@@ -88,7 +88,7 @@
 
   .ui-widget-content {
     border: 0;
-    color: $base-font-color;
+    color: get-color('additional', 'dark');
     padding: 0 40px;
 
     form {

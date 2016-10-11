@@ -42,7 +42,7 @@ body {
         border-radius: 4px;
 
         background: none;
-        color: $base-font-color;
+        color: get-color('additional', 'dark');
         font-size: $base-font-size;
 
         &.ui-state-active,
@@ -122,7 +122,7 @@ body {
       }
     }
     .ui-datepicker-title {
-      color: $base-font-color;
+      color: get-color('additional', 'dark');
       font-size: $base-font-size;
       font-weight: 100;
     }

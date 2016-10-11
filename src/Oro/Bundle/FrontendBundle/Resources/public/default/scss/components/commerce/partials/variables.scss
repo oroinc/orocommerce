@@ -1,5 +1,4 @@
 // Fonts
-$font-size: $base-font-size;
 $font-size-s: 13px;
 $font-size-m: 20px;
 $line-height: 1.2;
@@ -9,14 +8,3 @@ $color-error: $theme-input-error;
 $color-warring: $theme-warning-color;
 $color-success: $theme-input-success;
 $color-focus: $base-link-color;
-
-// Desktop Media Breakpoint
-$breakpoint-desktop: 1100px;
-// iPad mini 4 (768*1024), iPad Air 2 (768*1024), iPad Pro (1024*1366)
-$breakpoint-tablet: $breakpoint-desktop - 1;
-// iPhone 4s (320*480), iPhone 5s (320*568), iPhone 6s (375*667), iPhone 6s Plus (414*763)
-$breakpoint-mobile: 414px;
-
-// Media breakpoints old
-$phone-width: 480px;
-$tablet-width: 1024px;

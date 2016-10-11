@@ -73,7 +73,7 @@
                       rgba(255,255,255,1) 0%,
                       rgba(230,230,230,1) 100%);
 
-      color: $base-font-color-lighter;
+      color: get-color('additional', 'lighter');
       font-family: 'Lato', Arial, sans-serif;
       font-size: $base-font-size !important;
       line-height: 1.14 !important;
@@ -129,7 +129,7 @@
                       rgba(255,255,255,1) 0%,
                       rgba(230,230,230,1) 100%);
 
-      color: $base-font-color-lighter;
+      color: get-color('additional', 'lighter');
       font-size: 0;
 
       i, [class^="icon-"] {
@@ -390,7 +390,7 @@
 
       height: 0;
       margin: -3px 0 0 -5px;
-      border-top: 6px solid $base-font-color-lighter;
+      border-top: 6px solid get-color('additional', 'lighter');
       border-left: 5px solid transparent;
       border-right: 5px solid transparent;
     }
@@ -415,7 +415,7 @@
       box-shadow: none;
 
       background: $base-white-color;
-      color: $base-font-color-lighter;
+      color: get-color('additional', 'lighter');
       line-height: 24px;
       box-sizing: border-box;
       text-align: left;
@@ -484,11 +484,11 @@
           .nav-tabs-oro {
             > li {
               &.active {
-                color: $base-font-color;
+                color: get-color('additional', 'dark');
               }
 
               > a {
-                color: $base-font-color-lighter;
+                color: get-color('additional', 'lighter');
               }
             }
           }
@@ -1217,13 +1217,13 @@
 
             &.ascending {
               span.caret {
-                border-bottom-color: $base-font-color-lighter;
+                border-bottom-color: get-color('additional', 'lighter');
               }
             }
 
             &.descending {
               span.caret {
-                border-top-color: $base-font-color-lighter;
+                border-top-color: get-color('additional', 'lighter');
               }
             }
 

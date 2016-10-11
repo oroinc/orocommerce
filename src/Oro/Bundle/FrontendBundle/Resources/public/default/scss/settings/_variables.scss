@@ -1,10 +1,6 @@
 // Fonts
-$font-size: $base-font-size;
 $roboto-font: 'Roboto', 'Helvetica', Arial, sans-serif;
-
 //Theme base colors
-$base-font-color: #464646;
-$base-font-color-lighter: #707070;
 $base-white-color: #fff;
 
 //Theme links color 
@@ -17,9 +13,6 @@ $theme-lighter-gray-color: #ebebeb;
 //Theme background colors
 $base-background-color: $base-white-color;
 $base-topbar-background-color: $theme-lighter-gray-color;
-
-//Theme borders colors
-$base-border-color: $theme-lighter-gray-color;
 
 //Input errors
 $theme-input-error: #7a0026;

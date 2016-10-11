@@ -10,7 +10,7 @@
 
         font-size: $base-font-size;
 
-        border: 1px solid $base-border-color;
+        border: 1px solid get-color(additional, 'light');
     }
 
     &__picture {

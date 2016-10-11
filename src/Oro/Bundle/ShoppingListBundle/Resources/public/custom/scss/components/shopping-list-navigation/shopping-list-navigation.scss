@@ -60,7 +60,7 @@ $shopping-list-items-count: 6;
             border-left: 0;
 
             &:hover {
-                color: $base-font-color;
+                color: get-color('additional', 'dark');
                 border-left: 0;
             }
         }

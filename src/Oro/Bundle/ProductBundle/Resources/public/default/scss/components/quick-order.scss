@@ -185,7 +185,7 @@
   padding: 10px 0;
   border-radius: 3px;
 
-  color: $base-font-color-lighter;
+  color: get-color('additional', 'lighter');
   background: $theme-gray-color;
   font-size: 13px;
   text-decoration: none;
@@ -193,7 +193,7 @@
 
 
   &:focus, &:hover, &:active {
-    color: $base-font-color-lighter;
+    color: get-color('additional', 'lighter');
     text-decoration: none;
   }
 

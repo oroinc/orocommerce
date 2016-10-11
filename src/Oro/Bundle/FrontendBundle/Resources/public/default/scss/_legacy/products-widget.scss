@@ -460,7 +460,7 @@
     $product-item__title_gallery-view-line-h: 1.35;
 
     a {
-      color: $base-font-color;
+      color: get-color('additional', 'dark');
     }
 
     &_gallery-view {
@@ -551,11 +551,11 @@
       line-height: 1.2;
 
       a {
-        color: $base-font-color;
+        color: get-color('additional', 'dark');
         text-decoration: underline;
 
         &:focus, &:hover, &:active {
-          color: $base-font-color;
+          color: get-color('additional', 'dark');
           text-decoration: none;
         }
       }
@@ -980,7 +980,7 @@
 // *** The code below han not implemented yet!!!
 .cart-list__item_create-new-btn-container {
   text-align: center;
-  border-top: .1rem solid $base-border-color;
+  border-top: .1rem solid get-color(additional, 'light');
   padding: 1.5rem 0 0;
   margin: 2rem 0 0;
 }

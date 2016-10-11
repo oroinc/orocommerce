@@ -115,7 +115,7 @@
       top: 19px;
 
       .cf-play {
-        color: $base-font-color-lighter;
+        color: get-color('additional', 'lighter');
 
         transition: transform .2s linear;
       }

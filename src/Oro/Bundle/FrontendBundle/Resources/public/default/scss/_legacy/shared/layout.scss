@@ -69,10 +69,10 @@
   }
 
   &__link {
-    color: $base-font-color;
+    color: get-color('additional', 'dark');
 
     &:hover {
-      color: $base-font-color;
+      color: get-color('additional', 'dark');
     }
 
     span {
@@ -417,7 +417,7 @@
   display: inline-block;
   vertical-align: middle;
 
-  color: $base-font-color-lighter;
+  color: get-color('additional', 'lighter');
 
   &__trigger {
     position: relative;

@@ -128,7 +128,7 @@
     min-height: 49px;
     padding: 14px 0;
 
-    color: $base-font-color-lighter;
+    color: get-color('additional', 'lighter');
     line-height: 1.5;
     text-transform: uppercase;
     text-align: center;
@@ -143,7 +143,7 @@
     }
 
     &:hover, &:focus {
-      color: $base-font-color-lighter;
+      color: get-color('additional', 'lighter');
       text-decoration: none;
     }
   }
@@ -213,7 +213,7 @@
         height: calc(100% - 38px);
         width: 1px;
 
-        background: $base-border-color;
+        background: get-color(additional, 'light');
       }
     }
 
@@ -221,10 +221,10 @@
       margin: 10px 0 0;
 
       a {
-        color: $base-font-color;
+        color: get-color('additional', 'dark');
 
         &:hover {
-          color: $base-font-color;
+          color: get-color('additional', 'dark');
         }
       }
 
@@ -237,10 +237,10 @@
         }
 
         a {
-          color: $base-font-color-lighter;
+          color: get-color('additional', 'lighter');
 
           &:hover {
-            color: $base-font-color-lighter;
+            color: get-color('additional', 'lighter');
           }
         }
       }

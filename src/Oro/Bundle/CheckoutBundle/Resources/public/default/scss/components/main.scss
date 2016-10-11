@@ -59,13 +59,13 @@
   &__title {
     display: block;
 
-    color: $base-font-color;
+    color: get-color('additional', 'dark');
     font-size: 20px;
     line-height: 1.65;
     font-weight: 400;
 
     &:hover, &:focus, &:active {
-      color: $base-font-color;
+      color: get-color('additional', 'dark');
       text-decoration: none;
     }
 
@@ -139,7 +139,7 @@
 .checkout__multiple-shipping-block {
   background: #fff;
   padding: 2rem 2rem 1.5rem;
-  border: .1rem solid $base-border-color;
+  border: .1rem solid get-color(additional, 'light');
   border-radius: .5rem;
 
   .oro-more-info-toggler {
@@ -151,7 +151,7 @@
   > div {
     margin: 1rem 0 0;
     padding: 0 0 1rem;
-    border-bottom: .1rem solid $base-border-color;
+    border-bottom: .1rem solid get-color(additional, 'light');
 
     &:last-child {
       border: 0;
@@ -200,7 +200,7 @@
 
 .edit-order-list-link-mobile-container {
   text-align: left;
-  border-top: .1rem solid $base-border-color;
+  border-top: .1rem solid get-color(additional, 'light');
   padding: 1rem 0 0;
   margin: 1rem 0 0;
 

@@ -179,7 +179,7 @@
   &__additional-content {
     padding-left: 30px;
 
-    color: $base-font-color;
+    color: get-color('additional', 'dark');
   }
 }
 

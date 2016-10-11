@@ -81,7 +81,7 @@
   }
 
   &--gray {
-    color: $base-font-color-lighter;
+    color: get-color('additional', 'lighter');
   }
 
   &--hidden {

@@ -225,7 +225,7 @@
 }
 
 .base-color {
-  color: $base-font-color !important;
+  color: get-color('additional', 'dark') !important;
 }
 
 .gray {

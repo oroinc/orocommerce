@@ -664,7 +664,7 @@
 
   &.badge_transparent {
     background: transparent;
-    color: $base-font-color-lighter;
+    color: get-color('additional', 'lighter');
   }
 
   &.badge_dark {
@@ -676,7 +676,7 @@
   }
 
   &.badge_l-dark {
-    background: $base-font-color-lighter;
+    background: get-color('additional', 'lighter');
   }
 
   &.badge_orange {
@@ -705,7 +705,7 @@
 
   &.badge_lll_gray {
     background: $theme-lightest-gray-color;
-    color: $base-font-color;
+    color: get-color('additional', 'dark');
   }
 
   &.badge_complete {

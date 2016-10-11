@@ -113,7 +113,7 @@
             color: $base-white-color;
             border: 0;
             border-radius: 16px;
-            background: $base-font-color-lightest;
+            background: get-color('additional', 'dark')-lightest;
 
             &::before {
                 display: block;

@@ -103,7 +103,7 @@
 
   display: block;
   min-width: 345px;
-  border: 1px solid $base-border-color;
+  border: 1px solid get-color(additional, 'light');
   box-shadow: 0 2px 5px 0 rgba(0,0,0,.3);
 
   background: $base-footer-background-color;

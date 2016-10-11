@@ -5,17 +5,9 @@
   overflow: hidden;
 }
 
-@mixin clearfix() {
-  &:after {
-    content: "";
-    display: block;
-    clear: both;
-  }
-}
-
 @mixin input() {
   padding: 13px 12px;
-  border: 1px solid $base-border-color;
+  border: 1px solid get-color(additional, 'light');
   border-radius: 5px;
 
   &[disabled] {
@@ -139,7 +131,7 @@
 
     .fa {
       &.radio_not-checked {
-        color: $base-font-color-lighter;
+        color: get-color('additional', 'lighter');
       }
 
       &.radio_checked {

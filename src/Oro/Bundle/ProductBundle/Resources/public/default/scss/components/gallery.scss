@@ -412,7 +412,7 @@
       padding: 0;
 
       background: $theme-lightest-gray-color;
-      color: $base-font-color;
+      color: get-color('additional', 'dark');
       text-align: center;
 
       @media (max-width: $screen-md) {

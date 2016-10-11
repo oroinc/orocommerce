@@ -338,10 +338,10 @@
             display: block;
             padding: 0 17px;
 
-            color: $base-font-color;
+            color: get-color('additional', 'dark');
 
             &:hover, &:focus, &:active {
-              color: $base-font-color;
+              color: get-color('additional', 'dark');
             }
 
             > i {

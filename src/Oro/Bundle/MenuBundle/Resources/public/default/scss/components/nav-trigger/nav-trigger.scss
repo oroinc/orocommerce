@@ -24,7 +24,7 @@
 
         color: $base-white-color;
         border-radius: 50%;
-        background-color: $base-font-color-lighter;
+        background-color: get-color('additional', 'lighter');
 
         &--transparent {
             background-color: transparent;

@@ -135,7 +135,7 @@
     border-top: .1rem solid $alt-border-color;
 
     background: $base-topbar-background-color;
-    color: $base-font-color;
+    color: get-color('additional', 'dark');
     text-align: center;
     text-decoration: none;
 
@@ -143,7 +143,7 @@
       outline: 0;
 
       text-decoration: none;
-      color: $base-font-color;
+      color: get-color('additional', 'dark');
     }
 
     [class^="cf-"]:before {
@@ -164,7 +164,7 @@
     min-width: 260px;
     padding: 0;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.3);
-    border: 1px solid $base-border-color;
+    border: 1px solid get-color(additional, 'light');
     border-radius: 2px;
 
     background: #fff;
@@ -285,7 +285,7 @@
   right: 0;
   margin: 0;
   background: #fff;
-  border: .1rem solid $base-border-color;
+  border: .1rem solid get-color(additional, 'light');
   box-shadow: 0 .2rem .4rem 0 rgba(0,0,0,.3);
   z-index: 1001;
 
@@ -348,7 +348,7 @@
 .order-widget__product-item {
   position: relative;
   padding: 1.5rem 3.5rem 1.5rem 1rem;
-  border-bottom: .1rem solid $base-border-color;
+  border-bottom: .1rem solid get-color(additional, 'light');
 
   &:before, &:after {
     content: "";
@@ -363,7 +363,7 @@
   &.order-widget__product-item__image_gallery-view {
     max-width: 5.6rem;
     float: left;
-    border: .1rem solid $base-border-color;
+    border: .1rem solid get-color(additional, 'light');
 
     > a {
       display: block;

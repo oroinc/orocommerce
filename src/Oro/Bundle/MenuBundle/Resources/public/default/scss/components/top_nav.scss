@@ -43,7 +43,7 @@
     }
 
     a {
-      color: $base-font-color-lighter;
+      color: get-color('additional', 'lighter');
       text-decoration: none;
 
       &:hover {
@@ -133,7 +133,7 @@
 
       a {
         font-size: $base-font-size;
-        color: $base-font-color;
+        color: get-color('additional', 'dark');
       }
     }
   }
