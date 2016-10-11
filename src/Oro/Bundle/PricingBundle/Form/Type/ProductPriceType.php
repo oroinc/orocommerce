@@ -78,7 +78,6 @@ class ProductPriceType extends AbstractType
             }
         );
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
-
     }
 
     /**
