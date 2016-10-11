@@ -102,7 +102,7 @@ class WebsiteSearchCategoryIndexerListener
                         $event->addPlaceholderField(
                             $product->getId(),
                             $fieldName,
-                            (string) $fieldValue,
+                            (string)$fieldValue,
                             $placeholders
                         );
                     }
