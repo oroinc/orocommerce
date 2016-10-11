@@ -11,6 +11,7 @@ oro:
         account.label: Account
         account_user.label: Customer User
         organization.label: Organization
+        owner.label: Owner
         line_items.label: Line Items
         current.label: Current
         default.label: 'Shopping list'
@@ -39,6 +40,7 @@ oro:
 
         actions:
             set_current: Set as current
+            choose_list: Choose list
             view: view shopping list
             add_to_shopping_list: Add to {{ shoppingList }}
             remove_from_shopping_list: Remove From {{ shoppingList }}
@@ -81,6 +83,7 @@ oro:
             shopping_list.label: Shopping List
             unit.label: Unit
             organization.label: Organization
+            owner.label: Owner
             account_user.label: Customer User
             add_line_item: Add Line Item
             edit_line_item: Edit Line Item

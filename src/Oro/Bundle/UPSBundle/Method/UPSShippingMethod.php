@@ -4,6 +4,7 @@ namespace Oro\Bundle\UPSBundle\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
@@ -29,19 +30,25 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
     /** @var PriceRequestFactory */
     protected $priceRequestFactory;
 
+    /** @var LocalizationHelper */
+    protected $localizationHelper;
+
     /**
      * @param UPSTransportProvider $transportProvider
      * @param Channel $channel
      * @param PriceRequestFactory $priceRequestFactory
+     * @param LocalizationHelper $localizationHelper
      */
     public function __construct(
         UPSTransportProvider $transportProvider,
         Channel $channel,
-        PriceRequestFactory $priceRequestFactory
+        PriceRequestFactory $priceRequestFactory,
+        LocalizationHelper $localizationHelper
     ) {
         $this->transportProvider = $transportProvider;
         $this->channel = $channel;
         $this->priceRequestFactory = $priceRequestFactory;
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
@@ -65,7 +72,9 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
      */
     public function getLabel()
     {
-        return $this->channel->getName();
+        /** @var UPSTransport $transport */
+        $transport = $this->channel->getTransport();
+        return $this->localizationHelper->getLocalizedValue($transport->getLabels());
     }
 
     /**

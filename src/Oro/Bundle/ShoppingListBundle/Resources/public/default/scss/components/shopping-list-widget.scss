@@ -60,6 +60,10 @@
     font-size: 18px;
   }
 
+  @include breakpoint('mobile-portrait') {
+    position: static;
+  }
+
   @media (max-width: 360px) {
     position: static;
 
