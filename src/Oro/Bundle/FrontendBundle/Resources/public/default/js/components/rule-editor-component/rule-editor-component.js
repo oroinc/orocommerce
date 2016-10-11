@@ -59,21 +59,9 @@ define([
 
         /**
          *
-         * @property {Array}
+         * @property {Object}
          */
-        dataWordCases: [],
-
-        /**
-         *
-         * @property {Array}
-         */
-        boolCases: [],
-
-        /**
-         *
-         * @property {Array}
-         */
-        operationsCases: [],
+        cases: {},
 
         /**
          *
@@ -96,10 +84,10 @@ define([
 
             var _this = this;
 
-            this.dataWordCases = this.getStrings(options.data);
+            this.cases.data = this.getStrings(options.data);
 
             _.each(this.options.allowedOperations, function(item) {
-                _this.operationsCases[item] = _this.getStrings(_this.options.operations[item]);
+                _this.cases[item] = _this.getStrings(_this.options.operations[item]);
                 _this.opsRegEx[item] = _this.getRegexp(_this.options.operations[item], item);
             });
 
@@ -147,7 +135,7 @@ define([
                 });
 
             var dataWordsAreValid = _.every(groups.expr, function(item) {
-                return _this.checkWord(item);
+                return _this.checkWord(item).isValid;
             });
 
             console.log('isValid', normalized, logicIsValid && dataWordsAreValid, this.error);
@@ -326,61 +314,79 @@ define([
          * @returns {Array}
          */
         getSuggestList: function(normalized, wordUnderCaret) {
-            var result = [];
+            var result;
             var _this = this;
 
-            if (_.isEmpty(normalized.string)) { // initial suggestion for empty normalized value
-                return this.dataWordCases;
+            if (_.isEmpty(normalized.string)) {
+                return this.cases.data;
             }
 
             var words = this.splitString(normalized.string, ' ');
             var wordsLength = words.length;
             var groups = this.getGroups(words);
 
-            var isCheckedWord = wordIs(words[wordsLength - 1]);
+            var wordIs = checkWord(words[wordsLength - 1]);
 
-            if (!_.some(isCheckedWord, function(item) {
+            console.clear();
+            console.log('-> wordIs', words[wordsLength - 1], wordIs);
+
+            if (wordIs.isInclusion || wordIs.isCompare) {
+                result = this.cases.bool;
+            } else if (!wordIs.isInclusion && wordIs.hasInclusion) {
+                result = getCases(wordUnderCaret, this.cases.data);
+/*
+            } else  if (){
+                result = getCases(wordUnderCaret);
+*/
+            } else {
+                result = getCases(wordUnderCaret);
+            }
+
+/*
+            if (!_.some(wordIs, function(item) {
                     return _.isBoolean(item) && item;
                 }) && words[wordsLength - 2]) {
-                isCheckedWord = wordIs(words[wordsLength - 2]);
+                wordIs = this.checkWord(words[wordsLength - 2]);
             }
 
-            if (isCheckedWord.dataExpression) { // previous word is a complete data expression
+            if (wordIs.dataExpression) {
                 result = this.getFilteredSuggests(this.boolCases, wordUnderCaret);
-            } else if (isCheckedWord.dataWord) { // previous word is a data expression word
+            } else if (wordIs.dataWord) {
                 result = this.getFilteredSuggests(this.operationsCases, wordUnderCaret);
-            } else if (isCheckedWord.operation) { // previous word is an operation (=, !=, etc.)
-                result = this.getFilteredSuggests(isCheckedWord.hasValues, wordUnderCaret);
-            } else if (isCheckedWord.compare || wordsLength === 1) {
+            } else if (wordIs.operation) {
+                result = this.getFilteredSuggests(wordIs.hasValues, wordUnderCaret);
+            } else if (wordIs.compare || wordsLength === 1) {
                 result = this.getFilteredSuggests(this.dataWordCases, wordUnderCaret);
             }
+*/
 
-            return result;
+            return result || cases;
 
-            function wordIs(word) {
-                var isDataExpression = _this.checkTerm(word, _this.dataWordCases);
-                var isMath = _this.checkTerm(word, _this.operationsCases.math);
-                var isBool = _this.checkTerm(word, _this.operationsCases.bool);
-                var isCompare = _this.checkTerm(word, _this.operationsCases.compare);
-                var isInclusion = _this.checkTerm(word, _this.operationsCases.inclusion);
-
-                console.log(word,
-                    'isDataExpression', isDataExpression,
-                    'isMath', isMath,
-                    'isBool', isBool,
-                    'isCompare', isCompare,
-                    'isInclusion', isInclusion);
+            function checkWord(word) {
+                var checkIt = _this.checkWord(word),
+                    isDataTerm = _this.checkTerm(word, _this.cases.data),
+                    isMath = _this.checkTerm(word, _this.cases.math),
+                    isBool = _this.checkTerm(word, _this.cases.bool),
+                    isValue = _this.checkValue(word);
 
                 return {
-                    /*
-                     compare: isBool,
-                     dataWord: isDataExpression,
-                     dataExpression: !_.isEmpty(groups.dataWords) && _this.isDataExpression(word).isFull,
-                     operation: isDataExpression.hasExpression,
-                     hasValues: isDataExpression.values
-                     */
+                    isCompare: checkIt.hasCompare && checkIt.isValid,
+                    isInclusion: checkIt.hasInclusion && checkIt.isValid,
 
+                    hasTerm: isDataTerm,
+                    hasExpression: checkIt.hasExpression,
+                    hasInclusion: checkIt.hasInclusion,
+                    hasCompare: checkIt.hasCompare,
+                    hasMath: isMath,
+                    hasBool: isBool,
+                    hasValue: isValue
                 };
+            }
+
+            function getCases(word, base) {
+                return _.union(_.flatten(_.map(base || _this.cases, function(casesArray) {
+                    return _this.getFilteredSuggests(casesArray, word);
+                })));
             }
         },
 
@@ -391,16 +397,18 @@ define([
          * @returns {*}
          */
         checkTerm: function(term, base) {
-            var bracketsMatch = term.match(/\[(.*?)\]/g)[0];
+            var validBrackets = true;
+            var bracketsMatch = term.match(/\[(.*?)\]/g);
 
-            var clearedTerm = this.replaceBetween(term, '[]', 'wipe');
+            console.log('checkTerm',term);
 
-            console.log(term, clearedTerm);
+            if (bracketsMatch) {
+                validBrackets = bracketsMatch.length === 1 ? this.checkArray(this.replaceBetween(bracketsMatch[0], '[]').split(',')) : false;
+            }
 
-            var validBrackets = bracketsMatch && bracketsMatch.length ? this.checkArray(this.replaceBetween(bracketsMatch, '[]').split(',')) : true;
-            var isCorrect = term && validBrackets ? this.contains(base, clearedTerm) : false;
+            var isCorrect = term && validBrackets ? this.contains(base, this.replaceBetween(term, '[]', 'wipe')) : false;
 
-            this.error.term = !isCorrect ? '\'' + term + '\'' + ' is wrong' : undefined;
+            this.error.term = !isCorrect ? 'Part \'' + term + '\'' + ' is wrong' : undefined;
 
             return isCorrect;
         },
@@ -415,7 +423,7 @@ define([
             var matchSplit = this.splitTermAndExpr(string, match),
                 pathValue = this.getValueByPath(this.options.data, matchSplit.term);
 
-            return this.checkTerm(matchSplit.term, this.dataWordCases) && this.checkExpression(matchSplit.expr, pathValue);
+            return this.checkTerm(matchSplit.term, this.cases.data) && this.checkExpression(matchSplit.expr, pathValue);
         },
 
         /**
@@ -428,7 +436,7 @@ define([
             var matchSplit = this.splitTermAndExpr(string, match),
                 expr = this.replaceBetween(matchSplit.expr, '[]', 'trim');
 
-            return this.checkTerm(matchSplit.term, this.dataWordCases) && (this.checkArray(expr.split(',')) || this.checkTerm(expr, this.dataWordCases));
+            return this.checkTerm(matchSplit.term, this.cases.data) && !_.isEmpty(matchSplit.expr) && (this.checkArray(expr.split(',')) || this.checkTerm(expr, this.cases.data));
         },
 
         /**
@@ -456,7 +464,7 @@ define([
          */
         checkValue: function(value) {
             var num = Number(value),
-                isCorrect = !_.isEmpty(value) && ((_.isNumber(num) && !_.isNaN(num)) || _.contains(this.dataWordCases, value));
+                isCorrect = !_.isEmpty(value) && ((_.isNumber(num) && !_.isNaN(num)) || _.contains(this.cases.data, value));
 
             this.error.value = !isCorrect ? 'Wrong value is \'' + value + '\'' : undefined;
 
@@ -515,7 +523,7 @@ define([
 
             function hasBool(data) {
                 return _.every(_.flatten([data]), function(value) {
-                    return _.contains(_this.operationsCases.bool, value);
+                    return _.contains(_this.cases.bool, value);
                 });
             }
         },
@@ -551,14 +559,14 @@ define([
             var operationType = this.getOperationType(string);
 
             if (operationType.compare) {
-                var validCompare = this.checkCompare(string, operationType.match);
+                var isCompare = this.checkCompare(string, operationType.match);
             } else if (operationType.inclusion) {
-                var validInclusion = this.checkInclusion(string, operationType.match);
+                var isInclusion = this.checkInclusion(string, operationType.match);
             } else if (operationType.math) {
-                var validExpression = this.checkExpression(string);
+                var isExpression = this.checkExpression(string);
             }
 
-            var isValid = validCompare || validInclusion || validExpression;
+            var isValid = isCompare || isInclusion || isExpression;
 
             if (isValid) {
                 this.error = {};
@@ -566,7 +574,12 @@ define([
                 this.error.word = 'Wrong part in \'' + string + '\'';
             }
 
-            return isValid;
+            return {
+                isValid: isValid,
+                hasCompare: operationType.compare,
+                hasInclusion: operationType.inclusion,
+                hasExpression: operationType.math
+            };
         },
 
         /**
@@ -656,7 +669,10 @@ define([
             }
 
             var arr = _.filter(list, function(item) {
-                return item.toLowerCase().indexOf(word.toLowerCase()) === 0;
+                var lowercaseItem = item.toLowerCase(),
+                    lowercaseWord = word.toLowerCase();
+
+                return lowercaseItem.indexOf(lowercaseWord) === 0 && lowercaseItem !== lowercaseWord;
             });
 
             return arr.length > 1 || arr[0] !== word ? arr : [];
@@ -798,7 +814,7 @@ define([
                     input = _this.replaceBetween(input, item, type, replace);
                 });
             } else {
-                input = _replace(input, brackets, type, replace).trim();
+                input = input ? _replace(input, brackets, type, replace).trim() : input;
             }
 
             console.log(input);
