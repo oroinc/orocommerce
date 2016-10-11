@@ -3,14 +3,14 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Provider;
 
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderVisitor;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 
 class PlaceholderProvider
 {
     /**
-     * @var PlaceholderVisitor
+     * @var PlaceholderInterface
      */
-    private $placeholderVisitor;
+    private $placeholder;
 
     /**
      * @var AbstractSearchMappingProvider
@@ -18,14 +18,14 @@ class PlaceholderProvider
     private $mappingProvider;
 
     /**
-     * @param PlaceholderVisitor $placeholderVisitor
+     * @param PlaceholderInterface $placeholder
      * @param AbstractSearchMappingProvider $mappingProvider
      */
     public function __construct(
-        PlaceholderVisitor $placeholderVisitor,
+        PlaceholderInterface $placeholder,
         AbstractSearchMappingProvider $mappingProvider
     ) {
-        $this->placeholderVisitor = $placeholderVisitor;
+        $this->placeholder = $placeholder;
         $this->mappingProvider = $mappingProvider;
     }
 
@@ -44,7 +44,7 @@ class PlaceholderProvider
             throw new \RuntimeException(sprintf('Cannot find %s field for %s class', $fieldName, $entityClass));
         }
 
-        return $this->placeholderVisitor->replace($fields[$fieldName]['name'], $placeholders);
+        return $this->placeholder->replace($fields[$fieldName]['name'], $placeholders);
     }
 
     /**
@@ -56,6 +56,6 @@ class PlaceholderProvider
     {
         $entityAlias = $this->mappingProvider->getEntityAlias($entityClass);
 
-        return $this->placeholderVisitor->replace($entityAlias, $placeholders);
+        return $this->placeholder->replace($entityAlias, $placeholders);
     }
 }

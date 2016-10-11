@@ -116,8 +116,8 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
         $values = $searchResult->getElements();
 
         $this->assertEquals(2, $searchResult->getRecordsCount());
-        $this->assertEquals('product.2', $values[0]->getRecordTitle());
-        $this->assertEquals('product.3', $values[1]->getRecordTitle());
+        $this->assertStringStartsWith('product.2', $values[0]->getRecordTitle());
+        $this->assertStringStartsWith('product.3', $values[1]->getRecordTitle());
     }
 
     public function testUpdateAccountVisibility()
@@ -133,8 +133,8 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
         $values = $searchResult->getElements();
 
         $this->assertEquals(2, $searchResult->getRecordsCount());
-        $this->assertEquals('product.2', $values[0]->getRecordTitle());
-        $this->assertEquals('product.3', $values[1]->getRecordTitle());
+        $this->assertStringStartsWith('product.2', $values[0]->getRecordTitle());
+        $this->assertStringStartsWith('product.3', $values[1]->getRecordTitle());
 
         $visibilityManager = $this
             ->getContainer()
@@ -163,7 +163,7 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
         $values = $searchResult->getElements();
 
         $this->assertEquals(1, $searchResult->getRecordsCount());
-        $this->assertEquals('product.3', $values[0]->getRecordTitle());
+        $this->assertStringStartsWith('product.3', $values[0]->getRecordTitle());
     }
 
     public function testDeleteAccountVisibility()
@@ -179,8 +179,8 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
         $values = $searchResult->getElements();
 
         $this->assertEquals(2, $searchResult->getRecordsCount());
-        $this->assertEquals('product.2', $values[0]->getRecordTitle());
-        $this->assertEquals('product.3', $values[1]->getRecordTitle());
+        $this->assertStringStartsWith('product.2', $values[0]->getRecordTitle());
+        $this->assertStringStartsWith('product.3', $values[1]->getRecordTitle());
 
         $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Account::class);
         $manager->remove($account);

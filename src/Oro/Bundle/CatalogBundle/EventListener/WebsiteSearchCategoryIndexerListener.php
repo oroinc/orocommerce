@@ -5,6 +5,7 @@ namespace Oro\Bundle\CatalogBundle\EventListener;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
@@ -56,8 +57,7 @@ class WebsiteSearchCategoryIndexerListener
             : null;
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
-        //For fetching default localization
-        $localizations[] = null;
+
         $categoryMap = $this->getRepository()->getCategoryMapByProducts($products, $localizations);
 
         foreach ($products as $product) {
@@ -68,6 +68,27 @@ class WebsiteSearchCategoryIndexerListener
                 $event->addField($product->getId(), 'category_id', $category->getId());
                 $event->addField($product->getId(), 'category_path', $category->getMaterializedPath());
 
+                $placeholders = [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION];
+                $event->addPlaceholderField(
+                    $product->getId(),
+                    'category_title',
+                    (string)$category->getDefaultTitle(),
+                    $placeholders
+                );
+                $event->addPlaceholderField(
+                    $product->getId(),
+                    'category_description',
+                    (string)$category->getDefaultLongDescription(),
+                    $placeholders
+                );
+
+                $event->addPlaceholderField(
+                    $product->getId(),
+                    'category_short_desc',
+                    (string)$category->getDefaultShortDescription(),
+                    $placeholders
+                );
+
                 // Localized fields
                 foreach ($localizations as $localization) {
                     $localizedFields = [
@@ -77,12 +98,11 @@ class WebsiteSearchCategoryIndexerListener
                     ];
 
                     foreach ($localizedFields as $fieldName => $fieldValue) {
-                        $localizationId = $localization ? $localization->getId() : 0;
-                        $placeholders = [LocalizationIdPlaceholder::NAME => $localizationId];
+                        $placeholders = [LocalizationIdPlaceholder::NAME => $localization->getId()];
                         $event->addPlaceholderField(
                             $product->getId(),
                             $fieldName,
-                            $fieldValue,
+                            (string) $fieldValue,
                             $placeholders
                         );
                     }

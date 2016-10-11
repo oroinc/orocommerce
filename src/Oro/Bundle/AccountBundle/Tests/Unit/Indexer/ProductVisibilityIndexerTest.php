@@ -7,8 +7,7 @@ use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\AccountBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
-use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 
 class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
 {
@@ -88,39 +87,27 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
 
         $expectedEntitiesData = [
             1 => [
-                IndexDataProvider::STANDARD_VALUES_KEY => [
-                    'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
-                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                ],
-                IndexDataProvider::PLACEHOLDER_VALUES_KEY => [
-                    'visibility_account' => [
-                        new ValueWithPlaceholders(1, ['ACCOUNT_ID' => 1]),
-                    ]
+                'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
+                'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                'visibility_account' => [
+                    new PlaceholderValue(1, ['ACCOUNT_ID' => 1]),
                 ]
             ],
             2 => [
-                IndexDataProvider::STANDARD_VALUES_KEY => [
-                    'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
-                ],
-                IndexDataProvider::PLACEHOLDER_VALUES_KEY => [
-                    'visibility_account' => [
-                        new ValueWithPlaceholders(1, ['ACCOUNT_ID' => 3])
-                    ]
+                'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
+                'visibility_account' => [
+                    new PlaceholderValue(1, ['ACCOUNT_ID' => 3])
                 ]
             ],
             3 => [
-                IndexDataProvider::STANDARD_VALUES_KEY => [
-                    'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                    'visibility_new' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
-                    'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                ],
-                IndexDataProvider::PLACEHOLDER_VALUES_KEY => [
-                    'visibility_account' => [
-                        new ValueWithPlaceholders(1, ['ACCOUNT_ID' => 2]),
-                    ]
+                'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                'visibility_new' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
+                'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
+                'visibility_account' => [
+                    new PlaceholderValue(1, ['ACCOUNT_ID' => 2]),
                 ]
             ]
         ];

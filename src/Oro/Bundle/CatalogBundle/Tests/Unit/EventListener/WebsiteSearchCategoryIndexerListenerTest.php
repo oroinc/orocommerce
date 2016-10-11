@@ -13,14 +13,12 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
-use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
-
     const NAME_DEFAULT_LOCALE = 'name default';
     const NAME_CUSTOM_LOCALE = 'name custom';
     const DESCRIPTION_DEFAULT_LOCALE = 'description default';
@@ -69,12 +67,12 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
-     * @param Localization $localization
+     * @param Localization|null $localization
      * @param string|null $string
      * @param string|null $text
      * @return LocalizedFallbackValue
      */
-    private function prepareLocalizedValue($localization, $string = null, $text = null)
+    private function prepareLocalizedValue($localization = null, $string = null, $text = null)
     {
         $value = new LocalizedFallbackValue();
         $value->setString($string)
@@ -125,7 +123,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
 
     public function testOnWebsiteSearchIndexProductClass()
     {
-        $defaultLocale = null;
+        $defaultValueLocale = null;
 
         /** @var Localization $customLocale */
         $customLocale = $this->getEntity(Localization::class, ['id' => 2]);
@@ -142,7 +140,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
 
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 1]);
-        $category = $this->prepareCategory($defaultLocale, $customLocale, $product);
+        $category = $this->prepareCategory($defaultValueLocale, $customLocale, $product);
         $this->repository
             ->expects($this->once())
             ->method('getCategoryMapByProducts')
@@ -153,42 +151,38 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
         $this->listener->onWebsiteSearchIndex($event);
 
         $expected[$product->getId()] = [
-            IndexDataProvider::STANDARD_VALUES_KEY => [
-                'category_id' => 555,
-                'category_path' => '1_555',
+            'category_id' => 555,
+            'category_path' => '1_555',
+            'category_title' => [
+                new PlaceholderValue(
+                    $this->prepareLocalizedValue($defaultValueLocale, self::NAME_DEFAULT_LOCALE, null),
+                    [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
+                ),
+                new PlaceholderValue(
+                    $this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null),
+                    [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                ),
             ],
-            IndexDataProvider::PLACEHOLDER_VALUES_KEY => [
-                'category_title' => [
-                    new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null),
-                        [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
-                    ),
-                    new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($defaultLocale, self::NAME_DEFAULT_LOCALE, null),
-                        [LocalizationIdPlaceholder::NAME => 0]
-                    ),
-                ],
-                'category_description' => [
-                    new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($customLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
-                        [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
-                    ),
-                    new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($defaultLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
-                        [LocalizationIdPlaceholder::NAME => 0]
-                    ),
-                ],
-                'category_short_desc' => [
-                    new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($customLocale, null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE),
-                        [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
-                    ),
-                    new ValueWithPlaceholders(
-                        $this->prepareLocalizedValue($defaultLocale, null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE),
-                        [LocalizationIdPlaceholder::NAME => 0]
-                    ),
-                ],
-            ]
+            'category_description' => [
+                new PlaceholderValue(
+                    $this->prepareLocalizedValue($defaultValueLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
+                    [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
+                ),
+                new PlaceholderValue(
+                    $this->prepareLocalizedValue($customLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
+                    [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                ),
+            ],
+            'category_short_desc' => [
+                new PlaceholderValue(
+                    $this->prepareLocalizedValue($defaultValueLocale, null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE),
+                    [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
+                ),
+                new PlaceholderValue(
+                    $this->prepareLocalizedValue($customLocale, null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE),
+                    [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
+                ),
+            ],
         ];
 
         $this->assertEquals($expected, $event->getEntitiesData());

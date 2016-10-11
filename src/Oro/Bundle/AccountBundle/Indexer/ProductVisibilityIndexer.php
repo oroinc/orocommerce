@@ -8,7 +8,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
 
 class ProductVisibilityIndexer
 {
-    const ACCOUNT_VISIBILITY_VALUE = 1;
+    const ACCOUNT_VISIBILITY_VALUE = '1';
 
     const FIELD_VISIBILITY_ANONYMOUS = 'visibility_anonymous';
 

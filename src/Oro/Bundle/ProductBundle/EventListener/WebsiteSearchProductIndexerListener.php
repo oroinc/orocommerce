@@ -50,8 +50,6 @@ class WebsiteSearchProductIndexerListener
             : null;
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
-        //For fetching default localization
-        $localizations[] = null;
 
         foreach ($products as $product) {
             // Non localized fields
@@ -79,7 +77,7 @@ class WebsiteSearchProductIndexerListener
             );
 
             foreach ($localizations as $localization) {
-                $localizationId = $localization ? $localization->getId() : 0;
+                $localizationId =  $localization->getId();
                 $placeholders = [LocalizationIdPlaceholder::NAME => $localizationId];
                 $event->addPlaceholderField(
                     $product->getId(),

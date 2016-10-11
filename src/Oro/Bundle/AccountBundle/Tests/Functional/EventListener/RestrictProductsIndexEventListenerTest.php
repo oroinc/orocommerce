@@ -88,14 +88,14 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
         $values = $this->runIndexationAndSearch();
 
         $this->assertCount(8, $values);
-        $this->assertEquals('product.1', $values[0]->getRecordTitle());
-        $this->assertEquals('product.2', $values[1]->getRecordTitle());
-        $this->assertEquals('product.3', $values[2]->getRecordTitle());
-        $this->assertEquals('product.4', $values[3]->getRecordTitle());
-        $this->assertEquals('product.5', $values[4]->getRecordTitle());
-        $this->assertEquals('product.6', $values[5]->getRecordTitle());
-        $this->assertEquals('product.7', $values[6]->getRecordTitle());
-        $this->assertEquals('product.8', $values[7]->getRecordTitle());
+        $this->assertStringStartsWith('product.1', $values[0]->getRecordTitle());
+        $this->assertStringStartsWith('product.2', $values[1]->getRecordTitle());
+        $this->assertStringStartsWith('product.3', $values[2]->getRecordTitle());
+        $this->assertStringStartsWith('product.4', $values[3]->getRecordTitle());
+        $this->assertStringStartsWith('product.5', $values[4]->getRecordTitle());
+        $this->assertStringStartsWith('product.6', $values[5]->getRecordTitle());
+        $this->assertStringStartsWith('product.7', $values[6]->getRecordTitle());
+        $this->assertStringStartsWith('product.8', $values[7]->getRecordTitle());
     }
 
     public function testRestrictIndexEntityEventListenerWhenAllFallBacksAreHidden()
@@ -112,11 +112,11 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
         $values = $this->runIndexationAndSearch();
 
         $this->assertCount(5, $values);
-        $this->assertEquals('product.1', $values[0]->getRecordTitle());
-        $this->assertEquals('product.2', $values[1]->getRecordTitle());
-        $this->assertEquals('product.3', $values[2]->getRecordTitle());
-        $this->assertEquals('product.4', $values[3]->getRecordTitle());
-        $this->assertEquals('product.5', $values[4]->getRecordTitle());
+        $this->assertStringStartsWith('product.1', $values[0]->getRecordTitle());
+        $this->assertStringStartsWith('product.2', $values[1]->getRecordTitle());
+        $this->assertStringStartsWith('product.3', $values[2]->getRecordTitle());
+        $this->assertStringStartsWith('product.4', $values[3]->getRecordTitle());
+        $this->assertStringStartsWith('product.5', $values[4]->getRecordTitle());
     }
 
     public function testRestrictIndexEntityEventListenerWhenProductFallBackIsVisibleAndCategoryFallBackIsHidden()
@@ -133,11 +133,11 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
         $values = $this->runIndexationAndSearch();
 
         $this->assertCount(5, $values);
-        $this->assertEquals('product.1', $values[0]->getRecordTitle());
-        $this->assertEquals('product.2', $values[1]->getRecordTitle());
-        $this->assertEquals('product.3', $values[2]->getRecordTitle());
-        $this->assertEquals('product.4', $values[3]->getRecordTitle());
-        $this->assertEquals('product.5', $values[4]->getRecordTitle());
+        $this->assertStringStartsWith('product.1', $values[0]->getRecordTitle());
+        $this->assertStringStartsWith('product.2', $values[1]->getRecordTitle());
+        $this->assertStringStartsWith('product.3', $values[2]->getRecordTitle());
+        $this->assertStringStartsWith('product.4', $values[3]->getRecordTitle());
+        $this->assertStringStartsWith('product.5', $values[4]->getRecordTitle());
     }
 
     public function testRestrictIndexEntityEventListenerWhenProductFallBackIsHiddenAndCategoryFallBackIsVisible()
@@ -154,14 +154,14 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
         $values = $this->runIndexationAndSearch();
 
         $this->assertCount(8, $values);
-        $this->assertEquals('product.1', $values[0]->getRecordTitle());
-        $this->assertEquals('product.2', $values[1]->getRecordTitle());
-        $this->assertEquals('product.3', $values[2]->getRecordTitle());
-        $this->assertEquals('product.4', $values[3]->getRecordTitle());
-        $this->assertEquals('product.5', $values[4]->getRecordTitle());
-        $this->assertEquals('product.6', $values[5]->getRecordTitle());
-        $this->assertEquals('product.7', $values[6]->getRecordTitle());
-        $this->assertEquals('product.8', $values[7]->getRecordTitle());
+        $this->assertStringStartsWith('product.1', $values[0]->getRecordTitle());
+        $this->assertStringStartsWith('product.2', $values[1]->getRecordTitle());
+        $this->assertStringStartsWith('product.3', $values[2]->getRecordTitle());
+        $this->assertStringStartsWith('product.4', $values[3]->getRecordTitle());
+        $this->assertStringStartsWith('product.5', $values[4]->getRecordTitle());
+        $this->assertStringStartsWith('product.6', $values[5]->getRecordTitle());
+        $this->assertStringStartsWith('product.7', $values[6]->getRecordTitle());
+        $this->assertStringStartsWith('product.8', $values[7]->getRecordTitle());
     }
 
     /**

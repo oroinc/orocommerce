@@ -6,7 +6,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountUser;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class AccountIdPlaceholder implements WebsiteSearchPlaceholderInterface
+class AccountIdPlaceholder extends AbstractPlaceholder
 {
     const NAME = 'ACCOUNT_ID';
 
@@ -34,7 +34,7 @@ class AccountIdPlaceholder implements WebsiteSearchPlaceholderInterface
     /**
      * {@inheritdoc}
      */
-    public function getValue()
+    public function getDefaultValue()
     {
         $token = $this->tokenStorage->getToken();
 
@@ -43,13 +43,5 @@ class AccountIdPlaceholder implements WebsiteSearchPlaceholderInterface
         }
 
         return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function replace($string, $replaceValue)
-    {
-        return str_replace(self::NAME, $replaceValue, $string);
     }
 }

@@ -185,5 +185,5 @@ services:
     oro_website_search.provider.placeholder_provider:
         class: 'Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider'
         arguments:
-            - '@oro_website_search.placeholder.visitor_replace'
+            - '@oro_website_search.placeholder_decorator'
             - '@oro_website_search.provider.search_mapping'
