@@ -4,10 +4,6 @@
 
   background: $base-topbar-background-color;
 
-  @media (max-width: $screen-md) {
-    display: none;
-  }
-
   &__tab {
     .checkout-order-summary__tab__content {
       display: block;
@@ -165,15 +161,17 @@
   }
 }
 
-.form-input_datepicker_icon {
+.datepicker-icon {
   position: absolute;
-  top: 4px;
+  top: 50%;
   left: 10px;
+  margin-top: -12px;
 
   font-size: 22px;
-  color: $theme-datepicker-head-color;
+  line-height: 1;
+  color: get-color('additional', 'middle');
 
   &.date-applied {
-    color: $theme-orange-color;
+    color: get-color('primary', 'base');
   }
 }

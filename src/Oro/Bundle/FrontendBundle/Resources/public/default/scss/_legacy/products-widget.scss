@@ -209,13 +209,13 @@
 
     &_in-cart {
       float: left;
-      width: 56px;
-      height: 56px;
+      width: 84px;
+      height: 84px;
 
       a {
         display: block;
-        width: 56px;
-        height: 56px;
+        width: 84px;
+        height: 84px;
         overflow: hidden;
         border: 1px solid $theme-lighter-gray-color;
         border-radius: 5px;
@@ -695,22 +695,7 @@
       font-size: 0;
 
       input[type="text"] {
-        @include input();
-
-        vertical-align: middle;
-        width: 50px;
-        margin: 15px 10px 0 0;
-
-        font-size: $base-font-size;
-
         text-align: center;
-
-        &:focus {
-          outline: 0;
-          border-color: $base-link-color;
-          box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
-                            0 0 8px rgba(102,175,233,.6);
-        }
       }
 
       .btn_has-dropdown {
@@ -763,24 +748,6 @@
 
       font-size: 0;
 
-      input[type="text"] {
-        @include input();
-
-        vertical-align: middle;
-        width: 50px;
-        margin: 15px 10px 0 0;
-
-        font-size: $base-font-size;
-        text-align: center;
-
-        &:focus {
-          border-color: $base-link-color;
-          outline: 0;
-          box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
-                            0 0 7px rgba(102,175,233,.6);
-        }
-      }
-
       .btn {
         width: calc(100% - 60px);
         margin-top: 15px;
@@ -792,7 +759,7 @@
     position: relative;
 
     &_in-cart {
-      padding: 0 0 0 76px;
+      padding: 0 0 0 104px;
     }
   }
 

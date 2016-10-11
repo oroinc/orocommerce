@@ -46,6 +46,7 @@
     background: transparent !important;
   }
 }
+
 /* END MIDDLE BAR */
 
 .logo {
@@ -91,7 +92,7 @@
   width: 100%;
 
   &__inner {
-    padding-top: 20px;
+    padding-top: 30px;
     padding-bottom: 20px;
 
     @include clearfix();
@@ -102,15 +103,8 @@
   }
 
   &--has-sidebar { //Layout with left sidebar;
-    float: left;
-
-    .content__container {
-      margin-left: $base-sidebar-width;
-
-      @media (max-width: $screen-md) {
-        margin-left: 0;
-      }
-    }
+    order: 2;
+    flex: 1;
 
     .content__inner {
       padding-left: 15px;
@@ -207,100 +201,6 @@
     white-space: nowrap;
   }
 
-  input[type="text"] {
-    @include input();
-
-    &:focus {
-      outline: 0;
-      border-color: $base-link-color;
-      box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
-                        0 0 7px rgba(102,175,233,.6);
-    }
-
-    &.input_with-btn {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-
-      text-align: right;
-
-      + .input-group-btn {
-        border: 1px solid $theme-lighter-gray-color;
-        border-left: 0;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-
-        background: $base-background-color;
-        text-align: center;
-
-        > .form-input_has-btn__dropdown {
-          left: auto;
-          right: 0;
-
-          margin: 0;
-          padding: 10px 0;
-          border: 1px solid $theme-lighter-gray-color;
-
-          .table {
-            margin: 0;
-
-            tbody {
-              tr {
-                cursor: pointer;
-
-                td {
-                  padding: 10px 6px !important;
-
-                  &:first-child {
-                    padding-left: 25px !important;
-                  }
-
-                  &:last-child {
-                    padding-right: 15px !important;
-                  }
-                }
-
-                &:hover {
-                  td {
-                    background: $theme-slight-lightest-gray-color;
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        button {
-          width: 30px;
-          padding: 0;
-          border: 0;
-          box-shadow: none;
-
-          background: none;
-
-          cursor: pointer;
-        }
-      }
-    }
-  }
-
-  .form-label {
-    display: block;
-    margin: 0 0 5px;
-
-    font-weight: 400;
-  }
-
-  textarea {
-    @include input();
-
-    &:focus {
-      outline: 0;
-      border-color: $base-link-color;
-      box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
-                        0 0 8px rgba(102,175,233,.6);
-    }
-  }
-
   .input-group-addon {
     border-color: $theme-lighter-gray-color;
     background: $theme-lightest-gray-color;
@@ -310,26 +210,32 @@
     color: $base-link-color;
   }
 }
+
 /* END CONTENT */
 
 /* START SIDEBAR */
 .sidebar {
-  float: left;
   width: $base-sidebar-width;
 
-  @media (max-width: $screen-md) {
-    display: none;
-  }
+  padding-left: 15px;
 
   &_left {
-    margin-left: -100%;
+    order: 1;
   }
 
   &_right {
     width: $base-sidebar-width - 4rem;
-    margin-left: -$base-sidebar-width + 4rem;
+    order: 2;
   }
 }
+
+@include breakpoint('tablet-small') {
+  .sidebar {
+    width: 100%;
+    padding: 0 15px;
+  }
+}
+
 /* END SIDEBAR */
 
 /*===== START FOOTER =====*/
@@ -359,6 +265,7 @@
     padding: 22px 0;
   }
 }
+
 /*===== END FOOTER =====*/
 
 /*START CART*/
@@ -502,6 +409,7 @@
     }
   }
 }
+
 /*END CART*/
 
 /*ORO CUSTOM CHECKBOX SELECTBOX*/
@@ -616,8 +524,9 @@
     display: none !important;
   }
 }
+
 .input-append {
-  .select2-container.input.input_block {
+  .select2-container.input {
     display: inline-block;
     width: auto;
     height: auto;
@@ -652,41 +561,10 @@
 
 .action-selectbox_custom_in-pager {
   display: inline-block;
-  max-width: 165px;
-  &.sorting {
-    max-width: none;
-    line-height: 24px;
-  }
+
   .select2-container {
     a.select2-choice {
       padding: 8px !important;
-    }
-  }
-  .b2b-sorting-select-control {
-    margin-right: 12px;
-    font-size: 14px;
-    .select2-container a.select2-choice {
-      line-height: 30px;
-      padding: 0 0 0 8px !important;
-      outline: 0 none;
-    }
-    a[class^="icon-"] {
-      text-decoration: none;
-      font-size: 12px;
-      height: 14px;
-      vertical-align: middle;
-      padding-left: 8px;
-      margin-left: 0;
-      color: #666;
-      cursor: pointer;
-      &:before {
-        vertical-align: middle;
-      }
-    }
-    .sorting-label {
-      display: inline-block;
-      line-height: 23px;
-      vertical-align: middle;
     }
   }
 }
@@ -696,8 +574,6 @@
 }
 
 .action-select  {
-  @include input();
-
   position: relative;
 
   padding: 6px 9px 6px !important;
@@ -709,8 +585,8 @@
 
   &[disabled] {
     background: linear-gradient(to bottom,
-        rgba(255,255,255,1) 0%,
-        rgba(230,230,230,1) 100%);
+        rgba(255, 255, 255, 1) 0%,
+        rgba(230, 230, 230, 1) 100%);
   }
 }
 

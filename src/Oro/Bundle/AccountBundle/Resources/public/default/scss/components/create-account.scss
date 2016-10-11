@@ -58,4 +58,34 @@
       margin-bottom: 80px;
     }
   }
+
+  &_half-cols {
+    margin: 0 -15px;
+
+    @include clearfix();
+  }
+
+  &_pos-absolute_vert-centered {
+    position: absolute;
+    top: 50%;
+    left: 0;
+
+    width: 100%;
+
+    transform: translateY(-50%);
+
+    @media (max-width: $screen-md) {
+      margin: 0;
+    }
+
+    .create-account__form-container {
+      &.form-container-x6 {
+        max-width: 700px;
+      }
+    }
+  }
+}
+
+.secondary-contact-info {
+  display: none;
 }

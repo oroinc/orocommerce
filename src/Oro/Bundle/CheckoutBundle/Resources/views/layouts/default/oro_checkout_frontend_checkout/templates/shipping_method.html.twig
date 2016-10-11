@@ -4,7 +4,9 @@
         <fieldset class="checkout__form__row">
             {{ form_widget(form.shipping_method) }}
             {{ form_widget(form.shipping_method_type) }}
-            {{ form_widget(form.state_token) }}
+            {%  if  form.state_token is defined %}
+                {{ form_row(form.state_token) }}
+            {% endif %}
         </fieldset>
     </div>
 {% endblock %}
