@@ -95,7 +95,7 @@
 
   &__item {
     padding: 15px 9px;
-    border-top: 1px solid $theme-lighter-gray-color;
+    border-top: 1px solid get-color('additional', 'light');
   }
 
   &__order-name {
@@ -136,9 +136,9 @@
     padding: 10px 0;
     margin: 0;
     border: 0;
-    border-top: .1rem solid $alt-border-color;
+    border-top: .1rem solid get-color('additional', 'light');
 
-    background: $base-topbar-background-color;
+    background: get-color('additional', 'light');
     color: get-color('additional', 'dark');
     text-align: center;
     text-decoration: none;
@@ -152,7 +152,7 @@
 
     [class^="cf-"]:before {
       font-size: 18px;
-      color: $base-link-color;
+      color: get-color('ui', 'normal');
     }
   }
 
@@ -171,7 +171,7 @@
     border: 1px solid get-color(additional, 'light');
     border-radius: 2px;
 
-    background: #fff;
+    background: get-color('additional', 'ultra');
     text-align: left;
 
     &.opened {
@@ -236,10 +236,10 @@
   padding: 0;
   margin: 0;
   background: transparent;
-  color: $theme-edit-mode-btn-color;
+  color: get-color('additional', 'middle');
 
   &.order-widget__edit-mode-link {
-    color: $base-link-color;
+    color: get-color('ui', 'normal');
   }
 
   &.order-widget__edit-mode-btn_inline {
@@ -261,8 +261,8 @@
 
 .order-widget__trigger {
   position: relative;
-  color: #fff;
-  background: $theme-orange-color;
+  color: get-color('additional', 'ultra');
+  background: get-color('primary', 'base');
   border: 0;
   box-shadow: .2rem .1rem .5rem 0 rgba(0,0,0,.5);
   border-radius: 5px;
@@ -288,7 +288,7 @@
   bottom: 0;
   right: 0;
   margin: 0;
-  background: #fff;
+  background: get-color('additional', 'ultra');
   border: .1rem solid get-color(additional, 'light');
   box-shadow: 0 .2rem .4rem 0 rgba(0,0,0,.3);
   z-index: 1001;
@@ -299,7 +299,7 @@
 }
 
 .order-widget__title-container {
-  background: $base-topbar-background-color;
+  background: get-color('additional', 'light');
   padding: 1.3rem 1.5rem;
   position: relative;
 }
@@ -315,7 +315,7 @@
   top: .5rem;
   right: .5rem;
   z-index: 1;
-  color: $base-link-color;
+  color: get-color('ui', 'normal');
 
   [class^="cf-"] {
     font-size: 2rem;
@@ -333,7 +333,7 @@
   background: transparent;
   border: 0;
   box-shadow: none;
-  color: $base-link-color;
+  color: get-color('ui', 'normal');
   z-index: 1;
 
   [class^="cf-"] {

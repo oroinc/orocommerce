@@ -5,14 +5,14 @@
 
   border: 0; //override default theme styles
 
-  background-color: $theme-slight-lightest-gray-color;
+  background-color: get-color('additional', 'base');
 
   &:first-child {
     margin-top: 0;
   }
 
   &--collapsable {
-    background-color: $theme-lightest-gray-color;
+    background-color: get-color('additional', 'base');
 
     .main-menu__list {
       padding: 20px 0 0 35px;
@@ -36,7 +36,7 @@
     min-height: initial; //override default theme styles
     padding: 0; //override default styles
 
-    color: $base-font-color-light; //override default theme styles
+    color: get-color('additional', 'dark'); //override default theme styles
 
     font-size: 13px; //override default theme styles
     line-height: 1.46; //override default theme styles

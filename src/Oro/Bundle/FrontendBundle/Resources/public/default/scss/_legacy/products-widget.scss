@@ -5,7 +5,7 @@
 
     &.products__content_gallery-view {
       padding: 38px 0 0;
-      border-top: 1px solid $theme-lighter-gray-color;
+      border-top: 1px solid get-color('additional', 'light');
     }
   }
 
@@ -106,7 +106,7 @@
       overflow: hidden;
       margin: 0 0 10px;
       max-height: 249px;
-      border: 1px solid $theme-lighter-gray-color;
+      border: 1px solid get-color('additional', 'light');
 
       a {
         position: absolute;
@@ -152,7 +152,7 @@
       display: block;
       width: 23%;
       overflow: hidden;
-      border: 1px solid $theme-lighter-gray-color;
+      border: 1px solid get-color('additional', 'light');
 
       /*@media (min-width: 768px) and (max-width: 991px) {
         width: 31.2%;
@@ -217,7 +217,7 @@
         width: 84px;
         height: 84px;
         overflow: hidden;
-        border: 1px solid $theme-lighter-gray-color;
+        border: 1px solid get-color('additional', 'light');
         border-radius: 5px;
       }
 
@@ -586,7 +586,7 @@
       transition: opacity .2s linear;
 
       &:hover {
-        background: $base-dark-color;
+        background: get-color('additional', 'darker');
       }
     }
 
@@ -806,7 +806,7 @@
     display: table;
     width: 100%;
     padding: 30px 0;
-    border-bottom: 1px solid $theme-lighter-gray-color;
+    border-bottom: 1px solid get-color('additional', 'light');
 
     &:last-child {
       border-bottom: 0;
@@ -823,7 +823,7 @@
     width: 100%;
     padding: 0 0 15px;
     margin: 0 0 15px;
-    border-bottom: 1px solid $theme-lighter-gray-color;
+    border-bottom: 1px solid get-color('additional', 'light');
 
     &:last-child {
       border-bottom: 0;
@@ -899,10 +899,10 @@
       font-size: 13px;
 
       a {
-        color: $base-font-color-light;
+        color: get-color('additional', 'dark');
 
         &:focus, &:active, &:hover {
-          color: $base-font-color-light;
+          color: get-color('additional', 'dark');
           text-decoration: none;
         }
       }
@@ -913,7 +913,7 @@
   &__trigger {
     display: inline-block !important;
 
-    color: $base-link-color;
+    color: get-color('ui', 'normal');
 
     cursor: pointer;
 
@@ -925,7 +925,7 @@
     }
 
     &.orange {
-      color: $theme-orange-color;
+      color: get-color('primary', 'base');
     }
   }
 
@@ -957,7 +957,7 @@
 
   &_b-bordered {
     padding-bottom: 15px;
-    border-bottom: 1px solid $theme-lighter-gray-color;
+    border-bottom: 1px solid get-color('additional', 'light');
   }
 
   &_list-view {

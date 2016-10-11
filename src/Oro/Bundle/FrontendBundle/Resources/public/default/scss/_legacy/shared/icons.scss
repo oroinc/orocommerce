@@ -77,11 +77,11 @@
   }
 
   &--large {
-    font-size: $default-font-size-large;
+    font-size: 24px;
   }
 
   &--gray {
-    color: get-color('additional', 'lighter');
+    color: get-color('additional', 'dark');
   }
 
   &--hidden {

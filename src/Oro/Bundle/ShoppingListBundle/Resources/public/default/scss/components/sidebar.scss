@@ -9,12 +9,12 @@
 
     &--current,
     &:hover {
-      border-left: 6px solid $theme-lighter-gray-color;
-      background: $theme-lightest-gray-color;
+      border-left: 6px solid get-color('additional', 'light');
+      background: get-color('additional', 'base');
     }
 
     &:first-child {
-      border-top: 1px solid $theme-lighter-gray-color;
+      border-top: 1px solid get-color('additional', 'light');
     }
   }
 

@@ -88,7 +88,7 @@
 .account-oq__order-item-more {
   width: 52%;
 
-  color: get-color('additional', 'lighter');
+  color: get-color('additional', 'dark');
 
   @media (max-width: $screen-sm) {
     width: 95%;
@@ -112,7 +112,7 @@
 
 .account-oq__order-breakdown {
   > a {
-    color: $theme-red-color;
+    color: get-color('primary', 'dark');
   }
 
   > i {

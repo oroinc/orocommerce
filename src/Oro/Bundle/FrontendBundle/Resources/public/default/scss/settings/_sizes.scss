@@ -1,3 +1,7 @@
+$site-width: 1400px;
+
+// Breakpoints
+
 // Desktop Media Breakpoint
 $breakpoint-desktop: 1100px;
 // iPad mini 4 (768*1024), iPad Air 2 (768*1024), iPad Pro (1024*1366)
@@ -8,5 +12,5 @@ $breakpoint-mobile-portrait: 640px;
 $breakpoint-mobile: 414px;
 
 // Media breakpoints old
-$phone-width: 480px;
-$tablet-width: 1024px;
+$screen-sm: 767px;
+$screen-md: 991px;

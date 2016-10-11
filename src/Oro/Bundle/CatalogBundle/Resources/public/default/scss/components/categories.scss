@@ -1,7 +1,7 @@
 .categories-widget {
   margin: 3px 0 0;
 
-  background: $theme-lightest-gray-color;
+  background: get-color('additional', 'base');
 
   &:first-child {
     margin-top: 0;

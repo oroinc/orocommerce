@@ -1,5 +1,5 @@
 .ui-widget-overlay {
-  background: $base-dark-color;
+  background: get-color('additional', 'darker');
 
   opacity: .5;
 }
@@ -34,7 +34,7 @@
     border: 0;
 
     background: none;
-    color: $base-dark-color;
+    color: get-color('additional', 'darker');
 
     opacity: .2;
 

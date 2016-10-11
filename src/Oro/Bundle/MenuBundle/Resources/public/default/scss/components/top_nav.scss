@@ -1,6 +1,6 @@
 /* Topbar component */
 .topbar {
-  background: $base-topbar-background-color;
+  background: get-color('additional', 'light');
   font-size: 12px;
 
   @media (max-width: $screen-md) {
@@ -43,7 +43,7 @@
     }
 
     a {
-      color: get-color('additional', 'lighter');
+      color: get-color('additional', 'dark');
       text-decoration: none;
 
       &:hover {
@@ -97,7 +97,7 @@
 
     display: none;
 
-    background: $base-background-color;
+    background: get-color('additional', 'ultra');
     box-shadow: 0 4px 5px 0 rgba(0,0,0,.4);
     border-radius: 2px;
 
@@ -148,7 +148,7 @@
   width: 50px;
   height: 26px;
 
-  font-family: $roboto-font;
+  font-family: $bae-font-minor;
   font-size: 13px;
   vertical-align: top;
   text-align: center;

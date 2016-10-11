@@ -15,7 +15,7 @@
         &--separate {
             margin: 0 4px;
 
-            color: $theme-gray-color;
+            color: get-color('additional', 'base');
         }
     }
 

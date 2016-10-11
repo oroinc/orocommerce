@@ -1,0 +1,23 @@
+$sidebar-width: 255px !default;
+
+.sidebar {
+    width: $sidebar-width;
+
+    padding-left: 15px;
+
+    &_left {
+        order: 1;
+    }
+
+    &_right {
+        width: sidebar-width - 40px;
+        order: 2;
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .sidebar {
+        width: 100%;
+        padding: 0 15px;
+    }
+}

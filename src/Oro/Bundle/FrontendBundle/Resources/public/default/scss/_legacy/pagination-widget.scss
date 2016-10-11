@@ -28,9 +28,9 @@
       width: 23px;
       vertical-align: middle;
       padding: 0;
-      border: 1px solid $theme-lighter-gray-color;
+      border: 1px solid get-color('additional', 'light');
 
-      background: $theme-lightest-gray-color;
+      background: get-color('additional', 'base');
       color: get-color('additional', 'dark');
       font-size: 16px;
       line-height: 1.8;
@@ -39,7 +39,7 @@
       cursor: pointer;
 
       &.disabled {
-        color: $theme-edit-mode-btn-color;
+        color: get-color('additional', 'middle');
 
         cursor: default;
       }
@@ -66,8 +66,8 @@
       padding: 0;
       border-radius: 0;
       border: 0;
-      border-top: 1px solid $theme-lighter-gray-color;
-      border-bottom: 1px solid $theme-lighter-gray-color;
+      border-top: 1px solid get-color('additional', 'light');
+      border-bottom: 1px solid get-color('additional', 'light');
 
       font-size: $base-font-size;
       line-height: 2;

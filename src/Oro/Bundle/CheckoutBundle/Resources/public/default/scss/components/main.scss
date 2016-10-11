@@ -8,7 +8,7 @@
   padding: 30px 35px;
   border-radius: 5px;
 
-  background: $theme-lightest-gray-color;
+  background: get-color('additional', 'base');
 
   + & {
     margin-top: 2px;
@@ -136,7 +136,7 @@
 }
 
 .checkout__multiple-shipping-block {
-  background: #fff;
+  background: get-color('additional', 'ultra');
   padding: 2rem 2rem 1.5rem;
   border: .1rem solid get-color(additional, 'light');
   border-radius: .5rem;

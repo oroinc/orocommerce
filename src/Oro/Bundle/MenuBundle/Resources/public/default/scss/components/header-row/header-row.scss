@@ -10,14 +10,14 @@
 
     border: 1px solid get-color(additional, 'light');
     border-radius: 2px;
-    background: $base-white-color;
+    background: get-color('additional', 'ultra');
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .3);
 }
 
 .header-row {
     display: flex;
 
-    border: 1px solid $theme-lighter-gray-color;
+    border: 1px solid get-color('additional', 'light');
     border-width: 1px 0;
 
     justify-content: space-between;
@@ -36,8 +36,8 @@
         margin: 0;
         padding: 7px 20px;
 
-        border-right: 1px solid $base-white-color;
-        background-color: $theme-lightest-gray-color;
+        border-right: 1px solid get-color('additional', 'ultra');
+        background-color: get-color('additional', 'base');
 
         &.active,
         &:hover {

@@ -12,7 +12,7 @@
     padding: 40px 15%;
     border-radius: 3px;
 
-    background: $theme-lightest-gray-color;
+    background: get-color('additional', 'base');
 
     @media (max-width: $screen-md) {
       padding: 10px;

@@ -163,7 +163,7 @@
     padding: 23px 20px;
     border-radius: 5px;
 
-    background: $base-white-color;
+    background: get-color('additional', 'ultra');
   }
 
   &__payment-methods-authorized-card {

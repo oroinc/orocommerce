@@ -53,7 +53,7 @@
     padding: 40px 45px;
     border-radius: 3px;
 
-    background: $theme-lightest-gray-color;
+    background: get-color('additional', 'base');
 
     &.create-account__form_register {
       padding: 40px 25% 40px 15%;
@@ -163,7 +163,7 @@
       left: 230px;
       top: 18px;
 
-      color: $theme-red-color;
+      color: get-color('primary', 'dark');
 
       @media (max-width: $screen-md) {
         position: static;

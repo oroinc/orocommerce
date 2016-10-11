@@ -78,7 +78,7 @@
 
     span {
       font-size: 16px;
-      color: $theme-red-color;
+      color: get-color('primary', 'dark');
 
       @media (max-width: $screen-md) {
         font-size: $base-font-size;
@@ -202,47 +202,22 @@
   }
 
   .input-group-addon {
-    border-color: $theme-lighter-gray-color;
-    background: $theme-lightest-gray-color;
+    border-color: get-color('additional', 'light');
+    background: get-color('additional', 'base');
   }
 
   ~ .order-widget__edit-mode-btn {
-    color: $base-link-color;
+    color: get-color('ui', 'normal');
   }
 }
 
 /* END CONTENT */
 
-/* START SIDEBAR */
-.sidebar {
-  width: $base-sidebar-width;
-
-  padding-left: 15px;
-
-  &_left {
-    order: 1;
-  }
-
-  &_right {
-    width: $base-sidebar-width - 4rem;
-    order: 2;
-  }
-}
-
-@include breakpoint('tablet-small') {
-  .sidebar {
-    width: 100%;
-    padding: 0 15px;
-  }
-}
-
-/* END SIDEBAR */
-
 /*===== START FOOTER =====*/
 .footer {
   padding-top: 5rem;
 
-  background: $theme-lightest-gray-color;
+  background: get-color('additional', 'base');
 
   @media (max-width: $screen-sm) {
     padding: 4rem .5rem 0;
@@ -257,8 +232,8 @@
   line-height: normal;
   text-align: center;
 
-  border-top: 1px solid $theme-lighter-gray-color;
-  color: $theme-slight-middle-gray-color;
+  border-top: 1px solid get-color('additional', 'light');
+  color: get-color('additional', 'middle');
 
   @media (max-width: $screen-sm) {
     margin: 0;
@@ -305,7 +280,7 @@
         box-shadow: none;
 
         background: transparent;
-        color: $base-link-color;
+        color: get-color('ui', 'normal');
         font-size: $base-font-size;
 
         &:hover {
@@ -330,7 +305,7 @@
     display: inline-block;
     margin: 0 6px 0 0;
     padding-right: 6px;
-    border-right: 1px solid $base-link-color;
+    border-right: 1px solid get-color('ui', 'normal');
 
     font-size: $base-font-size;
     line-height: 1;
@@ -345,7 +320,7 @@
       &:focus, &:visited {
         outline: 0;
 
-        color: $base-link-color;
+        color: get-color('ui', 'normal');
         text-decoration: none;
       }
 
@@ -375,7 +350,7 @@
   min-height: 90px;
   margin-top: 15px;
   padding: 20px 20px 20px 90px;
-  border: 1px solid $theme-lighter-gray-color;
+  border: 1px solid get-color('additional', 'light');
   border-radius: 5px;
 
   line-height: 2;
@@ -419,7 +394,7 @@
   display: inline-block;
   vertical-align: middle;
 
-  color: get-color('additional', 'lighter');
+  color: get-color('additional', 'dark');
 
   &__trigger {
     position: relative;
@@ -428,11 +403,11 @@
     display: block;
     width: 100%;
     padding: 0 0 0 4px;
-    border: 1px solid $theme-lighter-gray-color;
+    border: 1px solid get-color('additional', 'light');
     border-radius: 3px;
     box-shadow: none;
 
-    background: $base-background-color;
+    background: get-color('additional', 'ultra');
     font-size: 0;
     white-space: nowrap;
 
@@ -442,11 +417,11 @@
       margin-right: -4px;
 
       .checkbox_checked {
-        color: $base-link-color;
+        color: get-color('ui', 'normal');
       }
 
       .checkbox_not-checked {
-        color: $theme-slight-light-gray-color;
+        color: get-color('additional', 'middle');
       }
     }
 
@@ -471,10 +446,10 @@
 
     display: none;
     padding: 5px 0;
-    border: 1px solid $theme-lighter-gray-color;
+    border: 1px solid get-color('additional', 'light');
     border-radius: 0 3px 3px 3px;
 
-    background: $base-white-color;
+    background: get-color('additional', 'ultra');
 
     li {
       padding: 5px 10px;
@@ -484,11 +459,11 @@
       cursor: pointer;
 
       .checkbox_checked {
-        color: $base-link-color;
+        color: get-color('ui', 'normal');
       }
 
       .checkbox_not-checked {
-        color: $theme-slight-light-gray-color;
+        color: get-color('additional', 'middle');
       }
     }
   }
@@ -578,8 +553,8 @@
 
   padding: 6px 9px 6px !important;
 
-  border: 1px solid $theme-lighter-gray-color;
-  background: $base-white-color;
+  border: 1px solid get-color('additional', 'light');
+  background: get-color('additional', 'ultra');
 
   appearance: none;
 

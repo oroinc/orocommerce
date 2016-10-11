@@ -2,7 +2,7 @@
   padding: 30px 30px 40px;
   border-radius: 5px;
 
-  background: $theme-lightest-gray-color;
+  background: get-color('additional', 'base');
 
   @media (max-width: $screen-md) {
     padding: 20px 30px 20px 15px;
@@ -45,7 +45,7 @@
 }
 
 .quick-order-table-num-row {
-  color: $theme-bucket-color;
+  color: get-color('additional', 'base');
 }
 
 .quick-order-page-title {
@@ -73,7 +73,7 @@
     font-size: 0;
 
     &:before {
-      color: $base-link-color;
+      color: get-color('ui', 'normal');
       font-size: $base-font-size;
     }
   }
@@ -185,15 +185,15 @@
   padding: 10px 0;
   border-radius: 3px;
 
-  color: get-color('additional', 'lighter');
-  background: $theme-gray-color;
+  color: get-color('additional', 'dark');
+  background: get-color('additional', 'base');
   font-size: 13px;
   text-decoration: none;
   text-align: center;
 
 
   &:focus, &:hover, &:active {
-    color: get-color('additional', 'lighter');
+    color: get-color('additional', 'dark');
     text-decoration: none;
   }
 
@@ -251,7 +251,7 @@
   top: 11px;
   right: -15px;
 
-  color: $theme-gray-color;
+  color: get-color('additional', 'base');
 
   i {
     font-size: 20px;
@@ -279,8 +279,8 @@
         vertical-align: middle;
         border-radius: 4px;
 
-        background: $theme-dark-gray-color;
-        color: $base-white-color;
+        background: get-color('additional', 'darker');
+        color: get-color('additional', 'ultra');
         font-size: 15px;
         line-height: 1;
         font-weight: 400;
@@ -298,7 +298,7 @@
           margin: 0;
           padding: 0 15px;
 
-          color: $base-white-color;
+          color: get-color('additional', 'ultra');
           line-height: 3.1;
 
           @include ellipsis();
@@ -316,7 +316,7 @@
           padding: 0 12px;
           border-left: 1px solid rgba(255,255,255,.3);
 
-          color: $base-white-color;
+          color: get-color('additional', 'ultra');
           line-height: 3.1;
 
           @include ellipsis();
@@ -334,8 +334,8 @@
     vertical-align: middle;
     border-radius: 4px;
 
-    background: $theme-middle-gray-color;
-    color: $base-white-color;
+    background: get-color('additional', 'middle');
+    color: get-color('additional', 'ultra');
     font-size: $base-font-size;
     line-height: 3.35;
     font-weight: 400;
@@ -349,7 +349,7 @@
 
   .widget-content {
     .action-button {
-      background-color: $theme-dark-gray-color;
+      background-color: get-color('additional', 'darker');
     }
   }
 }
@@ -384,9 +384,9 @@
     width: 100%;
     margin: 0 0 5px;
     padding: 2px;
-    border-bottom: 1px solid $theme-lighter-gray-color;
+    border-bottom: 1px solid get-color('additional', 'light');
 
-    background-color: $theme-lightest-gray-color;
+    background-color: get-color('additional', 'base');
 
   }
 

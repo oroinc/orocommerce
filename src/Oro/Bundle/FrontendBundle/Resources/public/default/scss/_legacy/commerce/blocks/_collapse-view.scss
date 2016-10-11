@@ -3,7 +3,7 @@
     display: inline-block;
     vertical-align: middle;
 
-    color: $base-link-color;
+    color: get-color('ui', 'normal');
 
     cursor: pointer;
 
@@ -21,7 +21,7 @@
     }
 
     &.orange {
-      color: $theme-orange-color;
+      color: get-color('primary', 'base');
     }
   }
 
