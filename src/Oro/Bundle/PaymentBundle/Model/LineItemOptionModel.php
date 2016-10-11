@@ -5,16 +5,16 @@ namespace Oro\Bundle\PaymentBundle\Model;
 class LineItemOptionModel
 {
     /** @var string */
-    private $name;
+    private $name = '';
 
     /** @var string */
-    private $description;
+    private $description = '';
 
     /** @var float */
-    private $cost;
+    private $cost = 0.;
 
     /** @var int */
-    private $qty;
+    private $qty = 0;
 
     /**
      * @return string

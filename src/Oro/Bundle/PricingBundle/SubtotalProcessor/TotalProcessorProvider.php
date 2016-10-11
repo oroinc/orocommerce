@@ -139,7 +139,7 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
     /**
      * @param SubtotalProviderInterface $provider
      * @param object $entity
-     * @return Subtotal
+     * @return Subtotal|Subtotal[]
      */
     protected function getEntitySubtotal(SubtotalProviderInterface $provider, $entity)
     {
@@ -169,22 +169,11 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
     }
 
     /**
-     * @param string $fromCurrency
-     * @param string $toCurrency
-     *
-     * @return float
-     */
-    protected function getExchangeRate($fromCurrency, $toCurrency)
-    {
-        return 1.0;
-    }
-
-    /**
      * @param int $operation
      * @param float $rowTotal
      * @param float $totalAmount
      *
-     * @return mixed
+     * @return float
      */
     protected function calculateTotal($operation, $rowTotal, $totalAmount)
     {
