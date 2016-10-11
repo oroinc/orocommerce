@@ -3,13 +3,13 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\TestFrameworkBundle\Entity\TestProductType;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestProductType;
 
 /**
  * @dbIsolation
