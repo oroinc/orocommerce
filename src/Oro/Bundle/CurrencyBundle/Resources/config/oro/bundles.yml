@@ -1,2 +1,0 @@
-bundles:
-    - { name: Oro\Bundle\CurrencyBundle\OroCurrencyBundle, priority: 10 }
