@@ -5,23 +5,22 @@ namespace Oro\Bundle\OrderBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
+use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\AccountBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\AccountBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
 use Oro\Bundle\OrderBundle\Model\DiscountAwareInterface;
-use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrderBundle\Model\ExtendOrder;
+use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
+use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -341,6 +340,22 @@ class Order extends ExtendOrder implements
     protected $discounts;
 
     /**
+     * @var Collection|OrderShippingTracking[]
+     *
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderShippingTrackings",
+     *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $shippingTrackings;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -349,6 +364,7 @@ class Order extends ExtendOrder implements
 
         $this->lineItems = new ArrayCollection();
         $this->discounts = new ArrayCollection();
+        $this->shippingTrackings = new ArrayCollection();
     }
 
     /**
@@ -969,6 +985,61 @@ class Order extends ExtendOrder implements
     public function setShippingMethodType($shippingMethodType)
     {
         $this->shippingMethodType = $shippingMethodType;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|OrderShippingTracking[]
+     */
+    public function getShippingTrackings()
+    {
+        return $this->shippingTrackings;
+    }
+
+    /**
+     * @param Collection|OrderShippingTracking[] $shippingTrackings
+     */
+    public function setShippingTrackings($shippingTrackings)
+    {
+        $this->shippingTrackings = $shippingTrackings;
+    }
+
+    /**
+     * @param OrderShippingTracking $shippingTracking
+     *
+     * @return bool
+     */
+    public function hasShippingTracking(OrderShippingTracking $shippingTracking)
+    {
+        return $this->shippingTrackings->contains($shippingTracking);
+    }
+
+    /**
+     * @param OrderShippingTracking $shippingTracking
+     *
+     * @return Order
+     */
+    public function addShippingTracking(OrderShippingTracking $shippingTracking)
+    {
+        $shippingTracking->setOrder($this);
+        if (!$this->hasShippingTracking($shippingTracking)) {
+            $this->shippingTrackings->add($shippingTracking);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param OrderShippingTracking $shippingTracking
+     *
+     * @return Order
+     */
+    public function removeShippingTracking(OrderShippingTracking $shippingTracking)
+    {
+        if ($this->hasShippingTracking($shippingTracking)) {
+            $this->shippingTrackings->removeElement($shippingTracking);
+        }
 
         return $this;
     }
