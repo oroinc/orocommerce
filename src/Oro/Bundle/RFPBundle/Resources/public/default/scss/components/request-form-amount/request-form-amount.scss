@@ -1,0 +1,17 @@
+.request-form-amount {
+    &__piece {
+        font-weight: normal;
+    }
+
+    &__price {
+        margin-top: 2px;
+    }
+
+    &__label {
+        margin-right: 4px;
+    }
+
+    &__currency {
+        margin-right: -2px;
+    }
+}

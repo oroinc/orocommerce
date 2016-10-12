@@ -1,0 +1,11 @@
+.request-form-link {
+    font-size: 15px;
+
+    text-decoration: underline;
+
+    color: get-color('additional', 'dark');
+
+    &:hover {
+        color: get-color('additional', 'dark');
+    }
+}

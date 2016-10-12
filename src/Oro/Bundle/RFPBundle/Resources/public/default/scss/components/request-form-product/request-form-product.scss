@@ -1,0 +1,81 @@
+.request-form-product {
+    &__item {
+        &--actions {
+            text-align: center;
+
+            font-size: $base-font-size--large;
+
+            color: get-color('additional', 'middle');
+        }
+    }
+}
+
+@include breakpoint('desktop') {
+    .request-form-product {
+        display: table;
+        width: 100%;
+
+        &__inner {
+            display: table-row;
+        }
+
+        &__count {
+            display: none;
+        }
+
+        &__item {
+            display: table-cell;
+
+            padding: 12px 0;
+
+            border-top: 1px solid get-color('additional', 'light');
+
+            &--quantity,
+            &--amount {
+                width: 160px;
+            }
+
+            &--target {
+                width: 190px;
+            }
+
+            &--actions {
+                width: 60px;
+            }
+        }
+    }
+};
+
+@include breakpoint('tablet') {
+    .request-form-product {
+        position: relative;
+
+        &__inner {
+            padding: 7px 0;
+
+            border-top: 1px solid get-color('additional', 'light');
+        }
+
+        &__count {
+            position: absolute;
+            left: 0;
+            display: inline;
+
+            color: get-color('additional', 'middle');
+        }
+
+        &__item {
+            padding: 5px 0 5px 20px;
+
+                &--link {
+                    padding-right: 60px;
+                }
+
+                &--actions {
+                    position: absolute;
+                    top: 5px;
+                    right: 0;
+            }
+        }
+    }
+};

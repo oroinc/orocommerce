@@ -32,7 +32,127 @@
 
     <div class="request-form">
         <h2 class="request-form__title">{{ 'oro.rfp.frontend.request.title.label'|trans }}</h2>
-        <div class="request-form__row">
+        <div class="request-form-product">
+            <div class="request-form-product__inner">
+                <div class="request-form-product__item request-form-product__item--link">
+                    <span class="request-form-product__count">1</span>
+                    <a class="request-form-link link" href="#">Basics Unisex Scrub Pants</a>
+                </div>
+                <div class="request-form-product__item request-form-product__item--quantity">
+                    <span class="request-form-quantity">
+                        <span class="request-form-quantity__label">QTY:</span>
+                        <span class="request-form-quantity__total">34</span>
+                        <span class="request-form-quantity__units">Pieces</span>
+                    </span>
+                </div>
+                <div class="request-form-product__item request-form-product__item--amount">
+                    <dl class="request-form-amount">
+                        <dt class="request-form-amount__piece">
+                            <span class="request-form-amount__label">Per Piece:</span>
+                            <span class="request-form-amount__currency">$</span>
+                            <span class="request-form-amount__total">1.50</span>
+                        </dt>
+                        <dd class="request-form-amount__price">
+                            <span class="request-form-amount__label">Price:</span>
+                            <span class="request-form-amount__currency">$</span>
+                            <span class="request-form-amount__total">51.00</span>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="request-form-product__item request-form-product__item--target">
+                    <dl class="request-form-amount">
+                        <dt class="request-form-amount__piece">
+                            <span class="request-form-amount__label">Target Per Piece:</span>
+                            <span class="request-form-amount__currency">$</span>
+                            <span class="request-form-amount__total">1.00</span>
+                        </dt>
+                        <dd class="request-form-amount__price">
+                            <span class="request-form-amount__label">Target Price:</span>
+                            <span class="request-form-amount__currency">$</span>
+                            <span class="request-form-amount__total">34.00</span>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="request-form-product__item request-form-product__item--actions">
+                    <ul class="actions-row">
+                        <li class="actions-row__item actions-row__item--edit">
+                            <button class="actions-row__button" title="Edit">
+                                <i class="actions-row__icon cf-pencil"></i>
+                            </button>
+                        </li>
+                        <li class="actions-row__item actions-row__item--separate">|</li>
+                        <li class="actions-row__item actions-row__item--remove">
+                            <button class="actions-row__button" title="Delete">
+                                <i class="actions-row__icon cf-trash"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="request-form-product">
+            <div class="request-form-product__inner">
+                <div class="request-form-product__item request-form-product__item--link">
+                    <span class="request-form-product__count">2</span>
+                    <a class="request-form-link link" href="#">Basics Unisex Scrub Pants</a>
+                </div>
+                <div class="request-form-product__item request-form-product__item--quantity">
+                    <span class="request-form-quantity">
+                        <span class="request-form-quantity__label">QTY:</span>
+                        <span class="request-form-quantity__total">34</span>
+                        <span class="request-form-quantity__units">Pieces</span>
+                    </span>
+                </div>
+                <div class="request-form-product__item request-form-product__item--amount">
+                    <dl class="request-form-amount">
+                        <dt class="request-form-amount__piece">
+                            <span class="request-form-amount__label">Per Piece:</span>
+                            <span class="request-form-amount__currency">$</span>
+                            <span class="request-form-amount__total">1.50</span>
+                        </dt>
+                        <dd class="request-form-amount__price">
+                            <span class="request-form-amount__label">Price:</span>
+                            <span class="request-form-amount__currency">$</span>
+                            <span class="request-form-amount__total">51.00</span>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="request-form-product__item request-form-product__item--target">
+                    <dl class="request-form-amount">
+                        <dt class="request-form-amount__piece">
+                            <span class="request-form-amount__label">Target Per Piece:</span>
+                            <span class="request-form-amount__currency">$</span>
+                            <span class="request-form-amount__total">1.00</span>
+                        </dt>
+                        <dd class="request-form-amount__price">
+                            <span class="request-form-amount__label">Target Price:</span>
+                            <span class="request-form-amount__currency">$</span>
+                            <span class="request-form-amount__total">34.00</span>
+                        </dd>
+                    </dl>
+                </div>
+                <div class="request-form-product__item request-form-product__item--actions">
+                    <ul class="actions-row">
+                        <li class="actions-row__item actions-row__item--edit">
+                            <button class="actions-row__button" title="Edit">
+                                <i class="actions-row__icon cf-pencil"></i>
+                            </button>
+                        </li>
+                        <li class="actions-row__item actions-row__item--separate">|</li>
+                        <li class="actions-row__item actions-row__item--remove">
+                            <button class="actions-row__button" title="Delete">
+                                <i class="actions-row__icon cf-trash"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <p class="request-form-note">
+            Note: This item may be moved to a different quote later.
+        </p>
+
+        <div class="row-oro">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}>
                 <table class="grid table-hover table table-bordered table-condensed" data-last-index="{{ form.children|length}}"
