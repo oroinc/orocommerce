@@ -155,9 +155,11 @@ oro:
                         label: ''
                         quantity: 'Requested Quantity'
                         price: 'Target Price'
-                        add: 'Add Line'
+                        add: 'Add Another Line'
                     notes: 'Notes'
                     add: 'Add Product'
+                    cancel: 'Cancel'
+                    update: 'Update'
         feature:
             label: 'Request For Quote'
             description: 'Request For Quote allows users to place Requests for chosen products'
