@@ -6,31 +6,31 @@ use Symfony\Component\Routing\RouterInterface;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
  */
-class WarehouseInventoryLevelControllerTest extends WebTestCase
+class InventoryLevelControllerTest extends WebTestCase
 {
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            'Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels'
+            LoadInventoryLevels::class
         ]);
     }
 
     public function testIndexAction()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_warehouse_inventory_level_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_inventory_level_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('warehouse-inventory-grid', $crawler->html());
+        $this->assertContains('inventory-grid', $crawler->html());
     }
 
     public function testUpdateAction()
@@ -57,7 +57,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         // check levels grid
-        $levelsGrid = $crawler->filterXPath('//div[starts-with(@id,"grid-warehouse-inventory-level-grid")]');
+        $levelsGrid = $crawler->filterXPath('//div[starts-with(@id,"grid-inventory-level-grid")]');
         $this->assertEquals(1, $levelsGrid->count());
 
         $gridConfig = json_decode($levelsGrid->attr('data-page-component-options'), true);
@@ -76,7 +76,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
         }
 
         $form = $crawler->selectButton('Save')->form();
-        $form['oro_warehouse_inventory_level_grid'] = json_encode($changeSet);
+        $form['oro_inventory_level_grid'] = json_encode($changeSet);
         $this->client->submit($form);
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
@@ -89,17 +89,15 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
      */
     protected function assertLevelsData(array $data)
     {
-        $repository = $this->getRepository('OroWarehouseBundle:InventoryLevel');
+        $repository = $this->getRepository('OroInventoryBundle:InventoryLevel');
 
         foreach ($data as $combinedId => $row) {
-            list($warehouseId, $precisionId) = explode('_', $combinedId, 2);
+            list($precisionId) = explode('_', $combinedId, 2);
             $quantity = $row['levelQuantity'];
 
             /** @var InventoryLevel|null $level */
             $level = $repository->createQueryBuilder('level')
-                ->andWhere('IDENTITY(level.warehouse) = :warehouseId')
                 ->andWhere('IDENTITY(level.productUnitPrecision) = :precisionId')
-                ->setParameter('warehouseId', $warehouseId)
                 ->setParameter('precisionId', $precisionId)
                 ->getQuery()
                 ->getOneOrNullResult();
@@ -134,15 +132,10 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
      */
     protected function assertLevelsGridData(Product $product, array $data)
     {
-        /** @var Warehouse[] $warehouses */
-        $warehouses = $this->getRepository('OroWarehouseBundle:Warehouse')->findAll();
-
         $expectedCombinedIds = [];
-        foreach ($warehouses as $warehouse) {
             foreach ($product->getUnitPrecisions() as $precision) {
-                $expectedCombinedIds[] = sprintf('%s_%s', $warehouse->getId(), $precision->getId());
+                $expectedCombinedIds[] = sprintf('%s', $precision->getId());
             }
-        }
 
         $this->assertSameSize($expectedCombinedIds, $data);
         foreach ($data as $row) {

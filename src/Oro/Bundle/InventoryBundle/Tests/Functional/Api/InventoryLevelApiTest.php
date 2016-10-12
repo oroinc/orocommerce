@@ -831,7 +831,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         /** @var InventoryLevel $inventoryLevel */
         $inventoryLevel = $this->getReference(
             sprintf(
-                'warehouse_inventory_level.%s',
+                'inventory_level.%s',
                 'product_unit_precision.product.1.liter'
             )
         );
@@ -957,7 +957,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         /** @var InventoryLevel $inventoryLevel */
         $inventoryLevel = $this->getReference(
             sprintf(
-                'warehouse_inventory_level.%s',
+                'inventory_level.%s',
                 'product_unit_precision.product.1.bottle'
             )
         );
@@ -977,7 +977,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         /** @var InventoryLevel $inventoryLevel */
         $inventoryLevel = $this->getReference(
             sprintf(
-                'warehouse_inventory_level.%s',
+                'inventory_level.%s',
                 'product_unit_precision.product.1.liter'
             )
         );

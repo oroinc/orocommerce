@@ -32,6 +32,7 @@ class LoadInventoryLevels extends AbstractFixture implements DependentFixtureInt
     {
         $this->createInventoryLevel($manager, 'product_unit_precision.product.1.liter', 10);
         $this->createInventoryLevel($manager, 'product_unit_precision.product.1.bottle', 99);
+        $this->createInventoryLevel($manager, 'product_unit_precision.product.1.milliliter', 299);
         $this->createInventoryLevel($manager, 'product_unit_precision.product.2.liter', 12.345);
         $this->createInventoryLevel($manager, 'product_unit_precision.product.2.bottle', 98);
         $this->createInventoryLevel($manager, 'product_unit_precision.product.2.box', 42);
@@ -56,7 +57,7 @@ class LoadInventoryLevels extends AbstractFixture implements DependentFixtureInt
 
         $manager->persist($level);
         $this->addReference(
-            sprintf('warehouse_inventory_level.%s', $precisionReference),
+            sprintf('inventory_level.%s', $precisionReference),
             $level
         );
     }

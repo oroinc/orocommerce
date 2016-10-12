@@ -70,7 +70,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     public function strategyDataProvider()
     {
         return [
-            'warehouse inventory level' => ['oro_warehouse.warehouse_inventory_level'],
+            'inventory level' => ['oro_inventory.inventory_level'],
         ];
     }
 

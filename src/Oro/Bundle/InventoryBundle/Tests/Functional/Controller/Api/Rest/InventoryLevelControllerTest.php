@@ -12,7 +12,7 @@ use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels
 /**
  * @dbIsolation
  */
-class WarehouseInventoryLevelControllerTest extends WebTestCase
+class InventoryLevelControllerTest extends WebTestCase
 {
     protected function setUp()
     {
@@ -22,7 +22,7 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
         );
         $this->loadFixtures(
             [
-                'Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels',
+                LoadInventoryLevels::class,
             ]
         );
     }
@@ -30,27 +30,25 @@ class WarehouseInventoryLevelControllerTest extends WebTestCase
     public function testDeleteAction()
     {
         /** @var InventoryLevel $entity */
-        $entity = $this->getWarehouseInventoryLevelReference(
-            LoadInventoryLevels::WAREHOUSE1,
+        $entity = $this->getInventoryLevelReference(
             'product_unit_precision.product.1.liter'
         );
         $this->client->request(
             Request::METHOD_DELETE,
-            $this->getUrl('oro_api_warehouse_delete_warehouse_inventory_level', ['id' => $entity->getId()])
+            $this->getUrl('oro_api_inventory_delete_inventory_level', ['id' => $entity->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, Response::HTTP_NO_CONTENT);
     }
 
     /**
-     * @param string $warehouseReference
      * @param string $precisionReference
      * @return InventoryLevel
      */
-    protected function getWarehouseInventoryLevelReference($warehouseReference, $precisionReference)
+    protected function getInventoryLevelReference($precisionReference)
     {
         return $this->getReference(
-            sprintf('warehouse_inventory_level.%s.%s', $warehouseReference, $precisionReference)
+            sprintf('inventory_level.%s', $precisionReference)
         );
     }
 }
