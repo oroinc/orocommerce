@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+
 /**
  * @ORM\Entity
  * @ORM\Table("oro_order_shipping_tracking")

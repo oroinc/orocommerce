@@ -342,7 +342,7 @@ class Order extends ExtendOrder implements
     /**
      * @var Collection|OrderShippingTracking[]
      *
-     * @ORM\OneToMany(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderShippingTrackings",
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\OrderBundle\Entity\OrderShippingTracking",
      *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
      * )
      * @ConfigField(
