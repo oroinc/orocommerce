@@ -38,7 +38,7 @@ class AccountIdPlaceholderTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->willReturn(null);
 
-        $this->assertNull($this->placeholder->getValue());
+        $this->assertNull($this->placeholder->getDefaultValue());
     }
 
     public function testGetValueWhenAccountUserIsNotAccountUser()
@@ -54,7 +54,7 @@ class AccountIdPlaceholderTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->willReturn($token);
 
-        $this->assertNull($this->placeholder->getValue());
+        $this->assertNull($this->placeholder->getDefaultValue());
     }
 
     public function testGetValueWhenAccountUserIsGiven()
@@ -79,11 +79,14 @@ class AccountIdPlaceholderTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->willReturn($token);
 
-        $this->assertEquals($accountUserId, $this->placeholder->getValue());
+        $this->assertEquals($accountUserId, $this->placeholder->getDefaultValue());
     }
 
     public function testReplace()
     {
-        $this->assertEquals('visibility_account_1', $this->placeholder->replace('visibility_account_ACCOUNT_ID', 1));
+        $this->assertEquals(
+            'visibility_account_1',
+            $this->placeholder->replace('visibility_account_ACCOUNT_ID', [AccountIdPlaceholder::NAME => 1])
+        );
     }
 }
