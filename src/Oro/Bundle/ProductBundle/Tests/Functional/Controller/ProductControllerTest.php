@@ -151,6 +151,7 @@ class ProductControllerTest extends WebTestCase
         ];
 
         $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
+        $this->assertEquals(1, $this->countImageResizeJobs());
     }
 
     /**
@@ -257,6 +258,8 @@ class ProductControllerTest extends WebTestCase
             $this->sortUnitPrecisions($actualAdditionalUnitPrecisions)
         );
 
+        $this->assertEquals(3, $this->countImageResizeJobs());
+
         return $id;
     }
 
@@ -333,6 +336,7 @@ class ProductControllerTest extends WebTestCase
         ];
 
         $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
+        $this->assertEquals(5, $this->countImageResizeJobs());
 
         $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
@@ -775,5 +779,18 @@ class ProductControllerTest extends WebTestCase
                 ->filter('input[name="oro_product[additionalUnitPrecisions][' . $position . '][sell]"]')
                 ->extract('checked')[0],
         ];
+    }
+
+    private function countImageResizeJobs()
+    {
+        $statement = $this
+            ->getContainer()
+            ->get('doctrine.dbal.default_connection')
+            ->executeQuery(
+                'SELECT COUNT(*) FROM oro_message_queue WHERE properties LIKE :text',
+                ['text' => '%"oro.message_queue.client.topic_name":"imageResize"%']
+            );
+
+        return $statement->fetchColumn()[0];
     }
 }

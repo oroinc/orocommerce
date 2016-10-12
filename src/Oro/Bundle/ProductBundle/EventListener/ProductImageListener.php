@@ -13,6 +13,11 @@ use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 class ProductImageListener
 {
     /**
+     * @var int[]
+     */
+    protected $processedImageIds = [];
+
+    /**
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
@@ -31,14 +36,7 @@ class ProductImageListener
      */
     public function postUpdate(ProductImage $productImage, LifecycleEventArgs $args)
     {
-        if (!$productImage->getTypes()) {
-            return;
-        }
-
-        $this->eventDispatcher->dispatch(
-            ProductImageResizeEvent::NAME,
-            new ProductImageResizeEvent($productImage, $forceOption = true)
-        );
+        $this->dispatchEvent($productImage);
     }
 
     /**
@@ -47,7 +45,7 @@ class ProductImageListener
      */
     public function postPersist(ProductImage $productImage, LifecycleEventArgs $args)
     {
-        $this->postUpdate($productImage, $args);
+        $this->dispatchEvent($productImage);
     }
 
     /**
@@ -56,9 +54,25 @@ class ProductImageListener
      */
     public function preFlush(ProductImage $productImage, PreFlushEventArgs $args)
     {
-        //if new file uploaded -> trigger update
-        if ($productImage->getId() && $productImage->getImage() && $productImage->getImage()->getFile()) {
-            $productImage->setUpdatedAt();
+        if ($productImage->getId() && $productImage->hasUploadedFile()) {
+            $productImage->setUpdatedAtToNow();
         }
+    }
+
+    /**
+     * @param ProductImage $productImage
+     */
+    private function dispatchEvent(ProductImage $productImage)
+    {
+        if (!$productImage->getTypes() || in_array($productImage->getId(), $this->processedImageIds)) {
+            return;
+        }
+
+        $this->processedImageIds[] = $productImage->getId();
+
+        $this->eventDispatcher->dispatch(
+            ProductImageResizeEvent::NAME,
+            new ProductImageResizeEvent($productImage, $forceOption = true)
+        );
     }
 }

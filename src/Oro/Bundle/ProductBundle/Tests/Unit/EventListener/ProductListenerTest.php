@@ -2,24 +2,22 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\UnitOfWork;
+use Doctrine\ORM\Event\PreFlushEventArgs;
 
 use Prophecy\Argument;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Oro\Bundle\AttachmentBundle\Entity\File;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
-use Oro\Bundle\ProductBundle\EventListener\ProductListener;
+use Oro\Bundle\ProductBundle\EventListener\ProductImageListener;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 
 class ProductListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ProductListener
+     * @var ProductImageListener
      */
     protected $listener;
 
@@ -31,58 +29,53 @@ class ProductListenerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
-        $this->listener = new ProductListener($this->eventDispatcher->reveal());
+        $this->listener = new ProductImageListener($this->eventDispatcher->reveal());
     }
 
-    public function testPostUpdate()
+    public function testDispatchResizeEventOnTypesChange()
     {
-        $file2 = new File();
-        $file3 = new File();
-
-        $productImage1 = new StubProductImage();
-        $productImage2 = new StubProductImage();
-        $productImage2->addType('type');
-        $productImage2->setImage($file2);
-        $productImage3 = new StubProductImage();
-        $productImage3->addType('othertype');
-        $productImage3->setImage($file3);
-
-        $product = new Product();
-        $product->addImage($productImage1);
-        $product->addImage($productImage2);
-        $product->addImage($productImage3);
+        $productImage = new StubProductImage();
+        $productImage->addType('type');
+        $productImage->setId(1);
 
         $this->eventDispatcher->dispatch(
             ProductImageResizeEvent::NAME,
             Argument::type(ProductImageResizeEvent::class)
-        )->shouldBeCalledTimes(2);
+        )->shouldBeCalledTimes(1);
 
-        $this->listener->postUpdate($product, $this->prepareArgs([
-            [$productImage2, ['somechanges']],
-            [$file2, []],
-            [$productImage3, []],
-            [$file3, ['notempty']]
-        ]));
+        $this->listener->postPersist($productImage, $this->prepareArgs());
+        $this->listener->postUpdate($productImage, $this->prepareArgs());
+    }
+
+    public function testDispatchResizeEventOnFileChange()
+    {
+        $productImage = $this->prophesize(ProductImage::class);
+        $productImage->getId()->willReturn(1);
+        $productImage->hasUploadedFile()->willReturn(true);
+
+        $productImage->setUpdatedAtToNow()->shouldBeCalled();
+
+        $this->listener->preFlush($productImage->reveal(), $this->prophesize(PreFlushEventArgs::class)->reveal());
+    }
+
+    public function testDoesNothingIfProductImageDoesNotHaveTypes()
+    {
+        $productImage = new StubProductImage();
+
+        $this->eventDispatcher->dispatch(
+            ProductImageResizeEvent::NAME,
+            Argument::type(ProductImageResizeEvent::class)
+        )->shouldNotBeCalled();
+
+        $this->listener->postPersist($productImage, $this->prepareArgs());
+        $this->listener->postUpdate($productImage, $this->prepareArgs());
     }
 
     /**
-     * @param array $changeSets
      * @return LifecycleEventArgs
      */
-    private function prepareArgs(array $changeSets)
+    private function prepareArgs()
     {
-        $unitOfWork = $this->prophesize(UnitOfWork::class);
-        foreach ($changeSets as $changeSet) {
-            list($entity, $set) = $changeSet;
-            $unitOfWork->getEntityChangeSet($entity)->willReturn($set);
-        }
-
-        $em = $this->prophesize(EntityManager::class);
-        $em->getUnitOfWork()->willReturn($unitOfWork->reveal());
-
-        $args = $this->prophesize(LifecycleEventArgs::class);
-        $args->getEntityManager()->willReturn($em->reveal());
-
-        return $args->reveal();
+        return $this->prophesize(LifecycleEventArgs::class)->reveal();
     }
 }
