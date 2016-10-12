@@ -30,7 +30,11 @@ define([
                     name: 'any',
                     role: 'any'
                 },
-                pricelist: {},
+                pricelist: {
+                    id: 'any',
+                    name: 'any',
+                    parent: 'any'
+                },
                 products: {
                     type: 'array',
                     entity: 'product'
