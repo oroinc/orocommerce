@@ -107,7 +107,7 @@ class TaxSubtotalProvider implements SubtotalProviderInterface, CacheAwareInterf
     {
         $subtotal->setAmount($tax->getTotal()->getTaxAmount());
         $subtotal->setCurrency($tax->getTotal()->getCurrency());
-        $subtotal->setVisible(true);
+        $subtotal->setVisible((bool)$tax->getTotal()->getTaxAmount());
         $subtotal->setData($tax->getArrayCopy());
 
         return $subtotal;

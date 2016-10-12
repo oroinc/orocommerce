@@ -15,7 +15,8 @@ use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 
-class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
+class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements
+    ProductCaseCacheBuilderInterface
 {
     /**
      * @param VisibilityInterface|ProductVisibility $visibilitySettings
@@ -68,6 +69,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         }
 
         $this->executeDbQuery($er, $insert, $delete, $update, $where);
+        $this->triggerProductReindexation($product, $website);
     }
 
     /**

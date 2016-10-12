@@ -7,16 +7,15 @@ use Doctrine\Common\Collections\Expr\Comparison as DoctrineComparison;
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderInterface;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolver;
 
 class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var WebsiteSearchPlaceholderRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var PlaceholderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $registry;
+    private $placeholder;
 
     /**
      * @var QueryPlaceholderResolver
@@ -25,12 +24,11 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this
-            ->getMockBuilder(WebsiteSearchPlaceholderRegistry::class)
-            ->disableOriginalConstructor()
+        $this->placeholder = $this
+            ->getMockBuilder(PlaceholderInterface::class)
             ->getMock();
 
-        $this->placeholderResolver = new QueryPlaceholderResolver($this->registry, []);
+        $this->placeholderResolver = new QueryPlaceholderResolver($this->placeholder, []);
     }
 
     public function testReplaceInFrom()
@@ -42,69 +40,13 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
             'oro_third_NAME_ID'
         ];
         $query->from($fromArray);
-        $placeholder1 = $this->getPlaceholder('TEST_ID', '1');
-        $placeholder2 = $this->getPlaceholder('NAME_ID', '2');
 
-        $this->registry->expects($this->once())
-            ->method('getPlaceholders')
-            ->willReturn([
-                'TEST_ID' => $placeholder1,
-                'NAME_ID' => $placeholder2
-            ]);
-
-        $placeholder1->expects($this->exactly(3))
-            ->method('replace')
+        $this->placeholder->expects($this->exactly(3))
+            ->method('replaceDefault')
             ->withConsecutive(
-                ['oro_first_TEST_ID', 1],
-                ['oro_second', 1],
-                ['oro_third_NAME_ID', 1]
-            )
-            ->willReturnOnConsecutiveCalls('oro_first_1', 'oro_second', 'oro_third_NAME_ID');
-
-        $placeholder2->expects($this->exactly(3))
-            ->method('replace')
-            ->withConsecutive(
-                ['oro_first_1', 2],
-                ['oro_second', 2],
-                ['oro_third_NAME_ID', 2]
-            )
-            ->willReturnOnConsecutiveCalls('oro_first_1', 'oro_second', 'oro_third_2');
-
-        $this->placeholderResolver->replace($query);
-
-        $this->assertEquals(
-            [
-                'oro_first_1',
-                'oro_second',
-                'oro_third_2'
-            ],
-            $query->getFrom()
-        );
-    }
-
-    public function testReplaceInFromForOnePlaceholder()
-    {
-        $query = new Query();
-        $query->from([
-            'oro_first_TEST_ID',
-            'oro_second',
-            'oro_third_NAME_ID'
-        ]);
-
-        $placeholder1 = $this->getPlaceholder('TEST_ID', '1');
-
-        $this->registry->expects($this->once())
-            ->method('getPlaceholders')
-            ->willReturn([
-                'TEST_ID' => $placeholder1
-            ]);
-
-        $placeholder1->expects($this->exactly(3))
-            ->method('replace')
-            ->withConsecutive(
-                ['oro_first_TEST_ID', 1],
-                ['oro_second', 1],
-                ['oro_third_NAME_ID', 1]
+                ['oro_first_TEST_ID'],
+                ['oro_second'],
+                ['oro_third_NAME_ID']
             )
             ->willReturnOnConsecutiveCalls('oro_first_1', 'oro_second', 'oro_third_NAME_ID');
 
@@ -120,6 +62,36 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testReplaceInSelect()
+    {
+        $query = new Query();
+        $query->select([
+            'text.oro_first_TEST_ID as test_id',
+            'text.oro_second',
+            'text.oro_third_NAME_ID'
+        ]);
+
+        $this->placeholder->expects($this->exactly(3))
+            ->method('replaceDefault')
+            ->withConsecutive(
+                ['text.oro_first_TEST_ID'],
+                ['text.oro_second'],
+                ['text.oro_third_NAME_ID']
+            )
+            ->willReturnOnConsecutiveCalls('oro_first_1', 'oro_second', 'oro_third_NAME_ID');
+
+        $this->placeholderResolver->replace($query);
+
+        $this->assertEquals(
+            [
+                'text.oro_first_1',
+                'text.oro_second',
+                'text.oro_third_NAME_ID'
+            ],
+            $query->getSelect()
+        );
+    }
+
     public function testReplaceInCriteria()
     {
         $expr = new Comparison("field_name_NAME_ID", "=", "value");
@@ -130,19 +102,16 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
         $query = new Query();
         $query->setCriteria($criteria);
 
-        $this->registry->expects($this->once())
-            ->method('getPlaceholders')
-            ->willReturn([
-                'TEST_ID' => $this->getPlaceholder('TEST_ID', '1'),
-                'NAME_ID' => $this->getPlaceholder('NAME_ID', '2')
-            ]);
+        $this->placeholder->expects($this->exactly(2))
+            ->method('replaceDefault')
+            ->willReturn('field_name_2');
 
         $this->placeholderResolver->replace($query);
 
         $expectedExpr = new Comparison("field_name_2", "=", "value");
         $expectedCriteria = new Criteria();
         $expectedCriteria->where($expectedExpr);
-        $expectedCriteria->orderBy(['sorter_1' => 'ASC']);
+        $expectedCriteria->orderBy(['field_name_2' => 'ASC']);
 
         /** @var DoctrineComparison $expectedComparison */
         $expectedComparison = $expectedCriteria->getWhereExpression();
@@ -162,35 +131,5 @@ class QueryPlaceholderResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected->getField(), $actual->getField());
         $this->assertEquals($expected->getOperator(), $actual->getOperator());
         $this->assertEquals($expected->getValue(), $actual->getValue());
-    }
-
-    /**
-     * @param string $placeholderName
-     * @param string $value
-     * @return WebsiteSearchPlaceholderInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getPlaceholder($placeholderName, $value)
-    {
-        $placeholder = $this
-            ->getMockBuilder(WebsiteSearchPlaceholderInterface::class)
-            ->getMock();
-
-        $placeholder->expects($this->any())
-            ->method('getPlaceholder')
-            ->willReturn($placeholderName);
-
-        $placeholder->expects($this->any())
-            ->method('getValue')
-            ->willReturn($value);
-
-        $placeholder->expects($this->any())
-            ->method('replace')
-            ->willReturnCallback(
-                function ($string, $replaceValue) use ($placeholderName) {
-                    return str_replace($placeholderName, $replaceValue, $string);
-                }
-            );
-
-        return $placeholder;
     }
 }

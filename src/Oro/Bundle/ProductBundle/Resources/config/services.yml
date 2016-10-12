@@ -15,6 +15,11 @@ services:
             - '%oro_product.entity.product.class%'
             - "@doctrine.orm.entity_manager"
 
+    oro_product.service.quantity_rounding:
+        class: 'Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService'
+        public: false
+        parent: oro_currency.service.abstract_rounding
+
     oro_product.formatter.unit_value:
         abstract: true
         class: 'Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter'
@@ -154,7 +159,6 @@ services:
             - "@oro_security.security_facade"
             - "@session"
             - "@translator"
-            - "@service_container"
         calls:
             - [setComponentProcessorFilter,  ["@oro_product.component_processor.filter"]]
         abstract: true
@@ -450,3 +454,11 @@ services:
         class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
         calls:
             - [setEntityName, ['%oro_product.entity.product.class%']]
+
+    oro_product.product_visibility_restriction_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener'
+        arguments:
+            - '@oro_product.product.manager'
+#        @todo: BB-4191
+#        tags:
+#            - { name: kernel.event_listener, event: oro_website_search.before_search, method: process }

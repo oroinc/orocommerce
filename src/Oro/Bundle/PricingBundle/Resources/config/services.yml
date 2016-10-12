@@ -484,6 +484,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
+    oro_pricing.rounding.price_rounding_service:
+        class: 'Oro\Bundle\PricingBundle\Rounding\PriceRoundingService'
+        decorates: 'oro_currency.rounding.price_rounding_service'
+        public: false
+        parent: oro_currency.service.abstract_rounding
+
     oro_pricing.event_listener.system_config:
         class: 'Oro\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber'
         arguments:
@@ -529,7 +535,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPriceCPLEntityListener'
         public: false
         arguments:
-            - '@oro_b2bentity.extra_insert_entity_storage'
+            - '@oro_commerce_entity.extra_insert_entity_storage'
             - '@doctrine'
             - '@oro_pricing.price_list_trigger_handler'
         tags:
@@ -590,9 +596,8 @@ services:
     oro_pricing.event_listener.category:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\CategoryEntityListener'
         parent: oro_pricing.entity_listener.abstract_rule_listener
-        public: false
         tags:
-            - { name: doctrine.event_listener, event: onFlush }
+            - {name: kernel.event_listener, event: oro_catalog.event.products_change_relation, method: onProductsChangeRelation }
 
     oro_pricing.entity_listener.product:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\ProductEntityListener'

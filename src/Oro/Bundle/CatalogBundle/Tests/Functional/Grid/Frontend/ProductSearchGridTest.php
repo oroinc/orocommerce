@@ -8,6 +8,8 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * @dbIsolation
  */
@@ -25,6 +27,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW),
             true
         );
+        $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->setCurrentWebsite('default');
 
         $this->loadFixtures(
@@ -36,6 +39,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
         // load image filters for grid images
         $this->getContainer()->get('oro_layout.loader.image_filter')->load();
 
+        $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
         // TODO: trigger immediate reindexation event instead
         $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }

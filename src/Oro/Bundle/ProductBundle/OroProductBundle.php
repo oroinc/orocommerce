@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\DefaultProductUnit
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductDataStorageSessionBagPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\TwigSandboxConfigurationPass;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class OroProductBundle extends Bundle
 {
@@ -39,7 +40,7 @@ class OroProductBundle extends Bundle
             ->addCompilerPass(new TwigSandboxConfigurationPass())
             ->addCompilerPass(new DefaultProductUnitProvidersCompilerPass())
             ->addCompilerPass(new DefaultFallbackExtensionPass([
-                'Oro\Bundle\ProductBundle\Entity\Product' => [
+                Product::class => [
                     'name' => 'names',
                     'description' => 'descriptions',
                     'shortDescription' => 'shortDescriptions'

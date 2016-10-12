@@ -7,11 +7,11 @@ use Doctrine\Common\Collections\Expr\Value;
 
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderExpressionVisitor;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderInterface;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 
 class PlaceholderExpressionVisitorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var WebsiteSearchPlaceholderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PlaceholderInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $placeholder;
 
     /** @var PlaceholderExpressionVisitor */
@@ -19,7 +19,7 @@ class PlaceholderExpressionVisitorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->placeholder = $this->getMock(WebsiteSearchPlaceholderInterface::class);
+        $this->placeholder = $this->getMock(PlaceholderInterface::class);
         $this->visitor = new PlaceholderExpressionVisitor($this->placeholder);
     }
 
@@ -40,12 +40,8 @@ class PlaceholderExpressionVisitorTest extends \PHPUnit_Framework_TestCase
         $expr = new Comparison("field_name_NAME_ID", "=", "value");
 
         $this->placeholder->expects($this->once())
-            ->method('getValue')
-            ->willReturn('1');
-
-        $this->placeholder->expects($this->once())
-            ->method('replace')
-            ->with("field_name_NAME_ID", '1')
+            ->method('replaceDefault')
+            ->with("field_name_NAME_ID")
             ->willReturn('field_name_1');
 
         $result = $this->visitor->walkComparison($expr);
@@ -64,12 +60,6 @@ class PlaceholderExpressionVisitorTest extends \PHPUnit_Framework_TestCase
                 new Comparison('field_name_TEXT_ID', '=', 'value'),
             ]
         );
-
-        $this->placeholder->expects($this->exactly(2))
-            ->method('replace');
-
-        $this->placeholder->expects($this->exactly(2))
-            ->method('getValue');
 
         $result = $this->visitor->walkCompositeExpression($exprs);
 

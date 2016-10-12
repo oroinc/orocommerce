@@ -112,6 +112,7 @@ class ProductProcessorTest extends \PHPUnit_Framework_TestCase
         $this->cacheBuilder->expects($this->once())
             ->method('productCategoryChanged')
             ->with($product);
+
         $this->assertEquals(
             MessageProcessorInterface::ACK,
             $this->visibilityProcessor->process($message, $session)

@@ -34,7 +34,7 @@ class LocalizationIdPlaceholderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('LOCALIZATION_ID', $this->placeholder->getPlaceholder());
     }
 
-    public function testGetValue()
+    public function testReplaceDefault()
     {
         $localization = $this->getMockBuilder(Localization::class)->getMock();
 
@@ -46,10 +46,10 @@ class LocalizationIdPlaceholderTest extends \PHPUnit_Framework_TestCase
             ->method('getId')
             ->willReturn(1);
 
-        $value = $this->placeholder->getValue();
+        $value = $this->placeholder->replaceDefault('string_LOCALIZATION_ID');
 
         $this->assertInternalType('string', $value);
-        $this->assertEquals('1', $value);
+        $this->assertEquals('string_1', $value);
     }
 
     /**
@@ -63,6 +63,29 @@ class LocalizationIdPlaceholderTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrentLocalization')
             ->willReturn(null);
 
-        $this->placeholder->getValue();
+        $this->assertEquals(
+            'string_LOCALIZATION_ID',
+            $this->placeholder->replaceDefault('string_LOCALIZATION_ID')
+        );
+    }
+
+    public function testReplace()
+    {
+        $this->localizationManager->expects($this->never())->method($this->anything());
+
+        $this->assertEquals(
+            'string_1',
+            $this->placeholder->replace('string_LOCALIZATION_ID', ['LOCALIZATION_ID' => '1'])
+        );
+    }
+
+    public function testReplaceWithoutValue()
+    {
+        $this->localizationManager->expects($this->never())->method($this->anything());
+
+        $this->assertEquals(
+            'string_LOCALIZATION_ID',
+            $this->placeholder->replace('string_LOCALIZATION_ID', ['NOT_LOCALIZATION_ID' => '1'])
+        );
     }
 }

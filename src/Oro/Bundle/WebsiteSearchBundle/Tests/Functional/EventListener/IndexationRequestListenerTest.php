@@ -5,10 +5,11 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\EventListener;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestProductType;
 
 /**
  * @dbIsolation
@@ -41,7 +42,7 @@ class IndexationRequestListenerTest extends WebTestCase
         $product = $this->createProduct();
 
         $this->assertNotNull($triggeredEvent, 'Event was not triggered.');
-        $this->assertEquals(Product::class, $triggeredEvent->getClassName());
+        $this->assertEquals(TestProduct::class, $triggeredEvent->getClassName());
         $this->assertContains($product->getId(), $triggeredEvent->getIds());
     }
 
@@ -68,12 +69,13 @@ class IndexationRequestListenerTest extends WebTestCase
          */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
-        $product->setSku('4050505');
+        $product->setName($product->getName().'-changed');
+
         $em->persist($product);
         $em->flush();
 
         $this->assertNotNull($triggeredEvent, 'Event was not triggered.');
-        $this->assertEquals(Product::class, $triggeredEvent->getClassName());
+        $this->assertEquals(TestProduct::class, $triggeredEvent->getClassName());
         $this->assertContains($product->getId(), $triggeredEvent->getIds());
     }
 
@@ -100,7 +102,12 @@ class IndexationRequestListenerTest extends WebTestCase
          */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
-        $product->setHasVariants(true);
+        $productType = new TestProductType();
+        $productType->setName('test123');
+        $em->persist($productType);
+
+        $product->setProductType($productType);
+
         $em->persist($product);
         $em->flush();
 
@@ -134,34 +141,24 @@ class IndexationRequestListenerTest extends WebTestCase
         $em->flush();
 
         $this->assertNotNull($triggeredEvent, 'Event was not triggered.');
-        $this->assertEquals(Product::class, $triggeredEvent->getClassName());
+        $this->assertEquals(TestProduct::class, $triggeredEvent->getClassName());
         $this->assertContains($product->getId(), $triggeredEvent->getIds());
     }
 
     /**
-     * Helper method for createing a product which will be used for testing
+     * Helper method for creating a product which will be used for testing
      *
-     * @return Product
+     * @return TestProduct
      */
     private function createProduct()
     {
-        static $sku = 0;
-
         /**
          * @var EntityManager $em
          */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
-        $user = $this->getFirstUser($em);
-        $businessUnit = $user->getOwner();
-        $organization = $user->getOrganization();
-
-        $product = new Product();
-        $product
-            ->setSku(++$sku)
-            ->setOwner($businessUnit)
-            ->setOrganization($organization)
-            ->setStatus('test');
+        $product = new TestProduct();
+        $product->setName('test');
 
         $em->persist($product);
         $em->flush();

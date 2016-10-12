@@ -40,9 +40,6 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $total->setAmount(1264);
         $total->setCurrency('EUR');
 
-        $this->totalProcessorProvider->expects($this->once())
-            ->method('clearCache');
-
         $this->totalProcessorProvider
             ->expects($this->once())
             ->method('getTotal')
