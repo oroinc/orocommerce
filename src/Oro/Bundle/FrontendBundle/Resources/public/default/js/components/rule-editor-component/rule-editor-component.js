@@ -354,7 +354,7 @@ define([
                     if (this.allowedMath) {
                         result = _.union(result, getCases(wordUnderCaret, this.cases.math));
                     }
-                } else if (wordIs.hasTerm) {
+                } else if (wordIs.hasTerm || wordIs.hasValue || wordIs.couldTerm) {
                     if (this.allowedCompare) {
                         result = _.union(result, getCases(wordUnderCaret, this.cases.compare));
                     }
@@ -362,7 +362,7 @@ define([
                         result = _.union(result, getCases(wordUnderCaret, this.cases.inclusion));
                     }
                     if (!this.allowedInclusion && !this.allowedCompare) {
-                        result = _.union(result, getCases(wordUnderCaret, this.cases.math));
+                        result = this.cases.math;
                     }
                 } else if (wordIs.isBool || wordIs.isMath){
                     return this.cases.data;
@@ -389,7 +389,8 @@ define([
                     hasTerm: _this.checkTerm(word, _this.cases.data),
                     hasValue: _this.checkValue(word),
                     isBool: _.contains(_this.cases.bool, word),
-                    isMath: _.contains(_this.cases.math, lastChar)
+                    isMath: _.contains(_this.cases.math, lastChar),
+                    couldTerm: !_.contains(_this.cases.math, lastChar) && !_.contains(_this.cases.compare, lastChar) && !_.contains(_this.cases.inclusion, lastChar)
                 };
             }
 
