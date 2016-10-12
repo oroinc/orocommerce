@@ -24,15 +24,33 @@ class ContextBuilderTest extends \PHPUnit_Framework_TestCase
     public function dataProviderCreateForReindexation()
     {
         return [
-            'for website only' => [
-                new ReindexationRequestEvent(null, 1),
+            'for websites only'   => [
+                new ReindexationRequestEvent([], [1, 2]),
                 [
-                    AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => 1,
+                    AbstractIndexer::CONTEXT_WEBSITE_ID_KEY   => [1, 2],
+                    AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
                 ],
             ],
-            'empty'     => [
-                new ReindexationRequestEvent(null, null),
-                [],
+            'for ids only'        => [
+                new ReindexationRequestEvent([], [], [3, 4]),
+                [
+                    AbstractIndexer::CONTEXT_WEBSITE_ID_KEY   => [],
+                    AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [3, 4],
+                ],
+            ],
+            'for websites and ids' => [
+                new ReindexationRequestEvent([], [1, 2], [3, 4]),
+                [
+                    AbstractIndexer::CONTEXT_WEBSITE_ID_KEY   => [1, 2],
+                    AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [3, 4],
+                ],
+            ],
+            'empty'               => [
+                new ReindexationRequestEvent(),
+                [
+                    AbstractIndexer::CONTEXT_WEBSITE_ID_KEY   => [],
+                    AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
+                ],
             ],
         ];
     }

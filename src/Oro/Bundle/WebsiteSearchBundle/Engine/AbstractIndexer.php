@@ -15,6 +15,7 @@ use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolverInterface;
 abstract class AbstractIndexer implements IndexerInterface
 {
     const CONTEXT_WEBSITE_ID_KEY = 'website_id';
+    const CONTEXT_ENTITIES_IDS_KEY = 'entityIds';
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;

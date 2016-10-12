@@ -54,7 +54,7 @@ class ProductIndexSchedulerTest extends \PHPUnit_Framework_TestCase
             ->method('getProductIdsByCategories')
             ->with($categories)
             ->willReturn($productIds);
-        $event = new ReindexationRequestEvent(Product::class, $websiteId, $productIds);
+        $event = new ReindexationRequestEvent([Product::class], [$websiteId], $productIds);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(ReindexationRequestEvent::EVENT_NAME, $event);
@@ -85,7 +85,7 @@ class ProductIndexSchedulerTest extends \PHPUnit_Framework_TestCase
     {
         $productIds = [1, 2, 3];
         $websiteId = 777;
-        $event = new ReindexationRequestEvent(Product::class, $websiteId, $productIds);
+        $event = new ReindexationRequestEvent([Product::class], [$websiteId], $productIds);
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(ReindexationRequestEvent::EVENT_NAME, $event);

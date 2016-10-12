@@ -15,11 +15,9 @@ class ContextBuilder
      */
     public static function createForReindexation(ReindexationRequestEvent $event)
     {
-        $context = [];
-
-        if (null !== $event->getWebsiteId()) {
-            $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY] = $event->getWebsiteId();
-        }
+        $context                                            = [];
+        $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY]   = $event->getWebsitesIds();
+        $context[AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY] = $event->getIds();
 
         return $context;
     }

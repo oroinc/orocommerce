@@ -49,14 +49,7 @@ class ReindexRequestListener
      */
     protected function processWithIndexer(ReindexationRequestEvent $event, IndexerInterface $indexer)
     {
-        $className = $event->getClassName();
-        $ids       = $event->getIds();
-
-        if (null === $className && count($ids) > 0) {
-            throw new \LogicException('Event data cannot contains IDs without class name');
-        }
-
         $context = ContextBuilder::createForReindexation($event);
-        $indexer->reindex($className, $context);
+        $indexer->reindex($event->getClassesNames(), $context);
     }
 }
