@@ -78,7 +78,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        if(is_null($this->frontendHelper) || (false === $this->frontendHelper->isFrontendRequest($request))) {
+        if (is_null($this->frontendHelper) || (false === $this->frontendHelper->isFrontendRequest($request))) {
             $queryBuilder = $this->entityRepository->getSearchQueryBuilder($search, $firstResult, $maxResults);
 
             if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
