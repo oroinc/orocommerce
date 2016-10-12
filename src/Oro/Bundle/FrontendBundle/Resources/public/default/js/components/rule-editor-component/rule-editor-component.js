@@ -138,8 +138,6 @@ define([
                 return _this.checkWord(item).isValid;
             });
 
-            console.log('isValid', normalized, logicIsValid && dataWordsAreValid, this.error);
-
             return logicIsValid && dataWordsAreValid;
         },
 
@@ -153,6 +151,7 @@ define([
 
             _context = this.$element.typeahead({
                 minLength: 0,
+
                 source: function(value) {
                     var sourceData = _this.getAutocompleteSource(value || '');
 
@@ -170,7 +169,15 @@ define([
                 },
                 focus: function() {
                     this.focused = true;
+
                     clickHandler.apply(this, arguments);
+                },
+                highlighter: function(item) {
+                    var query = (_this.getWordUnderCaret(this.query) || this.query).replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
+
+                    return item.replace(new RegExp('(' + query + ')', 'ig'), function($1, match) {
+                        return '<strong>' + match + '</strong>'
+                    });
                 },
                 lookup: function() {
                     this.query = _this.$element.val() || '';
@@ -195,6 +202,18 @@ define([
                     _this.keyup.apply(_this, _arguments);
                 }, 10);
             }
+        },
+
+        /**
+         *
+         * @param query
+         * @returns {*|String}
+         */
+        getWordUnderCaret: function(query) {
+            var caretPosition = this.$element[0].selectionStart;
+            var wordPosition = this.getWordPosition(query, caretPosition);
+
+            return this.getStringPart(query, wordPosition.start, wordPosition.end);
         },
 
         /**
@@ -264,10 +283,9 @@ define([
             var caretPosition = this.$element[0].selectionStart;
             var normalized = this.getNormalized(value, this.opsRegEx, caretPosition);
             var wordPosition = this.getWordPosition(value, caretPosition);
-            var wordUnderCaret = this.getStringPart(value, wordPosition.start, wordPosition.end);
 
             return {
-                array: this.getSuggestList(normalized, wordUnderCaret),
+                array: this.getSuggestList(normalized, this.getWordUnderCaret(value)),
                 position: wordPosition
             };
         },
@@ -323,70 +341,45 @@ define([
 
             var words = this.splitString(normalized.string, ' ');
             var wordsLength = words.length;
-            var groups = this.getGroups(words);
 
             var wordIs = checkWord(words[wordsLength - 1]);
 
-            console.clear();
-            console.log('-> wordIs', words[wordsLength - 1], wordIs);
+            var isSpaceUnderCaret = _.isNull(wordUnderCaret);
+            var isCompleteWord = wordIs.isInclusion || wordIs.isCompare;
 
-            if (wordIs.isInclusion || wordIs.isCompare) {
-                result = this.cases.bool;
-            } else if (!wordIs.isInclusion && wordIs.hasInclusion) {
-                result = getCases(wordUnderCaret, this.cases.data);
-/*
-            } else  if (){
-                result = getCases(wordUnderCaret);
-*/
+            if (isSpaceUnderCaret) {
+                if (isCompleteWord) {
+                    result = this.cases.bool;
+                } else if (wordIs.hasTerm) {
+                    result = getCases(wordUnderCaret, this.cases.compare, this.cases.inclusion);
+                }
             } else {
                 result = getCases(wordUnderCaret);
             }
 
-/*
-            if (!_.some(wordIs, function(item) {
-                    return _.isBoolean(item) && item;
-                }) && words[wordsLength - 2]) {
-                wordIs = this.checkWord(words[wordsLength - 2]);
-            }
+            return result;
 
-            if (wordIs.dataExpression) {
-                result = this.getFilteredSuggests(this.boolCases, wordUnderCaret);
-            } else if (wordIs.dataWord) {
-                result = this.getFilteredSuggests(this.operationsCases, wordUnderCaret);
-            } else if (wordIs.operation) {
-                result = this.getFilteredSuggests(wordIs.hasValues, wordUnderCaret);
-            } else if (wordIs.compare || wordsLength === 1) {
-                result = this.getFilteredSuggests(this.dataWordCases, wordUnderCaret);
-            }
-*/
-
-            return result || cases;
-
+            /**
+             *
+             * @param word
+             * @returns {{isCompare: (*|boolean), isInclusion: (*|boolean), hasTerm: *}}
+             */
             function checkWord(word) {
                 var checkIt = _this.checkWord(word),
-                    isDataTerm = _this.checkTerm(word, _this.cases.data),
-                    isMath = _this.checkTerm(word, _this.cases.math),
-                    isBool = _this.checkTerm(word, _this.cases.bool),
-                    isValue = _this.checkValue(word);
+                    isDataTerm = _this.checkTerm(word, _this.cases.data);
 
                 return {
                     isCompare: checkIt.hasCompare && checkIt.isValid,
                     isInclusion: checkIt.hasInclusion && checkIt.isValid,
-
-                    hasTerm: isDataTerm,
-                    hasExpression: checkIt.hasExpression,
-                    hasInclusion: checkIt.hasInclusion,
-                    hasCompare: checkIt.hasCompare,
-                    hasMath: isMath,
-                    hasBool: isBool,
-                    hasValue: isValue
+                    hasTerm: isDataTerm
                 };
             }
 
-            function getCases(word, base) {
-                return _.union(_.flatten(_.map(base || _this.cases, function(casesArray) {
-                    return _this.getFilteredSuggests(casesArray, word);
-                })));
+            function getCases(word) {
+                var base = Array.prototype.slice.call(arguments, 1),
+                    cases = _.union(_.flatten(!_.isEmpty(base) ? base : _.values(_this.cases)));
+
+                return _this.getFilteredSuggests(cases, word);
             }
         },
 
@@ -399,8 +392,6 @@ define([
         checkTerm: function(term, base) {
             var validBrackets = true;
             var bracketsMatch = term.match(/\[(.*?)\]/g);
-
-            console.log('checkTerm',term);
 
             if (bracketsMatch) {
                 validBrackets = bracketsMatch.length === 1 ? this.checkArray(this.replaceBetween(bracketsMatch[0], '[]').split(',')) : false;
@@ -816,8 +807,6 @@ define([
             } else {
                 input = input ? _replace(input, brackets, type, replace).trim() : input;
             }
-
-            console.log(input);
 
             return input;
 
