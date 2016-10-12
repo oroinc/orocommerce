@@ -65,12 +65,6 @@ define([
          *
          * @property {Object}
          */
-        cases: {},
-
-        /**
-         *
-         * @property {Object}
-         */
         error: {},
 
         /**
@@ -78,6 +72,8 @@ define([
          * @param options
          */
         initialize: function(options) {
+            this.cases = {};
+
             this.options = _.defaults(options || {}, this.options);
             this.$element = this.options._sourceElement;
 
@@ -336,7 +332,7 @@ define([
          * @returns {Array}
          */
         getSuggestList: function(normalized, wordUnderCaret) {
-            var result;
+            var result = [];
             var _this = this;
 
             if (_.isEmpty(normalized.string)) {
@@ -344,19 +340,34 @@ define([
             }
 
             var words = this.splitString(normalized.string, ' ');
-            var wordsLength = words.length;
+            var word = words[words.length - 1];
 
-            var wordIs = checkWord(words[wordsLength - 1]);
+            var wordIs = checkWord(word);
 
             var isSpaceUnderCaret = _.isNull(wordUnderCaret);
             var isCompleteWord = wordIs.isInclusion || wordIs.isCompare;
 
             if (isSpaceUnderCaret) {
                 if (isCompleteWord) {
-                    result = this.cases.bool;
+                    result = _.union(result, this.cases.bool);
+
+                    if (this.allowedMath) {
+                        result = _.union(result, getCases(wordUnderCaret, this.cases.math));
+                    }
                 } else if (wordIs.hasTerm) {
-                    result = getCases(wordUnderCaret, this.cases.compare, this.cases.inclusion);
+                    if (this.allowedCompare) {
+                        result = _.union(result, getCases(wordUnderCaret, this.cases.compare));
+                    }
+                    if (this.allowedInclusion) {
+                        result = _.union(result, getCases(wordUnderCaret, this.cases.inclusion));
+                    }
+                    if (!this.allowedInclusion && !this.allowedCompare) {
+                        result = _.union(result, getCases(wordUnderCaret, this.cases.math));
+                    }
+                } else if (wordIs.isBool || wordIs.isMath){
+                    return this.cases.data;
                 }
+
             } else {
                 result = getCases(wordUnderCaret);
             }
@@ -370,12 +381,15 @@ define([
              */
             function checkWord(word) {
                 var checkIt = _this.checkWord(word),
-                    isDataTerm = _this.checkTerm(word, _this.cases.data);
+                    lastChar = word[word.length - 1];
 
                 return {
                     isCompare: checkIt.hasCompare && checkIt.isValid,
                     isInclusion: checkIt.hasInclusion && checkIt.isValid,
-                    hasTerm: isDataTerm
+                    hasTerm: _this.checkTerm(word, _this.cases.data),
+                    hasValue: _this.checkValue(word),
+                    isBool: _.contains(_this.cases.bool, word),
+                    isMath: _.contains(_this.cases.math, lastChar)
                 };
             }
 
