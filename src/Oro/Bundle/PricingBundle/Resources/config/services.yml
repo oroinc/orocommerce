@@ -487,6 +487,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
 
+    oro_pricing.rounding.price_rounding_service:
+        class: 'Oro\Bundle\PricingBundle\Rounding\PriceRoundingService'
+        decorates: 'oro_currency.rounding.price_rounding_service'
+        public: false
+        parent: oro_currency.service.abstract_rounding
+
     oro_pricing.event_listener.system_config:
         class: 'Oro\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber'
         arguments:

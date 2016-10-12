@@ -31,7 +31,7 @@ services:
             - "@doctrine"
             - "@security.token_storage"
             - "@translator"
-            - "@oro_currency.service.quantity_rounding"
+            - "@oro_product.service.quantity_rounding"
             - '@oro_pricing.user_currency_manager'
             - "@oro_website.manager"
             - "@oro_shopping_list.manager.shopping_list_total"

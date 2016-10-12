@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService;
+use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;

@@ -27,6 +27,7 @@ use Symfony\Component\Intl\Intl;
 
 /**
  * @dbIsolation
+ * @group CommunityEdition
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class PriceListControllerTest extends WebTestCase
@@ -330,9 +331,14 @@ class PriceListControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertContains(self::PRICE_LIST_NAME_EDIT, $crawler->html());
-        $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName(self::CURRENCY), $crawler->html());
+        $this->checkCurrenciesOnPage($crawler);
 
         return $id;
+    }
+
+    protected function checkCurrenciesOnPage($crawler)
+    {
+        return true;
     }
 
     public function testUpdateCurrenciesError()
@@ -382,7 +388,7 @@ class PriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains(self::PRICE_LIST_NAME_EDIT, $crawler->html());
-        $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName(self::CURRENCY), $crawler->html());
+        $this->checkCurrenciesOnPage($crawler);
     }
 
     /**

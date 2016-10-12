@@ -141,10 +141,11 @@ services:
        class: Oro\Bundle\PricingBundle\Form\Type\DefaultCurrencySelectionType
        public: true
        arguments:
-           - '@oro_config.manager'
+           - '@oro_currency.config.currency'
            - '@oro_locale.settings'
            - "@translator"
            - "@request_stack"
+           - "@oro_currency.helper.currency_name"
        tags:
            - { name: form.type, alias: oro_pricing_default_currency_selection }
 
