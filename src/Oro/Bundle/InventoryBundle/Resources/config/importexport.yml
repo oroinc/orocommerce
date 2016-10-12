@@ -38,7 +38,7 @@ services:
         parent: oro_importexport.serializer.configurable_entity_normalizer
         arguments:
             - '@oro_product.formatter.product_unit_label'
-            - '@oro_currency.service.quantity_rounding'
+            - '@oro_product.service.quantity_rounding'
         calls:
             - [setDispatcher, ['@event_dispatcher']]
 

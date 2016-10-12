@@ -6,6 +6,7 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
+use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 
 /**
  * @dbIsolation
@@ -21,9 +22,6 @@ class UPSTransportEntityListenerTest extends WebTestCase
     public function testPostUpdate()
     {
         $em = static::getContainer()->get('doctrine')->getManager();
-        $shippingMethods = static::getContainer()
-            ->get('oro_shipping.shipping_method.registry')
-            ->getShippingMethods();
         /** @var Channel $ups_channel */
         $ups_channel = $this->getReference('ups:channel_1');
         /** @var UPSTransport $ups_transport */
@@ -35,7 +33,7 @@ class UPSTransportEntityListenerTest extends WebTestCase
         $configuredMethods = $em
             ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
             ->findBy([
-                'method' => $this->getShippingMethodIdentifierByLabel($shippingMethods, $ups_channel->getName())]);
+                'method' => UPSShippingMethod::IDENTIFIER . '_' . $ups_channel->getId()]);
         $typesBefore = $em
             ->getRepository('OroShippingBundle:ShippingRuleMethodTypeConfig')
             ->findBy(['methodConfig' => $configuredMethods, 'type' => $toBeDeletedService->getCode()]);
@@ -51,20 +49,5 @@ class UPSTransportEntityListenerTest extends WebTestCase
             ->findBy(['methodConfig' => $configuredMethods, 'type' => $toBeDeletedService->getCode()]);
 
         static::assertEmpty($typesAfter);
-    }
-
-    /**
-     * @param array $shippingMethods
-     * @param string $label
-     * @return string|null
-     */
-    protected function getShippingMethodIdentifierByLabel($shippingMethods, $label)
-    {
-        foreach ($shippingMethods as $shippingMethod) {
-            if ($shippingMethod->getLabel() === $label) {
-                return $shippingMethod->getIdentifier();
-            }
-        }
-        return null;
     }
 }

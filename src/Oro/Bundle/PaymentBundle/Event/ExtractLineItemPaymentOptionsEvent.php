@@ -41,6 +41,9 @@ class ExtractLineItemPaymentOptionsEvent extends Event
         return $this->models;
     }
 
+    /**
+     * @param LineItemOptionModel $model
+     */
     public function addModel(LineItemOptionModel $model)
     {
         if (!in_array($model, $this->models, true)) {

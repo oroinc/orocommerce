@@ -279,6 +279,24 @@ services:
         tags:
             - { name: checkout.workflow_state.mapper }
 
+    oro_checkout.workflow_state.mapper.shipping_method_diff:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodDiffMapper'
+        arguments:
+            - '@oro_shipping.shipping_price.provider'
+            - '@oro_checkout.factory.shipping_context_provider_factory'
+        public: false
+        tags:
+            - { name: checkout.workflow_state.mapper }
+
+    oro_checkout.workflow_state.mapper.shipping_method_enabled:
+        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodEnabledMapper'
+        arguments:
+            - '@oro_shipping.shipping_price.provider'
+            - '@oro_checkout.factory.shipping_context_provider_factory'
+        public: false
+        tags:
+            - { name: checkout.workflow_state.mapper }
+
     oro_checkout.workflow_state.action.get_checkout_state:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Action\GetCheckoutStateAction'
         arguments:
@@ -348,20 +366,12 @@ services:
             - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
 
-    oro_checkout.condition.shipping_method_supports:
-        class: 'Oro\Bundle\CheckoutBundle\Condition\ShippingMethodSupports'
-        arguments:
-            - '@oro_shipping.shipping_price.provider'
-            - '@oro_checkout.factory.shipping_context_provider_factory'
-        tags:
-            - { name: oro_workflow.condition, alias: 'shipping_method_supports' }
-            - { name: oro_action.condition, alias: 'shipping_method_supports' }
-
     oro_checkout.provider.checkout_totals:
         class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider'
         arguments:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_checkout.mapper.order_mapper'
 
     oro_checkout.action.default_shipping_method_setter:
         class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter'
@@ -380,3 +390,19 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Provider\PrivilegeCategoryProvider'
         tags:
             - { name: oro_user.privilege_category}
+
+    oro_checkout.mapper.order_mapper:
+        class: 'Oro\Bundle\CheckoutBundle\Mapper\OrderMapper'
+        public: false
+        arguments:
+            - '@oro_entity.entity_field_provider'
+            - '@property_accessor'
+
+    oro_checkout.model.action.create_order:
+        class: 'Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder'
+        arguments:
+            - '@oro_action.context_accessor'
+            - '@oro_checkout.mapper.order_mapper'
+        tags:
+            - { name: oro_workflow.action, alias: create_order }
+            - { name: oro_action.action, alias: create_order }

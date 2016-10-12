@@ -73,7 +73,7 @@ class InventoryLevelController extends Controller
             $form,
             $this->getDoctrine()->getManagerForClass('OroInventoryBundle:InventoryLevel'),
             $request,
-            $this->get('oro_currency.service.quantity_rounding')
+            $this->get('oro_product.service.quantity_rounding')
         );
 
         $result = $this->get('oro_form.model.update_handler')->handleUpdate(
