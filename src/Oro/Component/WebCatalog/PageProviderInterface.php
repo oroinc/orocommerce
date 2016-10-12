@@ -7,7 +7,7 @@ use Oro\Component\WebCatalog\Entity\WebCatalogPageInterface;
 interface PageProviderInterface
 {
     /**
-     * @param object $className
+     * @param string $className
      * @return bool
      */
     public function isSupportedClass($className);
