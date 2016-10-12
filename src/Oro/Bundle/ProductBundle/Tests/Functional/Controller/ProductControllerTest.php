@@ -9,8 +9,10 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -19,6 +21,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class ProductControllerTest extends WebTestCase
 {
+    use MessageQueueExtension;
+
     const TEST_SKU = 'SKU-001';
     const UPDATED_SKU = 'SKU-001-updated';
     const FIRST_DUPLICATED_SKU = 'SKU-001-updated-1';
@@ -783,14 +787,8 @@ class ProductControllerTest extends WebTestCase
 
     private function countImageResizeJobs()
     {
-        $statement = $this
-            ->getContainer()
-            ->get('doctrine.dbal.default_connection')
-            ->executeQuery(
-                'SELECT COUNT(*) FROM oro_message_queue WHERE properties LIKE :text',
-                ['text' => '%"oro.message_queue.client.topic_name":"imageResize"%']
-            );
-
-        return $statement->fetchColumn()[0];
+        return count(array_filter(self::getSentMessages(), function (array $message) {
+            return $message['topic'] === ProductImageResizeListener::IMAGE_RESIZE_TOPIC;
+        }));
     }
 }
