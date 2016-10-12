@@ -22,7 +22,7 @@ layout:
                     blockType: button
                     options:
                         action: submit
-                        text: oro.account.frontend.address.buttons.save
+                        text: oro.customer.frontend.address.buttons.save
                         style: auto
                         attr:
                             'class': role-submit
@@ -30,7 +30,7 @@ layout:
                     blockType: link
                     options:
                         path: '=data["backToUrl"]'
-                        text: oro.account.frontend.address.buttons.cancel
+                        text: oro.customer.frontend.address.buttons.cancel
                         attr:
                             'class': btn theme-btn btn-gray
                 __form_required_label:
