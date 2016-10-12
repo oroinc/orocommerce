@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
-use Oro\Bundle\PricingBundle\Expression\ExpressionLanguageConverter;
-use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
-use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression;
 use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Expression\ExpressionLanguageConverter;
+use Oro\Component\Expression\ExpressionParser;
+use Oro\Component\Expression\FieldsProviderInterface;
+use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -25,7 +25,7 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     protected $preprocessor;
 
     /**
-     * @var PriceRuleFieldsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $fieldsProvider;
 
@@ -41,9 +41,7 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fieldsProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->fieldsProvider = $this->getMock(FieldsProviderInterface::class);
         $this->preprocessor = $this->getMock(ExpressionPreprocessorInterface::class);
         $expressionConverter = new ExpressionLanguageConverter($this->fieldsProvider);
         $this->parser = new ExpressionParser($expressionConverter);

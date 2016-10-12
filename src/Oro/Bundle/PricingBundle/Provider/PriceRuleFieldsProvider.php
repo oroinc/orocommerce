@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Provider;
 
-use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
+use Oro\Component\Expression\FieldsProviderInterface;
 
-class PriceRuleFieldsProvider
+class PriceRuleFieldsProvider implements FieldsProviderInterface
 {
     /**
      * @var array
@@ -18,9 +19,9 @@ class PriceRuleFieldsProvider
     ];
 
     /**
-     * @var ServiceLink
+     * @var EntityFieldProvider
      */
-    protected $entityFieldProviderLink;
+    protected $entityFieldProvider;
 
     /**
      * @var DoctrineHelper
@@ -33,21 +34,17 @@ class PriceRuleFieldsProvider
     protected $entityFields = [];
 
     /**
-     * @param ServiceLink $entityFieldProviderLink
+     * @param EntityFieldProvider $entityFieldProvider
      * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(ServiceLink $entityFieldProviderLink, DoctrineHelper $doctrineHelper)
+    public function __construct(EntityFieldProvider $entityFieldProvider, DoctrineHelper $doctrineHelper)
     {
-        $this->entityFieldProviderLink = $entityFieldProviderLink;
+        $this->entityFieldProvider = $entityFieldProvider;
         $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
-     * @param string $className
-     * @param bool|false $numericOnly
-     * @param bool|false $withRelations
-     * @return array
-     * @throws \Exception
+     * {@inheritdoc}
      */
     public function getFields($className, $numericOnly = false, $withRelations = false)
     {
@@ -58,24 +55,7 @@ class PriceRuleFieldsProvider
     }
 
     /**
-     * @param string $className
-     * @param string $fieldName
-     * @return null|array
-     */
-    public function getField($className, $fieldName)
-    {
-        $entityFields = $this->getEntityFields($className, false, true);
-        if (array_key_exists($fieldName, $entityFields)) {
-            return $entityFields[$fieldName];
-        }
-        
-        return null;
-    }
-
-    /**
-     * @param string $className
-     * @param string $fieldName
-     * @return bool
+     * {@inheritdoc}
      */
     public function isRelation($className, $fieldName)
     {
@@ -85,8 +65,7 @@ class PriceRuleFieldsProvider
     }
 
     /**
-     * @param string $className
-     * @return null|string
+     * {@inheritdoc}
      */
     public function getIdentityFieldName($className)
     {
@@ -94,16 +73,14 @@ class PriceRuleFieldsProvider
     }
 
     /**
-     * @param string $className
-     * @param null|string $fieldName
-     * @return string
+     * {@inheritdoc}
      */
     public function getRealClassName($className, $fieldName = null)
     {
         if (!$fieldName && strpos($className, '::') !== false) {
             list($className, $fieldName) = explode('::', $className);
         }
-        
+
         if ($fieldName) {
             $numericOnly = false;
             $withRelations = true;
@@ -130,7 +107,7 @@ class PriceRuleFieldsProvider
     {
         $cacheKey = $this->getCacheKey($className, $numericOnly, $withRelations);
         if (!array_key_exists($cacheKey, $this->entityFields)) {
-            $fields = $this->entityFieldProviderLink->getService()->getFields(
+            $fields = $this->entityFieldProvider->getFields(
                 $className,
                 $withRelations,
                 $withRelations,
@@ -160,5 +137,20 @@ class PriceRuleFieldsProvider
     protected function getCacheKey($className, $numericOnly, $withRelations)
     {
         return $className . '|' . ($numericOnly ? 't' : 'f') . '|' . ($withRelations ? 't' : 'f');
+    }
+
+    /**
+     * @param string $className
+     * @param string $fieldName
+     * @return null|array
+     */
+    protected function getField($className, $fieldName)
+    {
+        $entityFields = $this->getEntityFields($className, false, true);
+        if (array_key_exists($fieldName, $entityFields)) {
+            return $entityFields[$fieldName];
+        }
+
+        return null;
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Provider;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Expression\Node\FieldsProviderInterface;
 
 /**
  * @dbIsolation
@@ -12,7 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 class PriceRuleFieldsProviderTest extends WebTestCase
 {
     /**
-     * @var PriceRuleFieldsProvider
+     * @var FieldsProviderInterface
      */
     protected $provider;
 
