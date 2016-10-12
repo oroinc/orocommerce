@@ -1,3 +1,9 @@
 .checkout-sidebar {
-  padding: 0 15px;
+  padding-right: 15px;
+}
+
+@include breakpoint('tablet') {
+  .checkout-sidebar {
+    display: none;
+  }
 }

@@ -11,6 +11,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
+use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
@@ -56,36 +57,33 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
         if ($value) {
             $upsTypeIds = $this->getUpsTypesIds($value);
 
-            $methodLabel = $this->getName();
-            if ($methodLabel !== null) {
-                $shippingMethods = $this->registry->getShippingMethods();
-                foreach ($shippingMethods as $shippingMethod) {
-                    if ($shippingMethod->getLabel() === $methodLabel) {
-                        $identifier = $shippingMethod->getIdentifier();
-                        $configuredMethods = $this
-                            ->doctrine
-                            ->getManagerForClass('OroShippingBundle:ShippingRuleMethodConfig')
-                            ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
-                            ->findBy(['method' => $identifier]);
-                        if (count($configuredMethods) > 0) {
-                            /** @var ShippingRuleMethodConfig $configuredMethod */
-                            foreach ($configuredMethods as $configuredMethod) {
-                                $configuredTypes = $configuredMethod->getTypeConfigs()->toArray();
-                                $enabledTypes = $this->getEnabledTypes($configuredTypes);
-                                $diff = array_diff($enabledTypes, $upsTypeIds);
-                                if (0 < count($diff) && (count($enabledTypes) >= count($upsTypeIds))) {
-                                    $missingServices = $this
-                                        ->doctrine
-                                        ->getManagerForClass('OroUPSBundle:ShippingService')
-                                        ->getRepository('OroUPSBundle:ShippingService')
-                                        ->findBy(['code' => $diff, 'country' => $this->getCountry()]);
-                                    
-                                    $this->addViolations($missingServices, $constraint->message);
-                                    break;
-                                }
+            $channelId = $this->getChannelId();
+            if (null !== $channelId) {
+                $methodIdentifier = UPSShippingMethod::IDENTIFIER . '_' . $channelId;
+                $shippingMethod = $this->registry->getShippingMethod($methodIdentifier);
+                if (null !== $shippingMethod) {
+                    $configuredMethods = $this
+                        ->doctrine
+                        ->getManagerForClass('OroShippingBundle:ShippingRuleMethodConfig')
+                        ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
+                        ->findBy(['method' => $methodIdentifier]);
+                    if (count($configuredMethods) > 0) {
+                        /** @var ShippingRuleMethodConfig $configuredMethod */
+                        foreach ($configuredMethods as $configuredMethod) {
+                            $configuredTypes = $configuredMethod->getTypeConfigs()->toArray();
+                            $enabledTypes = $this->getEnabledTypes($configuredTypes);
+                            $diff = array_diff($enabledTypes, $upsTypeIds);
+                            if (0 < count($diff) && (count($enabledTypes) >= count($upsTypeIds))) {
+                                $missingServices = $this
+                                    ->doctrine
+                                    ->getManagerForClass('OroUPSBundle:ShippingService')
+                                    ->getRepository('OroUPSBundle:ShippingService')
+                                    ->findBy(['code' => $diff, 'country' => $this->getCountry()]);
+
+                                $this->addViolations($missingServices, $constraint->message);
+                                break;
                             }
                         }
-                        break;
                     }
                 }
             }
@@ -150,19 +148,19 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
     /**
      * @return string|null
      */
-    protected function getName()
+    protected function getChannelId()
     {
-        $name = null;
+        $id = null;
 
         $form = $this->getForm();
         while ($form) {
             if ($form->getData() instanceof Channel) {
-                $name = $form->getData()->getName();
+                $id = $form->getData()->getId();
                 break;
             }
             $form = $form->getParent();
         }
-        return $name;
+        return $id;
     }
 
     /**

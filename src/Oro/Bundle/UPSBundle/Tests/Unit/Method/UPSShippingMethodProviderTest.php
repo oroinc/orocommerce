@@ -3,16 +3,15 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Method\FlatRate;
 
 use Doctrine\ORM\EntityManager;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider;
 use Oro\Bundle\UPSBundle\Provider\ChannelType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
-
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
@@ -64,7 +63,17 @@ class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
             ])
             ->willReturn([$channel]);
 
-        $this->provider = new UPSShippingMethodProvider($transportProvider, $doctrine, $priceRequestFactory);
+        $localizationHelper = $this
+            ->getMockBuilder(LocalizationHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->provider = new UPSShippingMethodProvider(
+            $transportProvider,
+            $doctrine,
+            $priceRequestFactory,
+            $localizationHelper
+        );
     }
 
     public function testGetShippingMethods()

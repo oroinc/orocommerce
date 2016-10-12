@@ -1,15 +1,14 @@
 {% block _product_container_widget %}
     <!-- START Product -->
-    {% set attr = {
+    {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
-        'data-page-component-options': {
+        '~data-page-component-options': {
             view: 'oroproduct/js/app/views/base-product-view',
-            modelAttr: product
-        }|json_encode,
-        'data-layout': 'separate'
-    }|merge(attr|merge({
-        class: attr.class|default('') ~ ' product clearfix'
-    })) %}
+            modelAttr: product.jsonSerialize()
+        },
+        'data-layout': 'separate',
+        '~class': ' product clearfix'
+    }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
