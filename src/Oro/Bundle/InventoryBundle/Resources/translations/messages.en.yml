@@ -22,12 +22,10 @@ oro:
             quantity.label: Quantity
             product.label: Product
             product_unit_precision.label: Product Unit Precision
-#            warehouse.label: Warehouse
             status.label: Status
 
             error:
                 units: "Please add at least one Unit of Quantity to the current product to enable inventory management."
-#                warehouses: "There are no warehouses configured in the system."
 
         inventory:
             entity_plural_label: Inventories
