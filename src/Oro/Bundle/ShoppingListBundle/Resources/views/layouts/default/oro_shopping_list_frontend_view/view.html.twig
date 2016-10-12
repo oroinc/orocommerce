@@ -123,7 +123,7 @@
                     <span class="custom-checkbox__icon"></span>
                     <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_note.label'|trans }}</span>
                 </label>
-                <div class="form-input" data-role="editor">
+                <div data-role="editor">
                 <textarea placeholder="{{ 'oro.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
                           rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
                           class="textarea textarea--full">{{ notes }}</textarea>
@@ -366,7 +366,7 @@
                                         <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
                                     </label>
                                 </div>
-                            <div class="form-input form-input_textarea" data-role="editor">
+                            <div data-role="editor">
                                 <textarea class="textarea textarea--full" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
                                     placeholder="{{ 'oro.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
                             </div>

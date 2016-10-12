@@ -184,18 +184,20 @@
     .column-manager-filter {
       .column-manager-search {
         input {
-          //@include input();
+          @include base-ui-element(
+            $use-base-style: true,
+            $padding: 5px 9px,
+            $line-height: 1.43
+          );
 
-          padding: 5px 9px;
+          @include element-state('hover') {
+            border-color: $input-border-color-hover-state;
+            box-shadow: $input-box-shadow-hover-state;
+          }
 
-          font-size: $base-font-size;
-          line-height: 1.43;
-
-          &:focus {
-            outline: 0;
-            border-color: get-color('ui', 'normal');
-            box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
-                              0 0 8px rgba(102,175,233,.6);
+          @include element-state('focus') {
+            border-color: $input-border-color-focus-state;
+            box-shadow: $input-box-shadow-focus-state;
           }
         }
       }
@@ -713,22 +715,26 @@
           margin: 0 !important;
 
           input[type=text] {
-            //@include input();
+            @include base-ui-element(
+              $use-base-style: true,
+              $padding: 8px 9px,
+              $line-height: 1.36
+
+            );
 
             display: block;
-            width: 100% !important;
-            height: auto;
             margin: 0 0 15px;
-            padding: 8px 9px;
+            height: auto;
+            width: 100% !important;
 
-            font-size: $base-font-size;
-            line-height: 1.36;
+            @include element-state('hover') {
+              border-color: $input-border-color-hover-state;
+              box-shadow: $input-box-shadow-hover-state;
+            }
 
-            &:focus {
-              outline: 0;
-              border-color: get-color('ui', 'normal');
-              box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
-                                0 0 8px rgba(102,175,233,.6);
+            @include element-state('focus') {
+              border-color: $input-border-color-focus-state;
+              box-shadow: $input-box-shadow-focus-state;
             }
           }
 
@@ -830,21 +836,23 @@
         }
 
         input[type="text"] {
-          //@include input();
+          @include base-ui-element(
+            $use-base-style: true,
+            $padding: 8px 9px,
+            $line-height: 1.36
+          );
 
           max-width: 140px;
           width: 100%;
-          padding: 8px 9px;
 
-          background: transparent;
-          font-size: $base-font-size;
-          line-height: 1.36;
+          @include element-state('hover') {
+            border-color: $input-border-color-hover-state;
+            box-shadow: $input-box-shadow-hover-state;
+          }
 
-          &:focus {
-            outline: 0;
-            border-color: get-color('ui', 'normal');
-            box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
-                              0 0 8px rgba(102,175,233,.6);
+          @include element-state('focus') {
+            border-color: $input-border-color-focus-state;
+            box-shadow: $input-box-shadow-focus-state;
           }
         }
       }
@@ -1032,19 +1040,22 @@
         border-bottom: 1px solid get-color('additional', 'light');
 
         input[type="search"] {
-          //@include input();
+          @include base-ui-element(
+            $use-base-style: true,
+            $padding: 8px 9px,
+            $line-height: 1.36
+          );
 
           width: 100% !important;
-          padding: 8px 9px;
 
-          font-size: $base-font-size;
-          line-height: 1.36;
+          @include element-state('hover') {
+            border-color: $input-border-color-hover-state;
+            box-shadow: $input-box-shadow-hover-state;
+          }
 
-          &:focus {
-            outline: 0;
-            border-color: get-color('ui', 'normal');
-            box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
-                              0 0 8px rgba(102,175,233,.6);
+          @include element-state('focus') {
+            border-color: $input-border-color-focus-state;
+            box-shadow: $input-box-shadow-focus-state;
           }
         }
       }
