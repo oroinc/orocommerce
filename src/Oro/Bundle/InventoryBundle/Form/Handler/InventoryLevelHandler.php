@@ -8,11 +8,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\FormBundle\Form\DataTransformer\DataChangesetTransformer;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\FormBundle\Form\DataTransformer\DataChangesetTransformer;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Form\DataTransformer\InventoryLevelGridDataTransformer as LevelTransformer;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class InventoryLevelHandler
 {
@@ -129,7 +129,8 @@ class InventoryLevelHandler
      */
     protected function findInventoryLevel(ProductUnitPrecision $precision)
     {
-        return $this->manager->getRepository('OroInventoryBundle:InventoryLevel')
-            ->findOneBy(['productUnitPrecision' => $precision]);
+        return $this->manager->getRepository(InventoryLevel::class)->findOneBy(
+            ['productUnitPrecision' => $precision]
+        );
     }
 }

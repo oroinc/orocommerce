@@ -43,7 +43,9 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         $this->addManageInventoryFieldToProduct($schema);
         $this->addManageInventoryFieldToCategory($schema);
 
-        $queries->addPostQuery(new RenameInventoryConfigSectionQuery('oro_warehouse', 'oro_inventory', 'manage_inventory'));
+        $queries->addPostQuery(
+            new RenameInventoryConfigSectionQuery('oro_warehouse', 'oro_inventory', 'manage_inventory')
+        );
     }
 
     /**

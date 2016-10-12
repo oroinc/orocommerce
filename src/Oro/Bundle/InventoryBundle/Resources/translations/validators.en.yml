@@ -1,4 +1,0 @@
-oro:
-    inventory:
-        validators:
-#            unique_warehouse.message: 'Warehouse is already selected.'

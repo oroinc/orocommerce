@@ -21,9 +21,7 @@ class LoadManagedInventoryData extends AbstractEntityReferenceFixture implements
      */
     public function getDependencies()
     {
-        return [
-            'Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadProductCategoryDemoData',
-        ];
+        return ['Oro\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadProductCategoryDemoData'];
     }
 
     /**

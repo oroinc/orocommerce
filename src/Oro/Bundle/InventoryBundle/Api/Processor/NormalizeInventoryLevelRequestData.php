@@ -5,11 +5,11 @@ namespace Oro\Bundle\InventoryBundle\Api\Processor;
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApiDoc;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
-use Oro\Component\ChainProcessor\ContextInterface;
-use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Component\ChainProcessor\ContextInterface;
+use Oro\Component\ChainProcessor\ProcessorInterface;
 
 class NormalizeInventoryLevelRequestData implements ProcessorInterface
 {
@@ -23,9 +23,8 @@ class NormalizeInventoryLevelRequestData implements ProcessorInterface
     /**
      * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(
-        DoctrineHelper $doctrineHelper
-    ) {
+    public function __construct(DoctrineHelper $doctrineHelper)
+    {
         $this->doctrineHelper = $doctrineHelper;
     }
 

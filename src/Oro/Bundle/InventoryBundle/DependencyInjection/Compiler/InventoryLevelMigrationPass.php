@@ -8,9 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class InventoryLevelMigrationPass implements CompilerPassInterface
 {
     /**
-     * You can modify the container here before it is dumped to PHP code.
-     *
-     * @param ContainerBuilder $container
+     * {@inheritDoc}
      */
     public function process(ContainerBuilder $container)
     {

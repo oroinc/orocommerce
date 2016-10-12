@@ -37,10 +37,8 @@ class InventoryLevelStrategy extends AbstractImportStrategy
      * @param null|array $itemData
      * @return mixed
      */
-    protected function processEntity(
-        $entity,
-        $itemData = null
-    ) {
+    protected function processEntity($entity, $itemData = null)
+    {
         $entity = $this->inventoryLevelStrategyHelper->process($entity, $itemData);
 
         foreach ($this->inventoryLevelStrategyHelper->getErrors(true) as $error => $prefix) {

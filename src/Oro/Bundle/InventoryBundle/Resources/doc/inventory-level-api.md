@@ -1,5 +1,5 @@
-Warehouse Inventory Level API
-=============================
+Inventory Level API
+===================
 
 Table of Contents
 -----------------

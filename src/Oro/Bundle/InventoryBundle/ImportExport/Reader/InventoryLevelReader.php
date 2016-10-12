@@ -5,9 +5,9 @@ namespace Oro\Bundle\InventoryBundle\ImportExport\Reader;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\ImportExportBundle\Reader\EntityReader;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
 class InventoryLevelReader extends EntityReader
 {

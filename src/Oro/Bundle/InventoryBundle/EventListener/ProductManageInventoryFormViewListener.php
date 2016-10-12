@@ -5,8 +5,8 @@ namespace Oro\Bundle\InventoryBundle\EventListener;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 class ProductManageInventoryFormViewListener
 {
@@ -24,10 +24,8 @@ class ProductManageInventoryFormViewListener
      * @param RequestStack $requestStack
      * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(
-        RequestStack $requestStack,
-        DoctrineHelper $doctrineHelper
-    ) {
+    public function __construct(RequestStack $requestStack, DoctrineHelper $doctrineHelper)
+    {
         $this->requestStack = $requestStack;
         $this->doctrineHelper = $doctrineHelper;
     }

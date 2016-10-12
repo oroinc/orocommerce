@@ -2,17 +2,16 @@
 
 namespace Oro\Bundle\InventoryBundle\DependencyInjection\Compiler;
 
-use Oro\Bundle\InventoryBundle\DependencyInjection\OroInventoryExtension;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Parameter;
 
+use Oro\Bundle\InventoryBundle\DependencyInjection\OroInventoryExtension;
+
 class InventoryLevelConstraintPass implements CompilerPassInterface
 {
     /**
-     * You can modify the container here before it is dumped to PHP code.
-     *
-     * @param ContainerBuilder $container
+     * {@inheritDoc}
      */
     public function process(ContainerBuilder $container)
     {

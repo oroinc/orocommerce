@@ -14,6 +14,7 @@ class OroInventoryBundle implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $queries->addPostQuery(new RenameInventoryConfigSectionQuery('oro_warehouse', 'oro_inventory', 'manage_inventory'));
+        $queries
+            ->addPostQuery(new RenameInventoryConfigSectionQuery('oro_warehouse', 'oro_inventory', 'manage_inventory'));
     }
 }
