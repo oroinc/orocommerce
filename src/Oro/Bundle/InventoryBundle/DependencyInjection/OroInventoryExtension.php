@@ -29,7 +29,7 @@ class OroInventoryExtension extends Extension
 
         $container->setParameter(
             self::VALIDATION_CONFIG,
-            __DIR__ . '/../Resources/config/inventory_level_validation.yml'
+            __DIR__ . '/../Resources/config/validation_inventory_level.yml'
         );
     }
 
