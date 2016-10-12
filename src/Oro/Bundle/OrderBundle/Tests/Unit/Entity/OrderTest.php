@@ -3,20 +3,20 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -63,6 +63,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors($order, $properties);
         $this->assertPropertyCollection($order, 'lineItems', new OrderLineItem());
         $this->assertPropertyCollection($order, 'discounts', new OrderDiscount());
+        $this->assertPropertyCollection($order, 'shippingTrackings', new OrderShippingTracking());
     }
 
     public function testLineItemsSetter()
