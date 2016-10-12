@@ -22,6 +22,8 @@
 .main {
   margin: 0 auto 70px;
 
+  display: flex;
+
   &_home {
     max-width: 100%;
   }
@@ -36,6 +38,12 @@
     @media (max-width: $screen-md) {
       padding-top: 5rem;
     }
+  }
+}
+
+@include breakpoint('tablet-small') {
+  .main {
+    flex-direction: column;
   }
 }
 

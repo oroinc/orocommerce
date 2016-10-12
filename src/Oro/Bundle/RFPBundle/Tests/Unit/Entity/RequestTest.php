@@ -82,6 +82,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
             ['account', new Account()],
             ['accountUser', new AccountUser()],
             ['organization', new Organization()],
+            ['owner', new User()]
         ];
 
         $this->assertPropertyAccessors(new Request(), $properties);

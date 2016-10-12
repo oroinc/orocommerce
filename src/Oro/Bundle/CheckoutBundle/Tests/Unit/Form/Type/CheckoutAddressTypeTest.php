@@ -112,6 +112,20 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
         $this->checkForm(true, $submittedData, $expectedData, new OrderAddress(), [], $formOptions);
     }
 
+    public function testSubmitWithManualPermissionWhenNoDataSubmitted()
+    {
+        $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')
+            ->willReturn([]);
+
+        $formOptions =  [
+            'addressType' => AddressTypeEntity::TYPE_BILLING,
+            'object' => $this->getEntity(),
+            'isEditEnabled' => true,
+        ];
+
+        $this->checkForm(true, null, null, new OrderAddress(), [], $formOptions);
+    }
+
     /**
      * @return array
      */

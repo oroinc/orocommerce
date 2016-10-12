@@ -17,6 +17,7 @@ use Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableTrait;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
+use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\RFPBundle\Model\ExtendRequest;
 
 /**
@@ -38,6 +39,9 @@ use Oro\Bundle\RFPBundle\Model\ExtendRequest;
  *              "category"="quotes"
  *          },
  *          "ownership"={
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="user_owner_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="accountUser",
  *              "frontend_owner_column_name"="account_user_id",
@@ -61,8 +65,8 @@ class Request extends ExtendRequest implements
 {
     use SoftDeleteableTrait;
     use DatesAwareTrait;
-    use AuditableOrganizationAwareTrait;
     use AuditableFrontendAccountUserAwareTrait;
+    use AuditableUserAwareTrait;
 
     /**
      * @var integer

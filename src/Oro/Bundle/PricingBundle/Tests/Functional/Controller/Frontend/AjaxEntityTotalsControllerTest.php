@@ -50,9 +50,10 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         $em->persist($settings);
         $em->flush();
 
+        $classNameHelper = $this->getContainer()->get('oro_entity.entity_class_name_helper');
 
         $params = [
-            'entityClassName' => ClassUtils::getClass($shoppingList),
+            'entityClassName' => $classNameHelper->resolveEntityClass(ClassUtils::getClass($shoppingList)),
             'entityId' => $shoppingList->getId()
         ];
 

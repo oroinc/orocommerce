@@ -161,6 +161,21 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 
+    oro_order.event_listener.payment_shipping_surcharge:
+        class: 'Oro\Bundle\PaymentBundle\EventListener\PaymentShippingSurchargeListener'
+        arguments:
+            - '@oro_order.provider.shipping_cost_subtotal'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.event.collect_surcharge, method: onCollectSurcharge }
+
+# TODO: Uncomment and apply in BB-4834
+#    oro_order.event_listener.payment_discount_surcharge:
+#        class: 'Oro\Bundle\PaymentBundle\EventListener\PaymentDiscountSurchargeListener'
+#        arguments:
+#            - '@oro_order.provider.discount_subtotal'
+#        tags:
+#            - { name: kernel.event_listener, event: oro_payment.event.collect_surcharge, method: onCollectSurcharge }
+
     oro_order.twig.order:
         class: 'Oro\Bundle\OrderBundle\Twig\OrderExtension'
         public: false

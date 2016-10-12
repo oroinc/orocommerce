@@ -10,6 +10,9 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserDa
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -66,10 +69,12 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
         /** @var AccountUser $accountUser */
         $accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         foreach ($this->getData() as $name => $checkoutData) {
             $checkout = $this->createCheckout();
             $checkout->setAccountUser($accountUser);
             $checkout->setOrganization($accountUser->getOrganization());
+            $checkout->setWebsite($website);
             $source = new CheckoutSource();
             /** @var CheckoutSourceEntityInterface $sourceEntity */
             $sourceEntity = $this->getReference($checkoutData['source']);
@@ -103,8 +108,9 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData',
-            'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData'
+            LoadOrderAddressData::class,
+            LoadPaymentTermData::class,
+            LoadWebsiteData::class,
         ];
     }
 }

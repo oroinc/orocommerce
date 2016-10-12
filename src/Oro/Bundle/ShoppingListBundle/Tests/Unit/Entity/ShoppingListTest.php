@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
@@ -25,11 +26,11 @@ class ShoppingListTest extends \PHPUnit_Framework_TestCase
             ['notes', 'notes-test-123'],
             ['subtotal', new Subtotal()],
             ['organization', new Organization()],
+            ['owner', new User()],
             ['account', new Account()],
             ['accountUser', new AccountUser()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
-            ['isAllowedRFP', true],
         ];
 
         $this->assertPropertyAccessors(new ShoppingList(), $properties);
