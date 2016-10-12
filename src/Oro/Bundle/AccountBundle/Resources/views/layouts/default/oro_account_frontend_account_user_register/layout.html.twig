@@ -1,13 +1,3 @@
-{% block _registration_page_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' register-form'
-    }) %}
-
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _registration_form_label_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' page-title'
