@@ -29,6 +29,14 @@ class WebCatalogPage extends ExtendWebCatalogPage implements WebCatalogPageInter
     protected $type;
 
     /**
+     * @var WebCatalogNode
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebCatalogBundle\Entity\WebCatalogNode", inversedBy="pages")
+     * @ORM\JoinColumn(name="node_id", referencedColumnName="id")
+     */
+    protected $node;
+
+    /**
      * @return int
      */
     public function getId()
