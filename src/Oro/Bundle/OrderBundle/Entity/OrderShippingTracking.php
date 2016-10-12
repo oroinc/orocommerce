@@ -60,10 +60,14 @@ class OrderShippingTracking
 
     /**
      * @param string $method
+     *
+     * @return OrderShippingTracking
      */
     public function setMethod($method)
     {
         $this->method = $method;
+
+        return $this;
     }
 
     /**
@@ -76,10 +80,14 @@ class OrderShippingTracking
 
     /**
      * @param string $number
+     *
+     * @return OrderShippingTracking
      */
     public function setNumber($number)
     {
         $this->number = $number;
+        
+        return $this;
     }
 
     /**
@@ -92,9 +100,13 @@ class OrderShippingTracking
 
     /**
      * @param Order $order
+     *
+     * @return OrderShippingTracking
      */
     public function setOrder($order)
     {
         $this->order = $order;
+        
+        return $this;
     }
 }

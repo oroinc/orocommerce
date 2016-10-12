@@ -413,6 +413,7 @@ class Order extends ExtendOrder implements
 
     /**
      * @param OrderAddress|null $billingAddress
+     *
      * @return Order
      */
     public function setBillingAddress(OrderAddress $billingAddress = null)
@@ -432,6 +433,7 @@ class Order extends ExtendOrder implements
 
     /**
      * @param OrderAddress|null $shippingAddress
+     *
      * @return Order
      */
     public function setShippingAddress(OrderAddress $shippingAddress = null)
@@ -630,6 +632,7 @@ class Order extends ExtendOrder implements
 
     /**
      * @param OrderLineItem $lineItem
+     *
      * @return bool
      */
     public function hasLineItem(OrderLineItem $lineItem)
@@ -641,6 +644,7 @@ class Order extends ExtendOrder implements
      * Add line item
      *
      * @param OrderLineItem $lineItem
+     *
      * @return Order
      */
     public function addLineItem(OrderLineItem $lineItem)
@@ -657,6 +661,7 @@ class Order extends ExtendOrder implements
      * Remove line item
      *
      * @param OrderLineItem $lineItem
+     *
      * @return Order
      */
     public function removeLineItem(OrderLineItem $lineItem)
@@ -670,7 +675,8 @@ class Order extends ExtendOrder implements
 
     /**
      * @param Collection|OrderLineItem[] $lineItems
-     * @return $this
+     *
+     * @return Order
      */
     public function setLineItems(Collection $lineItems)
     {
@@ -707,7 +713,8 @@ class Order extends ExtendOrder implements
 
     /**
      * @param Website $website
-     * @return $this
+     *
+     * @return Order
      */
     public function setWebsite(Website $website)
     {
@@ -738,7 +745,8 @@ class Order extends ExtendOrder implements
      * Set shipping cost
      *
      * @param Price $shippingCost
-     * @return $this
+     *
+     * @return Order
      */
     public function setShippingCost(Price $shippingCost = null)
     {
@@ -787,7 +795,7 @@ class Order extends ExtendOrder implements
      *
      * @param string $sourceEntityClass
      *
-     * @return $this
+     * @return Order
      */
     public function setSourceEntityClass($sourceEntityClass)
     {
@@ -811,7 +819,7 @@ class Order extends ExtendOrder implements
      *
      * @param integer $sourceEntityId
      *
-     * @return $this
+     * @return Order
      */
     public function setSourceEntityId($sourceEntityId)
     {
@@ -831,7 +839,7 @@ class Order extends ExtendOrder implements
     /**
      * @param string|null $sourceEntityIdentifier
      *
-     * @return $this
+     * @return Order
      */
     public function setSourceEntityIdentifier($sourceEntityIdentifier = null)
     {
@@ -854,7 +862,8 @@ class Order extends ExtendOrder implements
      * Set total discounts
      *
      * @param Price $totalDiscounts
-     * @return $this
+     *
+     * @return Order
      */
     public function setTotalDiscounts(Price $totalDiscounts = null)
     {
@@ -961,7 +970,8 @@ class Order extends ExtendOrder implements
 
     /**
      * @param string $shippingMethod
-     * @return $this
+     *
+     * @return Order
      */
     public function setShippingMethod($shippingMethod)
     {
@@ -980,7 +990,8 @@ class Order extends ExtendOrder implements
 
     /**
      * @param string $shippingMethodType
-     * @return $this
+     *
+     * @return Order
      */
     public function setShippingMethodType($shippingMethodType)
     {
@@ -999,10 +1010,14 @@ class Order extends ExtendOrder implements
 
     /**
      * @param Collection|OrderShippingTracking[] $shippingTrackings
+     *
+     * @return Order
      */
     public function setShippingTrackings($shippingTrackings)
     {
         $this->shippingTrackings = $shippingTrackings;
+
+        return $this;
     }
 
     /**
