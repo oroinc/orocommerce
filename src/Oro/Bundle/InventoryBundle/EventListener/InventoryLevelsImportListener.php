@@ -17,11 +17,18 @@ class InventoryLevelsImportListener
     /** @var  InventoryLevelStrategy $inventoryLevelStrategy */
     protected $inventoryLevelStrategy;
 
+    /**
+     * InventoryLevelsImportListener constructor.
+     * @param InventoryLevelStrategy $inventoryLevelStrategy
+     */
     public function __construct(InventoryLevelStrategy $inventoryLevelStrategy)
     {
         $this->inventoryLevelStrategy = $inventoryLevelStrategy;
     }
 
+    /**
+     * @param StepExecutionEvent $event
+     */
     public function onBatchStepCompleted(StepExecutionEvent $event)
     {
         /** @var StepExecution $stepExecution */

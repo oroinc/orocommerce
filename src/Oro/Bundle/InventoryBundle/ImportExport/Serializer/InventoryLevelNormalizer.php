@@ -25,7 +25,6 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
     private $roundingService;
 
     /**
-     * InventoryLevelNormalizer constructor.
      * @param FieldHelper $fieldHelper
      * @param ProductUnitLabelFormatter $formatter
      * @param QuantityRoundingService $roundingService
@@ -61,6 +60,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
             $object->setQuantity(null);
         }
 
+        /** @var Product $product */
         $product = $object->getProduct();
 
         $result['quantity'] = $this->getQuantity($object);
@@ -108,7 +108,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         if (!$unitPrecision) {
             return [];
         }
-        $code = $unitPrecision->getUnit() ? $unitPrecision->getUnit()->getCode(): null;
+        $code = $unitPrecision->getUnit() ? $unitPrecision->getUnit()->getCode() : null;
         $code = $code ? $this->formatter->format($code, false, $inventoryLevel->getQuantity() > 1) : null;
 
         return ['productUnitPrecision' => [
@@ -127,6 +127,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
             return null;
         }
 
+        /** @var InventoryLevel $inventoryLevel */
         $inventoryLevel = $this->dispatchDenormalizeEvent(
             $data,
             $this->createObject($class),

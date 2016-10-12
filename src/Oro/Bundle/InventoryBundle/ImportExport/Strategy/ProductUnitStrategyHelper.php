@@ -5,11 +5,11 @@ namespace Oro\Bundle\InventoryBundle\ImportExport\Strategy;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ImportExportBundle\Field\DatabaseHelper;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\Model\Data\ProductUnitTransformer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Model\Data\ProductUnitTransformer;
 
 class ProductUnitStrategyHelper extends AbstractInventoryLevelStrategyHelper
 {
@@ -17,7 +17,6 @@ class ProductUnitStrategyHelper extends AbstractInventoryLevelStrategyHelper
     protected $productUnitTransformer;
 
     /**
-     * ProductUnitStrategyHelper constructor.
      * @param DatabaseHelper $databaseHelper
      * @param TranslatorInterface $translator
      * @param ProductUnitTransformer $productUnitTransformer

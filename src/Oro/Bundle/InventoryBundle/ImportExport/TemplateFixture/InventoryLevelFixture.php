@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\InventoryBundle\ImportExport\TemplateFixture;
 
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
 class InventoryLevelFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {

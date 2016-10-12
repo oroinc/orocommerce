@@ -3,8 +3,8 @@
 namespace Oro\Bundle\InventoryBundle\ImportExport\Strategy;
 
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class InventoryStatusesStrategyHelper extends AbstractInventoryLevelStrategyHelper
 {

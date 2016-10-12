@@ -14,6 +14,9 @@ class ProductUnitTransformer
     /** @var  ProductUnitsProvider $productUnitsProvider */
     protected $productUnitsProvider;
 
+    /**
+     * @param ProductUnitsProvider $productUnitsProvider
+     */
     public function __construct(ProductUnitsProvider $productUnitsProvider)
     {
         $this->productUnitsProvider = $productUnitsProvider;

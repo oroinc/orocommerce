@@ -4,7 +4,7 @@ Oro\Bundle\WarehouseBundle\OroWarehouseBundle
 Table of Contents
 -----------------
  - [Description](#description)
- - [Warehouse Inventory Level API](./Resources/doc/warehouse-inventory-level-api.md)
+ - [Inventory Level API](./Resources/doc/inventory-level-api.md)
 
 Description:
 ------------

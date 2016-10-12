@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\InventoryBundle\ImportExport\Strategy;
 
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
 class InventoryLevelStrategyHelper extends AbstractInventoryLevelStrategyHelper
 {
@@ -46,10 +46,8 @@ class InventoryLevelStrategyHelper extends AbstractInventoryLevelStrategyHelper
      * @param ProductUnitPrecision $productUnitPrecision
      * @return null|InventoryLevel
      */
-    protected function getExistingInventoryLevel(
-        Product $product,
-        ProductUnitPrecision $productUnitPrecision
-    ) {
+    protected function getExistingInventoryLevel(Product $product, ProductUnitPrecision $productUnitPrecision)
+    {
         $criteria = [
             'product' => $product,
             'productUnitPrecision' => $productUnitPrecision

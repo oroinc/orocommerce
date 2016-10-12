@@ -6,9 +6,9 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
 class LoadInventoryLevelDemoData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
 {
@@ -28,7 +28,7 @@ class LoadInventoryLevelDemoData extends AbstractEntityReferenceFixture implemen
     public function load(ObjectManager $manager)
     {
         /** @var EntityManager $manager */
-        $precisions = $this->getObjectReferences($manager, 'OroProductBundle:ProductUnitPrecision');
+        $precisions = $this->getObjectReferences($manager, ProductUnitPrecision::class);
 
         foreach ($precisions as $precision) {
             $level = new InventoryLevel();
