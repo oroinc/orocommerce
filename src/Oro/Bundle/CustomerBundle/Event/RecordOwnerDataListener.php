@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Event;
+namespace Oro\Bundle\CustomerBundle\Event;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Component\DependencyInjection\ServiceLink;
 use Symfony\Component\PropertyAccess\PropertyAccess;

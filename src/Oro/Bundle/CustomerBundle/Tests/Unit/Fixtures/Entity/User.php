@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Unit\Fixtures\Entity;
+namespace Oro\Bundle\CustomerBundle\Tests\Unit\Fixtures\Entity;
 
-use Oro\Bundle\AccountBundle\Entity\AccountUser as ParentUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser as ParentUser;
 
 class User extends ParentUser
 {

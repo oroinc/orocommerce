@@ -1,12 +1,12 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Unit\Event;
+namespace Oro\Bundle\CustomerBundle\Tests\Unit\Event;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Event\RecordOwnerDataListener;
-use Oro\Bundle\AccountBundle\Tests\Unit\Fixtures\Entity\User;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Event\RecordOwnerDataListener;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;

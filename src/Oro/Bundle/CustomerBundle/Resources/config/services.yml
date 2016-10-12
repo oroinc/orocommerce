@@ -966,3 +966,9 @@ services:
         tags:
             - { name: oro_message_queue.client.message_processor, topicName: 'oro_customer.visibility.category_remove' }
             - { name: oro_message_queue.client.message_processor, topicName: 'oro_customer.visibility.category_position_change' }
+
+    oro_customer.entity_ownership.listener:
+        class: Oro\Bundle\CustomerBundle\Event\RecordOwnerDataListener
+        arguments: ["@oro_organization.link.security_context", "@oro_entity_config.provider.ownership"]
+        tags:
+             - { name: doctrine.event_listener, event: prePersist }
