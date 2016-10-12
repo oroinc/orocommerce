@@ -1044,3 +1044,9 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_entity.orm.insert_from_select_query_executor'
             - '@oro_account.visibility.provider.product_visibility_provider'
+
+    oro_account.entity_ownership.listener:
+        class: Oro\Bundle\AccountBundle\Event\RecordOwnerDataListener
+        arguments: ["@oro_organization.link.security_context", "@oro_entity_config.provider.ownership"]
+        tags:
+             - { name: doctrine.event_listener, event: prePersist }

@@ -4,26 +4,13 @@ namespace Oro\Bundle\UPSBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\PersistentCollection;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
+use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Provider\ChannelType;
 
 class UPSTransportEntityListener
 {
-    /**
-     * @var ShippingMethodRegistry
-     */
-    protected $registry;
-
-    /**
-     * @param ShippingMethodRegistry $registry
-     */
-    public function __construct(ShippingMethodRegistry $registry)
-    {
-        $this->registry = $registry;
-    }
-
     /**
      * @param UPSTransport $transport
      * @param LifecycleEventArgs $args
@@ -40,33 +27,23 @@ class UPSTransportEntityListener
                 $deleted[] = $deletedService->getCode();
             }
             $entityManager = $args->getEntityManager();
-            $upsChannels = $entityManager
+            $channel = $entityManager
                 ->getRepository('OroIntegrationBundle:Channel')
-                ->findBy(['type' => ChannelType::TYPE]);
-            $label = null;
-            foreach ($upsChannels as $upsChannel) {
-                if ($upsChannel->getTransport()->getId() === $transport->getId()) {
-                    $label = $upsChannel->getName();
-                    break;
-                }
-            }
-            if ($label !== null) {
-                $shippingMethods = $this->registry->getShippingMethods();
-                foreach ($shippingMethods as $shippingMethod) {
-                    if ($shippingMethod->getLabel() === $label) {
-                        $identifier = $shippingMethod->getIdentifier();
-                        $configuredMethods = $entityManager
-                            ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
-                            ->findBy(['method' => $identifier, ]);
-                        $types = $entityManager
-                            ->getRepository('OroShippingBundle:ShippingRuleMethodTypeConfig')
-                            ->findBy(['methodConfig' => $configuredMethods, 'type' => $deleted]);
+                ->findOneBy(['type' => ChannelType::TYPE, 'transport' => $transport->getId()]);
 
-                        foreach ($types as $type) {
-                            $entityManager->getRepository('OroShippingBundle:ShippingRuleMethodTypeConfig')
-                                ->deleteByMethodAndType($type->getMethodConfig(), $type->getType());
-                        }
-                        break;
+            if (null !== $channel) {
+                $shippingMethodIdentifier = UPSShippingMethod::IDENTIFIER . '_' . $channel->getId();
+                $configuredMethods = $entityManager
+                    ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
+                    ->findBy(['method' => $shippingMethodIdentifier ]);
+                if (0 < count($configuredMethods)) {
+                    $types = $entityManager
+                        ->getRepository('OroShippingBundle:ShippingRuleMethodTypeConfig')
+                        ->findBy(['methodConfig' => $configuredMethods, 'type' => $deleted]);
+
+                    foreach ($types as $type) {
+                        $entityManager->getRepository('OroShippingBundle:ShippingRuleMethodTypeConfig')
+                            ->deleteByMethodAndType($type->getMethodConfig(), $type->getType());
                     }
                 }
             }

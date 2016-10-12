@@ -267,12 +267,9 @@ class StartCheckout extends AbstractAction
         /** @var AccountUser $user */
         $user = $this->tokenStorage->getToken()->getUser();
         $account = $user->getAccount();
-        $owner = $account->getOwner();
         $organization = $account->getOrganization();
         $defaultData = [
-            'accountUser' => $user,
             'account' => $account,
-            'owner' => $owner,
             'organization' => $organization,
             'website' => $this->websiteManager->getCurrentWebsite(),
             'currency' => $this->currencyManager->getUserCurrency()
