@@ -56,4 +56,20 @@ class ShippingMethodRegistry implements ShippingMethodProviderInterface
         }
         return false;
     }
+
+    /**
+     * @return ShippingMethodInterface[]
+     */
+    public function getTrackingAwareShippingMethods()
+    {
+        $result = [];
+        foreach ($this->providers as $provider) {
+            foreach ($provider->getShippingMethods() as $shippingMethod) {
+                if ($shippingMethod instanceof ShippingTrackingAwareInterface) {
+                    $result[] = $shippingMethod;
+                }
+            }
+        }
+        return $result;
+    }
 }
