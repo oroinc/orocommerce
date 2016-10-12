@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CurrencyBundle\Rounding;
+namespace Oro\Bundle\PricingBundle\Rounding;
 
 use Oro\Bundle\CurrencyBundle\Rounding\AbstractRoundingService;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
