@@ -124,7 +124,7 @@ class LineItemRepository extends EntityRepository
     public function getLastProductsGroupedByShoppingList(array $shoppingLists, $productCount)
     {
         $dql = <<<DQL
-SELECT partial li.{id}, partial list.{id}, partial product.{id}, names
+SELECT li, list, product, names
 FROM OroShoppingListBundle:LineItem AS li
 INNER JOIN li.shoppingList list
 INNER JOIN li.product product
@@ -132,7 +132,6 @@ INNER JOIN product.names names
 WHERE li.shoppingList IN (:shoppingLists) AND (
     SELECT COUNT(li2.id) FROM OroShoppingListBundle:LineItem AS li2
     WHERE li2.shoppingList = li.shoppingList AND li2.id >= li.id
-    ORDER BY li2.id DESC
 ) <= :productCount
 ORDER BY li.shoppingList DESC, li.id DESC
 DQL;
