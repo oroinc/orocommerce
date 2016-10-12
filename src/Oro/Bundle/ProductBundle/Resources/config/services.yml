@@ -155,7 +155,6 @@ services:
             - "@oro_security.security_facade"
             - "@session"
             - "@translator"
-            - "@service_container"
         calls:
             - [setComponentProcessorFilter,  ["@oro_product.component_processor.filter"]]
         abstract: true
@@ -307,8 +306,7 @@ services:
 
     oro_product.repository.product_image:
         class: 'Doctrine\ORM\EntityRepository'
-        public: false
-        factory:  ["@oro_entity.doctrine_helper", getEntityRepository]
+        parent: oro_entity.abstract_repository
         arguments:
             - '%oro_product.entity.product_image.class%'
 

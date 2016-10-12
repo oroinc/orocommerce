@@ -196,9 +196,9 @@
                     </thead>
                     <tbody class="pricing-price-list-items" data-last-index="{{ form.children|length}}">
                     {% if form.children|length %}
-                        {% for unit in form.vars.units %}
+                        {% for unit, unitLabel in form.vars.units %}
                             <tr>
-                                <td><span>{{ unit|trans }}</span></td>
+                                <td><span>{{ unitLabel|trans }}</span></td>
                                 {% set childrenByCurrency = [] %}
                                 {% for child in form.children if child.vars.value.unit.code == unit %}
                                     {% set childrenByCurrency = childrenByCurrency|merge({(child.vars.value.price.currency): child}) %}

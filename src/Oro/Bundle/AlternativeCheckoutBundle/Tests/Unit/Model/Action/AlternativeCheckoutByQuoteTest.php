@@ -3,14 +3,13 @@
 namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Unit\Model\Action;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Component\Action\Model\ContextAccessor;
-use Oro\Component\Action\Tests\Unit\Action\Stub\StubStorage;
 use Oro\Bundle\AlternativeCheckoutBundle\Model\Action\AlternativeCheckoutByQuote;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Component\Action\Model\ContextAccessor;
+use Oro\Component\Action\Tests\Unit\Action\Stub\StubStorage;
 
 class AlternativeCheckoutByQuoteTest extends \PHPUnit_Framework_TestCase
 {
@@ -121,7 +120,7 @@ class AlternativeCheckoutByQuoteTest extends \PHPUnit_Framework_TestCase
         $repository = $this->getMockBuilder(CheckoutRepository::class)->disableOriginalConstructor()->getMock();
         $repository->expects($this->once())
             ->method('getCheckoutByQuote')
-            ->with($quote, 'alternative')
+            ->with($quote)
             ->willReturn($checkout);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $em */
