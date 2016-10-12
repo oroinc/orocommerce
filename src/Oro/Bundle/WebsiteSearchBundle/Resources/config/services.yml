@@ -142,7 +142,6 @@ services:
     oro_website_search.reindex_request.listener:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener'
         arguments:
-            - '@doctrine.orm.entity_manager'
             - ~ # regular indexer
             - ~ # async indexer
         tags:
