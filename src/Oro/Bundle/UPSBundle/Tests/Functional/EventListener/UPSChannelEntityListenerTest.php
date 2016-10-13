@@ -4,6 +4,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 
 /**
  * @dbIsolation
@@ -19,9 +20,7 @@ class UPSChannelEntityListenerTest extends WebTestCase
     public function testPreRemove()
     {
         $em = static::getContainer()->get('doctrine')->getManager();
-        $shippingMethods = static::getContainer()
-            ->get('oro_shipping.shipping_method.registry')
-            ->getShippingMethods();
+
         /** @var Channel $ups_channel */
         $ups_channel1 = $this->getReference('ups:channel_1');
         $ups_channel2 = $this->getReference('ups:channel_2');
@@ -30,7 +29,7 @@ class UPSChannelEntityListenerTest extends WebTestCase
         $configuredMethodsBefore = $em
             ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
             ->findBy([
-                'method' => $this->getShippingMethodIdentifierByLabel($shippingMethods, $ups_channel1->getName())]);
+                'method' => UPSShippingMethod::IDENTIFIER . '_' . $ups_channel1->getId()]);
         static::assertNotEmpty($configuredMethodsBefore);
 
         $em->remove($ups_channel1);
@@ -39,7 +38,7 @@ class UPSChannelEntityListenerTest extends WebTestCase
         $configuredMethodsAfter = $em
             ->getRepository('OroShippingBundle:ShippingRuleMethodConfig')
             ->findBy([
-                'method' => $this->getShippingMethodIdentifierByLabel($shippingMethods, $ups_channel1->getName())]);
+                'method' => UPSShippingMethod::IDENTIFIER . '_' . $ups_channel1->getId()]);
         static::assertEmpty($configuredMethodsAfter);
 
         $rulesWithoutShippingMethodsBefore = $em->getRepository('OroShippingBundle:ShippingRule')
@@ -56,20 +55,5 @@ class UPSChannelEntityListenerTest extends WebTestCase
         $enabledRulesWithoutShippingMethodsAfter = $em->getRepository('OroShippingBundle:ShippingRule')
             ->getRulesWithoutShippingMethods(true);
         static::assertEmpty($enabledRulesWithoutShippingMethodsAfter);
-    }
-
-    /**
-     * @param array $shippingMethods
-     * @param string $label
-     * @return string|null
-     */
-    protected function getShippingMethodIdentifierByLabel($shippingMethods, $label)
-    {
-        foreach ($shippingMethods as $shippingMethod) {
-            if ($shippingMethod->getLabel() === $label) {
-                return $shippingMethod->getIdentifier();
-            }
-        }
-        return null;
     }
 }

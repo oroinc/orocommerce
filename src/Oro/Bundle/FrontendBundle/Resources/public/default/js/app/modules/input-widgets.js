@@ -14,7 +14,7 @@ define(function(require) {
     });
 
     InputWidgetManager.addWidget('select2', {
-        selector: 'select,input.select2',
+        selector: 'select,input.select2, input.select-values-autocomplete',
         Widget: Select2InputWidget
     });
 });
