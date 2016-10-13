@@ -4,8 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 
 trait CategoryVisibilityResolvedTermTrait
@@ -29,13 +28,13 @@ trait CategoryVisibilityResolvedTermTrait
 
     /**
      * @param QueryBuilder $qb
-     * @param AccountGroup $account
+     * @param Scope $scope
      * @param int
      * @return string
      */
     protected function getAccountGroupCategoryVisibilityResolvedTerm(
         QueryBuilder $qb,
-        AccountGroup $account,
+        Scope $scope,
         $configValue
     ) {
         $qb->leftJoin(
@@ -44,11 +43,11 @@ trait CategoryVisibilityResolvedTermTrait
             Join::WITH,
             $qb->expr()->andX(
                 $qb->expr()->eq($this->getRootAlias($qb), 'agcvr.category'),
-                $qb->expr()->eq('agcvr.accountGroup', ':account_group')
+                $qb->expr()->eq('agcvr.scope', ':scope')
             )
         );
 
-        $qb->setParameter('account_group', $account);
+        $qb->setParameter('scope', $scope);
 
         return sprintf(
             'COALESCE(CASE WHEN agcvr.visibility = %s THEN %s ELSE agcvr.visibility END, 0) * 10',
@@ -59,11 +58,11 @@ trait CategoryVisibilityResolvedTermTrait
 
     /**
      * @param QueryBuilder $qb
-     * @param Account $account
+     * @param Scope $scope
      * @param int $configValue
      * @return string
      */
-    protected function getAccountCategoryVisibilityResolvedTerm(QueryBuilder $qb, Account $account, $configValue)
+    protected function getAccountCategoryVisibilityResolvedTerm(QueryBuilder $qb, Scope $scope, $configValue)
     {
         $qb->leftJoin(
             'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved',
@@ -71,11 +70,11 @@ trait CategoryVisibilityResolvedTermTrait
             Join::WITH,
             $qb->expr()->andX(
                 $qb->expr()->eq($this->getRootAlias($qb), 'acvr.category'),
-                $qb->expr()->eq('acvr.account', ':account')
+                $qb->expr()->eq('acvr.scope', ':scope')
             )
         );
 
-        $qb->setParameter('account', $account);
+        $qb->setParameter('scope', $scope);
 
         return sprintf(
             'COALESCE(CASE WHEN acvr.visibility = %s THEN %s ELSE acvr.visibility END, 0) * 100',

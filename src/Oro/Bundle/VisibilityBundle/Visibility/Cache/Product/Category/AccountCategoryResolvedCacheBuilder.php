@@ -9,6 +9,8 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder;
@@ -33,7 +35,7 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
         $category = $visibilitySettings->getCategory();
-        $account = $visibilitySettings->getAccount();
+        $scope = $visibilitySettings->getScope();
 
         $selectedVisibility = $visibilitySettings->getVisibility();
         $visibilitySettings = $this->refreshEntity($visibilitySettings);
@@ -41,7 +43,7 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         $insert = false;
         $delete = false;
         $update = [];
-        $where = ['account' => $account, 'category' => $category];
+        $where = ['scope' => $scope, 'category' => $category];
 
         $repository = $this->getRepository();
 
@@ -62,8 +64,8 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
             ];
         } elseif ($selectedVisibility === AccountCategoryVisibility::CATEGORY) {
             $visibility = $this->registry
-                ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-                ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
+                ->getManagerForClass(CategoryVisibilityResolved::class)
+                ->getRepository(CategoryVisibilityResolved::class)
                 ->getFallbackToAllVisibility($category);
             $update = [
                 'visibility' => $visibility,
@@ -76,22 +78,19 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 $delete = true;
             }
 
-            $accountGroup = $account->getGroup();
-            if ($accountGroup) {
+//            if ($accountGroup) {
                 $visibility = $this->registry
-                    ->getManagerForClass(
-                        'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved'
-                    )
-                    ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-                    ->getFallbackToGroupVisibility($category, $accountGroup);
-            } else {
-                $visibility = $this->registry
-                    ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-                    ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-                    ->getFallbackToAllVisibility($category);
-            }
+                    ->getManagerForClass(AccountGroupCategoryVisibilityResolved::class)
+                    ->getRepository(AccountGroupCategoryVisibilityResolved::class)
+                    ->getFallbackToGroupVisibility($category, $scope);
+//            } else {
+//                $visibility = $this->registry
+//                    ->getManagerForClass(CategoryVisibilityResolved::class)
+//                    ->getRepository(CategoryVisibilityResolved::class)
+//                    ->getFallbackToAllVisibility($category);
+//            }
         } elseif ($selectedVisibility === AccountCategoryVisibility::PARENT_CATEGORY) {
-            list($visibility, $source) = $this->getParentCategoryVisibilityAndSource($category, $account);
+            list($visibility, $source) = $this->getParentCategoryVisibilityAndSource($category, $scope);
             $update = [
                 'visibility' => $visibility,
                 'sourceCategoryVisibility' => $visibilitySettings,
@@ -105,7 +104,7 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 
         $this->visibilityChangeAccountSubtreeCacheBuilder->resolveVisibilitySettings(
             $category,
-            $account,
+            $scope,
             $visibility
         );
     }

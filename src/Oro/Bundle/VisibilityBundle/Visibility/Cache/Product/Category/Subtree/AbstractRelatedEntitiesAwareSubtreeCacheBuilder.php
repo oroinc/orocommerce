@@ -288,9 +288,16 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
      * @param array $accountGroupIds
      * @param int $visibility
      */
-    protected function updateAccountGroupsProductVisibility(Category $category, array $accountGroupIds, $visibility)
+    protected function updateAccountGroupsProductVisibility(Category $category, $accountGroupIds, $visibility)
     {
         if (!$accountGroupIds) {
+            return;
+        }
+        $scopes = $this->scopeManager->findRelatedScopeIds(
+            'account_group_category_visibility',
+            ['accountGroup' => $accountGroupIds]
+        );
+        if (!$scopes) {
             return;
         }
 
@@ -302,9 +309,9 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         $qb->update('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved', 'agpvr')
             ->set('agpvr.visibility', $visibility)
             ->where($qb->expr()->eq('agpvr.category', ':category'))
-            ->andWhere($qb->expr()->in('agpvr.accountGroup', ':accountGroupIds'))
+            ->andWhere($qb->expr()->in('agpvr.accountGroup', ':scopes'))
             ->setParameters([
-                'accountGroupIds' => $accountGroupIds,
+                'scopes' => $scopes,
                 'category' => $category
             ]);
 

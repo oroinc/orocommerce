@@ -33,7 +33,7 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
         $category = $visibilitySettings->getCategory();
-        $accountGroup = $visibilitySettings->getAccountGroup();
+        $scope = $visibilitySettings->getScope();
 
         $selectedVisibility = $visibilitySettings->getVisibility();
         $visibilitySettings = $this->refreshEntity($visibilitySettings);
@@ -41,7 +41,7 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
         $insert = false;
         $delete = false;
         $update = [];
-        $where = ['accountGroup' => $accountGroup, 'category' => $category];
+        $where = ['scope' => $scope, 'category' => $category];
 
         $repository = $this->getRepository();
 

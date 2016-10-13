@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -33,18 +34,26 @@ abstract class AbstractSubtreeCacheBuilder
     protected $configManager;
 
     /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
+    /**
      * @param Registry $registry
      * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
      * @param ConfigManager $configManager
+     * @param ScopeManager $scopeManager
      */
     public function __construct(
         Registry $registry,
         CategoryVisibilityResolverInterface $categoryVisibilityResolver,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        ScopeManager $scopeManager
     ) {
         $this->registry = $registry;
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
         $this->configManager = $configManager;
+        $this->scopeManager = $scopeManager;
     }
 
     /**
