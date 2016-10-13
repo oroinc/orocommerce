@@ -19,8 +19,10 @@
                                     {% set selected = currentShippingMethodType == type.identifier %}
                                     <div class="{{ class_prefix }}__form__radio" data-item-container>
                                         <label class="custom-radio custom-radio--large {% if selected %}checked{% endif %}" data-radio tabindex="0">
-                                            <input class="custom-radio__control" type="radio" name="shippingMethod" data-shipping-rule-config="{{ method.shippingRuleConfig }}"  data-shipping-price="{{ method.price.value }}" data-choice="{{ method.name }}" value="{{ method.name }}" {% if selected%}checked="checked"{% endif %} />
-                                            <span class="custom-radio__text">{{ method.label }}: <strong>{{ method.price|oro_format_price }}</strong></span>
+                                            <input class="custom-radio__control"
+                                                   type="radio" name="shippingMethodType" value="{{ type.identifier }}" {% if selected%}checked="checked"{% endif %}
+                                                   data-shipping-method="{{ method.identifier }}" data-shipping-price="{{ type.price.value }}" data-choice="{{ type.identifier }}" />
+                                            <span class="custom-radio__text">{{ type.label|trans }}: <strong>{{ type.price|oro_format_price }}</strong></span>
                                         </label>
                                     </div>
                                 {% endif %}
