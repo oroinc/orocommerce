@@ -42,7 +42,7 @@ class IndexationRequestListenerTest extends WebTestCase
         $product = $this->createProduct();
 
         $this->assertNotNull($triggeredEvent, 'Event was not triggered.');
-        $this->assertEquals(TestProduct::class, $triggeredEvent->getClassName());
+        $this->assertContains(TestProduct::class, $triggeredEvent->getClassesNames());
         $this->assertContains($product->getId(), $triggeredEvent->getIds());
     }
 
@@ -69,13 +69,13 @@ class IndexationRequestListenerTest extends WebTestCase
          */
         $em = $this->client->getContainer()->get('doctrine.orm.entity_manager');
 
-        $product->setName($product->getName().'-changed');
+        $product->setName($product->getName() . '-changed');
 
         $em->persist($product);
         $em->flush();
 
         $this->assertNotNull($triggeredEvent, 'Event was not triggered.');
-        $this->assertEquals(TestProduct::class, $triggeredEvent->getClassName());
+        $this->assertContains(TestProduct::class, $triggeredEvent->getClassesNames());
         $this->assertContains($product->getId(), $triggeredEvent->getIds());
     }
 
@@ -141,7 +141,7 @@ class IndexationRequestListenerTest extends WebTestCase
         $em->flush();
 
         $this->assertNotNull($triggeredEvent, 'Event was not triggered.');
-        $this->assertEquals(TestProduct::class, $triggeredEvent->getClassName());
+        $this->assertContains(TestProduct::class, $triggeredEvent->getClassesNames());
         $this->assertContains($product->getId(), $triggeredEvent->getIds());
     }
 
