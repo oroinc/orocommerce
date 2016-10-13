@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\CRMCalendarBridgeBundle;
+namespace Oro\Bridge\CommerceCalendar;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

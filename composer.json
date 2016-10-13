@@ -40,7 +40,8 @@
     "autoload": {
         "psr-0": {
             "Oro\\Component": "src/",
-            "Oro\\Bundle": "src/"
+            "Oro\\Bundle": "src/",
+            "Oro\\Bridge": "src/"
         }
     }
 }
