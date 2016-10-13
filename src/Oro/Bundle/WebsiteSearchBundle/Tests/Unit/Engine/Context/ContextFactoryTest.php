@@ -3,10 +3,10 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine\Context;
 
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextBuilder;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextFactory;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
-class ContextBuilderTest extends \PHPUnit_Framework_TestCase
+class ContextFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider dataProviderCreateForReindexation
@@ -15,7 +15,7 @@ class ContextBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateForReindexation(ReindexationRequestEvent $event, array $contextExpected)
     {
-        $this->assertEquals($contextExpected, ContextBuilder::createForReindexation($event));
+        $this->assertEquals($contextExpected, ContextFactory::createForReindexation($event));
     }
 
     /**

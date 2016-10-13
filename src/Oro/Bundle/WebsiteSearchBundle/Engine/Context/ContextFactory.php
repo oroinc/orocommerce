@@ -5,7 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Engine\Context;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
-class ContextBuilder
+class ContextFactory
 {
     /**
      * Context used in reindexation

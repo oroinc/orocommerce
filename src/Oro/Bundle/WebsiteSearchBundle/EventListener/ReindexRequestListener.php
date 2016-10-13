@@ -3,7 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
-use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextBuilder;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextFactory;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 class ReindexRequestListener
@@ -49,7 +49,7 @@ class ReindexRequestListener
      */
     protected function processWithIndexer(ReindexationRequestEvent $event, IndexerInterface $indexer)
     {
-        $context = ContextBuilder::createForReindexation($event);
+        $context = ContextFactory::createForReindexation($event);
         $indexer->reindex($event->getClassesNames(), $context);
     }
 }
