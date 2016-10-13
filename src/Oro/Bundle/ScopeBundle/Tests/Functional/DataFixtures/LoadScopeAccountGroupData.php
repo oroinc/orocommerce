@@ -11,7 +11,7 @@ use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
-class LoadScopeAccountGroupData  extends AbstractFixture implements DependentFixtureInterface
+class LoadScopeAccountGroupData extends AbstractFixture implements DependentFixtureInterface
 {
     const SCOPE_PREFIX = 'scope_account_group';
 

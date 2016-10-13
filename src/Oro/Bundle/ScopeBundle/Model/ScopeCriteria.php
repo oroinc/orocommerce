@@ -5,7 +5,6 @@ namespace Oro\Bundle\ScopeBundle\Model;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
-// todo: fix criteria should use proper conditions for all values including "is null"
 class ScopeCriteria implements \IteratorAggregate
 {
     const IS_NOT_NULL = 'IS_NOT_NULL';
@@ -77,10 +76,13 @@ class ScopeCriteria implements \IteratorAggregate
                 continue;
             }
 
-            $parts = [$join->getCondition()];
+            $condition = $join->getCondition();
+            $usedFields = $this->getUsedFields($condition, $alias);
+            $parts = [$condition];
+
             if ($join->getAlias() === $alias) {
                 foreach ($this->context as $field => $value) {
-                    if (in_array($field, $ignoreFields)) {
+                    if (in_array($field, $ignoreFields) || in_array($field, $usedFields)) {
                         continue;
                     }
                     $aliasedField = $alias.'.'.$field;
@@ -142,5 +144,25 @@ class ScopeCriteria implements \IteratorAggregate
     public function getIterator()
     {
         return new \ArrayIterator($this->context);
+    }
+
+    /**
+     * @param string $condition
+     * @param string $alias
+     * @return array
+     */
+    protected function getUsedFields($condition, $alias)
+    {
+        $fields = [];
+        $parts = explode('AND', $condition);
+        foreach ($parts as $part) {
+            $matches = [];
+            preg_match(sprintf('/%s\.\w+/', $alias), $part, $matches);
+            foreach ($matches as $match) {
+                $fields[] = explode('.', $match)[1];
+            }
+        }
+
+        return $fields;
     }
 }

@@ -111,13 +111,14 @@ class ScopedDataType extends AbstractType
         if (!$data) {
             return;
         }
+
+        /** @var EntityManager $em */
+        $em = $this->registry->getManagerForClass(Scope::class);
+
         foreach ($data as $scopeId => $value) {
             if ($form->has($scopeId)) {
                 continue;
             }
-
-            /** @var EntityManager $em */
-            $em = $this->registry->getManagerForClass(Scope::class);
 
             $formOptions['options'][self::SCOPE_OPTION] = $em
                 ->getReference(Scope::class, $scopeId);

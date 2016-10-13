@@ -11,7 +11,7 @@ use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
 
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
-class LoadScopeAccountData  extends AbstractFixture implements DependentFixtureInterface
+class LoadScopeAccountData extends AbstractFixture implements DependentFixtureInterface
 {
     const SCOPE_PREFIX = 'scope_account';
 

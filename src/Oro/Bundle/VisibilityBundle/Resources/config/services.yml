@@ -232,16 +232,6 @@ services:
         arguments:
             - '@doctrine'
 
-    oro_visibility.product_visibility_message_factory:
-        class: 'Oro\Bundle\VisibilityBundle\Model\ProductVisibilityMessageFactory'
-        arguments:
-            - '@doctrine'
-
-    oro_visibility.category_visibility_message_factory:
-        class: 'Oro\Bundle\VisibilityBundle\Model\CategoryVisibilityMessageFactory'
-        arguments:
-            - '@doctrine'
-
     oro_visibility.visibility_message_handler:
         class: 'Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler'
         arguments:
@@ -253,7 +243,7 @@ services:
     oro_visibility.product_visibility_message_handler:
         class: 'Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler'
         arguments:
-            - '@oro_visibility.product_visibility_message_factory'
+            - '@oro_visibility.visibility_message_factory'
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
@@ -261,7 +251,7 @@ services:
     oro_visibility.category_visibility_message_handler:
         class: 'Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler'
         arguments:
-            - '@oro_visibility.category_visibility_message_factory'
+            - '@oro_visibility.visibility_message_factory'
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
@@ -321,7 +311,7 @@ services:
         class: Oro\Bundle\VisibilityBundle\Async\Visibility\ProductVisibilityProcessor
         arguments:
             - '@doctrine'
-            - '@oro_visibility.product_visibility_message_factory'
+            - '@oro_visibility.visibility_message_factory'
             - '@logger'
             - '@oro_visibility.visibility.cache.product.cache_builder'
         calls:
@@ -333,7 +323,7 @@ services:
         class: Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryVisibilityProcessor
         arguments:
             - '@doctrine'
-            - '@oro_visibility.category_visibility_message_factory'
+            - '@oro_visibility.visibility_message_factory'
             - '@logger'
             - '@oro_visibility.visibility.cache.product.category.cache_builder'
             - '@oro_entity.database_exception_helper'

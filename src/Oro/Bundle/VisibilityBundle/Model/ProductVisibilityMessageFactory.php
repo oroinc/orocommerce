@@ -38,10 +38,7 @@ class ProductVisibilityMessageFactory implements MessageFactoryInterface
      */
     public function createMessage($visibility)
     {
-        if ($visibility instanceof ProductVisibility
-            || $visibility instanceof AccountProductVisibility
-            || $visibility instanceof AccountGroupProductVisibility
-        ) {
+        if ($visibility instanceof VisibilityInterface) {
             return [
                 self::ID => $visibility->getId(),
                 self::ENTITY_CLASS_NAME => ClassUtils::getClass($visibility),
@@ -71,17 +68,12 @@ class ProductVisibilityMessageFactory implements MessageFactoryInterface
             ->getRepository($data[self::ENTITY_CLASS_NAME])
             ->find($data[self::ID]);
         if (!$visibility) {
-            switch ($data[self::ENTITY_CLASS_NAME]) {
-                case ProductVisibility::class:
-                    $visibility = $this->createDefaultProductVisibility($data);
-                    break;
-                case AccountProductVisibility::class:
-                    $visibility = $this->createDefaultAccountProductVisibility($data);
-                    break;
-                case AccountGroupProductVisibility::class:
-                    $visibility = $this->createDefaultAccountGroupProductVisibility($data);
-                    break;
-            }
+            $product = $this->registry->getManagerForClass(Product::class)
+                ->getRepository(Product::class)
+                ->find($data[self::PRODUCT_ID]);
+            $scope = $this->registry->getManagerForClass(Scope::class)
+                ->getRepository(Scope::class)
+                ->find($data[self::SCOPE_ID]);
         }
 
         return $visibility;

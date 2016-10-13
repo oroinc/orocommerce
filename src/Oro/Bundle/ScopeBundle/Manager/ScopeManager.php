@@ -89,7 +89,6 @@ class ScopeManager
      */
     public function findRelatedScopes($scopeType, $context = null)
     {
-        // todo review this method
         /** @var ScopeRepository $scopeRepository */
         $scopeRepository = $this->registry->getManagerForClass(Scope::class)
             ->getRepository(Scope::class);
@@ -99,12 +98,12 @@ class ScopeManager
         $providers = $this->getProviders($scopeType);
         foreach ($providers as $provider) {
             $localCriteria = $provider->getCriteriaByContext($context);
-            if (count($criteria) === 0) {
+            if (count($localCriteria) === 0) {
                 $localCriteria = [$provider->getCriteriaField() => ScopeCriteria::IS_NOT_NULL];
             }
-            $context = array_merge($context, $localCriteria);
+            $criteria = array_merge($criteria, $localCriteria);
         }
-
+        $criteria = new ScopeCriteria($criteria);
         return $scopeRepository->findByCriteria($criteria);
     }
 
@@ -155,7 +154,7 @@ class ScopeManager
      */
     public function getCriteriaByScope(Scope $scope, $type)
     {
-        $criteria = [];
+        $criteria = $this->getNullContext();
         foreach ($this->getProviders($type) as $provider) {
             $field = $provider->getCriteriaField();
             $criteria[$field] = $this->getPropertyAccessor()->getValue($scope, $field);

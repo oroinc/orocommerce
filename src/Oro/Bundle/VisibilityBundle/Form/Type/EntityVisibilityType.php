@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\Type;
 
+use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener;
@@ -27,16 +29,6 @@ class EntityVisibilityType extends AbstractType
      * @var VisibilityChoicesProvider
      */
     protected $visibilityChoicesProvider;
-
-    /**
-     * @var string
-     */
-    protected $accountClass;
-
-    /**
-     * @var string
-     */
-    protected $accountGroupClass;
 
     /**
      * @param VisibilityPostSetDataListener $visibilityPostSetDataListener
@@ -111,37 +103,21 @@ class EntityVisibilityType extends AbstractType
                 'account',
                 EntityChangesetType::NAME,
                 [
-                    'class' => $this->accountClass,
+                    'class' => Account::class,
                     'context' => ['account' => ScopeCriteria::IS_NOT_NULL],
-                    'constraints' => [new VisibilityChangeSet(['entityClass' => $this->accountClass])],
+                    'constraints' => [new VisibilityChangeSet(['entityClass' => Account::class])],
                 ]
             )
             ->add(
                 'accountGroup',
                 EntityChangesetType::NAME,
                 [
-                    'class' => $this->accountGroupClass,
+                    'class' => AccountGroup::class,
                     'context' => ['accountGroup' => ScopeCriteria::IS_NOT_NULL],
-                    'constraints' => [new VisibilityChangeSet(['entityClass' => $this->accountGroupClass])],
+                    'constraints' => [new VisibilityChangeSet(['entityClass' => AccountGroup::class])],
                 ]
             );
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this->visibilityPostSetDataListener, 'onPostSetData']);
-    }
-
-    /**
-     * @param string $accountClass
-     */
-    public function setAccountClass($accountClass)
-    {
-        $this->accountClass = $accountClass;
-    }
-
-    /**
-     * @param string $accountGroupClass
-     */
-    public function setAccountGroupClass($accountGroupClass)
-    {
-        $this->accountGroupClass = $accountGroupClass;
     }
 }
