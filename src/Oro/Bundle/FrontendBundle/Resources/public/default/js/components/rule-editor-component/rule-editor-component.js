@@ -89,8 +89,7 @@ define([
 
                     $el.toggleClass('error', !isValid);
                     $el.parent().toggleClass('validation-error', !isValid);
-
-                });
+                }, 0);
             });
 
             this.initAutocomplete();
@@ -214,7 +213,7 @@ define([
         validBrackets: function(value) {
             var breakLoop = false;
             var expected = [];
-            var bracketsOnly = value.replace(/[^\[\]\(\)\{\}]/g, '');
+            var bracketsOnly = value.replace(/[^\[\](){}]/g, '');
 
             _.each(bracketsOnly, function(char) {
                 if (!breakLoop) {
@@ -344,6 +343,7 @@ define([
 
             var isSpaceUnderCaret = _.isNull(wordUnderCaret);
             var isCompleteWord = wordIs.isInclusion || wordIs.isCompare;
+            var pathValue = this.getValueByPath(this.options.data, word.replace(this.opsRegEx.compare, ''));
 
             if (isSpaceUnderCaret) {
                 if (isCompleteWord) {
@@ -363,9 +363,8 @@ define([
                         result = this.cases.math;
                     }
                 } else {
-                    return this.cases.data;
+                    return pathValue && pathValue !== 'any' ? pathValue : this.cases.data;
                 }
-
             } else {
                 result = getCases(wordUnderCaret);
             }
@@ -390,7 +389,7 @@ define([
                     hasValue: _this.checkValue(word),
                     isBool: _.contains(_this.cases.bool, word),
                     isMath: _.contains(_this.cases.math, lastChar),
-                    notOps: /[a-zA-Z\[\]\)\(]/g.test(lastChar)
+                    notOps: /[a-zA-Z\[\]()]/g.test(lastChar)
                 };
             }
 
@@ -760,7 +759,7 @@ define([
 
             var length = _.isNumber(endPos) ? endPos - startPos : undefined;
 
-            return _.isNumber(startPos) ? string.substr(startPos, length) : string;
+            return _.isNumber(startPos) ? String(string).substr(startPos, length) : string;
         },
 
         /**
@@ -775,13 +774,13 @@ define([
 
         /**
          *
-         * @param words
-         * @returns {{dataWords: *, logicWords: *}}
+         * @param string
+         * @returns {{expr: *, bool: *}}
          */
-        getGroups: function(words) {
+        getGroups: function(string) {
             return {
-                expr: separateGroups(words, true),
-                bool: separateGroups(words)
+                expr: separateGroups(string, true),
+                bool: separateGroups(string)
             };
 
             function separateGroups(groups, isOdd) {
