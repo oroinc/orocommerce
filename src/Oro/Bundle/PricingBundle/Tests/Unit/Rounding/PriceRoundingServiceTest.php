@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\CurrencyBundle\Tests\Unit\Rounding;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Rounding;
 
-use Oro\Bundle\CurrencyBundle\Rounding\PriceRoundingService;
+use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
 use Oro\Bundle\CurrencyBundle\Tests\Unit\Rounding\AbstractRoundingServiceTest;
 
 class PriceRoundingServiceTest extends AbstractRoundingServiceTest

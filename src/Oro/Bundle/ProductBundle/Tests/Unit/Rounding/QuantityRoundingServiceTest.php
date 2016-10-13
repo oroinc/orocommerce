@@ -1,8 +1,9 @@
 <?php
 
-namespace Oro\Bundle\CurrencyBundle\Tests\Unit\Rounding;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Rounding;
 
-use Oro\Bundle\CurrencyBundle\Rounding\QuantityRoundingService;
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Rounding\AbstractRoundingServiceTest;
+use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
