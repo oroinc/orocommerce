@@ -41,7 +41,11 @@ class ScopeCriteria implements \IteratorAggregate
                 $qb->andWhere($qb->expr()->isNotNull($aliasedField));
             } else {
                 $paramName = $alias.'_param_'.$field;
-                $qb->andWhere($qb->expr()->eq($aliasedField, ':'.$paramName));
+                if (is_array($value)) {
+                    $qb->andWhere($qb->expr()->in($aliasedField, ':'.$paramName));
+                } else {
+                    $qb->andWhere($qb->expr()->eq($aliasedField, ':'.$paramName));
+                }
                 $qb->setParameter($paramName, $value);
             }
         }

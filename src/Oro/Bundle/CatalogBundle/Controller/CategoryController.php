@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Controller;
 
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -77,6 +78,14 @@ class CategoryController extends Controller
      */
     protected function update(Category $category)
     {
+        $visibility = $this->getDoctrine()->getRepository(CategoryVisibility::class)
+            ->findOneBy(['category' => $category]);
+        if ($visibility) {
+            $this->get('oro_visibility.visibility.cache.product.category.cache_builder')
+                ->resolveVisibilitySettings($visibility);
+
+        }
+
         $form = $this->createForm(CategoryType::NAME, $category);
         $handler = new CategoryHandler(
             $form,

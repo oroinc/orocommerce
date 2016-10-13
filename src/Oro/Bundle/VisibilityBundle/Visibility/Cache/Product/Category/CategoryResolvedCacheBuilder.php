@@ -47,6 +47,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
         $category = $visibilitySettings->getCategory();
+        $scope = $visibilitySettings->getScope();
 
         $selectedVisibility = $visibilitySettings->getVisibility();
         $visibilitySettings = $this->refreshEntity($visibilitySettings);
@@ -70,6 +71,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
                 'visibility' => $visibility,
                 'sourceCategoryVisibility' => $visibilitySettings,
                 'source' => CategoryVisibilityResolved::SOURCE_STATIC,
+                'scope' => $scope,
             ];
         } elseif ($selectedVisibility === CategoryVisibility::CONFIG) {
             // fallback to config is default for account group and should be removed if exists
@@ -84,6 +86,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
                 'visibility' => $visibility,
                 'sourceCategoryVisibility' => $visibilitySettings,
                 'source' => $source,
+                'scope' => $scope,
             ];
         } else {
             throw new \InvalidArgumentException(sprintf('Unknown visibility %s', $selectedVisibility));

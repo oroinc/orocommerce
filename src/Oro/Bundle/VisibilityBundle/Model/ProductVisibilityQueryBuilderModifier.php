@@ -124,7 +124,7 @@ class ProductVisibilityQueryBuilderModifier
                     $this->getRootAlias($queryBuilder),
                     'account_group_product_visibility_resolved.product'
                 ),
-                $queryBuilder->expr()->eq('account_group_product_visibility_resolved.accountGroup', ':scope_group')
+                $queryBuilder->expr()->eq('account_group_product_visibility_resolved.scope', ':scope_group')
             )
         );
 

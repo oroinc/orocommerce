@@ -7,6 +7,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
@@ -153,11 +154,11 @@ class AccountCategoryRepository extends EntityRepository
 
     /**
      * @param int $visibility
-     * @param Account $account
+     * @param Scope $scope
      * @param int $configValue
      * @return array
      */
-    public function getCategoryIdsByVisibility($visibility, Account $account, $configValue)
+    public function getCategoryIdsByVisibility($visibility, Scope $scope, $configValue)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('category.id')
@@ -165,10 +166,11 @@ class AccountCategoryRepository extends EntityRepository
             ->orderBy('category.id');
 
         $terms = [$this->getCategoryVisibilityResolvedTerm($qb, $configValue)];
-        if ($account->getGroup()) {
-            $terms[] = $this->getAccountGroupCategoryVisibilityResolvedTerm($qb, $account->getGroup(), $configValue);
-        }
-        $terms[] = $this->getAccountCategoryVisibilityResolvedTerm($qb, $account, $configValue);
+        //TODO: FIX IT!!!
+//        if ($account->getGroup()) {
+//            $terms[] = $this->getAccountGroupCategoryVisibilityResolvedTerm($qb, $account->getGroup(), $configValue);
+//        }
+        $terms[] = $this->getAccountCategoryVisibilityResolvedTerm($qb, $scope, $configValue);
 
         if ($visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
             $qb->andWhere($qb->expr()->gt(implode(' + ', $terms), 0));
