@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Model;
+namespace Oro\Bundle\ProductBundle\Model;
 
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 
-class PriceListQueryDesigner extends AbstractQueryDesigner
+class NodeExpressionQueryDesigner extends AbstractQueryDesigner
 {
     /**
      * @var string

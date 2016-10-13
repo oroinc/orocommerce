@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
@@ -42,11 +42,16 @@ class LogicalExpressionValidator extends ConstraintValidator
             $value = $this->preprocessor->process($value);
             $node = $this->expressionParser->parse($value);
 
-            if ($node && !$node->isBoolean()) {
-                $this->context->addViolation($constraint->message);
+            if ($node) {
+                if ($constraint->logicalExpressionsAllowed && !$node->isBoolean()) {
+                    $this->context->addViolation($constraint->message);
+                }
+                if (!$constraint->logicalExpressionsAllowed && $node->isBoolean()) {
+                    $this->context->addViolation($constraint->messageDisallowedLogicalExpression);
+                }
             }
         } catch (SyntaxError $ex) {
-            $this->context->addViolation($constraint->message);
+            $this->context->addViolation($ex->getMessage());
         }
     }
 }

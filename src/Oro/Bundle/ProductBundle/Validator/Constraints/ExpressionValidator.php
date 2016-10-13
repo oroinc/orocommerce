@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Oro\Component\Expression\ExpressionParser;
 use Oro\Component\Expression\FieldsProviderInterface;
@@ -11,7 +11,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class PriceRuleExpressionValidator extends ConstraintValidator
+class ExpressionValidator extends ConstraintValidator
 {
     /**
      * @var ExpressionParser
@@ -53,7 +53,7 @@ class PriceRuleExpressionValidator extends ConstraintValidator
 
     /**
      * @param string $value
-     * @param PriceRuleExpression $constraint
+     * @param Expression $constraint
      *
      * {@inheritdoc}
      */
@@ -74,10 +74,10 @@ class PriceRuleExpressionValidator extends ConstraintValidator
     }
 
     /**
-     * @param PriceRuleExpression $constraint
+     * @param Expression $constraint
      * @return array
      */
-    protected function getErrorData(PriceRuleExpression $constraint)
+    protected function getErrorData(Expression $constraint)
     {
         if ($constraint->fieldLabel === null) {
             $message = $constraint->message;
@@ -92,7 +92,7 @@ class PriceRuleExpressionValidator extends ConstraintValidator
     }
 
     /**
-     * @param PriceRuleExpression|Constraint $constraint
+     * @param Expression|Constraint $constraint
      * @param string $class
      * @return array
      */
@@ -114,9 +114,9 @@ class PriceRuleExpressionValidator extends ConstraintValidator
 
     /**
      * @param Node\NodeInterface $rootNode
-     * @param PriceRuleExpression $constraint
+     * @param Expression $constraint
      */
-    protected function validateSupportedFields(Node\NodeInterface $rootNode, PriceRuleExpression $constraint)
+    protected function validateSupportedFields(Node\NodeInterface $rootNode, Expression $constraint)
     {
         $unsupportedFields = [];
         $lexemesInfo = $this->parser->getUsedLexemesByNode($rootNode);
@@ -144,9 +144,9 @@ class PriceRuleExpressionValidator extends ConstraintValidator
 
     /**
      * @param Node\NodeInterface $rootNode
-     * @param PriceRuleExpression $constraint
+     * @param Expression $constraint
      */
-    protected function validateDivisionByZero(Node\NodeInterface $rootNode, PriceRuleExpression $constraint)
+    protected function validateDivisionByZero(Node\NodeInterface $rootNode, Expression $constraint)
     {
         foreach ($rootNode->getNodes() as $node) {
             if ($node instanceof Node\BinaryNode) {

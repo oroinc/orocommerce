@@ -1,25 +1,25 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class PriceRuleExpression extends Constraint
+class Expression extends Constraint
 {
     /**
      * @var string
      */
-    public $message = 'oro.pricing.validators.field_is_not_allowed.message';
+    public $message = 'oro.product.validators.field_is_not_allowed.message';
 
     /**
      * @var string
      */
-    public $messageAs = 'oro.pricing.validators.field_is_not_allowed_as.message';
+    public $messageAs = 'oro.product.validators.field_is_not_allowed_as.message';
 
     /**
      * @var string
      */
-    public $divisionByZeroMessage = 'oro.pricing.validators.division_by_zero.message';
+    public $divisionByZeroMessage = 'oro.product.validators.division_by_zero.message';
 
     /**
      * @var bool
@@ -46,6 +46,6 @@ class PriceRuleExpression extends Constraint
      */
     public function validatedBy()
     {
-        return 'oro_pricing.validator_constraints.price_rule_expression_validator';
+        return 'oro_product.validator_constraints.expression_validator';
     }
 }

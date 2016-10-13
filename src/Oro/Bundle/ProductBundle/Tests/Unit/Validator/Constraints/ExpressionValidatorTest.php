@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
-use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpression;
-use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator;
+use Oro\Bundle\ProductBundle\Validator\Constraints\Expression;
+use Oro\Bundle\ProductBundle\Validator\Constraints\ExpressionValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Expression\ExpressionLanguageConverter;
 use Oro\Component\Expression\ExpressionParser;
@@ -12,7 +12,7 @@ use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
+class ExpressionValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ExpressionParser
@@ -30,7 +30,7 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
     protected $fieldsProvider;
 
     /**
-     * @var PriceRuleExpressionValidator
+     * @var ExpressionValidator
      */
     protected $expressionValidator;
 
@@ -47,7 +47,7 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $this->parser = new ExpressionParser($expressionConverter);
         $this->parser->addNameMapping('product', Product::class);
         $this->translator = $this->getMock(TranslatorInterface::class);
-        $this->expressionValidator = new PriceRuleExpressionValidator(
+        $this->expressionValidator = new ExpressionValidator(
             $this->parser,
             $this->preprocessor,
             $this->fieldsProvider,
@@ -89,7 +89,7 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateAdditionalField()
     {
-        $constraint = new PriceRuleExpression();
+        $constraint = new Expression();
         $constraint->allowedFields = [
             Product::class => ['additionalField']
         ];
@@ -122,7 +122,7 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
         $context = $this->getMock(ExecutionContextInterface::class);
         $context->expects($this->once())
             ->method('addViolation')
-            ->with('oro.pricing.validators.division_by_zero.message');
+            ->with('oro.product.validators.division_by_zero.message');
 
         $this->doTestValidation($value, $context);
     }
@@ -133,7 +133,7 @@ class PriceRuleExpressionValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function doTestValidation($value, ExecutionContextInterface $context)
     {
-        $constraint = new PriceRuleExpression();
+        $constraint = new Expression();
         $constraint->fieldLabel = 'Field label';
         $this->preprocessor->expects($this->any())
             ->method('process')

@@ -39,18 +39,16 @@ class BinaryNodeTest extends \PHPUnit_Framework_TestCase
      * @dataProvider booleanOperationsDataProvider
      * @param string $operation
      */
-    public function testIsBoolean($operation)
+    public function testIsBooleanOperation($operation)
     {
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $left */
         $left = $this->getMock(NodeInterface::class);
-        $left->expects($this->once())
-            ->method('isBoolean')
-            ->willReturn(true);
+        $left->expects($this->never())
+            ->method('isBoolean');
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $right */
         $right = $this->getMock(NodeInterface::class);
-        $right->expects($this->once())
-            ->method('isBoolean')
-            ->willReturn(true);
+        $right->expects($this->never())
+            ->method('isBoolean');
         $node = new BinaryNode($left, $right, $operation);
         $this->assertTrue($node->isBoolean());
     }
@@ -101,65 +99,40 @@ class BinaryNodeTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testIsBooleanFalseForMathExpression()
-    {
-        /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $left */
-        $left = $this->getMock(NodeInterface::class);
-        $left->expects($this->never())
-            ->method('isBoolean');
-        /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $right */
-        $right = $this->getMock(NodeInterface::class);
-        $right->expects($this->never())
-            ->method('isBoolean');
-
-        $node = new BinaryNode($left, $right, '+');
-        $this->assertFalse($node->isBoolean());
-    }
-
     /**
-     * @dataProvider leftRightDataProvider
-     * @param string $operation
-     * @param bool $leftIsBoolean
-     * @param bool $rightIsBoolean
+     * @dataProvider leftRightBooleanDataProvider
+     * @param bool $leftBoolean
+     * @param bool $rightBoolean
+     * @param bool $expected
      */
-    public function testIsBooleanFalse($operation, $leftIsBoolean, $rightIsBoolean)
+    public function testIsBooleanForMathExpression($leftBoolean, $rightBoolean, $expected)
     {
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $left */
         $left = $this->getMock(NodeInterface::class);
         $left->expects($this->any())
             ->method('isBoolean')
-            ->willReturn($leftIsBoolean);
+            ->willReturn($leftBoolean);
         /** @var NodeInterface|\PHPUnit_Framework_MockObject_MockObject $right */
         $right = $this->getMock(NodeInterface::class);
         $right->expects($this->any())
             ->method('isBoolean')
-            ->willReturn($rightIsBoolean);
-        $node = new BinaryNode($left, $right, $operation);
-        $this->assertFalse($node->isBoolean());
+            ->willReturn($rightBoolean);
+
+        $node = new BinaryNode($left, $right, '+');
+        $this->assertEquals($expected, $node->isBoolean());
     }
 
     /**
      * @return array
      */
-    public function leftRightDataProvider()
+    public function leftRightBooleanDataProvider()
     {
-        $operations = [
-            ['and'],
-            ['or']
+        return [
+            'is boolean when left and right boolean' => [true, true, true],
+            'is boolean when left is boolean and right is not' => [true, false, true],
+            'is boolean when right is boolean and left is not' => [false, true, true],
+            'is not boolean when left and right are not boolean' => [false, false, false]
         ];
-        $checkData = [
-            [true, false],
-            [false, true],
-            [false, false]
-        ];
-        $data = [];
-        foreach ($operations as $operation) {
-            foreach ($checkData as $dataToCheck) {
-                $data[] = array_merge($operation, $dataToCheck);
-            }
-        }
-
-        return $data;
     }
 
     /**

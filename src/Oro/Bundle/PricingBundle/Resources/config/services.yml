@@ -107,12 +107,6 @@ services:
             - '@oro_config.global'
             - '@oro_pricing.system_config_converter'
 
-    oro_pricing.provider.price_rule_fields_provider:
-        class: 'Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider'
-        arguments:
-            - '@oro_entity.entity_field_provider'
-            - '@oro_entity.doctrine_helper'
-
     oro_pricing.provider.product_virtual_relation_provider.config:
         class: 'Oro\Bundle\PricingBundle\Provider\ProductVirtualRelationProvider'
         arguments:
@@ -585,7 +579,7 @@ services:
         abstract: true
         arguments:
             - '@oro_pricing.price_rule_lexeme_trigger_handler'
-            - '@oro_pricing.provider.price_rule_fields_provider'
+            - '@oro_product.expression.fields_provider'
             - '@doctrine'
 
     oro_pricing.entity_listener.category:
@@ -744,18 +738,18 @@ services:
         class: 'Oro\Bundle\PricingBundle\Compiler\AbstractRuleCompiler'
         abstract: true
         arguments:
-            - '@oro_pricing.expression.parser'
-            - '@oro_pricing.expression.preprocessor'
-            - '@oro_pricing.expression.node_to_query_designer_converter'
+            - '@oro_product.expression.parser'
+            - '@oro_product.expression.preprocessor'
+            - '@oro_product.expression.node_to_query_designer_converter'
             - '@oro_pricing.query.price_list_expression_query_converter'
-            - '@oro_pricing.expression.query_expression_builder'
+            - '@oro_product.expression.query_expression_builder'
             - '@oro_pricing.cache.rule_cache'
 
     oro_pricing.compiler.price_list_rule_compiler:
         class: 'Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler'
         parent: oro_pricing.compiler.abstract_rule_compiler
         calls:
-            - [setFieldsProvider, ['@oro_pricing.provider.price_rule_fields_provider']]
+            - [setFieldsProvider, ['@oro_product.expression.fields_provider']]
 
     oro_pricing.compiler.product_assignment_rule_compiler:
         class: 'Oro\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler'
@@ -777,62 +771,11 @@ services:
             - '@oro_pricing.compiler.product_assignment_rule_compiler'
             - '@event_dispatcher'
 
-    oro_pricing.expression.expression_language_converter:
-        class: 'Oro\Component\Expression\ExpressionLanguageConverter'
-        public: false
-        arguments:
-            - '@oro_pricing.provider.price_rule_fields_provider'
-
-    oro_pricing.expression.parser:
-        class: 'Oro\Component\Expression\ExpressionParser'
-        public: false
-        arguments:
-            - '@oro_pricing.expression.expression_language_converter'
-        calls:
-            - [addNameMapping, ['product', '%oro_product.entity.product.class%']]
-            - [addNameMapping, ['pricelist', '%oro_pricing.entity.price_list.class%']]
-
-    oro_pricing.expression.node_to_query_designer_converter:
-        class: 'Oro\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter'
-        public: false
-        arguments:
-            - '@oro_pricing.provider.price_rule_fields_provider'
-
-    oro_pricing.expression.query_expression.converter.binary_node:
-        class: 'Oro\Component\Expression\QueryExpressionConverter\BinaryNodeConverter'
-        public: false
-
-    oro_pricing.expression.query_expression.converter.name_node:
-        class: 'Oro\Component\Expression\QueryExpressionConverter\NameNodeConverter'
-        public: false
-
-    oro_pricing.expression.query_expression.converter.relation_node:
-        class: 'Oro\Component\Expression\QueryExpressionConverter\RelationNodeConverter'
-        public: false
-
-    oro_pricing.expression.query_expression.converter.unary_node:
-        class: 'Oro\Component\Expression\QueryExpressionConverter\UnaryNodeConverter'
-        public: false
-
-    oro_pricing.expression.query_expression.converter.value_node:
-        class: 'Oro\Component\Expression\QueryExpressionConverter\ValueNodeConverter'
-        public: false
-
     oro_pricing.expression.query_expression.converter.assigned_products:
         class: Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\AssignedProductsConverter
         arguments:
-            - '@oro_pricing.provider.price_rule_fields_provider'
+            - '@oro_product.expression.fields_provider'
         public: false
-
-    oro_pricing.expression.query_expression_builder:
-        class: 'Oro\Component\Expression\QueryExpressionBuilder'
-        calls:
-            - ['registerConverter', ['@oro_pricing.expression.query_expression.converter.assigned_products', 10]]
-            - ['registerConverter', ['@oro_pricing.expression.query_expression.converter.binary_node']]
-            - ['registerConverter', ['@oro_pricing.expression.query_expression.converter.name_node']]
-            - ['registerConverter', ['@oro_pricing.expression.query_expression.converter.relation_node']]
-            - ['registerConverter', ['@oro_pricing.expression.query_expression.converter.unary_node']]
-            - ['registerConverter', ['@oro_pricing.expression.query_expression.converter.value_node']]
 
     oro_pricing.expression.preprocessor.product_assignment_rule:
         class: Oro\Bundle\PricingBundle\Expression\Preprocessor\ProductAssignmentRuleExpressionPreprocessor
@@ -840,10 +783,8 @@ services:
             - '@doctrine'
         public: false
 
-    oro_pricing.expression.preprocessor:
-        class: Oro\Component\Expression\Preprocessor\ExpressionPreprocessor
-        calls:
-            - ['registerPreprocessor', ['@oro_pricing.expression.preprocessor.product_assignment_rule']]
+    oro_pricing.expression.column_information.price_list_provider:
+        class: Oro\Bundle\PricingBundle\Expression\ColumnInformation\PriceListProvider
 
     oro_pricing.query.price_list_expression_query_converter:
         class: 'Oro\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter'
@@ -855,31 +796,11 @@ services:
         calls:
             - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]
 
-    oro_pricing.validator_constraints.logical_expression_validator:
-        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\LogicalExpressionValidator'
-        public: true
-        arguments:
-            - '@oro_pricing.expression.parser'
-            - '@oro_pricing.expression.preprocessor'
-        tags:
-            - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.logical_expression_validator }
-
-    oro_pricing.validator_constraints.price_rule_expression_validator:
-        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleExpressionValidator'
-        public: true
-        arguments:
-            - '@oro_pricing.expression.parser'
-            - '@oro_pricing.expression.preprocessor'
-            - '@oro_pricing.provider.price_rule_fields_provider'
-            - '@translator'
-        tags:
-            - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.price_rule_expression_validator }
-
     oro_pricing.validator_constraints.lexeme_circular_reference_validator:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReferenceValidator'
         public: true
         arguments:
-            - '@oro_pricing.expression.parser'
+            - '@oro_product.expression.parser'
             - '@doctrine'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.lexeme_circular_reference_validator }
@@ -887,8 +808,8 @@ services:
     oro_pricing.validator_constraints.price_rule_relation_expressions_validator:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressionsValidator'
         arguments:
-            - '@oro_pricing.expression.parser'
-            - '@oro_pricing.provider.price_rule_fields_provider'
+            - '@oro_product.expression.parser'
+            - '@oro_product.expression.fields_provider'
             - '@translator'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing.validator_constraints.price_rule_relation_expressions_validator }
@@ -897,8 +818,8 @@ services:
         class: 'Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_pricing.expression.parser'
-            - '@oro_pricing.provider.price_rule_fields_provider'
+            - '@oro_product.expression.parser'
+            - '@oro_product.expression.fields_provider'
 
     oro_pricing.cache.rule_cache.storage:
         public: false
