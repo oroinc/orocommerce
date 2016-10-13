@@ -65,21 +65,3 @@
     }) %}
     {{ parent() }}
 {% endblock %}
-
-{% block oro_entity_flexible_container_widget %}
-    <div class="request-form-flexbox">
-        <div class="request-form-flexbox__base">
-            {{ form_widget(form) }}
-        </div>
-
-        {% if isButtonsEnabled %}
-            <div class="request-form-flexbox__side">
-                <button class="add-on btn btn-lg entity-select-btn"><i class="icon-reorder"></i></button>
-
-                {% if form.vars.create_enabled %}
-                    <button class="btn btn-lg entity-create-btn"><i class="icon-plus"></i></button>
-                {% endif %}
-            </div>
-        {% endif %}
-    </div>
-{% endblock %}

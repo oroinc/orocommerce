@@ -1,3 +1,67 @@
+{% block oro_entity_create_or_select_inline_widget %}
+    {% set isButtonsEnabled = not disabled and not read_only %}
+    <div id="{{ id }}-el"
+            {% if configs.extra_config is not defined or not configs.extra_config %}
+                {% if form.vars.configs.async_dialogs|default(false) is sameas(true) %}
+                    {% set asyncNameSegment = 'async-' %}
+                {% endif %}
+                {% set urlParts = {
+                    grid: {
+                        route: form.vars.grid_widget_route|default('oro_datagrid_widget'),
+                        gridWidgetView: form.vars.grid_view_widget_route|default('oro_datagrid_widget'),
+                        parameters: {
+                            gridName     : form.vars.grid_name,
+                            params       : form.vars.grid_parameters,
+                            renderParams : form.vars.grid_render_parameters
+                        }
+                    }
+                } %}
+
+                {% if form.vars.create_enabled|default(false) is sameas(true) %}
+                    {% set urlParts = urlParts|merge({
+                        create: {
+                            route:      form.vars.create_form_route,
+                            parameters: form.vars.create_form_route_parameters
+                        }
+                    }) %}
+                {% endif %}
+                {% import 'OroUIBundle::macros.html.twig' as UI %}
+                {{ UI.renderPageComponentAttributes({
+                    module: 'oroform/js/app/components/select-create-inline-type-' ~ asyncNameSegment|default('') ~ 'component',
+                    options: {
+                        inputSelector: '#'~id,
+                        entityLabel: label|trans,
+                        urlParts: urlParts,
+                        existingEntityGridId: form.vars.existing_entity_grid_id|default('id'),
+                        createEnabled: form.vars.create_enabled|default(false)
+                        }
+                    }) }}
+            {% else %}
+                {% set _block = block('oro_entity_create_or_select_inline_js_' ~ configs.extra_config) %}
+            {% endif %}
+        {% if isButtonsEnabled %}class="entity-create-or-select-container {% if form.vars.create_enabled %}entity-create-enabled{% endif %}"{% endif %}>
+        <div class="request-form-flexbox">
+            <div class="request-form-flexbox__base">
+                {{ form_widget(form) }}
+            </div>
+
+            {% if isButtonsEnabled %}
+                <div class="request-form-flexbox__side">
+                    <button class="add-on btn btn-lg entity-select-btn"><i class="icon-reorder"></i></button>
+
+                    {% if form.vars.create_enabled %}
+                        <button class="btn btn-lg entity-create-btn"><i class="icon-plus"></i></button>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if _block is defined and _block is not empty %}
+        {{ _block|raw }}
+    {% endif %}
+{% endblock %}
+
 {% macro oro_rfp_frontend_request_lineitem_requested_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
