@@ -13,6 +13,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\AccountBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\SearchBundle\Query\Query;
 
 class ProductVisibilityQueryBuilderModifier
 {
@@ -73,6 +74,15 @@ class ProductVisibilityQueryBuilderModifier
         }
 
         $queryBuilder->andWhere($queryBuilder->expr()->gt(implode(' + ', $visibilities), 0));
+    }
+
+    /**
+     * @param Query $searchQuery
+     */
+    public function modifySearch(Query $searchQuery)
+    {
+        // @todo Implement the logic from ::modify() here
+        // @todo or replace with existing logic from BB-4035
     }
 
     /**

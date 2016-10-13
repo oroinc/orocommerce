@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\AccountBundle\EventListener\ProductDBQueryRestrictionEventListener;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
+use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
+use Oro\Bundle\SearchBundle\Query\Query;
 
 class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,12 +33,12 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_Test
      */
     protected function setUp()
     {
-        $this->frontendHelper = $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
+        $this->frontendHelper = $this->getMockBuilder(FrontendHelper::class)
             ->disableOriginalConstructor()->getMock();
-        $this->modifier = $this
-            ->getMockBuilder('Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier')
+        $this->modifier       = $this
+            ->getMockBuilder(ProductVisibilityQueryBuilderModifier::class)
             ->disableOriginalConstructor()->getMock();
-        $this->listener = new ProductDBQueryRestrictionEventListener(
+        $this->listener       = new ProductDBQueryRestrictionEventListener(
             $this->frontendHelper,
             $this->modifier
         );
@@ -50,10 +49,10 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_Test
         $this->setupRequest();
 
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
+        $queryBuilder = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()->getMock();
 
-        $event = $this->getEventMock();
+        $event = $this->getDBEventMock();
 
         $event->expects($this->once())
             ->method('getQueryBuilder')
@@ -70,7 +69,7 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_Test
     {
         $this->setupRequest(false);
 
-        $event = $this->getEventMock();
+        $event = $this->getDBEventMock();
 
         $event->expects($this->never())
             ->method('getQueryBuilder');
@@ -79,6 +78,25 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_Test
             ->method('modify');
 
         $this->listener->onDBQuery($event);
+    }
+
+    public function testOnSearchQuery()
+    {
+        $this->setupRequest();
+
+        $event = $this->getSQEventMock();
+
+        $query = $this->getMock(Query::class);
+
+        $event->expects($this->once())
+            ->method('getQuery')
+            ->willReturn($query);
+
+        $this->modifier->expects($this->once())
+            ->method('modifySearch')
+            ->with($query);
+
+        $this->listener->onSearchQuery($event);
     }
 
     /**
@@ -94,9 +112,18 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_Test
     /**
      * @return ProductDBQueryRestrictionEvent|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getEventMock()
+    protected function getDBEventMock()
     {
-        return $this->getMockBuilder('Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent')
+        return $this->getMockBuilder(ProductDBQueryRestrictionEvent::class)
+            ->disableOriginalConstructor()->getMock();
+    }
+
+    /**
+     * @return ProductSearchQueryRestrictionEvent|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getSQEventMock()
+    {
+        return $this->getMockBuilder(ProductSearchQueryRestrictionEvent::class)
             ->disableOriginalConstructor()->getMock();
     }
 }

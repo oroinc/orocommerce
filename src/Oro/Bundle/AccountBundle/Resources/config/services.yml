@@ -687,6 +687,7 @@ services:
             - "@oro_account.model.product_visibility_query_builder_modifier"
         tags:
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
 
     oro_account.entity.entity_listener.category_listener:
         class: 'Oro\Bundle\AccountBundle\Entity\EntityListener\CategoryListener'
