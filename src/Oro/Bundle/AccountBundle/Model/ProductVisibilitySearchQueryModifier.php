@@ -68,11 +68,10 @@ class ProductVisibilitySearchQueryModifier
 
             $defaultField = $this->completeFieldName(ProductVisibilityIndexer::FIELD_IS_VISIBLE_BY_DEFAULT);
 
-            //TODO: Replace isNull operator after BB-4508 is finished
             $expression = $exprBuilder->orX(
                 $exprBuilder->andX(
                     $exprBuilder->eq($defaultField, BaseVisibilityResolved::VISIBILITY_VISIBLE),
-                    $exprBuilder->isNull($accountField)
+                    $exprBuilder->notExists($accountField)
                 ),
                 $exprBuilder->andX(
                     $exprBuilder->eq($defaultField, BaseVisibilityResolved::VISIBILITY_HIDDEN),
