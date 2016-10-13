@@ -22,6 +22,11 @@ interface PageTypeInterface
     public function getFormType();
 
     /**
+     * @return bool
+     */
+    public function isAllowed();
+
+    /**
      * @param WebCatalogPageInterface $page
      * @return bool
      */

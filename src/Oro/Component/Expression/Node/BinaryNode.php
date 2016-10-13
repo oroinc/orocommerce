@@ -117,11 +117,11 @@ class BinaryNode implements NodeInterface
      */
     public function isBoolean()
     {
-        if ($this->isBooleanOperation()) {
-            return $this->getLeft()->isBoolean() && $this->getRight()->isBoolean();
+        if ($this->isBooleanOperation() || $this->isBooleanExpression()) {
+            return true;
         }
 
-        return $this->isBooleanExpression();
+        return $this->getLeft()->isBoolean() || $this->getRight()->isBoolean();
     }
 
     /**

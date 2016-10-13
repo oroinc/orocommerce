@@ -1,15 +1,15 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Functional\Provider;
+namespace Oro\Bundle\ProductBundle\Tests\Functional\Expression;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\Expression\Node\FieldsProviderInterface;
+use Oro\Component\Expression\FieldsProviderInterface;
 
 /**
  * @dbIsolation
  */
-class PriceRuleFieldsProviderTest extends WebTestCase
+class FieldsProviderTest extends WebTestCase
 {
     /**
      * @var FieldsProviderInterface
@@ -20,7 +20,7 @@ class PriceRuleFieldsProviderTest extends WebTestCase
     {
         $this->initClient([]);
         $this->client->useHashNavigation(true);
-        $this->provider = $this->getContainer()->get('oro_pricing.provider.price_rule_fields_provider');
+        $this->provider = $this->getContainer()->get('oro_product.expression.fields_provider');
     }
 
     /**

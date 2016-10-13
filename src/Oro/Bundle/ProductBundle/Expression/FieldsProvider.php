@@ -1,12 +1,12 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Provider;
+namespace Oro\Bundle\ProductBundle\Expression;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Component\Expression\FieldsProviderInterface;
 
-class PriceRuleFieldsProvider implements FieldsProviderInterface
+class FieldsProvider implements FieldsProviderInterface
 {
     /**
      * @var array

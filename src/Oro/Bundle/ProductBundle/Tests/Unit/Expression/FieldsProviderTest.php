@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Expression;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\ProductBundle\Expression\FieldsProvider;
 
-class PriceRuleFieldsProviderTest extends \PHPUnit_Framework_TestCase
+class FieldsProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var EntityFieldProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -15,9 +15,9 @@ class PriceRuleFieldsProviderTest extends \PHPUnit_Framework_TestCase
     protected $entityFieldProvider;
 
     /**
-     * @var PriceRuleFieldsProvider
+     * @var FieldsProvider
      */
-    protected $priceRuleFieldsProvider;
+    protected $fieldsProvider;
 
     /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
@@ -40,21 +40,8 @@ class PriceRuleFieldsProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /**
-         * @var \PHPUnit_Framework_MockObject_MockObject ServiceLink
-         */
-        $entityFieldProviderLink = $this
-            ->getMockBuilder('Oro\Component\DependencyInjection\ServiceLink')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $entityFieldProviderLink
-            ->expects($this->any())
-            ->method('getService')
-            ->willReturn($this->entityFieldProvider);
-
-        $this->priceRuleFieldsProvider = new PriceRuleFieldsProvider(
-            $entityFieldProviderLink,
+        $this->fieldsProvider = new FieldsProvider(
+            $this->entityFieldProvider,
             $this->doctrineHelper
         );
     }
@@ -70,7 +57,7 @@ class PriceRuleFieldsProviderTest extends \PHPUnit_Framework_TestCase
         $className = 'ClassName';
         $this->entityFieldProvider->method('getFields')->willReturn($fields);
 
-        $actualFields = $this->priceRuleFieldsProvider->getFields($className, true);
+        $actualFields = $this->fieldsProvider->getFields($className, true);
 
         $this->assertEquals($expectedFields, $actualFields);
     }
@@ -109,7 +96,7 @@ class PriceRuleFieldsProviderTest extends \PHPUnit_Framework_TestCase
         $className = 'ClassName';
         $this->entityFieldProvider->method('getFields')->willReturn($fields);
 
-        $actualFields = $this->priceRuleFieldsProvider->getFields($className, false, true);
+        $actualFields = $this->fieldsProvider->getFields($className, false, true);
         $this->assertEquals($expectedFields, $actualFields);
     }
 

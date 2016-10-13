@@ -1,0 +1,85 @@
+services:
+    oro_product.expression.fields_provider:
+        class: 'Oro\Bundle\ProductBundle\Expression\FieldsProvider'
+        arguments:
+            - '@oro_entity.entity_field_provider'
+            - '@oro_entity.doctrine_helper'
+
+    oro_product.expression.column_information.default_provider:
+        class: Oro\Bundle\ProductBundle\Expression\ColumnInformation\DefaultProvider
+        arguments:
+            - '@oro_product.expression.fields_provider'
+
+    oro_product.expression.node_to_query_designer_converter:
+        class: 'Oro\Bundle\ProductBundle\Expression\NodeToQueryDesignerConverter'
+        public: false
+        arguments:
+            - '%oro_product.entity.product.class%'
+        calls:
+            - ['addColumnInformationProvider', ['@oro_product.expression.column_information.default_provider']]
+
+    oro_product.expression.expression_language_converter:
+        class: 'Oro\Component\Expression\ExpressionLanguageConverter'
+        public: false
+        arguments:
+            - '@oro_product.expression.fields_provider'
+
+    oro_product.expression.parser:
+        class: 'Oro\Component\Expression\ExpressionParser'
+        public: false
+        arguments:
+            - '@oro_product.expression.expression_language_converter'
+        calls:
+            - [addNameMapping, ['product', '%oro_product.entity.product.class%']]
+
+    oro_product.expression.query_expression.converter.binary_node:
+        class: 'Oro\Component\Expression\QueryExpressionConverter\BinaryNodeConverter'
+        public: false
+
+    oro_product.expression.query_expression.converter.name_node:
+        class: 'Oro\Component\Expression\QueryExpressionConverter\NameNodeConverter'
+        public: false
+
+    oro_product.expression.query_expression.converter.relation_node:
+        class: 'Oro\Component\Expression\QueryExpressionConverter\RelationNodeConverter'
+        public: false
+
+    oro_product.expression.query_expression.converter.unary_node:
+        class: 'Oro\Component\Expression\QueryExpressionConverter\UnaryNodeConverter'
+        public: false
+
+    oro_product.expression.query_expression.converter.value_node:
+        class: 'Oro\Component\Expression\QueryExpressionConverter\ValueNodeConverter'
+        public: false
+
+    oro_product.expression.query_expression_builder:
+        class: 'Oro\Component\Expression\QueryExpressionBuilder'
+        calls:
+            - ['registerConverter', ['@oro_product.expression.query_expression.converter.binary_node']]
+            - ['registerConverter', ['@oro_product.expression.query_expression.converter.name_node']]
+            - ['registerConverter', ['@oro_product.expression.query_expression.converter.relation_node']]
+            - ['registerConverter', ['@oro_product.expression.query_expression.converter.unary_node']]
+            - ['registerConverter', ['@oro_product.expression.query_expression.converter.value_node']]
+
+    oro_product.expression.preprocessor:
+        class: Oro\Component\Expression\Preprocessor\ExpressionPreprocessor
+
+    oro_product.validator_constraints.logical_expression_validator:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\LogicalExpressionValidator'
+        public: true
+        arguments:
+            - '@oro_product.expression.parser'
+            - '@oro_product.expression.preprocessor'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product.validator_constraints.logical_expression_validator }
+
+    oro_product.validator_constraints.expression_validator:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ExpressionValidator'
+        public: true
+        arguments:
+            - '@oro_product.expression.parser'
+            - '@oro_product.expression.preprocessor'
+            - '@oro_product.expression.fields_provider'
+            - '@translator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product.validator_constraints.expression_validator }
