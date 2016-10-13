@@ -16,6 +16,7 @@ use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\AccountBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Query\Criteria\Comparison as SearchComparison;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
@@ -100,7 +101,11 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
                     CompositeExpression::TYPE_AND,
                     [
                         new Comparison('integer.is_visible_by_default', Comparison::EQ, new Value($visible)),
-                        new Comparison('integer.visibility_account_1', Comparison::EQ, new Value(null)),
+                        new SearchComparison(
+                            'integer.visibility_account_1',
+                            SearchComparison::NOT_EXISTS,
+                            new Value(null)
+                        ),
                     ]
                 ),
                 new CompositeExpression(
@@ -116,7 +121,10 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
         $this->assertEquals($expected, $query->getCriteria()->getWhereExpression());
     }
 
-    public function wrongAccountUser()
+    /**
+     * @return array
+     */
+    public function wrongAccountUserProvider()
     {
         return [
             [null],
@@ -125,7 +133,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
-     * @dataProvider wrongAccountUser
+     * @dataProvider wrongAccountUserProvider
      *
      * @param mixed $accountUser
      */
