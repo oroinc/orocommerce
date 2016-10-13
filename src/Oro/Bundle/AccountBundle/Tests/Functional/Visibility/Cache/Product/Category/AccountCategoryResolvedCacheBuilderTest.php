@@ -12,6 +12,7 @@ use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityRes
 use Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountCategoryResolvedCacheBuilder;
 use Oro\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
@@ -37,9 +38,15 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
 
         $container = $this->client->getContainer();
 
+        $indexScheduler = new ProductIndexScheduler(
+            $container->get('oro_entity.doctrine_helper'),
+            $container->get('event_dispatcher')
+        );
+
         $this->builder = new AccountCategoryResolvedCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_entity.orm.insert_from_select_query_executor')
+            $container->get('oro_entity.orm.insert_from_select_query_executor'),
+            $indexScheduler
         );
         $this->builder->setCacheClass(
             $container->getParameter('oro_account.entity.account_category_visibility_resolved.class')
@@ -52,7 +59,6 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         );
 
         $this->builder->setVisibilityChangeAccountSubtreeCacheBuilder($subtreeBuilder);
-
     }
 
     public function testChangeAccountCategoryVisibilityToHidden()

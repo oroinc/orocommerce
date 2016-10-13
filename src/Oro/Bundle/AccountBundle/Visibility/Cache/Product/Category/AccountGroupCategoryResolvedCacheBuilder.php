@@ -91,6 +91,7 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
 
         $this->visibilityChangeAccountGroupSubtreeCacheBuilder
             ->resolveVisibilitySettings($category, $accountGroup, $visibility);
+        $this->triggerCategoryReindexation($category);
     }
 
     /**

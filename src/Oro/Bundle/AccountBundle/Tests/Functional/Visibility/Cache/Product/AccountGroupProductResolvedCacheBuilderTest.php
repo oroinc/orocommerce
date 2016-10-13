@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use Oro\Bundle\AccountBundle\Visibility\Cache\Product\AccountGroupProductResolvedCacheBuilder;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
@@ -21,7 +22,7 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
     {
         return [
             'without_website' => [
-                'expectedStaticCount' => 6,
+                'expectedStaticCount' => 8,
                 'expectedCategoryCount' => 2,
                 'websiteReference' => null,
             ],
@@ -55,9 +56,15 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
     {
         $container = $this->client->getContainer();
 
+        $indexScheduler = new ProductIndexScheduler(
+            $container->get('oro_entity.doctrine_helper'),
+            $container->get('event_dispatcher')
+        );
+
         $builder = new AccountGroupProductResolvedCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_entity.orm.insert_from_select_query_executor')
+            $container->get('oro_entity.orm.insert_from_select_query_executor'),
+            $indexScheduler
         );
         $builder->setCacheClass(
             $container->getParameter('oro_account.entity.account_group_product_visibility_resolved.class')

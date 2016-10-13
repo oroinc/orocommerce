@@ -16,15 +16,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
         minimum_price:
             name: minimum_price
             type: decimal
-        is_visible_by_default:
-            name: is_visible_by_default
-            type: integer
-        visibility_anonymous:
-            name: visibility_anonymous
-            type: integer
-        visibility_new:
-            name: visibility_new
-            type: integer
         status:
             name: status
             type: text
@@ -32,5 +23,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: status
             type: text
         all_text:
+            name: all_text
+            type: text
+        all_text_localization:
             name: all_text_LOCALIZATION_ID
             type: text

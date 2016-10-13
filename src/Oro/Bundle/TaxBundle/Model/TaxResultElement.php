@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Model;
 
-use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration;
 
 class TaxResultElement extends AbstractResultElement
 {

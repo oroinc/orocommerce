@@ -1,6 +1,6 @@
 {% block __oro_product_line_item_form__line_item_form_start_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'id': form.vars.id ~ '-product-id-{{ product.id }} %>',
+        'id': form.vars.id ~ '-product-id-' ~ product.id,
     }) %}
     {{ block('form_start_widget') }}
 {% endblock %}

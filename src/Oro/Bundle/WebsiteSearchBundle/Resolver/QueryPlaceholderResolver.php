@@ -4,22 +4,19 @@ namespace Oro\Bundle\WebsiteSearchBundle\Resolver;
 
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderExpressionVisitor;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderInterface;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteSearchPlaceholderRegistry;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 
 class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
 {
-    /**
-     * @var WebsiteSearchPlaceholderRegistry
-     */
-    private $placeholderRegistry;
+    /** @var PlaceholderInterface */
+    private $placeholder;
 
     /**
-     * @param WebsiteSearchPlaceholderRegistry $placeholderRegistry
+     * @param PlaceholderInterface $placeholder
      */
-    public function __construct(WebsiteSearchPlaceholderRegistry $placeholderRegistry)
+    public function __construct(PlaceholderInterface $placeholder)
     {
-        $this->placeholderRegistry = $placeholderRegistry;
+        $this->placeholder = $placeholder;
     }
 
     /**
@@ -27,23 +24,20 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
      */
     public function replace(Query $query)
     {
-        foreach ($this->placeholderRegistry->getPlaceholders() as $placeholder) {
-            $this->replaceInSelect($query, $placeholder);
-            $this->replaceInFrom($query, $placeholder);
-            $this->replaceInCriteria($query, $placeholder);
-        }
+        $this->replaceInSelect($query);
+        $this->replaceInFrom($query);
+        $this->replaceInCriteria($query);
     }
 
     /**
      * @param Query $query
-     * @param WebsiteSearchPlaceholderInterface $placeholder
      */
-    private function replaceInSelect(Query $query, WebsiteSearchPlaceholderInterface $placeholder)
+    private function replaceInSelect(Query $query)
     {
         $selectAliases = $query->getSelectAliases();
         $newSelects = [];
         foreach ($query->getSelect() as $select) {
-            $newSelect = str_replace($placeholder->getPlaceholder(), $placeholder->getValue(), $select);
+            $newSelect = $this->placeholder->replaceDefault($select);
             if (isset($selectAliases[$select])) {
                 $newSelect .= ' as ' . $selectAliases[$select];
             }
@@ -56,10 +50,9 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
 
     /**
      * @param Query $query
-     * @param WebsiteSearchPlaceholderInterface $placeholder
      * @return Query
      */
-    private function replaceInFrom(Query $query, WebsiteSearchPlaceholderInterface $placeholder)
+    private function replaceInFrom(Query $query)
     {
         $newEntities = [];
         $from = $query->getFrom();
@@ -67,7 +60,7 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
         // This check required because getFrom can return false
         if ($from) {
             foreach ($from as $alias) {
-                $newEntities[] = $placeholder->replace($alias, $placeholder->getValue());
+                $newEntities[] = $this->placeholder->replaceDefault($alias);
             }
         }
 
@@ -76,15 +69,14 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
 
     /**
      * @param Query $query
-     * @param WebsiteSearchPlaceholderInterface $placeholder
      */
-    private function replaceInCriteria(Query $query, WebsiteSearchPlaceholderInterface $placeholder)
+    private function replaceInCriteria(Query $query)
     {
         $criteria = $query->getCriteria();
         $whereExpr = $criteria->getWhereExpression();
 
         if ($whereExpr) {
-            $visitor = new PlaceholderExpressionVisitor($placeholder);
+            $visitor = new PlaceholderExpressionVisitor($this->placeholder);
             $criteria->where($visitor->dispatch($whereExpr));
         }
 
@@ -92,7 +84,7 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
         if ($orderings) {
             foreach ($orderings as $field => $ordering) {
                 unset($orderings[$field]);
-                $alteredField = $placeholder->replace($field, $placeholder->getValue());
+                $alteredField = $this->placeholder->replaceDefault($field);
                 $orderings[$alteredField] = $ordering;
             }
             $criteria->orderBy($orderings);

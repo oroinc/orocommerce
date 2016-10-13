@@ -1,0 +1,10 @@
+.shopping-list-navigation {
+    margin-top: 30px;
+    margin-left: 15px;
+}
+
+@include breakpoint('tablet') {
+    .shopping-list-navigation {
+        margin-left: auto;
+    }
+}

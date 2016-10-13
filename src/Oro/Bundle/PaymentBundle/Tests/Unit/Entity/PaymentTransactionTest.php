@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -32,6 +33,7 @@ class PaymentTransactionTest extends \PHPUnit_Framework_TestCase
             ['accessIdentifier', 'accessIdentifier', false],
             ['accessToken', 'accessToken', false],
             ['organization', new Organization()],
+            ['owner', new User()],
             ['frontendOwner', new AccountUser()],
             ['createdAt', new \DateTime()],
             ['updatedAt', new \DateTime()],

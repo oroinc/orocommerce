@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Event;
 
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\ValueWithPlaceholders;
-use Oro\Bundle\WebsiteSearchBundle\Provider\IndexDataProvider;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 
 use Symfony\Component\EventDispatcher\Event;
 
@@ -55,12 +54,22 @@ class IndexEntityEvent extends Event
     /**
      * @param int $entityId
      * @param string $fieldName
-     * @param string|int|float $value
+     * @param string|int|float|\DateTime $value
      * @return $this
+     * @throws \InvalidArgumentException if value is array
      */
     public function addField($entityId, $fieldName, $value)
     {
-        $this->entitiesData[$entityId][IndexDataProvider::STANDARD_VALUES_KEY][$fieldName] = $value;
+        if (!is_scalar($value) && !$value instanceof \DateTime) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Scalars and \DateTime are supported only, "%s" given',
+                    is_object($value) ? get_class($value) : gettype($value)
+                )
+            );
+        }
+
+        $this->entitiesData[$entityId][$fieldName] = $value;
 
         return $this;
     }
@@ -68,14 +77,23 @@ class IndexEntityEvent extends Event
     /**
      * @param int $entityId
      * @param string $fieldName
-     * @param string|int|float
+     * @param string $value
      * @param array $placeholders
      * @return $this
+     * @throws \InvalidArgumentException if value is array
      */
     public function addPlaceholderField($entityId, $fieldName, $value, $placeholders)
     {
-        $this->entitiesData[$entityId][IndexDataProvider::PLACEHOLDER_VALUES_KEY][$fieldName][] =
-            new ValueWithPlaceholders($value, $placeholders);
+        if (!is_string($value)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'Strings are supported only, "%s" given',
+                    is_object($value) ? get_class($value) : gettype($value)
+                )
+            );
+        }
+
+        $this->entitiesData[$entityId][$fieldName][] = new PlaceholderValue($value, $placeholders);
 
         return $this;
     }

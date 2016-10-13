@@ -2,11 +2,10 @@ layout:
     imports:
         -
             id: oro_account_address_form
-            root: oro_account_user_address_form_content
+            namespace: account_address_edit
+            root: content
         - oro_account_menu
     actions:
-        - '@setBlockTheme':
-            themes: 'layout.html.twig'
         - '@appendOption':
             id: title
             optionName: value
@@ -18,19 +17,3 @@ layout:
             optionName: text
             optionValue:
                 label: oro.account.frontend.address.page_title.edit
-        - '@add':
-            id: oro_account_user_address_form_container
-            parentId: content
-            blockType: container
-        - '@add':
-            id: oro_account_user_address_form_content
-            parentId: oro_account_user_address_form_container
-            blockType: container
-        - '@add':
-            id: account_user_address_form_required_label
-            parentId: account_address_edit_container
-            blockType: container
-        - '@move':
-            id: page_title
-            parentId: oro_account_user_address_form_container
-            prepend: true
