@@ -9,10 +9,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -21,8 +19,6 @@ use Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener;
  */
 class ProductControllerTest extends WebTestCase
 {
-    use MessageQueueExtension;
-
     const TEST_SKU = 'SKU-001';
     const UPDATED_SKU = 'SKU-001-updated';
     const FIRST_DUPLICATED_SKU = 'SKU-001-updated-1';
@@ -155,7 +151,6 @@ class ProductControllerTest extends WebTestCase
         ];
 
         $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
-        $this->assertEquals(1, $this->countImageResizeJobs());
     }
 
     /**
@@ -262,8 +257,6 @@ class ProductControllerTest extends WebTestCase
             $this->sortUnitPrecisions($actualAdditionalUnitPrecisions)
         );
 
-        $this->assertEquals(3, $this->countImageResizeJobs());
-
         return $id;
     }
 
@@ -340,7 +333,6 @@ class ProductControllerTest extends WebTestCase
         ];
 
         $this->assertEquals($expectedProductImageMatrix, $this->parseProductImages($crawler));
-        $this->assertEquals(5, $this->countImageResizeJobs());
 
         $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
@@ -783,12 +775,5 @@ class ProductControllerTest extends WebTestCase
                 ->filter('input[name="oro_product[additionalUnitPrecisions][' . $position . '][sell]"]')
                 ->extract('checked')[0],
         ];
-    }
-
-    private function countImageResizeJobs()
-    {
-        return count(array_filter(self::getSentMessages(), function (array $message) {
-            return $message['topic'] === ProductImageResizeListener::IMAGE_RESIZE_TOPIC;
-        }));
     }
 }
