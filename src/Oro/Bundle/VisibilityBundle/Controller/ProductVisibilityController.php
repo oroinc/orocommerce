@@ -94,16 +94,16 @@ class ProductVisibilityController extends Controller
             $product,
             [
                 'ownership_disabled' => true,
-                'preloaded_scopes' => $preloadedScopes,
-                'scopes' => $this->get('oro_visibility.root_scopes_provider')->getScopes(),
-                'type' => EntityVisibilityType::NAME,
-                'options' => [
-                    'targetEntityField' => 'product',
-                    'allClass' => $this
+                ScopedDataType::PRELOADED_SCOPES_OPTION => $preloadedScopes,
+                ScopedDataType::SCOPES_OPTION => $this->get('oro_visibility.root_scopes_provider')->getScopes(),
+                ScopedDataType::TYPE_OPTION => EntityVisibilityType::NAME,
+                ScopedDataType::OPTIONS_OPTION => [
+                    EntityVisibilityType::TARGET_ENTITY_FIELD => 'product',
+                    EntityVisibilityType::ALL_CLASS => $this
                         ->getParameter('oro_visibility.entity.product_visibility.class'),
-                    'accountGroupClass' => $this
+                    EntityVisibilityType::ACCOUNT_GROUP_CLASS => $this
                         ->getParameter('oro_visibility.entity.account_group_product_visibility.class'),
-                    'accountClass' => $this
+                    EntityVisibilityType::ACCOUNT_CLASS => $this
                         ->getParameter('oro_visibility.entity.account_product_visibility.class'),
                 ]
             ]

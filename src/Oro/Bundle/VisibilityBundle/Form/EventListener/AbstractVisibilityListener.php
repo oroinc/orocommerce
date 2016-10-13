@@ -13,6 +13,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException;
 use Symfony\Component\Form\FormInterface;
 
@@ -47,7 +48,7 @@ abstract class AbstractVisibilityListener
     {
         $targetEntity = $form->getData();
         $config = $form->getConfig();
-        $targetEntityField = $config->getOption('targetEntityField');
+        $targetEntityField = $config->getOption(EntityVisibilityType::TARGET_ENTITY_FIELD);
         $visibilityClassName = $form->getConfig()->getOption($field.'Class');
 
         /** @var EntityManager $em */
@@ -81,8 +82,8 @@ abstract class AbstractVisibilityListener
         $context = [];
         if ($form->getConfig()->hasOption('context')) {
             $context = $form->getConfig()->getOption('context');
-        } elseif ($form->getConfig()->hasOption('scope')) {
-            $scope = $form->getConfig()->getOption('scope');
+        } elseif ($form->getConfig()->hasOption(EntityVisibilityType::SCOPE)) {
+            $scope = $form->getConfig()->getOption(EntityVisibilityType::SCOPE);
 
             if ($scope instanceof Scope) {
                 $context = $this->scopeManager->getCriteriaByScope($scope, $type)->toArray();
@@ -138,8 +139,10 @@ abstract class AbstractVisibilityListener
 
         $visibilityClassName = $config->getOption($field.'Class');
 
-        if ($config->hasOption('scope') && null !== $config->getOption('scope')) {
-            $rootScope = $config->getOption('scope');
+        if ($config->hasOption(EntityVisibilityType::SCOPE)
+            && null !== $config->getOption(EntityVisibilityType::SCOPE)
+        ) {
+            $rootScope = $config->getOption(EntityVisibilityType::SCOPE);
         } else {
             $rootScope = $this->scopeManager->findDefaultScope();
         }
@@ -185,20 +188,20 @@ abstract class AbstractVisibilityListener
 
     /**
      * @param FormInterface $form
-     * @param $field
+     * @param string $field
      * @return string
      */
     protected function getVisibilityScopeType(FormInterface $form, $field)
     {
         switch ($field) {
-            case 'all':
-                $className = $form->getConfig()->getOption('allClass');
+            case EntityVisibilityType::ALL_FIELD:
+                $className = $form->getConfig()->getOption(EntityVisibilityType::ALL_CLASS);
                 break;
-            case 'account':
-                $className = $form->getConfig()->getOption('accountClass');
+            case EntityVisibilityType::ACCOUNT_FIELD:
+                $className = $form->getConfig()->getOption(EntityVisibilityType::ACCOUNT_CLASS);
                 break;
-            case 'accountGroup':
-                $className = $form->getConfig()->getOption('accountGroupClass');
+            case EntityVisibilityType::ACCOUNT_GROUP_FIELD:
+                $className = $form->getConfig()->getOption(EntityVisibilityType::ACCOUNT_GROUP_CLASS);
                 break;
             default:
                 throw new InvalidArgumentException();

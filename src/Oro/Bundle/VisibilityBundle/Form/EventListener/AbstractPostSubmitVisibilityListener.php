@@ -38,16 +38,16 @@ abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityLi
     protected function saveFormAllData(FormInterface $form)
     {
         $targetEntity = $form->getData();
-        $visibility = $form->get('all')->getData();
+        $visibility = $form->get(EntityVisibilityType::ALL_FIELD)->getData();
 
         if (!$visibility) {
             return;
         }
 
-        $visibilityEntity = $this->findFormFieldData($form, 'all');
+        $visibilityEntity = $this->findFormFieldData($form, EntityVisibilityType::ALL_FIELD);
 
         if (!$visibilityEntity) {
-            $visibilityEntity = $this->createFormFieldData($form, 'all');
+            $visibilityEntity = $this->createFormFieldData($form, EntityVisibilityType::ALL_FIELD);
         }
 
         $this->saveVisibility($targetEntity, $visibilityEntity, $visibility);
@@ -58,7 +58,7 @@ abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityLi
      */
     protected function saveFormAccountGroupData(FormInterface $form)
     {
-        $this->saveFormFieldData($form, 'accountGroup');
+        $this->saveFormFieldData($form, EntityVisibilityType::ACCOUNT_GROUP_FIELD);
     }
 
     /**
@@ -66,7 +66,7 @@ abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityLi
      */
     protected function saveFormAccountData(FormInterface $form)
     {
-        $this->saveFormFieldData($form, 'account');
+        $this->saveFormFieldData($form, EntityVisibilityType::ACCOUNT_FIELD);
     }
 
     /**

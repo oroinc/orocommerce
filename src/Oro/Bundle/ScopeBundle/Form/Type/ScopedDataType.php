@@ -17,6 +17,10 @@ class ScopedDataType extends AbstractType
 {
     const NAME = 'oro_scoped_data_type';
     const SCOPE_OPTION = 'scope';
+    const SCOPES_OPTION = 'scopes';
+    const TYPE_OPTION = 'type';
+    const OPTIONS_OPTION = 'options';
+    const PRELOADED_SCOPES_OPTION = 'preloaded_scopes';
 
     /**
      * @var ManagerRegistry
@@ -54,15 +58,16 @@ class ScopedDataType extends AbstractType
     {
         $resolver->setRequired(
             [
-                'type',
+                self::TYPE_OPTION,
+                self::SCOPES_OPTION,
             ]
         );
+        $resolver->setAllowedTypes(self::SCOPES_OPTION, 'array');
 
         $resolver->setDefaults(
             [
-                'preloaded_scopes' => [],
-                'scopes' => [],
-                'options' => null,
+                self::PRELOADED_SCOPES_OPTION => [],
+                self::OPTIONS_OPTION => null,
             ]
         );
     }
@@ -72,22 +77,27 @@ class ScopedDataType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (!empty($options['preloaded_scopes'])) {
-            $loadedScopes = $options['preloaded_scopes'];
+        if (!empty($options[self::PRELOADED_SCOPES_OPTION])) {
+            $preloadedScopes = $options[self::PRELOADED_SCOPES_OPTION];
         } else {
-            $loadedScopes = $options['scopes'];
+            $preloadedScopes = $options[self::SCOPES_OPTION];
         }
 
-        $options['options']['data'] = $options['data'];
-        $options['options']['ownership_disabled'] = true;
+        $options[self::OPTIONS_OPTION]['data'] = $options['data'];
+        $options[self::OPTIONS_OPTION]['ownership_disabled'] = true;
 
         /** @var Scope $scope */
-        foreach ($loadedScopes as $scope) {
+        foreach ($preloadedScopes as $scope) {
+            if (!$this->isAllowedScope($options[self::SCOPES_OPTION], $scope->getId())) {
+                throw new \InvalidArgumentException(
+                    sprintf('Scope id %s is not in allowed form scopes', $scope->getId())
+                );
+            }
             $options['options'][self::SCOPE_OPTION] = $scope;
             $builder->add(
                 $scope->getId(),
-                $options['type'],
-                $options['options']
+                $options[self::TYPE_OPTION],
+                $options[self::OPTIONS_OPTION]
             );
         }
 
@@ -96,77 +106,76 @@ class ScopedDataType extends AbstractType
     }
 
     /**
-     * @param FormEvent $event
-     */
-    public function preSubmit(FormEvent $event)
-    {
-        $data = $event->getData();
-        $form = $event->getForm();
-
-        $formOptions = $form->getConfig()->getOptions();
-
-        $formOptions['options']['data'] = $form->getData();
-        $formOptions['options']['ownership_disabled'] = true;
-
-        if (!$data) {
-            return;
-        }
-
-        /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass(Scope::class);
-
-        foreach ($data as $scopeId => $value) {
-            if ($form->has($scopeId)) {
-                continue;
-            }
-
-            $formOptions['options'][self::SCOPE_OPTION] = $em
-                ->getReference(Scope::class, $scopeId);
-
-            $form->add(
-                $scopeId,
-                $formOptions['type'],
-                $formOptions['options']
-            );
-        }
-    }
-
-    /**
-     * @param FormEvent $event
-     * @throws \Doctrine\ORM\ORMException
-     */
-    public function preSetData(FormEvent $event)
-    {
-        $form = $event->getForm();
-
-        $formOptions = $form->getConfig()->getOptions();
-
-        $formOptions['options']['ownership_disabled'] = true;
-        /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass(Scope::class);
-
-        foreach ($event->getData() as $scopeId => $value) {
-            $formOptions['options']['data'] = [];
-
-            if (is_array($value)) {
-                $formOptions['options']['data'] = $value;
-            }
-
-            $formOptions['options'][self::SCOPE_OPTION] = $em->getReference(Scope::class, $scopeId);
-
-            $form->add(
-                $scopeId,
-                $formOptions['type'],
-                $formOptions['options']
-            );
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['scopes'] = $form->getConfig()->getOption('scopes');
+        $view->vars[self::SCOPES_OPTION] = $form->getConfig()->getOption(self::SCOPES_OPTION);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSubmit(FormEvent $event)
+    {
+        $form = $event->getForm();
+        foreach ($event->getData() as $scopeId => $value) {
+            if ($form->has($scopeId)) {
+                continue;
+            }
+            $this->addTypeByScope($form, $scopeId, $form->getData());
+        }
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        foreach ($event->getData() as $scopeId => $value) {
+            $data = [];
+            if (is_array($value)) {
+                $data = $value;
+            }
+
+            $this->addTypeByScope($event->getForm(), $scopeId, $data);
+        }
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param int $scopeId
+     * @param array|object $data
+     */
+    protected function addTypeByScope(FormInterface $form, $scopeId, $data)
+    {
+        if (!$this->isAllowedScope($form->getConfig()->getOption(self::SCOPES_OPTION), $scopeId)) {
+            throw new \InvalidArgumentException(sprintf('Scope id %s is not in allowed form scopes', $scopeId));
+        }
+        $options = $form->getConfig()->getOption(self::OPTIONS_OPTION);
+        $options['data'] = $data;
+        $options['ownership_disabled'] = true;
+
+        /** @var EntityManager $em */
+        $em = $this->registry->getManagerForClass(Scope::class);
+        $options[self::SCOPE_OPTION] = $em->getReference(Scope::class, $scopeId);
+
+        $form->add($scopeId, $form->getConfig()->getOption(self::TYPE_OPTION), $options);
+    }
+
+    /**
+     * @param Scope[] $scopes
+     * @param int $scopeId
+     * @return bool
+     */
+    protected function isAllowedScope(array $scopes, $scopeId)
+    {
+        foreach ($scopes as $scope) {
+            if ($scopeId === $scope->getId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

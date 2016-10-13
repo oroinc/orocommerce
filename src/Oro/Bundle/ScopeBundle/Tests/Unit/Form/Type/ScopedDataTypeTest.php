@@ -3,11 +3,12 @@
 namespace Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopedDataType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\PreloadedExtension;
 
 class ScopedDataTypeTest extends FormIntegrationTestCase
 {
@@ -23,17 +24,14 @@ class ScopedDataTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-//        $entityVisibilityType = new EntityVisibilityType();
-//
-//        return [
-//            new PreloadedExtension(
-//                [
-//                    EntityVisibilityType::NAME => $entityVisibilityType,
-//                ],
-//                []
-//            )
-//        ];
-        return [];
+        return [
+            new PreloadedExtension(
+                [
+                    StubType::NAME => new StubType(),
+                ],
+                []
+            ),
+        ];
     }
 
     protected function setUp()
@@ -46,88 +44,91 @@ class ScopedDataTypeTest extends FormIntegrationTestCase
 
         $em->expects($this->any())
             ->method('getReference')
-            ->with('TestWebsiteClass', self::WEBSITE_ID)
-            ->willReturn($website);
-
-        $repository = $this->getMockBuilder('Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $repository->expects($this->any())
-            ->method('getAllWebsites')
-            ->willReturn([$website]);
+            ->with(Scope::class)
+            ->will(
+                $this->returnCallback(
+                    function ($class, $id) {
+                        return $this->getEntity($class, ['id' => $id]);
+                    }
+                )
+            );
 
         /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
-        $registry = $this->getMockBuilder('\Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $registry->expects($this->any())
-            ->method('getRepository')
-            ->with('TestWebsiteClass')
-            ->willReturn($repository);
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with('TestWebsiteClass')
-            ->willReturn($em);
+        $registry = $this->getMock(ManagerRegistry::class);
+        $registry->method('getManagerForClass')->willReturn($em);
 
         $this->formType = new ScopedDataType($registry);
     }
 
     public function testSubmit()
     {
-        $this->factory->createBuilder()
-        $form = $this->factory->create($this->formType);
+        $scope4 = $this->getEntity(Scope::class, ['id' => 4]);
+        $scope6 = $this->getEntity(Scope::class, ['id' => 6]);
+        $scope1 = $this->getEntity(Scope::class, ['id' => 1]);
+        $form = $this->factory->create(
+            $this->formType,
+            [],
+            [
+                'type' => StubType::NAME,
+                'scopes' => [$scope4, $scope6, $scope1],
+                'preloaded_scopes' => [$scope4, $scope6],
+                'options' => [
+                    StubType::REQUIRED_OPTION => 'test_value',
+                ],
+            ]
+        );
 
-        $this->assertEquals($defaultData, $form->getData());
+        // assert that form was built with all preloaded scopes
+        $this->assertSame(2, $form->count());
+        $this->assertTrue($form->has(4));
+        $this->assertTrue($form->has(6));
+
+        $submittedData = [
+            4 => [
+                StubType::FIELD_1 => 'scope4_field1',
+                StubType::FIELD_2 => 'scope4_field2',
+            ],
+            6 => [
+                StubType::FIELD_1 => 'scope6_field1',
+                StubType::FIELD_2 => 'scope6_field2',
+            ],
+            1 => [
+                StubType::FIELD_1 => 'scope1_field1',
+                StubType::FIELD_2 => 'scope1_field2',
+            ],
+        ];
         $form->submit($submittedData);
+
         $this->assertTrue($form->isValid());
-
-        $data = $form->getData();
-
-        $this->assertEquals($expectedData, $data);
+        // assert that when submitted all scopes added to form
+        $this->assertSame(3, $form->count());
+        $this->assertSame($submittedData[4], $form->get('4')->getData());
+        $this->assertSame($submittedData[6], $form->get('6')->getData());
+        $this->assertSame($submittedData[1], $form->get('1')->getData());
     }
-
-    /**
-     * @return array
-     */
-//    public function submitDataProvider()
-//    {
-//        return [
-//            [
-//                'defaultData'   => [],
-//                'options' => [
-//                    'preloaded_websites' => [],
-//                    'type' => new EntityVisibilityType()
-//                ],
-//                'submittedData' => [
-//                    self::WEBSITE_ID => [],
-//                ],
-//                'expectedData'  => [
-//                    self::WEBSITE_ID => [],
-//                ],
-//            ],
-//        ];
-//    }
 
     public function testBuildView()
     {
         $view = new FormView();
+        $scopes = [
+            $this->getEntity(Scope::class, ['id' => 4]),
+            $this->getEntity(Scope::class, ['id' => 6]),
+            $this->getEntity(Scope::class, ['id' => 1]),
+        ];
+        $form = $this->factory->create(
+            $this->formType,
+            [],
+            [
+                'type' => StubType::NAME,
+                'scopes' => $scopes,
+                'options' => [
+                    StubType::REQUIRED_OPTION => 'test_value',
+                ],
+            ]
+        );
+        $this->formType->buildView($view, $form, []);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $this->formType->buildView($view, $form, ['region_route' => 'test']);
-
-        $this->assertArrayHasKey('websites', $view->vars);
-
-//        $websiteIds = array_map(
-//            function (Website $website) {
-//                return $website->getId();
-//            },
-//            $view->vars['websites']
-//        );
-
-//        $this->assertEquals([self::WEBSITE_ID], $websiteIds);
+        $this->assertSame($scopes, $view->vars['scopes']);
     }
 
     /**
@@ -138,15 +139,15 @@ class ScopedDataTypeTest extends FormIntegrationTestCase
         return [
             [
                 'children' => ['1' => 'test'],
-                'expected' => []
+                'expected' => [],
             ],
             [
                 'children' => ['1' => 'test', 'not_int' => 'test'],
-                'expected' => ['not_int' => 'test']
+                'expected' => ['not_int' => 'test'],
             ],
             [
                 'children' => ['1' => 'test', 'not_int' => 'test'],
-                'expected' => ['1' => 'test', 'not_int' => 'test']
+                'expected' => ['1' => 'test', 'not_int' => 'test'],
             ],
         ];
     }
@@ -154,19 +155,5 @@ class ScopedDataTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertEquals(ScopedDataType::NAME, $this->formType->getName());
-    }
-
-    /**
-     * @param FormView $formView
-     * @param array $children
-     * @return FormView
-     */
-    protected function setFormViewChildren(FormView $formView, array $children)
-    {
-        $childrenReflection = new \ReflectionProperty($formView, 'children');
-        $childrenReflection->setAccessible(true);
-        $childrenReflection->setValue($formView, $children);
-
-        return $formView;
     }
 }
