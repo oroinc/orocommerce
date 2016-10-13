@@ -43,7 +43,7 @@ define([
             operations: {
                 math: ['+', '-', '%', '*', '/'],
                 bool: ['and', 'or'],
-                compare: ['>', '<', '=', '!='],
+                compare: ['==', '!=', '>', '<', '<=', '>=', 'like'],
                 inclusion: ['in', 'not in']
             },
             allowedOperations: ['math', 'bool', 'compare', 'inclusion']
@@ -57,22 +57,12 @@ define([
 
         /**
          *
-         * @property {Object}
-         */
-        opsRegEx: {},
-
-        /**
-         *
-         * @property {Object}
-         */
-        error: {},
-
-        /**
-         *
          * @param options
          */
         initialize: function(options) {
             this.cases = {};
+            this.error = {};
+            this.opsRegEx = {};
 
             this.options = _.defaults(options || {}, this.options);
             this.$element = this.options._sourceElement;
@@ -116,7 +106,7 @@ define([
                 return true;
             }
 
-            if (!this.hasValidBrackets(value)) {
+            if (!this.validBrackets(value)) {
                 return false;
             }
 
@@ -151,7 +141,7 @@ define([
 
             _context = this.$element.typeahead({
                 minLength: 0,
-
+                items: 10,
                 source: function(value) {
                     var sourceData = _this.getAutocompleteSource(value || '');
 
@@ -221,34 +211,38 @@ define([
          * @param value {String}
          * @returns {Boolean}
          */
-        hasValidBrackets: function(value) {
-            var nestingLevel = 0;
+        validBrackets: function(value) {
+            var breakLoop = false;
+            var expected = [];
+            var bracketsOnly = value.replace(/[^\[\]\(\)\{\}]/g, '');
 
-            _.each(value, function(char) {
-                if (nestingLevel >= 0) {
-                    if (char === '(') {
-                        nestingLevel++;
-                    }
-                    if (char === ')') {
-                        nestingLevel--;
-                    }
+            _.each(bracketsOnly, function(char) {
+                if (!breakLoop) {
+                    setOpen(char, '(', ')');
+                    setOpen(char, '[', ']');
+                    checkClose(char, ')');
+                    checkClose(char, ']');
                 }
             });
 
-            _.each(value, function(char) {
-                if (nestingLevel >= 0) {
-                    if (char === '[') {
-                        nestingLevel++;
-                    }
-                    if (char === ']') {
-                        nestingLevel--;
-                    }
+            if (breakLoop || !_.isEmpty(expected)) {
+                this.error.brackets = 'Wrong brackets balance in \'' + value + '\'';
+                return false
+            }
+
+            return true;
+
+            function setOpen(symbol, char, closeExpect) {
+                if (char === symbol) {
+                    expected.push(closeExpect);
                 }
-            });
+            }
 
-            this.error.brackets = nestingLevel !== 0 ? 'Wrong balance of brackets' : undefined;
-
-            return nestingLevel === 0;
+            function checkClose(symbol, char) {
+                if (char === symbol) {
+                    breakLoop = expected.pop() !== char;
+                }
+            }
         },
 
         /**
@@ -267,11 +261,15 @@ define([
             var queryPartBefore = this.getStringPart(query, 0, cutBefore);
             var queryPartAfter = this.getStringPart(query, cutAfter);
 
+            var doSpaceOffset = !queryPartAfter.trim();
+
             setTimeout(function() {
-                _this.$element[0].selectionStart = _this.$element[0].selectionEnd = cutBefore + item.length;
+                _this.$element[0].selectionStart = _this.$element[0].selectionEnd = cutBefore + item.length + (doSpaceOffset ? 1 : 0);
+                _this.$element.trigger('keyup');
             }, 10);
 
-            return queryPartBefore + item + queryPartAfter;
+
+            return queryPartBefore + item + (doSpaceOffset ? ' ' : queryPartAfter);
         },
 
         /**
@@ -354,7 +352,7 @@ define([
                     if (this.allowedMath) {
                         result = _.union(result, getCases(wordUnderCaret, this.cases.math));
                     }
-                } else if (wordIs.hasTerm || wordIs.hasValue || wordIs.couldTerm) {
+                } else if (wordIs.hasTerm || wordIs.hasValue || wordIs.notOps) {
                     if (this.allowedCompare) {
                         result = _.union(result, getCases(wordUnderCaret, this.cases.compare));
                     }
@@ -364,7 +362,7 @@ define([
                     if (!this.allowedInclusion && !this.allowedCompare) {
                         result = this.cases.math;
                     }
-                } else if (wordIs.isBool || wordIs.isMath){
+                } else {
                     return this.cases.data;
                 }
 
@@ -384,13 +382,15 @@ define([
                     lastChar = word[word.length - 1];
 
                 return {
+                    hasCompare: checkIt.hasCompare,
+                    hasInclusion: checkIt.hasInclusion,
                     isCompare: checkIt.hasCompare && checkIt.isValid,
                     isInclusion: checkIt.hasInclusion && checkIt.isValid,
                     hasTerm: _this.checkTerm(word, _this.cases.data),
                     hasValue: _this.checkValue(word),
                     isBool: _.contains(_this.cases.bool, word),
                     isMath: _.contains(_this.cases.math, lastChar),
-                    couldTerm: !_.contains(_this.cases.math, lastChar) && !_.contains(_this.cases.compare, lastChar) && !_.contains(_this.cases.inclusion, lastChar)
+                    notOps: /[a-zA-Z\[\]\)\(]/g.test(lastChar)
                 };
             }
 
@@ -409,18 +409,20 @@ define([
          * @returns {*}
          */
         checkTerm: function(term, base) {
-            var validBrackets = true;
-            var bracketsMatch = term.match(/\[(.*?)\]/g);
-
-            if (bracketsMatch) {
-                validBrackets = bracketsMatch.length === 1 ? this.checkArray(this.replaceBetween(bracketsMatch[0], '[]').split(',')) : false;
+            if (!term){
+                return false;
             }
 
-            var isCorrect = term && validBrackets ? this.contains(base, this.replaceBetween(term, '[]', 'wipe')) : false;
+            if (!this.contains(base, this.replaceBetween(term, '[]', 'wipe'))){
+                this.error.term = 'Part \'' + term + '\'' + ' is wrong';
+                return false;
+            }
 
-            this.error.term = !isCorrect ? 'Part \'' + term + '\'' + ' is wrong' : undefined;
+            if (this.error.term) {
+                delete this.error.term;
+            }
 
-            return isCorrect;
+            return true;
         },
 
         /**
@@ -446,25 +448,53 @@ define([
             var matchSplit = this.splitTermAndExpr(string, match),
                 expr = this.replaceBetween(matchSplit.expr, '[]', 'trim');
 
-            return this.checkTerm(matchSplit.term, this.cases.data) && !_.isEmpty(matchSplit.expr) && (this.checkArray(expr.split(',')) || this.checkTerm(expr, this.cases.data));
+            return this.checkTerm(matchSplit.term, this.cases.data) && !_.isEmpty(matchSplit.expr) && (this.checkArray(matchSplit.expr) || this.checkTerm(expr, this.cases.data));
         },
 
         /**
          *
-         * @param arr
+         * @param array
          * @returns {boolean}
          */
-        checkArray: function(arr) {
-            if (_.isEmpty(arr)) {
-                return false;
-            }
-
+        checkArray: function(array) {
             var _this = this;
 
-            return _.every(arr, function(item) {
-                return _this.checkValue(item);
-            });
+            if (_.isArray(array)) {
+                return checkValues(array);
+            } else {
+                var arrayMatch = getMatches(array, /(\[(.*?)\])/g);
 
+                if (!_.isEmpty(arrayMatch)) {
+                    if (arrayMatch.length > 1) {
+                        this.error.array = 'Array \'' + array + '\' is wrong';
+                        return false;
+                    } else {
+                        return checkValues((arrayMatch[0] || '').split(','));
+                    }
+                }
+            }
+
+            function getMatches(string, re) {
+                var match,
+                    matches = [];
+
+                while ((match = re.exec(string)) !== null) {
+                    matches.push(match[2]);
+                }
+
+                return matches;
+            }
+
+            function checkValues(array) {
+                return _.every(array, function(value) {
+                    if (_.isEmpty(value)) {
+                        _this.error.array = 'One of \'' + array + '\' array items is empty';
+                        return false;
+                    }
+
+                    return _this.checkValue(value);
+                });
+            }
         },
 
         /**
@@ -473,12 +503,14 @@ define([
          * @returns {boolean}
          */
         checkValue: function(value) {
+            if (_.isEmpty(value)) {
+                return false
+            }
+
             var num = Number(value),
-                isCorrect = !_.isEmpty(value) && ((_.isNumber(num) && !_.isNaN(num)) || _.contains(this.cases.data, value));
+                isNumber = _.isNumber(num) && !_.isNaN(num);
 
-            this.error.value = !isCorrect ? 'Wrong value is \'' + value + '\'' : undefined;
-
-            return isCorrect;
+            return isNumber || this.checkTerm(value, this.cases.data);
         },
 
         /**
@@ -507,34 +539,24 @@ define([
                 return false;
             }
 
-            expr = this.replaceBetween(this.replaceBetween(expr, '[]', 'trim'), '[]', 'wipe');
-
-            var _this = this;
-
             if (this.checkValue(expr)) {
                 return true;
             }
 
-            if (this.checkArray(expr.split(','))) {
+            if (this.checkArray(expr)) {
+                return true;
+            }
+
+            if (this.contains(keyData, expr)) {
                 return true;
             }
 
             var mathMatch = expr.match(this.opsRegEx['math']);
 
             if (mathMatch) {
-                var values = _.reduce(mathMatch, function(values, match) {
+                return this.checkArray(_.reduce(mathMatch, function(values, match) {
                     return values.replace(match, ' ');
-                }, expr).split(' ');
-
-                return !_.contains(values, '') && !hasBool(values) && this.checkArray(values);
-            } else {
-                return this.contains(keyData, expr);
-            }
-
-            function hasBool(data) {
-                return _.every(_.flatten([data]), function(value) {
-                    return _.contains(_this.cases.bool, value);
-                });
+                }, expr).split(' '));
             }
         },
 
@@ -830,15 +852,17 @@ define([
             return input;
 
             function _replace(string, brackets, type, replace) {
+                var split = brackets.split('');
+
                 switch (type) {
                     case 'trim':
-                        return string.replace(new RegExp('^' + '\\' + brackets.split('').join('|\\') + '$', 'g'), replace || '');
+                        return string.replace(new RegExp('^' + '\\' + split.join('(.*?)\\') + '$', 'g'), _.isUndefined(replace) ? '$1' : replace + '$1' + replace);
                         break;
                     case 'wipe':
-                        return string.replace(new RegExp('\\' + brackets.split('').join('(.*?)\\'), 'g'), replace || '');
+                        return string.replace(new RegExp('\\' + split.join('(.*?)\\'), 'g'), replace || '');
                         break;
                     default:
-                        return string.replace(new RegExp('\\' + brackets.split('').join('|\\'), 'g'), replace || '');
+                        return string.replace(new RegExp('\\' + split.join('|\\'), 'g'), replace || '');
                 }
             }
         }
