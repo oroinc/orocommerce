@@ -1,4 +1,12 @@
 operations:
+    crm_page_create:
+        label: oro.cms.page.create
+        routes:
+            - oro_cms_page_index
+        acl_resource: oro_cms_page_create
+        actions:
+            - '@redirect':
+                route: oro_cms_page_create
     DELETE:
         exclude_entities:
             - Oro\Bundle\CMSBundle\Entity\LoginPage
