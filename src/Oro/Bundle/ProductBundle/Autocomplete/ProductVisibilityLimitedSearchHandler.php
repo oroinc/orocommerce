@@ -11,7 +11,6 @@ use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 
-
 class ProductVisibilityLimitedSearchHandler extends SearchHandler
 {
     /** @var RequestStack */
@@ -71,6 +70,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     {
         $this->searchRepository = $searchRepository;
     }
+
     /**
      * {@inheritdoc}
      */

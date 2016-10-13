@@ -1,7 +1,6 @@
 <?php
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Search;
 
-
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;

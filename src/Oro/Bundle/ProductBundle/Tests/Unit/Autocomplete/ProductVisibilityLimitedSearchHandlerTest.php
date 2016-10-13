@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Autocomplete;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
-use Oro\Bundle\ProductBundle\Search\ProductRepository;
+
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -19,13 +19,16 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\SearchBundle\Engine\Indexer;
 
-use Oro\Bundle\SearchBundle\Query\Result;
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
+
+use Oro\Bundle\SearchBundle\Engine\Indexer;
+use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\SearchBundle\Query\SearchRepository;
+
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestCase
@@ -135,7 +138,6 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
             ->getMock();
         $this->entityRepository
             ->method('createQueryBuilder')->will($this->returnValue($this->queryBuilder));
-
 
         $metadata = $this->getMockBuilder(ClassMetadata::class)
             ->setMethods(['getSingleIdentifierFieldName'])
@@ -250,9 +252,6 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
         $this->searchHandler->initDoctrinePropertiesByEntityManager($this->entityManager);
         $this->searchHandler->setFrontendHelper($this->frontendHelper);
 
-//        var_dump($this->searchRepository);
-//        die;
-
         $this->searchHandler->setSearchRepository($this->searchRepository);
         $this->searchHandler->initSearchIndexer($this->indexer, $this->testSearchConfig);
         $this->searchHandler->setAclHelper($this->aclHelper);
@@ -305,5 +304,4 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
             sprintf('Search result should containe %d elements', count(self::TEST_RESULTS))
         );
     }
-
 }
