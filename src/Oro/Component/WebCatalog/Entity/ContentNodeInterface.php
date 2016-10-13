@@ -2,15 +2,10 @@
 
 namespace Oro\Component\WebCatalog\Entity;
 
-interface WebCatalogPageInterface
+interface ContentNodeInterface
 {
     /**
      * @return int
      */
     public function getId();
-
-    /**
-     * @return string
-     */
-    public function getType();
 }

@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendWebCatalog;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 
@@ -13,11 +14,20 @@ use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
  * @Config(
  *      routeName="oro_web_catalog_index",
  *      routeView="oro_web_catalog_view",
- *      routeUpdate="oro_web_catalog_update"
+ *      routeUpdate="oro_web_catalog_update",
+ *      defaultValues={
+ *          "ownership"={
+ *              "owner_type"="BUSINESS_UNIT",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="business_unit_owner_id"
+ *          }
+ *     }
  * )
  */
 class WebCatalog extends ExtendWebCatalog implements WebCatalogInterface
 {
+    use BusinessUnitAwareTrait;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")

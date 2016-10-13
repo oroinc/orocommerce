@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Model;
 
-class ExtendWebCatalogPage
+class ExtendContentVariant
 {
     /**
      * Constructor

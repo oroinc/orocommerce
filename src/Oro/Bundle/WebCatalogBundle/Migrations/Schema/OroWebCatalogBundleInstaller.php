@@ -40,18 +40,18 @@ class OroWebCatalogBundleInstaller implements
     {
         /** Tables generation **/
         $this->createOroWebCatalogTable($schema);
-        $this->createOroWebCatalogPageTable($schema);
-        $this->createOroWebCatalogNodeTable($schema);
-        $this->createOroWebCatalogNodeSlugTable($schema);
-        $this->createOroWebCatalogNodeTitleTable($schema);
-        $this->createOroWebCatalogNodeToSlugTable($schema);
+        $this->createOroContentVariantTable($schema);
+        $this->createOroContentNodeTable($schema);
+        $this->createOroContentNodeSlugTable($schema);
+        $this->createOroContentNodeTitleTable($schema);
+        $this->createOroContentNodeToSlugTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroWebCatalogNodeForeignKeys($schema);
-        $this->addOroWebCatalogNodeSlugForeignKeys($schema);
-        $this->addOroWebCatalogNodeTitleForeignKeys($schema);
-        $this->addOroWebCatalogNodeToSlugForeignKeys($schema);
-        $this->addOroWebCatalogPageForeignKeys($schema);
+        $this->addOroContentNodeForeignKeys($schema);
+        $this->addOroContentNodeSlugForeignKeys($schema);
+        $this->addOroContentNodeTitleForeignKeys($schema);
+        $this->addOroContentNodeToSlugForeignKeys($schema);
+        $this->addOroContentVariantForeignKeys($schema);
     }
 
     /**
@@ -69,28 +69,29 @@ class OroWebCatalogBundleInstaller implements
     }
 
     /**
-     * Create oro_web_catalog_page table
+     * Create oro_web_catalog_variant table
      *
      * @param Schema $schema
      */
-    protected function createOroWebCatalogPageTable(Schema $schema)
+    protected function createOroContentVariantTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_web_catalog_page');
+        $table = $schema->createTable('oro_web_catalog_variant');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('node_id', 'integer', ['notnull' => false]);
         $table->addColumn('type', 'string', ['length' => 255]);
+        $table->addColumn('system_page_route', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['node_id']);
     }
 
     /**
-     * Create oro_web_catalog_node table
+     * Create oro_web_catalog_content_node table
      *
      * @param Schema $schema
      */
-    protected function createOroWebCatalogNodeTable(Schema $schema)
+    protected function createOroContentNodeTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_web_catalog_node');
+        $table = $schema->createTable('oro_web_catalog_content_node');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('name', 'string', ['length' => 255]);
@@ -102,10 +103,10 @@ class OroWebCatalogBundleInstaller implements
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $this->noteExtension->addNoteAssociation($schema, 'oro_web_catalog_node');
+        $this->noteExtension->addNoteAssociation($schema, 'oro_web_catalog_content_node');
         $this->attachmentExtension->addImageRelation(
             $schema,
-            'oro_web_catalog_node',
+            'oro_web_catalog_content_node',
             'image'
         );
     }
@@ -115,7 +116,7 @@ class OroWebCatalogBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOroWebCatalogNodeSlugTable(Schema $schema)
+    protected function createOroContentNodeSlugTable(Schema $schema)
     {
         $table = $schema->createTable('oro_web_catalog_node_slug');
         $table->addColumn('node_id', 'integer', []);
@@ -129,7 +130,7 @@ class OroWebCatalogBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOroWebCatalogNodeTitleTable(Schema $schema)
+    protected function createOroContentNodeTitleTable(Schema $schema)
     {
         $table = $schema->createTable('oro_web_catalog_node_title');
         $table->addColumn('node_id', 'integer', []);
@@ -143,7 +144,7 @@ class OroWebCatalogBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOroWebCatalogNodeToSlugTable(Schema $schema)
+    protected function createOroContentNodeToSlugTable(Schema $schema)
     {
         $table = $schema->createTable('oro_web_catalog_node_to_slug');
         $table->addColumn('node_id', 'integer', []);
@@ -153,15 +154,15 @@ class OroWebCatalogBundleInstaller implements
     }
 
     /**
-     * Add oro_web_catalog_node foreign keys.
+     * Add oro_web_catalog_content_node foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOroWebCatalogNodeForeignKeys(Schema $schema)
+    protected function addOroContentNodeForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_web_catalog_node');
+        $table = $schema->getTable('oro_web_catalog_content_node');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_web_catalog_node'),
+            $schema->getTable('oro_web_catalog_content_node'),
             ['parent_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -173,11 +174,11 @@ class OroWebCatalogBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOroWebCatalogNodeSlugForeignKeys(Schema $schema)
+    protected function addOroContentNodeSlugForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_web_catalog_node_slug');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_web_catalog_node'),
+            $schema->getTable('oro_web_catalog_content_node'),
             ['node_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -195,11 +196,11 @@ class OroWebCatalogBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOroWebCatalogNodeTitleForeignKeys(Schema $schema)
+    protected function addOroContentNodeTitleForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_web_catalog_node_title');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_web_catalog_node'),
+            $schema->getTable('oro_web_catalog_content_node'),
             ['node_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -217,7 +218,7 @@ class OroWebCatalogBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOroWebCatalogNodeToSlugForeignKeys(Schema $schema)
+    protected function addOroContentNodeToSlugForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_web_catalog_node_to_slug');
         $table->addForeignKeyConstraint(
@@ -227,7 +228,7 @@ class OroWebCatalogBundleInstaller implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_web_catalog_node'),
+            $schema->getTable('oro_web_catalog_content_node'),
             ['node_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -235,15 +236,15 @@ class OroWebCatalogBundleInstaller implements
     }
 
     /**
-     * Add oro_web_catalog_page foreign keys.
+     * Add oro_web_catalog_variant foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOroWebCatalogPageForeignKeys(Schema $schema)
+    protected function addOroContentVariantForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_web_catalog_page');
+        $table = $schema->getTable('oro_web_catalog_variant');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_web_catalog_node'),
+            $schema->getTable('oro_web_catalog_content_node'),
             ['node_id'],
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]

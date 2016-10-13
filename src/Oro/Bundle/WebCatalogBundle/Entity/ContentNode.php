@@ -11,18 +11,24 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Oro\Bundle\WebCatalogBundle\Model\ExtendWebCatalogNode;
+use Oro\Bundle\WebCatalogBundle\Model\ExtendContentNode;
 use Oro\Component\Tree\Entity\TreeTrait;
-use Oro\Component\WebCatalog\Entity\WebCatalogNodeInterface;
+use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="oro_web_catalog_node")
+ * @ORM\Table(name="oro_web_catalog_content_node")
  * @Gedmo\Tree(type="nested")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      defaultValues={
+ *          "ownership"={
+ *              "owner_type"="BUSINESS_UNIT",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="business_unit_owner_id"
+ *          },
  *          "dataaudit"={
  *              "auditable"=true
  *          }
@@ -31,10 +37,11 @@ use Oro\Component\WebCatalog\Entity\WebCatalogNodeInterface;
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInterface, DatesAwareInterface
+class ContentNode extends ExtendContentNode implements ContentNodeInterface, DatesAwareInterface
 {
     use TreeTrait;
     use DatesAwareTrait;
+    use BusinessUnitAwareTrait;
     
     /**
      * @ORM\Id
@@ -44,10 +51,10 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
     protected $id;
 
     /**
-     * @var WebCatalogNode
+     * @var ContentNode
      *
      * @Gedmo\TreeParent
-     * @ORM\ManyToOne(targetEntity="WebCatalogNode", inversedBy="childNodes")
+     * @ORM\ManyToOne(targetEntity="ContentNode", inversedBy="childNodes")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
@@ -60,9 +67,9 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
     protected $parentNode;
 
     /**
-     * @var Collection|WebCatalogNode[]
+     * @var Collection|ContentNode[]
      *
-     * @ORM\OneToMany(targetEntity="WebCatalogNode", mappedBy="parentNode", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="ContentNode", mappedBy="parentNode", cascade={"persist"})
      * @ORM\OrderBy({"left" = "ASC"})
      * @ConfigField(
      *      defaultValues={
@@ -155,11 +162,11 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
     protected $pageSlugs;
 
     /**
-     * @var Collection|WebCatalogPage[]
+     * @var Collection|ContentVariant[]
      *
-     * @ORM\OneToMany(targetEntity="Oro\Bundle\WebCatalogBundle\Entity\WebCatalogPage", mappedBy="node")
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\WebCatalogBundle\Entity\ContentVariant", mappedBy="node")
      */
-    protected $pages;
+    protected $contentVariants;
 
     /**
      * @var string
@@ -169,7 +176,7 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
     protected $materializedPath;
 
     /**
-     * WebCatalogNode Constructor
+     * ContentNode Constructor
      */
     public function __construct()
     {
@@ -179,7 +186,7 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
         $this->childNodes = new ArrayCollection();
         $this->slugs = new ArrayCollection();
         $this->pageSlugs = new ArrayCollection();
-        $this->pages = new ArrayCollection();
+        $this->contentVariants = new ArrayCollection();
     }
     
     /**
@@ -200,7 +207,7 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
 
     /**
      * @param string $name
-     * @return WebCatalogNode
+     * @return ContentNode
      */
     public function setName($name)
     {
@@ -210,7 +217,7 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
     }
 
     /**
-     * @return WebCatalogNode
+     * @return ContentNode
      */
     public function getParentNode()
     {
@@ -218,11 +225,11 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
     }
 
     /**
-     * @param WebCatalogNode|null $parentNode
+     * @param ContentNode|null $parentNode
      *
      * @return $this
      */
-    public function setParentNode(WebCatalogNode $parentNode = null)
+    public function setParentNode(ContentNode $parentNode = null)
     {
         $this->parentNode = $parentNode;
 
@@ -230,7 +237,7 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
     }
 
     /**
-     * @return Collection|WebCatalogNode[]
+     * @return Collection|ContentNode[]
      */
     public function getChildNodes()
     {
@@ -238,11 +245,11 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
     }
 
     /**
-     * @param WebCatalogNode $node
+     * @param ContentNode $node
      *
      * @return $this
      */
-    public function addChildNode(WebCatalogNode $node)
+    public function addChildNode(ContentNode $node)
     {
         if (!$this->childNodes->contains($node)) {
             $this->childNodes->add($node);
@@ -253,11 +260,11 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
     }
 
     /**
-     * @param WebCatalogNode $node
+     * @param ContentNode $node
      *
      * @return $this
      */
-    public function removeChildNode(WebCatalogNode $node)
+    public function removeChildNode(ContentNode $node)
     {
         if ($this->childNodes->contains($node)) {
             $this->childNodes->removeElement($node);
@@ -341,7 +348,7 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
     /**
      * @return Collection|Slug[]
      */
-    public function getPageSlugs()
+    public function getContentVariantSlugs()
     {
         return $this->pageSlugs;
     }
@@ -351,7 +358,7 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
      *
      * @return $this
      */
-    public function addPageSlug(Slug $pageSlug)
+    public function addContentVariantSlug(Slug $pageSlug)
     {
         if (!$this->pageSlugs->contains($pageSlug)) {
             $this->pageSlugs->add($pageSlug);
@@ -365,7 +372,7 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
      *
      * @return $this
      */
-    public function removePageSlug(Slug $pageSlug)
+    public function removeContentVariantSlug(Slug $pageSlug)
     {
         if ($this->pageSlugs->contains($pageSlug)) {
             $this->pageSlugs->removeElement($pageSlug);
@@ -375,36 +382,36 @@ class WebCatalogNode extends ExtendWebCatalogNode implements WebCatalogNodeInter
     }
 
     /**
-     * @return Collection|WebCatalogPage[]
+     * @return Collection|ContentVariant[]
      */
-    public function getPages()
+    public function getContentVariants()
     {
-        return $this->pages;
+        return $this->contentVariants;
     }
 
     /**
-     * @param WebCatalogPage $page
+     * @param ContentVariant $page
      *
      * @return $this
      */
-    public function addPage(WebCatalogPage $page)
+    public function addContentVariant(ContentVariant $page)
     {
-        if (!$this->pages->contains($page)) {
-            $this->pages->add($page);
+        if (!$this->contentVariants->contains($page)) {
+            $this->contentVariants->add($page);
         }
 
         return $this;
     }
 
     /**
-     * @param WebCatalogPage $page
+     * @param ContentVariant $page
      *
      * @return $this
      */
-    public function removePage(WebCatalogPage $page)
+    public function removeContentVariant(ContentVariant $page)
     {
-        if ($this->pages->contains($page)) {
-            $this->pages->removeElement($page);
+        if ($this->contentVariants->contains($page)) {
+            $this->contentVariants->removeElement($page);
         }
 
         return $this;

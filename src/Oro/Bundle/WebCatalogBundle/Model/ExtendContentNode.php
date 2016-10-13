@@ -5,15 +5,15 @@ namespace Oro\Bundle\WebCatalogBundle\Model;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\WebCatalogBundle\Entity\WebCatalogNode;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 
 /**
  * @method File getImage()
- * @method WebCatalogNode setImage(File $image)
+ * @method ContentNode setImage(File $image)
  * @method LocalizedFallbackValue getTitle(Localization $localization = null)
  * @method LocalizedFallbackValue getSlug(Localization $localization = null)
  */
-class ExtendWebCatalogNode
+class ExtendContentNode
 {
     /**
      * Constructor

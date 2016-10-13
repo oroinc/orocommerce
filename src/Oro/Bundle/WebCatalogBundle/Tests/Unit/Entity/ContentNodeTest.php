@@ -2,20 +2,20 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\WebCatalogBundle\Entity\WebCatalogNode;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Oro\Bundle\WebCatalogBundle\Entity\WebCatalogPage;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class WebCatalogNodeTest extends \PHPUnit_Framework_TestCase
+class ContentNodeTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
 
     public function testAccessors()
     {
-        $this->assertPropertyAccessors(new WebCatalogNode(), [
-            ['parentNode', new WebCatalogNode()],
+        $this->assertPropertyAccessors(new ContentNode(), [
+            ['parentNode', new ContentNode()],
             ['name', 'Node name'],
             ['materializedPath', 'path/to/node'],
             ['left', 30],
@@ -25,18 +25,18 @@ class WebCatalogNodeTest extends \PHPUnit_Framework_TestCase
             ['createdAt', new \DateTime()],
             ['updatedAt', new \DateTime()]
         ]);
-        $this->assertPropertyCollections(new WebCatalogNode(), [
-            ['childNodes', new WebCatalogNode()],
+        $this->assertPropertyCollections(new ContentNode(), [
+            ['childNodes', new ContentNode()],
             ['titles', new LocalizedFallbackValue()],
             ['slugs', new LocalizedFallbackValue()],
-            ['pageSlugs', new Slug()],
-            ['pages', new WebCatalogPage()],
+            ['contentVariantSlugs', new Slug()],
+            ['contentVariants', new ContentVariant()],
         ]);
     }
 
     public function testIsUpdatedAtSet()
     {
-        $entity = new WebCatalogNode();
+        $entity = new ContentNode();
         $entity->setUpdatedAt(new \DateTime());
 
         $this->assertTrue($entity->isUpdatedAtSet());
@@ -44,7 +44,7 @@ class WebCatalogNodeTest extends \PHPUnit_Framework_TestCase
 
     public function testIsUpdatedAtNotSet()
     {
-        $entity = new WebCatalogNode();
+        $entity = new ContentNode();
         $entity->setUpdatedAt(null);
 
         $this->assertFalse($entity->isUpdatedAtSet());

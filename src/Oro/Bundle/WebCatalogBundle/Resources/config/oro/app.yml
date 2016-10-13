@@ -2,5 +2,5 @@ doctrine:
     orm:
         resolve_target_entities:
             Oro\Component\WebCatalog\Entity\WebCatalogInterface: Oro\Bundle\WebCatalogBundle\Entity\WebCatalog
-            Oro\Component\WebCatalog\Entity\WebCatalogNodeInterface: Oro\Bundle\WebCatalogBundle\Entity\WebCatalogNode
-            Oro\Component\WebCatalog\Entity\WebCatalogPageInterface: Oro\Bundle\WebCatalogBundle\Entity\WebCatalogPage
+            Oro\Component\WebCatalog\Entity\ContentNodeInterface: Oro\Bundle\WebCatalogBundle\Entity\ContentNode
+            Oro\Component\WebCatalog\Entity\ContentVariantInterface: Oro\Bundle\WebCatalogBundle\Entity\ContentVariant
