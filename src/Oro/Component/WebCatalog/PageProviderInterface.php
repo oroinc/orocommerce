@@ -2,7 +2,7 @@
 
 namespace Oro\Component\WebCatalog;
 
-use Oro\Component\WebCatalog\Entity\WebCatalogPageInterface;
+use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 interface PageProviderInterface
 {
@@ -14,13 +14,13 @@ interface PageProviderInterface
 
     /**
      * @param object $entity
-     * @return WebCatalogPageInterface[]
+     * @return ContentVariantInterface[]
      */
     public function getPagesByEntity($entity);
 
     /**
      * @param object[] $entities
-     * @return WebCatalogPageInterface[]
+     * @return ContentVariantInterface[]
      */
     public function getPagesByEntities(array $entities);
 }

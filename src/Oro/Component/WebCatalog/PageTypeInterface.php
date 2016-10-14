@@ -2,7 +2,7 @@
 
 namespace Oro\Component\WebCatalog;
 
-use Oro\Component\WebCatalog\Entity\WebCatalogPageInterface;
+use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 interface PageTypeInterface
 {
@@ -27,14 +27,14 @@ interface PageTypeInterface
     public function isAllowed();
 
     /**
-     * @param WebCatalogPageInterface $page
+     * @param ContentVariantInterface $page
      * @return bool
      */
-    public function isSupportedPage(WebCatalogPageInterface $page);
+    public function isSupportedPage(ContentVariantInterface $page);
 
     /**
-     * @param WebCatalogPageInterface $page
+     * @param ContentVariantInterface $page
      * @return RouteData
      */
-    public function getRouteData(WebCatalogPageInterface $page);
+    public function getRouteData(ContentVariantInterface $page);
 }

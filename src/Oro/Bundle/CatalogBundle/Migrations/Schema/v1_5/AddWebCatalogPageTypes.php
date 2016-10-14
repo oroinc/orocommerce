@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_6;
+namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_5;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
@@ -11,7 +11,7 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class AddWebContentPageTypes implements Migration, ExtendExtensionAwareInterface
+class AddWebCatalogPageTypes implements Migration, ExtendExtensionAwareInterface
 {
     /**
      * @var ExtendExtension
@@ -37,32 +37,17 @@ class AddWebContentPageTypes implements Migration, ExtendExtensionAwareInterface
             $this->extendExtension->addManyToOneRelation(
                 $schema,
                 $table,
-                'product_page_product',
-                'oro_product',
+                'catalog_page_category',
+                'oro_catalog_category',
                 'id',
                 [
                     ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
-                    'entity' => ['label' => 'oro.product.entity_label'],
+                    'entity' => ['label' => 'oro.catalog.category.entity_label'],
                     'extend' => [
                         'is_extend' => true,
                         'owner' => ExtendScope::OWNER_CUSTOM
                     ],
                     'dataaudit' => ['auditable' => true]
-                ]
-            );
-
-            $table->addColumn(
-                'product_collection_page_rule',
-                'text',
-                [
-                    'oro_options' => [
-                        'extend' => [
-                            'is_extend' => true,
-                            'owner' => ExtendScope::OWNER_CUSTOM
-                        ],
-                        'merge' => ['display' => true],
-                        'dataaudit' => ['auditable' => true]
-                    ]
                 ]
             );
         }

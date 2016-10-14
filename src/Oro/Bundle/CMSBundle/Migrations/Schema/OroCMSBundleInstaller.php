@@ -6,24 +6,36 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInterface
+class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInterface, ExtendExtensionAwareInterface
 {
     const CMS_LOGIN_PAGE_TABLE = 'oro_cms_login_page';
     const MAX_LOGO_IMAGE_SIZE_IN_MB = 10;
     const MAX_BACKGROUND_IMAGE_SIZE_IN_MB = 10;
 
-    /** @var AttachmentExtension */
+    /**
+     * @var AttachmentExtension
+     */
     protected $attachmentExtension;
+
+    /**
+     * @var ExtendExtension
+     */
+    protected $extendExtension;
 
     /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -32,6 +44,14 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
     public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
     {
         $this->attachmentExtension = $attachmentExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
     }
 
     /**
@@ -49,6 +69,8 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
         $this->addOroCmsPageToSlugForeignKeys($schema);
 
         $this->addImageAssociations($schema);
+        
+        $this->addWebCatalogPageTypes($schema);
     }
 
     /**
@@ -174,5 +196,32 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
             [],
             self::MAX_BACKGROUND_IMAGE_SIZE_IN_MB
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function addWebCatalogPageTypes(Schema $schema)
+    {
+        if ($schema->hasTable('oro_web_catalog_variant')) {
+            $table = $schema->getTable('oro_web_catalog_variant');
+
+            $this->extendExtension->addManyToOneRelation(
+                $schema,
+                $table,
+                'landing_page_cms_page',
+                'oro_cms_page',
+                'id',
+                [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                    'entity' => ['label' => 'oro.cms.page.entity_label'],
+                    'extend' => [
+                        'is_extend' => true,
+                        'owner' => ExtendScope::OWNER_CUSTOM
+                    ],
+                    'dataaudit' => ['auditable' => true]
+                ]
+            );
+        }
     }
 }
