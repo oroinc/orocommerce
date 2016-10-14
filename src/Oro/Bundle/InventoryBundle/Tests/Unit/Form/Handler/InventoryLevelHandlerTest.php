@@ -12,7 +12,6 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\InventoryBundle\Form\Handler\InventoryLevelHandler;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -111,8 +110,6 @@ class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('findOneBy')
             ->willReturnCallback(
                 function (array $criteria) use ($existingLevels) {
-                    /** @var Warehouse $warehouse */
-                    //$warehouse = $criteria['warehouse'];
                     /** @var ProductUnitPrecision $precision */
                     $precision = $criteria['productUnitPrecision'];
                     foreach ($existingLevels as $level) {
@@ -126,7 +123,7 @@ class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager->expects($this->any())
             ->method('getRepository')
-            ->with('OroInventoryBundle:InventoryLevel')
+            ->with('Oro\Bundle\InventoryBundle\Entity\InventoryLevel')
             ->willReturn($repository);
 
         // mock remove and persist behaviour
@@ -270,7 +267,7 @@ class InventoryLevelHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int $warehouseId
+     * @param int $id
      * @param int $precisionId
      * @param int|float $quantity
      * @param int $precision

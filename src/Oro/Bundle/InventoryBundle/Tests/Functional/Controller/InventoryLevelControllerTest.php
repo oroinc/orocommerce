@@ -7,7 +7,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevelWithPrimaryUnit;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -21,7 +21,7 @@ class InventoryLevelControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            LoadInventoryLevels::class
+            LoadInventoryLevelWithPrimaryUnit::class
         ]);
     }
 
@@ -133,9 +133,9 @@ class InventoryLevelControllerTest extends WebTestCase
     protected function assertLevelsGridData(Product $product, array $data)
     {
         $expectedCombinedIds = [];
-            foreach ($product->getUnitPrecisions() as $precision) {
-                $expectedCombinedIds[] = sprintf('%s', $precision->getId());
-            }
+        foreach ($product->getUnitPrecisions() as $precision) {
+            $expectedCombinedIds[] = sprintf('%s', $precision->getId());
+        }
 
         $this->assertSameSize($expectedCombinedIds, $data);
         foreach ($data as $row) {
