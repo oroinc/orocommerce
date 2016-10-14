@@ -1,0 +1,67 @@
+{% block _page_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-container'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _page_header_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-header'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _logo_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' logo'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {# In home page #}
+        {% if app.request.attributes.get('_route') == 'oro_frontend_root' %}
+            <img
+                src="{% image '@OroFrontendBundle/Resources/public/blank/images/logo/logo-oroacem.svg' %}{{ asset_url }}{% endimage %}"
+                alt="logo"
+            />
+        {% else %}
+            <a href="{{ path('oro_frontend_root') }}" class="logo" style="background: url('{% image '@OroFrontendBundle/Resources/public/blank/images/logo/logo-oroacem.svg' %}{{ asset_url }}{% endimage %}') no-repeat;"></a>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block _page_content_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-content'
+    }) %}
+
+    <main {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </main>
+{% endblock %}
+
+{% block _page_footer_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-footer'
+    }) %}
+
+    <footer {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </footer>
+{% endblock %}
+
+{% block _copyright_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' copyright'
+    }) %}
+
+    <p {{ block('block_attributes') }}>
+        {{ 'oro_frontend.copyright'|trans|raw }}
+    </p>
+{% endblock %}
