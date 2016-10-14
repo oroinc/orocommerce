@@ -5,7 +5,7 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: 'oro.account.accountuser.profile.register'
+            optionValue: 'oro.account.profile.register'
         - '@addTree':
             items:
                 registration_page_wrapper:

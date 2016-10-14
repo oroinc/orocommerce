@@ -5,11 +5,13 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: 'oro.account.menu.account_user_login.label'
+            optionValue: 'oro.account.accountuser.profile.register'
         - '@addTree':
             items:
                 login_page_wrapper:
                     blockType: vertical_container
+                login_page:
+                    blockType: login_page
                 login_form:
                     blockType: container
                 login_form_remember_item:
@@ -88,18 +90,19 @@ layout:
             tree:
                 wrapper:
                     login_page_wrapper:
-                        login_form:
-                            login_form_title: ~
-                            login_form_notifications: ~
-                            login_form_username: ~
-                            login_form_password: ~
-                            login_form_remember_item:
-                                login_form_remember: ~
-                            login_form_submit_item:
-                                login_form_submit: ~
-                            login_form_forgot_item:
-                                login_form_forgot: ~
-                            login_form_register_item:
-                                login_form_register: ~
-                            login_form_target: ~
-                            login_form_csrf: ~
+                        login_page:
+                            login_form:
+                                login_form_title: ~
+                                login_form_notifications: ~
+                                login_form_username: ~
+                                login_form_password: ~
+                                login_form_remember_item:
+                                    login_form_remember: ~
+                                login_form_submit_item:
+                                    login_form_submit: ~
+                                login_form_forgot_item:
+                                    login_form_forgot: ~
+                                login_form_register_item:
+                                    login_form_register: ~
+                                login_form_target: ~
+                                login_form_csrf: ~
