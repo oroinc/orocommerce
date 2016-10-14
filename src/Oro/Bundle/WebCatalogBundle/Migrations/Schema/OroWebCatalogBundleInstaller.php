@@ -3,8 +3,6 @@
 namespace Oro\Bundle\WebCatalogBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
@@ -16,15 +14,21 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
  */
 class OroWebCatalogBundleInstaller implements
     Installation,
-    NoteExtensionAwareInterface,
-    AttachmentExtensionAwareInterface
+    NoteExtensionAwareInterface
 {
-    /** @var NoteExtension */
+    /**
+     * @var NoteExtension
+     */
     protected $noteExtension;
-    
-    /** @var AttachmentExtension */
-    protected $attachmentExtension;
-    
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setNoteExtension(NoteExtension $noteExtension)
+    {
+        $this->noteExtension = $noteExtension;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -47,6 +51,7 @@ class OroWebCatalogBundleInstaller implements
         $this->createOroContentNodeToSlugTable($schema);
 
         /** Foreign keys generation **/
+        $this->addOroWebCatalogForeignKeys($schema);
         $this->addOroContentNodeForeignKeys($schema);
         $this->addOroContentNodeSlugForeignKeys($schema);
         $this->addOroContentNodeTitleForeignKeys($schema);
@@ -63,9 +68,12 @@ class OroWebCatalogBundleInstaller implements
     {
         $table = $schema->createTable('oro_web_catalog');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('description', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $this->noteExtension->addNoteAssociation($schema, $table->getName());
     }
 
     /**
@@ -93,9 +101,11 @@ class OroWebCatalogBundleInstaller implements
     {
         $table = $schema->createTable('oro_web_catalog_content_node');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('name', 'string', ['length' => 255]);
-        $table->addColumn('materialized_path', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('materialized_path', 'string', ['notnull' => false, 'length' => 1024]);
         $table->addColumn('tree_left', 'integer', []);
         $table->addColumn('tree_level', 'integer', []);
         $table->addColumn('tree_right', 'integer', []);
@@ -103,12 +113,7 @@ class OroWebCatalogBundleInstaller implements
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $this->noteExtension->addNoteAssociation($schema, 'oro_web_catalog_content_node');
-        $this->attachmentExtension->addImageRelation(
-            $schema,
-            'oro_web_catalog_content_node',
-            'image'
-        );
+        $this->noteExtension->addNoteAssociation($schema, $table->getName());
     }
 
     /**
@@ -154,6 +159,28 @@ class OroWebCatalogBundleInstaller implements
     }
 
     /**
+     * Add oro_web_catalog foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroWebCatalogForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_web_catalog');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_business_unit'),
+            ['business_unit_owner_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    /**
      * Add oro_web_catalog_content_node foreign keys.
      *
      * @param Schema $schema
@@ -166,6 +193,18 @@ class OroWebCatalogBundleInstaller implements
             ['parent_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_business_unit'),
+            ['business_unit_owner_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 
@@ -249,21 +288,5 @@ class OroWebCatalogBundleInstaller implements
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
     }
 }

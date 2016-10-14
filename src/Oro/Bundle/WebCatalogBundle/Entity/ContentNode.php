@@ -159,19 +159,23 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      *      }
      * )
      */
-    protected $pageSlugs;
+    protected $contentVariantSlugs;
 
     /**
      * @var Collection|ContentVariant[]
      *
-     * @ORM\OneToMany(targetEntity="Oro\Bundle\WebCatalogBundle\Entity\ContentVariant", mappedBy="node")
+     * @ORM\OneToMany(
+     *     targetEntity="Oro\Bundle\WebCatalogBundle\Entity\ContentVariant",
+     *     mappedBy="node",
+     *     cascade={"persist"}
+     * )
      */
     protected $contentVariants;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="materialized_path", type="string", length=255, nullable=true)
+     * @ORM\Column(name="materialized_path", type="string", length=1024, nullable=true)
      */
     protected $materializedPath;
 
@@ -185,7 +189,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
         $this->titles = new ArrayCollection();
         $this->childNodes = new ArrayCollection();
         $this->slugs = new ArrayCollection();
-        $this->pageSlugs = new ArrayCollection();
+        $this->contentVariantSlugs = new ArrayCollection();
         $this->contentVariants = new ArrayCollection();
     }
     
@@ -350,7 +354,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      */
     public function getContentVariantSlugs()
     {
-        return $this->pageSlugs;
+        return $this->contentVariantSlugs;
     }
 
     /**
@@ -360,8 +364,8 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      */
     public function addContentVariantSlug(Slug $pageSlug)
     {
-        if (!$this->pageSlugs->contains($pageSlug)) {
-            $this->pageSlugs->add($pageSlug);
+        if (!$this->contentVariantSlugs->contains($pageSlug)) {
+            $this->contentVariantSlugs->add($pageSlug);
         }
 
         return $this;
@@ -374,8 +378,8 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      */
     public function removeContentVariantSlug(Slug $pageSlug)
     {
-        if ($this->pageSlugs->contains($pageSlug)) {
-            $this->pageSlugs->removeElement($pageSlug);
+        if ($this->contentVariantSlugs->contains($pageSlug)) {
+            $this->contentVariantSlugs->removeElement($pageSlug);
         }
 
         return $this;
