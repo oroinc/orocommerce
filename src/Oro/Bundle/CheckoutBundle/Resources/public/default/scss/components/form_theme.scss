@@ -197,37 +197,3 @@
     }
   }
 }
-
-// *** The code below has not implemented yet!!!
-.checkout__form__row_custom {
-  position: relative;
-  margin: 0 -1rem;
-  font-size: 0;
-
-  &:before, &:after {
-    content: "";
-    display: block;
-    height: 0;
-    clear: both;
-  }
-}
-
-.checkout__form__col_custom {
-  margin: 0 0 1.5rem;
-  padding: 0 1rem;
-
-  &.form__col_x3 {
-    display: inline-block;
-    width: 33.3333%;
-    vertical-align: top;
-
-    @media (min-width: 992px) and (max-width: 1150px) {
-      width: 50%;
-    }
-
-    @media (max-width: 991px) {
-      display: block;
-      width: 100%;
-    }
-  }
-}
