@@ -39,7 +39,7 @@ define(function(require) {
 
         getTemplateData: function() {
             return {
-                value: this.model.get(this.fieldName),
+                value: _.escape(this.model.get(this.fieldName)),
                 tooltip: this.tooltip,
                 additionalClass: this.additionalClass
             };
