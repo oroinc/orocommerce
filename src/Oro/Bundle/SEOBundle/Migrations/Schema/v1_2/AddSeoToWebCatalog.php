@@ -1,24 +1,22 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Migrations\Schema;
+namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
-use Oro\Bundle\MigrationBundle\Migration\Installation;
+use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterface
+class AddSeoToWebCatalog implements Migration, ExtendExtensionAwareInterface
 {
-    const PRODUCT_TABLE_NAME = 'oro_product';
-    const CATEGORY_TABLE_NAME = 'oro_catalog_category';
-    const LANDING_PAGE_TABLE_NAME = 'oro_cms_page';
-    const WEB_CATALOG_NODE_TABLE_NAME = 'oro_web_catalog_content_node';
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
+    const WEB_CATALOG_NODE_TABLE_NAME = 'oro_web_catalog_content_node';
 
-    /** @var ExtendExtension */
+    /**
+     * @var ExtendExtension
+     */
     protected $extendExtension;
 
     /**
@@ -30,37 +28,20 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     }
 
     /**
-     * @inheritdoc
-     */
-    public function getMigrationVersion()
-    {
-        return 'v1_2';
-    }
-
-    /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->addMetaInformation($schema, self::PRODUCT_TABLE_NAME);
-        $this->addMetaInformation($schema, self::CATEGORY_TABLE_NAME);
-        $this->addMetaInformation($schema, self::LANDING_PAGE_TABLE_NAME);
-
         $this->addMetaInformationToWebCatalogNode($schema);
     }
 
     /**
-     * Method that adds 3 meta fields (metaTitles, metaDescription, metaKeywords) relations to the
-     * received table (corresponding to a an entitiy).
-     *
      * @param Schema $schema
-     * @param string $ownerTable
      */
-    private function addMetaInformation(Schema $schema, $ownerTable)
+    private function addMetaInformationToWebCatalogNode(Schema $schema)
     {
-        $this->addMetaInformationField($schema, $ownerTable, 'metaTitles');
-        $this->addMetaInformationField($schema, $ownerTable, 'metaDescriptions');
-        $this->addMetaInformationField($schema, $ownerTable, 'metaKeywords');
+        $this->addMetaInformationField($schema, self::WEB_CATALOG_NODE_TABLE_NAME, 'metaDescriptions');
+        $this->addMetaInformationField($schema, self::WEB_CATALOG_NODE_TABLE_NAME, 'metaKeywords');
     }
 
     /**
@@ -103,14 +84,5 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                 'importexport' => ['excluded' => true],
             ]
         );
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    private function addMetaInformationToWebCatalogNode(Schema $schema)
-    {
-        $this->addMetaInformationField($schema, self::WEB_CATALOG_NODE_TABLE_NAME, 'metaDescriptions');
-        $this->addMetaInformationField($schema, self::WEB_CATALOG_NODE_TABLE_NAME, 'metaKeywords');
     }
 }
