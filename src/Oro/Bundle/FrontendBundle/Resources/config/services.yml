@@ -145,3 +145,8 @@ services:
         class: 'Oro\Bundle\FrontendBundle\CacheWarmer\NamespaceMigrationProvider'
         tags:
             - {name: oro_installer.namespace_migration_provider, priority: 10}
+
+    oro_frontend.namespace_migration_fix_product_provider:
+        class: 'Oro\Bundle\FrontendBundle\CacheWarmer\NamespaceMigrationFixProductProvider'
+        tags:
+            - {name: oro_installer.namespace_migration_provider, priority: 25}
