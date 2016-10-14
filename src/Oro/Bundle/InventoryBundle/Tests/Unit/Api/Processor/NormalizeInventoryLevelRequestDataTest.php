@@ -157,6 +157,13 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
                 ]
             ]
         ];
+        $requestData = [
+            'data' => [
+                'relationships' => [
+                    'productUnitPrecision' => ['data' => ['type' => ProductUnitPrecision::class, 'id' => 10]],
+                ]
+            ]
+        ];
 
         $context->expects($this->once())->method('getRequestData')->willReturn($data);
         $this
@@ -179,7 +186,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
         $product->expects($this->once())->method('getPrimaryUnitPrecision')->willReturn($unitPrecision);
         $unitPrecision->expects($this->once())->method('getId')->willReturn(10);
 
-        $context->expects($this->never())->method('setRequestData');
+        $context->expects($this->once())->method('setRequestData')->with($requestData);
 
         $this->normalizeInventoryLevelRequestData->process($context);
     }
@@ -196,6 +203,13 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
                 'relationships' => [
                     'product' => ['data' => ['id' => 'product.1', 'type' => Product::class]],
                     'unit' => ['data' => ['id' => 'liter', 'type' => ProductUnit::class]],
+                ]
+            ]
+        ];
+        $requestData = [
+            'data' => [
+                'relationships' => [
+                    'productUnitPrecision' => ['data' => ['type' => ProductUnitPrecision::class, 'id' => 10]],
                 ]
             ]
         ];
@@ -225,7 +239,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
             ->willReturn($unitPrecision);
         $unitPrecision->expects($this->once())->method('getId')->willReturn(10);
 
-        $context->expects($this->never())->method('setRequestData');
+        $context->expects($this->once())->method('setRequestData')->with($requestData);
 
         $this->normalizeInventoryLevelRequestData->process($context);
     }
