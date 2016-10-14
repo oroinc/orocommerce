@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
+use Oro\Bundle\CMSBundle\Form\Type\PageSelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -71,6 +72,15 @@ class PriceListType extends AbstractType
                     'delete_empty' => true
                 ]
             );
+
+        $builder->add(
+            'test',
+            PageSelectType::class,
+            [
+                'mapped' => false,
+                'label' => 'Landing Page'
+            ]
+        );
     }
 
     /**
