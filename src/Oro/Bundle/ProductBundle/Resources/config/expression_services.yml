@@ -18,6 +18,16 @@ services:
         calls:
             - ['addColumnInformationProvider', ['@oro_product.expression.column_information.default_provider']]
 
+    oro_product.expression.query_converter:
+        class: 'Oro\Bundle\ProductBundle\Expression\QueryConverter'
+        public: false
+        arguments:
+            - '@oro_query_designer.query_designer.manager'
+            - '@oro_entity.virtual_field_provider.chain'
+            - '@doctrine'
+        calls:
+            - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]
+
     oro_product.expression.expression_language_converter:
         class: 'Oro\Component\Expression\ExpressionLanguageConverter'
         public: false
