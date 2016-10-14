@@ -44,6 +44,10 @@ oro:
                     label: 'Data of approving'
                 requested_for_approve:
                     label: 'Is requested for approve'
+                state_token:
+                    label: Token to track checkout state
+                internal_state_token:
+                    label: Internal checkout state token
             transition:
                 continue_to_shipping_address:
                     label: Continue
