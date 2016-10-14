@@ -104,7 +104,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             'id',
             [
                 'entity' => [
-                    'label' => 'oro.warehouse.manage_inventory.label',
+                    'label' => 'oro.inventory.manage_inventory.label',
                 ],
                 'extend' => [
                     'owner' => ExtendScope::OWNER_CUSTOM,
@@ -141,7 +141,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             'id',
             [
                 'entity' => [
-                    'label' => 'oro.warehouse.manage_inventory.label',
+                    'label' => 'oro.inventory.manage_inventory.label',
                 ],
                 'extend' => [
                     'owner' => ExtendScope::OWNER_CUSTOM,

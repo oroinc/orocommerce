@@ -18,6 +18,11 @@ class InventoryLevelMigrationPass implements CompilerPassInterface
                 'append',
                 ['WarehouseBundle\\Entity\\WarehouseInventoryLevel', 'InventoryBundle\\Entity\\InventoryLevel']
             )
-            ->addMethodCall('append', ['oro_warehouse_inventory_lev', 'oro_inventory_level']);
+            ->addMethodCall('append', ['oro_warehouse_inventory_lev', 'oro_inventory_level'])
+            ->addMethodCall(
+                'append',
+                ['ShippingBundle\\Entity\\ShippingOriginWarehouse', 'WarehouseBundle\\Entity\\WarehouseAddress']
+            )
+            ->addMethodCall('append', ['oro_shipping_orig_warehouse', 'oro_warehouse_address']);
     }
 }
