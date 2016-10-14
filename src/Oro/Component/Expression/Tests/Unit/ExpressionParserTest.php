@@ -9,9 +9,7 @@ use Oro\Component\Expression\Node;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 /**
- * @SuppressWarnings(PHPMD.ExcessiveClassLength)
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD)
  */
 class ExpressionParserTest extends \PHPUnit_Framework_TestCase
 {
