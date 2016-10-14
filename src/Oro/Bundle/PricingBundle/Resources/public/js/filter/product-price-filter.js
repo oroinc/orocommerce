@@ -3,8 +3,9 @@ define([
     'jquery',
     'underscore',
     'orotranslation/js/translator',
+    'oroui/js/tools',
     'oro/filter/number-range-filter'
-], function($, _, __, NumberRangeFilter) {
+], function($, _, __, tools, NumberRangeFilter) {
     'use strict';
 
     var ProductPriceFilter;
@@ -156,12 +157,40 @@ define([
         },
 
         /**
+         * @inheritDoc
+         */
+        _beforeApply: function() {
+            this._updateNegativeValue(this._readDOMValue());
+            ProductPriceFilter.__super__._beforeApply.apply(this, arguments);
+        },
+
+        /**
          * @private
          */
         _checkAppendFilter: function() {
             if (this._appendFilter !== this._appendUnitFilter) {
                 this._appendUnitFilter._appendFilter = this._appendFilter;
                 this._appendFilter = this._appendUnitFilter;
+            }
+        },
+
+        /**
+         * @private
+         */
+        _updateNegativeValue: function(value) {
+            value = this._formatRawValue(value);
+            var oldValue = tools.deepClone(value);
+
+            if (value.value < 0) {
+                value.value *= -1;
+            }
+            if (value.value_end < 0) {
+                value.value_end *= -1;
+            }
+
+            if (!tools.isEqualsLoosely(value, oldValue)) {
+                //apply new values and filter type
+                this._writeDOMValue(value);
             }
         },
 
