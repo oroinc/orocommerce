@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\ImportExport;
 
-
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Yaml\Yaml;
