@@ -26,8 +26,6 @@ class OroShippingExtensionTest extends ExtensionTestCase
 
         $expectedDefinitions = [
             'oro_shipping.form.type.shipping_origin_config',
-            'oro_shipping.form.type.shipping_origin_warehouse',
-            'oro_shipping.form.extension.warehouse_shipping_origin',
             'oro_shipping.form_event_subscriber.rule_method_type_config_collection_subscriber',
             'oro_shipping.form_event_subscriber.rule_method_config_subscriber',
             'oro_shipping.factory.shipping_origin_model_factory',

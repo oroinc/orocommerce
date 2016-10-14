@@ -13,7 +13,6 @@ use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\EventListener\FormViewListener;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
-use Oro\Bundle\WarehouseProBundle\Entity\Warehouse;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -51,127 +50,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $this->listener = new FormViewListener(
             $this->translator,
             $this->doctrineHelper,
-            $this->shippingOriginProvider,
             $this->requestStack
-        );
-    }
-
-    public function testOnWarehouseViewWithoutRequest()
-    {
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn(null);
-
-        $event = $this->getBeforeListRenderEventMock();
-        $event->expects($this->never())->method('getScrollData');
-
-        $this->listener->onWarehouseView($event);
-    }
-
-    public function testOnWarehouseViewWithEmptyRequest()
-    {
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($this->request);
-
-        $event = $this->getBeforeListRenderEventMock();
-        $event->expects($this->never())->method('getScrollData');
-
-        $this->listener->onWarehouseView($event);
-    }
-
-    public function testOnWarehouseViewWithoutWarehouse()
-    {
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($this->request);
-        $this->request->expects($this->once())->method('get')->with('id')->willReturn(42);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with('OroWarehouseProBundle:Warehouse', 42)
-            ->willReturn(null);
-
-        $event = $this->getBeforeListRenderEventMock();
-        $event->expects($this->never())->method('getScrollData');
-
-        $this->listener->onWarehouseView($event);
-    }
-
-    public function testOnWarehouseViewWithEmptyShippingOrigin()
-    {
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($this->request);
-        $this->request->expects($this->once())->method('get')->with('id')->willReturn(42);
-
-        $warehouse = new Warehouse();
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with('OroWarehouseProBundle:Warehouse', 42)
-            ->willReturn($warehouse);
-
-        $shippingOrigin = new ShippingOrigin();
-
-        $this->shippingOriginProvider->expects($this->once())
-            ->method('getShippingOriginByWarehouse')
-            ->with($warehouse)
-            ->willReturn($shippingOrigin);
-
-        $event = $this->getBeforeListRenderEventMock();
-        $event->expects($this->never())->method('getScrollData');
-
-        $this->listener->onWarehouseView($event);
-    }
-
-    public function testOnWarehouseView()
-    {
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($this->request);
-        $this->request->expects($this->once())->method('get')->with('id')->willReturn(42);
-
-        $warehouse = new Warehouse();
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with('OroWarehouseProBundle:Warehouse', 42)
-            ->willReturn($warehouse);
-
-        $shippingOrigin = new ShippingOrigin(['region' => 'data']);
-
-        $this->shippingOriginProvider->expects($this->once())
-            ->method('getShippingOriginByWarehouse')
-            ->with($warehouse)
-            ->willReturn($shippingOrigin);
-
-        $renderedHtml = 'rendered_html';
-
-        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $twig */
-        $twig = $this->getMockBuilder('\Twig_Environment')->disableOriginalConstructor()->getMock();
-        $twig->expects($this->once())
-            ->method('render')
-            ->with('OroShippingBundle:Warehouse:shipping_origin_view.html.twig', ['entity' => $shippingOrigin])
-            ->willReturn($renderedHtml);
-
-        $event = new BeforeListRenderEvent($twig, $this->getScrollData());
-
-        $this->listener->onWarehouseView($event);
-
-        $scrollData = $event->getScrollData()->getData();
-        $this->assertEquals(
-            [$renderedHtml],
-            $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
-        );
-    }
-
-    public function testOnWarehouseEdit()
-    {
-        $renderedHtml = 'rendered_html';
-
-        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $twig */
-        $twig = $this->getMockBuilder('\Twig_Environment')->disableOriginalConstructor()->getMock();
-        $twig->expects($this->once())->method('render')->willReturn($renderedHtml);
-
-        $event = new BeforeListRenderEvent($twig, $this->getScrollData());
-
-        $this->listener->onWarehouseEdit($event);
-
-        $scrollData = $event->getScrollData()->getData();
-        $this->assertEquals(
-            [$renderedHtml],
-            $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
         );
     }
 
