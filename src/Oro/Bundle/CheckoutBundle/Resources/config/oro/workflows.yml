@@ -365,6 +365,8 @@ workflows:
             back_to_billing_address_definition:
                 preconditions:
                     '@not_equal': [$payment_in_progress, true]
+                conditions:
+                    '@extendable': ~
                 actions:
                     - '@assign_value': [$billing_address_has_shipping, true]
                     - '@assign_value': [$payment_method, null]
@@ -411,6 +413,7 @@ workflows:
                                 entity: $checkout
                 conditions:
                     '@and':
+                        - '@extendable': ~
                         - '@not_empty': $checkout.billingAddress
                         - '@not_empty': $.result.initCheckoutState
                         - '@or':
@@ -514,6 +517,7 @@ workflows:
                                 entity: $checkout
                 conditions:
                     '@and':
+                        - '@extendable': ~
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -598,6 +602,7 @@ workflows:
                                 entity: $checkout
                 conditions:
                     '@and':
+                        - '@extendable': ~
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -667,6 +672,7 @@ workflows:
                             entity: $checkout
                 conditions:
                     '@and':
+                        - '@extendable': ~
                         - '@shipping_method_supports':
                             message: oro.checkout.workflow.condition.shipping_method_supports.message
                             parameters:
@@ -698,12 +704,12 @@ workflows:
                                 attribute: $.result.successUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.id
+                                    id: $.entityId
                             - '@assign_url':
                                 attribute: $.result.failureUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.id
+                                    id: $.entityId
                                     transition: 'payment_error'
                             - '@payment_validate':
                                 conditions:
@@ -748,10 +754,12 @@ workflows:
                                     expected_key: transition
                                     expected_value: continue_to_order_review
                 conditions:
-                    '@shipping_method_supports':
-                        message: oro.checkout.workflow.condition.shipping_method_supports.message
-                        parameters:
-                            entity: $checkout
+                    '@and':
+                        - '@extendable': ~
+                        - '@shipping_method_supports':
+                            message: oro.checkout.workflow.condition.shipping_method_supports.message
+                            parameters:
+                                entity: $checkout
                 actions:
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -797,19 +805,20 @@ workflows:
                         message: Payment process is running for this checkout
                         parameters: [$payment_in_progress, true]
                 conditions:
-                  '@and':
-                      - '@or':
-                          - '@empty': $.result.savedCheckoutState
-                          - '@check_checkout_states':
-                              message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                              parameters:
-                                  entity: $checkout
-                                  state1: $.result.initCheckoutState
-                                  state2: $.result.savedCheckoutState
-                      - '@shipping_method_supports':
-                          message: oro.checkout.workflow.condition.shipping_method_supports.message
-                          parameters:
-                              entity: $checkout
+                    '@and':
+                        - '@extendable': ~
+                        - '@or':
+                            - '@empty': $.result.savedCheckoutState
+                            - '@check_checkout_states':
+                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                                parameters:
+                                    entity: $checkout
+                                    state1: $.result.initCheckoutState
+                                    state2: $.result.savedCheckoutState
+                        - '@shipping_method_supports':
+                            message: oro.checkout.workflow.condition.shipping_method_supports.message
+                            parameters:
+                                entity: $checkout
                 actions:
                     - '@assign_value':
                         conditions:
@@ -897,19 +906,19 @@ workflows:
                                 attribute: $.result.successUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.id
+                                    id: $.entityId
                                     transition: 'finish_checkout'
                             - '@assign_url':
                                 attribute: $.result.failureUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.id
+                                    id: $.entityId
                                     transition: 'payment_error'
                             - '@assign_url':
                                 attribute: $.result.failedShippingAddressUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.id
+                                    id: $.entityId
                                     transition: 'back_to_shipping_address_on_fail_address'
                             - '@payment_purchase':
                                 attribute: $.result.responseData
@@ -956,6 +965,7 @@ workflows:
             finish_checkout_definition:
                 conditions:
                     '@and':
+                        - '@extendable': ~
                         - '@not_empty': [$order]
                         - '@equal': [$payment_in_progress, true]
                         - '@shipping_method_supports':
@@ -1091,6 +1101,8 @@ workflows:
             recalculate_state_definition:
                 preconditions:
                     '@not_equal': [$payment_in_progress, true]
+                conditions:
+                    '@extendable': ~
                 actions:
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -1103,6 +1115,8 @@ workflows:
             clear_payment_method_and_recalculate_state_definition:
                 preconditions:
                     '@not_equal': [$payment_in_progress, true]
+                conditions:
+                    '@extendable': ~
                 actions:
                     - '@assign_value': [$payment_method, null]
                     - '@generate_checkout_state_snapshot':
@@ -1115,6 +1129,8 @@ workflows:
                     - '@assign_value': [$internal_state_token, $state_token]
 
             unblock_and_recalculate_definition:
+                conditions:
+                    '@extendable': ~
                 actions:
                     - '@assign_value': [$payment_method, null]
                     - '@assign_value': [$payment_in_progress, false]

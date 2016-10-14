@@ -40,6 +40,7 @@ layout:
                     options:
                         visible: '=data["entity"]!=null && data["entity"].getLineItems()!=null'
                         shoppingList: '=data["entity"]'
+                        lineItemErrors: '=data["oro_line_item_errors"].getLineItemErrors(data["entity"].getLineItems())'
                         productsMatchedPrice: '=data["oro_shopping_list_products"].getMatchedPrice(data["entity"])'
                         productsAllPrices: '=data["oro_shopping_list_products"].getAllPrices(data["entity"])'
                         productsUnits: '=data["oro_shopping_list_products_units"].getProductsUnits(data["entity"])'

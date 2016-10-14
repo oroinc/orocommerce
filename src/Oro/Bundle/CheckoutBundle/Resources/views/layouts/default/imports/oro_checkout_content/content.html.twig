@@ -60,7 +60,8 @@
              data-page-component-options="{{ {
                  widgetModule: 'oroui/js/widget/collapse-widget',
                  storageKey: id,
-                 animationSpeed: 0
+                 animationSpeed: 0,
+                 forcedState: (false == isLineItemListValid) ? true : null
              }|json_encode() }}"
         >
             <div class="checkout-order-summary__header">
@@ -161,6 +162,19 @@
                                     </div>
                                 </td>
                             </tr>
+                            {% set errorPath = 'product.' ~ lineItem.productSku %}
+                            {% if lineItemErrors is iterable and lineItemErrors[errorPath] is defined and lineItemErrors[errorPath] is iterable %}
+                                {% for error in lineItemErrors[errorPath] %}
+                                    <script>
+                                        require(['oroui/js/messenger'], function(messenger) {
+                                            messenger.notificationFlashMessage('error', '{{ error.message }}', {container: $('#product-error-{{ lineItem.productSku }}')})
+                                        });
+                                    </script>
+                                    <tr>
+                                        <td id="product-error-{{ lineItem.productSku }}"></td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
                         {% endfor %}
 
                     </table>

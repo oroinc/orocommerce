@@ -109,3 +109,26 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
+
+    oro_warehouse.event_listener.quantity_to_order_condition_listener:
+        class: Oro\Bundle\WarehouseBundle\EventListener\QuantityToOrderConditionListener
+        arguments:
+            - '@oro_warehouse.validator.quantity_to_order_validator'
+            - '@session'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: extendable.WorkflowItem, method: onConditionAllowedCheck }
+            - { name: kernel.event_listener, event: extendable.ActionData, method: onProductQuantityCheck }
+
+    oro_warehouse.validator.quantity_to_order_validator:
+        class: Oro\Bundle\WarehouseBundle\Validator\QuantityToOrderValidator
+        arguments:
+            - '@oro_entity.fallback.resolver.entity_fallback_resolver'
+
+    oro_warehouse.event_listener.line_item_validation_listener:
+        class: Oro\Bundle\WarehouseBundle\EventListener\LineItemValidationListener
+        arguments:
+            - '@oro_warehouse.validator.quantity_to_order_validator'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }

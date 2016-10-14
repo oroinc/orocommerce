@@ -11,6 +11,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_shopping_list_line_item_validator }
 
+    oro_shopping_list.validator.line_item_collection:
+        class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollectionValidator'
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_shopping_list_line_item_collection_validator }
+
     oro_shopping_list.line_item.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
@@ -226,3 +233,10 @@ services:
             - '@oro_pricing.model.price_list_request_handler'
         tags:
             - { name: oro_action.condition, alias: 'has_price_in_shopping_line_items' }
+
+    oro_shopping_list.validator_service.line_item:
+        class: 'Oro\Bundle\ShoppingListBundle\Validator\LineItemErrorsProvider'
+        arguments:
+            - '@validator'
+        tags:
+            - { name: layout.data_provider, alias: oro_line_item_errors }

@@ -5,6 +5,8 @@ namespace Oro\Bundle\CheckoutBundle\WorkflowState\Handler;
 use Symfony\Component\Form\FormErrorIterator;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
+use Oro\Bundle\WorkflowBundle\Validator\Constraints\TransitionIsAllowed;
+
 class CheckoutErrorHandler
 {
     const WORKFLOW_STATE_MESSAGE = 'oro.checkout.workflow.condition.content_of_order_was_changed.message';
@@ -65,6 +67,25 @@ class CheckoutErrorHandler
 
             $this->addUniqueWarningMessage($error->getMessage());
         }
+    }
+
+    /**
+     * @param FormErrorIterator $errorIterator
+     * @return bool
+     */
+    public function isCheckoutRestartRequired(FormErrorIterator $errorIterator)
+    {
+        foreach ($errorIterator as $error) {
+            if ($error instanceof FormErrorIterator) {
+                return $this->isCheckoutRestartRequired($error);
+            }
+
+            if ($error->getMessage() == TransitionIsAllowed::$workflowCanceledByTransitionMessage) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

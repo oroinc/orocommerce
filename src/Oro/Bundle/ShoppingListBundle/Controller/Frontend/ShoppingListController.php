@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +12,7 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;

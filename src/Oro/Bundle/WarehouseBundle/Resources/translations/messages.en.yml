@@ -107,3 +107,8 @@ oro:
                 label: Warehouse
         warehouse:
             label: Warehouse
+
+    product:
+        error:
+            quantity_over_max_limit: 'You cannot order more than %limit% units of %sku%: %product_name%'
+            quantity_below_min_limit: 'You cannot order less than %limit% units of %sku%: %product_name%'

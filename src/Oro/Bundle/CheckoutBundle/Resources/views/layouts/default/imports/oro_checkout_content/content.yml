@@ -27,6 +27,7 @@ layout:
                     options:
                         visible: '=context["workflowStepName"]!="order_review"'
                         lineItemsWithTotals: '=data["oro_checkout_line_items_totals"].getData(data["checkout"])'
+                        isLineItemListValid: '=data["oro_line_item_errors"].isLineItemListValid(data["checkout"].getLineItems())'
                         total: '=data["oro_checkout_totals"].getData(data["checkout"])["subtotal"]'
                         checkout: '=data["checkout"]'
                         workflowItem: '=data["workflowItem"]'
@@ -37,6 +38,7 @@ layout:
                     options:
                         checkout: '=data["checkout"]'
                         workflowStep: '=data["workflowStep"]'
+                        lineItemErrors: '=data["oro_line_item_errors"].getLineItemErrors(data["checkout"].getLineItems())'
                         lineItemsWithTotals: '=data["oro_checkout_line_items_totals"].getData(data["checkout"])'
                         workflowItem: '=data["workflowItem"]'
                 __checkout_order_summary_totals:

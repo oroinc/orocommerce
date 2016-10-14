@@ -326,6 +326,19 @@
                             </button>
                         </td>
                     </tr>
+                    {% set errorPath = 'product.' ~ lineItem.productSku %}
+                    {% if lineItemErrors is iterable and lineItemErrors[errorPath] is defined and lineItemErrors[errorPath] is iterable %}
+                        {% for error in lineItemErrors[errorPath] %}
+                            <script>
+                                require(['oroui/js/messenger'], function(messenger) {
+                                    messenger.notificationFlashMessage('error', '{{ error.message }}', {container: $('#product-error-{{ lineItem.productSku }}')})
+                                });
+                            </script>
+                            <tr>
+                                <td id="product-error-{{ lineItem.productSku }}"></td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
                     <tr class="borderless t_paddingless">
                         {% set notes = lineItem.notes %}
                         <td colspan="6">

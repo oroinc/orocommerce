@@ -70,6 +70,7 @@ services:
                     -
                         checkout: {required: true}
                         lineItemsWithTotals: {required: true}
+                        isLineItemListValid: {required: true}
                         total: {required: true}
                         workflowItem: {required: true}
             - [setName, ['checkout_order_summary']]
@@ -100,6 +101,7 @@ services:
                         lineItemsWithTotals: {required: true}
                         workflowStep: {required: true}
                         workflowItem: {required: true}
+                        lineItemErrors: {required: true}
             - [setName, ['checkout_order_summary_line_items']]
         tags:
             - { name: layout.block_type, alias: checkout_order_summary_line_items }
