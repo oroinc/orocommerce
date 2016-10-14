@@ -2,7 +2,7 @@ services:
     oro_product.expression.fields_provider:
         class: 'Oro\Bundle\ProductBundle\Expression\FieldsProvider'
         arguments:
-            - '@oro_entity.entity_field_provider'
+            - '@oro_entity.entity_field_provider.link'
             - '@oro_entity.doctrine_helper'
 
     oro_product.expression.column_information.default_provider:
