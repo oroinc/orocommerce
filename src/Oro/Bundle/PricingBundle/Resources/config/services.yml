@@ -741,7 +741,7 @@ services:
             - '@oro_product.expression.parser'
             - '@oro_product.expression.preprocessor'
             - '@oro_product.expression.node_to_query_designer_converter'
-            - '@oro_pricing.query.price_list_expression_query_converter'
+            - '@oro_product.expression.query_converter'
             - '@oro_product.expression.query_expression_builder'
             - '@oro_pricing.cache.rule_cache'
 
@@ -786,15 +786,8 @@ services:
     oro_pricing.expression.column_information.price_list_provider:
         class: Oro\Bundle\PricingBundle\Expression\ColumnInformation\PriceListProvider
 
-    oro_pricing.query.price_list_expression_query_converter:
-        class: 'Oro\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter'
-        public: false
-        arguments:
-            - '@oro_query_designer.query_designer.manager'
-            - '@oro_entity.virtual_field_provider.chain'
-            - '@doctrine'
-        calls:
-            - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]
+    oro_pricing.expression.price_list_query_converter_extension:
+        class: Oro\Bundle\PricingBundle\Expression\PriceListQueryConverterExtension
 
     oro_pricing.validator_constraints.lexeme_circular_reference_validator:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReferenceValidator'
