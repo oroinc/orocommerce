@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Expression;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
+use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\Expression\FieldsProviderInterface;
 
 class FieldsProvider implements FieldsProviderInterface
@@ -19,9 +20,9 @@ class FieldsProvider implements FieldsProviderInterface
     ];
 
     /**
-     * @var EntityFieldProvider
+     * @var ServiceLink
      */
-    protected $entityFieldProvider;
+    protected $entityFieldProviderLink;
 
     /**
      * @var DoctrineHelper
@@ -34,12 +35,12 @@ class FieldsProvider implements FieldsProviderInterface
     protected $entityFields = [];
 
     /**
-     * @param EntityFieldProvider $entityFieldProvider
+     * @param ServiceLink $entityFieldProviderLink
      * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(EntityFieldProvider $entityFieldProvider, DoctrineHelper $doctrineHelper)
+    public function __construct(ServiceLink $entityFieldProviderLink, DoctrineHelper $doctrineHelper)
     {
-        $this->entityFieldProvider = $entityFieldProvider;
+        $this->entityFieldProviderLink = $entityFieldProviderLink;
         $this->doctrineHelper = $doctrineHelper;
     }
 
@@ -107,7 +108,7 @@ class FieldsProvider implements FieldsProviderInterface
     {
         $cacheKey = $this->getCacheKey($className, $numericOnly, $withRelations);
         if (!array_key_exists($cacheKey, $this->entityFields)) {
-            $fields = $this->entityFieldProvider->getFields(
+            $fields = $this->getFieldsProvider()->getFields(
                 $className,
                 $withRelations,
                 $withRelations,
@@ -152,5 +153,13 @@ class FieldsProvider implements FieldsProviderInterface
         }
 
         return null;
+    }
+
+    /**
+     * @return EntityFieldProvider
+     */
+    protected function getFieldsProvider()
+    {
+        return $this->entityFieldProviderLink->getService();
     }
 }

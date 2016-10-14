@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ProductBundle\Expression\FieldsProvider;
+use Oro\Component\DependencyInjection\ServiceLink;
 
 class FieldsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -40,8 +41,21 @@ class FieldsProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        /**
+         * @var \PHPUnit_Framework_MockObject_MockObject|ServiceLink
+         */
+        $entityFieldProviderLink = $this
+            ->getMockBuilder('Oro\Component\DependencyInjection\ServiceLink')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $entityFieldProviderLink
+            ->expects($this->any())
+            ->method('getService')
+            ->willReturn($this->entityFieldProvider);
+
         $this->fieldsProvider = new FieldsProvider(
-            $this->entityFieldProvider,
+            $entityFieldProviderLink,
             $this->doctrineHelper
         );
     }
