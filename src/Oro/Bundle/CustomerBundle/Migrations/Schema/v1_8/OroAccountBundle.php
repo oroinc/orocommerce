@@ -115,7 +115,7 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
             'Oro\Bundle\AttachmentBundle\Entity\Attachment',
             'Oro\Bundle\CustomerBundle\Entity\AccountUser',
             'account_user_1cc98a31',
-            'account_user_1cc98a31',
+            'account_user_5919fc1d',
             RelationType::MANY_TO_ONE
         ));
     }
