@@ -48,7 +48,7 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
             'Oro\Bundle\EmailBundle\Entity\Email',
             'Oro\Bundle\CustomerBundle\Entity\AccountUser',
             'account_user_795f990e',
-            'account_user_741cdecd',
+            'account_user_489123cf',
             RelationType::MANY_TO_MANY
         ));
 
@@ -58,7 +58,7 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
             'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
             'Oro\Bundle\CustomerBundle\Entity\AccountUser',
             'account_user_795f990e',
-            'account_user_741cdecd',
+            'account_user_489123cf',
             RelationType::MANY_TO_MANY
         ));
     }
