@@ -28,10 +28,13 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->renameActivityTables($schema, $queries);
-        $this->updateAttachments($schema, $queries);
-        $this->updateNotes($schema, $queries);
-        $this->updateTableField($queries);
+        // if has table then beta4 and we update to beta5
+        if ($schema->hasTable('oro_rel_26535370a6adb604aeb863')) {
+            $this->renameActivityTables($schema, $queries);
+            $this->updateAttachments($schema, $queries);
+            $this->updateNotes($schema, $queries);
+            $this->updateTableField($queries);
+        }
     }
 
     /**
@@ -256,33 +259,4 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
     {
         $this->renameExtension = $renameExtension;
     }
-
-//    /**
-//     * @param Schema $schema
-//     * @param QueryBag $queries
-//     */
-//    private function updateComment(Schema $schema, QueryBag $queries)
-//    {
-//        $extension = $this->renameExtension;
-//        $comment = $schema->getTable('oro_comment');
-//
-//         $comment->removeForeignKey('FK_5CD3A4BAD655E33D');
-//         $extension->renameColumn($schema, $queries, $comment, 'call_74d3684c_id', 'call_41b3ba7d_id');
-//         $extension->addForeignKeyConstraint(
-//             $schema,
-//             $queries,
-//             'oro_comment',
-//             'orocrm_call',
-//             ['call_41b3ba7d_id'],
-//             ['id'],
-//             ['onDelete' => 'SET NULL']
-//         );
-//         $queries->addQuery(new UpdateExtendRelationQuery(
-//             'Oro\Bundle\CommentBundle\Entity\Comment',
-//             'Oro\Bundle\CallBundle\Entity\Call',
-//             'call_74d3684c',
-//             'call_41b3ba7d',
-//             RelationType::MANY_TO_ONE
-//         ));
-//     }
 }
