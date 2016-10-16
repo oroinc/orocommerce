@@ -5,6 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Migrations\Schema\v1_8;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
+use Oro\Bundle\InstallerBundle\Migration\UpdateTableFieldQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -29,6 +30,7 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
         $this->renameActivityTables($schema, $queries);
         $this->updateAttachments($schema, $queries);
         $this->updateNotes($schema, $queries);
+        $this->updateTableField($queries);
     }
 
     /**
@@ -99,7 +101,7 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
             $schema,
             $queries,
             $attachments,
-            'account_user_1cc98a31_id',
+            'account_user_7e92c4f1_id',
             'account_user_5919fc1d_id'
         );
         $extension->addForeignKeyConstraint(
@@ -114,7 +116,7 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\AttachmentBundle\Entity\Attachment',
             'Oro\Bundle\CustomerBundle\Entity\AccountUser',
-            'account_user_1cc98a31',
+            'account_user_7e92c4f1',
             'account_user_5919fc1d',
             RelationType::MANY_TO_ONE
         ));
@@ -136,7 +138,7 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
             $queries,
             'oro_note',
             'oro_account_user',
-            ['account_user_7e92c4f1_id'],
+            ['account_user_5919fc1d_id'],
             ['id'],
             ['onDelete' => 'SET NULL']
         );
@@ -161,7 +163,7 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
             $queries,
             'oro_note',
             'oro_account_user_role',
-            ['account_user_role_abeddea9_id'],
+            ['account_user_role_604160ea_id'],
             ['id'],
             ['onDelete' => 'SET NULL']
         );
@@ -180,7 +182,7 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
             $queries,
             'oro_note',
             'oro_account',
-            ['account_8d93c122_id'],
+            ['account_8d1f63b9_id'],
             ['id'],
             ['onDelete' => 'SET NULL'],
             'fk_oro_note_account_8d1f63b9_id'
@@ -200,7 +202,7 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
             $queries,
             'oro_note',
             'oro_account_group',
-            ['account_group_a8897e69_id'],
+            ['account_group_1125b02_id'],
             ['id'],
             ['onDelete' => 'SET NULL']
         );
@@ -210,6 +212,19 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
             'account_group_a8897e69',
             'account_group_1125b02',
             RelationType::MANY_TO_ONE
+        ));
+    }
+
+    /**
+     * @param QueryBag $queries
+     */
+    private function updateTableField(QueryBag $queries)
+    {
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_migrations_data',
+            'class_name',
+            'AccountBundle',
+            'CustomerBundle'
         ));
     }
 
