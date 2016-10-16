@@ -70,16 +70,16 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getTrackingAwareShippingMethodsProvider
      *
      * @param array $methods
-     * @param int $trackingAwareCNT
+     * @param int $trackingAwareCount
      */
-    public function testGetTrackingAwareShippingMethods(array $methods, $trackingAwareCNT)
+    public function testGetTrackingAwareShippingMethods(array $methods, $trackingAwareCount)
     {
         $this->provider->expects($this->once())
             ->method('getShippingMethods')
             ->willReturn($methods);
         $this->registry->addProvider($this->provider);
 
-        $this->assertCount($trackingAwareCNT, $this->registry->getTrackingAwareShippingMethods());
+        $this->assertCount($trackingAwareCount, $this->registry->getTrackingAwareShippingMethods());
     }
 
     /**
@@ -94,7 +94,7 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
                   $this->getMock(ShippingMethodInterface::class),
                   $this->getMock(ShippingTrackingAwareInterface::class)
                 ],
-                'trackingAwareCNT' => 1,
+                'trackingAwareCount' => 1,
             ],
             [
                 'methods' => [
@@ -103,7 +103,7 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
                     $this->getMock(ShippingTrackingAwareInterface::class),
                     $this->getMock(ShippingTrackingAwareInterface::class)
                 ],
-                'trackingAwareCNT' => 2,
+                'trackingAwareCount' => 2,
             ],
             [
                 'methods' => [
@@ -114,7 +114,7 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
                     $this->getMock(ShippingTrackingAwareInterface::class),
 
                 ],
-                'trackingAwareCNT' => 3,
+                'trackingAwareCount' => 3,
             ]
 
         ];
