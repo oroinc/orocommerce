@@ -13,7 +13,7 @@ use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
-class OroAccountBundle implements Migration, RenameExtensionAwareInterface
+class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
 {
     use MigrationConstraintTrait;
 
@@ -100,7 +100,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         $extension->renameTable($schema, $queries, 'oro_rel_26535370a6adb604a9b8e1', 'oro_rel_26535370a6adb604aeb863');
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\EmailBundle\Entity\Email',
-            'Oro\Bundle\AccountBundle\Entity\AccountUser',
+            'Oro\Bundle\CustomerBundle\Entity\AccountUser',
             'account_user_489123cf',
             'account_user_795f990e',
             RelationType::MANY_TO_MANY
@@ -110,7 +110,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         $extension->renameTable($schema, $queries, 'oro_rel_46a29d19a6adb604a9b8e1', 'oro_rel_46a29d19a6adb604aeb863');
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
-            'Oro\Bundle\AccountBundle\Entity\AccountUser',
+            'Oro\Bundle\CustomerBundle\Entity\AccountUser',
             'account_user_489123cf',
             'account_user_795f990e',
             RelationType::MANY_TO_MANY
@@ -359,7 +359,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         );
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\AccountBundle\Entity\AccountUser',
+            'Oro\Bundle\CustomerBundle\Entity\AccountUser',
             'account_user_1cc98a31',
             'account_user_7e92c4f1',
             RelationType::MANY_TO_ONE
@@ -384,7 +384,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         );
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\AccountBundle\Entity\AccountUserRole',
+            'Oro\Bundle\CustomerBundle\Entity\AccountUserRole',
             'account_user_role_5d57148e',
             'account_user_role_abeddea9',
             RelationType::MANY_TO_ONE
@@ -404,7 +404,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         );
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\AccountBundle\Entity\Account',
+            'Oro\Bundle\CustomerBundle\Entity\Account',
             'account_557018f',
             'account_8d93c122',
             RelationType::MANY_TO_ONE
@@ -423,7 +423,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         );
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\AccountBundle\Entity\AccountGroup',
+            'Oro\Bundle\CustomerBundle\Entity\AccountGroup',
             'account_group_338fe797',
             'account_group_a8897e69',
             RelationType::MANY_TO_ONE
