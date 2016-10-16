@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
