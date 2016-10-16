@@ -5,6 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
 
 class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
 {
@@ -63,5 +64,59 @@ class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase
     public function testRegistryWrongMethod()
     {
         $this->assertNull($this->registry->getShippingMethod('wrong_name'));
+    }
+
+    /**
+     * @dataProvider getTrackingAwareShippingMethodsProvider
+     *
+     * @param array $methods
+     * @param int $trackingAwareCount
+     */
+    public function testGetTrackingAwareShippingMethods(array $methods, $trackingAwareCount)
+    {
+        $this->provider->expects($this->once())
+            ->method('getShippingMethods')
+            ->willReturn($methods);
+        $this->registry->addProvider($this->provider);
+
+        $this->assertCount($trackingAwareCount, $this->registry->getTrackingAwareShippingMethods());
+    }
+
+    /**
+     * @return array
+     */
+    public function getTrackingAwareShippingMethodsProvider()
+    {
+        return [
+            [
+                'methods' => [
+                  $this->getMock(ShippingMethodInterface::class),
+                  $this->getMock(ShippingMethodInterface::class),
+                  $this->getMock(ShippingTrackingAwareInterface::class)
+                ],
+                'trackingAwareCount' => 1,
+            ],
+            [
+                'methods' => [
+                    $this->getMock(ShippingMethodInterface::class),
+                    $this->getMock(ShippingMethodInterface::class),
+                    $this->getMock(ShippingTrackingAwareInterface::class),
+                    $this->getMock(ShippingTrackingAwareInterface::class)
+                ],
+                'trackingAwareCount' => 2,
+            ],
+            [
+                'methods' => [
+                    $this->getMock(ShippingMethodInterface::class),
+                    $this->getMock(ShippingMethodInterface::class),
+                    $this->getMock(ShippingTrackingAwareInterface::class),
+                    $this->getMock(ShippingTrackingAwareInterface::class),
+                    $this->getMock(ShippingTrackingAwareInterface::class),
+
+                ],
+                'trackingAwareCount' => 3,
+            ]
+
+        ];
     }
 }
