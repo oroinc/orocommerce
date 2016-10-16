@@ -20,7 +20,7 @@ use Oro\Bundle\CustomerBundle\Entity\Account;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroCustomerBundle implements
+class OroAccountBundle implements
     Migration,
     AttachmentExtensionAwareInterface,
     NoteExtensionAwareInterface,

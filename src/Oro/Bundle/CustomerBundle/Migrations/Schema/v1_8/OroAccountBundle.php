@@ -14,7 +14,7 @@ use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
-class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
+class OroAccountBundle implements Migration, RenameExtensionAwareInterface
 {
     use MigrationConstraintTrait;
 
@@ -229,7 +229,7 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
         ));
         $queries->addQuery(new UpdateTableFieldQuery(
             'oro_email_template',
-            'entityName',
+            'entityname',
             'AccountBundle',
             'CustomerBundle'
         ));

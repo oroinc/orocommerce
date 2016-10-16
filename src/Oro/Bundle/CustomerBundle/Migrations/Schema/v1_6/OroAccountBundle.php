@@ -10,7 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
+class OroAccountBundle implements Migration, RenameExtensionAwareInterface
 {
     /**
      * @var RenameExtension
