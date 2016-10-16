@@ -179,7 +179,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
             RelationType::MANY_TO_ONE
         ));
 
-        $notes->removeForeignKey('fk_oro_note_account_8d93c122_id');
+        $notes->removeForeignKey('FK_BA066CE16127545E');
         $extension->renameColumn($schema, $queries, $notes, 'account_8d93c122_id', 'account_8d1f63b9_id');
         $extension->addForeignKeyConstraint(
             $schema,
@@ -188,8 +188,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
             'oro_account',
             ['account_8d1f63b9_id'],
             ['id'],
-            ['onDelete' => 'SET NULL'],
-            'fk_oro_note_account_8d1f63b9_id'
+            ['onDelete' => 'SET NULL']
         );
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\NoteBundle\Entity\Note',
