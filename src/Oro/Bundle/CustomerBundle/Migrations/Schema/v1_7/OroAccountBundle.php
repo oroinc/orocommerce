@@ -305,7 +305,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         );
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\AttachmentBundle\Entity\Attachment',
-            'Oro\Bundle\AccountBundle\Entity\Account',
+            'Oro\Bundle\CustomerBundle\Entity\Account',
             'account_557018f',
             'account_8d93c122',
             RelationType::MANY_TO_ONE
@@ -330,7 +330,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         );
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\AttachmentBundle\Entity\Attachment',
-            'Oro\Bundle\AccountBundle\Entity\AccountUser',
+            'Oro\Bundle\CustomerBundle\Entity\AccountUser',
             'account_user_1cc98a31',
             'account_user_7e92c4f1',
             RelationType::MANY_TO_ONE
