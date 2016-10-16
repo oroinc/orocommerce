@@ -5,6 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Migrations\Schema\v1_8;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
+
 use Oro\Bundle\InstallerBundle\Migration\UpdateTableFieldQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
@@ -226,6 +227,26 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
             'AccountBundle',
             'CustomerBundle'
         ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_email_template',
+            'entityName',
+            'AccountBundle',
+            'CustomerBundle'
+        ));
+
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_email_template',
+            'content',
+            'oro_account_frontend_account_user_confirmation',
+            'oro_customer_frontend_account_user_confirmation'
+        ));
+
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_email_template',
+            'content',
+            'oro_account_account_user_security_login',
+            'oro_customer_account_user_security_login'
+        ));
     }
 
     /**
@@ -235,4 +256,33 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
     {
         $this->renameExtension = $renameExtension;
     }
+
+//    /**
+//     * @param Schema $schema
+//     * @param QueryBag $queries
+//     */
+//    private function updateComment(Schema $schema, QueryBag $queries)
+//    {
+//        $extension = $this->renameExtension;
+//        $comment = $schema->getTable('oro_comment');
+//
+//         $comment->removeForeignKey('FK_5CD3A4BAD655E33D');
+//         $extension->renameColumn($schema, $queries, $comment, 'call_74d3684c_id', 'call_41b3ba7d_id');
+//         $extension->addForeignKeyConstraint(
+//             $schema,
+//             $queries,
+//             'oro_comment',
+//             'orocrm_call',
+//             ['call_41b3ba7d_id'],
+//             ['id'],
+//             ['onDelete' => 'SET NULL']
+//         );
+//         $queries->addQuery(new UpdateExtendRelationQuery(
+//             'Oro\Bundle\CommentBundle\Entity\Comment',
+//             'Oro\Bundle\CallBundle\Entity\Call',
+//             'call_74d3684c',
+//             'call_41b3ba7d',
+//             RelationType::MANY_TO_ONE
+//         ));
+//     }
 }

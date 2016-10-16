@@ -1,3 +1,7 @@
+oeo:
+  account:
+    owner.label: 'Owner'
+
 oro.customer:
     account:
         entity_label: 'Customer'
