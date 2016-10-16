@@ -22,7 +22,7 @@ use Oro\Bundle\CustomerBundle\Entity\Account;
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class OroCustomerBundleInstaller implements
+class OroAccountBundleInstaller implements
     Installation,
     AttachmentExtensionAwareInterface,
     NoteExtensionAwareInterface,

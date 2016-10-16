@@ -10,7 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class OroCustomerBundle implements Migration
+class OroAccountBundle implements Migration
 {
     const ORO_B2B_ACCOUNT_ADDRESS_TABLE_NAME = 'orob2b_account_address';
     const ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME = 'orob2b_account_user_address';

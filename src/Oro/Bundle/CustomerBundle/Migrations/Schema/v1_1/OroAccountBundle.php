@@ -12,7 +12,7 @@ use Oro\Bundle\CustomerBundle\Migrations\Schema\OroCustomerBundleInstaller;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class OroCustomerBundle implements Migration
+class OroAccountBundle implements Migration
 {
     const ORO_B2B_ACCOUNT_TABLE_NAME = 'orob2b_account';
     const ORO_B2B_ACCOUNT_GROUP_TABLE_NAME = 'orob2b_account_group';
