@@ -58,7 +58,7 @@ class ProductVisibilityRestrictionListener
 
         $query->getCriteria()->andWhere(
             Criteria::expr()->orX(
-                Criteria::expr()->isNull('sku'),
+                Criteria::expr()->notExists('sku'),
                 $restrictions
             )
         );
