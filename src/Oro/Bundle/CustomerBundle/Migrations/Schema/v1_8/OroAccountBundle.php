@@ -99,8 +99,8 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
             $schema,
             $queries,
             $attachments,
-            'account_user_5919fc1d_id',
-            'account_user_1cc98a31_id'
+            'account_user_1cc98a31_id',
+            'account_user_5919fc1d_id'
         );
         $extension->addForeignKeyConstraint(
             $schema,
@@ -114,7 +114,7 @@ class OroCustomerBundle implements Migration, RenameExtensionAwareInterface
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\AttachmentBundle\Entity\Attachment',
             'Oro\Bundle\CustomerBundle\Entity\AccountUser',
-            'account_user_5919fc1d',
+            'account_user_1cc98a31',
             'account_user_1cc98a31',
             RelationType::MANY_TO_ONE
         ));
