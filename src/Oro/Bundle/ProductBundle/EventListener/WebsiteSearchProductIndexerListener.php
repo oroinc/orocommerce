@@ -57,6 +57,7 @@ class WebsiteSearchProductIndexerListener
             $event->addField($product->getId(), 'status', $product->getStatus());
             $event->addField($product->getId(), 'inventory_status', $product->getInventoryStatus()->getId());
 
+
             // Localized fields
             $placeholders = [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION];
             $event->addPlaceholderField($product->getId(), 'title', (string)$product->getDefaultName(), $placeholders);
@@ -76,7 +77,8 @@ class WebsiteSearchProductIndexerListener
             );
 
             foreach ($localizations as $localization) {
-                $placeholders = [LocalizationIdPlaceholder::NAME => $localization->getId()];
+                $localizationId = $localization->getId();
+                $placeholders = [LocalizationIdPlaceholder::NAME => $localizationId];
                 $event->addPlaceholderField(
                     $product->getId(),
                     'title',

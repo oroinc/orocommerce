@@ -5,9 +5,9 @@ namespace Oro\Bundle\AccountBundle\Model;
 interface MessageFactoryInterface
 {
     /**
-     * @param object $visibility
+     * @param object $object
      */
-    public function createMessage($visibility);
+    public function createMessage($object);
 
     /**
      * @param array $data

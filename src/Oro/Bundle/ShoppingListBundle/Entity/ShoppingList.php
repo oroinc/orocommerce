@@ -9,7 +9,6 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\OrganizationBundle\Entity\Ownership\OrganizationAwareTrait;
 use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use Oro\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
@@ -18,6 +17,7 @@ use Oro\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
+use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
  * @ORM\Table(
@@ -48,6 +48,9 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *              }
  *          },
  *          "ownership"={
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="user_owner_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="accountUser",
  *              "frontend_owner_column_name"="account_user_id",
@@ -75,8 +78,8 @@ class ShoppingList extends ExtendShoppingList implements
     \JsonSerializable
 {
     use DatesAwareTrait;
-    use OrganizationAwareTrait;
     use FrontendAccountUserAwareTrait;
+    use UserAwareTrait;
 
     /**
      * @var int
@@ -165,11 +168,6 @@ class ShoppingList extends ExtendShoppingList implements
      * @var Subtotal
      */
     protected $subtotal;
-
-    /**
-     * @var bool
-     */
-    protected $isAllowedRFP = true;
 
     /**
      * {@inheritdoc}
@@ -412,22 +410,6 @@ class ShoppingList extends ExtendShoppingList implements
     public function setSubtotal(Subtotal $subtotal)
     {
         $this->subtotal = $subtotal;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getIsAllowedRFP()
-    {
-        return $this->isAllowedRFP;
-    }
-
-    /**
-     * @param bool $isAllowedRFP
-     */
-    public function setIsAllowedRFP($isAllowedRFP)
-    {
-        $this->isAllowedRFP = $isAllowedRFP;
     }
 
     /**

@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
 use Oro\Bundle\AccountBundle\Visibility\Cache\Product\AccountProductResolvedCacheBuilder;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
@@ -60,9 +61,15 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     {
         $container = $this->client->getContainer();
 
+        $indexScheduler = new ProductIndexScheduler(
+            $container->get('oro_entity.doctrine_helper'),
+            $container->get('event_dispatcher')
+        );
+
         $builder = new AccountProductResolvedCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_entity.orm.insert_from_select_query_executor')
+            $container->get('oro_entity.orm.insert_from_select_query_executor'),
+            $indexScheduler
         );
         $builder->setCacheClass(
             $container->getParameter('oro_account.entity.account_product_visibility_resolved.class')

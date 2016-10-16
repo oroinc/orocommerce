@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Doctrine\ORM\PersistentCollection;
+
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
 
 /**
  * Handle category scalar attributes changes, category parent change, category remove.
@@ -15,16 +14,13 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class CategoryEntityListener extends AbstractRuleEntityListener
 {
-    const FIELD_PARENT_CATEGORY = 'parentCategory';
-    const FIELD_PRODUCTS = 'products';
-
     /**
      * @param Category $category
      * @param PreUpdateEventArgs $event
      */
     public function preUpdate(Category $category, PreUpdateEventArgs $event)
     {
-        if ($event->hasChangedField(self::FIELD_PARENT_CATEGORY)) {
+        if ($event->hasChangedField(Category::FIELD_PARENT_CATEGORY)) {
             // handle category tree changes
             $this->recalculateByEntity();
         } else {
@@ -38,25 +34,17 @@ class CategoryEntityListener extends AbstractRuleEntityListener
     }
 
     /**
-     * @param OnFlushEventArgs $event
+     * @param ProductsChangeRelationEvent $event
      */
-    public function onFlush(OnFlushEventArgs $event)
+    public function onProductsChangeRelation(ProductsChangeRelationEvent $event)
     {
-        $unitOfWork = $event->getEntityManager()->getUnitOfWork();
-        $collections = $unitOfWork->getScheduledCollectionUpdates();
-        foreach ($collections as $collection) {
-            if ($collection instanceof PersistentCollection && $collection->getOwner() instanceof Category
-                && $collection->getMapping()['fieldName'] === self::FIELD_PRODUCTS
-                && $collection->isDirty() && $collection->isInitialized()
-            ) {
-                // Get lexemes associated with Category::id relation
-                $lexemes = $this->priceRuleLexemeTriggerHandler
-                    ->findEntityLexemes($this->getEntityClassName(), ['id']);
-                /** @var Product $product */
-                foreach (array_merge($collection->getInsertDiff(), $collection->getDeleteDiff()) as $product) {
-                    $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product);
-                }
-            }
+        $products = $event->getProducts();
+        // Get lexemes associated with Category::id relation
+        $lexemes = $this->priceRuleLexemeTriggerHandler
+            ->findEntityLexemes($this->getEntityClassName(), ['id']);
+
+        foreach ($products as $product) {
+            $this->priceRuleLexemeTriggerHandler->addTriggersByLexemes($lexemes, $product);
         }
     }
 

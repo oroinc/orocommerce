@@ -14,6 +14,8 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
 {
+    const OPTION_CATEGORY_VISIBILITY = 'oro_account.category_visibility';
+
     /**
      * @var Registry
      */
@@ -172,7 +174,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     protected function getCategoryVisibilityConfigValue()
     {
-        return ($this->configManager->get('oro_account.category_visibility') === CategoryVisibility::HIDDEN)
+        return ($this->configManager->get(self::OPTION_CATEGORY_VISIBILITY) === CategoryVisibility::HIDDEN)
             ? BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN
             : BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE;
     }
