@@ -35,3 +35,10 @@ services:
             - '@oro_payment.payment_method.payment_term.config'
         tags:
             - { name: oro_payment.payment_method_view }
+
+    oro_payment.provider.extract_options:
+        class: 'Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider'
+        public: false
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_entity.entity_alias_resolver'

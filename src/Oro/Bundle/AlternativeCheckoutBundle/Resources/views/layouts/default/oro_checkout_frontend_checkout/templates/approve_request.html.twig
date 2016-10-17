@@ -13,5 +13,9 @@
         <span>{{ workflowItem.data.get('request_approval_notes')|nl2br|raw }}</span>
     {% endif %}
 
+    {% if form.state_token is defined %}
+        {{ form_row(form.state_token) }}
+    {% endif %}
+
     {{ block_widget(block) }}
 {%- endblock %}

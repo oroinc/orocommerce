@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -107,6 +108,26 @@ class UPSTransport extends Transport
     protected $applicableShippingServices;
 
     /**
+     * @var Collection|LocalizedFallbackValue[]
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="oro_ups_transport_label",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     */
+    protected $labels;
+
+    /**
      * @var ParameterBag
      */
     protected $settings;
@@ -114,6 +135,7 @@ class UPSTransport extends Transport
     public function __construct()
     {
         $this->applicableShippingServices = new ArrayCollection();
+        $this->labels = new ArrayCollection();
     }
 
     /**
@@ -278,6 +300,7 @@ class UPSTransport extends Transport
 
     /**
      * @param Country|null $country
+     *
      * @return $this
      */
     public function setCountry(Country $country = null)
@@ -304,6 +327,7 @@ class UPSTransport extends Transport
 
     /**
      * @param string $code
+     *
      * @return ShippingService|null
      */
     public function getApplicableShippingService($code)
@@ -322,6 +346,7 @@ class UPSTransport extends Transport
 
     /**
      * @param ShippingService $service
+     *
      * @return $this
      */
     public function addApplicableShippingService(ShippingService $service)
@@ -335,12 +360,49 @@ class UPSTransport extends Transport
 
     /**
      * @param ShippingService $service
+     *
      * @return $this
      */
     public function removeApplicableShippingService(ShippingService $service)
     {
         if ($this->applicableShippingServices->contains($service)) {
             $this->applicableShippingServices->removeElement($service);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LocalizedFallbackValue[]
+     */
+    public function getLabels()
+    {
+        return $this->labels;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $label
+     *
+     * @return $this
+     */
+    public function addLabel(LocalizedFallbackValue $label)
+    {
+        if (!$this->labels->contains($label)) {
+            $this->labels->add($label);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $label
+     *
+     * @return $this
+     */
+    public function removeLabel(LocalizedFallbackValue $label)
+    {
+        if ($this->labels->contains($label)) {
+            $this->labels->removeElement($label);
         }
 
         return $this;
@@ -364,6 +426,7 @@ class UPSTransport extends Transport
                     'unit_of_weight' => $this->getUnitOfWeight(),
                     'country' => $this->getCountry(),
                     'applicable_shipping_services' => $this->getApplicableShippingServices()->toArray(),
+                    'labels' => $this->getLabels()->toArray()
                 ]
             );
         }
