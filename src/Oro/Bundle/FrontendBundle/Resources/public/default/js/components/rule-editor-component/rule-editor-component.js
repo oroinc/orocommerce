@@ -83,13 +83,11 @@ define([
 
             this.$element.on('keyup paste blur', function(e) {
                 var $el = $(e.target);
-
                 setTimeout(function() {
                     var isValid = _this.isValid($el.val());
-
                     $el.toggleClass('error', !isValid);
                     $el.parent().toggleClass('validation-error', !isValid);
-                }, 0);
+                }, 10);
             });
 
             this.initAutocomplete();
@@ -461,7 +459,7 @@ define([
             if (_.isArray(array)) {
                 return checkValues(array);
             } else {
-                var arrayMatch = getMatches(array, /(\[(.*?)\])/g);
+                var arrayMatch = getMatches(array, /^(\[(.*?)\])$/g);
 
                 if (!_.isEmpty(arrayMatch)) {
                     if (arrayMatch.length > 1) {
@@ -508,6 +506,8 @@ define([
 
             var num = Number(value),
                 isNumber = _.isNumber(num) && !_.isNaN(num);
+
+            console.log('checkValue',value, isNumber, this.checkTerm(value, this.cases.data));
 
             return isNumber || this.checkTerm(value, this.cases.data);
         },
