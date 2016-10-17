@@ -39,7 +39,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         }
         // update to beta5 from less then beta4
         if (!$schema->hasTable('oro_rel_26535370a6adb604aeb863')) {
-//            $this->renameActivityTables($schema, $queries);
+//            $this->renameOldActivityTables($schema, $queries);
 //            $this->updateAttachments($schema, $queries);
 //            $this->updateNotes($schema, $queries);
 //            $this->updateTableField($queries);
@@ -53,6 +53,35 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
      * @param QueryBag $queries
      */
     private function renameActivityTables(Schema $schema, QueryBag $queries)
+    {
+        $extension = $this->renameExtension;
+
+        // email to account user association
+        $extension->renameTable($schema, $queries, 'oro_rel_26535370a6adb604aeb863', 'oro_rel_26535370a6adb604264ef1');
+        $queries->addQuery(new UpdateExtendRelationQuery(
+            'Oro\Bundle\EmailBundle\Entity\Email',
+            'Oro\Bundle\CustomerBundle\Entity\AccountUser',
+            'account_user_795f990e',
+            'account_user_489123cf',
+            RelationType::MANY_TO_MANY
+        ));
+
+        // calendar event to account user association
+        $extension->renameTable($schema, $queries, 'oro_rel_46a29d19a6adb604aeb863', 'oro_rel_46a29d19a6adb604264ef1');
+        $queries->addQuery(new UpdateExtendRelationQuery(
+            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
+            'Oro\Bundle\CustomerBundle\Entity\AccountUser',
+            'account_user_795f990e',
+            'account_user_489123cf',
+            RelationType::MANY_TO_MANY
+        ));
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function renameOldActivityTables(Schema $schema, QueryBag $queries)
     {
         $extension = $this->renameExtension;
 
