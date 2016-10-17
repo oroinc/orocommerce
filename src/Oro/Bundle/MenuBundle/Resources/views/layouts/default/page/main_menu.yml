@@ -10,7 +10,7 @@ layout:
                     blockType: container
                 header_row_shopping:
                     blockType: container
-                quick_access_relocated:
+                main_menu_axtra_container:
                     blockType: container
                 main_menu_container:
                     blockType: container
@@ -23,6 +23,6 @@ layout:
                 header:
                     header_row:
                         header_row_links:
-                            quick_access_relocated: ~
+                            main_menu_axtra_container: ~
                             main_menu_container:
                                 main_menu: ~

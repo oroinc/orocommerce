@@ -46,9 +46,9 @@
     </div>
 {% endblock %}
 
-{% block _quick_access_relocated_widget %}
+{% block _main_menu_axtra_container_widget %}
     {% set attr =  layout_attr_defaults(attr, {
-        '~class': ' quick-access-relocated'
+        'data-main-menu-axtra-container': ''
     }) %}
 
     <div {{ block('block_attributes') }}>
