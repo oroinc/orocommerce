@@ -215,6 +215,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_shipping.shipping_method.registry'
+            - '@oro_shipping.expression_language.line_item_decorator_factory'
 
     oro_shipping.form.handler.shipping_rule:
         class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingRuleHandler'
