@@ -50,7 +50,7 @@ class ShoppingListRepositoryTest extends WebTestCase
         $this->assertEquals($this->accountUser, $shoppingList->getAccountUser());
     }
 
-    public function findAvailableForAccountUser()
+    public function testFindAvailableForAccountUser()
     {
         // Isset current shopping list
         $currentShoppingList = $this->getRepository()->findCurrentForAccountUser($this->accountUser);
@@ -65,8 +65,8 @@ class ShoppingListRepositoryTest extends WebTestCase
 
         $availableShoppingList = $this->getRepository()->findAvailableForAccountUser($this->accountUser);
 
-        // Check shopping list is not current for account user
-        $this->assertFalse($availableShoppingList->isCurrent());
+        // Check shopping list is current for account user
+        $this->assertTrue($availableShoppingList->isCurrent());
         $this->assertEquals($this->accountUser, $availableShoppingList->getAccountUser());
     }
 
