@@ -366,7 +366,7 @@ workflows:
                 preconditions:
                     '@not_equal': [$payment_in_progress, true]
                 conditions:
-                    '@extendable': ~
+                    '@extendable': [extendable_condition.checkout]
                 actions:
                     - '@assign_value': [$billing_address_has_shipping, true]
                     - '@assign_value': [$payment_method, null]
@@ -413,7 +413,7 @@ workflows:
                                 entity: $checkout
                 conditions:
                     '@and':
-                        - '@extendable': ~
+                        - '@extendable': [extendable_condition.checkout]
                         - '@not_empty': $checkout.billingAddress
                         - '@not_empty': $.result.initCheckoutState
                         - '@or':
@@ -517,7 +517,7 @@ workflows:
                                 entity: $checkout
                 conditions:
                     '@and':
-                        - '@extendable': ~
+                        - '@extendable': [extendable_condition.checkout]
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -602,7 +602,7 @@ workflows:
                                 entity: $checkout
                 conditions:
                     '@and':
-                        - '@extendable': ~
+                        - '@extendable': [extendable_condition.checkout]
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -672,7 +672,7 @@ workflows:
                             entity: $checkout
                 conditions:
                     '@and':
-                        - '@extendable': ~
+                        - '@extendable': [extendable_condition.checkout]
                         - '@shipping_method_supports':
                             message: oro.checkout.workflow.condition.shipping_method_supports.message
                             parameters:
@@ -755,7 +755,7 @@ workflows:
                                     expected_value: continue_to_order_review
                 conditions:
                     '@and':
-                        - '@extendable': ~
+                        - '@extendable': [extendable_condition.checkout]
                         - '@shipping_method_supports':
                             message: oro.checkout.workflow.condition.shipping_method_supports.message
                             parameters:
@@ -806,7 +806,7 @@ workflows:
                         parameters: [$payment_in_progress, true]
                 conditions:
                     '@and':
-                        - '@extendable': ~
+                        - '@extendable': [extendable_condition.checkout]
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -965,7 +965,7 @@ workflows:
             finish_checkout_definition:
                 conditions:
                     '@and':
-                        - '@extendable': ~
+                        - '@extendable': [extendable_condition.checkout]
                         - '@not_empty': [$order]
                         - '@equal': [$payment_in_progress, true]
                         - '@shipping_method_supports':
@@ -1102,7 +1102,7 @@ workflows:
                 preconditions:
                     '@not_equal': [$payment_in_progress, true]
                 conditions:
-                    '@extendable': ~
+                    '@extendable': [extendable_condition.checkout]
                 actions:
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -1116,7 +1116,7 @@ workflows:
                 preconditions:
                     '@not_equal': [$payment_in_progress, true]
                 conditions:
-                    '@extendable': ~
+                    '@extendable': [extendable_condition.checkout]
                 actions:
                     - '@assign_value': [$payment_method, null]
                     - '@generate_checkout_state_snapshot':
@@ -1130,7 +1130,7 @@ workflows:
 
             unblock_and_recalculate_definition:
                 conditions:
-                    '@extendable': ~
+                    '@extendable': [extendable_condition.checkout]
                 actions:
                     - '@assign_value': [$payment_method, null]
                     - '@assign_value': [$payment_in_progress, false]

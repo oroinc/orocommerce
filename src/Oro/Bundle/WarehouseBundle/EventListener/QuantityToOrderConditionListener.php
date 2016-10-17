@@ -96,7 +96,7 @@ class QuantityToOrderConditionListener
         }
 
         if (false == $this->quantityValidator->isLineItemListValid($context->getEntity()->getLineItems())) {
-            $event->addError(self::QUANTITY_CHECK_ERROR);
+            $event->addError(self::QUANTITY_CHECK_ERROR, $context);
         }
     }
 

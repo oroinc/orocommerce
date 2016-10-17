@@ -117,8 +117,8 @@ services:
             - '@session'
             - '@translator'
         tags:
-            - { name: kernel.event_listener, event: extendable.WorkflowItem, method: onConditionAllowedCheck }
-            - { name: kernel.event_listener, event: extendable.ActionData, method: onProductQuantityCheck }
+            - { name: kernel.event_listener, event: extendable_condition.checkout, method: onConditionAllowedCheck }
+            - { name: kernel.event_listener, event: extendable_operation.create_order, method: onProductQuantityCheck }
 
     oro_warehouse.validator.quantity_to_order_validator:
         class: Oro\Bundle\WarehouseBundle\Validator\QuantityToOrderValidator

@@ -28,7 +28,7 @@ operations:
         button_options:
             icon: icon-briefcase
         conditions:
-                - '@extendable': ~
+            '@extendable': [extendable_operation.create_order]
         preconditions:
             '@and':
                 - '@has_elements': $lineItems
