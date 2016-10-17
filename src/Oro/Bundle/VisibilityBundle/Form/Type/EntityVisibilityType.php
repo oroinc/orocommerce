@@ -5,6 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Form\Type;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
+use Oro\Bundle\ScopeBundle\Form\FormScopeCriteriaResolver;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
@@ -22,7 +23,6 @@ class EntityVisibilityType extends AbstractType
     const ALL_FIELD = 'all';
     const ACCOUNT_FIELD = 'account';
     const ACCOUNT_GROUP_FIELD = 'accountGroup';
-    const SCOPE = 'scope';
     const ALL_CLASS = 'allClass';
     const ACCOUNT_GROUP_CLASS = 'accountGroupClass';
     const ACCOUNT_CLASS = 'accountClass';
@@ -56,7 +56,7 @@ class EntityVisibilityType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                self::SCOPE => null,
+                FormScopeCriteriaResolver::SCOPE => null,
             ]
         );
         $resolver->setRequired(

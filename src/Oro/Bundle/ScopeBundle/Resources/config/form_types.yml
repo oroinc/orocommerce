@@ -6,3 +6,7 @@ services:
         tags:
             - { name: form.type, alias: oro_scoped_data_type }
 
+    oro_scope.for_scope_criteria_resolver:
+        class: 'Oro\Bundle\ScopeBundle\Form\FormScopeCriteriaResolver'
+        arguments:
+            - '@oro_scope.scope_manager'

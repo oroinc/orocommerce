@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Form\FormScopeCriteriaResolver;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\VisibilityRepositoryInterface;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
@@ -31,13 +31,23 @@ abstract class AbstractVisibilityListener
     protected $scopeManager;
 
     /**
+     * @var FormScopeCriteriaResolver
+     */
+    protected $formScopeCriteriaResolver;
+
+    /**
      * @param ManagerRegistry $registry
      * @param ScopeManager $scopeManager
+     * @param FormScopeCriteriaResolver $formScopeCriteriaResolver
      */
-    public function __construct(ManagerRegistry $registry, ScopeManager $scopeManager)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        ScopeManager $scopeManager,
+        FormScopeCriteriaResolver $formScopeCriteriaResolver
+    ) {
         $this->registry = $registry;
         $this->scopeManager = $scopeManager;
+        $this->formScopeCriteriaResolver = $formScopeCriteriaResolver;
     }
 
     /**
@@ -50,8 +60,7 @@ abstract class AbstractVisibilityListener
         $visibilityClassName = $form->getConfig()->getOption($field.'Class');
         /** @var VisibilityRepositoryInterface $repository */
         $type = $this->getVisibilityScopeType($form, $field);
-        $context = $this->getFormScopeContext($form->get($field), $type);
-        $criteria = $this->scopeManager->getCriteria($type, $context);
+        $criteria = $this->formScopeCriteriaResolver->resolve($form->get($field), $type);
 
         $repository = $this->registry->getManagerForClass($visibilityClassName)->getRepository($visibilityClassName);
         $result = $repository->findByScopeCriteriaForTarget($criteria, $form->getData());
@@ -62,34 +71,11 @@ abstract class AbstractVisibilityListener
             } else {
                 $result = reset($result);
             }
+        } else {
+            $result = $this->mapVisibilitiesById($result);
         }
+
         return $result;
-    }
-
-    /**
-     * @param FormInterface $form
-     * @param string $type
-     * @return array
-     */
-    protected function getFormScopeContext(FormInterface $form, $type)
-    {
-        $context = [];
-        if ($form->getConfig()->hasOption('context')) {
-            $context = $form->getConfig()->getOption('context');
-        } elseif ($form->getConfig()->hasOption(EntityVisibilityType::SCOPE)) {
-            $scope = $form->getConfig()->getOption(EntityVisibilityType::SCOPE);
-
-            if ($scope instanceof Scope) {
-                $context = $this->scopeManager->getCriteriaByScope($scope, $type)->toArray();
-            }
-        }
-
-        $parentForm = $form->getParent();
-        if (null !== $parentForm) {
-            $context = array_replace($this->getFormScopeContext($parentForm, $type), $context);
-        }
-
-        return $context;
     }
 
     /**
@@ -133,10 +119,10 @@ abstract class AbstractVisibilityListener
 
         $visibilityClassName = $config->getOption($field.'Class');
 
-        if ($config->hasOption(EntityVisibilityType::SCOPE)
-            && null !== $config->getOption(EntityVisibilityType::SCOPE)
+        if ($config->hasOption(FormScopeCriteriaResolver::SCOPE)
+            && null !== $config->getOption(FormScopeCriteriaResolver::SCOPE)
         ) {
-            $rootScope = $config->getOption(EntityVisibilityType::SCOPE);
+            $rootScope = $config->getOption(FormScopeCriteriaResolver::SCOPE);
         } else {
             $rootScope = $this->scopeManager->findDefaultScope();
         }

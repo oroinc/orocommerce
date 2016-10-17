@@ -5,6 +5,7 @@ namespace Oro\Bundle\ScopeBundle\Form\Type;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Form\FormScopeCriteriaResolver;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -16,7 +17,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ScopedDataType extends AbstractType
 {
     const NAME = 'oro_scoped_data_type';
-    const SCOPE_OPTION = 'scope';
     const SCOPES_OPTION = 'scopes';
     const TYPE_OPTION = 'type';
     const OPTIONS_OPTION = 'options';
@@ -93,7 +93,7 @@ class ScopedDataType extends AbstractType
                     sprintf('Scope id %s is not in allowed form scopes', $scope->getId())
                 );
             }
-            $options['options'][self::SCOPE_OPTION] = $scope;
+            $options['options'][FormScopeCriteriaResolver::SCOPE] = $scope;
             $builder->add(
                 $scope->getId(),
                 $options[self::TYPE_OPTION],
@@ -158,7 +158,7 @@ class ScopedDataType extends AbstractType
 
         /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass(Scope::class);
-        $options[self::SCOPE_OPTION] = $em->getReference(Scope::class, $scopeId);
+        $options[FormScopeCriteriaResolver::SCOPE] = $em->getReference(Scope::class, $scopeId);
 
         $form->add($scopeId, $form->getConfig()->getOption(self::TYPE_OPTION), $options);
     }
