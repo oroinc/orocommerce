@@ -11,7 +11,16 @@
 
 {% block _quick_access_menu_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " quick-access"
+        '~class': " quick-access",
+        'data-dom-relocation': true,
+        'data-dom-relocation-options': {
+            responsive: [
+                {
+                    breakpoint: 1099,
+                    moveTo: '.quick-access-relocated'
+                }
+            ]
+        }
     }) %}
     <div {{ block('block_attributes') }}>
         <ul class="quick-access__list">

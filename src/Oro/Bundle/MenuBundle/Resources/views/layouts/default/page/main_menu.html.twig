@@ -46,6 +46,16 @@
     </div>
 {% endblock %}
 
+{% block _quick_access_relocated_widget %}
+    {% set attr =  layout_attr_defaults(attr, {
+        '~class': ' quick-access-relocated'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _main_menu_container_widget %}
     {% set attr =  layout_attr_defaults(attr, {
         '~class': ' main-menu'

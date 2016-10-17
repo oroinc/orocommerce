@@ -4,7 +4,8 @@
 @import 'orofrontend/default/scss/components/commerce/partials/mixins.scss';
 
 @import './components/top_nav';
-@import './components/quick_access';
+@import './components/quick-access/quick-access';
+@import './components/quick-access-relocated/quick-access-relocated';
 @import './components/main_menu';
 @import './components/footer_menu';
 

@@ -1,0 +1,25 @@
+.quick-access-relocated {
+    & .quick-access__list {
+        text-align: left;
+    }
+
+    & .quick-access__item {
+        display: block;
+
+        margin: 0;
+        padding: 10px 16px;
+
+        text-transform: uppercase;
+    }
+
+    & .quick-access__text {
+        font-weight: bold;
+    }
+
+    & .quick-access__badge {
+        width: 26px;
+        height: 26px;
+
+        line-height: 26px;
+    }
+}
