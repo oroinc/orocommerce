@@ -37,6 +37,15 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
 
             $queries->addPostQuery(new RenameConfigSectionQuery('oro_account', 'oro_customer'));
         }
+        // update to beta5 from less then beta4
+        if (!$schema->hasTable('oro_rel_26535370a6adb604aeb863')) {
+//            $this->renameActivityTables($schema, $queries);
+//            $this->updateAttachments($schema, $queries);
+//            $this->updateNotes($schema, $queries);
+//            $this->updateTableField($queries);
+
+//            $queries->addPostQuery(new RenameConfigSectionQuery('oro_account', 'oro_customer'));
+        }
     }
 
     /**
