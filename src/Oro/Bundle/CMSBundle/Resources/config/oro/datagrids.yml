@@ -12,7 +12,8 @@ datagrids:
                 from:
                     - { table: %oro_cms.entity.loginpage.class%, alias: loginPage }
         columns:
-            id: ~
+            id:
+              label: oro.cms.loginpage.id.label
         properties:
             id: ~
             view_link:
@@ -41,8 +42,10 @@ datagrids:
                 from:
                     - { table: %oro_cms.entity.page.class%, alias: page }
         columns:
-            id: ~
-            title: ~
+            id:
+              label: oro.cms.page.id.label
+            title:
+              label: oro.cms.page.title.label
         properties:
             id: ~
             view_link:

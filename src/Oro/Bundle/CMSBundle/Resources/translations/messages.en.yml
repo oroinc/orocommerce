@@ -12,6 +12,7 @@ oro.cms:
         level.label:            'Tree level'
         right.label:            'Tree right index'
         root.label:             'Tree root'
+        id.label:               'Id'
         child_pages.label:      'Child pages'
         parent_page.label:      'Parent page'
         slugs.label:            'Slugs'
@@ -35,9 +36,6 @@ oro.cms:
     sections:
         general: 'General'
         content: 'Content'
-
-    template:
-        select_existing_or_create_new: 'Please select a page on the left or create new one.'
 
     loginpage:
         entity_plural_label: 'Customer Login Pages'
