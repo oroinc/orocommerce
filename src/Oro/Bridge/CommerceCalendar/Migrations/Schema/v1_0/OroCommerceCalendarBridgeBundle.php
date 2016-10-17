@@ -60,7 +60,12 @@ class OroCommerceCalendarBridgeBundle implements Migration, ActivityExtensionAwa
                 if (!$schema->hasTable($tableName)) {
                     $tableName = $legacyAssociationTables[$tableName];
                 }
-                $associationTableName = $activityExtension->getAssociationTableName(self::CALENDAR_EVENT_TABLE, $tableName);
+
+                $associationTableName = $activityExtension->getAssociationTableName(
+                    self::CALENDAR_EVENT_TABLE,
+                    $tableName
+                );
+
                 if (!$schema->hasTable($associationTableName)) {
                     $activityExtension->addActivityAssociation($schema, self::CALENDAR_EVENT_TABLE, $tableName);
                 }
