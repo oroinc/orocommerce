@@ -148,11 +148,27 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\Provider\ResourcesHashProvider'
         public: false
 
+    oro_website_search.async.indexer:
+        class: Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer
+        arguments:
+            - '@oro_website_search.indexer'
+            - '@oro_message_queue.client.message_producer'
+
+    oro_website_search.async_messaging.search_message.processor:
+        class: Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\SearchMessageProcessor
+        arguments:
+            - '@oro_website_search.indexer'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor', 'topicName': 'oro.website.search.indexer.save' }
+            - { name: 'oro_message_queue.client.message_processor', 'topicName': 'oro.website.search.indexer.delete' }
+            - { name: 'oro_message_queue.client.message_processor', 'topicName': 'oro.website.search.indexer.reset_index' }
+            - { name: 'oro_message_queue.client.message_processor', 'topicName': 'oro.website.search.indexer.reindex' }
+
     oro_website_search.reindex_request.listener:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener'
         arguments:
-            - ~ # regular indexer
-            - ~ # async indexer
+            - '@oro_website_search.indexer'
+            - "@oro_website_search.async.indexer"
         tags:
             - { name: kernel.event_listener, event: oro_website_search.reindexation_request, method: process }
 
