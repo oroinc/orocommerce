@@ -1,11 +1,3 @@
-.ttip__wrap {
-  position: relative;
-
-  display: inline-block;
-  *display: inline;
-  *zoom: 1; 
-}
-
 .ttip {
   position: absolute;
   bottom: 100%;
@@ -18,6 +10,14 @@
 
   visibility: hidden;
   opacity: 0;
+
+  &__wrap {
+    position: relative;
+
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+  }
 
   &__content {
     position: relative;
