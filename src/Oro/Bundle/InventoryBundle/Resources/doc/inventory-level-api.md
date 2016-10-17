@@ -3,28 +3,26 @@ Inventory Level API
 
 Table of Contents
 -----------------
- - [GET Warehouse Inventory Levels](#get-warehouse-inventory-levels)
- - [PATCH Warehouse Inventory Level](#patch-warehouse-inventory-level)
- - [POST Warehouse Inventory Level](#post-warehouse-inventory-level)
- - [DELETE Warehouse Inventory Level](#delete-warehouse-inventory-level)
- - [DELETE Warehouse Inventory Levels](#delete-warehouse-inventory-levels)
+ - [GET Inventory Levels](#get-inventory-levels)
+ - [PATCH Inventory Level](#patch-inventory-level)
+ - [POST Inventory Level](#post-inventory-level)
+ - [DELETE Inventory Level](#delete-inventory-level)
+ - [DELETE Inventory Levels](#delete-inventory-levels)
 
-GET Warehouse Inventory Levels
+GET Inventory Levels
 ==============================
 
-Returns a collection of **Warehouse Inventory Levels**.
+Returns a collection of **Inventory Levels**.
 
-This API can be used to retrieve Warehouse Inventory Level quantities.
+This API can be used to retrieve Inventory Level quantities.
 
 One or more Product SKUs can be provided in order to filter the received data.
-
-One or more Warehouse ids can be provided in order to filter the received data.
 
 One or more Product Unit codes can be provided in order to filter the received data.
 
 Resource URL
 ------------
-`{web_backend_prefix}/api/warehouseinventorylevels/`
+`{web_backend_prefix}/api/inventorylevels/`
 
 Request Headers
 ---------------
@@ -53,13 +51,6 @@ One or more ProductUnit codes can be provided as request query.
 
 E.g.: `filter[productUnitPrecision.unit.code]=item` or `filter[productUnitPrecision.unit.code]=item,set`
 
-### warehouse
-Warehouse ID(s).
-
-One or more Warehouse ids can be provided as request query.
-
-E.g.: `filter[warehouse]=1` or `filter[warehouse]=1,2`
-
 ### included
 Included related resource(s).
 
@@ -71,11 +62,11 @@ Authentication Requirements
 ---------------------------
 WSSE authentication is required.
 
-ACL permission to view Warehouse Inventory Levels is required.
+ACL permission to view Inventory Levels is required.
 
 Example Request
 ---------------
-http://demo.orocommerce.com/admin/api/warehouseinventorylevels?filter[product.sku]=0RT28,1AB92&filter[productUnitPrecision.unit.code]=item&filter[warehouse]=1,2&include=product,productUnitPrecision
+http://demo.orocommerce.com/admin/api/inventorylevels?filter[product.sku]=0RT28,1AB92&filter[productUnitPrecision.unit.code]=item&include=product,productUnitPrecision
 
 Example Request Body
 --------------------
@@ -87,7 +78,7 @@ Example Response
 {
   "data": [
     {
-      "type": "warehouseinventorylevels",
+      "type": "inventorylevels",
       "id": "1",
       "relationships": {
         "product": {
@@ -101,12 +92,6 @@ Example Response
             "type": "productunitprecisions",
             "id": "1"
           }
-        },
-        "warehouse": {
-          "data": {
-            "type": "warehouses",
-            "id": "1"
-          }
         }
       },
       "attributes": {
@@ -114,7 +99,7 @@ Example Response
       }
     },
     {
-      "type": "warehouseinventorylevels",
+      "type": "inventorylevels",
       "id": "3",
       "relationships": {
         "product": {
@@ -127,12 +112,6 @@ Example Response
           "data": {
             "type": "productunitprecisions",
             "id": "2"
-          }
-        },
-        "warehouse": {
-          "data": {
-            "type": "warehouses",
-            "id": "1"
           }
         }
       },
@@ -292,23 +271,21 @@ Example Response
 }
 ```
 
-PATCH Warehouse Inventory Level
-===============================
-Updates a single **Warehouse Inventory Level**.
+PATCH Inventory Level
+=====================
+Updates a single **Inventory Level**.
 
-This API can be used to update the Warehouse Inventory Level quantity.
+This API can be used to update the Inventory Level quantity.
 
-One Product SKU must be provided in order to identify the Warehouse Inventory Level of the Product.
-
-One Warehouse ID must be provided if there are multiple Warehouses in the system.
+One Product SKU must be provided in order to identify the Inventory Level of the Product.
 
 One Product Unit code can be provided. The default Product Unit is the one of the primary Product Unit Precision of the Product. 
 
-Warehouse Inventory Level quantity must be provided in order to update it.
+Inventory Level quantity must be provided in order to update it.
 
 Resource URL
 ------------
-`{web_backend_prefix}/api/warehouseinventorylevels/{sku}`
+`{web_backend_prefix}/api/inventorylevels/{sku}`
 
 Request Headers
 ---------------
@@ -326,32 +303,18 @@ Parameters
 ### type
 Type of the resource.
 
-Must be set to `warehouseinventorylevels`.
+Must be set to `inventorylevels`.
 
-E.g.: `"type": "warehouseinventorylevels"`
+E.g.: `"type": "inventorylevels"`
 
 ### sku
 Product SKU.
 
-One Product SKU must be provided in order to identify the Warehouse Inventory Level of the Product.
+One Product SKU must be provided in order to identify the Inventory Level of the Product.
 
-The key for the Product SKU is `id` since this is the primary identifier of the Warehouse Inventory Level.
+The key for the Product SKU is `id` since this is the primary identifier of the Inventory Level.
 
 E.g.: `"id": "0RT28"`
-
-### warehouse
-Warehouse ID.
-
-One Warehouse ID must be provided if there are multiple Warehouses in the system.
-
-Warehouse ID is provided in the `attributes` section.
-
-E.g.:
-```json
-"attributes": {
-  "warehouse": "1"
-}
-```
 
 ### unit
 Product Unit code.
@@ -368,11 +331,11 @@ E.g.:
 ```
 
 ### quantity
-Warehouse Inventory Level quantity.
+Inventory Level quantity.
 
-Warehouse Inventory Level quantity must be provided in order to update it.
+Inventory Level quantity must be provided in order to update it.
 
-Warehouse Inventory Level quantity is provided in the `attributes` section.
+Inventory Level quantity is provided in the `attributes` section.
 
 E.g.:
 ```json
@@ -385,22 +348,21 @@ Authentication Requirements
 ---------------------------
 WSSE authentication is required.
 
-ACL permission to update Warehouse Inventory Levels is required.
+ACL permission to update Inventory Levels is required.
 
 Example Request
 ---------------
-http://demo.orocommerce.com/admin/api/warehouseinventorylevels/0RT28
+http://demo.orocommerce.com/admin/api/inventorylevels/0RT28
 
 Example Request Body
 --------------------
 ```json
 {
   "data": {
-    "type": "warehouseinventorylevels",
+    "type": "inventorylevels",
     "id": "0RT28",
     "attributes": {
       "quantity": "17",
-      "warehouse": "1",
       "unit": "item"
     }
   }
@@ -412,18 +374,12 @@ Example Response
 ```json
 {
   "data": {
-    "type": "warehouseinventorylevels",
+    "type": "inventorylevels",
     "id": "1",
     "attributes": {
       "quantity": 17
     },
     "relationships": {
-      "warehouse": {
-        "data": {
-          "type": "warehouses",
-          "id": "1"
-        }
-      },
       "product": {
         "data": {
           "type": "products",
@@ -441,24 +397,22 @@ Example Response
 }
 ```
 
-POST Warehouse Inventory Level
+POST Inventory Level
 ==============================
 
-Creates a single **Warehouse Inventory Level**.
+Creates a single **Inventory Level**.
 
-This API can be used to create a Warehouse Inventory Level.
+This API can be used to create a Inventory Level.
 
-One Product SKU must be provided as a Product relationship in order to relate the Warehouse Inventory Level to a Product.
+One Product SKU must be provided as a Product relationship in order to relate the Inventory Level to a Product.
 
-One Warehouse ID must be provided as a Warehouse relationship if there are multiple Warehouses in the system in order to relate the Warehouse Inventory Level to a Warehouse.
+One Product Unit code can be provided as a Unit relationship in order to relate the Inventory Level to a Product Unit Precision. The default Product Unit is the one of the primary Product Unit Precision of the Product. 
 
-One Product Unit code can be provided as a Unit relationship in order to relate the Warehouse Inventory Level to a Product Unit Precision. The default Product Unit is the one of the primary Product Unit Precision of the Product. 
-
-Warehouse Inventory Level quantity must be provided as an attribute.
+Inventory Level quantity must be provided as an attribute.
 
 Resource URL
 ------------
-`{web_backend_prefix}/api/warehouseinventorylevels`
+`{web_backend_prefix}/api/inventorylevels`
 
 Request Headers
 ---------------
@@ -476,14 +430,14 @@ Parameters
 ### type
 Type of the resource.
 
-Must be set to `warehouseinventorylevels`.
+Must be set to `inventorylevels`.
 
-E.g.: `"type": "warehouseinventorylevels"`
+E.g.: `"type": "inventorylevels"`
 
 ### sku
 Product SKU.
 
-One Product SKU must be provided as a Product relationship in order to relate the Warehouse Inventory Level to a Product.
+One Product SKU must be provided as a Product relationship in order to relate the Inventory Level to a Product.
 
 Product SKU is provided in the `relationships` section.
 
@@ -499,29 +453,10 @@ relationships": {
 }
 ```
 
-### warehouse
-Warehouse ID.
-
-One Warehouse ID must be provided as a Warehouse relationship if there are multiple Warehouses in the system in order to relate the Warehouse Inventory Level to a Warehouse.
-
-Warehouse ID is provided in the `relationships` section. The Type of the resource must be provided.
-
-E.g.:
-```json
-relationships": {
-  "warehouse": {
-    "data": {
-      "type": "warehouses",
-      "id": "2"
-    }
-  },
-}
-```
-
 ### unit
 Product Unit code.
 
-One Product Unit code can be provided as a Unit relationship in order to relate the Warehouse Inventory Level to a Product Unit Precision. The default Product Unit is the one of the primary Product Unit Precision of the Product.
+One Product Unit code can be provided as a Unit relationship in order to relate the Inventory Level to a Product Unit Precision. The default Product Unit is the one of the primary Product Unit Precision of the Product.
 
 Product Unit code is provided in the `relationships` section.
 
@@ -538,11 +473,11 @@ relationships": {
 ```
 
 ### quantity
-Warehouse Inventory Level quantity.
+Inventory Level quantity.
 
-Warehouse Inventory Level quantity must be provided.
+Inventory Level quantity must be provided.
 
-Warehouse Inventory Level quantity is provided in the `attributes` section.
+Inventory Level quantity is provided in the `attributes` section.
 
 E.g.:
 ```json
@@ -555,28 +490,22 @@ Authentication Requirements
 ---------------------------
 WSSE authentication is required.
 
-ACL permission to create Warehouse Inventory Levels is required.
+ACL permission to create Inventory Levels is required.
 
 Example Request
 ---------------
-http://demo.orocommerce.com/admin/api/warehouseinventorylevels
+http://demo.orocommerce.com/admin/api/inventorylevels
 
 Example Request Body
 --------------------
 ```json
 {
   "data": {
-    "type": "warehouseinventorylevels",
+    "type": "inventorylevels",
     "attributes": {
       "quantity": "17"
     },
     "relationships": {
-      "warehouse": {
-        "data": {
-          "type": "warehouses",
-          "id": "2"
-        }
-      },
       "product": {
         "data": {
           "type": "products",
@@ -599,18 +528,12 @@ Example Response
 ```json
 {
   "data": {
-    "type": "warehouseinventorylevels",
+    "type": "inventorylevels",
     "id": "133",
     "attributes": {
       "quantity": 17
     },
     "relationships": {
-      "warehouse": {
-        "data": {
-          "type": "warehouses",
-          "id": "2"
-        }
-      },
       "product": {
         "data": {
           "type": "products",
@@ -628,18 +551,18 @@ Example Response
 }
 ```
 
-DELETE Warehouse Inventory Level
-================================
+DELETE Inventory Level
+======================
 
-Deletes a single **Warehouse Inventory Level**.
+Deletes a single **Inventory Level**.
 
-This API can be used to delete a Warehouse Inventory Level.
+This API can be used to delete a Inventory Level.
 
-One Warehouse Inventory Level id must be provided.
+One Inventory Level id must be provided.
 
 Resource URL
 ------------
-`{web_backend_prefix}/api/warehouseinventorylevels/{id}`
+`{web_backend_prefix}/api/inventorylevels/{id}`
 
 Request Headers
 ---------------
@@ -655,21 +578,21 @@ Resource Information
 Parameters
 ----------
 ### id
-Warehouse Inventory Level id.
+Inventory Level id.
 
-One Warehouse Inventory Level id must be provided in order to identify the Warehouse Inventory Level.
+One Inventory Level id must be provided in order to identify the Inventory Level.
 
-E.g.: `{web_backend_prefix}/api/warehouseinventorylevels/1`
+E.g.: `{web_backend_prefix}/api/inventorylevels/1`
 
 Authentication Requirements
 ---------------------------
 WSSE authentication is required.
 
-ACL permission to delete Warehouse Inventory Levels is required.
+ACL permission to delete Inventory Levels is required.
 
 Example Request
 ---------------
-http://demo.orocommerce.com/admin/api/warehouseinventorylevels/1
+http://demo.orocommerce.com/admin/api/inventorylevels/1
 
 Example Request Body
 --------------------
@@ -679,22 +602,20 @@ Example Response
 ----------------
 No Response Body will be received.
 
-DELETE Warehouse Inventory Levels
-=================================
+DELETE Inventory Levels
+=======================
 
-Deletes a collection of **Warehouse Inventory Levels**.
+Deletes a collection of **Inventory Levels**.
 
-This API can be used to delete one or multiple Warehouse Inventory Level.
+This API can be used to delete one or multiple Inventory Level.
 
 One or more Product SKUs can be provided in order to filter the deleted data.
-
-One or more Warehouse ids can be provided in order to filter the deleted data.
 
 One or more Product Unit codes can be provided in order to filter the deleted data.
 
 Resource URL
 ------------
-`{web_backend_prefix}/api/warehouseinventorylevels/`
+`{web_backend_prefix}/api/inventorylevels/`
 
 Request Headers
 ---------------
@@ -723,22 +644,15 @@ One or more ProductUnit codes can be provided as request query.
 
 E.g.: `filter[productUnitPrecision.unit.code]=item` or `filter[productUnitPrecision.unit.code]=item,set`
 
-### warehouse
-Warehouse ID(s).
-
-One or more Warehouse ids can be provided as request query.
-
-E.g.: `filter[warehouse]=1` or `filter[warehouse]=1,2`
-
 Authentication Requirements
 ---------------------------
 WSSE authentication is required.
 
-ACL permission to delete Warehouse Inventory Levels is required.
+ACL permission to delete Inventory Levels is required.
 
 Example Request
 ---------------
-http://demo.orocommerce.com/admin/api/warehouseinventorylevels?filter[product.sku]=0RT28&filter[productUnitPrecision.unit.code]=item&filter[warehouse]=1
+http://demo.orocommerce.com/admin/api/inventorylevels?filter[product.sku]=0RT28&filter[productUnitPrecision.unit.code]=item
 
 Example Request Body
 --------------------
