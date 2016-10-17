@@ -4,15 +4,15 @@ namespace Oro\Bundle\ShippingBundle\QueryDesigner;
 
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 
-class QueryDesigner extends AbstractQueryDesigner
+class ShippingProductQueryDesigner extends AbstractQueryDesigner
 {
     /**
-     * @var
+     * @var string
      */
     protected $definition;
 
     /**
-     * @var
+     * @var string
      */
     protected $entity;
 

@@ -4,9 +4,10 @@ namespace Oro\Bundle\ShippingBundle\ExpressionLanguage;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
+use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ShippingBundle\QueryDesigner\Converter;
-use Oro\Bundle\ShippingBundle\QueryDesigner\QueryDesigner;
+use Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter;
+use Oro\Bundle\ShippingBundle\QueryDesigner\ShippingProductQueryDesigner;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
@@ -21,7 +22,7 @@ class ProductDecorator
     protected $provider;
 
     /**
-     * @var Converter
+     * @var SelectQueryConverter
      */
     protected $converter;
 
@@ -31,9 +32,9 @@ class ProductDecorator
     protected $doctrine;
 
     /**
-     * @var Collection
+     * @var Collection|Product[]
      */
-    protected $lineItems;
+    protected $products;
 
     /**
      * @var Collection
@@ -41,9 +42,14 @@ class ProductDecorator
     protected $product;
 
     /**
+     * @var FieldHelper
+     */
+    protected $fieldHelper;
+
+    /**
      * @var array
      */
-    protected $values = [];
+    protected static $values = [];
 
     /**
      * @var PropertyAccessor
@@ -52,22 +58,25 @@ class ProductDecorator
 
     /**
      * @param EntityFieldProvider $provider
-     * @param Converter $converter
+     * @param SelectQueryConverter $converter
      * @param ManagerRegistry $doctrine
-     * @param Collection $lineItems
+     * @param FieldHelper $fieldHelper
+     * @param array $products
      * @param Product $product
      */
     public function __construct(
         EntityFieldProvider $provider,
-        Converter $converter,
+        SelectQueryConverter $converter,
         ManagerRegistry $doctrine,
-        Collection $lineItems,
+        FieldHelper $fieldHelper,
+        array $products,
         Product $product
     ) {
         $this->provider = $provider;
         $this->doctrine = $doctrine;
         $this->converter = $converter;
-        $this->lineItems = $lineItems;
+        $this->fieldHelper = $fieldHelper;
+        $this->products = $products;
         $this->product = $product;
     }
 
@@ -79,18 +88,19 @@ class ProductDecorator
         if ($this->getPropertyAccessor()->isReadable($this->product, $name)) {
             return $this->getPropertyAccessor()->getValue($this->product, $name);
         }
-        $field = $this->getField($name);
+        $field = $this->getRelationField($name);
         if (!$field) {
-            throw new \Exception('Field doesn\'t exists: '.$name);
+            throw new \InvalidArgumentException(sprintf('Relation "%s" doesn\'t exists for Product entity', $name));
         }
-        return $this->getVirtualFieldValue($field);
+        $result = $this->getVirtualFieldValueForAllProducts($field);
+        return $result[$this->product->getId()];
     }
 
     /**
      * @param string $name
      * @return array|null
      */
-    protected function getField($name)
+    protected function getRelationField($name)
     {
         $fields = $this->provider->getFields(Product::class, true, true, true);
         foreach ($fields as $field) {
@@ -105,9 +115,45 @@ class ProductDecorator
      * @param array $field
      * @return array
      */
-    protected function getVirtualFieldValue(array $field)
+    protected function getVirtualFieldValueForAllProducts(array $field)
     {
-        $queryDesigner = new QueryDesigner();
+        if (array_key_exists($field['name'], static::$values)) {
+            return static::$values[$field['name']];
+        }
+
+        $relatedEntityIdsByProduct = $this->getRelatedEntityIdsByProduct($field);
+
+        $relatedEntities = $this->getRelatedEntities(
+            $field['related_entity_name'],
+            call_user_func_array('array_merge', $relatedEntityIdsByProduct)
+        );
+
+        if ($this->fieldHelper->isSingleRelation($field)) {
+            static::$values[$field['name']] = $this->getSingleRelationEntity(
+                $relatedEntityIdsByProduct,
+                $relatedEntities
+            );
+        } else {
+            static::$values[$field['name']] = $this->getMultipleRelationEntities(
+                $relatedEntityIdsByProduct,
+                $relatedEntities
+            );
+        }
+        return static::$values[$field['name']];
+    }
+
+    /**
+     * Fetch related entity identifiers for all products and return they by product ids
+     * [product_id => [related_entity_identifier_id_1, related_entity_identifier_id_2...]]
+     *
+     * @param array $field
+     * @return array
+     */
+    protected function getRelatedEntityIdsByProduct(array $field)
+    {
+        $relatedEntityIdentifier = $this->getEntityIdentifier($field['related_entity_name']);
+
+        $queryDesigner = new ShippingProductQueryDesigner();
         $queryDesigner->setEntity(Product::class);
         $queryDesigner->setDefinition(json_encode([
             'columns' => [
@@ -120,8 +166,7 @@ class ProductDecorator
                         '%s+%s::%s',
                         $field['name'],
                         $field['related_entity_name'],
-                        //TODO: get identifier field
-                        'id'
+                        $relatedEntityIdentifier
                     ),
                     'table_identifier' => sprintf(
                         '%s::%s',
@@ -134,18 +179,91 @@ class ProductDecorator
         ]));
 
         $qb = $this->converter->convert($queryDesigner);
-        $result = $qb->getQuery()->getResult();
+        $rootAliases = $qb->getRootAliases();
+        $rootAlias = reset($rootAliases);
+        $qb
+            ->andWhere(sprintf('%s in (:products)', $rootAlias))
+            ->setParameter('products', $this->products);
 
-        $ids = array_column(array_filter($result, function ($data) {
-            return $data[static::PRODUCT_ID_LABEL] === $this->product->getId();
-        }), static::RELATED_ID_LABEL);
+        return array_reduce($qb->getQuery()->getResult(), function ($result, $data) {
+            if (!array_key_exists($data[static::PRODUCT_ID_LABEL], $result)) {
+                $result[$data[static::PRODUCT_ID_LABEL]] = [];
+            }
+            if ($data[static::RELATED_ID_LABEL]) {
+                $result[$data[static::PRODUCT_ID_LABEL]][] = $data[static::RELATED_ID_LABEL];
+            }
+            return $result;
+        }, []);
+    }
 
-        //TODO: add checking for relation type
-        //if ref-one - use findOneBy
+    /**
+     * @param string $className
+     * @param array $ids
+     * @return array
+     */
+    protected function getRelatedEntities($className, array $ids)
+    {
+        $relatedEntityIdentifier = $this->getEntityIdentifier($className);
+        $relatedEntities = $this->doctrine->getManagerForClass($className)->getRepository($className)
+            ->findBy([$relatedEntityIdentifier => $ids]);
 
-        return $this->doctrine->getManagerForClass($field['related_entity_name'])
-            ->getRepository($field['related_entity_name'])
-            ->findBy(['id' => $ids]);
+        return array_reduce(
+            $relatedEntities,
+            function ($result, $relatedEntity) use ($relatedEntityIdentifier) {
+                $id = $this->getPropertyAccessor()->getValue($relatedEntity, $relatedEntityIdentifier);
+                $result[$id] = $relatedEntity;
+                return $result;
+            },
+            []
+        );
+    }
+
+    /**
+     * @param array $relatedEntityIdsByProduct
+     * @param array $relatedEntities
+     * @return array
+     */
+    protected function getMultipleRelationEntities(array $relatedEntityIdsByProduct, array $relatedEntities)
+    {
+        return array_reduce(
+            array_keys($relatedEntityIdsByProduct),
+            function ($result, $productId) use ($relatedEntityIdsByProduct, $relatedEntities) {
+                $result[$productId] = array_map(function ($id) use ($relatedEntities) {
+                    return $relatedEntities[$id];
+                }, $relatedEntityIdsByProduct[$productId]);
+                return $result;
+            },
+            []
+        );
+    }
+
+    /**
+     * @param array $relatedEntityIdsByProduct
+     * @param array $relatedEntities
+     * @return array
+     */
+    protected function getSingleRelationEntity(array $relatedEntityIdsByProduct, array $relatedEntities)
+    {
+        return array_reduce(
+            array_keys($relatedEntityIdsByProduct),
+            function ($result, $productId) use ($relatedEntityIdsByProduct, $relatedEntities) {
+                $relatedIds = $relatedEntityIdsByProduct[$productId];
+                $result[$productId] = $relatedEntities[reset($relatedIds)];
+                return $result;
+            },
+            []
+        );
+    }
+
+    /**
+     * @param string $className
+     * @return string
+     */
+    protected function getEntityIdentifier($className)
+    {
+        $metadata = $this->doctrine->getManagerForClass($className)->getClassMetadata($className);
+        $identifier = $metadata->getIdentifier();
+        return reset($identifier);
     }
 
     /**

@@ -7,10 +7,9 @@ use Oro\Bundle\EntityBundle\Provider\VirtualFieldProviderInterface;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\FunctionProviderInterface;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\GroupingOrmQueryConverter;
-use Oro\Bundle\QueryDesignerBundle\QueryDesigner\RestrictionBuilderInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-class Converter extends GroupingOrmQueryConverter
+class SelectQueryConverter extends GroupingOrmQueryConverter
 {
     /**
      * @var array
@@ -22,24 +21,18 @@ class Converter extends GroupingOrmQueryConverter
      */
     protected $qb;
 
-    /** @var RestrictionBuilderInterface */
-    protected $restrictionBuilder;
-
     /**
      * Constructor
      *
      * @param FunctionProviderInterface $functionProvider
      * @param VirtualFieldProviderInterface $virtualFieldProvider
      * @param ManagerRegistry $doctrine
-     * @param RestrictionBuilderInterface $restrictionBuilder
      */
     public function __construct(
         FunctionProviderInterface $functionProvider,
         VirtualFieldProviderInterface $virtualFieldProvider,
-        ManagerRegistry $doctrine,
-        RestrictionBuilderInterface $restrictionBuilder
+        ManagerRegistry $doctrine
     ) {
-        $this->restrictionBuilder = $restrictionBuilder;
         parent::__construct($functionProvider, $virtualFieldProvider, $doctrine);
     }
 
@@ -92,19 +85,6 @@ class Converter extends GroupingOrmQueryConverter
      */
     protected function saveTableAliases($tableAliases)
     {
-        foreach ($this->definition['columns'] as $column) {
-            if (array_key_exists('table_identifier', $column)) {
-                $columnName = $column['name'];
-                $tableIdentifier = $column['table_identifier'];
-
-                if (array_key_exists($columnName, $this->virtualColumnExpressions)) {
-                    $exprColumn = explode('.', $this->virtualColumnExpressions[$columnName]);
-                    $this->tableAliasByColumn[$tableIdentifier] = $exprColumn[0];
-                } else {
-                    $this->tableAliasByColumn[$tableIdentifier] = $this->getTableAliasForColumn($columnName);
-                }
-            }
-        }
     }
 
     /**
