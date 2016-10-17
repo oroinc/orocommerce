@@ -28,20 +28,14 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-//        // if has table then beta4 and we update to beta5
-//        if ($schema->hasTable('oro_rel_26535370a6adb604aeb863')) {
-            $this->renameActivityTables($schema, $queries);
-            $this->updateAttachments($schema, $queries);
-            $this->updateNotes($schema, $queries);
-//
-//        }
-//        // update to beta5 from less then beta4
-//        if (!$schema->hasTable('oro_rel_26535370a6adb604aeb863')) {
-            $this->renameOldActivityTables($queries);
-            $this->updateOldAttachments($queries);
-            $this->updateOldNotes($queries);
-//        }
-//
+        $this->renameActivityTables($schema, $queries);
+        $this->updateAttachments($schema, $queries);
+        $this->updateNotes($schema, $queries);
+
+        $this->renameOldActivityTables($queries);
+        $this->updateOldAttachments($queries);
+        $this->updateOldNotes($queries);
+
         $this->updateTableField($queries);
         $queries->addPostQuery(new RenameConfigSectionQuery('oro_account', 'oro_customer'));
     }
@@ -184,6 +178,8 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
     /**
      * @param Schema $schema
      * @param QueryBag $queries
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     private function updateNotes(Schema $schema, QueryBag $queries)
     {
