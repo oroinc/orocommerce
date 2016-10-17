@@ -20,20 +20,22 @@
 
 {% block _logo_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' logo'
+        '~class': ' logo',
+        'src': '/bundles/orofrontend/blank/images/logo/logo-oroacem.svg',
+        'width:': '190',
+        'height':  '35',
+        'alt': 'logo'
     }) %}
 
-    <div {{ block('block_attributes') }}>
-        {# In home page #}
-        {% if app.request.attributes.get('_route') == 'oro_frontend_root' %}
-            <img
-                src="{% image '@OroFrontendBundle/Resources/public/blank/images/logo/logo-oroacem.svg' %}{{ asset_url }}{% endimage %}"
-                alt="logo"
-            />
-        {% else %}
-            <a href="{{ path('oro_frontend_root') }}" class="logo" style="background: url('{% image '@OroFrontendBundle/Resources/public/blank/images/logo/logo-oroacem.svg' %}{{ asset_url }}{% endimage %}') no-repeat;"></a>
-        {% endif %}
-    </div>
+    {% if not app.request.attributes.get('_route') == 'oro_frontend_root' %}
+        <a href="{{ path('oro_frontend_root') }}">
+    {% endif %}
+
+    <img {{ block('block_attributes') }} />
+
+    {% if not app.request.attributes.get('_route') == 'oro_frontend_root' %}
+        </a>
+    {% endif %}
 {% endblock %}
 
 {% block _page_content_widget %}
