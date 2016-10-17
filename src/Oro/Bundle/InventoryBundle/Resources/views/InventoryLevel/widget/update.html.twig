@@ -4,7 +4,7 @@
 } %}
 <div class="widget-content"
      data-page-component-module="orofrontend/js/app/components/widget-form-component"
-     data-page-component-options="{{ pageComponentOptions|merge({message: 'oro.inventory.inventory_level_save.flash.success'})|json_encode }}"
+     data-page-component-options="{{ pageComponentOptions|merge({message: 'oro.inventory.inventory_level_save.flash.success'|trans})|json_encode }}"
 >
     {% if form.vars.data is empty and noDataReason is defined %}
         <div class="no-data">
