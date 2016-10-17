@@ -18,7 +18,7 @@ use Oro\Component\Tree\Entity\TreeTrait;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository")
  * @ORM\Table(name="oro_web_catalog_content_node")
  * @Gedmo\Tree(type="nested")
  * @ORM\HasLifecycleCallbacks()
@@ -42,6 +42,10 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     use TreeTrait;
     use DatesAwareTrait;
     use BusinessUnitAwareTrait;
+
+    const MATERIALIZED_PATH_DELIMITER = '_';
+
+    const FIELD_PARENT_NODE = 'parentNode';
     
     /**
      * @ORM\Id
@@ -191,6 +195,14 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
         $this->slugs = new ArrayCollection();
         $this->contentVariantSlugs = new ArrayCollection();
         $this->contentVariants = new ArrayCollection();
+    }
+    
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->getDefaultTitle();
     }
     
     /**
