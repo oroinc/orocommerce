@@ -2,9 +2,16 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
+        - '@setFormTheme':
+            themes: 'form_theme.html.twig'
         - '@appendOption':
             id: title
             optionName: value
             optionValue: 'oro.account.accountuser.profile.register'
+        - @remove:
+            id: main
+        - @move:
+            id: registration_page_wrapper
+            parentId: wrapper_content
     imports:
         - 'only_content'

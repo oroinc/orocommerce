@@ -115,7 +115,7 @@
         autofocus: true,
         'data-validation': {"NotBlank":{"payload":null}}|json_encode,
     }|merge(attr)|merge({
-            class: attr.class|default('') ~ " input"
+            class: attr.class|default('') ~ " input input--full"
     }) %}
 
     {% set label_attr = label_attr|merge({
@@ -134,7 +134,7 @@
         autofocus: true,
         'data-validation': {"NotBlank":{"payload":null}}|json_encode,
     }|merge(attr)|merge({
-        class: attr.class|default('') ~ " input"
+        class: attr.class|default('') ~ " input input--full"
     }) %}
 
     {% set label_attr = label_attr|merge({

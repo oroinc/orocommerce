@@ -5,15 +5,11 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: 'oro.account.accountuser.profile.register'
+            optionValue: 'oro.account.profile.register'
         - '@addTree':
             items:
                 registration_page_wrapper:
                     blockType: vertical_container
-                registration_page:
-                    blockType: container
-                registration_form:
-                    blockType: container
                 registration_form_label:
                     blockType: text
                     options:
@@ -51,15 +47,13 @@ layout:
             tree:
                 wrapper:
                     registration_page_wrapper:
-                        registration_page:
-                            registration_form:
-                                registration_form_start: ~
-                                registration_form_label: ~
-                                registration_form_description: ~
-                                registration_form_fields: ~
-                                registration_form_submit_wrap:
-                                    registration_form_submit: ~
-                                registration_back_btn: ~
-                                registration_form_end: ~
+                        registration_form_start: ~
+                        registration_form_label: ~
+                        registration_form_description: ~
+                        registration_form_fields: ~
+                        registration_form_submit_wrap:
+                            registration_form_submit: ~
+                        registration_back_btn: ~
+                        registration_form_end: ~
     imports:
         - 'only_content'

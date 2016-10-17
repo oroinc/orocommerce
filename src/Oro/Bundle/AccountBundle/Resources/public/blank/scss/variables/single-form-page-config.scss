@@ -1,5 +1,6 @@
 $single-form-page-bg: get-color('additional', 'base') !default;
 $single-form-page-offset-inner: 55px 45px !default;
+$single-form-page-offset-inner-relative: 55px 5% !default;
 $single-form-page-offset-outer: 0 auto;
 $single-form-page-width: 400px !default;
 
@@ -9,4 +10,10 @@ $single-form-page-width: 400px !default;
     padding: $single-form-page-offset-inner;
 
     background: $single-form-page-bg;
+}
+
+@include breakpoint('tablet-small') {
+    %single-form-page {
+        padding: $single-form-page-offset-inner-relative;
+    }
 }

@@ -1,11 +1,9 @@
-{% block _registration_page_widget %}
+{% block _registration_form_start_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' register-form'
     }) %}
 
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+    {{ block_widget(block, {attr: attr}) }}
 {% endblock %}
 
 {% block _registration_form_label_widget %}
@@ -18,12 +16,6 @@
 
 {% block _registration_form_description_widget %}
     <p{{ block('block_attributes') }}>{{ block_widget(block) }}</p>
-{% endblock %}
-
-{% block _registration_form_widget %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
 {% endblock %}
 
 {% block _registration_form_submit_wrap_widget %}

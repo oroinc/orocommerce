@@ -1,43 +1,13 @@
-{% block _registration_page_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " register-form {{ class_prefix }} {{ class_prefix }}_half-cols create-account_pos-absolute_vert-centered"
-    }) %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _registration_form_start_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }}__form {{ class_prefix }}__form_register"
-    }) %}
-    {{ block('form_start_widget') }}
-{% endblock %}
-
-{% block _registration_form_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }}__form-container form-container-x6"
-    }) %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _registration_form_label_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }}__title"
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-title'
     }) %}
+
     <h2{{ block('block_attributes') }}>{{ block_widget(block) }}</h2>
 {% endblock %}
 
-{% block _registration_form_submit_widget %}
-    <fieldset class="{{ class_prefix }}__form__row mt1-sm">
-        <div class="{{ class_prefix }}__form__col form__col_x12">
-            {{ block_widget(block) }}
-        </div>
-    </fieldset>
-{% endblock %}
-
 {% block _registration_form_description_widget %}
-    <p{{ block('block_attributes') }}>{{ block_widget(block) }}</p>
+    <div class="form-row">
+        <p{{ block('block_attributes') }}>{{ block_widget(block) }}</p>
+    </div>
 {% endblock %}
