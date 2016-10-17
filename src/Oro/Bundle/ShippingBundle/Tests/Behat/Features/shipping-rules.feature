@@ -34,7 +34,7 @@ Feature: Applying shipping rules
     Then There is no shipping method available for this order
 
   Scenario: "SHIPPING 2E" > LIST OF COUNTRIES FOR SHIPPING RULE #2 CONTAINS COUNTRY FOR ORDER. PRIORITY - MAJOR
-    Given Admin User Created "Shipping Rule 2" with next data:
+    Given Admin User created "Shipping Rule 2" with next data:
       | Enabled       | true      |
       | Currency      | EUR       |
       | Country       | Ukraine   |
