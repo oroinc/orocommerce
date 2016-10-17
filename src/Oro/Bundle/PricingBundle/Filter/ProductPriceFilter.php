@@ -160,6 +160,14 @@ class ProductPriceFilter extends NumberRangeFilter
             return false;
         }
 
+        if (isset($data['value'])) {
+            $data['value'] = abs($data['value']);
+        }
+
+        if (isset($data['value_end'])) {
+            $data['value_end'] = abs($data['value_end']);
+        }
+
         return $data;
     }
 
