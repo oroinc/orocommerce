@@ -5,6 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
 use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 
@@ -31,14 +32,14 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
      */
     protected function setFormAllData(FormInterface $form)
     {
-        $visibility = $this->findFormFieldData($form, 'all');
+        $visibility = $this->findFormFieldData($form, EntityVisibilityType::ALL_FIELD);
 
         if ($visibility instanceof VisibilityInterface) {
             $data = $visibility->getVisibility();
         } else {
             $data = call_user_func([$form->getConfig()->getOption('allClass'), 'getDefault'], $form->getData());
         }
-        $form->get('all')->setData($data);
+        $form->get(EntityVisibilityType::ALL_FIELD)->setData($data);
     }
 
     /**
@@ -46,7 +47,7 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
      */
     protected function setFormAccountGroupData(FormInterface $form)
     {
-        $visibilities = $this->findFormFieldData($form, 'accountGroup');
+        $visibilities = $this->findFormFieldData($form, EntityVisibilityType::ACCOUNT_GROUP_FIELD);
 
         $data = array_map(
             function ($visibility) {
@@ -64,7 +65,7 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
             $visibilities
         );
 
-        $form->get('accountGroup')->setData($data);
+        $form->get(EntityVisibilityType::ACCOUNT_GROUP_FIELD)->setData($data);
     }
 
     /**
@@ -72,7 +73,7 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
      */
     protected function setFormAccountData(FormInterface $form)
     {
-        $visibilities = $this->findFormFieldData($form, 'account');
+        $visibilities = $this->findFormFieldData($form, EntityVisibilityType::ACCOUNT_FIELD);
 
         $data = array_map(
             function ($visibility) {
@@ -90,6 +91,6 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
             $visibilities
         );
 
-        $form->get('account')->setData($data);
+        $form->get(EntityVisibilityType::ACCOUNT_FIELD)->setData($data);
     }
 }

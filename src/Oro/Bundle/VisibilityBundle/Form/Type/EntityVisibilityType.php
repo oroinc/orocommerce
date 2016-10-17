@@ -19,6 +19,14 @@ class EntityVisibilityType extends AbstractType
     const NAME = 'oro_visibility_entity_visibility_type';
 
     const VISIBILITY = 'visibility';
+    const ALL_FIELD = 'all';
+    const ACCOUNT_FIELD = 'account';
+    const ACCOUNT_GROUP_FIELD = 'accountGroup';
+    const SCOPE = 'scope';
+    const TARGET_ENTITY_FIELD = 'targetEntityField';
+    const ALL_CLASS = 'allClass';
+    const ACCOUNT_GROUP_CLASS = 'accountGroupClass';
+    const ACCOUNT_CLASS = 'accountClass';
 
     /**
      * @var VisibilityPostSetDataListener
@@ -49,15 +57,15 @@ class EntityVisibilityType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'scope' => null,
+                self::SCOPE => null,
             ]
         );
         $resolver->setRequired(
             [
-                'targetEntityField',
-                'allClass',
-                'accountGroupClass',
-                'accountClass',
+                self::TARGET_ENTITY_FIELD,
+                self::ALL_CLASS,
+                self::ACCOUNT_GROUP_CLASS,
+                self::ACCOUNT_CLASS,
             ]
         );
     }
@@ -86,11 +94,11 @@ class EntityVisibilityType extends AbstractType
         $builder->setMapped(false);
 
         $target = isset($options['data']) ? $options['data'] : null;
-        $choices = $this->visibilityChoicesProvider->getFormattedChoices($options['allClass'], $target);
+        $choices = $this->visibilityChoicesProvider->getFormattedChoices($options[self::ALL_CLASS], $target);
 
         $builder
             ->add(
-                'all',
+                self::ALL_FIELD,
                 'choice',
                 [
                     'required' => true,
@@ -100,7 +108,7 @@ class EntityVisibilityType extends AbstractType
                 ]
             )
             ->add(
-                'account',
+                self::ACCOUNT_FIELD,
                 EntityChangesetType::NAME,
                 [
                     'class' => Account::class,
@@ -109,7 +117,7 @@ class EntityVisibilityType extends AbstractType
                 ]
             )
             ->add(
-                'accountGroup',
+                self::ACCOUNT_GROUP_FIELD,
                 EntityChangesetType::NAME,
                 [
                     'class' => AccountGroup::class,
