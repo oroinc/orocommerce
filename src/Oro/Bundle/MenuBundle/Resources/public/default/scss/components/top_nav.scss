@@ -75,17 +75,6 @@
           cursor: pointer;
         }
       }
-
-      // *** Currency class has not implemented yet or will not be used anymore!!!
-      + .currency {
-        @media (max-width: 880px) {
-          &:before {
-            content: "\A";
-
-            white-space: pre;
-          }
-        }
-      }
     }
   }
 
