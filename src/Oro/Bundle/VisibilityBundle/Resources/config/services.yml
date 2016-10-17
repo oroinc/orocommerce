@@ -243,22 +243,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
 
-    oro_visibility.product_visibility_message_handler:
-        class: 'Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler'
-        arguments:
-            - '@oro_visibility.visibility_message_factory'
-            - '@oro_message_queue.client.message_producer'
-        tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
-
-    oro_visibility.category_visibility_message_handler:
-        class: 'Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler'
-        arguments:
-            - '@oro_visibility.visibility_message_factory'
-            - '@oro_message_queue.client.message_producer'
-        tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
-
     oro_visibility.entity_listener.abstract_visibility_listener:
         class: 'Oro\Bundle\VisibilityBundle\Entity\EntityListener\AbstractAffectVisibilityListener'
         abstract: true
@@ -270,7 +254,7 @@ services:
         class: 'Oro\Bundle\VisibilityBundle\Entity\EntityListener\ProductVisibilityListener'
         public: false
         arguments:
-            - '@oro_visibility.product_visibility_message_handler'
+            - '@oro_visibility.visibility_message_handler'
         calls:
             - [setTopic, ['oro_visibility.visibility.resolve_product_visibility']]
         tags:
@@ -286,7 +270,7 @@ services:
         class: 'Oro\Bundle\VisibilityBundle\Entity\EntityListener\CategoryVisibilityListener'
         public: false
         arguments:
-            - '@oro_visibility.category_visibility_message_handler'
+            - '@oro_visibility.visibility_message_handler'
             - '@oro_scope.scope_manager'
         calls:
             - [setTopic, ['oro_visibility.visibility.change_category_visibility']]
@@ -317,6 +301,7 @@ services:
             - '@oro_visibility.visibility_message_factory'
             - '@logger'
             - '@oro_visibility.visibility.cache.product.cache_builder'
+            - '@oro_entity.database_exception_helper'
         calls:
             - [setResolvedVisibilityClassName, ['%oro_visibility.entity.account_product_visibility_resolved.class%']]
         tags:

@@ -37,7 +37,7 @@ abstract class AbstractAffectVisibilityListener
      */
     public function postPersist($entity)
     {
-        $this->visibilityMessageHandler->addVisibilityMessageToSchedule($this->topic, $entity);
+        $this->visibilityMessageHandler->addMessageToSchedule($this->topic, $entity);
     }
 
     /**
@@ -45,7 +45,7 @@ abstract class AbstractAffectVisibilityListener
      */
     public function preUpdate($entity)
     {
-        $this->visibilityMessageHandler->addVisibilityMessageToSchedule($this->topic, $entity);
+        $this->visibilityMessageHandler->addMessageToSchedule($this->topic, $entity);
     }
 
     /**
@@ -53,6 +53,6 @@ abstract class AbstractAffectVisibilityListener
      */
     public function preRemove($entity)
     {
-        $this->visibilityMessageHandler->addVisibilityMessageToSchedule($this->topic, $entity);
+        $this->visibilityMessageHandler->addMessageToSchedule($this->topic, $entity);
     }
 }

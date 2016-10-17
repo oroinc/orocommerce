@@ -358,7 +358,8 @@ class AccountCategoryRepository extends EntityRepository
                 'IDENTITY(acv.category)',
                 'IDENTITY(acv.account)',
                 (string)$visibility,
-                (string)AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
+                (string)AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                'IDENTITY(acv.scope)'
             )
             ->from('OroVisibilityBundle:Visibility\AccountCategoryVisibility', 'acv')
             ->andWhere('acv.visibility = :parentCategory')  // parent category fallback
@@ -369,7 +370,7 @@ class AccountCategoryRepository extends EntityRepository
             $queryBuilder->setParameter('visibilityIds', $ids);
             $insertExecutor->execute(
                 $this->getClassName(),
-                ['sourceCategoryVisibility', 'category', 'account', 'visibility', 'source'],
+                ['sourceCategoryVisibility', 'category', 'account', 'visibility', 'source', 'scope'],
                 $queryBuilder
             );
         }

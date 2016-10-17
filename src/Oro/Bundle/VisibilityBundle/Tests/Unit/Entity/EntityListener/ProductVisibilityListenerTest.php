@@ -47,7 +47,7 @@ class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
         $visibility = $this->getMock(VisibilityInterface::class);
 
         $this->visibilityChangeMessageHandler->expects($this->once())
-            ->method('addVisibilityMessageToSchedule')
+            ->method('addMessageToSchedule')
             ->with('oro_visibility.visibility.resolve_product_visibility', $visibility);
         $this->visibilityListener->postPersist($visibility);
     }
@@ -59,7 +59,7 @@ class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
         $visibility = $this->getMock(VisibilityInterface::class);
 
         $this->visibilityChangeMessageHandler->expects($this->once())
-            ->method('addVisibilityMessageToSchedule')
+            ->method('addMessageToSchedule')
             ->with('oro_visibility.visibility.resolve_product_visibility', $visibility);
 
         $this->scopeManager->expects($this->once())
@@ -75,7 +75,7 @@ class ProductVisibilityListenerTest extends \PHPUnit_Framework_TestCase
         $visibility = $this->getMock(VisibilityInterface::class);
 
         $this->visibilityChangeMessageHandler->expects($this->once())
-            ->method('addVisibilityMessageToSchedule')
+            ->method('addMessageToSchedule')
             ->with('oro_visibility.visibility.resolve_product_visibility', $visibility);
 
         $this->visibilityListener->preRemove($visibility);

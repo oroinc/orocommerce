@@ -132,9 +132,9 @@ class AccountGroupCategoryRepository extends EntityRepository
             ->select(
                 'agcv.id',
                 'IDENTITY(agcv.category)',
-                'IDENTITY(agcv.accountGroup)',
                 (string)$visibility,
-                $sourceCondition
+                $sourceCondition,
+                'IDENTITY(agcv.scope)'
             )
             ->from('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility', 'agcv')
             ->leftJoin('agcv.category', 'c')
@@ -146,7 +146,7 @@ class AccountGroupCategoryRepository extends EntityRepository
             $queryBuilder->setParameter('visibilityIds', $ids);
             $insertExecutor->execute(
                 $this->getClassName(),
-                ['sourceCategoryVisibility', 'category', 'accountGroup', 'visibility', 'source'],
+                ['sourceCategoryVisibility', 'category', 'visibility', 'source', 'scope'],
                 $queryBuilder
             );
         }
