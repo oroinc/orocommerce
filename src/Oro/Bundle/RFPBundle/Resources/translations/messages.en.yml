@@ -157,7 +157,7 @@ oro:
                         price: 'Target Price'
                         add: 'Add Another Line'
                     notes: 'Notes'
-                    add: 'Add Product'
+                    add: 'Add Another Product'
                     cancel: 'Cancel'
                     update: 'Update'
         feature:

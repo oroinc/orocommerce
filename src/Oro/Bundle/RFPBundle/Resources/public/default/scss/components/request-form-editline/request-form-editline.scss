@@ -42,8 +42,7 @@
     }
 }
 
-/* Don't forget uncomment */
-/* @include breakpoint('tablet') {
+@include breakpoint('tablet') {
     .request-form-editline {
         &__inner {
             display: block;
@@ -70,4 +69,4 @@
             min-width: 0;
         }
     }
-} */
+}
