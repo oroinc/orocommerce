@@ -4,8 +4,8 @@ namespace Oro\Bundle\CustomerBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
-
 use Oro\Bundle\InstallerBundle\Migration\UpdateTableFieldQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
@@ -34,6 +34,8 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
             $this->updateAttachments($schema, $queries);
             $this->updateNotes($schema, $queries);
             $this->updateTableField($queries);
+
+            $queries->addPostQuery(new RenameConfigSectionQuery('oro_account', 'oro_customer'));
         }
     }
 
