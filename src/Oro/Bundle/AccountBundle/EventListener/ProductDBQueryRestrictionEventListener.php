@@ -3,6 +3,7 @@
 namespace Oro\Bundle\AccountBundle\EventListener;
 
 use Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\AccountBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
@@ -12,23 +13,31 @@ class ProductDBQueryRestrictionEventListener
     /**
      * @var FrontendHelper
      */
-    protected $frontendHelper;
+    private $frontendHelper;
 
     /**
      * @var ProductVisibilityQueryBuilderModifier
      */
-    protected $modifier;
+    private $dbModifier;
 
     /**
-     * @param FrontendHelper $frontendHelper
-     * @param ProductVisibilityQueryBuilderModifier $modifier
+     * @var ProductVisibilitySearchQueryModifier
+     */
+    private $searchQueryModifier;
+
+    /**
+     * @param FrontendHelper                        $frontendHelper
+     * @param ProductVisibilityQueryBuilderModifier $dbModifier
+     * @param ProductVisibilitySearchQueryModifier  $searchQueryModifier
      */
     public function __construct(
         FrontendHelper $frontendHelper,
-        ProductVisibilityQueryBuilderModifier $modifier
+        ProductVisibilityQueryBuilderModifier $dbModifier,
+        ProductVisibilitySearchQueryModifier $searchQueryModifier
     ) {
-        $this->frontendHelper = $frontendHelper;
-        $this->modifier = $modifier;
+        $this->frontendHelper      = $frontendHelper;
+        $this->dbModifier          = $dbModifier;
+        $this->searchQueryModifier = $searchQueryModifier;
     }
 
     /**
@@ -37,7 +46,7 @@ class ProductDBQueryRestrictionEventListener
     public function onDBQuery(ProductDBQueryRestrictionEvent $event)
     {
         if ($this->frontendHelper->isFrontendRequest()) {
-            $this->modifier->modify($event->getQueryBuilder());
+            $this->dbModifier->modify($event->getQueryBuilder());
         }
     }
 
@@ -47,7 +56,7 @@ class ProductDBQueryRestrictionEventListener
     public function onSearchQuery(ProductSearchQueryRestrictionEvent $event)
     {
         if ($this->frontendHelper->isFrontendRequest()) {
-            $this->modifier->modifySearch($event->getQuery());
+            $this->searchQueryModifier->modify($event->getQuery());
         }
     }
 }
