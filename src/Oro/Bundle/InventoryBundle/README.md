@@ -1,5 +1,5 @@
-Oro\Bundle\WarehouseBundle\OroWarehouseBundle
-==========================================
+Oro\Bundle\InventoryBundle\OroInventoryBundle
+=============================================
 
 Table of Contents
 -----------------
@@ -9,4 +9,4 @@ Table of Contents
 Description:
 ------------
 
-The OroWarehouseBundle introduces the notion of Warehouses and Warehouse Inventory Levels.
+The OroInventoryBundle introduces the notion of Inventory Levels.
