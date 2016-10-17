@@ -60,19 +60,19 @@ define([
          * @param options
          */
         initialize: function(options) {
+            var _this = this;
+
             this.cases = {};
             this.error = {};
             this.opsRegEx = {};
+            this.allowed = {};
 
             this.options = _.defaults(options || {}, this.options);
             this.$element = this.options._sourceElement;
 
-            this.allowedCompare = _.contains(this.options.allowedOperations, 'compare');
-            this.allowedInclusion = _.contains(this.options.allowedOperations, 'inclusion');
-            this.allowedMath = _.contains(this.options.allowedOperations, 'math');
-            this.allowedBool = _.contains(this.options.allowedOperations, 'bool');
-
-            var _this = this;
+            _.each(this.options.allowedOperations, function(name) {
+                _this.allowed[name] = true;
+            });
 
             this.cases.data = this.getStrings(options.data);
 
@@ -113,7 +113,7 @@ define([
             var words = this.splitString(normalized.string, ' ');
             var groups = this.getGroups(words);
 
-            if (!this.allowedBool && groups.bool.length) {
+            if (!this.allowed.bool && groups.bool.length) {
                 return false;
             }
 
@@ -347,17 +347,17 @@ define([
                 if (isCompleteWord) {
                     result = _.union(result, this.cases.bool);
 
-                    if (this.allowedMath) {
+                    if (this.allowed.math) {
                         result = _.union(result, getCases(wordUnderCaret, this.cases.math));
                     }
                 } else if (wordIs.hasTerm || wordIs.hasValue || wordIs.notOps) {
-                    if (this.allowedCompare) {
+                    if (this.allowed.compare) {
                         result = _.union(result, getCases(wordUnderCaret, this.cases.compare));
                     }
-                    if (this.allowedInclusion) {
+                    if (this.allowed.inclusion) {
                         result = _.union(result, getCases(wordUnderCaret, this.cases.inclusion));
                     }
-                    if (!this.allowedInclusion && !this.allowedCompare) {
+                    if (!this.allowed.inclusion && !this.allowed.compare) {
                         result = this.cases.math;
                     }
                 } else {
@@ -410,7 +410,7 @@ define([
                 return false;
             }
 
-            if (!this.contains(base, this.replaceBetween(term, '[]', 'wipe'))){
+            if (!this.contains(base, this.replaceWraps(term, '[]', 'wipe'))){
                 this.error.term = 'Part \'' + term + '\'' + ' is wrong';
                 return false;
             }
@@ -443,7 +443,7 @@ define([
          */
         checkInclusion: function(string, match) {
             var matchSplit = this.splitTermAndExpr(string, match),
-                expr = this.replaceBetween(matchSplit.expr, '[]', 'trim');
+                expr = this.replaceWraps(matchSplit.expr, '[]', 'trim');
 
             return this.checkTerm(matchSplit.term, this.cases.data) && !_.isEmpty(matchSplit.expr) && (this.checkArray(matchSplit.expr) || this.checkTerm(expr, this.cases.data));
         },
@@ -507,8 +507,6 @@ define([
             var num = Number(value),
                 isNumber = _.isNumber(num) && !_.isNaN(num);
 
-            console.log('checkValue',value, isNumber, this.checkTerm(value, this.cases.data));
-
             return isNumber || this.checkTerm(value, this.cases.data);
         },
 
@@ -568,9 +566,9 @@ define([
             var compareMatch = string.match(this.opsRegEx['compare']),
                 inclusionMatch = string.match(this.opsRegEx['inclusion']),
                 mathMatch = string.match(this.opsRegEx['math']),
-                doCompare = compareMatch && compareMatch.length === 1 && this.allowedCompare,
-                doInclusion = inclusionMatch && inclusionMatch.length === 1 && this.allowedInclusion,
-                doMath = this.allowedMath && !this.allowedCompare && !this.allowedInclusion,
+                doCompare = compareMatch && compareMatch.length === 1 && this.allowed.compare,
+                doInclusion = inclusionMatch && inclusionMatch.length === 1 && this.allowed.inclusion,
+                doMath = this.allowed.math && !this.allowed.compare && !this.allowed.inclusion,
                 match = doCompare ? compareMatch : (doInclusion ? inclusionMatch : (doMath ? mathMatch : undefined));
 
             return {
@@ -658,9 +656,9 @@ define([
             var hasCutPosition = !_.isUndefined(caretPosition),
                 string = hasCutPosition ? this.getStringPart(value, 0, caretPosition) : value;
 
-            string = this.replaceBetween(string, '()', ' ');
+            string = this.replaceWraps(string, '()', ' ');
 
-            string = string.replace(/\s*\]/g, ']').replace(/\[\s*/g, '[');
+            string = string.replace(/\[\s*/g, '[').replace(/\s*\]/g, ']');
 
             string = string.replace(/\s*,\s*/g, ',');
 
@@ -833,16 +831,16 @@ define([
          * @param replace
          * @returns {String}
          */
-        replaceBetween: function(input, brackets, type, replace) {
+        replaceWraps: function(input, brackets, type, replace) {
             var _this = this;
 
             if (_.isArray(input)) {
                 _.each(input, function(string, i) {
-                    input[i] = _this.replaceBetween(string, brackets, type, replace);
+                    input[i] = _this.replaceWraps(string, brackets, type, replace);
                 });
             } else if (_.isArray(brackets)) {
                 _.each(brackets, function(item) {
-                    input = _this.replaceBetween(input, item, type, replace);
+                    input = _this.replaceWraps(input, item, type, replace);
                 });
             } else {
                 input = input ? _replace(input, brackets, type, replace).trim() : input;
