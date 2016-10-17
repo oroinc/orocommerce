@@ -30,6 +30,17 @@ class OroCommerceMenuBundle implements Migration, RenameExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        /** Table updates **/
+        $this->renameOroCommerceMenuUpdateAndMenuUpdateTitleTables($schema, $queries);
+        $this->updateOroCommerceMenuUpdateTable($schema);
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    public function renameOroCommerceMenuUpdateAndMenuUpdateTitleTables($schema, $queries)
+    {
         $this->renameExtension->renameTable(
             $schema,
             $queries,
@@ -43,9 +54,6 @@ class OroCommerceMenuBundle implements Migration, RenameExtensionAwareInterface
             'oro_front_nav_menu_upd_title',
             'oro_commerce_menu_upd_title'
         );
-
-        /** Table updates **/
-        $this->updateOroCommerceMenuUpdateTable($schema);
     }
 
     /**
@@ -56,7 +64,8 @@ class OroCommerceMenuBundle implements Migration, RenameExtensionAwareInterface
     protected function updateOroCommerceMenuUpdateTable(Schema $schema)
     {
         $table = $schema->getTable('oro_commerce_menu_upd');
-        $table->addColumn('is_active', 'boolean', []);
+        $table->addColumn('is_divider', 'boolean', []);
+        $table->addColumn('is_custom', 'boolean', []);
         $table->changeColumn('ownership_type', ['type' => StringType::getType('string')]);
         $table->dropColumn('website_id');
     }
