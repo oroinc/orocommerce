@@ -1,5 +1,5 @@
 operations:
-    crm_page_create:
+    cms_page_create:
         label: oro.cms.page.create
         routes:
             - oro_cms_page_index
