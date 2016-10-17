@@ -208,4 +208,36 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
             ]
         ];
     }
+
+    /**
+     * @param string $number
+     * @param string|null $resultURL
+     *
+     * @dataProvider trackingDataProvider
+     */
+    public function testGetTrackingLink($number, $resultURL)
+    {
+        static::assertEquals($resultURL, $this->upsShippingMethod->getTrackingLink($number));
+    }
+
+    /**
+     * @return array
+     */
+    public function trackingDataProvider()
+    {
+        return [
+            'emptyTrackingNumber' => [
+                'number' => '',
+                'resultURL' => null,
+            ],
+            'wrongTrackingNumber2' => [
+                'number' => '123123123123',
+                'resultURL' => null,
+            ],
+            'rightTrackingNumber' => [
+                'number' => '1Z111E111111111111',
+                'resultURL' => UPSShippingMethod::TRACKING_URL.'1Z111E111111111111',
+            ],
+        ];
+    }
 }
