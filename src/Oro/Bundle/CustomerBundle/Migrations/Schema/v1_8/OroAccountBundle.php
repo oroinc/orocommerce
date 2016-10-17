@@ -361,6 +361,13 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
             'oro_account_account_user_security_login',
             'oro_customer_account_user_security_login'
         ));
+
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_email_template',
+            'content',
+            'oro_account_frontend_account_user_password_reset',
+            'oro_customer_frontend_account_user_password_reset'
+        ));
     }
 
     /**
