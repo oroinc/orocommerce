@@ -178,19 +178,15 @@ define([
          * @private
          */
         _updateNegativeValue: function(value) {
-            value = this._formatRawValue(value);
-            var oldValue = tools.deepClone(value);
+            var currentValue = this._formatRawValue(value);
+            var oldValue = tools.deepClone(currentValue);
 
-            if (value.value < 0) {
-                value.value *= -1;
-            }
-            if (value.value_end < 0) {
-                value.value_end *= -1;
-            }
+            currentValue.value = Math.abs(currentValue.value);
+            currentValue.value_end = Math.abs(currentValue.value_end);
 
-            if (!tools.isEqualsLoosely(value, oldValue)) {
+            if (!tools.isEqualsLoosely(currentValue, oldValue)) {
                 //apply new values and filter type
-                this._writeDOMValue(value);
+                this._writeDOMValue(currentValue);
             }
         },
 
