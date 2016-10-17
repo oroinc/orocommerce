@@ -13,13 +13,22 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\RenameInventoryConfigSectionQuery;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 
-class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareInterface
+class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareInterface, RenameExtensionAwareInterface
 {
     const INVENTORY_LEVEL_TABLE_NAME = 'oro_inventory_level';
+    const OLD_WAREHOUSE_INVENTORY_TABLE = 'oro_warehouse_inventory_lev';
+    const ORO_B2B_WAREHOUSE_INVENTORY_TABLE = 'orob2b_warehouse_inventory_lev';
 
     /** @var ExtendExtension */
     protected $extendExtension;
+
+    /**
+     * @var RenameExtension
+     */
+    private $renameExtension;
 
     /**
      * {@inheritdoc}
@@ -30,10 +39,27 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function setRenameExtension(RenameExtension $renameExtension)
+    {
+        $this->renameExtension = $renameExtension;
+    }
+
+    /**
      * @inheritDoc
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        if (($schema->hasTable(self::OLD_WAREHOUSE_INVENTORY_TABLE) ||
+                $schema->hasTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE))
+            && !$schema->hasTable(self::INVENTORY_LEVEL_TABLE_NAME))
+        {
+            $this->renameTablesUpdateRelation($schema, $queries);
+
+            return;
+        }
+
         /** Tables generation **/
         $this->createOroInventoryLevelTable($schema);
 
@@ -46,6 +72,37 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         $queries->addPostQuery(
             new RenameInventoryConfigSectionQuery('oro_warehouse', 'oro_inventory', 'manage_inventory')
         );
+    }
+
+    protected function renameTablesUpdateRelation(Schema $schema, QueryBag $queries)
+    {
+        $extension = $this->renameExtension;
+
+        // rename orob2b namespace
+        if ($schema->hasTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE)) {
+            $extension->renameTable($schema, $queries, self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE, self::OLD_WAREHOUSE_INVENTORY_TABLE);
+            $schema->getTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE)->dropIndex('uidx_orob2b_wh_wh_inventory_lev');
+            $extension->addUniqueIndex(
+                $schema,
+                $queries,
+                self::OLD_WAREHOUSE_INVENTORY_TABLE,
+                ['warehouse_id', 'product_unit_precision_id'],
+                'uidx_oro_wh_wh_inventory_lev'
+            );
+        }
+
+        if ($schema->hasTable(self::OLD_WAREHOUSE_INVENTORY_TABLE)) {
+            // drop warehouse indexes
+            $schema->getTable(self::OLD_WAREHOUSE_INVENTORY_TABLE)->dropIndex('uidx_oro_wh_wh_inventory_lev');
+
+            // drop warehouse column
+            $inventoryTable = $schema->getTable(self::OLD_WAREHOUSE_INVENTORY_TABLE);
+            $warehouseForeignKey = $this->getConstraintName($inventoryTable, 'warehouse_id');
+            $inventoryTable->removeForeignKey($warehouseForeignKey);
+
+            // rename entity
+            $extension->renameTable($schema, $queries, self::OLD_WAREHOUSE_INVENTORY_TABLE, self::INVENTORY_LEVEL_TABLE_NAME);
+        }
     }
 
     /**

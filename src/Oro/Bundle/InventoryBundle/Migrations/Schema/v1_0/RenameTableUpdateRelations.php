@@ -14,6 +14,7 @@ class RenameTableUpdateRelations implements Migration, RenameExtensionAwareInter
 {
     use MigrationConstraintTrait;
 
+    const ORO_B2B_WAREHOUSE_INVENTORY_TABLE = 'orob2b_warehouse_inventory_lev';
     const OLD_WAREHOUSE_INVENTORY_TABLE = 'oro_warehouse_inventory_lev';
     const NEW_INVENTORY_TABLE = 'oro_inventory_level';
 
@@ -28,6 +29,19 @@ class RenameTableUpdateRelations implements Migration, RenameExtensionAwareInter
     public function up(Schema $schema, QueryBag $queries)
     {
         $extension = $this->renameExtension;
+
+        // rename orob2b namespace
+        if ($schema->hasTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE)) {
+            $extension->renameTable($schema, $queries, self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE, self::OLD_WAREHOUSE_INVENTORY_TABLE);
+            $schema->getTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE)->dropIndex('uidx_orob2b_wh_wh_inventory_lev');
+            $extension->addUniqueIndex(
+                $schema,
+                $queries,
+                self::OLD_WAREHOUSE_INVENTORY_TABLE,
+                ['warehouse_id', 'product_unit_precision_id'],
+                'uidx_oro_wh_wh_inventory_lev'
+            );
+        }
 
         // drop warehouse indexes
         $schema->getTable(self::OLD_WAREHOUSE_INVENTORY_TABLE)->dropIndex('uidx_oro_wh_wh_inventory_lev');
