@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 
@@ -131,11 +132,13 @@ class CategoryRepository extends EntityRepository
      * @param InsertFromSelectQueryExecutor $insertExecutor
      * @param array $categoryIds
      * @param int $visibility
+     * @param Scope $scope
      */
     public function insertParentCategoryValues(
         InsertFromSelectQueryExecutor $insertExecutor,
         array $categoryIds,
-        $visibility
+        $visibility,
+        Scope $scope
     ) {
         if (!$categoryIds) {
             return;
@@ -151,7 +154,8 @@ class CategoryRepository extends EntityRepository
             ->select(
                 'c.id',
                 (string)$visibility,
-                $sourceCondition
+                $sourceCondition,
+                (string)$scope->getId()
             )
             ->from('OroCatalogBundle:Category', 'c')
             ->leftJoin('OroVisibilityBundle:Visibility\CategoryVisibility', 'cv', 'WITH', 'cv.category = c')
@@ -162,7 +166,7 @@ class CategoryRepository extends EntityRepository
             $queryBuilder->setParameter('categoryIds', $ids);
             $insertExecutor->execute(
                 $this->getClassName(),
-                ['category', 'visibility', 'source'],
+                ['category', 'visibility', 'source', 'scope'],
                 $queryBuilder
             );
         }

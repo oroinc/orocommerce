@@ -31,7 +31,7 @@ class LoadProductVisibilityDemoData extends AbstractLoadProductVisibilityDemoDat
         }
         fclose($handler);
         $manager->flush();
-//        todo: fix BB 4506
-//        $this->container->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
+
+        $this->container->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
     }
 }

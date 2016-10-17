@@ -48,8 +48,12 @@ class VisibilityMessageFactory implements MessageFactoryInterface
                 self::TARGET_ID => $visibility->getTargetEntity()->getId(),
                 self::SCOPE_ID => $visibility->getScope()->getId(),
             ];
+        } else {
+            return [
+                self::ID => $visibility->getId(),
+                self::ENTITY_CLASS_NAME => ClassUtils::getClass($visibility),
+            ];
         }
-        throw new InvalidArgumentException('Unsupported entity class');
     }
 
     /**
@@ -67,7 +71,7 @@ class VisibilityMessageFactory implements MessageFactoryInterface
             ->getRepository($data[self::ENTITY_CLASS_NAME])
             ->find($data[self::ID]);
 
-        if (!$visibility) {
+        if (!$visibility && $data[self::TARGET_CLASS_NAME]) {
             $target = $this->registry->getManagerForClass($data[self::TARGET_CLASS_NAME])
                 ->getRepository($data[self::TARGET_CLASS_NAME])
                 ->find($data[self::TARGET_ID]);

@@ -145,8 +145,14 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
                 $categoryIds[$resolvedVisibility][] = $categoryId;
             }
         }
+        $scope = $this->scopeManager->findOrCreate('category_visibility');
         foreach ($categoryIds as $visibility => $ids) {
-            $resolvedRepository->insertParentCategoryValues($this->insertFromSelectQueryExecutor, $ids, $visibility);
+            $resolvedRepository->insertParentCategoryValues(
+                $this->insertFromSelectQueryExecutor,
+                $ids,
+                $visibility,
+                $scope
+            );
         }
     }
 
