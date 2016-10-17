@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
-class AccountCategoryVisibilityRepository extends EntityRepository
+class AccountCategoryVisibilityRepository extends AbstractCategoryVisibilityRepository
 {
     /**
      * @param Category $category

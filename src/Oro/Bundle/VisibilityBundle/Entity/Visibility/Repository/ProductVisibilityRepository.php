@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 
-class ProductVisibilityRepository extends EntityRepository
+class ProductVisibilityRepository extends AbstractProductVisibilityRepository
 {
     /**
      * Update to 'config' ProductVisibility for products without category with fallback to 'category'.

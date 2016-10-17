@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
-class CategoryVisibilityRepository extends EntityRepository
+class CategoryVisibilityRepository extends AbstractCategoryVisibilityRepository
 {
     /**
      * @return array [['category_id' => <int>, 'category_parent_id' => <int>, 'visibility' => <string>], ...]

@@ -37,7 +37,10 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
         if ($visibility instanceof VisibilityInterface) {
             $data = $visibility->getVisibility();
         } else {
-            $data = call_user_func([$form->getConfig()->getOption('allClass'), 'getDefault'], $form->getData());
+            $data = call_user_func(
+                [$form->getConfig()->getOption(EntityVisibilityType::ALL_CLASS), 'getDefault'],
+                $form->getData()
+            );
         }
         $form->get(EntityVisibilityType::ALL_FIELD)->setData($data);
     }

@@ -23,7 +23,6 @@ class EntityVisibilityType extends AbstractType
     const ACCOUNT_FIELD = 'account';
     const ACCOUNT_GROUP_FIELD = 'accountGroup';
     const SCOPE = 'scope';
-    const TARGET_ENTITY_FIELD = 'targetEntityField';
     const ALL_CLASS = 'allClass';
     const ACCOUNT_GROUP_CLASS = 'accountGroupClass';
     const ACCOUNT_CLASS = 'accountClass';
@@ -62,7 +61,6 @@ class EntityVisibilityType extends AbstractType
         );
         $resolver->setRequired(
             [
-                self::TARGET_ENTITY_FIELD,
                 self::ALL_CLASS,
                 self::ACCOUNT_GROUP_CLASS,
                 self::ACCOUNT_CLASS,

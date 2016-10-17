@@ -12,6 +12,7 @@ use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\VisibilityRepositoryInterface;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException;
@@ -46,30 +47,23 @@ abstract class AbstractVisibilityListener
      */
     protected function findFormFieldData($form, $field)
     {
-        $targetEntity = $form->getData();
-        $config = $form->getConfig();
-        $targetEntityField = $config->getOption(EntityVisibilityType::TARGET_ENTITY_FIELD);
         $visibilityClassName = $form->getConfig()->getOption($field.'Class');
-
-        /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass($visibilityClassName);
-        $qb = $em->createQueryBuilder();
-        $qb->select('scope, v')
-            ->from($visibilityClassName, 'v')
-            ->join('v.scope', 'scope')
-            ->where(sprintf('v.%1$s = :%1$s', $targetEntityField))
-            ->setParameter($targetEntityField, $targetEntity);
-
+        /** @var VisibilityRepositoryInterface $repository */
         $type = $this->getVisibilityScopeType($form, $field);
         $context = $this->getFormScopeContext($form->get($field), $type);
         $criteria = $this->scopeManager->getCriteria($type, $context);
-        $criteria->applyWhere($qb, 'scope');
 
-        if ($field === 'all') {
-            return $qb->getQuery()->getOneOrNullResult();
-        } else {
-            return $this->mapVisibilitiesById($qb->getQuery()->getResult());
+        $repository = $this->registry->getManagerForClass($visibilityClassName)->getRepository($visibilityClassName);
+        $result = $repository->findByScopeCriteriaForTarget($criteria, $form->getData());
+
+        if ($field === EntityVisibilityType::ALL_FIELD) {
+            if (0 === count($result)) {
+                $result = null;
+            } else {
+                $result = reset($result);
+            }
         }
+        return $result;
     }
 
     /**

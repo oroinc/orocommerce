@@ -2,311 +2,110 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\EventListener;
 
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormInterface;
-
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\VisibilityRepositoryInterface;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\Test\FormInterface;
 
-class PostSetDataVisibilityListenerTest extends AbstractVisibilityListenerTestCase
+class VisibilityPostSetDataListenerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var VisibilityPostSetDataListener */
-    protected $listener;
-
-    /** @var Account|\PHPUnit_Framework_MockObject_MockObject */
-    protected $account;
-
-    /** @var AccountGroup|\PHPUnit_Framework_MockObject_MockObject */
-    protected $accountGroup;
+    use EntityTrait;
 
     /**
-     * @return VisibilityPostSetDataListener
+     * @var VisibilityPostSetDataListener|\PHPUnit_Framework_MockObject_MockObject
      */
-    public function getListener()
+    protected $listener;
+
+    /**
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
+     * @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $scopeManager;
+
+    public function setUp()
     {
-        return new VisibilityPostSetDataListener($this->registry);
+        $this->registry = $this->getMock(ManagerRegistry::class);
+
+        $this->scopeManager = $this->getMockBuilder(ScopeManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = new VisibilityPostSetDataListener($this->registry, $this->scopeManager);
     }
 
     public function testOnPostSetData()
     {
-        $this->markTestSkipped('Should be fixed after BB-4710');
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')->disableOriginalConstructor()->getMock();
-        /** @var Category $category */
-        $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', 1);
-        $this->form->expects($this->atLeast(1))->method('getData')->willReturn($category);
-        $event->expects($this->any())->method('getForm')->willReturn($this->form);
+        // visibility target entity
+        $product = $this->getEntity(Product::class, ['id' => 1]);
 
-        $allForm = $this->setCategoryVisibilityExpectations(
-            $category,
-            $this->getCategoryVisibility(),
-            CategoryVisibility::HIDDEN
-        );
-        $accountForm = $this->setAccountCategoryVisibilityExpectations($category);
-        $accountGroupForm = $this->setAccountGroupCategoryVisibilityExpectations($category);
+        // configure scope manager behaviour
+        $visibilityForAllCriteria = new ScopeCriteria([]);
+        $this->scopeManager
+            ->expects($this->exactly(3))
+            ->method('getCriteria')
+            ->willReturnOnConsecutiveCalls([
+                [ProductVisibility::PRODUCT_VISIBILITY, [], $visibilityForAllCriteria],
+                [AccountGroupProductVisibility::ACCOUNT_GROUP_PRODUCT_VISIBILITY, [], new ScopeCriteria([])],
+                [AccountProductVisibility::ACCOUNT_PRODUCT_VISIBILITY, [], new ScopeCriteria([])],
+            ]);
 
-        $this->form->expects($this->exactly(3))
-            ->method('get')
-            ->willReturnMap(
-                [
-                    ['all', $allForm],
-                    ['account', $accountForm],
-                    ['accountGroup', $accountGroupForm],
-                ]
-            );
+        // configure database queries results
+        $em = $this->getMock(EntityManagerInterface::class);
+        $this->registry->method('getManagerForClass')->willReturn($em);
+        $productVisibilityRepository = $this->getMock(VisibilityRepositoryInterface::class);
+        $productVisibilityRepository
+            ->expects($this->once())
+            ->method('findByScopeCriteriaForTarget')
+            ->with($visibilityForAllCriteria)
+            ->willReturn([]);
+        $accountProductVisibilityRepository = $this->getMock(VisibilityRepositoryInterface::class);
+        $accountGroupProductVisibilityRepository = $this->getMock(VisibilityRepositoryInterface::class);
+        $em->method('getRepositoryForClass')
+            ->willReturnMap([
+                [ProductVisibility::class, $productVisibilityRepository],
+                [AccountProductVisibility::class, $accountProductVisibilityRepository],
+                [AccountGroupProductVisibility::class, $accountGroupProductVisibilityRepository]
+            ]);
 
+        // configure root form behaviour
+        $form = $this->getMock(FormInterface::class);
+        $form->method('getData')->willReturn($product);
+        $formConfig = $this->getMock(FormConfigInterface::class);
+        $formConfig->method('getOption')
+            ->willReturnMap([
+                ['allClass', null, ProductVisibility::class],
+                ['accountClass', null, AccountProductVisibility::class],
+                ['accountGroupClass', null, AccountGroupProductVisibility::class],
+            ]);
+        $form->method('getConfig')->willReturn($formConfig);
+
+        $allForm = $this->getMock(FormInterface::class);
+        $accountForm = $this->getMock(FormInterface::class);
+        $accountGroupForm = $this->getMock(FormInterface::class);
+
+        $form->method('get')->willReturnMap([
+            ['all', $allForm],
+            ['account', $accountForm],
+            ['accountGroup', $accountGroupForm]
+        ]);
+
+        $event = new FormEvent($form, []);
         $this->listener->onPostSetData($event);
     }
 
-    /**
-     * @param Category $category
-     * @param string $visibility
-     * @dataProvider onPostSetDataWithDefaultCategoryVisibilityDataProvider
-     */
-    public function testOnPostSetDataWithDefaultCategoryVisibility(Category $category, $visibility)
-    {
-        $this->markTestSkipped('Should be fixed after BB-4710');
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')->disableOriginalConstructor()->getMock();
-        $this->form->expects($this->atLeast(1))->method('getData')->willReturn($category);
-        $event->expects($this->any())->method('getForm')->willReturn($this->form);
-
-        $allForm = $this->setCategoryVisibilityExpectations($category, null, $visibility);
-        $accountForm = $this->setAccountCategoryVisibilityExpectations($category);
-        $accountGroupForm = $this->setAccountGroupCategoryVisibilityExpectations($category);
-
-        $this->form->expects($this->exactly(3))
-            ->method('get')
-            ->willReturnMap(
-                [
-                    ['all', $allForm],
-                    ['account', $accountForm],
-                    ['accountGroup', $accountGroupForm],
-                ]
-            );
-
-        $this->listener->onPostSetData($event);
-    }
-
-    /**
-     * @return array
-     */
-    public function onPostSetDataWithDefaultCategoryVisibilityDataProvider()
-    {
-        /** @var Category $rootCategory */
-        $rootCategory = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', 1);
-        $subCategory = clone($rootCategory);
-        $subCategory->setParentCategory($rootCategory);
-
-        return [
-            'root' => [
-                'category' => $rootCategory,
-                'visibility' => CategoryVisibility::CONFIG,
-            ],
-            'sub' => [
-                'category' => $subCategory,
-                'visibility' => CategoryVisibility::PARENT_CATEGORY,
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider onPostSetDataWithoutCategoryDataProvider
-     * @param $category
-     */
-    public function testOnPostSetDataWithoutCategory($category)
-    {
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')->disableOriginalConstructor()->getMock();
-        $this->form->expects($this->atLeast(1))->method('getData')->willReturn($category);
-        $event->expects($this->any())->method('getForm')->willReturn($this->form);
-        $this->registry->expects($this->never())->method('getManagerForClass');
-        $this->listener->onPostSetData($event);
-    }
-
-    /**
-     * @return array
-     */
-    public function onPostSetDataWithoutCategoryDataProvider()
-    {
-        return [
-            ['categoryWithoutId' => new Category()],
-            ['null' => null],
-            ['false' => false],
-            ['string' => 'Category'],
-            ['integer' => 1],
-        ];
-    }
-
-    /**
-     * @param Category $category
-     * @param CategoryVisibility $categoryVisibility
-     * @param string $expectedVisibility
-     * @return FormInterface
-     */
-    protected function setCategoryVisibilityExpectations(
-        Category $category,
-        CategoryVisibility $categoryVisibility = null,
-        $expectedVisibility = CategoryVisibility::PARENT_CATEGORY
-    ) {
-        $criteria = $this->addWebsiteCriteria(['category' => $category]);
-        $this->categoryVisibilityRepository->expects($this->once())
-            ->method('findOneBy')
-            ->with($criteria)
-            ->willReturn($categoryVisibility);
-
-        /** @var  FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())->method('setData')->with($expectedVisibility);
-        return $form;
-    }
-
-    /**
-     * @param Category $category
-     * @return FormInterface
-     */
-    protected function setAccountCategoryVisibilityExpectations(Category $category)
-    {
-        $accountCategoryVisibility = $this->getAccountCategoryVisibility();
-        $criteria = $this->addWebsiteCriteria(['category' => $category]);
-        $this->accountCategoryVisibilityRepository->expects($this->once())
-            ->method('findBy')
-            ->with($criteria)
-            ->willReturn([$accountCategoryVisibility]);
-        /** @var  FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())->method('setData')->with(
-            [
-                1 =>
-                    [
-                        'entity' => $this->account,
-                        'data' =>
-                            ['visibility' => AccountCategoryVisibility::VISIBLE],
-                    ],
-            ]
-        );
-        return $form;
-    }
-
-    /**
-     * @param Category $category
-     * @return FormInterface
-     */
-    protected function setAccountGroupCategoryVisibilityExpectations(Category $category)
-    {
-        $accountGroupCategoryVisibility = $this->getAccountGroupCategoryVisibility();
-        $criteria = $this->addWebsiteCriteria(['category' => $category]);
-        $this->accountGroupCategoryVisibilityRepository->expects($this->once())
-            ->method('findBy')
-            ->with($criteria)
-            ->willReturn([$accountGroupCategoryVisibility]);
-        /** @var  FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())->method('setData')->with(
-            [
-                1 =>
-                    [
-                        'entity' => $this->accountGroup,
-                        'data' =>
-                            ['visibility' => AccountGroupCategoryVisibility::VISIBLE],
-                    ],
-            ]
-        );
-        return $form;
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     * @param string $primaryKey
-     * @return object
-     */
-    protected function getEntity($className, $id, $primaryKey = 'id')
-    {
-        static $entities = [];
-
-        if (!isset($entities[$className])) {
-            $entities[$className] = [];
-        }
-
-        if (!isset($entities[$className][$id])) {
-            $entities[$className][$id] = new $className;
-            $reflectionClass = new \ReflectionClass($className);
-            $method = $reflectionClass->getProperty($primaryKey);
-            $method->setAccessible(true);
-            $method->setValue($entities[$className][$id], $id);
-        }
-
-        return $entities[$className][$id];
-    }
-
-    /**
-     * @return CategoryVisibility|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getCategoryVisibility()
-    {
-        $categoryVisibility = $this->getMockBuilder('Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility')
-            ->setMethods(['getVisibility'])
-            ->getMock();
-        $categoryVisibility->expects($this->once())
-            ->method('getVisibility')
-            ->willReturn(CategoryVisibility::HIDDEN);
-
-        return $categoryVisibility;
-    }
-
-    /**
-     * @return AccountCategoryVisibility|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getAccountCategoryVisibility()
-    {
-        /** @var Account|\PHPUnit_Framework_MockObject_MockObject $account */
-        $this->account = $this->getMock('Oro\Bundle\AccountBundle\Entity\Account');
-        $this->account->expects($this->once())
-            ->method('getId')
-            ->willReturn(1);
-
-        $visibility = $this->getMockBuilder('Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility')
-            ->setMethods(['getVisibility', 'getAccount'])
-            ->getMock();
-        $visibility->expects($this->exactly(2))
-            ->method('getAccount')
-            ->willReturn($this->account);
-        $visibility->expects($this->once())
-            ->method('getVisibility')
-            ->willReturn(AccountCategoryVisibility::VISIBLE);
-
-        return $visibility;
-    }
-
-    /**
-     * @return AccountGroupCategoryVisibility|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getAccountGroupCategoryVisibility()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AccountGroup $accountGroup */
-        $this->accountGroup = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountGroup');
-        $this->accountGroup->expects($this->once())
-            ->method('getId')
-            ->willReturn(1);
-
-        $visibility = $this->getMockBuilder(
-            'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility'
-        )
-            ->setMethods(['getVisibility', 'getAccountGroup'])
-            ->getMock();
-        $visibility->expects($this->exactly(2))
-            ->method('getAccountGroup')
-            ->willReturn($this->accountGroup);
-        $visibility->expects($this->once())
-            ->method('getVisibility')
-            ->willReturn(AccountGroupCategoryVisibility::VISIBLE);
-
-        return $visibility;
-    }
+//    protected function getFormMock(array $options)
 }

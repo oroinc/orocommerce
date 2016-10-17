@@ -98,7 +98,6 @@ class ProductVisibilityController extends Controller
                 ScopedDataType::SCOPES_OPTION => $this->get('oro_visibility.root_scopes_provider')->getScopes(),
                 ScopedDataType::TYPE_OPTION => EntityVisibilityType::NAME,
                 ScopedDataType::OPTIONS_OPTION => [
-                    EntityVisibilityType::TARGET_ENTITY_FIELD => 'product',
                     EntityVisibilityType::ALL_CLASS => $this
                         ->getParameter('oro_visibility.entity.product_visibility.class'),
                     EntityVisibilityType::ACCOUNT_GROUP_CLASS => $this

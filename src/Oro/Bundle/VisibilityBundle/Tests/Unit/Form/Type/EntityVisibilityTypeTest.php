@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
@@ -26,10 +27,14 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|VisibilityPostSetDataListener */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|VisibilityPostSetDataListener
+     */
     protected $visibilityPostSetDataListener;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|VisibilityChoicesProvider */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|VisibilityChoicesProvider
+     */
     protected $visibilityChoicesProvider;
 
     protected function setUp()
@@ -51,8 +56,6 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
             $this->visibilityPostSetDataListener,
             $this->visibilityChoicesProvider
         );
-        $this->formType->setAccountGroupClass(self::ACCOUNT_GROUP_CLASS);
-        $this->formType->setAccountClass(self::ACCOUNT_CLASS);
     }
 
     /**
@@ -68,7 +71,7 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
                 ],
                 []
             ),
-            new ValidatorExtension(Validation::createValidator()),
+            $this->getValidatorExtension(true)
         ];
     }
 
@@ -95,16 +98,17 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
         $this->visibilityChoicesProvider->expects($this->once())->method('getFormattedChoices')->willReturn([]);
 
         $options = [
-            'targetEntityField' => '',
-            'allClass' => '',
-            'accountGroupClass' => '',
-            'accountClass' => '',
+            'targetEntityField' => 'product',
+            'allClass' => ProductVisibility::class,
+            'accountGroupClass' => AccountGroupProductVisibility::class,
+            'accountClass' => AccountProductVisibility::class
         ];
 
         $form = $this->factory->create($this->formType, [], $options);
 
-        $this->assertTrue($form->has('all'));
-        $this->assertTrue($form->has('account'));
-        $this->assertTrue($form->has('accountGroup'));
+        $form->submit([
+
+        ]);
+        $this->assertTrue($form->isValid());
     }
 }
