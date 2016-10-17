@@ -9,14 +9,14 @@ class ReindexationRequestEventTest extends \PHPUnit_Framework_TestCase
     public function testInitialization()
     {
         $reindexationEvent = new ReindexationRequestEvent(
-            self::class,
-            1024,
+            [static::class, 'AnotherClass'],
+            [1024, 1025],
             [1, 2, 3],
             true
         );
 
-        $this->assertEquals(self::class, $reindexationEvent->getClassName());
-        $this->assertEquals(1024, $reindexationEvent->getWebsiteId());
+        $this->assertEquals([static::class, 'AnotherClass'], $reindexationEvent->getClassesNames());
+        $this->assertEquals([1024, 1025], $reindexationEvent->getWebsitesIds());
         $this->assertSame([1, 2, 3], $reindexationEvent->getIds());
         $this->assertTrue($reindexationEvent->isScheduled());
     }

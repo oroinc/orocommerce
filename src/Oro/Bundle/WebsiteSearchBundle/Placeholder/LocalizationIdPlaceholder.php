@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 
-class LocalizationIdPlaceholder implements WebsiteSearchPlaceholderInterface
+class LocalizationIdPlaceholder extends AbstractPlaceholder
 {
     const NAME = 'LOCALIZATION_ID';
 
@@ -32,7 +32,7 @@ class LocalizationIdPlaceholder implements WebsiteSearchPlaceholderInterface
     /**
      * {@inheritdoc}
      */
-    public function getValue()
+    public function getDefaultValue()
     {
         $localization = $this->localizationManager->getCurrentLocalization();
 

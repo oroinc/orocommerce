@@ -31,7 +31,7 @@ services:
             - "@doctrine"
             - "@security.token_storage"
             - "@translator"
-            - "@oro_currency.service.quantity_rounding"
+            - "@oro_product.service.quantity_rounding"
             - '@oro_pricing.user_currency_manager'
             - "@oro_website.manager"
             - "@oro_shopping_list.manager.shopping_list_total"
@@ -92,14 +92,14 @@ services:
         arguments:
             - "@oro_product.storage.product_data_storage"
 
-    oro_shopping_list.event_listener.product_select_db_query:
-        class: '%oro_product.event_listener.scoped_product_select_db_query.common_class%'
-        parent: oro_product.event_listener.abstract_product_select_db_query
+    oro_shopping_list.event_listener.product_db_query_restriction:
+        class: '%oro_product.event_listener.scoped_product_db_query_restriction.common_class%'
+        parent: oro_product.event_listener.abstract_product_db_query_restriction
         calls:
             - [setScope, ['shopping_list']]
             - [setBackendSystemConfigurationPath, ['oro_shopping_list.backend_product_visibility']]
         tags:
-            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
     oro_shopping_list.layout.data_provider.shopping_list_form:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListFormProvider'
@@ -226,3 +226,10 @@ services:
             - '@oro_pricing.model.price_list_request_handler'
         tags:
             - { name: oro_action.condition, alias: 'has_price_in_shopping_line_items' }
+
+    oro_shopping_list.condition.rfp_allowed:
+        class: 'Oro\Bundle\ShoppingListBundle\Condition\RfpAllowed'
+        arguments:
+            - '@oro_rfp.form.type.extension.frontend_request_data_storage'
+        tags:
+            - { name: oro_action.condition, alias: 'rfp_allowed' }

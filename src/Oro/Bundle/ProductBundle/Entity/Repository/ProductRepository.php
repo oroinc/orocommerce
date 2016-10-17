@@ -136,9 +136,14 @@ class ProductRepository extends EntityRepository
         return $queryBuilder;
     }
 
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @return $this
+     */
     public function selectNames(QueryBuilder $queryBuilder)
     {
         $queryBuilder->addSelect('product_names')->innerJoin('product.names', 'product_names');
+
         return $this;
     }
 
@@ -252,6 +257,7 @@ class ProductRepository extends EntityRepository
             ->join('product_images.image', 'product_images_file')
             ->andWhere($queryBuilder->expr()->eq('product_images_types.type', ':imageType'))
             ->setParameter('imageType', ProductImageType::TYPE_MAIN);
+
         return $this;
     }
 }

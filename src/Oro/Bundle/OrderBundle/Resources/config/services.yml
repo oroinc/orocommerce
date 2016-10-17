@@ -114,15 +114,15 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
 
-    oro_order.event_listener.product_select_db_query:
-        class: '%oro_product.event_listener.scoped_product_select_db_query.common_class%'
-        parent: oro_product.event_listener.abstract_product_select_db_query
+    oro_order.event_listener.product_db_query_restriction:
+        class: '%oro_product.event_listener.scoped_product_db_query_restriction.common_class%'
+        parent: oro_product.event_listener.abstract_product_db_query_restriction
         calls:
             - [setScope, ['order']]
             - [setFrontendSystemConfigurationPath, ['oro_order.frontend_product_visibility']]
             - [setBackendSystemConfigurationPath, ['oro_order.backend_product_visibility']]
         tags:
-            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
     oro_order.event_listener.order.total:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderTotalEventListener'
@@ -160,6 +160,21 @@ services:
             - '@oro_pricing.model.price_list_tree_handler'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
+
+    oro_order.event_listener.payment_shipping_surcharge:
+        class: 'Oro\Bundle\PaymentBundle\EventListener\PaymentShippingSurchargeListener'
+        arguments:
+            - '@oro_order.provider.shipping_cost_subtotal'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.event.collect_surcharge, method: onCollectSurcharge }
+
+# TODO: Uncomment and apply in BB-4834
+#    oro_order.event_listener.payment_discount_surcharge:
+#        class: 'Oro\Bundle\PaymentBundle\EventListener\PaymentDiscountSurchargeListener'
+#        arguments:
+#            - '@oro_order.provider.discount_subtotal'
+#        tags:
+#            - { name: kernel.event_listener, event: oro_payment.event.collect_surcharge, method: onCollectSurcharge }
 
     oro_order.twig.order:
         class: 'Oro\Bundle\OrderBundle\Twig\OrderExtension'

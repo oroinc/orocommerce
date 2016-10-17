@@ -2,18 +2,19 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle;
 
+use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\Compiler\WebsiteSearchCompilerPass;
+
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-
-use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\OroWebsiteSearchExtension;
 
 class OroWebsiteSearchBundle extends Bundle
 {
     /**
      * {@inheritdoc}
      */
-    public function getContainerExtension()
+    public function build(ContainerBuilder $container)
     {
-        return new OroWebsiteSearchExtension();
+        parent::build($container);
+        $container->addCompilerPass(new WebsiteSearchCompilerPass());
     }
 }

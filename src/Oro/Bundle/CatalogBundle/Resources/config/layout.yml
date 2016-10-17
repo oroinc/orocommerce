@@ -7,6 +7,11 @@ services:
         tags:
             - { name: layout.block_type, alias: category_list }
 
+    oro_catalog.layout.block_type.navigation:
+        class: Oro\Bundle\CatalogBundle\Layout\Block\Type\CategoryBreadcrumbsType
+        tags:
+            - { name: layout.block_type, alias: category_breadcrumbs }
+
     oro_catalog.layout.data_provider.category:
         class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider'
         public: true

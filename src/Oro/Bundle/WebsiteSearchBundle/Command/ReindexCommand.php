@@ -44,7 +44,7 @@ class ReindexCommand extends ContainerAwareCommand
         $websiteId = $input->getOption('website-id');
 
         $class = $class ? $this->getFQCN($class) : null;
-
+        
         $context = [];
         if ($websiteId !== null) {
             $websiteId = (int)$websiteId;
@@ -53,6 +53,7 @@ class ReindexCommand extends ContainerAwareCommand
 
         $output->writeln($this->getStartingMessage($class, $websiteId));
 
+        // TODO: trigger immediate reindexation event instead
         $indexer = $this->getContainer()->get('oro_website_search.indexer');
         $recordsCount = $indexer->reindex($class, $context);
 
@@ -61,7 +62,7 @@ class ReindexCommand extends ContainerAwareCommand
 
     /**
      * @param string|null $class
-     * @param $websiteId
+     * @param int $websiteId
      * @return string
      */
     private function getStartingMessage($class, $websiteId)
@@ -78,7 +79,7 @@ class ReindexCommand extends ContainerAwareCommand
 
     /**
      * @param string $class
-     * @return mixed
+     * @return string
      */
     private function getFQCN($class)
     {

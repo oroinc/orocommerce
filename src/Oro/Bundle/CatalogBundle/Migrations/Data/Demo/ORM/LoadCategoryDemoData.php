@@ -11,12 +11,12 @@ class LoadCategoryDemoData extends AbstractCategoryFixture
      */
     protected $categories = [
         'Lighting Products' => [
-            'Architectural floodlighting' => [],
-            'Headlamps' => []
+            'Architectural Floodlighting' => [],
+            'Headlamps'                   => []
         ],
-        'Medical Apparel' => [],
-        'Office Furniture' => [],
-        'Retail Supplies' => [],
+        'Medical Apparel'   => [],
+        'Office Furniture'  => [],
+        'Retail Supplies'   => [],
         //'Uniforms' => [
         //    'Healthcare' => [
         //        'Medical Scrubs' => [],
@@ -31,5 +31,17 @@ class LoadCategoryDemoData extends AbstractCategoryFixture
         //'Patient Transport Equipment' => [
         //    'Hospital Wheelchairs' => [],
         //],
+    ];
+
+    /**
+     * @var array
+     */
+    protected $categoryImages = [
+        'Lighting Products'           => '2JD90',
+        'Medical Apparel'             => '8BC37',
+        'Office Furniture'            => '5UB78',
+        'Retail Supplies'             => '5XY10',
+        'Architectural Floodlighting' => '7BS72',
+        'Headlamps'                   => '6UK81'
     ];
 }

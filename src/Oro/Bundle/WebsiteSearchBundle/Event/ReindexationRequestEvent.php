@@ -9,17 +9,17 @@ final class ReindexationRequestEvent extends Event
     const EVENT_NAME = 'oro_website_search.reindexation_request';
 
     /**
-     * @var string
+     * @var array
      */
-    private $className;
+    private $classesNames;
 
     /**
-     * @var int
+     * @var array
      */
-    private $websiteId;
+    private $websitesIds;
 
     /**
-     * @var int[]|null
+     * @var array
      */
     private $ids;
 
@@ -29,41 +29,41 @@ final class ReindexationRequestEvent extends Event
     private $scheduled = true;
 
     /**
-     * @param string $className
-     * @param int $websiteId
-     * @param \int[]|null $ids
-     * @param \boolean $scheduled
+     * @param array $classesNames
+     * @param array $websitesIds
+     * @param array $ids
+     * @param bool  $scheduled
      */
     public function __construct(
-        $className = null,
-        $websiteId = null,
-        array $ids = null,
+        array $classesNames = [],
+        array $websitesIds = [],
+        array $ids = [],
         $scheduled = true
     ) {
-        $this->className = $className;
-        $this->websiteId = $websiteId;
-        $this->ids = $ids;
-        $this->scheduled = $scheduled;
+        $this->classesNames = $classesNames;
+        $this->websitesIds  = $websitesIds;
+        $this->ids          = $ids;
+        $this->scheduled    = $scheduled;
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getClassName()
+    public function getClassesNames()
     {
-        return $this->className;
+        return $this->classesNames;
     }
 
     /**
-     * @return int
+     * @return array
      */
-    public function getWebsiteId()
+    public function getWebsitesIds()
     {
-        return $this->websiteId;
+        return $this->websitesIds;
     }
 
     /**
-     * @return \int[]|null
+     * @return array
      */
     public function getIds()
     {

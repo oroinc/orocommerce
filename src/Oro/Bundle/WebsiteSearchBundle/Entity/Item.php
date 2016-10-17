@@ -19,12 +19,10 @@ use Oro\Bundle\SearchBundle\Query\Query as SearchQuery;
  *    }
  * )
  * @ORM\HasLifecycleCallbacks
- * @ORM\Entity(repositoryClass="Oro\Bundle\WebsiteSearchBundle\Entity\Repository\WebsiteSearchIndexRepository")
+ * @ORM\Entity(repositoryClass="Oro\Bundle\WebsiteSearchBundle\Entity\Repository\ItemRepository")
  */
 class Item extends AbstractItem
 {
-    const TABLE_NAME = 'oro_website_search_item';
-
     /**
      * Save index item data. Needed to use classes from the proper namespace.
      *

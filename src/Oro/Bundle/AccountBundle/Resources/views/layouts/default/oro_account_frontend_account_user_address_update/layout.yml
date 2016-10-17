@@ -2,6 +2,7 @@ layout:
     imports:
         -
             id: oro_account_user_address_form
+            namespace: account_user_address_edit
             root: content
         - oro_account_menu
     actions:
@@ -14,5 +15,4 @@ layout:
         - '@setOption':
             id: page_title
             optionName: text
-            optionValue:
-                label: oro.account.frontend.address.page_title.edit
+            optionValue: oro.account.frontend.address.page_title.edit

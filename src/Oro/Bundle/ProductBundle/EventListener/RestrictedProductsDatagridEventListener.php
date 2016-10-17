@@ -22,14 +22,14 @@ class RestrictedProductsDatagridEventListener
     protected $productManager;
 
     /**
-     * @param RequestStack $requestStack
+     * @param RequestStack   $requestStack
      * @param ProductManager $productManager
      */
     public function __construct(
         RequestStack $requestStack,
         ProductManager $productManager
     ) {
-        $this->requestStack = $requestStack;
+        $this->requestStack   = $requestStack;
         $this->productManager = $productManager;
     }
 
@@ -39,9 +39,9 @@ class RestrictedProductsDatagridEventListener
     public function onBuildAfter(BuildAfter $event)
     {
         /** @var OrmDatasource $dataSource */
-        $dataSource = $event->getDatagrid()->getDatasource();
+        $dataSource   = $event->getDatagrid()->getDatasource();
         $queryBuilder = $dataSource->getQueryBuilder();
-        $request = $this->requestStack->getCurrentRequest();
+        $request      = $this->requestStack->getCurrentRequest();
         if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
             $params = [];
         }

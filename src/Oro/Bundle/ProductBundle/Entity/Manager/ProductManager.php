@@ -7,12 +7,15 @@ use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
-use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
+use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
+use Oro\Bundle\SearchBundle\Query\Query;
 
 class ProductManager
 {
-    /** @var  EventDispatcherInterface */
+    /**
+     * @var  EventDispatcherInterface
+     */
     protected $eventDispatcher;
 
     /**
@@ -25,29 +28,28 @@ class ProductManager
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param array        $dataParameters
+     * @param array $dataParameters
      * @return QueryBuilder
      */
     public function restrictQueryBuilder(
         QueryBuilder $queryBuilder,
         array $dataParameters
     ) {
-        $event = new ProductSelectDBQueryEvent($queryBuilder, new ParameterBag($dataParameters));
-        $this->eventDispatcher->dispatch(ProductSelectDBQueryEvent::NAME, $event);
+        $event = new ProductDBQueryRestrictionEvent($queryBuilder, new ParameterBag($dataParameters));
+        $this->eventDispatcher->dispatch(ProductDBQueryRestrictionEvent::NAME, $event);
+
         return $event->getQueryBuilder();
     }
 
     /**
-     * @param SearchQueryInterface $searchQuery
-     * @param array                $dataParameters
-     * @return SearchQueryInterface
+     * @param Query $query
+     * @return Query
      */
-    public function restrictSearchQuery(
-        SearchQueryInterface $searchQuery,
-        array $dataParameters
-    ) {
-        $event = new ProductSearchEvent($searchQuery, new ParameterBag($dataParameters));
-        $this->eventDispatcher->dispatch(ProductSearchEvent::NAME, $event);
-        return $event->getQuery();
+    public function restrictSearchQuery(Query $query)
+    {
+        $ProductSearchQueryEvent = new ProductSearchQueryRestrictionEvent($query);
+        $this->eventDispatcher->dispatch(ProductSearchQueryRestrictionEvent::NAME, $ProductSearchQueryEvent);
+
+        return $ProductSearchQueryEvent->getQuery();
     }
 }

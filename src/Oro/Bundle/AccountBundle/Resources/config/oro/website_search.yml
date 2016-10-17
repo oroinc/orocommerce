@@ -1,0 +1,14 @@
+Oro\Bundle\ProductBundle\Entity\Product:
+    fields:
+        is_visible_by_default:
+            name: is_visible_by_default
+            type: integer
+        visibility_anonymous:
+            name: visibility_anonymous
+            type: integer
+        visibility_new:
+            name: visibility_new
+            type: integer
+        visibility_account:
+            name: visibility_account_ACCOUNT_ID
+            type: integer

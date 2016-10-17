@@ -5,10 +5,18 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product as BaseProduct;
+use Oro\Component\PropertyAccess\PropertyAccessor;
+
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class Product extends BaseProduct
 {
     use LocalizedEntityTrait;
+
+    /**
+     * @var PropertyAccessor
+     */
+    private $propertyAccessor;
 
     /**
      * @var AbstractEnumValue
@@ -52,7 +60,13 @@ class Product extends BaseProduct
      */
     public function __get($name)
     {
-        return $this->localizedFieldGet($this->localizedFields, $name);
+        if (array_key_exists($name, $this->localizedFields)) {
+            return $this->localizedFieldGet($this->localizedFields, $name);
+        } else {
+            $this->getPropertyAccessor()->getValue($this, $name);
+        }
+
+        return null;
     }
 
     /**
@@ -60,7 +74,28 @@ class Product extends BaseProduct
      */
     public function __set($name, $value)
     {
-        return $this->localizedFieldSet($this->localizedFields, $name, $value);
+        if (array_key_exists($name, $this->localizedFields)) {
+            return $this->localizedFieldSet($this->localizedFields, $name, $value);
+        } else {
+            //PropertyAccessor::setValue() not work in this case
+            $reflection = new \ReflectionProperty(self::class, $name);
+            $reflection->setAccessible(true);
+            $reflection->setValue($this, $value);
+        }
+
+        return null;
+    }
+
+    /**
+     * @return PropertyAccessor
+     */
+    private function getPropertyAccessor()
+    {
+        if (!$this->propertyAccessor) {
+            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        }
+
+        return $this->propertyAccessor;
     }
 
     /**

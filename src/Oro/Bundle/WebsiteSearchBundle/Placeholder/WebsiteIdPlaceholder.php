@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
 
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
-class WebsiteIdPlaceholder implements WebsiteSearchPlaceholderInterface
+class WebsiteIdPlaceholder extends AbstractPlaceholder
 {
     const NAME = 'WEBSITE_ID';
 
@@ -29,10 +29,8 @@ class WebsiteIdPlaceholder implements WebsiteSearchPlaceholderInterface
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getValue()
+    /** {@inheritdoc} */
+    public function getDefaultValue()
     {
         $website = $this->websiteManager->getCurrentWebsite();
 

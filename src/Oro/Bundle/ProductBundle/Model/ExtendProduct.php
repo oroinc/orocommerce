@@ -16,6 +16,9 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  * @method LocalizedFallbackValue getDefaultDescription()
  * @method LocalizedFallbackValue getShortDescription(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultShortDescription()
+ * @method LocalizedFallbackValue getMetaTitle(Localization $localization = null)
+ * @method LocalizedFallbackValue getMetaDescription(Localization $localization = null)
+ * @method LocalizedFallbackValue getMetaKeyword(Localization $localization = null)
  */
 class ExtendProduct
 {

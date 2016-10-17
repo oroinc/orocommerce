@@ -22,9 +22,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-        $this->client->useHashNavigation(true);
-
+        $this->initClient();
         $this->loadFixtures(
             [
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules',
@@ -158,7 +156,6 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl2']);
         $this->assertEmpty($priceLists);
-
     }
 
     public function testDeleteUnusedDisabledPriceLists()

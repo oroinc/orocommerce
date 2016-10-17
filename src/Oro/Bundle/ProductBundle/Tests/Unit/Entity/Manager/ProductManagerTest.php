@@ -4,11 +4,13 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\Manager;
 
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
+use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
 class ProductManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,10 +35,24 @@ class ProductManagerTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')
             ->with(
-                ProductSelectDBQueryEvent::NAME,
-                new ProductSelectDBQueryEvent($qb, new ParameterBag($params))
+                ProductDBQueryRestrictionEvent::NAME,
+                new ProductDBQueryRestrictionEvent($qb, new ParameterBag($params))
             );
 
         $this->productManager->restrictQueryBuilder($qb, $params);
+    }
+
+    public function testRestrictSearchQuery()
+    {
+        $query = $this->getMock(Query::class);
+
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                ProductSearchQueryRestrictionEvent::NAME,
+                new ProductSearchQueryRestrictionEvent($query)
+            );
+
+        $this->productManager->restrictSearchQuery($query);
     }
 }

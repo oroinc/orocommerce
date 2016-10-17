@@ -2,9 +2,6 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Query\Factory;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
-use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
@@ -15,16 +12,13 @@ class QueryFactoryTest extends \PHPUnit_Framework_TestCase
     /** @var QueryFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $queryFactory;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockBuilder */
-    protected $eventDispatcher;
-
     /** @var EngineV2Interface|\PHPUnit_Framework_MockObject_MockBuilder */
     protected $engine;
+
 
     public function setUp()
     {
         $this->queryFactory    = $this->getMock(QueryFactoryInterface::class);
-        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
         $this->engine          = $this->getMock(EngineV2Interface::class);
     }
 
@@ -50,7 +44,7 @@ class QueryFactoryTest extends \PHPUnit_Framework_TestCase
             ->method('create')
             ->with($configForBackendSearch);
 
-        $factory = new QueryFactory($this->queryFactory, $this->eventDispatcher, $this->engine);
+        $factory = new QueryFactory($this->queryFactory, $this->engine);
 
         $factory->create($configForBackendSearch);
 

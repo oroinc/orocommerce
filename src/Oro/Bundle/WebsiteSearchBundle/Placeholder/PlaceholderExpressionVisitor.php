@@ -10,14 +10,14 @@ use Doctrine\Common\Collections\Expr\Value;
 class PlaceholderExpressionVisitor extends ExpressionVisitor
 {
     /**
-     * @var WebsiteSearchPlaceholderInterface
+     * @var PlaceholderInterface
      */
     private $placeholder;
 
     /**
-     * @param WebsiteSearchPlaceholderInterface $placeholder
+     * @param PlaceholderInterface $placeholder
      */
-    public function __construct(WebsiteSearchPlaceholderInterface $placeholder)
+    public function __construct(PlaceholderInterface $placeholder)
     {
         $this->placeholder = $placeholder;
     }
@@ -28,7 +28,7 @@ class PlaceholderExpressionVisitor extends ExpressionVisitor
     public function walkComparison(Comparison $comparison)
     {
         return new Comparison(
-            str_replace($this->placeholder->getPlaceholder(), $this->placeholder->getValue(), $comparison->getField()),
+            $this->placeholder->replaceDefault($comparison->getField()),
             $comparison->getOperator(),
             $this->walkValue($comparison->getValue())
         );

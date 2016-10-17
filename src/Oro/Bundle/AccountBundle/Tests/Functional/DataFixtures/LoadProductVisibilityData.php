@@ -15,6 +15,7 @@ use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\AccountBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -98,13 +99,36 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     protected function getWebsite($websiteName)
     {
         if ($websiteName === 'Default') {
-            return $this->container
+            $website = $this->container
                 ->get('doctrine')
                 ->getManagerForClass('OroWebsiteBundle:Website')
                 ->getRepository('OroWebsiteBundle:Website')->findOneBy(['name' => $websiteName]);
+        } else {
+            /** @var Website $website */
+            $website = $this->getReference($websiteName);
         }
 
-        return $this->getReference($websiteName);
+        return $website;
+    }
+
+    /**
+     * @param string $groupReference
+     * @return AccountGroup
+     */
+    private function getAccountGroup($groupReference)
+    {
+        if ($groupReference === 'account_group.anonymous') {
+            $accountGroup = $this->container
+                ->get('doctrine')
+                ->getManagerForClass('OroAccountBundle:AccountGroup')
+                ->getRepository('OroAccountBundle:AccountGroup')
+                ->findOneBy(['name' => LoadAnonymousAccountGroup::GROUP_NAME_NON_AUTHENTICATED]);
+        } else {
+            /** @var AccountGroup $accountGroup */
+            $accountGroup = $this->getReference($groupReference);
+        }
+
+        return $accountGroup;
     }
 
     /**
@@ -121,7 +145,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     ) {
         foreach ($accountGroupsData as $groupReference => $accountGroupData) {
             /** @var AccountGroup $accountGroup */
-            $accountGroup = $this->getReference($groupReference);
+            $accountGroup = $this->getAccountGroup($groupReference);
 
             $accountGroupProductVisibility = (new AccountGroupProductVisibility())
                 ->setProduct($product)
