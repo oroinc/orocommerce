@@ -184,27 +184,6 @@ class AccountCategoryRepository extends EntityRepository
     }
 
     /**
-     * @param array $categoryIds
-     * @param int $visibility
-     * @param Account $account
-     */
-    public function updateAccountCategoryVisibilityByCategory(Account $account, array $categoryIds, $visibility)
-    {
-        if (!$categoryIds) {
-            return;
-        }
-
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->update('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved', 'acvr')
-            ->set('acvr.visibility', $visibility)
-            ->where($qb->expr()->eq('acvr.account', ':account'))
-            ->andWhere($qb->expr()->in('IDENTITY(acvr.category)', ':categoryIds'))
-            ->setParameters(['account' => $account, 'categoryIds' => $categoryIds]);
-
-        $qb->getQuery()->execute();
-    }
-
-    /**
      * @param Category $category
      * @param Account $account
      * @return null|AccountCategoryVisibilityResolved

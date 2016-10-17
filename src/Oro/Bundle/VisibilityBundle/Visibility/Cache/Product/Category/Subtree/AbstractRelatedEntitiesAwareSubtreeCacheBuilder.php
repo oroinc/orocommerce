@@ -5,7 +5,6 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
@@ -182,8 +181,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         array $restrictedAccountGroupIds = null
     ) {
         return $this->registry
-            ->getManagerForClass('OroAccountBundle:AccountGroup')
-            ->getRepository('OroAccountBundle:AccountGroup')
+            ->getManagerForClass(AccountGroupCategoryVisibility::class)
+            ->getRepository(AccountGroupCategoryVisibility::class)
             ->getCategoryAccountGroupIdsByVisibility(
                 $category,
                 AccountGroupCategoryVisibility::PARENT_CATEGORY,
@@ -199,8 +198,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
     protected function getAccountIdsWithFallbackToParent(Category $category, array $restrictedAccountIds = null)
     {
         return $this->registry
-            ->getManagerForClass('OroAccountBundle:Account')
-            ->getRepository('OroAccountBundle:Account')
+            ->getManagerForClass(AccountCategoryVisibility::class)
+            ->getRepository(AccountCategoryVisibility::class)
             ->getCategoryAccountIdsByVisibility(
                 $category,
                 AccountCategoryVisibility::PARENT_CATEGORY,
@@ -215,8 +214,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
     protected function getAccountIdsWithFallbackToAll(Category $category)
     {
         return $this->registry
-            ->getManagerForClass('OroAccountBundle:Account')
-            ->getRepository('OroAccountBundle:Account')
+            ->getManagerForClass(AccountCategoryVisibility::class)
+            ->getRepository(AccountCategoryVisibility::class)
             ->getCategoryAccountIdsByVisibility($category, AccountCategoryVisibility::CATEGORY);
     }
 
@@ -236,20 +235,23 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             ->getManagerForClass('OroAccountBundle:Account')
             ->createQueryBuilder();
 
+        /** @var QueryBuilder $subQb */
+        $subQb = $this->registry
+            ->getManagerForClass('OroVisibilityBundle:Visibility\AccountCategoryVisibility')
+            ->createQueryBuilder();
+
+        $subQb->select('1')
+            ->from('OroVisibilityBundle:Visibility\AccountCategoryVisibility', 'accountCategoryVisibility')
+            ->join('accountCategoryVisibility.scope', 'scope')
+            ->join('scope.account', 'scopeAccount')
+            ->where($qb->expr()->eq('accountCategoryVisibility.category', ':category'))
+            ->andWhere($qb->expr()->in('scopeAccount.group', ':accountGroupIds'))
+            ->andWhere($qb->expr()->eq('scope.account', 'account.id'));
+
         $qb->select('account.id')
             ->from('OroAccountBundle:Account', 'account')
-            ->leftJoin(
-                'OroVisibilityBundle:Visibility\AccountCategoryVisibility',
-                'accountCategoryVisibility',
-                Join::WITH,
-                $qb->expr()->andX(
-                    $qb->expr()->eq('accountCategoryVisibility.account', 'account'),
-                    $qb->expr()->eq('accountCategoryVisibility.category', ':category')
-                )
-            )
-            ->leftJoin('account.group', 'accountGroup')
-            ->where($qb->expr()->isNull('accountCategoryVisibility.id'))
-            ->andWhere($qb->expr()->in('accountGroup', ':accountGroupIds'))
+            ->where($qb->expr()->not($qb->expr()->exists($subQb->getDQL())))
+
             ->setParameters([
                 'category' => $category,
                 'accountGroupIds' => $accountGroupIds
@@ -309,7 +311,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         $qb->update('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved', 'agpvr')
             ->set('agpvr.visibility', $visibility)
             ->where($qb->expr()->eq('agpvr.category', ':category'))
-            ->andWhere($qb->expr()->in('agpvr.accountGroup', ':scopes'))
+            ->andWhere($qb->expr()->in('agpvr.scope', ':scopes'))
             ->setParameters([
                 'scopes' => $scopes,
                 'category' => $category
@@ -328,7 +330,13 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         if (!$accountIds) {
             return;
         }
-
+        $scopes = $this->scopeManager->findRelatedScopeIds(
+            'account_category_visibility',
+            ['account' => $accountIds]
+        );
+        if (!$scopes) {
+            return;
+        }
         /** @var QueryBuilder $qb */
         $qb = $this->registry
             ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved')
@@ -337,9 +345,9 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         $qb->update('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved', 'apvr')
             ->set('apvr.visibility', $visibility)
             ->where($qb->expr()->eq('apvr.category', ':category'))
-            ->andWhere($qb->expr()->in('apvr.account', ':accountIds'))
+            ->andWhere($qb->expr()->in('apvr.scope', ':scopes'))
             ->setParameters([
-                'accountIds' => $accountIds,
+                'scopes' => $scopes,
                 'category' => $category
             ]);
 
@@ -356,6 +364,10 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         if (!$accountIds) {
             return;
         }
+        $scopes = $this->scopeManager->findRelatedScopeIds('account_category_visibility', ['account' => $accountIds]);
+        if (!$scopes) {
+            return;
+        }
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
@@ -365,9 +377,9 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         $qb->update('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved', 'acvr')
             ->set('acvr.visibility', $visibility)
             ->where($qb->expr()->eq('acvr.category', ':category'))
-            ->andWhere($qb->expr()->in('acvr.account', ':accountIds'))
+            ->andWhere($qb->expr()->in('acvr.scope', ':scopes'))
             ->setParameters([
-                'accountIds' => $accountIds,
+                'scopes' => $scopes,
                 'category' => $category
             ]);
 
@@ -387,7 +399,13 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         if (!$accountGroupIds) {
             return;
         }
-
+        $scopes = $this->scopeManager->findRelatedScopeIds(
+            'account_group_category_visibility',
+            ['accountGroup' => $accountGroupIds]
+        );
+        if (!$scopes) {
+            return;
+        }
         /** @var QueryBuilder $qb */
         $qb = $this->registry
             ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
@@ -396,9 +414,9 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         $qb->update('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved', 'agcvr')
             ->set('agcvr.visibility', $visibility)
             ->where($qb->expr()->eq('agcvr.category', ':category'))
-            ->andWhere($qb->expr()->in('agcvr.accountGroup', ':accountGroupIds'))
+            ->andWhere($qb->expr()->in('agcvr.scope', ':scopes'))
             ->setParameters([
-                'accountGroupIds' => $accountGroupIds,
+                'scopes' => $scopes,
                 'category' => $category
             ]);
 

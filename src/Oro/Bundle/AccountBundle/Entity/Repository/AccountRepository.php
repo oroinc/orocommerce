@@ -3,9 +3,7 @@
 namespace Oro\Bundle\AccountBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorInterface;
 use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorTrait;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -51,41 +49,5 @@ class AccountRepository extends EntityRepository implements BatchIteratorInterfa
         }
 
         return $children;
-    }
-
-    /**
-     * @param Category $category
-     * @param $visibility
-     * @param array $restrictedAccountIds
-     * @return array
-     */
-    public function getCategoryAccountIdsByVisibility(
-        Category $category,
-        $visibility,
-        array $restrictedAccountIds = null
-    ) {
-        $qb = $this->createQueryBuilder('account');
-
-        $qb->select('account.id')
-            ->join(
-                'OroVisibilityBundle:Visibility\AccountCategoryVisibility',
-                'accountCategoryVisibility',
-                Join::WITH,
-                $qb->expr()->eq('accountCategoryVisibility.account', 'account')
-            )
-            ->where($qb->expr()->eq('accountCategoryVisibility.category', ':category'))
-            ->andWhere($qb->expr()->eq('accountCategoryVisibility.visibility', ':visibility'))
-            ->setParameters([
-                'category' => $category,
-                'visibility' => $visibility,
-            ]);
-
-        if ($restrictedAccountIds !== null) {
-            $qb->andWhere($qb->expr()->in('account.id', ':restrictedAccountIds'))
-                ->setParameter('restrictedAccountIds', $restrictedAccountIds);
-        }
-
-        // Return only account ids
-        return array_map('current', $qb->getQuery()->getScalarResult());
     }
 }

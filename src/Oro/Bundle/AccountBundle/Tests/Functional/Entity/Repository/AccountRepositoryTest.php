@@ -7,7 +7,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\Repository\AccountRepository;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
@@ -122,33 +121,6 @@ class AccountRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider getCategoryAccountIdsByVisibilityDataProvider
-     * @param string $categoryName
-     * @param string $visibility
-     * @param array $expectedAccounts
-     * @param array $restricted
-     */
-    public function testGetCategoryAccountIdsByVisibility(
-        $categoryName,
-        $visibility,
-        array $expectedAccounts,
-        array $restricted = null
-    ) {
-        /** @var Category $category */
-        $category = $this->getReference($categoryName);
-
-        $accountIds = $this->repository->getCategoryAccountIdsByVisibility($category, $visibility, $restricted);
-
-        $expectedAccountIds = [];
-        foreach ($expectedAccounts as $expectedAccountName) {
-            $accountGroup = $this->getReference($expectedAccountName);
-            $expectedAccountIds[] = $accountGroup->getId();
-        }
-
-        $this->assertEquals($expectedAccountIds, $accountIds);
-    }
-
-    /**
      * @return array
      */
     public function getCategoryAccountIdsByVisibilityDataProvider()
@@ -179,6 +151,7 @@ class AccountRepositoryTest extends WebTestCase
 
     public function testGetBatchIterator()
     {
+        /** @var Account[] $results */
         $results  = $this->repository->findAll();
         $accounts = [];
 

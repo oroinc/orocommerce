@@ -25,6 +25,24 @@ class ScopeRepository extends EntityRepository
      * @param ScopeCriteria $criteria
      * @return BufferedQueryResultIterator|Scope[]
      */
+    public function findIdentifiersByCriteria(ScopeCriteria $criteria)
+    {
+        $qb = $this->createQueryBuilder('scope');
+        $criteria->applyWhere($qb, 'scope');
+        $scopes = $qb->select('scope.id')
+            ->getQuery()
+            ->getScalarResult();
+        $ids = [];
+        foreach ($scopes as $scope) {
+            $ids[] = $scope['id'];
+        }
+        return $ids;
+    }
+
+    /**
+     * @param ScopeCriteria $criteria
+     * @return BufferedQueryResultIterator|Scope[]
+     */
     public function findScalarByCriteria(ScopeCriteria $criteria)
     {
         $qb = $this->createQueryBuilder('scope');

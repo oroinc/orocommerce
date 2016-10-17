@@ -199,18 +199,20 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
     /**
      * {@inheritdoc}
      */
-    protected function joinCategoryVisibility(QueryBuilder $qb, $target = null)
+    protected function joinCategoryVisibility(QueryBuilder $qb, $target)
     {
+        $scope = $this->scopeManager->find('account_group_category_visibility', ['accountGroup' => $target]);
+
         return $qb->leftJoin(
             'OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility',
             'cv',
             Join::WITH,
             $qb->expr()->andX(
                 $qb->expr()->eq('node', 'cv.category'),
-                $qb->expr()->eq('cv.accountGroup', ':accountGroup')
+                $qb->expr()->eq('cv.scope', ':scope')
             )
         )
-            ->setParameter('accountGroup', $target);
+            ->setParameter('scope', $scope);
     }
 
     /**

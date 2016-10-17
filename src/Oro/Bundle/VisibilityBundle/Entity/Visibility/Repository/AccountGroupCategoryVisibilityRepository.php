@@ -31,4 +31,38 @@ class AccountGroupCategoryVisibilityRepository extends EntityRepository
             return null;
         }
     }
+
+    /**
+     * @param Category $category
+     * @param string $visibility
+     * @param array $restrictedAccountGroupIds
+     * @return array
+     */
+    public function getCategoryAccountGroupIdsByVisibility(
+        Category $category,
+        $visibility,
+        array $restrictedAccountGroupIds = null
+    ) {
+        $qb = $this->createQueryBuilder('visibility');
+
+        $qb->select('IDENTITY(scope.accountGroup) as accountGroupId')
+            ->join('visibility.scope', 'scope')
+            ->where($qb->expr()->eq('visibility.category', ':category'))
+            ->andWhere($qb->expr()->eq('visibility.visibility', ':visibility'))
+            ->setParameters([
+                'category' => $category,
+                'visibility' => $visibility
+            ]);
+
+        if ($restrictedAccountGroupIds !== null) {
+            $qb->andWhere($qb->expr()->in('scope.accountGroup', ':restrictedAccountGroupIds'))
+                ->setParameter('restrictedAccountGroupIds', $restrictedAccountGroupIds);
+        }
+        $ids = [];
+        foreach ($qb->getQuery()->getScalarResult() as $accountGroup) {
+            $ids[] = $accountGroup['accountGroupId'];
+        }
+
+        return $ids;
+    }
 }

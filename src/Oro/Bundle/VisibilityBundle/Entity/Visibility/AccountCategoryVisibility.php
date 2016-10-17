@@ -9,7 +9,9 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Entity\ScopeAwareInterface;
 
 /**
- * @ORM\Entity()
+ * @ORM\Entity(
+ *   repositoryClass="Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountCategoryVisibilityRepository"
+ * )
  * @ORM\Table(
  *      name="oro_acc_category_visibility",
  *      uniqueConstraints={

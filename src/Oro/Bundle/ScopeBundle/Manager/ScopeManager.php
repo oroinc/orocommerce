@@ -112,7 +112,7 @@ class ScopeManager
         $scopeRepository = $this->registry->getManagerForClass(Scope::class)
             ->getRepository(Scope::class);
 
-        return $scopeRepository->findByCriteria($criteria);
+        return $scopeRepository->findIdentifiersByCriteria($criteria);
     }
 
     /**
