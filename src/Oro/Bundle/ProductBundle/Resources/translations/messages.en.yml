@@ -312,3 +312,7 @@ oro:
         value:
             full: '{0} none|{1} %count% bottle|]1,Inf] %count% bottles'
             short: '{0} none|{1} %count% bottle|]1,Inf] %count% bottles'
+
+    webcatalog:
+        contentvariant:
+            product_collection_page_rule.label: Product Collection Assignment Rule

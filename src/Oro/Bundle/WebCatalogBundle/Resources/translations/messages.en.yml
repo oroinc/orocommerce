@@ -1,0 +1,36 @@
+oro:
+    webcatalog:
+        entity_label: Web Catalog
+        entity_plural_label: Web Catalogs
+        description.label: Description
+        id.label: Id
+        name.label: Name
+        organization.label: Organization
+        owner.label: Owner
+        
+        contentnode:
+            entity_plural_label: Content Node
+            entity_label: Content Nodes
+            id.label: Id
+            left.label: Tree left index
+            level.label: Tree level
+            right.label: Tree right index
+            root.label: Tree root
+            materialized_path.label: Materialized Path
+            name.label: Name
+            child_nodes.label: Child Nodes
+            content_variant_slugs.label: Content Variant Slugs
+            content_variants.label: Content Variant
+            organization.label: Organization
+            owner.label: Owner
+            parent_node.label: Parent Content Node
+            slugs.label: Slugs
+            titles.label: Titles
+
+        contentvariant:
+            entity_label: Content Variant
+            entity_plural_label: Content Variants
+            id.label: Id
+            type.label: Type
+            system_page_route.label: System Page Route
+            node.label: Content Node

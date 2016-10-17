@@ -3,7 +3,11 @@
 namespace Oro\Bundle\CatalogBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
@@ -17,7 +21,8 @@ use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInte
 class OroCatalogBundleInstaller implements
     Installation,
     NoteExtensionAwareInterface,
-    AttachmentExtensionAwareInterface
+    AttachmentExtensionAwareInterface,
+    ExtendExtensionAwareInterface
 {
     const ORO_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME = 'oro_catalog_cat_short_desc';
     const ORO_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME = 'oro_catalog_cat_long_desc';
@@ -29,9 +34,29 @@ class OroCatalogBundleInstaller implements
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
     const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
 
-    /** @var NoteExtension */
+    /**
+     * @var NoteExtension
+     */
     protected $noteExtension;
+    
+    /**
+     * @var AttachmentExtension
+     */
+    protected $attachmentExtension;
 
+    /**
+     * @var ExtendExtension
+     */
+    protected $extendExtension;
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function getMigrationVersion()
+    {
+        return 'v1_5';
+    }
+    
     /**
      * Sets the NoteExtension
      *
@@ -41,9 +66,6 @@ class OroCatalogBundleInstaller implements
     {
         $this->noteExtension = $noteExtension;
     }
-
-    /** @var AttachmentExtension */
-    protected $attachmentExtension;
 
     /**
      * {@inheritdoc}
@@ -56,9 +78,9 @@ class OroCatalogBundleInstaller implements
     /**
      * {@inheritdoc}
      */
-    public function getMigrationVersion()
+    public function setExtendExtension(ExtendExtension $extendExtension)
     {
-        return 'v1_4';
+        $this->extendExtension = $extendExtension;
     }
 
     /**
@@ -83,6 +105,8 @@ class OroCatalogBundleInstaller implements
         $this->addOroCategoryDefaultProductOptionsForeignKeys($schema);
         $this->addCategoryImageAssociation($schema, 'largeImage');
         $this->addCategoryImageAssociation($schema, 'smallImage');
+        
+        $this->addWebCatalogPageTypes($schema);
     }
 
     /**
@@ -314,5 +338,32 @@ class OroCatalogBundleInstaller implements
             self::THUMBNAIL_WIDTH_SIZE_IN_PX,
             self::THUMBNAIL_HEIGHT_SIZE_IN_PX
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function addWebCatalogPageTypes(Schema $schema)
+    {
+        if ($schema->hasTable('oro_web_catalog_variant')) {
+            $table = $schema->getTable('oro_web_catalog_variant');
+
+            $this->extendExtension->addManyToOneRelation(
+                $schema,
+                $table,
+                'catalog_page_category',
+                'oro_catalog_category',
+                'id',
+                [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                    'entity' => ['label' => 'oro.catalog.category.entity_label'],
+                    'extend' => [
+                        'is_extend' => true,
+                        'owner' => ExtendScope::OWNER_CUSTOM
+                    ],
+                    'dataaudit' => ['auditable' => true]
+                ]
+            );
+        }
     }
 }
