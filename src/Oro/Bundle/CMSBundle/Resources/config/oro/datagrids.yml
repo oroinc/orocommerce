@@ -32,7 +32,7 @@ datagrids:
         acl_resource: oro_cms_page_view
         options:
             entity_pagination: true
-            entityHint:        page
+            entityHint:        landing page
         source:
             type:         orm
             query:
@@ -60,3 +60,17 @@ datagrids:
                 icon:          eye-open
                 acl_resource:  oro_cms_page_view
                 rowAction:     true
+        sorters:
+            columns:
+                id:
+                    data_name: page.id
+                title:
+                    data_name: page.title
+        filters:
+            columns:
+                id:
+                    type: number
+                    data_name: page.id
+                title:
+                    type: string
+                    data_name: page.title
