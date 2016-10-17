@@ -13,8 +13,8 @@ class OroCommerceMenuBundleInstaller implements
     Installation,
     AttachmentExtensionAwareInterface
 {
-    const ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME = 'oro_commerce_menu_upd';
-    const ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TITLE_TABLE_NAME = 'oro_commerce_menu_upd_title';
+    const ORO_COMMERCE_MENU_UPDATE_TABLE_NAME = 'oro_commerce_menu_upd';
+    const ORO_COMMERCE_MENU_UPDATE_TITLE_TABLE_NAME = 'oro_commerce_menu_upd_title';
     
     const MAX_MENU_UPDATE_IMAGE_SIZE_IN_MB = 10;
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
@@ -62,7 +62,7 @@ class OroCommerceMenuBundleInstaller implements
      */
     protected function createOroCommerceMenuUpdateTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_COMMERCE_MENU_UPDATE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('key', 'string', ['length' => 100]);
         $table->addColumn('parent_key', 'string', ['length' => 100, 'notnull' => false]);
@@ -85,7 +85,7 @@ class OroCommerceMenuBundleInstaller implements
      */
     protected function createOroCommerceMenuUpdateTitleTable(Schema $schema)
     {
-        $table = $schema->createTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TITLE_TABLE_NAME);
+        $table = $schema->createTable(self::ORO_COMMERCE_MENU_UPDATE_TITLE_TABLE_NAME);
         $table->addColumn('menu_update_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['menu_update_id', 'localized_value_id']);
@@ -99,7 +99,7 @@ class OroCommerceMenuBundleInstaller implements
      */
     protected function addOroCommerceMenuUpdateTitleForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TITLE_TABLE_NAME);
+        $table = $schema->getTable(self::ORO_COMMERCE_MENU_UPDATE_TITLE_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_fallback_localization_val'),
             ['localized_value_id'],
@@ -107,7 +107,7 @@ class OroCommerceMenuBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME),
+            $schema->getTable(self::ORO_COMMERCE_MENU_UPDATE_TABLE_NAME),
             ['menu_update_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -121,7 +121,7 @@ class OroCommerceMenuBundleInstaller implements
     {
         $this->attachmentExtension->addImageRelation(
             $schema,
-            self::ORO_FRONTEND_NAVIGATION_MENU_UPDATE_TABLE_NAME,
+            self::ORO_COMMERCE_MENU_UPDATE_TABLE_NAME,
             'image',
             [],
             self::MAX_MENU_UPDATE_IMAGE_SIZE_IN_MB,

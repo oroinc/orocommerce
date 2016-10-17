@@ -15,7 +15,7 @@ services:
         tags:
             - { name: oro_navigation.ownership_provider, area: frontend, priority: 200 }
 
-    oro_frontend_navigation.ownership_provider.account:
+    oro_commerce_menu.ownership_provider.account:
         class: 'Oro\Bundle\CommerceMenuBundle\Provider\AccountOwnershipProvider'
         arguments:
             - '@oro_frontend_navigation.repository.menu_update'

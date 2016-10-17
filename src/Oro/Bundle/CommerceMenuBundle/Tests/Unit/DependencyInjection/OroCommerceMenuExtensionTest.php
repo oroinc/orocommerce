@@ -12,7 +12,7 @@ class OroCommerceMenuExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroCommerceMenuExtension());
 
         $expectedServices = [
-            'oro_frontend_navigation.ownership_provider.account',
+            'oro_commerce_menu.ownership_provider.account',
         ];
         $this->assertDefinitionsLoaded($expectedServices);
     }
