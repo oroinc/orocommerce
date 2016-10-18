@@ -67,6 +67,7 @@ services:
             - [setClassName, ['%oro_product.entity.product.class%']]
             - [setModifier, ["@oro_account.model.product_visibility_query_builder_modifier"]]
             - [setFrontendHelper, ["@oro_frontend.request.frontend_helper"]]
+            - [setSearchRepository, ["@oro_product.search.repository.product"]]
         tags:
             - { name: security.voter }
 

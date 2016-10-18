@@ -8,6 +8,7 @@ use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 
 class ProductVisibilityVoter extends AbstractEntityVoter
 {
@@ -29,6 +30,10 @@ class ProductVisibilityVoter extends AbstractEntityVoter
      * @var FrontendHelper
      */
     protected $frontendHelper;
+    /**
+     * @var \Oro\Bundle\ProductBundle\Search\ProductRepository
+     */
+    protected $searchRepository;
 
     /**
      * {@inheritdoc}
@@ -48,6 +53,9 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         if (in_array($attribute, $this->supportedAttributes, true)) {
+
+            $query = $this->searchRepository->createQuery();
+
             $repository = $this->doctrineHelper
                 ->getEntityRepository($class);
             /** @var $repository ProductRepository */
@@ -79,5 +87,13 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     public function setFrontendHelper(FrontendHelper $frontendHelper)
     {
         $this->frontendHelper = $frontendHelper;
+    }
+
+    /**
+     * @param \Oro\Bundle\ProductBundle\Search\ProductRepository $searchRepository
+     */
+    public function setSearchRepository(ProductSearchRepository $searchRepository)
+    {
+        $this->searchRepository = $searchRepository;
     }
 }
