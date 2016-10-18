@@ -30,29 +30,27 @@ class RenameTableUpdateRelations implements Migration, RenameExtensionAwareInter
     {
         $extension = $this->renameExtension;
 
-        // rename orob2b namespace
+        $toTable = self::INVENTORY_LEVEL_TABLE_NAME;
+        $fromTable = self::OLD_WAREHOUSE_INVENTORY_TABLE;
+        $indexToDrop = 'uidx_oro_wh_wh_inventory_lev';
+
         if ($schema->hasTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE)) {
-            $extension->renameTable($schema, $queries, self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE, self::OLD_WAREHOUSE_INVENTORY_TABLE);
-            $schema->getTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE)->dropIndex('uidx_orob2b_wh_wh_inventory_lev');
-            $extension->addUniqueIndex(
-                $schema,
-                $queries,
-                self::OLD_WAREHOUSE_INVENTORY_TABLE,
-                ['warehouse_id', 'product_unit_precision_id'],
-                'uidx_oro_wh_wh_inventory_lev'
-            );
+            $fromTable = self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE;
+            $indexToDrop = 'uidx_orob2b_wh_wh_inventory_lev';
         }
 
+        //rename table
+        $extension->renameTable($schema, $queries, $fromTable, $toTable);
+
+        $inventoryTable = $schema->getTable($fromTable);
+
         // drop warehouse indexes
-        $schema->getTable(self::OLD_WAREHOUSE_INVENTORY_TABLE)->dropIndex('uidx_oro_wh_wh_inventory_lev');
+        $inventoryTable->dropIndex($indexToDrop);
 
         // drop warehouse column
-        $inventoryTable = $schema->getTable(self::OLD_WAREHOUSE_INVENTORY_TABLE);
         $warehouseForeignKey = $this->getConstraintName($inventoryTable, 'warehouse_id');
         $inventoryTable->removeForeignKey($warehouseForeignKey);
-
-        // rename entity
-        $extension->renameTable($schema, $queries, self::OLD_WAREHOUSE_INVENTORY_TABLE, self::NEW_INVENTORY_TABLE);
+        $inventoryTable->dropColumn('warehouse_id');
     }
 
     /**

@@ -15,9 +15,12 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 
 class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareInterface, RenameExtensionAwareInterface
 {
+    use MigrationConstraintTrait;
+
     const INVENTORY_LEVEL_TABLE_NAME = 'oro_inventory_level';
     const OLD_WAREHOUSE_INVENTORY_TABLE = 'oro_warehouse_inventory_lev';
     const ORO_B2B_WAREHOUSE_INVENTORY_TABLE = 'orob2b_warehouse_inventory_lev';
@@ -53,8 +56,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     {
         if (($schema->hasTable(self::OLD_WAREHOUSE_INVENTORY_TABLE) ||
                 $schema->hasTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE))
-            && !$schema->hasTable(self::INVENTORY_LEVEL_TABLE_NAME))
-        {
+            && !$schema->hasTable(self::INVENTORY_LEVEL_TABLE_NAME)
+        ) {
             $this->renameTablesUpdateRelation($schema, $queries);
 
             return;
@@ -74,35 +77,36 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         );
     }
 
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
     protected function renameTablesUpdateRelation(Schema $schema, QueryBag $queries)
     {
         $extension = $this->renameExtension;
 
-        // rename orob2b namespace
+        $toTable = self::INVENTORY_LEVEL_TABLE_NAME;
+        $fromTable = self::OLD_WAREHOUSE_INVENTORY_TABLE;
+        $indexToDrop = 'uidx_oro_wh_wh_inventory_lev';
+
         if ($schema->hasTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE)) {
-            $extension->renameTable($schema, $queries, self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE, self::OLD_WAREHOUSE_INVENTORY_TABLE);
-            $schema->getTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE)->dropIndex('uidx_orob2b_wh_wh_inventory_lev');
-            $extension->addUniqueIndex(
-                $schema,
-                $queries,
-                self::OLD_WAREHOUSE_INVENTORY_TABLE,
-                ['warehouse_id', 'product_unit_precision_id'],
-                'uidx_oro_wh_wh_inventory_lev'
-            );
+            $fromTable = self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE;
+            $indexToDrop = 'uidx_orob2b_wh_wh_inventory_lev';
         }
 
-        if ($schema->hasTable(self::OLD_WAREHOUSE_INVENTORY_TABLE)) {
-            // drop warehouse indexes
-            $schema->getTable(self::OLD_WAREHOUSE_INVENTORY_TABLE)->dropIndex('uidx_oro_wh_wh_inventory_lev');
+        //rename table
+        $extension->renameTable($schema, $queries, $fromTable, $toTable);
 
-            // drop warehouse column
-            $inventoryTable = $schema->getTable(self::OLD_WAREHOUSE_INVENTORY_TABLE);
-            $warehouseForeignKey = $this->getConstraintName($inventoryTable, 'warehouse_id');
-            $inventoryTable->removeForeignKey($warehouseForeignKey);
+        $inventoryTable = $schema->getTable($fromTable);
 
-            // rename entity
-            $extension->renameTable($schema, $queries, self::OLD_WAREHOUSE_INVENTORY_TABLE, self::INVENTORY_LEVEL_TABLE_NAME);
-        }
+        // drop warehouse indexes
+        $inventoryTable->dropIndex($indexToDrop);
+
+        // drop warehouse column
+        $warehouseForeignKey = $this->getConstraintName($inventoryTable, 'warehouse_id');
+        $inventoryTable->removeForeignKey($warehouseForeignKey);
+        $inventoryTable->dropColumn('warehouse_id');
     }
 
     /**
