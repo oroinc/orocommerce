@@ -196,7 +196,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
         $this->contentVariantSlugs = new ArrayCollection();
         $this->contentVariants = new ArrayCollection();
     }
-    
+
     /**
      * @return string
      */
@@ -204,7 +204,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     {
         return (string) $this->getDefaultTitle();
     }
-    
+
     /**
      * @return int
      */
