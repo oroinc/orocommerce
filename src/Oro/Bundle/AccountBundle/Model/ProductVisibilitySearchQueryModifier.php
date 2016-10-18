@@ -10,12 +10,13 @@ use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Query\Modifier\QueryModifierInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class ProductVisibilitySearchQueryModifier
+class ProductVisibilitySearchQueryModifier implements QueryModifierInterface
 {
     /**
      * @var TokenStorageInterface
@@ -40,7 +41,7 @@ class ProductVisibilitySearchQueryModifier
     }
 
     /**
-     * @param Query $query
+     * {@inheritdoc}
      */
     public function modify(Query $query)
     {
@@ -68,11 +69,10 @@ class ProductVisibilitySearchQueryModifier
 
             $defaultField = $this->completeFieldName(ProductVisibilityIndexer::FIELD_IS_VISIBLE_BY_DEFAULT);
 
-            //TODO: Replace isNull operator after BB-4508 is finished
             $expression = $exprBuilder->orX(
                 $exprBuilder->andX(
                     $exprBuilder->eq($defaultField, BaseVisibilityResolved::VISIBILITY_VISIBLE),
-                    $exprBuilder->isNull($accountField)
+                    $exprBuilder->notExists($accountField)
                 ),
                 $exprBuilder->andX(
                     $exprBuilder->eq($defaultField, BaseVisibilityResolved::VISIBILITY_HIDDEN),
