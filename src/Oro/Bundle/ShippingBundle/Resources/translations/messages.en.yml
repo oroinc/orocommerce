@@ -131,6 +131,7 @@ oro:
             shippingrule_destination: 'Destinations'
             shippingrule_conditions: 'Conditions'
             shippingrule_configurations: 'Shipping Method Configurations'
+            shipping_information: 'Shipping Information'
 
         controller:
             rule.saved.message: 'Shipping rule has been saved'

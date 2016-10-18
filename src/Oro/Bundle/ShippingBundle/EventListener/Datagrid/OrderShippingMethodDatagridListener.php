@@ -28,8 +28,7 @@ class OrderShippingMethodDatagridListener
         ];
 
         $columns = $config->offsetGetByPath("[columns]");
-        $columns = array_merge
-        (
+        $columns = array_merge(
             array_slice($columns, 0, 13),
             array(static::SHIPPING_METHOD_COLUMN => $column),
             array_slice($columns, 13, null)

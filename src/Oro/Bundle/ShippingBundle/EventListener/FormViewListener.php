@@ -9,6 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
@@ -139,6 +140,34 @@ class FormViewListener
             ['form' => $event->getFormView()]
         );
         $this->addBlock($event->getScrollData(), $template, 'oro.shipping.product.section.shipping_options');
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     */
+    public function onOrderView(BeforeListRenderEvent $event)
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
+            return;
+        }
+
+        $orderId = (int)$request->get('id');
+        if (!$orderId) {
+            return;
+        }
+
+        /** @var Order $order */
+        $order = $this->doctrineHelper->getEntityReference('OroOrderBundle:Order', $orderId);
+        if (!$order) {
+            return;
+        }
+        
+        $template = $event->getEnvironment()->render(
+            'OroShippingBundle:Order:shipping_information_view.html.twig',
+            ['entity' => $order]
+        );
+        $this->addBlock($event->getScrollData(), $template, 'oro.shipping.sections.shipping_information', -100);
     }
 
     /**
