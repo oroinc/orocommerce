@@ -24,13 +24,15 @@ class AccountCategoryRepository extends EntityRepository
 
     /**
      * @param Category $category
-     * @param Account $account
+     * @param Scope $accountScope
+     * @param Scope $accountGroupScope
      * @return int visible|hidden|config
      */
-    public function getFallbackToAccountVisibility(Category $category, Account $account)
-    {
-        $accountGroup = $account->getGroup();
-
+    public function getFallbackToAccountVisibility(
+        Category $category,
+        Scope $accountScope,
+        Scope $accountGroupScope
+    ) {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
         $configFallback = BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
@@ -43,7 +45,7 @@ class AccountCategoryRepository extends EntityRepository
                 $qb->expr()->eq('cvr.category', 'category')
             );
 
-        if ($accountGroup) {
+        if ($accountGroupScope) {
             $qb->select('COALESCE(' .
                 'acvr.visibility, agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configFallback) .
             ')')
@@ -53,10 +55,10 @@ class AccountCategoryRepository extends EntityRepository
                     Join::WITH,
                     $qb->expr()->andX(
                         $qb->expr()->eq('agcvr.category', 'category'),
-                        $qb->expr()->eq('agcvr.accountGroup', ':accountGroup')
+                        $qb->expr()->eq('agcvr.scope', ':accountGroupScope')
                     )
                 )
-                ->setParameter('accountGroup', $accountGroup);
+                ->setParameter('accountGroupScope', $accountGroupScope);
         }
 
         $qb
@@ -66,14 +68,45 @@ class AccountCategoryRepository extends EntityRepository
                 Join::WITH,
                 $qb->expr()->andX(
                     $qb->expr()->eq('acvr.category', 'category'),
-                    $qb->expr()->eq('acvr.account', ':account')
+                    $qb->expr()->eq('acvr.scope', ':scope')
                 )
             )
             ->where($qb->expr()->eq('category', ':category'))
             ->setParameter('category', $category)
-            ->setParameter('account', $account);
+            ->setParameter('scope', $accountScope);
 
         return (int)$qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param int $visibility
+     * @param int $configValue
+     * @param Scope $scope
+     * @param Scope $groupScope
+     * @return array
+     */
+    public function getCategoryIdsByVisibility($visibility, $configValue, Scope $scope, Scope $groupScope = null)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select('category.id')
+            ->from('OroCatalogBundle:Category', 'category')
+            ->orderBy('category.id');
+
+        $terms = [$this->getCategoryVisibilityResolvedTerm($qb, $configValue)];
+        if ($groupScope) {
+            $terms[] = $this->getAccountGroupCategoryVisibilityResolvedTerm($qb, $groupScope, $configValue);
+        }
+        $terms[] = $this->getAccountCategoryVisibilityResolvedTerm($qb, $scope, $configValue);
+
+        if ($visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
+            $qb->andWhere($qb->expr()->gt(implode(' + ', $terms), 0));
+        } else {
+            $qb->andWhere($qb->expr()->lte(implode(' + ', $terms), 0));
+        }
+
+        $categoryVisibilityResolved = $qb->getQuery()->getArrayResult();
+
+        return array_map('current', $categoryVisibilityResolved);
     }
 
     /**
@@ -98,26 +131,21 @@ class AccountCategoryRepository extends EntityRepository
             'OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
             'acvr',
             Join::WITH,
-            $qb->expr()->andX(
-                $qb->expr()->eq('acvr.category', ':category'),
-                $qb->expr()->eq('acvr.account', 'account')
-            )
+            $qb->expr()->eq('acvr.category', ':category')
         )
-        ->leftJoin(
-            'OroAccountBundle:AccountGroup',
-            'accountGroup',
-            Join::WITH,
-            $qb->expr()->eq('account.group', 'accountGroup')
-        )
+        ->leftJoin('acvr.scope', 'acvr_scope')
+        ->andWhere('acvr.visibility IS NULL OR acvr_scope.account = account')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr',
             Join::WITH,
             $qb->expr()->andX(
                 $qb->expr()->eq('agcvr.category', ':category'),
-                $qb->expr()->eq('agcvr.accountGroup', 'accountGroup')
+                $qb->expr()->eq('agcvr.accountGroup', 'account.group')
             )
         )
+        ->leftJoin('agcvr.scope', 'agcvr_scope')
+        ->andWhere('agcvr.visibility IS NULL OR agcvr_scope.accountGroup = account.group')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
             'cvr',
@@ -138,13 +166,14 @@ class AccountCategoryRepository extends EntityRepository
 
     /**
      * @param Category $category
-     * @param Account $account
+     * @param Scope $scope
+     * @param Scope $groupScope
      * @param int $configValue
      * @return bool
      */
-    public function isCategoryVisible(Category $category, Account $account, $configValue)
+    public function isCategoryVisible(Category $category, Scope $scope, Scope $groupScope, $configValue)
     {
-        $visibility = $this->getFallbackToAccountVisibility($category, $account);
+        $visibility = $this->getFallbackToAccountVisibility($category, $scope, $groupScope);
         if ($visibility === AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
             $visibility = $configValue;
         }
@@ -153,44 +182,13 @@ class AccountCategoryRepository extends EntityRepository
     }
 
     /**
-     * @param int $visibility
-     * @param Scope $scope
-     * @param int $configValue
-     * @return array
-     */
-    public function getCategoryIdsByVisibility($visibility, Scope $scope, $configValue)
-    {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('category.id')
-            ->from('OroCatalogBundle:Category', 'category')
-            ->orderBy('category.id');
-
-        $terms = [$this->getCategoryVisibilityResolvedTerm($qb, $configValue)];
-        //TODO: FIX IT!!!
-//        if ($account->getGroup()) {
-//            $terms[] = $this->getAccountGroupCategoryVisibilityResolvedTerm($qb, $account->getGroup(), $configValue);
-//        }
-        $terms[] = $this->getAccountCategoryVisibilityResolvedTerm($qb, $scope, $configValue);
-
-        if ($visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
-            $qb->andWhere($qb->expr()->gt(implode(' + ', $terms), 0));
-        } else {
-            $qb->andWhere($qb->expr()->lte(implode(' + ', $terms), 0));
-        }
-
-        $categoryVisibilityResolved = $qb->getQuery()->getArrayResult();
-
-        return array_map('current', $categoryVisibilityResolved);
-    }
-
-    /**
      * @param Category $category
-     * @param Account $account
+     * @param Scope $scope
      * @return null|AccountCategoryVisibilityResolved
      */
-    public function findByPrimaryKey(Category $category, Account $account)
+    public function findByPrimaryKey(Category $category, Scope $scope)
     {
-        return $this->findOneBy(['account' => $account, 'category' => $category]);
+        return $this->findOneBy(['scope' => $scope, 'category' => $category]);
     }
 
     public function clearTable()
@@ -334,6 +332,7 @@ class AccountCategoryRepository extends EntityRepository
         ->addOrderBy('c.level', 'ASC')
         ->addOrderBy('c.left', 'ASC')
         ->getQuery();
+
         return $query->getScalarResult();
     }
 

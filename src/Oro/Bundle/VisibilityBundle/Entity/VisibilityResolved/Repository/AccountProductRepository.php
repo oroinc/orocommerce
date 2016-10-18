@@ -68,7 +68,7 @@ class AccountProductRepository extends AbstractVisibilityRepository
             ],
         ];
 
-        $fields = ['sourceProductVisibility', 'product', 'scope', 'account', 'visibility', 'source'];
+        $fields = ['sourceProductVisibility', 'product', 'scope', 'visibility', 'source'];
 
         foreach ($visibilityMap as $visibility => $productVisibility) {
             $qb = $this->getEntityManager()
@@ -79,7 +79,6 @@ class AccountProductRepository extends AbstractVisibilityRepository
                 'productVisibility.id',
                 'IDENTITY(productVisibility.product)',
                 'IDENTITY(productVisibility.scope)',
-                'IDENTITY(productVisibility.account)',
                 (string)$productVisibility['visibility'],
                 (string)$productVisibility['source'],
             ])
@@ -104,19 +103,19 @@ class AccountProductRepository extends AbstractVisibilityRepository
                 'apv.id',
                 'IDENTITY(apv.product)',
                 'IDENTITY(apv.scope)',
-                'IDENTITY(apv.account)',
                 'COALESCE(' .
                     'acvr.visibility, agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configValue) .
                 ')',
                 (string)AccountProductVisibilityResolved::SOURCE_CATEGORY,
                 (string)$category->getId()
             ])
+            ->innerJoin('apv.scope', 'scope')
             ->innerJoin('apv.account', 'account')
             ->leftJoin(
                 'OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
                 'acvr',
                 'WITH',
-                'acvr.account = apv.account AND acvr.category = :category'
+                'acvr.scope = apv.scope AND acvr.category = :category'
             )
             ->leftJoin(
                 'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
@@ -124,6 +123,8 @@ class AccountProductRepository extends AbstractVisibilityRepository
                 'WITH',
                 'agcvr.accountGroup = account.group AND agcvr.category = :category'
             )
+            ->leftJoin('agcvr.scope', 'agcvr_scope')
+            ->andWhere('agcvr_scope.visibility IS NULL OR agcvr_scope.accountGroup = account.group')
             ->leftJoin(
                 'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
                 'cvr',

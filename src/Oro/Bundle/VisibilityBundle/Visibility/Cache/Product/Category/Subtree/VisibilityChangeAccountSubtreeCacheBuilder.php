@@ -4,8 +4,8 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountCategoryVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
@@ -14,14 +14,12 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
 {
     /**
      * @param Category $category
-     * @param Account $account
+     * @param Scope $scope
      * @param int $categoryVisibility visible|hidden|config
      */
-    public function resolveVisibilitySettings(Category $category, Account $account, $categoryVisibility)
+    public function resolveVisibilitySettings(Category $category, Scope $scope, $categoryVisibility)
     {
-        $childCategoryIds = $this->getChildCategoryIdsForUpdate($category, $account);
-
-        $scope = $this->scopeManager->find('account_category_visibility', ['account' => $account]);
+        $childCategoryIds = $this->getChildCategoryIdsForUpdate($category, $scope);
 
         /** @var AccountCategoryVisibilityRepository $repository */
         $repository = $this->registry->getManagerForClass(AccountCategoryVisibilityResolved::class)
@@ -30,7 +28,7 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
         $repository->updateAccountCategoryVisibilityByCategory($scope, $childCategoryIds, $categoryVisibility);
 
         $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
-        $this->updateAccountProductVisibilityByCategory($categoryIds, $categoryVisibility, $account);
+        $this->updateAccountProductVisibilityByCategory($categoryIds, $categoryVisibility, $scope);
     }
 
     /**
@@ -56,15 +54,11 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
     /**
      * @param array $categoryIds
      * @param int $visibility
-     * @param Account $account
+     * @param Scope $scope
      */
-    protected function updateAccountProductVisibilityByCategory(array $categoryIds, $visibility, Account $account)
+    protected function updateAccountProductVisibilityByCategory(array $categoryIds, $visibility, Scope $scope)
     {
         if (!$categoryIds) {
-            return;
-        }
-        $scope = $this->scopeManager->find('account_category_visibility', ['account' => $account]);
-        if (!$scope) {
             return;
         }
         /** @var QueryBuilder $qb */
@@ -86,7 +80,6 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
      */
     protected function joinCategoryVisibility(QueryBuilder $qb, $target)
     {
-        $scope = $this->scopeManager->find('account_category_visibility', ['account' => $target]);
 
         return $qb->leftJoin(
             'OroVisibilityBundle:Visibility\AccountCategoryVisibility',
@@ -97,6 +90,6 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
                 $qb->expr()->eq('cv.scope', ':scope')
             )
         )
-        ->setParameter('scope', $scope);
+        ->setParameter('scope', $target);
     }
 }

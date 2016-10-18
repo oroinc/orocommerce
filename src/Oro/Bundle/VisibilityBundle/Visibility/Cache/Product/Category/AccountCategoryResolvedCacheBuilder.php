@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
@@ -223,15 +222,22 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 
     /**
      * @param Category $category
-     * @param Account $account
+     * @param Scope $scope
      * @return array
      */
-    protected function getParentCategoryVisibilityAndSource(Category $category, Account $account)
+    protected function getParentCategoryVisibilityAndSource(Category $category, Scope $scope)
     {
         $parentCategory = $category->getParentCategory();
         if ($parentCategory) {
+            $groupScope = null;
+            if ($scope->getAccount()->getGroup()) {
+                $groupScope = $this->scopeManager->find(
+                    'account_category_visibility',
+                    ['accountGroup' => $scope->getAccount()->getGroup()]
+                );
+            }
             return [
-                $this->getRepository()->getFallbackToAccountVisibility($parentCategory, $account),
+                $this->getRepository()->getFallbackToAccountVisibility($parentCategory, $scope, $groupScope),
                 AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
             ];
         } else {

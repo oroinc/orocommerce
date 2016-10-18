@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
@@ -77,7 +76,7 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
                 ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
                 ->getFallbackToAllVisibility($category);
         } elseif ($selectedVisibility === AccountGroupCategoryVisibility::PARENT_CATEGORY) {
-            list($visibility, $source) = $this->getParentCategoryVisibilityAndSource($category, $accountGroup);
+            list($visibility, $source) = $this->getParentCategoryVisibilityAndSource($category, $scope);
             $update = [
                 'visibility' => $visibility,
                 'sourceCategoryVisibility' => $visibilitySettings,
@@ -89,20 +88,20 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
         $this->executeDbQuery($repository, $insert, $delete, $update, $where);
 
         $this->visibilityChangeAccountGroupSubtreeCacheBuilder
-            ->resolveVisibilitySettings($category, $accountGroup, $visibility);
+            ->resolveVisibilitySettings($category, $scope, $visibility);
     }
 
     /**
      * @param Category $category
-     * @param AccountGroup $accountGroup
+     * @param Scope $scope
      * @return array
      */
-    protected function getParentCategoryVisibilityAndSource(Category $category, AccountGroup $accountGroup)
+    protected function getParentCategoryVisibilityAndSource(Category $category, Scope $scope)
     {
         $parentCategory = $category->getParentCategory();
         if ($parentCategory) {
             return [
-                $this->getRepository()->getFallbackToGroupVisibility($parentCategory, $accountGroup),
+                $this->getRepository()->getFallbackToGroupVisibility($parentCategory, $scope),
                 AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
             ];
         } else {

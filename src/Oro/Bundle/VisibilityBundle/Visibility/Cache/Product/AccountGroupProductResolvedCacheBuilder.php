@@ -54,7 +54,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
                         'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved'
                     )
                     ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-                    ->getFallbackToGroupVisibility($category, $accountGroup);
+                    ->getFallbackToGroupVisibility($category, $scope);
                 $update = [
                     'sourceProductVisibility' => $visibilitySettings,
                     'visibility' => $visibility,

@@ -46,11 +46,17 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
                 ->getRepository('OroCatalogBundle:Category')
                 ->findOneByProduct($product);
             if ($category) {
-                //TODO: use scopes for category visibility
+                $groupScope = null;
+                if ($scope->getAccount()->getGroup()) {
+                    $groupScope = $this->scopeManager->find(
+                        'account_group_category_visibility',
+                        ['accountGroup' => $scope->getAccount()->getGroup()]
+                    );
+                }
                 $visibility = $this->registry
                     ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
                     ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-                    ->getFallbackToAccountVisibility($category, $scope->getAccount());
+                    ->getFallbackToAccountVisibility($category, $scope, $groupScope);
                 $update = [
                     'sourceProductVisibility' => $visibilitySettings,
                     'visibility' => $visibility,
