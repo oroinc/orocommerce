@@ -33,7 +33,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_1';
     }
 
     /**
