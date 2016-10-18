@@ -64,7 +64,7 @@ class AccountUserPasswordResetTypeTest extends FormIntegrationTestCase
         $entity = new AccountUser();
         $expectedEntity = new AccountUser();
         $expectedEntity->setSalt($entity->getSalt());
-        $expectedEntity->setPlainPassword('new password');
+        $expectedEntity->setPlainPassword('new password1Q');
 
         return [
             'reset password' => [

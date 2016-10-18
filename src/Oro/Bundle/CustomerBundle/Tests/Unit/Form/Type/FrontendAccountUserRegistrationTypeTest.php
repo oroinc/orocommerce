@@ -119,7 +119,7 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
             ->setLastName('Doe')
             ->setEmail('johndoe@example.com')
             ->setOwner($owner)
-            ->setPlainPassword('123456')
+            ->setPlainPassword('123456Q')
             ->createAccount();
 
         $entity->setSalt($expectedEntity->getSalt());

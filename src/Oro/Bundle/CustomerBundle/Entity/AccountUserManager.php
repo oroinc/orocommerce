@@ -83,7 +83,11 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
      */
     public function generatePassword($maxLength)
     {
-        return substr($this->generateToken(), 0, $maxLength);
+        $upperCase = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 1); // get 1 upper case letter
+        $number = substr(str_shuffle('1234567890'), 0, 1); // get 1 digit
+        $randomString = substr($upperCase . $number . $this->generateToken(), $maxLength); // construct a password
+
+        return str_shuffle($randomString);
     }
 
     /**

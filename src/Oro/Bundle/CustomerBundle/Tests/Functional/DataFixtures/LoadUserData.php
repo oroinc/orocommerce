@@ -60,7 +60,7 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
                 ->setEnabled(true)
-                ->setPlainPassword($item['email'])
+                ->setPlainPassword($item['email'] . '1Q')
                 ->setOrganization($organization)
                 ->addOrganization($organization);
 

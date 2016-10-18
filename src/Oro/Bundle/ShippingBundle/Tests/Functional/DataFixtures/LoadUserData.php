@@ -168,7 +168,7 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface
                 ->setOrganization($organization)
                 ->addOrganization($organization)
                 ->setUsername($item['username'])
-                ->setPlainPassword($item['password'])
+                ->setPlainPassword($item['password'] . '1Q')
                 ->setEnabled(true)
                 ->addApiKey($apiKey);
 
