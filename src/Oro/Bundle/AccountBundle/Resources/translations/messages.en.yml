@@ -431,7 +431,7 @@ oro.account:
         access-level:
             BASIC: 'Customer User'
             LOCAL: 'Customer'
-            DEEP: 'Not supported'
+            DEEP: 'Сorporate'
             GLOBAL: 'Not supported'
             SYSTEM: 'Full'
             NONE: 'None'
