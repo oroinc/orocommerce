@@ -35,3 +35,5 @@ oro:
             type.label: Type
             system_page_route.label: System Page Route
             node.label: Content Node
+        sections:
+          general: 'General'

@@ -1,0 +1,32 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+
+{% oro_title_set({params : {"%entityLabel%": entity.name } }) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('oro_web_catalog_index'),
+        'indexLabel': 'oro.webcatalog.entity_plural_label'|trans,
+        'entityTitle': entity.name|default('N/A'|trans)
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set dataBlocks = [
+        {
+            'title': 'oro.webcatalog.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{'data' : [
+                UI.renderProperty('oro.webcatalog.name.label'|trans, entity.name),
+                UI.renderSwitchableHtmlProperty('oro.webcatalog.description.label'|trans, entity.description)
+            ]}]
+        }
+    ] %}
+
+    {% set id = 'web-catalog-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

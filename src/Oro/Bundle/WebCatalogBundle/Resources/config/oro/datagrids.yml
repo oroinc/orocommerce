@@ -9,7 +9,8 @@ datagrids:
                 select:
                     - web_catalog.id
                     - web_catalog.name
-                    - web_catalog.description
+                    - web_catalog.createdAt
+                    - web_catalog.updatedAt
                 from:
                     - { table: '%oro_web_catalog.entity.web_catalog.class%', alias: web_catalog }
         columns:
@@ -17,18 +18,27 @@ datagrids:
                 label: oro.webcatalog.id.label
             name:
                 label: oro.webcatalog.name.label
-            description:
-                label: oro.webcatalog.description.label
+            createdAt:
+                data_name: web_catalog.createdAt
+            updatedAt:
+                data_name: web_catalog.updatedAt
         properties:
             id: ~
+            view_link:
+                type:  url
+                route: oro_web_catalog_view
+                params:
+                    - id
         sorters:
             columns:
                 id:
                     data_name: web_catalog.id
                 name:
                     data_name: web_catalog.name
-                description:
-                    data_name: web_catalog.description
+                createdAt:
+                    data_name: web_catalog.createdAt
+                updatedAt:
+                    data_name: web_catalog.updatedAt
         filters:
             columns:
                 id:
@@ -37,6 +47,17 @@ datagrids:
                 name:
                     type: string
                     data_name: web_catalog.name
-                description:
-                    type: string
-                    data_name: web_catalog.description
+                createdAt:
+                    type:      datetime
+                    data_name: web_catalog.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: web_catalog.updatedAt
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  oro_web_catalog_view
+                rowAction:     true

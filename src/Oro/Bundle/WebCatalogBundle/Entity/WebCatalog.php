@@ -3,7 +3,10 @@
 namespace Oro\Bundle\WebCatalogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendWebCatalog;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
@@ -24,9 +27,10 @@ use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
  *     }
  * )
  */
-class WebCatalog extends ExtendWebCatalog implements WebCatalogInterface
+class WebCatalog extends ExtendWebCatalog implements WebCatalogInterface, DatesAwareInterface
 {
     use BusinessUnitAwareTrait;
+    use DatesAwareTrait;
 
     /**
      * @ORM\Id
