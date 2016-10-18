@@ -13,13 +13,14 @@ use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class EntityVisibilityTypeTest extends FormIntegrationTestCase
 {
-    const ACCOUNT_CLASS = 'Oro\Bundle\AccountBundle\Entity\Account';
-    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountGroup';
-
     /**
      * @var EntityVisibilityType
      */
@@ -40,13 +41,13 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->visibilityPostSetDataListener = $this->getMockBuilder(
-            'Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener'
+            VisibilityPostSetDataListener::class
         )
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->visibilityChoicesProvider = $this
-            ->getMockBuilder('Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider')
+            ->getMockBuilder(VisibilityChoicesProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -61,29 +62,23 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $validator = $this->getMock(ValidatorInterface::class);
+        $metadata = $this->getMockBuilder(ClassMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $validator->method('validate')->willReturn(new ConstraintViolationList());
+        $validator->method('getMetadataFor')->willReturn($metadata);
+
         return [
             new PreloadedExtension(
                 [
                     DataChangesetType::NAME => new DataChangesetTypeStub(),
-                    EntityChangesetType::NAME => new EntityChangesetTypeStub()
+                    EntityChangesetType::NAME => new EntityChangesetTypeStub(),
                 ],
                 []
             ),
-            $this->getValidatorExtension(true)
+            new ValidatorExtension($validator),
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset(
-            $this->formType,
-            $this->visibilityPostSetDataListener,
-            $this->visibilityPostSubmitListener,
-            $this->visibilityChoicesProvider
-        );
     }
 
     public function testGetName()
@@ -93,20 +88,34 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $this->markTestIncomplete('BB-4710');
-        $this->visibilityChoicesProvider->expects($this->once())->method('getFormattedChoices')->willReturn([]);
+        $this->visibilityChoicesProvider->expects($this->once())
+            ->method('getFormattedChoices')
+            ->willReturn([
+                'visible' => 'Visible',
+                'hidden' => 'Hidden'
+            ]);
 
         $options = [
             'allClass' => ProductVisibility::class,
             'accountGroupClass' => AccountGroupProductVisibility::class,
-            'accountClass' => AccountProductVisibility::class
+            'accountClass' => AccountProductVisibility::class,
         ];
 
         $form = $this->factory->create($this->formType, [], $options);
 
-        $form->submit([
+        $accountGroupData = '{"1":{"visibility":"hidden"},"2":{"visibility":"hidden"}}';
+        $accountData = '{"1":{"visibility":"account_group"},"2":{"visibility":"visible"}}';
+        $form->submit(
+            [
+                'all' => 'visible',
+                'accountGroup' => $accountGroupData,
+                'account' => $accountData,
+            ]
+        );
 
-        ]);
-        $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
+        $this->assertSame('visible', $form->get('all')->getData());
+        $this->assertSame($accountData, $form->get('account')->getData());
+        $this->assertSame($accountGroupData, $form->get('accountGroup')->getData());
     }
 }
