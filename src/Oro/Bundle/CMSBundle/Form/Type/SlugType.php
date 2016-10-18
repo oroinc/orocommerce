@@ -3,12 +3,16 @@
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 
@@ -27,7 +31,7 @@ class SlugType extends AbstractType
         $builder
             ->add(
                 'slug',
-                'text',
+                TextType::class,
                 [
                     'label' => 'oro.redirect.slug.entity_label',
                     'constraints' => [new UrlSafe()]
@@ -36,7 +40,7 @@ class SlugType extends AbstractType
 
         if ($options['type'] == 'update') {
             $builder
-                ->add('mode', 'choice', [
+                ->add('mode', ChoiceType::class, [
                     'choices' => [
                         self::MODE_OLD => 'oro.cms.slug.leave_as_is',
                         self::MODE_NEW => 'oro.cms.slug.update_to'
@@ -46,12 +50,12 @@ class SlugType extends AbstractType
                     'expanded' => true,
                     'multiple' => false
                 ])
-                ->add('redirect', 'checkbox', [
+                ->add('redirect', CheckboxType::class, [
                     'required' => false, 'label' => 'oro.cms.slug.redirect'
                 ]);
         } else {
             $builder
-                ->add('mode', 'hidden', [
+                ->add('mode', HiddenType::class, [
                     'data' => self::MODE_NEW
                 ]);
         }
@@ -91,9 +95,9 @@ class SlugType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired([
             'type',
@@ -104,7 +108,6 @@ class SlugType extends AbstractType
             'options' => [],
             'type' => 'create',
             'current_slug' => '',
-            'parent_slug' => '',
         ]);
     }
 
@@ -115,6 +118,5 @@ class SlugType extends AbstractType
     {
         $view->vars['type'] = $options['type'];
         $view->vars['current_slug'] = $options['current_slug'];
-        $view->vars['parent_slug'] = $options['parent_slug'];
     }
 }

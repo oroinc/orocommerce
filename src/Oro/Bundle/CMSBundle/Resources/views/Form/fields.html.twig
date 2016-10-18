@@ -5,7 +5,7 @@
                 <div>
                     {{- form_widget(radio) -}}
                     {{- radio.vars.label|trans ~ ' ' -}}
-                    {{- form.vars.parent_slug ~ '/' -}}{{- form_widget(form.slug) -}}
+                    {{- form_widget(form.slug) -}}
                     {{- form_errors(form.slug) -}}
                     <div class="sub-item">
                         {{- form_widget(form.redirect) -}}
@@ -22,7 +22,7 @@
         {% endfor %}
     {% else %}
         {{- form_widget(form.mode) -}}
-        {{- form.vars.parent_slug ~ '/' -}}{{- form_widget(form.slug) -}}
+        {{- form_widget(form.slug) -}}
         {{- form_errors(form.slug) -}}
     {% endif %}
 {% endblock %}

@@ -3,13 +3,6 @@ parameters:
     oro_cms.entity.loginpage.class: Oro\Bundle\CMSBundle\Entity\LoginPage
 
 services:
-    oro_cms.page_tree_handler:
-        class: 'Oro\Bundle\CMSBundle\JsTree\PageTreeHandler'
-        arguments:
-            - '%oro_cms.entity.page.class%'
-            - "@doctrine"
-            - "@oro_redirect.slug.manager"
-
     oro_cms.listener.page_slug_listener:
         class: 'Oro\Bundle\CMSBundle\EventListener\PageSlugListener'
         tags:

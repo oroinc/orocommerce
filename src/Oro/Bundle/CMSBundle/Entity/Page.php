@@ -6,19 +6,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Gedmo\Mapping\Annotation as Gedmo;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableOrganizationAwareTrait;
 use Oro\Bundle\CMSBundle\Model\ExtendPage;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
-use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
  * @ORM\Table(name="oro_cms_page")
- * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\PageRepository")
- * @Gedmo\Tree(type="nested")
+ * @ORM\Entity()
  * @Config(
  *      routeName="oro_cms_page_index",
  *      routeView="oro_cms_page_view",
@@ -45,7 +41,6 @@ use Oro\Component\Tree\Entity\TreeTrait;
  */
 class Page extends ExtendPage
 {
-    use TreeTrait;
     use AuditableOrganizationAwareTrait;
 
     /**
@@ -74,7 +69,7 @@ class Page extends ExtendPage
     /**
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -101,37 +96,6 @@ class Page extends ExtendPage
      * )
      */
     protected $currentSlug;
-
-    /**
-     * @var Page
-     *
-     * @Gedmo\TreeParent
-     * @ORM\ManyToOne(targetEntity="Page", inversedBy="childPages")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $parentPage;
-
-    /**
-     * @var Collection|Page[]
-     *
-     * @ORM\OneToMany(targetEntity="Page", mappedBy="parentPage", cascade={"persist"})
-     * @ORM\OrderBy({"left" = "ASC"})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $childPages;
 
     /**
      * @var \DateTime $createdAt
@@ -180,12 +144,14 @@ class Page extends ExtendPage
      */
     protected $slugs;
 
+    /**
+     * {@inheritDoc}
+     */
     public function __construct()
     {
         parent::__construct();
 
         $this->slugs      = new ArrayCollection();
-        $this->childPages = new ArrayCollection();
         $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
 
@@ -294,62 +260,6 @@ class Page extends ExtendPage
     }
 
     /**
-     * @param Page|null $parentPage
-     * @return $this
-     */
-    public function setParentPage(Page $parentPage = null)
-    {
-        $this->parentPage = $parentPage;
-        $this->refreshSlugUrls();
-
-        return $this;
-    }
-
-    /**
-     * @return Page
-     */
-    public function getParentPage()
-    {
-        return $this->parentPage;
-    }
-
-    /**
-     * @return Collection|Page[]
-     */
-    public function getChildPages()
-    {
-        return $this->childPages;
-    }
-
-    /**
-     * @param Page $page
-     * @return $this
-     */
-    public function addChildPage(Page $page)
-    {
-        if (!$this->childPages->contains($page)) {
-            $this->childPages->add($page);
-            $page->setParentPage($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Page $page
-     * @return $this
-     */
-    public function removeChildPage(Page $page)
-    {
-        if ($this->childPages->contains($page)) {
-            $this->childPages->removeElement($page);
-            $page->setParentPage(null);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return \DateTime
      */
     public function getCreatedAt()
@@ -438,20 +348,11 @@ class Page extends ExtendPage
     }
 
     /**
-     * Refresh slug URLs for current and child pages
+     * Refresh slug URLs for current page
      */
     protected function refreshSlugUrls()
     {
-        $parentSlugUrl = '';
-        if ($this->parentPage) {
-            $parentSlugUrl = $this->parentPage->currentSlug->getUrl();
-        }
-
         $slugUrl = $this->currentSlug->getSlugUrl();
-        $this->currentSlug->setUrl($parentSlugUrl . Slug::DELIMITER . $slugUrl);
-
-        foreach ($this->childPages as $childPage) {
-            $childPage->refreshSlugUrls();
-        }
+        $this->currentSlug->setUrl($slugUrl);
     }
 }

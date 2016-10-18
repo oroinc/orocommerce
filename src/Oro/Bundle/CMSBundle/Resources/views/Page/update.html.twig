@@ -2,25 +2,12 @@
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
 {% set entityId = entity.id %}
-{% set parentPageId = entity.parentPage ? entity.parentPage.id : null %}
 
 {% oro_title_set({params : {"%title%": entity.title, '%entityName%': 'oro.cms.page.entity_label'|trans} }) %}
 
-{% set formAction = entityId ? path('oro_cms_page_update', { 'id': entityId }) : path('oro_cms_page_create', { 'id': parentPageId })  %}
+{% set formAction = entityId ? path('oro_cms_page_update', { 'id': entityId }) : path('oro_cms_page_create')  %}
 
 {% block navButtons %}
-    {% if entityId %}
-        {% if resource_granted('oro_cms_page_create') %}
-            {{ UI.button({
-                'path' : path('oro_cms_page_create', { 'id': entityId }),
-                'iCss': 'icon-book',
-                'aCss': 'btn-primary',
-                'label': 'oro.ui.create_entity'|trans({'%entityName%': 'oro.cms.child_page.entity_label'|trans}),
-                'title': 'oro.ui.create_entity'|trans({'%entityName%': 'oro.cms.child_page.entity_label'|trans})
-            }) }}
-        {% endif %}
-    {% endif %}
-
     {{ parent() }}
 
     {{ UI.cancelButton(path('oro_cms_page_index')) }}
@@ -62,7 +49,6 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    form_row(form.parentPage),
                     form_row(form.title),
                     form_row(form.slug)
                 ]
@@ -82,33 +68,14 @@
         'dataBlocks': dataBlocks
     }%}
 
-    <div class="cms-page-container tree-component-container">
-        <div class="page page-tree tree-component">
-            {% set treeOptions = {
-                'key' : 'commerce-page',
-                'data' : oro_page_list(),
-                'nodeId' : entity.id,
-                'updateAllowed' : resource_granted('oro_cms_page_update'),
-                'onSelectRoute' : 'oro_cms_page_view',
-                'onMoveRoute' : 'oro_cms_page_move',
-                'reloadWidget': 'page-info-widget'
-            } %}
-            <div
-                data-page-component-module="orocms/js/app/components/tree-manage-component"
-                data-page-component-options="{{ treeOptions|json_encode }}"
-            ></div>
-        </div>
-    </div>
-    <div class="cms-page-data">
-        {{ parent() }}
-        {% set options = {
-            'targetInput': '#' ~ form.title.vars.id,
-            'recipientInput': '#' ~ form.slug.slug.vars.id,
-            'modeName': 'oro_cms_page[slug][mode]'
-        } %}
-        <div
-            data-page-component-module="orocms/js/app/components/slugify-component"
-            data-page-component-options="{{ options|json_encode }}"
-        ></div>
-    </div>
+    {{ parent() }}
+    {% set options = {
+        'targetInput': '#' ~ form.title.vars.id,
+        'recipientInput': '#' ~ form.slug.slug.vars.id,
+        'modeName': 'oro_cms_page[slug][mode]'
+    } %}
+    <div
+        data-page-component-module="orocms/js/app/components/slugify-component"
+        data-page-component-options="{{ options|json_encode }}"
+    ></div>
 {% endblock content_data %}
