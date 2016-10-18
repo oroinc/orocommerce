@@ -94,6 +94,8 @@ oro.visibility:
     product:
         visibility:
             label: Manage Visibility
+            visible.label: Visible
+            hidden.label: Hidden
 
     system_configuration:
         groups:
