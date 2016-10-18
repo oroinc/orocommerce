@@ -61,7 +61,7 @@ class PageController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_cms.entity.page.class')
+            'entity_class' => Page::class
         ];
     }
 
