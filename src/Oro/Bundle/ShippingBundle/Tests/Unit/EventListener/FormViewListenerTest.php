@@ -18,6 +18,7 @@ use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class FormViewListenerTest extends FormViewListenerTestCase
 {
@@ -404,7 +405,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
         );
     }
-    
+
     /**
      * @return ScrollData
      */

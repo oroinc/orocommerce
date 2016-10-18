@@ -20,19 +20,23 @@ class OrderShippingMethodDatagridListener
     {
         $config = $event->getConfig();
         $column = [
-           // 'label' => 'oro.order.shipping_method.label',
-            'label' => 'shipping method',
+            'label' => 'oro.shipping.methods.label',
             'type' => 'twig',
             'template' => 'OroShippingBundle:Datagrid:Column/shippingMethodFull.html.twig',
             'frontend_type' => 'html',
         ];
 
         $columns = $config->offsetGetByPath("[columns]");
-        $columns = array_merge(
-            array_slice($columns, 0, 13),
-            array(static::SHIPPING_METHOD_COLUMN => $column),
-            array_slice($columns, 13, null)
-        );
+        $newColumnArray = array(static::SHIPPING_METHOD_COLUMN => $column);
+        if (is_array($columns)) {
+            $columns = array_merge(
+                array_slice($columns, 0, 13),
+                $newColumnArray,
+                array_slice($columns, 13, null)
+            );
+        } else {
+            $columns = $newColumnArray;
+        }
         $config->offsetSetByPath("[columns]", $columns);
     }
 }
