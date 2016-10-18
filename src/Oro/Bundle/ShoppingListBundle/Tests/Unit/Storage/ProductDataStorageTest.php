@@ -5,8 +5,8 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Storage;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
@@ -48,10 +48,10 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
         $unitCode = 'kg';
 
         /** @var Account $account */
-        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => $accountId]);
+        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => $accountId]);
 
         /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', ['id' => $accountUserId]);
+        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', ['id' => $accountUserId]);
 
         $product = new Product();
         $product->setSku($productSku);

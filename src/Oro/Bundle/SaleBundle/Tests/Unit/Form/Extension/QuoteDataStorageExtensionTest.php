@@ -5,8 +5,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Extension;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -58,10 +58,10 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                         'targetEntity' => 'Oro\Bundle\RFPBundle\Entity\Request',
                     ],
                     'account' => [
-                        'targetEntity' => 'Oro\Bundle\AccountBundle\Entity\Account',
+                        'targetEntity' => 'Oro\Bundle\CustomerBundle\Entity\Account',
                     ],
                     'accountUser' => [
-                        'targetEntity' => 'Oro\Bundle\AccountBundle\Entity\AccountUser',
+                        'targetEntity' => 'Oro\Bundle\CustomerBundle\Entity\AccountUser',
                     ],
                 ],
             ],
@@ -105,9 +105,9 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $product = $this->getProductEntity($inputData['productSku'], $productUnit);
 
         /* @var $account Account */
-        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', $inputData['accountId']);
+        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', $inputData['accountId']);
         /* @var $accountUser AccountUser */
-        $accountUser = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', $inputData['accountUserId']);
+        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', $inputData['accountUserId']);
 
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => [
