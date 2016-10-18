@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
@@ -22,8 +22,7 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->initClient();
         $this->loadFixtures(
             [
                 LoadPriceListRelations::class,
@@ -278,9 +277,9 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
                     'account_group.group2',
                 ],
                 'expectsResult' => [
-                    ['account_group.group1', 'US', 'priceList6'],
-                    ['account_group.group1', 'US', 'priceList1'],
                     ['account_group.group1', 'US', 'priceList5'],
+                    ['account_group.group1', 'US', 'priceList1'],
+                    ['account_group.group1', 'US', 'priceList6'],
                     ['account_group.group2', 'US', 'priceList4'],
                 ],
             ],

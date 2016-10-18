@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WarehouseBundle\ImportExport\Serializer;
 
-use Oro\Bundle\CurrencyBundle\Rounding\QuantityRoundingService;
+use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\DenormalizerInterface;
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\NormalizerInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;

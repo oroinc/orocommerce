@@ -1,4 +1,0 @@
-oro.currency:
-    form:
-        tooltip:
-            allowed_currencies: 'Select the currencies that can be used in application.'

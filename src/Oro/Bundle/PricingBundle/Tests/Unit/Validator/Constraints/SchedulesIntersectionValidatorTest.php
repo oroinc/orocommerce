@@ -217,9 +217,7 @@ class SchedulesIntersectionValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function getContextMock()
     {
-        return $this->getMockBuilder('Symfony\Component\Validator\Context\ExecutionContextInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->getMock(ExecutionContextInterface::class);
     }
 
     /**

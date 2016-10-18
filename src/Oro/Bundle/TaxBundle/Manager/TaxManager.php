@@ -73,7 +73,8 @@ class TaxManager
      * Load tax and return Result by object
      * @param object $object
      * @return Result
-     * @throws TaxationDisabledException
+     * @throws TaxationDisabledException if taxation disabled in system configuration
+     * @throws \InvalidArgumentException if taxes for object could not be loaded
      */
     public function loadTax($object)
     {
@@ -92,7 +93,7 @@ class TaxManager
      *
      * @param object $object
      * @return Result
-     * @throws TaxationDisabledException
+     * @throws TaxationDisabledException if taxation disabled in system configuration
      */
     public function getTax($object)
     {
@@ -105,7 +106,8 @@ class TaxManager
      * @param object $object
      * @param bool $includeItems
      * @return false|Result
-     * @throws TaxationDisabledException
+     * @throws TaxationDisabledException if taxation disabled in system configuration
+     * @throws \InvalidArgumentException if taxes for object could not be saved
      */
     public function saveTax($object, $includeItems = false)
     {
@@ -136,7 +138,7 @@ class TaxManager
      * @param object $object
      * @param bool $includeItems Remove object item taxes too
      * @return bool
-     * @throws TaxationDisabledException
+     * @throws TaxationDisabledException if taxation disabled in system configuration
      */
     public function removeTax($object, $includeItems = false)
     {
@@ -158,7 +160,8 @@ class TaxManager
      *
      * @param object $object
      * @return false|TaxValue
-     * @throws TaxationDisabledException
+     * @throws TaxationDisabledException if taxation disabled in system configuration
+     * @throws \InvalidArgumentException if impossible to create TaxValue for object
      */
     public function createTaxValue($object)
     {
@@ -221,7 +224,7 @@ class TaxManager
     }
 
     /**
-     * @throws TaxationDisabledException
+     * @throws TaxationDisabledException if taxation disabled in system configuration
      */
     protected function throwExceptionIfTaxationDisabled()
     {

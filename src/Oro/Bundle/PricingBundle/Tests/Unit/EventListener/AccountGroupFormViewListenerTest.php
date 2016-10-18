@@ -12,7 +12,7 @@ use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\PricingBundle\EventListener\AccountGroupFormViewListener;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;

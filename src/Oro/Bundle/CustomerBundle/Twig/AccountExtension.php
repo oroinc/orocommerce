@@ -1,0 +1,50 @@
+<?php
+
+namespace Oro\Bundle\CustomerBundle\Twig;
+
+use Oro\Bundle\CustomerBundle\Security\AccountUserProvider;
+
+class AccountExtension extends \Twig_Extension
+{
+    const NAME = 'account_extension';
+
+    /**
+     * @var AccountUserProvider
+     */
+    protected $securityProvider;
+
+    /**
+     * @param AccountUserProvider $securityProvider
+     */
+    public function __construct(AccountUserProvider $securityProvider)
+    {
+        $this->securityProvider = $securityProvider;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFunctions()
+    {
+        return array(
+            'is_granted_view_account_user' => new \Twig_Function_Method($this, 'isGrantedViewAccountUser'),
+        );
+    }
+
+    /**
+     * @param string $object
+     * @return bool
+     */
+    public function isGrantedViewAccountUser($object)
+    {
+        return $this->securityProvider->isGrantedViewAccountUser($object);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return self::NAME;
+    }
+}
