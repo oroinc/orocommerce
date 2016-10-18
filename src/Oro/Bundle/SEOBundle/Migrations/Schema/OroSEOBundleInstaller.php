@@ -15,6 +15,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
     const PRODUCT_TABLE_NAME = 'oro_product';
     const CATEGORY_TABLE_NAME = 'oro_catalog_category';
     const LANDING_PAGE_TABLE_NAME = 'oro_cms_page';
+    const WEB_CATALOG_NODE_TABLE_NAME = 'oro_web_catalog_content_node';
     const FALLBACK_LOCALE_VALUE_TABLE_NAME = 'oro_fallback_localization_val';
 
     /** @var ExtendExtension */
@@ -33,7 +34,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -44,6 +45,8 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
         $this->addMetaInformation($schema, self::PRODUCT_TABLE_NAME);
         $this->addMetaInformation($schema, self::CATEGORY_TABLE_NAME);
         $this->addMetaInformation($schema, self::LANDING_PAGE_TABLE_NAME);
+
+        $this->addMetaInformationToWebCatalogNode($schema);
     }
 
     /**
@@ -100,5 +103,14 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                 'importexport' => ['excluded' => true],
             ]
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function addMetaInformationToWebCatalogNode(Schema $schema)
+    {
+        $this->addMetaInformationField($schema, self::WEB_CATALOG_NODE_TABLE_NAME, 'metaDescriptions');
+        $this->addMetaInformationField($schema, self::WEB_CATALOG_NODE_TABLE_NAME, 'metaKeywords');
     }
 }

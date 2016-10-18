@@ -10,7 +10,7 @@ datagrids:
                 select:
                     - loginPage.id
                 from:
-                    - { table: %oro_cms.entity.loginpage.class%, alias: loginPage }
+                    - { table: '%oro_cms.entity.loginpage.class%', alias: loginPage }
         columns:
             id:
               label: oro.cms.loginpage.id.label
@@ -28,6 +28,7 @@ datagrids:
                 icon:          eye-open
                 acl_resource:  oro_cms_loginpage_view
                 rowAction:     true
+
     cms-page-grid:
         acl_resource: oro_cms_page_view
         options:
@@ -40,7 +41,7 @@ datagrids:
                     - page.id
                     - page.title
                 from:
-                    - { table: %oro_cms.entity.page.class%, alias: page }
+                    - { table: '%oro_cms.entity.page.class%', alias: page }
         columns:
             id:
               label: oro.cms.page.id.label

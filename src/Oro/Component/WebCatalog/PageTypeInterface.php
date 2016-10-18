@@ -22,6 +22,11 @@ interface PageTypeInterface
     public function getFormType();
 
     /**
+     * @return bool
+     */
+    public function isAllowed();
+
+    /**
      * @param ContentVariantInterface $page
      * @return bool
      */
