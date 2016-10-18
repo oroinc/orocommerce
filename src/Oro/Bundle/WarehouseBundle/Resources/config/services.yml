@@ -55,6 +55,15 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_warehouse_unique_warehouse_validator }
 
+    oro_warehouse.validator.product_quantity_to_order_validator:
+        class: 'Oro\Bundle\WarehouseBundle\Validator\Constraints\ProductRowQuantityValidator'
+        arguments:
+            - "@oro_warehouse.validator.quantity_to_order_validator"
+            - "@oro_entity.doctrine_helper"
+            - "@translator"
+        tags:
+            - { name: validator.constraint_validator, alias: oro_warehouse_unique_warehouse_validator }
+
     oro_warehouse.event_listener.system_config:
         class: 'Oro\Bundle\WarehouseBundle\EventListener\WarehouseSystemConfigSubscriber'
         arguments:
@@ -132,3 +141,8 @@ services:
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }
+
+    oro_warehouse.event_listener.product_row_type_listener:
+        class: Oro\Bundle\WarehouseBundle\Form\Extension\ProductRowTypeListener
+        tags:
+            - { name: kernel.event_listener, event: product_row_type.constraints, method: onConstraintsConfigureOptions }

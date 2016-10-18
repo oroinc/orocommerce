@@ -56,31 +56,32 @@ class LineItemValidationListener
 
             // trigger error messages for products
             if ($this->quantityValidator->isHigherThanMaxLimit($maxLimit, $lineItem->getQuantity())) {
-                $event->addError(
-                    $product->getSku(),
-                    $this->translator->trans(
-                        'oro.product.error.quantity_over_max_limit',
-                        [
-                            '%limit%' => $maxLimit,
-                            '%sku%' => $product->getSku(),
-                            '%product_name%' => $product->getName(),
-                        ]
-                    )
-                );
+                $this->addErrorToEvent($event, $product, $maxLimit, 'quantity_over_max_limit');
             }
             if ($this->quantityValidator->isLowerThenMinLimit($minLimit, $lineItem->getQuantity())) {
-                $event->addError(
-                    $product->getSku(),
-                    $this->translator->trans(
-                        'oro.product.error.quantity_below_min_limit',
-                        [
-                            '%limit%' => $minLimit,
-                            '%sku%' => $product->getSku(),
-                            '%product_name%' => $product->getName(),
-                        ]
-                    )
-                );
+                $this->addErrorToEvent($event, $product, $minLimit, 'quantity_below_min_limit');
             }
         }
+    }
+
+    /**
+     * @param LineItemValidateEvent $event
+     * @param Product $product
+     * @param int $limit
+     * @param string $errorSuffix
+     */
+    public function addErrorToEvent(LineItemValidateEvent $event, Product $product, $limit, $errorSuffix)
+    {
+        $event->addError(
+            $product->getSku(),
+            $this->translator->trans(
+                'oro.product.error.' . $errorSuffix,
+                [
+                    '%limit%' => $limit,
+                    '%sku%' => $product->getSku(),
+                    '%product_name%' => $product->getName(),
+                ]
+            )
+        );
     }
 }

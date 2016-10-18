@@ -17,6 +17,8 @@ services:
 
     oro_product.form.type.product_row:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductRowType'
+        arguments:
+            - "@event_dispatcher"
         tags:
             - { name: form.type, alias: oro_product_row }
 
