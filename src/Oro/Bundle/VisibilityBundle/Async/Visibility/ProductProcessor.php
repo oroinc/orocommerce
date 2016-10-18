@@ -6,11 +6,11 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
-use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
-use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Model\ProductMessageFactory;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
+use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -93,7 +93,7 @@ class ProductProcessor implements MessageProcessorInterface
                     $message->getBody()
                 )
             );
-
+            throw $e;
             return self::REJECT;
         } catch (\Exception $e) {
             $em->rollback();
@@ -101,7 +101,7 @@ class ProductProcessor implements MessageProcessorInterface
                 'Unexpected exception occurred during Product Visibility resolve by Product',
                 ['exception' => $e]
             );
-
+            throw $e;
             if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
                 return self::REQUEUE;
             } else {
