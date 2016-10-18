@@ -16,7 +16,8 @@ class AccountGroupCategoryVisibilityRepository extends AbstractCategoryVisibilit
     {
         $result = $this->createQueryBuilder('accountGroupCategoryVisibility')
             ->select('accountGroupCategoryVisibility.visibility')
-            ->andWhere('accountGroupCategoryVisibility.accountGroup = :accountGroup')
+            ->join('accountGroupCategoryVisibility.scope', 'scope')
+            ->andWhere('scope.accountGroup = :accountGroup')
             ->andWhere('accountGroupCategoryVisibility.category = :category')
             ->setParameter('accountGroup', $accountGroup)
             ->setParameter('category', $category)
