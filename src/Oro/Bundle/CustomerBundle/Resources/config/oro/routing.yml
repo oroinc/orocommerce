@@ -1,0 +1,171 @@
+# Prefix `customer` is temporary solution to remove route duplication
+# with OroCustomerBundle/Controller/AccountController.php
+# @todo: all routes prefix will be chnaged in scope of BB-2679
+oro_customer:
+    resource:     "@OroCustomerBundle/Controller/AccountController.php"
+    type:         annotation
+    prefix:       /customer
+
+oro_customer_address:
+    resource:     "@OroCustomerBundle/Controller/AccountAddressController.php"
+    type:         annotation
+    prefix:       /account/address
+
+oro_customer_account_user_address:
+    resource:     "@OroCustomerBundle/Controller/AccountUserAddressController.php"
+    type:         annotation
+    prefix:       /account/user/address
+
+oro_customer_group:
+    resource:     "@OroCustomerBundle/Controller/AccountGroupController.php"
+    type:         annotation
+    prefix:       /account/group
+
+oro_customer_account_user:
+    resource: "@OroCustomerBundle/Controller/AccountUserController.php"
+    type: annotation
+    prefix: /account/user
+
+oro_customer_account_user_ajax:
+    resource: "@OroCustomerBundle/Controller/AjaxAccountUserController.php"
+    type: annotation
+    prefix: /account/user
+
+oro_customer_frontend_account_user_ajax:
+    resource: "@OroCustomerBundle/Controller/Frontend/AjaxAccountUserController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
+
+oro_customer_account_user_role:
+    resource: "@OroCustomerBundle/Controller/AccountUserRoleController.php"
+    type: annotation
+    prefix: /account/user/role
+
+oro_customer_acl_permission:
+    resource: "@OroCustomerBundle/Controller/AclPermissionController.php"
+    type: annotation
+    prefix: /account/acl
+
+oro_customer_product_visibility:
+    resource: "@OroCustomerBundle/Controller/ProductVisibilityController.php"
+    type: annotation
+    prefix: /product/visibility
+
+oro_customer_frontend_account_user_profile:
+    resource: "@OroCustomerBundle/Controller/Frontend/AccountUserProfileController.php"
+    type: annotation
+    prefix: /account/profile
+    options:
+        frontend: true
+
+oro_customer_frontend_account_user_register:
+    resource: "@OroCustomerBundle/Controller/Frontend/AccountUserRegisterController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
+
+oro_customer_frontend_account_user:
+    resource: "@OroCustomerBundle/Controller/Frontend/AccountUserController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
+
+oro_customer_frontend_account_user_address:
+    resource: "@OroCustomerBundle/Controller/Frontend/AccountUserAddressController.php"
+    type: annotation
+    prefix: /account/user/address
+    options:
+        frontend: true
+
+oro_customer_frontend_account_address:
+    resource: "@OroCustomerBundle/Controller/Frontend/AccountAddressController.php"
+    type: annotation
+    prefix: /account/user/address/account/
+    options:
+        frontend: true
+
+oro_customer_user_security:
+    resource: "@OroCustomerBundle/Controller/SecurityController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
+
+oro_customer_user_password_reset:
+    resource: "@OroCustomerBundle/Controller/Frontend/ResetController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
+
+oro_customer_bundle_api:
+    resource:     "@OroCustomerBundle/Resources/config/oro/routing_api.yml"
+    prefix:       api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest
+
+oro_account_pinbar_help:
+    path: /pinbar/help
+    defaults: { _controller: FrameworkBundle:Template:template, template: "OroNavigationBundle:Pinbar:help.html.twig" }
+    options:
+        frontend: true
+
+oro_customer_frontend_account_user_role:
+    resource: "@OroCustomerBundle/Controller/Frontend/AccountUserRoleController.php"
+    type:     annotation
+    prefix:   /account/roles
+    options:
+        frontend: true
+
+oro_customer_frontend_acl_access_levels:
+    path: /account/roles/acl-access-levels/{oid}
+    defaults:
+        _controller: OroCustomerBundle:AclPermission:aclAccessLevels
+        _format: json
+    requirements:
+        oid: '\w+:[\w\(\)]+'
+    options:
+        frontend: true
+
+oro_frontend_autocomplete_search:
+    path: /autocomplete/search
+    defaults: { _controller: OroFormBundle:Autocomplete:search }
+    options:
+        frontend: true
+
+oro_customer_frontend_entity_pagination_first:
+    path: /entity-pagination/first/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:first }
+    options:
+        frontend: true
+
+oro_customer_frontend_entity_pagination_previous:
+    path: /entity-pagination/previous/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:previous }
+    options:
+        frontend: true
+
+oro_customer_frontend_entity_pagination_next:
+    path: /entity-pagination/next/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:next }
+    options:
+        frontend: true
+
+oro_customer_frontend_entity_pagination_last:
+    path: /entity-pagination/last/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:last }
+    options:
+        frontend: true
+
+oro_customer_audit:
+    resource:     "@OroCustomerBundle/Controller/AuditController.php"
+    type:         annotation
+    options:
+        frontend: true

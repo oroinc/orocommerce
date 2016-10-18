@@ -6,8 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
@@ -165,8 +165,8 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
         return [
             'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
             'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
         ];
     }
 
