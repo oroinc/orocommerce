@@ -22,32 +22,32 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
     const FIRST_NAME = 'Grzegorz';
     const LAST_NAME = 'Brzeczyszczykiewicz';
     const EMAIL = 'grzegorz.brzeczyszczykiewicz@example.com';
-    const PASSWORD = 'test';
+    const PASSWORD = 'test1Q';
     
     const LEVEL_1_FIRST_NAME = 'First';
     const LEVEL_1_LAST_NAME = 'Last';
     const LEVEL_1_EMAIL = 'other.user@test.com';
-    const LEVEL_1_PASSWORD = 'pass';
+    const LEVEL_1_PASSWORD = 'pass1Q';
 
     const LEVEL_1_1_FIRST_NAME = 'FirstName';
     const LEVEL_1_1_LAST_NAME = 'LastName';
     const LEVEL_1_1_EMAIL = 'second_account.user@test.com';
-    const LEVEL_1_1_PASSWORD = 'pass';
+    const LEVEL_1_1_PASSWORD = 'pass1Q';
 
     const ANONYMOUS_FIRST_NAME = 'FirstAccountUser';
     const ANONYMOUS_LAST_NAME = 'LastAccountUser';
     const ANONYMOUS_EMAIL = 'account.user2@test.com';
-    const ANONYMOUS_PASSWORD = 'pass';
+    const ANONYMOUS_PASSWORD = 'pass1Q';
 
     const ORPHAN_FIRST_NAME = 'FirstOrphan';
     const ORPHAN_LAST_NAME = 'LastOrphan';
     const ORPHAN_EMAIL = 'orphan.user@test.com';
-    const ORPHAN_PASSWORD = 'pass';
+    const ORPHAN_PASSWORD = 'pass1Q';
 
     const GROUP2_FIRST_NAME = 'FirstAccountUserGroup2';
     const GROUP2_LAST_NAME = 'LastAccountUserGroup2';
     const GROUP2_EMAIL = 'account.level_1.2@test.com';
-    const GROUP2_PASSWORD = 'pass';
+    const GROUP2_PASSWORD = 'pass1Q';
 
     /** @var ContainerInterface */
     protected $container;

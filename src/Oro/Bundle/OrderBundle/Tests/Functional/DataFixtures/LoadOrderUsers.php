@@ -46,7 +46,7 @@ class LoadOrderUsers extends AbstractFixture implements ContainerAwareInterface
 
         $user = $userManager->createUser();
         $user->setUsername($name)
-            ->setPlainPassword('simple_password')
+            ->setPlainPassword('simple_password1Q')
             ->setFirstName($name . 'first_name')
             ->setLastName($name . 'last_name')
             ->setEmail($name . '@example.com')
