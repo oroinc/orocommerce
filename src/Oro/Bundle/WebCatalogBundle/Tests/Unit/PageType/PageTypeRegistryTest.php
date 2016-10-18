@@ -53,13 +53,16 @@ class PageTypeRegistryTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($pageType, $actualPageType);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Page type "unknown" does not exist.
-     */
     public function testGetPlaceholderException()
     {
-        $this->registry->getPageType('unknown');
+        $unknownPageType = 'unknown';
+
+        $this->setExpectedException(
+            'Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException',
+            sprintf('Page type "%s" does not exist.', $unknownPageType)
+        );
+        
+        $this->registry->getPageType($unknownPageType);
     }
 
     public function testGetPageTypes()

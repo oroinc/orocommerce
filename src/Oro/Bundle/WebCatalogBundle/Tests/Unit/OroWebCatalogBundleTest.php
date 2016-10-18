@@ -22,7 +22,14 @@ class OroWebCatalogBundleTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInternalType('array', $passes);
         $this->assertCount(1, $passes);
-        $this->assertInstanceOf(WebCatalogCompilerPass::class, $passes[0]);
+
+        $expectedPasses = [
+            new WebCatalogCompilerPass(),
+        ];
+
+        foreach ($expectedPasses as $expectedPass) {
+            $this->assertContains($expectedPass, $passes, '', false, false);
+        }
     }
 
     public function testGetContainerExtension()

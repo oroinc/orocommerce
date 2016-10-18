@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\PageType;
 
+use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
 use Oro\Component\WebCatalog\PageTypeInterface;
 
 class PageTypeRegistry
@@ -25,8 +26,8 @@ class PageTypeRegistry
      */
     public function getPageType($pageTypeName)
     {
-        if (!isset($this->pageTypes[$pageTypeName])) {
-            throw new \InvalidArgumentException(sprintf('Page type "%s" does not exist.', $pageTypeName));
+        if (!array_key_exists($pageTypeName, $this->pageTypes)) {
+            throw new InvalidArgumentException(sprintf('Page type "%s" does not exist.', $pageTypeName));
         }
 
         return $this->pageTypes[$pageTypeName];
