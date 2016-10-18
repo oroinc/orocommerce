@@ -173,7 +173,8 @@ define(function(require) {
                 var options = {
                     event: e
                 };
-                options.manually = Boolean(e && e.originalEvent && e.currentTarget === element);
+                options.manually = Boolean(e && e.originalEvent && e.currentTarget === element ||
+                                           e && e.manually);
                 this.model.set(modelKey, value, options);
             }
         },

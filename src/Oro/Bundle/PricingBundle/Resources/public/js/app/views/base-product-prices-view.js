@@ -132,7 +132,10 @@ define(function(require) {
         },
 
         onUnitChange: function(options) {
-            this.setPrice(true);
+            if (options.manually) {
+                this.setPrice(true);
+            }
+            this.setPrice();
         },
 
         setPrice: function(changeQuantity) {
