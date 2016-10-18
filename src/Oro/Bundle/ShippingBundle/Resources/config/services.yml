@@ -68,6 +68,11 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
 
+    oro_shipping.event_listener.order_shipping_method_datagrid:
+            class: 'Oro\Bundle\ShippingBundle\EventListener\Datagrid\OrderShippingMethodDatagridListener'
+            tags:
+                - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orders-grid, method: onBuildBefore }
+
     # formatters
     oro_shipping.formatter.length_unit_label:
         parent: oro_product.formatter.unit_label

@@ -253,11 +253,6 @@ datagrids:
                 frontend_type: html
             paymentTermLabel:
                 label:         oro.order.payment_term.label
-            shippingMethod:
-                label:         oro.order.shipping_method.label
-                type:          twig
-                frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
             poNumber:
                 label:         oro.order.po_number.label
             shipUntil:
