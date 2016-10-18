@@ -11,6 +11,11 @@ services:
         tags:
             - { name: form.type, alias: oro_cms_page }
 
+    oro_cms.form.type.page_select:
+        class: Oro\Bundle\CMSBundle\Form\Type\PageSelectType
+        tags:
+            - { name: form.type, alias: oro_cms_page_select }
+
     oro_cms.form.type.loginpage:
         class: 'Oro\Bundle\CMSBundle\Form\Type\LoginPageType'
         tags:
