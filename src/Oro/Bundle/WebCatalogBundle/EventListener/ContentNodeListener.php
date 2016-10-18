@@ -3,8 +3,8 @@
 namespace Oro\Bundle\WebCatalogBundle\EventListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 
 class ContentNodeListener
@@ -13,13 +13,22 @@ class ContentNodeListener
      * @var ContentNodeMaterializedPathModifier
      */
     protected $modifier;
-    
+
+    /**
+     * @var ExtraActionEntityStorageInterface
+     */
+    protected $storage;
+
     /**
      * @param ContentNodeMaterializedPathModifier $modifier
+     * @param ExtraActionEntityStorageInterface $storage
      */
-    public function __construct(ContentNodeMaterializedPathModifier $modifier)
-    {
+    public function __construct(
+        ContentNodeMaterializedPathModifier $modifier,
+        ExtraActionEntityStorageInterface $storage
+    ) {
         $this->modifier = $modifier;
+        $this->storage = $storage;
     }
     
     /**
@@ -27,7 +36,8 @@ class ContentNodeListener
      */
     public function postPersist(ContentNode $contentNode)
     {
-        $this->modifier->calculateMaterializedPath($contentNode, true);
+        $contentNode = $this->modifier->calculateMaterializedPath($contentNode);
+        $this->storage->scheduleForExtraInsert($contentNode);
     }
     
     /**
@@ -38,13 +48,13 @@ class ContentNodeListener
     {
         $changeSet = $args->getEntityChangeSet();
         
-        $children = [];
         if (!empty($changeSet[ContentNode::FIELD_PARENT_NODE])) {
-            /** @var ContentNodeRepository $repository */
-            $repository = $args->getEntityManager()->getRepository(ContentNode::class);
-            $children = $repository->children($contentNode);
+            $this->modifier->calculateMaterializedPath($contentNode);
+            $childNodes = $this->modifier->calculateChildrenMaterializedPath($contentNode);
+
+            foreach ($childNodes as $childNode) {
+                $this->storage->scheduleForExtraInsert($childNode);
+            }
         }
-        
-        $this->modifier->updateMaterializedPathNested($contentNode, $children);
     }
 }

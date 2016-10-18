@@ -43,8 +43,6 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     use DatesAwareTrait;
     use BusinessUnitAwareTrait;
 
-    const MATERIALIZED_PATH_DELIMITER = '_';
-
     const FIELD_PARENT_NODE = 'parentNode';
     
     /**

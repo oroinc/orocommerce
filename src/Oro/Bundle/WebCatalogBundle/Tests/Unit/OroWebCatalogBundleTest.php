@@ -27,7 +27,8 @@ class OroWebCatalogBundleTest extends \PHPUnit_Framework_TestCase
         $this->assertAttributeEquals(
             [
                 ContentNode::class => [
-                    'title' => 'titles'
+                    'title' => 'titles',
+                    'slug' => 'slugs'
                 ]
             ],
             'classes',
