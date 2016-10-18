@@ -1,5 +1,5 @@
 .notification-flash {
-  padding: 15px 0 10px;
+  padding: 15px 15px 10px;
 
   &:empty {
     display: none;
@@ -11,6 +11,7 @@
 
   .notification.notification_lg  {
     width: auto;
+    max-width: $site-width - 30px;
 
     padding-left: 48px;
     padding-right: 48px;
