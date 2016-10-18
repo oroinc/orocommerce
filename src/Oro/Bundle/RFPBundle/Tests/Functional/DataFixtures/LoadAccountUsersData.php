@@ -21,16 +21,16 @@ class LoadAccountUsersData extends AbstractFixture implements DependentFixtureIn
     const USER_NAME      = 'John';
     const USER_LAST_NAME = 'Doe';
     const USER_EMAIL     = 'user@example.com';
-    const USER_PASSWORD  = '123123';
+    const USER_PASSWORD  = '123123Q';
 
     const SUB_ACCOUNT_USER_EMAIL = 'sub_account@example.com';
-    const SUB_ACCOUNT_USER_PASSWORD ='147147';
+    const SUB_ACCOUNT_USER_PASSWORD ='147147Q';
 
     const SAME_ACCOUNT_USER_EMAIL    = 'same_account@example.com';
-    const SAME_ACCOUNT_USER_PASSWORD = '456456';
+    const SAME_ACCOUNT_USER_PASSWORD = '456456Q';
 
     const NOT_SAME_ACCOUNT_USER_EMAIL    = 'not_same_account@example.com';
-    const NOT_SAME_ACCOUNT_USER_PASSWORD = '789789';
+    const NOT_SAME_ACCOUNT_USER_PASSWORD = '789789Q';
 
     /** @var ContainerInterface */
     protected $container;

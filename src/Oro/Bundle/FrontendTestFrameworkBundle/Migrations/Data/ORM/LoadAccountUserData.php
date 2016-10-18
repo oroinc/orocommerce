@@ -17,7 +17,7 @@ use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 class LoadAccountUserData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     const AUTH_USER = 'account_user@example.com';
-    const AUTH_PW = 'account_user';
+    const AUTH_PW = 'account_user1Q';
 
     /** @var ContainerInterface */
     protected $container;
