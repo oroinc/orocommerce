@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -22,8 +22,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->initClient();
         $this->loadFixtures(
             [
                 'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceListsActivationRules',
@@ -157,7 +156,6 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $priceLists = $combinedPriceListRepository->findBy(['name' => 'test_cpl2']);
         $this->assertEmpty($priceLists);
-
     }
 
     public function testDeleteUnusedDisabledPriceLists()

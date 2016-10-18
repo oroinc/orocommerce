@@ -47,10 +47,11 @@ class ProductFormProvider extends AbstractFormProvider
 
     /**
      * @param Product|null $product
+     * @param string $instanceName
      *
      * @return FormAccessor
      */
-    public function getLineItemForm(Product $product = null)
+    public function getLineItemForm(Product $product = null, $instanceName = '')
     {
         $lineItem = new ProductLineItem(null);
         if ($product) {
@@ -59,6 +60,6 @@ class ProductFormProvider extends AbstractFormProvider
 
         // in this context parameters used for generating local cache
         $parameters = $product ? ['id' => $product->getId()] : [];
-        return $this->getFormAccessor(FrontendLineItemType::NAME, null, $lineItem, $parameters);
+        return $this->getFormAccessor(FrontendLineItemType::NAME, null, $lineItem, $parameters, [], $instanceName);
     }
 }

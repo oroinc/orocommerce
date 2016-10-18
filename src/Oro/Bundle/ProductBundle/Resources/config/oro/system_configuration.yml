@@ -19,6 +19,12 @@ system_configuration:
             title: oro.product.system_configuration.groups.frontend_inventory_statuses_visibility.title
         backend_inventory_statuses_visibility:
             title: oro.product.system_configuration.groups.backend_inventory_statuses_visibility.title
+        product_images:
+            title: oro.product.system_configuration.groups.product_images.title
+            icon: 'icon-picture'
+        product_image_watermark:
+            title: oro.product.system_configuration.groups.product_image_watermark.title
+
     fields:
         oro_product.unit_rounding_type:
             data_type: string
@@ -57,6 +63,47 @@ system_configuration:
             options:
                 label: oro.product.system_configuration.fields.default_unit_precision.label
 
+        oro_product.product_image_watermark_file:
+            data_type: string
+            type: 'Oro\Bundle\ConfigBundle\Form\Type\ConfigFileType'
+            priority: 30
+            options:
+                label: oro.product.system_configuration.fields.product_image_watermark_file.label
+                resettable: false
+                required: false
+                fileConstraints:
+                    - Image: ~
+
+        oro_product.product_image_watermark_size:
+            data_type: integer
+            type: 'Symfony\Component\Form\Extension\Core\Type\IntegerType'
+            priority: 20
+            options:
+                label: oro.product.system_configuration.fields.product_image_watermark_size.label
+                tooltip: oro.product.system_configuration.fields.product_image_watermark_size.tooltip
+                constraints:
+                    - NotBlank: ~
+                    - Range:
+                        min: 1
+                        max: 100
+
+        oro_product.product_image_watermark_position:
+            data_type: string
+            type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.product_image_watermark_position.label
+                choice_translation_domain: messages
+                choices:
+                    topleft: oro.product.system_configuration.fields.product_image_watermark_position.topleft.label
+                    top: oro.product.system_configuration.fields.product_image_watermark_position.top.label
+                    topright: oro.product.system_configuration.fields.product_image_watermark_position.topright.label
+                    left: oro.product.system_configuration.fields.product_image_watermark_position.left.label
+                    center: oro.product.system_configuration.fields.product_image_watermark_position.center.label
+                    right: oro.product.system_configuration.fields.product_image_watermark_position.right.label
+                    bottomleft: oro.product.system_configuration.fields.product_image_watermark_position.bottomleft.label
+                    bottom: oro.product.system_configuration.fields.product_image_watermark_position.bottom.label
+                    bottomright: oro.product.system_configuration.fields.product_image_watermark_position.bottomright.label
     tree:
         system_configuration:
             commerce:
@@ -65,7 +112,7 @@ system_configuration:
                         priority: 700
                         children:
                             product_unit:
-                                priority: 100
+                                priority: 200
                                 children:
                                     product_unit_rounding:
                                         children:
@@ -74,6 +121,14 @@ system_configuration:
                                         children:
                                             - oro_product.default_unit
                                             - oro_product.default_unit_precision
+                            product_images:
+                                priority: 100
+                                children:
+                                    product_image_watermark:
+                                        children:
+                                            - oro_product.product_image_watermark_file
+                                            - oro_product.product_image_watermark_size
+                                            - oro_product.product_image_watermark_position
                     product_inventory:
                         priority: 650
                         children:

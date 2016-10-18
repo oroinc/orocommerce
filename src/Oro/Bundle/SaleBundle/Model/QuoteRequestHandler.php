@@ -7,9 +7,9 @@ use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 
 class QuoteRequestHandler
 {

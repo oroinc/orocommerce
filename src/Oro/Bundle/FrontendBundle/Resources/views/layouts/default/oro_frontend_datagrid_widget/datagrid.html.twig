@@ -1,0 +1,53 @@
+{% block _widget_datagrid_widget %}
+    {% set grid_parameters = {'enableFullScreenLayout': true}|merge(grid_parameters) %}
+    {# Replace row click action with triggering of grid-row-select event #}
+    <script type="text/javascript">
+        require(['oroui/js/mediator', 'oroui/js/widget-manager'],
+                function(mediator, widgetManager) {
+                    var gridName = {{ grid_full_name|json_encode|raw }};
+                    mediator.bind('datagrid_create_before', function(options) {
+                        if (options.name == gridName) {
+                            {% if multiselect %}
+                            options.multiSelectRowEnabled = true;
+                            {% else %}
+                            options.rowClickAction = function(data) {
+                                return {
+                                    run: function() {
+                                        widgetManager.getWidgetInstance(
+                                                {{ app.request.get('_wid')|json_encode|raw }},
+                                                function(widget) {
+                                                    widget.trigger('grid-row-select', data);
+                                                }
+                                        );
+                                    }
+                                }
+                            };
+                            {% endif %}
+                        }
+                    });
+                });
+    </script>
+    <div class="flash-messages">
+        <div class="flash-messages-frame">
+            <div class="flash-messages-holder"></div>
+        </div>
+    </div>
+    {% if split_to_cells != false %}
+        {% set themeOptions = grid_render_parameters.themeOptions|default({}) %}
+        {% set themeOptions = layout_attr_defaults(themeOptions, {
+        'headerRowTemplateSelector': '#template-datagrid-header-row',
+        'rowTemplateSelector': '#template-datagrid-row'
+        }) %}
+        {% set toolbarOptions = grid_render_parameters.toolbarOptions|default({}) %}
+        {% set toolbarOptions = layout_attr_defaults(toolbarOptions, {
+        'columnManager': {'addSorting': false}
+        }) %}
+        {% set grid_render_parameters = grid_render_parameters|merge({
+        'themeOptions': themeOptions,
+        'toolbarOptions': toolbarOptions
+        }) %}
+        {{ block("container_widget") }}
+    {% endif %}
+    {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+    {{ dataGrid.renderGrid(grid_full_name, grid_parameters, {'enableViews': false, 'routerEnabled': false}|merge(grid_render_parameters)) }}
+{% endblock %}

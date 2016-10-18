@@ -1,0 +1,27 @@
+layout:
+    imports:
+        -
+            id: oro_account_user_role_form
+            root: content
+        - oro_account_menu
+    actions:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.customer.menu.account_user.label'
+                - 'oro.customer.frontend.account_user.role.entity_plural_label'
+                - 'oro.customer.frontend.title.account_user_role.create'
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue:
+                label: 'oro.customer.frontend.title.page.account_user_role.create'
+        - '@setOption':
+            id: account_user_role_form_actions_update_top
+            optionName: text
+            optionValue: oro.customer.action.account_user_role.create_label
+        - '@setOption':
+            id: account_user_role_form_actions_update_bottom
+            optionName: text
+            optionValue: oro.customer.action.account_user_role.create_label

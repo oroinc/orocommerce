@@ -6,8 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\RFPBundle\Mailer\Processor;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Mailer\RequestRepresentativesNotifier;
@@ -181,11 +181,11 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     protected function configureRequestMock()
     {
         $this->owner = new User();
-        $this->accountUser = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountUser');
+        $this->accountUser = $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountUser');
         $this->accountUser->expects($this->any())
             ->method('getOwner')
             ->willReturn($this->owner);
-        $this->account = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountUser');
+        $this->account = $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountUser');
         $this->account->expects($this->any())
             ->method('getOwner')
             ->willReturn($this->owner);
