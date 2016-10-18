@@ -13,7 +13,7 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'oro.account.menu.account_user.label'
+                - 'oro.customer.menu.account_user.label'
                 - 'oro.frontend.order.entity_plural_label'
                 -
                     label: 'oro.order.navigation.view'

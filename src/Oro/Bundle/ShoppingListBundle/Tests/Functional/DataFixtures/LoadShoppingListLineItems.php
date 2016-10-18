@@ -10,9 +10,12 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 class LoadShoppingListLineItems extends AbstractFixture implements DependentFixtureInterface
 {
+    use UserUtilityTrait;
+
     const LINE_ITEM_1 = 'shopping_list_line_item.1';
     const LINE_ITEM_2 = 'shopping_list_line_item.2';
     const LINE_ITEM_3 = 'shopping_list_line_item.3';
@@ -101,10 +104,12 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
         $quantity,
         $referenceName
     ) {
+        $owner = $this->getFirstUser($manager);
         $item = new LineItem();
         $item->setNotes('Test Notes')
             ->setAccountUser($shoppingList->getAccountUser())
             ->setOrganization($shoppingList->getOrganization())
+            ->setOwner($owner)
             ->setShoppingList($shoppingList)
             ->setUnit($unit)
             ->setProduct($product)

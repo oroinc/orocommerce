@@ -3,12 +3,12 @@
 namespace Oro\Bundle\UPSBundle\Method;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Provider\ChannelType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport;
-
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class UPSShippingMethodProvider implements ShippingMethodProviderInterface
@@ -34,18 +34,26 @@ class UPSShippingMethodProvider implements ShippingMethodProviderInterface
     protected $priceRequestFactory;
 
     /**
+     * @var LocalizationHelper
+     */
+    protected $localizationHelper;
+
+    /**
      * @param UPSTransport $transportProvider
      * @param ManagerRegistry $doctrine
      * @param PriceRequestFactory $priceRequestFactory
+     * @param LocalizationHelper $localizationHelper
      */
     public function __construct(
         UPSTransport $transportProvider,
         ManagerRegistry $doctrine,
-        PriceRequestFactory $priceRequestFactory
+        PriceRequestFactory $priceRequestFactory,
+        LocalizationHelper $localizationHelper
     ) {
         $this->transportProvider = $transportProvider;
         $this->doctrine = $doctrine;
         $this->priceRequestFactory = $priceRequestFactory;
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
@@ -62,7 +70,12 @@ class UPSShippingMethodProvider implements ShippingMethodProviderInterface
             /** @var Channel $channel */
             foreach ($channels as $channel) {
                 if ($channel->isEnabled()) {
-                    $method = new UPSShippingMethod($this->transportProvider, $channel, $this->priceRequestFactory);
+                    $method = new UPSShippingMethod(
+                        $this->transportProvider,
+                        $channel,
+                        $this->priceRequestFactory,
+                        $this->localizationHelper
+                    );
                     $this->methods[$method->getIdentifier()] = $method;
                 }
             }
