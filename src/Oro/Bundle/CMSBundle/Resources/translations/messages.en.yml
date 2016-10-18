@@ -9,6 +9,7 @@ oro.cms:
         current_slug.label:     'Current slug'
         related_slugs.label:    'Related slugs'
         slugs.label:            'Slugs'
+        form.choose:            'Choose a Landing Page...'
     slug:
         update_to:             'Update to'
         redirect:              'Redirect visitors from %old_slug%'

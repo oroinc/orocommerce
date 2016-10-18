@@ -1,4 +1,40 @@
 datagrids:
+    cms-page-select-grid:
+        acl_resource: oro_cms_page_view
+        options:
+            entityHint: 'landing page'
+        source:
+            type:         orm
+            query:
+                select:
+                    - page.id
+                    - page.title
+                from:
+                    - { table: '%oro_cms.entity.page.class%', alias: page }
+        columns:
+            id:
+                label: oro.cms.page.id.label
+            title:
+                label: oro.cms.page.title.label
+        properties:
+            id: ~
+        sorters:
+            columns:
+                id:
+                    data_name: page.id
+                title:
+                    data_name: page.title
+            default:
+                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                id:
+                    type:      number
+                    data_name: page.id
+                title:
+                    type:      string
+                    data_name: page.title
+
     cms-login-page-grid:
         acl_resource: oro_cms_loginpage_view
         options:

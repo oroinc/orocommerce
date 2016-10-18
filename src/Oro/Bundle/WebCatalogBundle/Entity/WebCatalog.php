@@ -3,7 +3,10 @@
 namespace Oro\Bundle\WebCatalogBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendWebCatalog;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
@@ -20,13 +23,17 @@ use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
  *              "owner_type"="BUSINESS_UNIT",
  *              "owner_field_name"="owner",
  *              "owner_column_name"="business_unit_owner_id"
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
  *          }
  *     }
  * )
  */
-class WebCatalog extends ExtendWebCatalog implements WebCatalogInterface
+class WebCatalog extends ExtendWebCatalog implements WebCatalogInterface, DatesAwareInterface
 {
     use BusinessUnitAwareTrait;
+    use DatesAwareTrait;
 
     /**
      * @ORM\Id
@@ -39,6 +46,13 @@ class WebCatalog extends ExtendWebCatalog implements WebCatalogInterface
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $name;
 
@@ -46,6 +60,13 @@ class WebCatalog extends ExtendWebCatalog implements WebCatalogInterface
      * @var string
      *
      * @ORM\Column(name="description", type="text", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $description;
 

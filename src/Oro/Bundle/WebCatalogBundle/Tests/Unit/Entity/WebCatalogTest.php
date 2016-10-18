@@ -13,7 +13,9 @@ class WebCatalogTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertPropertyAccessors(new WebCatalog(), [
             ['name', 'Catalog'],
-            ['description', 'Catalog Description']
+            ['description', 'Catalog Description'],
+            ['createdAt', new \DateTime()],
+            ['updatedAt', new \DateTime()],
         ]);
     }
 }
