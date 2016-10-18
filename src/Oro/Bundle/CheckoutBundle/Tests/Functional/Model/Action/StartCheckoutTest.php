@@ -9,7 +9,7 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CheckoutBundle\Model\Action\StartCheckout;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
@@ -51,7 +51,7 @@ class StartCheckoutTest extends WebTestCase
 
         $this->registry = $this->getContainer()->get('doctrine');
         $this->user = $this->registry
-            ->getRepository('OroAccountBundle:AccountUser')
+            ->getRepository('OroCustomerBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
         $token = new UsernamePasswordToken($this->user, false, 'key');
         $this->client->getContainer()->get('security.token_storage')->setToken($token);

@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
@@ -94,7 +94,7 @@ class OrderTaxListenerTest extends WebTestCase
             );
         }
         /** @var AccountUser $accountUser */
-        $accountUser = $this->doctrine->getRepository('OroAccountBundle:AccountUser')->findOneBy([]);
+        $accountUser = $this->doctrine->getRepository('OroCustomerBundle:AccountUser')->findOneBy([]);
 
         /** @var PaymentTerm $paymentTerm */
         $paymentTerm = $this->doctrine->getRepository('OroPaymentBundle:PaymentTerm')->findOneBy([]);

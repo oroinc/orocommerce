@@ -14,8 +14,8 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    const ACCOUNT_CLASS = 'Oro\Bundle\AccountBundle\Entity\Account';
-    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountGroup';
+    const ACCOUNT_CLASS = 'Oro\Bundle\CustomerBundle\Entity\Account';
+    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountGroup';
 
     /**
      * @var PaymentTermType
