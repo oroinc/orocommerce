@@ -93,13 +93,23 @@ class FrontendProductPricesDataProvider
             return null;
         }
 
-        return $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
+        $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
             $this->priceListRequestHandler->getPriceListByAccount()->getId(),
             array_map(function (LineItem $lineItem) {
                 return $lineItem->getProduct()->getId();
             }, $lineItems),
             $this->userCurrencyManager->getUserCurrency()
         );
+
+        $pricesByUnit = [];
+        foreach ($prices as $productId => $productPrices) {
+            $pricesByUnit[$productId] = [];
+            foreach ($productPrices as $productPrice) {
+                $pricesByUnit[$productId][$productPrice['unit']][] = $productPrice;
+            }
+        }
+
+        return $pricesByUnit;
     }
 
     /**

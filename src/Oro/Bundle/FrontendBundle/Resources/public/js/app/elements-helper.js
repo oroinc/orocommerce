@@ -23,8 +23,8 @@ define(function(require) {
         initializeElements: function(options) {
             $.extend(true, this, _.pick(options, ['elements', 'modelElements']));
             this.$elements = this.$elements || {};
-            this.elementsEvents = this.elementsEvents || {};
-            this.modelEvents = this.modelEvents || {};
+            this.elementsEvents = $.extend({}, this.elementsEvents || {});
+            this.modelEvents = $.extend({}, this.modelEvents || {});
 
             this.initializeModelElements();
             this.delegateElementsEvents();
@@ -46,23 +46,23 @@ define(function(require) {
             _.each(this.modelElements, function(elementKey, modelKey) {
                 if (this.elementsEvents[elementKey + ' setModelValue'] === undefined) {
                     this.elementsEvents[elementKey + ' setModelValue'] = ['change', _.bind(function(e) {
-                        return this.setModelValueFromElement(modelKey, elementKey);
+                        return this.setModelValueFromElement(e, modelKey, elementKey);
                     }, this)];
                 }
 
                 if (this.modelEvents[modelKey + ' setElementValue'] === undefined) {
                     this.modelEvents[modelKey + ' setElementValue'] = ['change', _.bind(function(e) {
-                        return this.setElementValueFromModel(modelKey, elementKey);
+                        return this.setElementValueFromModel(e, modelKey, elementKey);
                     }, this)];
                 }
 
                 if (this.modelEvents[modelKey + ' focus'] === undefined) {
-                    this.modelEvents[modelKey + ' focus'] = ['focus', _.bind(function(e) {
+                    this.modelEvents[modelKey + ' focus'] = ['focus', _.bind(function() {
                         this.getElement(elementKey).focus();
                     }, this)];
                 }
 
-                this.setModelValueFromElement(modelKey, elementKey);
+                this.setModelValueFromElement(null, modelKey, elementKey);
             }, this);
         },
 
@@ -101,8 +101,8 @@ define(function(require) {
             if (!_.isFunction(callback)) {
                 callback = _.bind(this[callback], this);
             }
-            this.model.on(event + ':' + key, function(e) {
-                callback(e, key);
+            this.model.on(event + ':' + key, function(model, attribute, options) {
+                callback(options || {});
             }, this);
         },
 
@@ -136,6 +136,10 @@ define(function(require) {
                 return null;
             }
 
+            if (selector instanceof $) {
+                return selector;
+            }
+
             var $context;
             if (!_.isArray(selector)) {
                 //selector = '[data-name="element"]'
@@ -153,8 +157,9 @@ define(function(require) {
             return $context.find(selector);
         },
 
-        setModelValueFromElement: function(modelKey, elementKey) {
+        setModelValueFromElement: function(e, modelKey, elementKey) {
             var $element = this.getElement(elementKey);
+            var element = $element.get(0);
             if (!$element.length) {
                 return false;
             }
@@ -164,12 +169,16 @@ define(function(require) {
             }
 
             var validator = $element.closest('form').validate();
-            if (!validator || validator.element($element.get(0))) {
-                this.model.set(modelKey, value);
+            if (!validator || validator.element(element)) {
+                var options = {
+                    event: e
+                };
+                options.manually = Boolean(e && e.originalEvent && e.currentTarget === element);
+                this.model.set(modelKey, value, options);
             }
         },
 
-        setElementValueFromModel: function(modelKey, elementKey) {
+        setElementValueFromModel: function(e, modelKey, elementKey) {
             var $element = this.getElement(elementKey);
             if (!$element.length) {
                 return false;
