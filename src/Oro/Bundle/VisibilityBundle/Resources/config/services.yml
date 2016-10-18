@@ -68,18 +68,6 @@ services:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
-    oro_visibility.form.event_listener.category_visibility_post_submit:
-        class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\CategoryVisibilityPostSubmitListener'
-        parent: oro_visibility.form.event_listener.abstract_visibility_post_submit
-        tags:
-            - { name: kernel.event_listener, event: oro_catalog.category.edit, method: onPostSubmit }
-
-    oro_visibility.form.event_listener.product_visibility_post_submit:
-        class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\ProductVisibilityPostSubmitListener'
-        parent: oro_visibility.form.event_listener.abstract_visibility_post_submit
-        tags:
-            - { name: kernel.event_listener, event: oro_product.product.edit, method: onPostSubmit }
-
     oro.visibility.catalog.visibility.change_set.validatior:
         class: 'Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSetValidator'
         tags:

@@ -28,7 +28,7 @@ class AccountCategoryVisibility implements VisibilityInterface, ScopeAwareInterf
     const PARENT_CATEGORY = 'parent_category';
     const CATEGORY = 'category';
     const ACCOUNT_GROUP = 'account_group';
-    const CATEGORY_VISIBILITY = 'category_visibility';
+    const VISIBILITY_TYPE = 'account_category_visibility';
 
     /**
      * @var integer
@@ -177,6 +177,6 @@ class AccountCategoryVisibility implements VisibilityInterface, ScopeAwareInterf
      */
     public static function getScopeType()
     {
-        return self::CATEGORY_VISIBILITY;
+        return self::VISIBILITY_TYPE;
     }
 }

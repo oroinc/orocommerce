@@ -1,19 +1,38 @@
 services:
-    oro_visibility.form.event_listener.category.post_set_data:
-        class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener'
-        parent: oro_visibility.form.event_listener.abstract_visibility
-
-    oro_visibility.form.event_listener.abstract_visibility:
-        class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\AbstractVisibilityListener'
-        abstract: true
+    oro_visibility.form.visibility_form_field_data_provider:
+        public: false
+        class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityFormFieldDataProvider'
         arguments:
             - '@doctrine'
             - '@oro_scope.scope_manager'
             - '@oro_scope.for_scope_criteria_resolver'
 
-    oro_visibility.form.event_listener.abstract_visibility_post_submit:
-        class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\AbstractPostSubmitVisibilityListener'
-        parent: oro_visibility.form.event_listener.abstract_visibility
+    oro_visibility.form.event_listener.visibility_post_set_data_listener:
+        class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener'
+        arguments:
+            - '@oro_visibility.form.visibility_form_field_data_provider'
+
+    oro_visibility.form.event_listener.visibility_post_submit_data_handler:
+        class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityFormPostSubmitDataHandler'
+        arguments:
+            - '@doctrine'
+            - '@oro_visibility.form.visibility_form_field_data_provider'
+
+    oro_visibility.form.event_listener.category_visibility_post_submit:
+        class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\CategoryVisibilityPostSubmitListener'
+        arguments:
+            - '@oro_visibility.form.event_listener.visibility_post_submit_data_handler'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_catalog.category.edit, method: onPostSubmit }
+
+    oro_visibility.form.event_listener.product_visibility_post_submit:
+        class: 'Oro\Bundle\VisibilityBundle\Form\EventListener\ProductVisibilityPostSubmitListener'
+        arguments:
+            - '@oro_visibility.form.event_listener.visibility_post_submit_data_handler'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product.edit, method: onPostSubmit }
 
     oro_visibility.form.extension.category_type:
         class: 'Oro\Bundle\VisibilityBundle\Form\Extension\CategoryFormExtension'
@@ -33,7 +52,7 @@ services:
     oro_visibility.form.type.entity_visibility_type:
         class: 'Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType'
         arguments:
-            - '@oro_visibility.form.event_listener.category.post_set_data'
+            - '@oro_visibility.form.event_listener.visibility_post_set_data_listener'
             - '@oro_visibility.provider.visibility_choices'
         tags:
             - { name: form.type, alias: oro_visibility_entity_visibility_type }

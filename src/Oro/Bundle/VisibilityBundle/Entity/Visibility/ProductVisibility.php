@@ -25,7 +25,7 @@ class ProductVisibility implements VisibilityInterface, ScopeAwareInterface
 {
     const CATEGORY = 'category';
     const CONFIG = 'config';
-    const PRODUCT_VISIBILITY = 'product_visibility';
+    const VISIBILITY_TYPE = 'product_visibility';
 
     /**
      * @var integer
@@ -176,6 +176,6 @@ class ProductVisibility implements VisibilityInterface, ScopeAwareInterface
      */
     public static function getScopeType()
     {
-        return self::PRODUCT_VISIBILITY;
+        return self::VISIBILITY_TYPE;
     }
 }

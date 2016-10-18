@@ -25,7 +25,7 @@ class CategoryVisibility implements VisibilityInterface, ScopeAwareInterface
 {
     const PARENT_CATEGORY = 'parent_category';
     const CONFIG = 'config';
-    const CATEGORY_VISIBILITY = 'category_visibility';
+    const VISIBILITY_TYPE = 'category_visibility';
 
     /**
      * @var integer
@@ -178,6 +178,6 @@ class CategoryVisibility implements VisibilityInterface, ScopeAwareInterface
      */
     public static function getScopeType()
     {
-        return self::CATEGORY_VISIBILITY;
+        return self::VISIBILITY_TYPE;
     }
 }
