@@ -1,6 +1,7 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroShippingBundle:ShippingRule:macros.html.twig' as ShipRuleMacro %}
 
 {% oro_title_set({params : {"%label%": entity.name|default('N/A') }}) %}
 
@@ -38,7 +39,7 @@
                 {% if entity.methodConfigs.count %}
                     {{ UI.renderHtmlProperty(
                     'oro.shipping.shippingrule.method_configs.label'|trans,
-                    UI.renderList(entity.methodConfigs)) }}
+                    ShipRuleMacro.renderShippingMethodsConfigs(entity.methodConfigs)) }}
                 {% endif %}
             </div>
             <div class="responsive-block">

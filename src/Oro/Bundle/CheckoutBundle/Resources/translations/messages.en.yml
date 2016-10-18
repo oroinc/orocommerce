@@ -98,8 +98,6 @@ oro:
             step.label: '%step_label%'
 
         workflow:
-            condition:
-                shipping_method_supports.message: Shipping Method is not supported
             view_options.label: View Options for this Order
             unavailable_transition.message: 'This action is not available, reason:'
             b2b_flow_checkout:

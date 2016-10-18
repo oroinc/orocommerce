@@ -35,6 +35,11 @@ class DefaultCurrencySelectionTypeTest extends FormIntegrationTestCase
     protected $requestStack;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper
+     */
+    protected $currencyNameHelper;
+
+    /**
      * {@inheritdoc}
      */
     public function setUp()
@@ -47,7 +52,12 @@ class DefaultCurrencySelectionTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+        $this->configManager = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Config\CurrencyConfigManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->currencyNameHelper = $this
+            ->getMockBuilder('Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -68,7 +78,8 @@ class DefaultCurrencySelectionTypeTest extends FormIntegrationTestCase
                         $this->configManager,
                         $this->localeSettings,
                         $this->translator,
-                        $this->requestStack
+                        $this->requestStack,
+                        $this->currencyNameHelper
                     ),
                 ],
                 []
@@ -86,8 +97,7 @@ class DefaultCurrencySelectionTypeTest extends FormIntegrationTestCase
     public function testSubmitForm(array $defaultCurrency, array $enableCurrencies, $submittedValue, $isValid)
     {
         $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_currency.allowed_currencies')
+            ->method('getCurrencyList')
             ->willReturn(['USD', 'CAD', 'EUR']);
 
         $currentRequest = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
@@ -203,7 +213,8 @@ class DefaultCurrencySelectionTypeTest extends FormIntegrationTestCase
             $this->configManager,
             $this->localeSettings,
             $this->translator,
-            $this->requestStack
+            $this->requestStack,
+            $this->currencyNameHelper
         );
         $this->assertEquals(DefaultCurrencySelectionType::NAME, $formType->getName());
     }

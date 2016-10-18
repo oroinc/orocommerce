@@ -15,10 +15,20 @@
                 margin-bottom: $offset-y;
             }
         }
+
+        .select {
+            width: 100%;
+        }
     }
 
     &__group-column {
         padding-left: $offset-x;
+    }
+}
+
+@include breakpoint('tablet') {
+    .grid__column--2 {
+        width: 50%;
     }
 }
 

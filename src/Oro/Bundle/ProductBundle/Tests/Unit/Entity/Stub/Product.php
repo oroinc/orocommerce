@@ -77,7 +77,10 @@ class Product extends BaseProduct
         if (array_key_exists($name, $this->localizedFields)) {
             return $this->localizedFieldSet($this->localizedFields, $name, $value);
         } else {
-            $this->getPropertyAccessor()->setValue($this, $name, $value);
+            //PropertyAccessor::setValue() not work in this case
+            $reflection = new \ReflectionProperty(self::class, $name);
+            $reflection->setAccessible(true);
+            $reflection->setValue($this, $value);
         }
 
         return null;

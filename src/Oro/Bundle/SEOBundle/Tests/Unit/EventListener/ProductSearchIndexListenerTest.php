@@ -37,44 +37,33 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getLocalizationsByWebsiteId')
             ->willReturn($localizations);
 
-        $event->expects($this->at(2))
-            ->method('appendToPlaceholderField')
-            ->with(
-                1,
-                'all_text',
-                'Polish metaTitle Polish meta description Polish meta keywords',
-                LocalizationIdPlaceholder::NAME,
-                1
-            );
-
-        $event->expects($this->at(3))
-            ->method('appendToPlaceholderField')
-            ->with(
-                1,
-                'all_text',
-                'English metaTitle English meta description English meta keywords',
-                LocalizationIdPlaceholder::NAME,
-                2
-            );
-
-        $event->expects($this->at(4))
-            ->method('appendToPlaceholderField')
-            ->with(
-                2,
-                'all_text',
-                'Polish metaTitle Polish meta description Polish meta keywords',
-                LocalizationIdPlaceholder::NAME,
-                1
-            );
-
-        $event->expects($this->at(5))
-            ->method('appendToPlaceholderField')
-            ->with(
-                2,
-                'all_text',
-                'English metaTitle English meta description English meta keywords',
-                LocalizationIdPlaceholder::NAME,
-                2
+        $event->expects($this->exactly(4))
+            ->method('addPlaceholderField')
+            ->withConsecutive(
+                [
+                    1,
+                    'all_text_localization',
+                    'Polish metaTitle Polish meta description Polish meta keywords',
+                    [LocalizationIdPlaceholder::NAME => 1],
+                ],
+                [
+                    1,
+                    'all_text_localization',
+                    'English metaTitle English meta description English meta keywords',
+                    [LocalizationIdPlaceholder::NAME => 2],
+                ],
+                [
+                    2,
+                    'all_text_localization',
+                    'Polish metaTitle Polish meta description Polish meta keywords',
+                    [LocalizationIdPlaceholder::NAME => 1],
+                ],
+                [
+                    2,
+                    'all_text_localization',
+                    'English metaTitle English meta description English meta keywords',
+                    [LocalizationIdPlaceholder::NAME => 2],
+                ]
             );
 
         $propertyAccessor = new PropertyAccessor();

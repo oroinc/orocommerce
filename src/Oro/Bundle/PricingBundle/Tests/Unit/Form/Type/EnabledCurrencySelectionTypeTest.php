@@ -26,14 +26,18 @@ class EnabledCurrencySelectionTypeTest extends FormIntegrationTestCase
     protected $localeSettings;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper
+     */
+    protected $currencyNameHelper;
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
         parent::setUp();
 
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->setMethods(['get'])
+        $this->configManager = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Config\CurrencyConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -46,7 +50,16 @@ class EnabledCurrencySelectionTypeTest extends FormIntegrationTestCase
             ->method('getLocale')
             ->willReturn(Locale::getDefault());
 
-        $this->formType = new EnabledCurrencySelectionType($this->configManager, $this->localeSettings);
+        $this->currencyNameHelper = $this
+            ->getMockBuilder('Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->formType = new EnabledCurrencySelectionType(
+            $this->configManager,
+            $this->localeSettings,
+            $this->currencyNameHelper
+        );
     }
 
     public function testGetName()

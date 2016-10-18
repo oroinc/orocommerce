@@ -176,29 +176,32 @@ define(function(require) {
         onAddFormShoppingListChange: function(e) {
             var $addFormQty = this.getElement('addFormQty');
             var selectedShoppingList = this.getSelectedShoppingList();
+            var selectedUnit = this.getSelectedUnit();
+            var quantity = this.getMinimumQuantity(selectedUnit);
 
-            $addFormQty.val(1);
-            
             if (selectedShoppingList && selectedShoppingList.line_items) {
-                $addFormQty.val(selectedShoppingList.line_items[0].quantity);
+                quantity = selectedShoppingList.line_items[0].quantity;
                 this.setSelectedUnit(selectedShoppingList.line_items[0].unit);
             }
+
+            $addFormQty.val(quantity);
         },
 
         onAddFormUnitChange: function(e) {
             var $addFormQty = this.getElement('addFormQty');
             var selectedShoppingList = this.getSelectedShoppingList();
             var selectedUnit = this.getSelectedUnit();
-
-            $addFormQty.val(1);
+            var quantity = this.getMinimumQuantity(selectedUnit);
 
             if (selectedShoppingList && selectedShoppingList.line_items) {
                 var selectedLineItem = _.findWhere(selectedShoppingList.line_items, {unit: selectedUnit});
 
                 if(selectedLineItem && selectedLineItem.quantity) {
-                    $addFormQty.val(selectedLineItem.quantity);
+                    quantity = selectedLineItem.quantity;
                 }
             }
+
+            $addFormQty.val(quantity);
         },
 
         onAddFormAccept: function() {
@@ -373,6 +376,17 @@ define(function(require) {
 
         setSelectedUnit: function(unit) {
             this.getElement('addFormUnit').val(unit).inputWidget('refresh');
+        },
+
+        getMinimumQuantity: function(unit) {
+            var quantity = 1;
+            var prices = _.filter(this.model.get('prices') || {}, function(price) {
+                return price.unit === unit;
+            });
+            if (prices.length) {
+                quantity = _.min(prices, 'quantity').quantity;
+            }
+            return quantity;
         },
 
         edit: function(e) {
