@@ -114,7 +114,7 @@ class CategoryProcessor implements MessageProcessorInterface
                     $message->getBody()
                 )
             );
-
+            throw $e;
             return self::REJECT;
         } catch (\Exception $e) {
             $em->rollback();
@@ -122,7 +122,7 @@ class CategoryProcessor implements MessageProcessorInterface
                 'Unexpected exception occurred during Category visibility resolve',
                 ['exception' => $e]
             );
-
+            throw $e;
             if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
                 return self::REQUEUE;
             } else {
