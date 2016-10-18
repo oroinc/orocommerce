@@ -132,8 +132,8 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
                     'lastName' => 'Doe',
                     'email' => 'johndoe@example.com',
                     'plainPassword' => [
-                        'first' => '123456',
-                        'second' => '123456'
+                        'first' => '123456Q',
+                        'second' => '123456Q'
                     ]
                 ],
                 'expectedData' => $expectedEntity,
@@ -148,8 +148,8 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
                     'lastName' => 'Doe',
                     'email' => 'johndoe@example.com',
                     'plainPassword' => [
-                        'first' => '123456',
-                        'second' => '123456'
+                        'first' => '123456Q',
+                        'second' => '123456Q'
                     ]
                 ],
                 'expectedData' => $expectedEntity,
