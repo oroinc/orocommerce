@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\WebCatalogBundle;
 
+use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\WebCatalogCompilerPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroWebCatalogBundle extends Bundle
@@ -17,5 +19,14 @@ class OroWebCatalogBundle extends Bundle
         }
 
         return $this->extension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+        $container->addCompilerPass(new WebCatalogCompilerPass());
     }
 }

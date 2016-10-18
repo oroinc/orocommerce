@@ -1,2 +1,7 @@
 parameters:
     oro_web_catalog.entity.web_catalog.class: Oro\Bundle\WebCatalogBundle\Entity\WebCatalog
+
+services:
+    oro_web_catalog.page_type.registry:
+        class: 'Oro\Bundle\WebCatalogBundle\PageType\PageTypeRegistry'
+        public: false
