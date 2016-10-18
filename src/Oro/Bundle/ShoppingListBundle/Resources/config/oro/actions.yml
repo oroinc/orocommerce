@@ -234,8 +234,10 @@ operations:
             icon: icon-briefcase
         preconditions:
             '@and':
+                - '@route_exists': oro_rfp_frontend_request_create
+                - '@service_exists': oro_rfp.form.type.extension.frontend_request_data_storage
                 - '@has_elements': $lineItems
-                - '@equal': [$.data.isAllowedRFP, true]
+                - '@rfp_allowed': $lineItems
         actions:
             - '@call_service_method':
                 service: oro_shopping_list.service.product_data_storage

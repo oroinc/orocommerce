@@ -4,9 +4,9 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AccountBundle\Entity\AccountAddress;
-use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
-use Oro\Bundle\AccountBundle\Entity\AddressPhoneAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\AddressPhoneAwareInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 
 abstract class AbstractAddressDiffMapperTest extends AbstractCheckoutDiffMapperTest
