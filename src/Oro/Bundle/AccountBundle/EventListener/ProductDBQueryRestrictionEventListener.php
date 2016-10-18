@@ -16,16 +16,16 @@ class ProductDBQueryRestrictionEventListener
     /**
      * @var QueryBuilderModifierInterface
      */
-    private $dbModifier;
+    private $modifier;
 
     /**
      * @param FrontendHelper                $frontendHelper
-     * @param QueryBuilderModifierInterface $dbModifier
+     * @param QueryBuilderModifierInterface $modifier
      */
-    public function __construct(FrontendHelper $frontendHelper, QueryBuilderModifierInterface $dbModifier)
+    public function __construct(FrontendHelper $frontendHelper, QueryBuilderModifierInterface $modifier)
     {
         $this->frontendHelper = $frontendHelper;
-        $this->dbModifier     = $dbModifier;
+        $this->modifier       = $modifier;
     }
 
     /**
@@ -34,7 +34,7 @@ class ProductDBQueryRestrictionEventListener
     public function onDBQuery(ProductDBQueryRestrictionEvent $event)
     {
         if ($this->frontendHelper->isFrontendRequest()) {
-            $this->dbModifier->modify($event->getQueryBuilder());
+            $this->modifier->modify($event->getQueryBuilder());
         }
     }
 }
