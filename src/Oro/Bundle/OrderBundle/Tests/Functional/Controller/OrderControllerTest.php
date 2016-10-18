@@ -1,7 +1,7 @@
 <?php
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -109,8 +109,8 @@ class OrderControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
                 'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             ]
         );
