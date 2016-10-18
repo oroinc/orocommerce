@@ -110,4 +110,18 @@ class WebCatalogController extends Controller
             $this->get('translator')->trans('oro.webcatalog.controller.webcatalog.saved.message')
         );
     }
+
+    /**
+     * @Route("/update-tree/{id}", name="oro_web_catalog_update_tree", requirements={"id"="\d+"})
+     *
+     * @AclAncestor("oro_web_catalog_update")
+     * @Template("OroWebCatalogBundle:WebCatalog:update.html.twig")
+     *
+     * @param WebCatalog $webCatalog
+     * @return array
+     */
+    public function updateTreeAction(WebCatalog $webCatalog)
+    {
+        return [];
+    }
 }

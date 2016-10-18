@@ -6,7 +6,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
-class PageTreeHandler extends AbstractTreeHandler
+class ContentNodeTreeHandler extends AbstractTreeHandler
 {
     /**
      * @param ContentNode $entity

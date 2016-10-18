@@ -3,6 +3,20 @@ parameters:
     oro_web_catalog.entity.content_node.class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode
 
 services:
+    oro_web_catalog.content_node_tree_handler:
+        class: Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler
+        arguments:
+            - '%oro_web_catalog.entity.content_node.class%'
+            - '@doctrine'
+
+    oro_web_catalog.twig.extension:
+        class: Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension
+        public: false
+        arguments:
+            - '@oro_web_catalog.content_node_tree_handler'
+        tags:
+            - { name: twig.extension }
+
     oro_web_catalog.event_listener.orm.category_listener:
         class: 'Oro\Bundle\WebCatalogBundle\EventListener\ContentNodeListener'
         public: false
