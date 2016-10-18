@@ -1,0 +1,17 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroAccountBundle:layouts:default/page/main_menu_logged.html.twig'
+        - '@addTree':
+            items:
+                header_row_account:
+                    blockType: link
+                    options:
+                        route_name: oro_account_frontend_account_user_profile
+            tree:
+                header_row:
+                    header_row_account:
+        - '@move':
+            id: header_row_shopping
+            siblingId: header_row_account
+    conditions: 'context["is_logged_in"]'
