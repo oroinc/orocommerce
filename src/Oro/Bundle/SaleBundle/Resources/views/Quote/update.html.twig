@@ -37,7 +37,7 @@
     {% set ownerSelectors %}
         <div data-page-component-module="orosale/js/app/components/related-data-component"
              data-page-component-options="{{ {formName: form.vars.name}|json_encode }}">
-            <div data-page-component-module="oroaccount/js/app/components/account-selection-component">
+            <div data-page-component-module="orocustomer/js/app/components/account-selection-component">
                 {{ form_row(form.account) }}
                 {{ form_row(form.accountUser) }}
             </div>

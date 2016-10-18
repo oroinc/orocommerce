@@ -12,8 +12,8 @@ class DeleteMessageTextGenerator
 {
     const ACCOUNT_GROUP_GRID_NAME = 'account-groups-grid';
     const ACCOUNT_GRID_NAME = 'account-accounts-grid';
-    const ACCOUNT_GROUP_GRID_ROUTE = 'oro_account_group_index';
-    const ACCOUNT_GRID_ROUTE = 'oro_account_index';
+    const ACCOUNT_GROUP_GRID_ROUTE = 'oro_customer_account_group_index';
+    const ACCOUNT_GRID_ROUTE = 'oro_customer_account_index';
 
     /** @var RouterInterface  */
     protected $router;
@@ -81,7 +81,7 @@ class DeleteMessageTextGenerator
             $paymentTerm->getId(),
             static::ACCOUNT_GROUP_GRID_NAME,
             static::ACCOUNT_GROUP_GRID_ROUTE,
-            'oro.account.accountgroup.entity_label'
+            'oro.customer.accountgroup.entity_label'
         );
     }
 
@@ -99,7 +99,7 @@ class DeleteMessageTextGenerator
             $paymentTerm->getId(),
             static::ACCOUNT_GRID_NAME,
             static::ACCOUNT_GRID_ROUTE,
-            'oro.account.entity_label'
+            'oro.customer.account.entity_label'
         );
     }
 

@@ -2,7 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Async\NotificationMessages;
 use Oro\Bundle\PricingBundle\Async\PriceListProcessor;
 use Oro\Bundle\PricingBundle\Async\PriceRuleProcessor;
@@ -21,7 +22,6 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
@@ -59,7 +59,7 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
     protected $translator;
 
     /**
-     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $registry;
 
@@ -72,7 +72,7 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->logger = $this->getMock(LoggerInterface::class);
-        $this->registry = $this->getMock(RegistryInterface::class);
+        $this->registry = $this->getMock(ManagerRegistry::class);
 
         $this->messenger = $this->getMockBuilder(Messenger::class)
             ->disableOriginalConstructor()
@@ -94,6 +94,19 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $data = ['test' => 1];
         $body = json_encode($data);
+
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
 
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
@@ -126,6 +139,19 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $exception = new \Exception('Some error');
 
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
+
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->getMock(MessageInterface::class);
         $message->expects($this->any())
@@ -156,6 +182,19 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 1];
         $body = json_encode($data);
         $exception = new \Exception('Some error');
+
+        $em = $this->getMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($em);
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
@@ -242,14 +281,32 @@ class PriceRuleProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('buildByPriceList')
             ->with($priceList, $product);
 
-        $manager = $this->getMock(ObjectManager::class);
-        $manager->expects($this->once())->method('refresh');
+        $manager = $this->getMock(EntityManagerInterface::class);
+
+        $manager->expects($this->once())
+            ->method('refresh');
+
         $repository = $this->getMockBuilder(PriceListRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $repository->expects($this->once())->method('updatePriceListsActuality');
-        $manager->method('getRepository')->willReturn($repository);
-        $this->registry->method('getManagerForClass')->willReturn($manager);
+        
+        $repository->expects($this->once())
+            ->method('updatePriceListsActuality');
+
+        $manager->expects($this->once())
+            ->method('beginTransaction');
+
+        $manager->expects(($this->once()))
+            ->method('commit');
+
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($repository);
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(PriceList::class)
+            ->willReturn($manager);
 
         $this->messenger->expects($this->once())
             ->method('remove')

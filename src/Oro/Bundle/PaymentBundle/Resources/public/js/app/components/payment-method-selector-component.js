@@ -44,11 +44,12 @@ define(function(require) {
             this.options = _.extend(this.options, options);
 
             this.$el = this.options._sourceElement;
-            this.$el.on('change', this.options.selectors.radio, _.bind(this.updateForms, this));
+            this.$el.on('change', this.options.selectors.radio, $.proxy(this.updateForms, this));
 
             mediator.on('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
             mediator.on('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
-            mediator.on('checkout:payment:method:get-value', this.onGetValue, this);
+            mediator.on('checkout:payment:remove-filled-form', this.removeFilledForm, this);
+            mediator.on('checkout:payment:method:refresh', this.refreshPaymentMethod, this);
 
             this.$el.on(
                 this.options.redirectEvent,
@@ -77,7 +78,8 @@ define(function(require) {
 
             mediator.off('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
             mediator.off('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
-            mediator.off('checkout:payment:method:get-value', this.onGetValue, this);
+            mediator.off('checkout:payment:remove-filled-form', this.removeFilledForm, this);
+            mediator.off('checkout:payment:method:refresh', this.refreshPaymentMethod, this);
 
             PaymentMethodSelectorComponent.__super__.dispose.call(this);
         },
@@ -86,7 +88,7 @@ define(function(require) {
             var $element =  $(e.target);
             this.$el.find(this.options.selectors.subform).hide();
             $element.parents(this.options.selectors.itemContainer).find(this.options.selectors.subform).show();
-            mediator.trigger('checkout:payment:method:changed', {paymentMethod: $element.val()});
+            this.refreshPaymentMethod();
         },
 
         beforeHideFilledForm: function() {
@@ -99,12 +101,23 @@ define(function(require) {
             }
         },
 
-        /**
-         * @param {Object} object
-         */
-        onGetValue: function(object) {
+        removeFilledForm: function() {
+            // Remove hidden form js component
+            if (!this.disposable) {
+                this.disposable = true;
+                this.dispose();
+            }
+        },
+
+        refreshPaymentMethod: function() {
+            var actualMethod = this.getPaymentMethod();
+
+            mediator.trigger('checkout:payment:method:changed', {paymentMethod: actualMethod});
+        },
+
+        getPaymentMethod: function() {
             var $checkedRadio = this.$el.find(this.options.selectors.radio).filter(':checked');
-            object.value = $checkedRadio.val();
+            return $checkedRadio.val();
         }
     });
 

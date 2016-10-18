@@ -46,7 +46,6 @@ class InvoiceFormListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(100, $invoice->getSubtotal());
         $this->assertSame(self::UNIT_CODE, $invoice->getLineItems()[0]->getProductUnitCode());
         $this->assertSame(self::SKU, $invoice->getLineItems()[0]->getProductSku());
-
     }
 
     /**

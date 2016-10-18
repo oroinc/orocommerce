@@ -15,7 +15,7 @@ use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\Action\Model\ContextAccessor;
 
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -267,12 +267,9 @@ class StartCheckout extends AbstractAction
         /** @var AccountUser $user */
         $user = $this->tokenStorage->getToken()->getUser();
         $account = $user->getAccount();
-        $owner = $account->getOwner();
         $organization = $account->getOrganization();
         $defaultData = [
-            'accountUser' => $user,
             'account' => $account,
-            'owner' => $owner,
             'organization' => $organization,
             'website' => $this->websiteManager->getCurrentWebsite(),
             'currency' => $this->currencyManager->getUserCurrency()

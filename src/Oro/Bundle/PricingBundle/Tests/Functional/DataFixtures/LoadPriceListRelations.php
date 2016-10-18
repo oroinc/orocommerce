@@ -6,8 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
@@ -25,7 +25,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
             'priceLists' => [
                 [
                     'priceList' => 'price_list_6',
-                    'priority' => 50,
+                    'priority' => 200,
                     'mergeAllowed' => false,
                 ],
                 [
@@ -35,7 +35,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                 ],
                 [
                     'priceList' => 'price_list_3',
-                    'priority' => 200,
+                    'priority' => 50,
                     'mergeAllowed' => false,
                 ],
             ],
@@ -43,24 +43,24 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                 'account.level_1_1' => [ // No group
                     [
                         'priceList' => 'price_list_1',
-                        'priority' => 100,
+                        'priority' => 300,
                         'mergeAllowed' => true,
                     ],
                     [
                         'priceList' => 'price_list_2',
-                        'priority' => 300,
+                        'priority' => 100,
                         'mergeAllowed' => false,
                     ]
                 ],
                 'account.level_1.3' => [// Assigned to group1
                     [
                         'priceList' => 'price_list_6',
-                        'priority' => 50,
+                        'priority' => 100,
                         'mergeAllowed' => false,
                     ],
                     [
                         'priceList' => 'price_list_4',
-                        'priority' => 100,
+                        'priority' => 50,
                         'mergeAllowed' => true,
                     ],
                     [
@@ -81,7 +81,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                 'account_group.group1' => [
                     [
                         'priceList' => 'price_list_6',
-                        'priority' => 50,
+                        'priority' => 500,
                         'mergeAllowed' => false,
                     ],
                     [
@@ -91,7 +91,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                     ],
                     [
                         'priceList' => 'price_list_5',
-                        'priority' => 500,
+                        'priority' => 50,
                         'mergeAllowed' => false,
                     ],
                 ],
@@ -147,8 +147,8 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
     {
         return [
             'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
             'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
         ];
     }

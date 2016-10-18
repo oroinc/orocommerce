@@ -2,7 +2,7 @@ layout:
     imports:
         -
             id: oro_checkout_grid
-            root: content
+            root: checkouts_container
             namespace: checkouts
 
     actions:
@@ -10,8 +10,22 @@ layout:
             themes: 'OroCheckoutBundle:layouts:default/oro_order_frontend_index/layout.html.twig'
 
         - '@add':
-            id: checkouts_title
+            id: order_history
             parentId: content
+            blockType: text
+            prepend: true
+            options:
+                text: 'oro.checkout.order_history.label'
+
+        - '@add':
+            id: checkouts_container
+            parentId: content
+            blockType: container
+            siblingId: order_history
+
+        - '@add':
+            id: checkouts_title
+            parentId: checkouts_container
             blockType: text
             siblingId: ~
             prepend: true
