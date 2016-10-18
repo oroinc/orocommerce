@@ -61,12 +61,12 @@ class PageController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('oro_cms.entity.page.class')
+            'entity_class' => Page::class
         ];
     }
 
     /**
-     * @Route("/create/{id}", name="oro_cms_page_create", requirements={"id"="\d+"}, defaults={"id"=null})
+     * @Route("/create", name="oro_cms_page_create")
      * @Template("OroCMSBundle:Page:update.html.twig")
      * @Acl(
      *      id="oro_cms_page_create",
@@ -75,20 +75,11 @@ class PageController extends Controller
      *      permission="CREATE"
      * )
      *
-     * @param int|null $id
      * @return array|RedirectResponse
      */
-    public function createAction($id)
+    public function createAction()
     {
         $page = new Page();
-        if ($id) {
-            $parentPage = $this->getDoctrine()->getRepository('OroCMSBundle:Page')->find($id);
-            if (!$parentPage) {
-                throw new \LogicException(sprintf('Page with identifier %s does not exist', $id));
-            }
-            $page->setParentPage($parentPage);
-        }
-
         return $this->update($page);
     }
 
