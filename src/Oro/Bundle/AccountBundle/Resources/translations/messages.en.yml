@@ -472,7 +472,7 @@ oro.account:
             access-level:
                 BASIC: 'Individual'
                 LOCAL: 'All'
-                DEEP: 'Not supported'
+                DEEP: 'Сorporate'
                 GLOBAL: 'Not supported'
                 SYSTEM: 'System'
                 NONE: 'None'
