@@ -12,12 +12,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 /**
  * @ORM\Table(
  *     name="oro_inventory_level",
- *     uniqueConstraints={
- *          @ORM\UniqueConstraint(
- *              name="uidx_oro_inventory_lev",
- *              columns={"product_unit_precision_id"}
- *          )
- *      }
  * )
  * @ORM\Entity
  * @Config(
