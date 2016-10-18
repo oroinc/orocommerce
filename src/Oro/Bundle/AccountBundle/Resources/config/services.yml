@@ -685,9 +685,15 @@ services:
         arguments:
             - "@oro_frontend.request.frontend_helper"
             - "@oro_account.model.product_visibility_query_builder_modifier"
-            - "@oro_account.model.product_visibility_search_query_modifier"
         tags:
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
+
+    oro_account.event_listener.product_search_query_restriction:
+        class: 'Oro\Bundle\AccountBundle\EventListener\ProductSearchQueryRestrictionEventListener'
+        arguments:
+            - "@oro_frontend.request.frontend_helper"
+            - "@oro_account.model.product_visibility_search_query_modifier"
+        tags:
             - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
 
     oro_account.entity.entity_listener.category_listener:

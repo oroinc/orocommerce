@@ -12,9 +12,10 @@ use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\AccountBundle\Visibility\ProductVisibilityTrait;
+use Oro\Bundle\SearchBundle\Query\Modifier\QueryBuilderModifierInterface;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
-class ProductVisibilityQueryBuilderModifier
+class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInterface
 {
     use ProductVisibilityTrait;
 
@@ -52,7 +53,7 @@ class ProductVisibilityQueryBuilderModifier
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
+     * {@inheritdoc}
      */
     public function modify(QueryBuilder $queryBuilder)
     {

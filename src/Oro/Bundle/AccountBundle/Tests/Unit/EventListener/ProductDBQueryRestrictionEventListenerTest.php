@@ -5,12 +5,9 @@ namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
-use Oro\Bundle\AccountBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\AccountBundle\EventListener\ProductDBQueryRestrictionEventListener;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
-use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
-use Oro\Bundle\SearchBundle\Query\Query;
 
 class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,11 +27,6 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_Test
     private $listener;
 
     /**
-     * @var ProductVisibilitySearchQueryModifier|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $searchQueryModifier;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -44,14 +36,10 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_Test
         $this->dbModifier          = $this
             ->getMockBuilder(ProductVisibilityQueryBuilderModifier::class)
             ->disableOriginalConstructor()->getMock();
-        $this->searchQueryModifier = $this
-            ->getMockBuilder(ProductVisibilitySearchQueryModifier::class)
-            ->disableOriginalConstructor()->getMock();
 
         $this->listener = new ProductDBQueryRestrictionEventListener(
             $this->frontendHelper,
-            $this->dbModifier,
-            $this->searchQueryModifier
+            $this->dbModifier
         );
     }
 
@@ -91,25 +79,6 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_Test
         $this->listener->onDBQuery($event);
     }
 
-    public function testOnSearchQuery()
-    {
-        $this->setupRequest();
-
-        $event = $this->getSQEventMock();
-
-        $query = $this->getMock(Query::class);
-
-        $event->expects($this->once())
-            ->method('getQuery')
-            ->willReturn($query);
-
-        $this->searchQueryModifier->expects($this->once())
-            ->method('modify')
-            ->with($query);
-
-        $this->listener->onSearchQuery($event);
-    }
-
     /**
      * @param bool $frontend
      */
@@ -126,15 +95,6 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_Test
     protected function getDBEventMock()
     {
         return $this->getMockBuilder(ProductDBQueryRestrictionEvent::class)
-            ->disableOriginalConstructor()->getMock();
-    }
-
-    /**
-     * @return ProductSearchQueryRestrictionEvent|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getSQEventMock()
-    {
-        return $this->getMockBuilder(ProductSearchQueryRestrictionEvent::class)
             ->disableOriginalConstructor()->getMock();
     }
 }
