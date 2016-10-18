@@ -92,8 +92,8 @@ class ProductDecorator
         if (!$field) {
             throw new \InvalidArgumentException(sprintf('Relation "%s" doesn\'t exists for Product entity', $name));
         }
-        $result = $this->getVirtualFieldValueForAllProducts($field);
-        return $result[$this->product->getId()];
+
+        return $this->getVirtualFieldValueForAllProducts($field)[$this->product->getId()];
     }
 
     /**
