@@ -3,16 +3,16 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Event;
 
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
-use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
 class ProductSearchQueryRestrictionEventTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetQuery()
     {
         /**
-         * @var Query $query
+         * @var SearchQueryInterface $query
          */
-        $query = $this->getMock(Query::class);
+        $query = $this->getMock(SearchQueryInterface::class);
 
         $event = new ProductSearchQueryRestrictionEvent($query);
 

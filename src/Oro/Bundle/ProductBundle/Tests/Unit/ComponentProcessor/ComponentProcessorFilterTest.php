@@ -1,19 +1,18 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Model;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\ComponentProcessor;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Search\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
 class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
 {
-    const PRODUCT_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
-
     /**
      * @var ComponentProcessorFilter|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -41,8 +40,10 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->filter = new ComponentProcessorFilter($this->getProductManager(), $this->getManagerRegistry());
-        $this->filter->setProductClass(self::PRODUCT_CLASS);
+        $this->filter = new ComponentProcessorFilter(
+            $this->getProductManager(),
+            $this->getProductRepository()
+        );
     }
 
     protected function tearDown()
@@ -56,41 +57,11 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
     protected function getProductManager()
     {
         if (!$this->productManager) {
-            $this->productManager = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Manager\ProductManager')
+            $this->productManager = $this->getMockBuilder(ProductManager::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         }
         return $this->productManager;
-    }
-
-    /**
-     * @return ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getManagerRegistry()
-    {
-        if (!$this->managerRegistry) {
-            $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-            $this->managerRegistry->expects($this->any())
-                ->method('getManagerForClass')
-                ->with(self::PRODUCT_CLASS)
-                ->willReturn($this->getManager());
-        }
-        return $this->managerRegistry;
-    }
-
-    /**
-     * @return ObjectManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getManager()
-    {
-        if (!$this->manager) {
-            $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-            $this->manager->expects($this->once())
-                ->method('getRepository')
-                ->with(self::PRODUCT_CLASS)
-                ->willReturn($this->getProductRepository());
-        }
-        return $this->manager;
     }
 
     /**
@@ -100,7 +71,7 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
     {
         if (!$this->productRepository) {
             $this->productRepository = $this
-                ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+                ->getMockBuilder(ProductRepository::class)
                 ->disableOriginalConstructor()
                 ->getMock();
         }
@@ -109,8 +80,8 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
 
     public function testFilterData()
     {
-        $skus = ['visibleSku1', 'invisibleSku1', 'visibleSku2'];
-        $data = [
+        $skus           = ['visibleSku1', 'invisibleSku1', 'visibleSku2'];
+        $data           = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 ['productSku' => $skus[0]],
                 ['productSku' => $skus[1]],
@@ -119,38 +90,37 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
         ];
         $dataParameters = [];
 
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
+        $query = $this->getMockBuilder(SearchQueryInterface::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getResult'])
+            ->setMethods(['getResult', 'toArray'])
             ->getMockForAbstractClass();
         $query->expects($this->once())
             ->method('getResult')
+            ->willReturnSelf();
+        $query->expects($this->once())
+            ->method('toArray')
             ->willReturnCallback(function () use ($skus) {
                 $filteredSkus = [];
                 foreach ($skus as $sku) {
                     if (strpos($sku, 'invisibleSku') === false) {
-                        $filteredSkus[] = ['sku' => $sku];
+                        $filteredSkus[] = [
+                            'sku'           => $sku,
+                            'sku_uppercase' => strtoupper($sku)
+                        ];
                     }
                 }
                 return $filteredSkus;
             });
 
-        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $queryBuilder->expects($this->once())
-            ->method('getQuery')
+        $this->getProductRepository()->expects($this->once())
+            ->method('getFilterSkuQuery')
+            ->with(array_map('strtoupper', $skus))
             ->willReturn($query);
 
-        $this->getProductRepository()->expects($this->once())
-            ->method('getFilterSkuQueryBuilder')
-            ->with(array_map('strtoupper', $skus))
-            ->willReturn($queryBuilder);
-
         $this->getProductManager()->expects($this->once())
-            ->method('restrictQueryBuilder')
-            ->with($queryBuilder, $dataParameters)
-            ->willReturn($queryBuilder);
+            ->method('restrictSearchQuery')
+            ->with($query)
+            ->willReturn($query);
 
         $filteredData = $this->filter->filterData($data, $dataParameters);
 

@@ -4,11 +4,11 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\Manager;
 
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
-use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
+use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
@@ -44,7 +44,7 @@ class ProductManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testRestrictSearchQuery()
     {
-        $query = $this->getMock(Query::class);
+        $query = $this->getMock(SearchQueryInterface::class);
 
         $this->eventDispatcher->expects($this->once())
             ->method('dispatch')

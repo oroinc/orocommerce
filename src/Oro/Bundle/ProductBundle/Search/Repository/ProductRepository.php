@@ -3,11 +3,10 @@
 namespace Oro\Bundle\ProductBundle\Search\Repository;
 
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
-use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
-use Oro\Bundle\SearchBundle\Search\Repository\AbstractSearchQueryRepository;
+use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 
-class ProductRepository extends AbstractSearchQueryRepository
+class ProductRepository extends WebsiteSearchRepository
 {
     /**
      * @param array $skus
@@ -15,7 +14,7 @@ class ProductRepository extends AbstractSearchQueryRepository
      */
     public function getFilterSkuQuery($skus)
     {
-        $searchQuery = $this->getQueryBuilder();
+        $searchQuery = $this->createQuery();
 
         // Convert to uppercase for insensitive search in all DB
         $upperCaseSkus = array_map("strtoupper", $skus);
@@ -23,8 +22,7 @@ class ProductRepository extends AbstractSearchQueryRepository
         $searchQuery->setFrom('product')
             ->addSelect('sku')
             ->getCriteria()
-            // todo add uppercase sku
-            ->addWhere(Criteria::expr()->in('sku', $upperCaseSkus));
+            ->andWhere(Criteria::expr()->in('sku_uppercase', $upperCaseSkus));
 
         return $searchQuery;
     }
