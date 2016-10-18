@@ -146,7 +146,7 @@ define(function(require) {
         findPrice: function(changeQuantity) {
             var quantity = this.model.get('quantity');
             var unit = this.model.get('unit');
-            var changeQuantity = changeQuantity && this.changeQuantity;
+            changeQuantity = changeQuantity && this.changeQuantity;
 
             var foundKey = unit + ' ' + quantity + ' ' + (changeQuantity ? 1 : 0);
             var price = null;

@@ -171,10 +171,13 @@ define(function(require) {
             var validator = $element.closest('form').validate();
             if (!validator || validator.element(element)) {
                 var options = {
-                    event: e
+                    event: e,
+                    manually: false
                 };
-                options.manually = Boolean(e && e.originalEvent && e.currentTarget === element ||
-                                           e && e.manually);
+                if (e) {
+                    e.manually = options.manually = e.manually || (e.originalEvent && e.currentTarget === element);
+                }
+
                 this.model.set(modelKey, value, options);
             }
         },
