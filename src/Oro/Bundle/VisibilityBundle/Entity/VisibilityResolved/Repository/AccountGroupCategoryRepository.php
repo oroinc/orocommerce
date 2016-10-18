@@ -93,7 +93,7 @@ class AccountGroupCategoryRepository extends EntityRepository
             ->select(
                 'agcv.id',
                 'IDENTITY(agcv.category)',
-                'IDENTITY(agcv.accountGroup)',
+                'IDENTITY(agcv.scope)',
                 $visibilityCondition,
                 (string)AccountGroupCategoryVisibilityResolved::SOURCE_STATIC
             )
@@ -103,7 +103,7 @@ class AccountGroupCategoryRepository extends EntityRepository
 
         $insertExecutor->execute(
             $this->getClassName(),
-            ['sourceCategoryVisibility', 'category', 'accountGroup', 'visibility', 'source'],
+            ['sourceCategoryVisibility', 'category', 'scope', 'visibility', 'source'],
             $queryBuilder
         );
     }
@@ -273,7 +273,7 @@ class AccountGroupCategoryRepository extends EntityRepository
             'OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility',
             'agcv_parent',
             'WITH',
-            'agcv_parent.accountGroup = agcv.accountGroup AND agcv_parent.category = c.parentCategory'
+            'agcv_parent.scope = agcv.scope AND agcv_parent.category = c.parentCategory'
         )
         // join to resolved category visibility for parent category
         ->leftJoin(

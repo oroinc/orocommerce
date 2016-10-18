@@ -154,25 +154,27 @@ class AccountProductRepository extends AbstractVisibilityRepository
             'apv.id',
             'IDENTITY(apv.scope)',
             'IDENTITY(apv.product)',
-            'IDENTITY(apv.account)',
             'COALESCE(acvr.visibility, agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
             (string)AccountProductVisibilityResolved::SOURCE_CATEGORY,
             'category.id'
         )
-        ->innerJoin('apv.account', 'account')
+        ->innerJoin('apv.scope', 'scope')
+        ->innerJoin('scope.account', 'account')
         ->innerJoin('OroCatalogBundle:Category', 'category', 'WITH', 'apv.product MEMBER OF category.products')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
             'acvr',
             'WITH',
-            'acvr.account = apv.account AND acvr.category = category'
+            'acvr.scope = apv.scope AND acvr.category = category'
         )
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr',
             'WITH',
-            'agcvr.accountGroup = account.group AND agcvr.category = category'
+            'agcvr.category = category'
         )
+        ->leftJoin('agcvr.scope', 'agcvr_scope')
+        ->andWhere('agcvr.visibility IS NULL OR agcvr_scope.accountGroup = account.group')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
             'cvr',
@@ -193,7 +195,6 @@ class AccountProductRepository extends AbstractVisibilityRepository
                 'sourceProductVisibility',
                 'scope',
                 'product',
-                'account',
                 'visibility',
                 'source',
                 'category',
@@ -226,7 +227,6 @@ VISIBILITY;
                 'apv.id',
                 'IDENTITY(apv.scope)',
                 'IDENTITY(apv.product)',
-                'IDENTITY(apv.account)',
                 $visibility,
                 (string)BaseProductVisibilityResolved::SOURCE_STATIC
             )
@@ -252,7 +252,6 @@ VISIBILITY;
                 'sourceProductVisibility',
                 'scope',
                 'product',
-                'account',
                 'visibility',
                 'source',
             ],

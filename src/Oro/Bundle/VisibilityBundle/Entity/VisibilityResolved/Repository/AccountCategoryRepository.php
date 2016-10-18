@@ -218,7 +218,7 @@ class AccountCategoryRepository extends EntityRepository
             ->select(
                 'acv.id',
                 'IDENTITY(acv.category)',
-                'IDENTITY(acv.account)',
+                'IDENTITY(acv.scope)',
                 $visibilityCondition,
                 (string)AccountCategoryVisibilityResolved::SOURCE_STATIC
             )
@@ -231,7 +231,7 @@ class AccountCategoryRepository extends EntityRepository
 
         $insertExecutor->execute(
             $this->getClassName(),
-            ['sourceCategoryVisibility', 'category', 'account', 'visibility', 'source'],
+            ['sourceCategoryVisibility', 'category', 'scope', 'visibility', 'source'],
             $queryBuilder
         );
     }
@@ -250,7 +250,7 @@ class AccountCategoryRepository extends EntityRepository
             ->select(
                 'acv.id',
                 'IDENTITY(acv.category)',
-                'IDENTITY(acv.account)',
+                'IDENTITY(acv.scope)',
                 $visibilityCondition,
                 (string)AccountCategoryVisibilityResolved::SOURCE_STATIC
             )
@@ -266,7 +266,7 @@ class AccountCategoryRepository extends EntityRepository
 
         $insertExecutor->execute(
             $this->getClassName(),
-            ['sourceCategoryVisibility', 'category', 'account', 'visibility', 'source'],
+            ['sourceCategoryVisibility', 'category', 'scope', 'visibility', 'source'],
             $queryBuilder
         );
     }
@@ -291,7 +291,7 @@ class AccountCategoryRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
-        return $qb->select(
+        $query = $qb->select(
             'acv.id as visibility_id',
             'acv_parent.id as parent_visibility_id',
             'acv_parent.visibility as parent_visibility',
@@ -301,29 +301,27 @@ class AccountCategoryRepository extends EntityRepository
             'cvr_parent.visibility as parent_category_resolved_visibility'
         )
         ->from('OroVisibilityBundle:Visibility\AccountCategoryVisibility', 'acv')
+        ->join('acv.scope', 'acv_scope')
+        ->join('acv_scope.account', 'a')
         // join to category that includes only parent category entities
-        ->innerJoin(
-            'acv.category',
-            'c',
-            'WITH',
-            'acv.visibility = ' . $qb->expr()->literal(AccountCategoryVisibility::PARENT_CATEGORY)
-        )
+        ->innerJoin('acv.category', 'c')
         // join to related account
-        ->innerJoin('OroAccountBundle:Account', 'a', 'WITH', 'acv.account = a')
         // join to parent category visibility
         ->leftJoin(
             'OroVisibilityBundle:Visibility\AccountCategoryVisibility',
             'acv_parent',
             'WITH',
-            'acv_parent.account = acv.account AND acv_parent.category = c.parentCategory'
+            'acv_parent.scope = acv.scope AND acv_parent.category = c.parentCategory'
         )
         // join to resolved group visibility for parent category
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr_parent',
             'WITH',
-            'agcvr_parent.accountGroup = a.group AND agcvr_parent.category = c.parentCategory'
+            'agcvr_parent.category = c.parentCategory'
         )
+        ->leftJoin('agcvr_parent.scope', 'agcvr_parent_scope')
+        ->andWhere('(agcvr_parent.visibility IS NULL OR agcvr_parent_scope.accountGroup = a.group)')
         // join to resolved category visibility for parent category
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
@@ -331,11 +329,12 @@ class AccountCategoryRepository extends EntityRepository
             'WITH',
             'cvr_parent.category = c.parentCategory'
         )
+        ->andWhere('acv.visibility = ' . $qb->expr()->literal(AccountCategoryVisibility::PARENT_CATEGORY))
         // order is important to make sure that higher level categories will be processed first
         ->addOrderBy('c.level', 'ASC')
         ->addOrderBy('c.left', 'ASC')
-        ->getQuery()
-        ->getScalarResult();
+        ->getQuery();
+        return $query->getScalarResult();
     }
 
     /**

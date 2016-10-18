@@ -34,7 +34,6 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             'agpv.id',
             'IDENTITY(agpv.scope)',
             'IDENTITY(agpv.product)',
-            'IDENTITY(agpv.accountGroup)',
             'COALESCE(agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
             (string)AccountGroupProductVisibilityResolved::SOURCE_CATEGORY,
             'category.id'
@@ -44,7 +43,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr',
             'WITH',
-            'agcvr.accountGroup = agpv.accountGroup AND agcvr.category = category'
+            'agcvr.scope = agpv.scope AND agcvr.category = category'
         )
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
@@ -66,7 +65,6 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
                 'sourceProductVisibility',
                 'scope',
                 'product',
-                'accountGroup',
                 'visibility',
                 'source',
                 'category',
@@ -89,7 +87,6 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
                     'agpv.id',
                     'IDENTITY(agpv.scope)',
                     'IDENTITY(agpv.product)',
-                    'IDENTITY(agpv.accountGroup)',
                     'CASE WHEN agpv.visibility = :visible THEN :cacheVisible ELSE :cacheHidden END',
                     (string)BaseProductVisibilityResolved::SOURCE_STATIC,
                 ]
@@ -111,7 +108,6 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
                 'sourceProductVisibility',
                 'scope',
                 'product',
-                'accountGroup',
                 'visibility',
                 'source',
             ],
