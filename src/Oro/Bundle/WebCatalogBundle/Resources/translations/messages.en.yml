@@ -36,4 +36,8 @@ oro:
             system_page_route.label: System Page Route
             node.label: Content Node
         sections:
-          general: 'General'
+            general: 'General'
+        controller:
+            webcatalog:
+                saved:
+                    message: 'Web Catalog has been saved'

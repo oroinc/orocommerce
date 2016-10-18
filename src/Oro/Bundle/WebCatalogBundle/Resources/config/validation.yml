@@ -1,0 +1,6 @@
+Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255
