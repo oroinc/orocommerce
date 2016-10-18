@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -15,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 class ProductPriceRepository extends BaseProductPriceRepository
 {
     const BUFFER_SIZE = 500;
+
     /**
      * @param PriceList $priceList
      * @param Product|null $product

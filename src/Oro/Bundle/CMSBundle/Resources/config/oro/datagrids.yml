@@ -46,9 +46,10 @@ datagrids:
                 select:
                     - loginPage.id
                 from:
-                    - { table: %oro_cms.entity.loginpage.class%, alias: loginPage }
+                    - { table: '%oro_cms.entity.loginpage.class%', alias: loginPage }
         columns:
-            id: ~
+            id:
+              label: oro.cms.loginpage.id.label
         properties:
             id: ~
             view_link:
@@ -63,3 +64,50 @@ datagrids:
                 icon:          eye-open
                 acl_resource:  oro_cms_loginpage_view
                 rowAction:     true
+
+    cms-page-grid:
+        acl_resource: oro_cms_page_view
+        options:
+            entity_pagination: true
+            entityHint:        landing page
+        source:
+            type:         orm
+            query:
+                select:
+                    - page.id
+                    - page.title
+                from:
+                    - { table: '%oro_cms.entity.page.class%', alias: page }
+        columns:
+            id:
+              label: oro.cms.page.id.label
+            title:
+              label: oro.cms.page.title.label
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                route:  oro_cms_page_view
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  oro_cms_page_view
+                rowAction:     true
+        sorters:
+            columns:
+                id:
+                    data_name: page.id
+                title:
+                    data_name: page.title
+        filters:
+            columns:
+                id:
+                    type: number
+                    data_name: page.id
+                title:
+                    type: string
+                    data_name: page.title
