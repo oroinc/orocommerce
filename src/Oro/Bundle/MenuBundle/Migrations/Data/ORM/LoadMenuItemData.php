@@ -141,7 +141,7 @@ class LoadMenuItemData extends AbstractFixture implements
         $itemMyAccount = $item->addChild('My Account');
         $itemMyAccount->addChild(
             'Sign Out',
-            ['uri' => $this->router->generate('oro_account_account_user_security_logout')]
+            ['uri' => $this->router->generate('oro_customer_account_user_security_logout')]
         );
         $itemMyAccount->addChild('View Cart', ['uri' => $this->router->generate('oro_shopping_list_frontend_view')]);
         $itemMyAccount->addChild(

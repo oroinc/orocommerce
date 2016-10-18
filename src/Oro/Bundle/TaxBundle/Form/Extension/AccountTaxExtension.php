@@ -4,8 +4,8 @@ namespace Oro\Bundle\TaxBundle\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Form\Type\AccountType;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountType;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;

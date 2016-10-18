@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Oro\Bundle\AccountBundle\Event\AccountGroupEvent;
+use Oro\Bundle\CustomerBundle\Event\AccountGroupEvent;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
