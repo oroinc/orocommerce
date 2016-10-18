@@ -78,6 +78,5 @@ class TaxFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->factory->addMapper($mapper);
         $this->assertTrue($this->factory->supports(new \stdClass()));
-
     }
 }

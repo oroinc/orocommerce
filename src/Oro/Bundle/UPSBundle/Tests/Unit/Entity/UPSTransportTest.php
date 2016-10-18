@@ -3,6 +3,7 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
@@ -27,6 +28,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
         ]);
         static::assertPropertyCollections(new UPSTransport(), [
             ['applicableShippingServices', new ShippingService()],
+            ['labels', new LocalizedFallbackValue()],
         ]);
     }
 
@@ -44,7 +46,8 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
                 'pickupType' => '01',
                 'unitOfWeight' => 'LPS',
                 'country' => new Country('US'),
-                'applicableShippingServices' => [new ShippingService()]
+                'applicableShippingServices' => [new ShippingService()],
+                'labels' => [(new LocalizedFallbackValue())->setString('UPS')],
             ]
         );
 
@@ -62,6 +65,10 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
         static::assertEquals(
             $result->get('applicable_shipping_services'),
             $entity->getApplicableShippingServices()->toArray()
+        );
+        static::assertEquals(
+            $result->get('labels'),
+            $entity->getLabels()->toArray()
         );
     }
 }

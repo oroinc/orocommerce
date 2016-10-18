@@ -89,12 +89,13 @@ define(function(require) {
             mediator.on('checkout:payment:before-transit', this.beforeTransit, this);
             mediator.on('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
             mediator.on('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
+            mediator.on('checkout:payment:remove-filled-form', this.removeFilledForm, this);
+            mediator.on('checkout-content:initialized', this.refreshPaymentMethod, this);
 
-            mediator.once('page:afterChange', function() {
-                var paymentMethodObject = {};
-                mediator.trigger('checkout:payment:method:get-value', paymentMethodObject);
-                mediator.trigger('checkout:payment:method:changed', {paymentMethod: paymentMethodObject.value});
-            });
+        },
+
+        refreshPaymentMethod: function() {
+            mediator.trigger('checkout:payment:method:refresh');
         },
 
         /**
@@ -195,11 +196,13 @@ define(function(require) {
 
             this.$el.off();
 
+            mediator.off('checkout-content:initialized', this.refreshPaymentMethod, this);
             mediator.off('checkout:place-order:response', this.handleSubmit, this);
             mediator.off('checkout:payment:method:changed', this.onPaymentMethodChanged, this);
             mediator.off('checkout:payment:before-transit', this.beforeTransit, this);
             mediator.off('checkout:payment:before-hide-filled-form', this.beforeHideFilledForm, this);
             mediator.off('checkout:payment:before-restore-filled-form', this.beforeRestoreFilledForm, this);
+            mediator.off('checkout:payment:remove-filled-form', this.removeFilledForm, this);
 
             CreditCardComponent.__super__.dispose.call(this);
         },
@@ -349,6 +352,14 @@ define(function(require) {
 
         beforeRestoreFilledForm: function() {
             if (this.disposable) {
+                this.dispose();
+            }
+        },
+
+        removeFilledForm: function() {
+            // Remove hidden form js component
+            if (!this.disposable) {
+                this.disposable = true;
                 this.dispose();
             }
         }

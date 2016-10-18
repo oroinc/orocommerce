@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
-use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -110,6 +110,20 @@ class CheckoutAddressTypeTest extends AbstractOrderAddressTypeTest
         ];
 
         $this->checkForm(true, $submittedData, $expectedData, new OrderAddress(), [], $formOptions);
+    }
+
+    public function testSubmitWithManualPermissionWhenNoDataSubmitted()
+    {
+        $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')
+            ->willReturn([]);
+
+        $formOptions =  [
+            'addressType' => AddressTypeEntity::TYPE_BILLING,
+            'object' => $this->getEntity(),
+            'isEditEnabled' => true,
+        ];
+
+        $this->checkForm(true, null, null, new OrderAddress(), [], $formOptions);
     }
 
     /**
