@@ -7,9 +7,7 @@ layout:
                 header_row_shopping:
                     blockType: container
                 header_row_account:
-                    blockType: link
-                    options:
-                        route_name: oro_account_frontend_account_user_profile
+                    blockType: container
                 main_menu_messages:
                     blockType: block
             tree:
