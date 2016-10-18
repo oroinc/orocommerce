@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -10,18 +12,33 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Symfony\Component\Form\FormInterface;
 
-abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityListener
+class VisibilityFormPostSubmitDataHandler
 {
     /**
-     * @var string
+     * @var ManagerRegistry
      */
-    protected $visibilityField = EntityVisibilityType::VISIBILITY;
+    protected $registry;
+
+    /**
+     * @var VisibilityFormFieldDataProvider
+     */
+    protected $formFieldDataProvider;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param VisibilityFormFieldDataProvider $formFieldDataProvider
+     */
+    public function __construct(ManagerRegistry $registry, VisibilityFormFieldDataProvider $formFieldDataProvider)
+    {
+        $this->registry = $registry;
+        $this->formFieldDataProvider = $formFieldDataProvider;
+    }
 
     /**
      * @param FormInterface $visibilityForm
      * @param Product|Category $targetEntity
      */
-    protected function saveForm(FormInterface $visibilityForm, $targetEntity)
+    public function saveForm(FormInterface $visibilityForm, $targetEntity)
     {
         if (!$visibilityForm->isValid() || !is_object($targetEntity) || !$targetEntity->getId()) {
             return;
@@ -44,10 +61,12 @@ abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityLi
             return;
         }
 
-        $visibilityEntity = $this->findFormFieldData($form, EntityVisibilityType::ALL_FIELD);
+        $visibilityEntity = $this->formFieldDataProvider
+            ->findFormFieldData($form, EntityVisibilityType::ALL_FIELD);
 
         if (!$visibilityEntity) {
-            $visibilityEntity = $this->createFormFieldData($form, EntityVisibilityType::ALL_FIELD);
+            $visibilityEntity = $this->formFieldDataProvider
+                ->createFormFieldData($form, EntityVisibilityType::ALL_FIELD);
         }
 
         $this->saveVisibility($targetEntity, $visibilityEntity, $visibility);
@@ -77,7 +96,8 @@ abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityLi
     {
         $targetEntity = $form->getData();
         $visibilitiesData = $form->get($field)->getData();
-        $visibilitiesEntity = $this->findFormFieldData($form, $field);
+        $visibilitiesEntity = $this->formFieldDataProvider
+            ->findFormFieldData($form, $field);
 
         foreach ($visibilitiesData as $visibilityData) {
             $visibility = $visibilityData['data']['visibility'];
@@ -93,7 +113,8 @@ abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityLi
             if (isset($visibilitiesEntity[$visibilityToEntity->getId()])) {
                 $visibilityEntity = $visibilitiesEntity[$visibilityToEntity->getId()];
             } else {
-                $visibilityEntity = $this->createFormFieldData($form, $field, $visibilityToEntity);
+                $visibilityEntity = $this->formFieldDataProvider
+                    ->createFormFieldData($form, $field, $visibilityToEntity);
             }
 
             $this->saveVisibility($targetEntity, $visibilityEntity, $visibility);
@@ -111,20 +132,12 @@ abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityLi
         $visibility
     ) {
         // manual handling of visibility entities must be performed here to avoid triggering of extra processes
-        $em = $this->getEntityManager($targetEntity);
+        $em = $this->registry->getManagerForClass(ClassUtils::getClass($targetEntity));
         $visibilityEntity->setVisibility($visibility);
         if ($visibility !== $visibilityEntity->getDefault($targetEntity)) {
             $em->persist($visibilityEntity);
         } elseif ($visibilityEntity->getVisibility()) {
             $em->remove($visibilityEntity);
         }
-    }
-
-    /**
-     * @param string $visibilityField
-     */
-    public function setVisibilityField($visibilityField)
-    {
-        $this->visibilityField = $visibilityField;
     }
 }

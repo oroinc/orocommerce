@@ -27,7 +27,7 @@ class AccountGroupProductVisibility implements VisibilityInterface, ScopeAwareIn
 {
     const CURRENT_PRODUCT = 'current_product';
     const CATEGORY = 'category';
-    const ACCOUNT_GROUP_PRODUCT_VISIBILITY = 'account_group_product_visibility';
+    const VISIBILITY_TYPE = 'account_group_product_visibility';
 
     /**
      * @var integer
@@ -178,6 +178,6 @@ class AccountGroupProductVisibility implements VisibilityInterface, ScopeAwareIn
      */
     public static function getScopeType()
     {
-        return self::ACCOUNT_GROUP_PRODUCT_VISIBILITY;
+        return self::VISIBILITY_TYPE;
     }
 }
