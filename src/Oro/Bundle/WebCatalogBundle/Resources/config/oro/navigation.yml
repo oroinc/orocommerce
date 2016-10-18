@@ -20,3 +20,4 @@ navigation:
         oro_web_catalog_index: ~
         oro_web_catalog_view: '%%entityLabel%%'
         oro_web_catalog_update: '%%entityLabel%%'
+        oro_web_catalog_create: oro.ui.create_entity

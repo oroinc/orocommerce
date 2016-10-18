@@ -5,10 +5,11 @@ namespace Oro\Bundle\WebCatalogBundle\Controller;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class WebCatalogController extends Controller
 {
@@ -61,7 +62,7 @@ class WebCatalogController extends Controller
      */
     public function createAction()
     {
-        return new Response('Will be done in scope BB-3306');
+        return $this->update(new WebCatalog());
     }
 
     /**
@@ -80,6 +81,33 @@ class WebCatalogController extends Controller
      */
     public function updateAction(WebCatalog $webCatalog)
     {
-        return new Response('Will be done in scope BB-3306');
+        return $this->update($webCatalog);
+    }
+
+    /**
+     * @param WebCatalog $webCatalog
+     * @return array|RedirectResponse
+     */
+    protected function update(WebCatalog $webCatalog)
+    {
+        $form = $this->createForm(WebCatalogType::NAME, $webCatalog);
+
+        return $this->get('oro_form.model.update_handler')->handleUpdate(
+            $webCatalog,
+            $form,
+            function (WebCatalog $webCatalog) {
+                return [
+                    'route' => 'oro_web_catalog_update',
+                    'parameters' => ['id' => $webCatalog->getId()]
+                ];
+            },
+            function (WebCatalog $webCatalog) {
+                return [
+                    'route' => 'oro_web_catalog_view',
+                    'parameters' => ['id' => $webCatalog->getId()]
+                ];
+            },
+            $this->get('translator')->trans('oro.webcatalog.controller.webcatalog.saved.message')
+        );
     }
 }

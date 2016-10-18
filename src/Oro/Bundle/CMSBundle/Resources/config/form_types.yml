@@ -6,8 +6,6 @@ services:
 
     oro_cms.form.type.page:
         class: 'Oro\Bundle\CMSBundle\Form\Type\PageType'
-        calls:
-            - [setDataClass, ['%oro_cms.entity.page.class%']]
         tags:
             - { name: form.type, alias: oro_cms_page }
 

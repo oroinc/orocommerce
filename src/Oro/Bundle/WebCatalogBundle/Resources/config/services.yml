@@ -5,3 +5,8 @@ services:
     oro_web_catalog.page_type.registry:
         class: 'Oro\Bundle\WebCatalogBundle\PageType\PageTypeRegistry'
         public: false
+
+    oro_web_catalog.form.type.web_catalog:
+        class: Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType
+        tags:
+            - { name: form.type, alias: oro_web_catalog }

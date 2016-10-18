@@ -19,9 +19,11 @@ datagrids:
             name:
                 label: oro.webcatalog.name.label
             createdAt:
-                data_name: web_catalog.createdAt
+                label: oro.ui.created_at
+                frontend_type: datetime
             updatedAt:
-                data_name: web_catalog.updatedAt
+                label: oro.ui.updated_at
+                frontend_type: datetime
         properties:
             id: ~
             view_link:
