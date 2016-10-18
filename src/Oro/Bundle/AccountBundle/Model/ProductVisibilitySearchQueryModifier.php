@@ -10,12 +10,13 @@ use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Query\Modifier\QueryModifierInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class ProductVisibilitySearchQueryModifier
+class ProductVisibilitySearchQueryModifier implements QueryModifierInterface
 {
     /**
      * @var TokenStorageInterface
@@ -40,7 +41,7 @@ class ProductVisibilitySearchQueryModifier
     }
 
     /**
-     * @param Query $query
+     * {@inheritdoc}
      */
     public function modify(Query $query)
     {
