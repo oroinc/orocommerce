@@ -96,7 +96,6 @@ class MenuUpdate extends ExtendMenuUpdate implements
         $extras = [
             'image' => $this->getImage(),
             'condition' => $this->getCondition(),
-            'existsInNavigationYml' => $this->isExistsInNavigationYml(),
             'divider' => $this->isDivider()
         ];
 
