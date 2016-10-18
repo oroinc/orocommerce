@@ -61,7 +61,7 @@ class CategoryListenerTest extends WebTestCase
 
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
 
-        self::assertEmptyMessages('oro_account.visibility.change_product_category');
+        self::assertEmptyMessages('oro_customer.visibility.change_product_category');
     }
 
     public function testChangeProductCategory()
