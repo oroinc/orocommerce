@@ -1,0 +1,42 @@
+datagrids:
+    web-catalog-grid:
+        acl_resource: oro_web_catalog_view
+        options:
+            entityHint: 'web catalog'
+        source:
+            type: orm
+            query:
+                select:
+                    - web_catalog.id
+                    - web_catalog.name
+                    - web_catalog.description
+                from:
+                    - { table: '%oro_web_catalog.entity.web_catalog.class%', alias: web_catalog }
+        columns:
+            id:
+                label: oro.webcatalog.id.label
+            name:
+                label: oro.webcatalog.name.label
+            description:
+                label: oro.webcatalog.description.label
+        properties:
+            id: ~
+        sorters:
+            columns:
+                id:
+                    data_name: web_catalog.id
+                name:
+                    data_name: web_catalog.name
+                description:
+                    data_name: web_catalog.description
+        filters:
+            columns:
+                id:
+                    type: number
+                    data_name: web_catalog.id
+                name:
+                    type: string
+                    data_name: web_catalog.name
+                description:
+                    type: string
+                    data_name: web_catalog.description

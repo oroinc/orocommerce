@@ -1,0 +1,2 @@
+parameters:
+    oro_web_catalog.entity.web_catalog.class: Oro\Bundle\WebCatalogBundle\Entity\WebCatalog

@@ -1,0 +1,20 @@
+navigation:
+    menu_config:
+        items:
+            web_catalog_list:
+                label: 'oro.webcatalog.entity_plural_label'
+                route: 'oro_web_catalog_index'
+                extras:
+                    position: 100
+                    routes: ['/^oro_web_catalog/']
+                    description: 'oro.webcatalog.entity_description'
+
+        tree:
+            application_menu:
+                children:
+                    marketing_tab:
+                        children:
+                            web_catalog_list: ~
+
+    titles:
+        oro_web_catalog_index: ~
