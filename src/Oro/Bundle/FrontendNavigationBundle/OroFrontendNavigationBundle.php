@@ -19,7 +19,10 @@ class OroFrontendNavigationBundle extends Bundle
 
         $container->addCompilerPass(
             new DefaultFallbackExtensionPass([
-                MenuUpdate::class => ['title' => 'titles']
+                MenuUpdate::class => [
+                    'title' => 'titles',
+                    'description' => 'descriptions',
+                ]
             ])
         );
     }
