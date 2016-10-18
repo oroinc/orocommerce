@@ -1,0 +1,25 @@
+layout:
+    imports:
+        - oro_account_menu
+        -
+            id: oro_account_user_grid
+            root: content
+            namespace: account_users
+
+    actions:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.customer.menu.account_user.label'
+                - 'oro.customer.frontend.account_user.entity_plural_label'
+
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue: 'oro.customer.frontend.account_user.entity_plural_label'
+
+        - '@setOption':
+            id: content
+            optionName: class_prefix
+            optionValue: 'account-users'

@@ -11,7 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity
- * @ORM\Table("oro_shipping_rl_destination")
+ * @ORM\Table("oro_shipping_rule_destination")
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *     mode="hidden",

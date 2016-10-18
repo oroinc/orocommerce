@@ -20,10 +20,10 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use Oro\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
@@ -272,16 +272,16 @@ class OrderTypeTest extends TypeTestCase
 
         $accountSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 1),
-                2 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', 2),
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', 2),
             ],
             AccountSelectType::NAME
         );
 
         $accountUserSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', 1),
-                2 => $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', 2),
+                1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 1),
+                2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', 2),
             ],
             AccountUserSelectType::NAME
         );
@@ -498,13 +498,13 @@ class OrderTypeTest extends TypeTestCase
                 }
             } elseif ($fieldName === 'accountUser') {
                 $order->setAccountUser($this->getEntity(
-                    'Oro\Bundle\AccountBundle\Entity\AccountUser',
+                    'Oro\Bundle\CustomerBundle\Entity\AccountUser',
                     $value
                 ));
             } elseif ($fieldName === 'account') {
                 $order->setAccount(
                     $this->getEntity(
-                        'Oro\Bundle\AccountBundle\Entity\Account',
+                        'Oro\Bundle\CustomerBundle\Entity\Account',
                         $value
                     )
                 );

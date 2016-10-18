@@ -40,6 +40,7 @@ class RequestControllerNotificationTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], [], true);
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [

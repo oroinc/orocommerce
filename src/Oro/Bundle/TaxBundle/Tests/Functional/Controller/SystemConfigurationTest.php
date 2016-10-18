@@ -19,6 +19,7 @@ class SystemConfigurationTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->configManager = $this->getContainer()->get('oro_config.global');
     }

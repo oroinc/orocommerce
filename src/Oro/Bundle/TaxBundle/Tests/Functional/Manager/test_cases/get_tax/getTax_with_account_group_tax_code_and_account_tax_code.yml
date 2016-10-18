@@ -2,7 +2,7 @@ method: getTax
 reference: simple_order
 configuration: { use_as_base_by_default: destination }
 databaseBefore:
-    'Oro\Bundle\AccountBundle\Entity\Account':
+    'Oro\Bundle\CustomerBundle\Entity\Account':
         account.with_group:
             name: { property_value: account.with_group }
             group: { reference: account_group.group1 }

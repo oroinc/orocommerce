@@ -14,9 +14,12 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Entity\RequestStatus;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 class LoadRequestData extends AbstractFixture implements DependentFixtureInterface
 {
+    use UserUtilityTrait;
+
     const FIRST_NAME = 'Grzegorz';
     const FIRST_NAME_DELETED = 'John';
     const LAST_NAME = 'Brzeczyszczykiewicz';
@@ -180,6 +183,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             LoadRequestStatusData::NAME_DELETED,
             LoadRequestStatusData::NAME_NOT_DELETED,
         ];
+        $owner = $this->getFirstUser($manager);
 
         /** @var RequestStatus $status */
         $status = $this->getReference(LoadRequestStatusData::PREFIX . $statuses[array_rand($statuses)]);
@@ -198,6 +202,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 ->setRole($rawRequest['role'])
                 ->setNote($rawRequest['note'])
                 ->setStatus($status)
+                ->setOwner($owner)
                 ->setOrganization($organization);
 
             if (!empty($rawRequest['account'])) {

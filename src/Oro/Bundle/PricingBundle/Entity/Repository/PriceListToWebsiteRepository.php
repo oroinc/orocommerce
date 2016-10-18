@@ -39,7 +39,7 @@ class PriceListToWebsiteRepository extends EntityRepository
         $qb->innerJoin('relation.priceList', 'priceList')
             ->where($qb->expr()->eq('relation.website', ':website'))
             ->andWhere($qb->expr()->eq('priceList.active', ':active'))
-            ->orderBy('relation.priority', Criteria::DESC)
+            ->orderBy('relation.priority', Criteria::ASC)
             ->setParameter('website', $website)
             ->setParameter('active', true);
 

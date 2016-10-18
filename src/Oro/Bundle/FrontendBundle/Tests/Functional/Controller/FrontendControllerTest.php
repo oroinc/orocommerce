@@ -15,7 +15,13 @@ class FrontendControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
         $this->setTheme(self::DEFAULT_THEME);
+
+        $this->loadFixtures([
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData',
+        ]);
     }
 
     protected function tearDown()

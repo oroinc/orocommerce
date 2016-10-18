@@ -76,6 +76,11 @@ class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
         }
 
         $unit = $this->getUnit($requestData, $sku);
+        if (is_null($unit)) {
+            // unit is required if there no unit found we stop process
+            return;
+        }
+        
         unset($requestData['unit']);
 
         $queryBuilder = $this->doctrineHelper->getEntityRepositoryForClass($entityClass)->createQueryBuilder('e');
@@ -101,7 +106,7 @@ class BuildSingleWarehouseInventoryLevelQuery implements ProcessorInterface
     /**
      * @param array $requestData
      * @param string $sku
-     * @return string
+     * @return string|null
      */
     protected function getUnit(array $requestData, $sku)
     {
