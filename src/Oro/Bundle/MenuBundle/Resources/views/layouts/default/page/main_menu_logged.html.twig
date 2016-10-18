@@ -21,14 +21,6 @@
     </div>
 {% endblock %}
 
-{% block _header_row_account_widget %}
-    <div class="header-row__container hidden-on-desktop">
-        <a href="{{ app.request.getUriForPath('/account/profile') }}" class="header-row__trigger">
-            <span class="badge badge_md badge_circle badge_dark"><i class="icon-user"></i></span>
-        </a>
-    </div>
-{% endblock %}
-
 {% block _main_menu_messages_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " main-menu__item main-menu__item--nested"
