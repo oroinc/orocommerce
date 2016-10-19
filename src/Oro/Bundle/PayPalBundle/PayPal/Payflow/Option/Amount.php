@@ -33,7 +33,13 @@ class Amount implements OptionInterface
         Amount::FREIGHTAMT,
         Amount::HANDLINGAMT,
         Amount::INSURANCEAMT,
-        Amount::DISCOUNT,
+    ];
+
+    /**
+     * @var array
+     */
+    protected $negativeAdditionalAmounts = [
+        Amount::DISCOUNT
     ];
 
     /** {@inheritdoc} */
@@ -48,6 +54,7 @@ class Amount implements OptionInterface
         $resolver
             ->setDefined(Amount::AMT)
             ->setDefined($this->additionalAmounts)
+            ->setDefined($this->negativeAdditionalAmounts)
             ->addAllowedTypes(Amount::AMT, $allowedTypes)
             ->addAllowedTypes(Amount::ITEMAMT, $allowedTypes)
             ->addAllowedTypes(Amount::TAXAMT, $allowedTypes)
@@ -64,6 +71,13 @@ class Amount implements OptionInterface
                             $amounts[] = $resolver->offsetGet($key);
                         }
                     }
+
+                    foreach ($this->negativeAdditionalAmounts as $key) {
+                        if ($resolver->offsetExists($key)) {
+                            $amounts[] = $resolver->offsetGet($key) * -1;
+                        }
+                    }
+
                     $amounts = array_filter($amounts);
 
                     if ($amounts) {
@@ -77,6 +91,11 @@ class Amount implements OptionInterface
             );
 
         foreach ($this->additionalAmounts as $amount) {
+            $resolver
+                ->setNormalizer($amount, $this->getFloatValueNormalizer());
+        }
+
+        foreach ($this->negativeAdditionalAmounts as $amount) {
             $resolver
                 ->setNormalizer($amount, $this->getFloatValueNormalizer());
         }

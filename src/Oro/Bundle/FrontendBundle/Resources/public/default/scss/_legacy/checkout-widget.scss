@@ -68,10 +68,6 @@
 
     background: $theme-lightest-gray-color;
 
-    @media (max-width: $screen-md) {
-      float: none;
-    }
-
     + .order-checkout-widget__container {
       margin-top: 4px;
       clear: right;

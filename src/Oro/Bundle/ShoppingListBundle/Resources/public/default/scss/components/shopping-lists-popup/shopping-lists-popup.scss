@@ -3,10 +3,25 @@ $shopping-lists-popup-offset: 15px;
 .shopping-lists-popup {
     width: 100%;
 
-    font-family: $lato-font;
+    font-family: $base-font;
+
+    &__content {
+        display: block;
+        overflow-y: auto;
+
+        max-height: 420px;
+    }
 
     &__item {
-        border-bottom: 1px solid $base-topbar-background-color;
+        display: block;
+
+        border-top: 1px solid get-color('additional', 'light');
+    }
+
+    &__list,
+    &__quantity {
+        display: inline-block;
+        vertical-align: top;
     }
 
     &__list {
@@ -16,11 +31,11 @@ $shopping-lists-popup-offset: 15px;
 
     &__quantity {
         width: 46%;
-        padding: ($shopping-lists-popup-offset / 2) 0 ($shopping-lists-popup-offset / 2) $shopping-lists-popup-offset;
+        padding: ($shopping-lists-popup-offset * 2 / 3) 0 ($shopping-lists-popup-offset * 2 / 3) $shopping-lists-popup-offset;
     }
 
     &__headline {
-        background: $base-sidebar-background-color-light;
+        background: get-color('additional', 'light');
     }
 
     &__headline &__item {
@@ -38,5 +53,19 @@ $shopping-lists-popup-offset: 15px;
         padding: $shopping-lists-popup-offset 0;
 
         text-align: right;
+    }
+
+    &__footer {
+        background: get-color('additional', 'light');
+    }
+
+    &__footer &__list {
+        padding: ($shopping-lists-popup-offset / 4) $shopping-lists-popup-offset;
+        vertical-align: middle;
+    }
+
+    &__footer &__quantity {
+        padding: ($shopping-lists-popup-offset / 4) 0 ($shopping-lists-popup-offset / 4) $shopping-lists-popup-offset;
+        vertical-align: middle;
     }
 }

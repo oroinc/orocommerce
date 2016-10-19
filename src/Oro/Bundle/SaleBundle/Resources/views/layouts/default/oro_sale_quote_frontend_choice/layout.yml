@@ -11,7 +11,7 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'oro.account.menu.account_user.label'
+                - 'oro.customer.menu.account_user.label'
                 - 'oro.frontend.sale.quote.entity_plural_label'
                 -
                     label: 'oro.frontend.sale.quote.title.label'
@@ -63,7 +63,7 @@ layout:
                     options:
                         address: '=data["quote"].getShippingAddress()'
                         label: 'oro.sale.quote.shipping_address.label'
-                        block_prefixes: ['quote_body_column_element']
+                        additional_block_prefixes: ['quote_body_column_element']
             tree:
                 content:
                     quote_choice_page:

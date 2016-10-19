@@ -46,6 +46,7 @@
     background: transparent !important;
   }
 }
+
 /* END MIDDLE BAR */
 
 .logo {
@@ -91,7 +92,7 @@
   width: 100%;
 
   &__inner {
-    padding-top: 20px;
+    padding-top: 30px;
     padding-bottom: 20px;
 
     @include clearfix();
@@ -102,15 +103,8 @@
   }
 
   &--has-sidebar { //Layout with left sidebar;
-    float: left;
-
-    .content__container {
-      margin-left: $base-sidebar-width;
-
-      @media (max-width: $screen-md) {
-        margin-left: 0;
-      }
-    }
+    order: 2;
+    flex: 1;
 
     .content__inner {
       padding-left: 15px;
@@ -213,8 +207,8 @@
     &:focus {
       outline: 0;
       border-color: $base-link-color;
-      box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
-                        0 0 7px rgba(102,175,233,.6);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075),
+      0 0 7px rgba(102, 175, 233, .6);
     }
 
     &.input_with-btn {
@@ -296,8 +290,8 @@
     &:focus {
       outline: 0;
       border-color: $base-link-color;
-      box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
-                        0 0 8px rgba(102,175,233,.6);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075),
+      0 0 8px rgba(102, 175, 233, .6);
     }
   }
 
@@ -310,26 +304,32 @@
     color: $base-link-color;
   }
 }
+
 /* END CONTENT */
 
 /* START SIDEBAR */
 .sidebar {
-  float: left;
   width: $base-sidebar-width;
 
-  @media (max-width: $screen-md) {
-    display: none;
-  }
+  padding-left: 15px;
 
   &_left {
-    margin-left: -100%;
+    order: 1;
   }
 
   &_right {
     width: $base-sidebar-width - 4rem;
-    margin-left: -$base-sidebar-width + 4rem;
+    order: 2;
   }
 }
+
+@include breakpoint('tablet-small') {
+  .sidebar {
+    width: 100%;
+    padding: 0 15px;
+  }
+}
+
 /* END SIDEBAR */
 
 /*===== START FOOTER =====*/
@@ -359,6 +359,7 @@
     padding: 22px 0;
   }
 }
+
 /*===== END FOOTER =====*/
 
 /*START CART*/
@@ -502,6 +503,7 @@
     }
   }
 }
+
 /*END CART*/
 
 /*ORO CUSTOM CHECKBOX SELECTBOX*/
@@ -616,6 +618,7 @@
     display: none !important;
   }
 }
+
 .input-append {
   .select2-container.input.input_block {
     display: inline-block;
@@ -652,41 +655,10 @@
 
 .action-selectbox_custom_in-pager {
   display: inline-block;
-  max-width: 165px;
-  &.sorting {
-    max-width: none;
-    line-height: 24px;
-  }
+
   .select2-container {
     a.select2-choice {
       padding: 8px !important;
-    }
-  }
-  .b2b-sorting-select-control {
-    margin-right: 12px;
-    font-size: 14px;
-    .select2-container a.select2-choice {
-      line-height: 30px;
-      padding: 0 0 0 8px !important;
-      outline: 0 none;
-    }
-    a[class^="icon-"] {
-      text-decoration: none;
-      font-size: 12px;
-      height: 14px;
-      vertical-align: middle;
-      padding-left: 8px;
-      margin-left: 0;
-      color: #666;
-      cursor: pointer;
-      &:before {
-        vertical-align: middle;
-      }
-    }
-    .sorting-label {
-      display: inline-block;
-      line-height: 23px;
-      vertical-align: middle;
     }
   }
 }
@@ -695,7 +667,7 @@
   @include clearfix();
 }
 
-.action-select  {
+.action-select {
   @include input();
 
   position: relative;
@@ -709,8 +681,8 @@
 
   &[disabled] {
     background: linear-gradient(to bottom,
-        rgba(255,255,255,1) 0%,
-        rgba(230,230,230,1) 100%);
+        rgba(255, 255, 255, 1) 0%,
+        rgba(230, 230, 230, 1) 100%);
   }
 }
 

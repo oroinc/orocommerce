@@ -211,7 +211,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $product = new Product();
         $product->addUnitPrecision($unitPrecision);
 
-        $this->assertEquals([$unit], $product->getAvailableUnits());
+        $this->assertEquals(['itm' => $unit], $product->getAvailableUnits());
     }
 
     public function testClone()

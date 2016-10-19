@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\AbstractSubtotalProvider;
@@ -13,7 +14,6 @@ use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalCacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class TotalProcessorProvider extends AbstractSubtotalProvider
 {
@@ -29,9 +29,6 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
 
     /** @var RoundingServiceInterface */
     protected $rounding;
-
-    /** @var  [] */
-    protected $subtotals = [];
 
     /** @var bool */
     protected $recalculationEnabled = false;
@@ -127,26 +124,22 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         if (!is_object($entity)) {
             throw new \InvalidArgumentException('Function parameter "entity" should be object.');
         }
-        $hash = spl_object_hash($entity);
 
-        if (!array_key_exists($hash, $this->subtotals)) {
-            foreach ($this->subtotalProviderRegistry->getSupportedProviders($entity) as $provider) {
-                $subtotals = $this->getEntitySubtotal($provider, $entity);
-                $subtotals = is_object($subtotals) ? [$subtotals] : (array) $subtotals;
-                foreach ($subtotals as $subtotal) {
-                    $subtotalCollection->add($subtotal);
-                }
+        foreach ($this->subtotalProviderRegistry->getSupportedProviders($entity) as $provider) {
+            $subtotals = $this->getEntitySubtotal($provider, $entity);
+            $subtotals = is_object($subtotals) ? [$subtotals] : (array) $subtotals;
+            foreach ($subtotals as $subtotal) {
+                $subtotalCollection->add($subtotal);
             }
-            $this->subtotals[$hash] = $subtotalCollection;
         }
 
-        return $this->subtotals[$hash];
+        return $subtotalCollection;
     }
 
     /**
      * @param SubtotalProviderInterface $provider
      * @param object $entity
-     * @return Subtotal
+     * @return Subtotal|Subtotal[]
      */
     protected function getEntitySubtotal(SubtotalProviderInterface $provider, $entity)
     {
@@ -176,30 +169,11 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
     }
 
     /**
-     * Clear subtotals cache
-     */
-    public function clearCache()
-    {
-        $this->subtotals = [];
-    }
-
-    /**
-     * @param string $fromCurrency
-     * @param string $toCurrency
-     *
-     * @return float
-     */
-    protected function getExchangeRate($fromCurrency, $toCurrency)
-    {
-        return 1.0;
-    }
-
-    /**
      * @param int $operation
      * @param float $rowTotal
      * @param float $totalAmount
      *
-     * @return mixed
+     * @return float
      */
     protected function calculateTotal($operation, $rowTotal, $totalAmount)
     {

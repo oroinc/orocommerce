@@ -13,7 +13,7 @@ use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\AbstractAddressTypeTest;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
-use Oro\Bundle\AccountBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;

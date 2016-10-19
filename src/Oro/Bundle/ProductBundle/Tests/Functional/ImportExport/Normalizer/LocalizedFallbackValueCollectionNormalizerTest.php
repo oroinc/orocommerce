@@ -19,6 +19,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
     }
 
     /**

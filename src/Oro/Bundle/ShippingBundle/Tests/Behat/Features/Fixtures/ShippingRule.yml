@@ -2,10 +2,11 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRule:
    shipping_rule1:
        name: 'Shipping Rule 1'
        enabled: true
-       priority: '5'
+       priority: 5
        conditions: 'true'
        currency: 'EUR'
-       stopProcessing: 'false'
+       stopProcessing: false
+       methodConfigs: ['@method_configuration']
 
 Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
    germany_destination:
@@ -15,28 +16,31 @@ Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination:
       regionText: 'Berlin'
       rule: '@shipping_rule1'
 
-Oro\Bundle\ShippingBundle\Entity\FlatRateRuleConfiguration:
-   flatrate_configuration:
-      processingType: 'per_order'
+Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig:
+   method_configuration:
       method: 'flat_rate'
-      type: 'flat_rate'
-      enabled: true
-      value: '1.5'
-      handlingFeeValue: '1.5'
       rule: '@shipping_rule1'
+      typeConfigs: ['@method_type_configuration']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig:
+   method_type_configuration:
+      enabled: true
+      type: 'primary'
+      options: { price: '1.5', handling_fee: '1.5', type: 'per_order' }
+      methodConfig: '@method_configuration'
 
 Oro\Bundle\CurrencyBundle\Entity\Price(local):
    price1:
        value: '1'
        currency: 'EUR'
 
-Oro\Bundle\AccountBundle\Entity\Account:
+Oro\Bundle\CustomerBundle\Entity\Account:
    account1:
        name: 'Company A'
        organization: '@organization'
        owner: '@admin'
 
-Oro\Bundle\AccountBundle\Entity\AccountUser:
+Oro\Bundle\CustomerBundle\Entity\AccountUser:
    amanda:
        email: 'AmandaRCole@example.org'
        username: 'AmandaRCole@example.org'
@@ -88,9 +92,9 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
        shoppingList: '@shoppinglist1'
        currency: 'EUR'
        subtotalValue: '10.1'
-       valid: 'true'
+       valid: true
 
-Oro\Bundle\AccountBundle\Entity\AccountUserAddress:
+Oro\Bundle\CustomerBundle\Entity\AccountUserAddress:
     address1:
         country: '@germany'
         region: '@berlin'
@@ -146,13 +150,13 @@ Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
         pricelist: '@combinedPriceList'
         website: '@website1'
 
-Oro\Bundle\AccountBundle\Entity\AccountUserSettings:
+Oro\Bundle\CustomerBundle\Entity\AccountUserSettings:
     accountUserSetting1:
         accountUser: '@amanda'
         __construct: ['@website1']
         currency: 'EUR'
 
-Oro\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType:
+Oro\Bundle\CustomerBundle\Entity\AccountUserAddressToAddressType:
     billing:
          address: '@address1'
          type: '@billingType'

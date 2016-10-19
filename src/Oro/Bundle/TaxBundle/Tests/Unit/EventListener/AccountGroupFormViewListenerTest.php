@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\Form\FormView;
 
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\TaxBundle\EventListener\AccountGroupFormViewListener;
 
@@ -26,7 +26,7 @@ class AccountGroupFormViewListenerTest extends AbstractFormViewListenerTest
             $this->doctrineHelper,
             $this->requestStack,
             'Oro\Bundle\TaxBundle\Entity\AccountTaxCode',
-            'Oro\Bundle\AccountBundle\Entity\AccountGroup'
+            'Oro\Bundle\CustomerBundle\Entity\AccountGroup'
         );
     }
 
