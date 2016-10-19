@@ -147,7 +147,7 @@ services:
 
     oro_product.product.repository:
         parent: oro_website_search.repository.abstract
-        class: 'Oro\Bundle\ProductBundle\Search\Repository\ProductRepository'
+        class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
         arguments:
             - "@oro_search.query_factory"
             - "@oro_search.provider.search_mapping"
