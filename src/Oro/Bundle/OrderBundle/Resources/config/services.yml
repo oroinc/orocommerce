@@ -246,7 +246,7 @@ services:
     oro_order.layout.provider.order_shipping_method:
         class: 'Oro\Bundle\OrderBundle\Layout\DataProvider\OrderShippingMethodProvider'
         arguments:
-            - '@oro_shipping.formatter.shipping_method_label'
+           - "@?oro_shipping.formatter.shipping_method_label"
         tags:
             - { name: layout.data_provider, alias: oro_order_frontend_shipping_method_provider }
 
