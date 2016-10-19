@@ -4,9 +4,9 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\Visibility\Reposit
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 
 abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
 {
