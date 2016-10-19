@@ -73,6 +73,8 @@ services:
             class: 'Oro\Bundle\ShippingBundle\EventListener\Datagrid\OrderShippingMethodDatagridListener'
             tags:
                 - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orders-grid, method: onBuildBefore }
+                - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-orders-grid, method: onBuildBefore }
+
 
     # formatters
     oro_shipping.formatter.length_unit_label:

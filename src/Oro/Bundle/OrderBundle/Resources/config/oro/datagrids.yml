@@ -99,12 +99,6 @@ datagrids:
             paymentTermLabel:
                 label:         oro.order.payment_term.label
                 renderable:    false
-            shippingMethod:
-                label:         oro.order.shipping_method.label
-                type:          twig
-                frontend_type: html
-                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
-                renderable:    false
             poNumber:
                 label:         oro.order.po_number.label
                 renderable:    false
