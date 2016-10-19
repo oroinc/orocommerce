@@ -21,7 +21,7 @@
 
         text-transform: uppercase;
 
-        color: $theme-middle-gray-color;
+        color: get-color('additional', 'dark');
     }
 }
 
@@ -30,13 +30,16 @@
         display: block;
 
         max-height: none;
-        padding: 10px 15px 0 15px;
+        padding: 10px 21px 0 21px;
 
         &__item {
             min-height: 0;
         }
 
         &__link {
+            font-size: 14px;
+            font-weight: bold;
+
             padding: 5px 0;
 
             text-align: left;
