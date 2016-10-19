@@ -145,6 +145,15 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
 
         /** @var Comparison $expr */
         foreach ($where->getExpressionList() as $expr) {
+
+            if ($expr instanceof CompositeExpression) {
+                list($foundSkuComposite, $foundCustomComposite) = $this->checkCompositeExpression($expr);
+
+                $foundSkuExpression    = $foundSkuExpression || $foundSkuComposite;
+                $foundCustomExpression = $foundCustomExpression || $foundCustomComposite;
+                continue;
+            }
+
             if (($expr->getField() === 'sku') && ($expr->getValue()->getValue() === null)) {
                 $foundSkuExpression = true;
             }
