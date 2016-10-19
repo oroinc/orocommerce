@@ -22,7 +22,7 @@
         {% endfor %}
     {% else %}
         {{- form_widget(form.mode) -}}
-        {{- form_widget(form.slug) -}}
+        {{- '/' ~ form.vars.current_slug -}}{{- form_widget(form.slug) -}}
         {{- form_errors(form.slug) -}}
     {% endif %}
 {% endblock %}

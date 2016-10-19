@@ -6,6 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableOrganizationAwareTrait;
@@ -43,9 +45,10 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class Page extends ExtendPage
+class Page extends ExtendPage implements DatesAwareInterface
 {
     use AuditableOrganizationAwareTrait;
+    use DatesAwareTrait;
 
     /**
      * @var integer
@@ -100,34 +103,6 @@ class Page extends ExtendPage
      * )
      */
     protected $currentSlug;
-
-    /**
-     * @var \DateTime $createdAt
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime $updatedAt
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
 
     /**
      * @var Collection|Slug[]
@@ -264,44 +239,6 @@ class Page extends ExtendPage
     }
 
     /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Slug[]
      */
     public function getSlugs()
@@ -357,6 +294,6 @@ class Page extends ExtendPage
     protected function refreshSlugUrls()
     {
         $slugUrl = $this->currentSlug->getSlugUrl();
-        $this->currentSlug->setUrl($slugUrl);
+        $this->currentSlug->setUrl(Slug::DELIMITER . $slugUrl);
     }
 }

@@ -25,13 +25,7 @@ class PageTest extends \PHPUnit_Framework_TestCase
             ['id', 1],
             ['title', 'test_title'],
             ['content', 'test_content'],
-            ['left', 2],
-            ['level', 3],
-            ['right', 4],
-            ['root', 1],
             ['currentSlug', $propertySlug, false],
-            ['parentPage', $propertyPage],
-            ['parentPage', null],
             ['organization', new Organization()],
             ['createdAt', $date, false],
             ['updatedAt', $date, false],
@@ -50,9 +44,6 @@ class PageTest extends \PHPUnit_Framework_TestCase
     {
         $page = new Page();
 
-        $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $page->getChildPages());
-        $this->assertEmpty($page->getChildPages()->toArray());
-
         $slug = new Slug();
         $slug->setUrl('/');
         $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $page->getSlugs());
@@ -65,47 +56,6 @@ class PageTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('DateTime', $page->getUpdatedAt());
         $this->assertLessThanOrEqual($now, $page->getUpdatedAt());
-    }
-
-    public function testChildPageAccessors()
-    {
-        $slug = new Slug();
-        $slug->setUrl('/root');
-        $page = new Page();
-        $page->setCurrentSlug($slug);
-        $this->assertEmpty($page->getChildPages()->toArray());
-
-        $firstSlug = new Slug();
-        $firstSlug->setUrl('/first');
-        $firstPage = new Page();
-        $firstPage->setLevel(1);
-        $firstPage->setCurrentSlug($firstSlug);
-
-        $secondSlug = new Slug();
-        $secondSlug->setUrl('/second');
-        $secondPage = new Page();
-        $secondPage->setLevel(2);
-        $secondPage->setCurrentSlug($secondSlug);
-
-        $page->addChildPage($firstPage)
-            ->addChildPage($secondPage)
-            ->addChildPage($secondPage);
-        $this->assertEquals(
-            [$firstPage, $secondPage],
-            array_values($page->getChildPages()->toArray())
-        );
-        $this->assertEquals('/root/first', $firstPage->getCurrentSlugUrl());
-        $this->assertEquals('/root/second', $secondPage->getCurrentSlugUrl());
-
-        $page->removeChildPage($firstPage)
-            ->removeChildPage($firstPage);
-        $this->assertEquals(
-            [$secondPage],
-            array_values($page->getChildPages()->toArray())
-        );
-
-        $this->assertEquals('/first', $firstPage->getCurrentSlugUrl());
-        $this->assertEquals('/root/second', $secondPage->getCurrentSlugUrl());
     }
 
     public function testSlugAccessors()
@@ -180,19 +130,9 @@ class PageTest extends \PHPUnit_Framework_TestCase
         $rootPage = new Page();
         $rootPage->setCurrentSlug($rootSlug);
 
-        $childSlug = new Slug();
-        $childSlug->setUrl('/first');
-        $childPage = new Page();
-        $childPage->setCurrentSlug($childSlug);
-
-        $rootPage->addChildPage($childPage);
-
-        $childPage->setCurrentSlugUrl('first-altered');
         $this->assertEquals('/root', $rootPage->getCurrentSlugUrl());
-        $this->assertEquals('/root/first-altered', $childPage->getCurrentSlugUrl());
 
         $rootPage->setCurrentSlugUrl('root-altered');
         $this->assertEquals('/root-altered', $rootPage->getCurrentSlugUrl());
-        $this->assertEquals('/root-altered/first-altered', $childPage->getCurrentSlugUrl());
     }
 }
