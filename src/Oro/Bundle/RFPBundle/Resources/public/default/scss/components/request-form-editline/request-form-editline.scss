@@ -1,7 +1,7 @@
 .request-form-editline {
     padding: 10px;
     
-    background: #fafafa;
+    background: get-color('additional', 'base');
 
     border-top: 1px solid get-color('additional', 'light');
 

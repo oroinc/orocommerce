@@ -24,18 +24,18 @@ define(function(require) {
         options: {
             ftid: '',
             selectors: {
-                productSelector: '.rfp-lineitem-product [data-name="field__product"]',
-                quantitySelector: '.rfp-lineitem-requested-quantity input',
-                unitSelector: '.rfp-lineitem-requested-unit select',
-                priceSelector: '.rfp-lineitem-requested-price input',
-                currencySelector: '.rfp-lineitem-requested-currency select'
+                productSelector: '[data-lineitem-product] [data-name="field__product"]',
+                quantitySelector: '[data-lineitem-quantity] input',
+                unitSelector: '[data-lineitem-unit] select',
+                priceSelector: '[data-lineitem-price] input',
+                currencySelector: '[data-lineitem-currency] select'
             },
             unitLoaderRouteName: 'oro_pricing_frontend_units_by_pricelist',
             unitsRoute: 'oro_product_frontend_ajaxproductunit_productunits',
             compactUnits: false,
-            itemsContainer: '.rfp-lineitem-requested-items',
-            itemWidget: '.rfp-lineitem-requested-item',
-            addItemButton: '.rfp-lineitem-requested-item-add',
+            itemsContainer: '[data-lineitems]',
+            itemWidget: '[data-lineitem]',
+            addItemButton: '[data-lineitem-add]',
             skipLoadingMask: false
         },
 

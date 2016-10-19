@@ -6,10 +6,10 @@
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
     {% endif %}
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
-        class="rfp-lineitem-requested rfp-lineitem-requested-item">
+    <tr data-content="{{ name }}" data-validation-optional-group data-lineitem {{ block('widget_container_attributes') }}
+        class="request-form-lineitem">
         {{ form_widget(form) }}
-        <td class="rfp-lineitem-requested-remove">
+        <td class="request-form-lineitem-unit--remove">
             <button type="button" class="removeRow item-remove button-icon gray fs18">
                 <i class="cf-trash"></i>
             </button>
@@ -294,14 +294,14 @@
             >
         {{ form_widget(form) }}
         {{ form_errors(form) }}
-        <td class="rfp-lineitem-remove">
+        <td class="request-form-lineitem-unit--remove">
             <button type="button" class="removeLineItem btn icons-holder"><i class="icon-remove"></i></button>
         </td>
     </tr>
 {% endmacro %}
 
 {% block oro_rfp_frontend_request_product_widget %}
-    <div class="rfp-lineitem-product request-form-editline__product">
+    <div class="request-form-editline__product" data-lineitem-product>
         {{ form_widget(form.product) }}
         {{ form_errors(form.product) }}
     </div>
@@ -370,14 +370,14 @@
         {% set prototype_name = form.vars.prototype_name %}
         <div {{ block('widget_container_attributes') }}>
             <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" disabled data-validate-element>
-            <table class="request-form-lines">
-                <tbody class="rfp-lineitem-requested-items"
-                data-last-index="{{ form.children|length}}"
+            <table class="request-form-lineitems">
+                <tbody data-last-index="{{ form.children|length}}"
                 data-prototype-name="{{ prototype_name }}"
                 {% if prototype_html is defined %}
                     data-prototype="{{ prototype_html|escape }}"
                 {% endif %}
-                data-content>
+                data-content
+                data-lineitems>
                 {% if form.children|length %}
                     {% for child in form.children %}
                         {{ _self.oro_rfp_frontend_request_lineitem_requested_prototype(child) }}
@@ -388,7 +388,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="add-list-item rfp-lineitem-requested-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
+        <a class="add-list-item" data-lineitem-add data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
     </div>
 {% endblock %}
 
@@ -443,22 +443,22 @@
 {% endmacro %}
 
 {% block oro_rfp_request_product_item_widget %}
-    <td class="rfp-lineitem-requested-quantity">
+    <td class="request-form-lineitem-unit" data-lineitem-quantity>
         {{ form_widget(form.quantity) }}
         {{ form_errors(form.quantity) }}
     </td>
-    <td class="rfp-lineitem-requested-unit">
+    <td class="request-form-lineitem-unit" data-lineitem-unit>
         {{ form_widget(form.productUnit, {attr: attr|merge({class: 'rfp-requestproductitem-productunit-select'})}) }}
         {{ form_errors(form.productUnit) }}
     </td>
-    <td class="rfp-lineitem-requested-label">
+    <td class="request-form-lineitem-unit--text-node">
         <label>Target price:</label>
     </td>
-    <td class="rfp-lineitem-requested-price">
+    <td class="request-form-lineitem-unit" data-lineitem-price>
         {{ form_widget(form.price.value) }}
         {{ form_errors(form.price.value) }}
     </td>
-    <td class="rfp-lineitem-requested-currency">
+    <td class="request-form-lineitem-unit hide" data-lineitem-currency>
         {{ form_widget(form.price.currency) }}
         {{ form_errors(form.price.currency) }}
     </td>
