@@ -7,9 +7,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\ProductBundle\Search\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
+use Oro\Bundle\SearchBundle\Query\Query;
 
 class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -90,7 +90,7 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
         ];
         $dataParameters = [];
 
-        $query = $this->getMockBuilder(SearchQueryInterface::class)
+        $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()
             ->setMethods(['getResult', 'toArray'])
             ->getMockForAbstractClass();

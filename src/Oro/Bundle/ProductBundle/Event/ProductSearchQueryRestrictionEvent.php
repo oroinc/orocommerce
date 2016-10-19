@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
-use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
+use Oro\Bundle\SearchBundle\Query\Query;
 
 /**
  * This event is fired by the Product Manager when
@@ -17,20 +17,20 @@ class ProductSearchQueryRestrictionEvent extends Event
     const NAME = 'oro_product.product_search_query.restriction';
 
     /**
-     * @var SearchQueryInterface
+     * @var Query
      */
     private $query;
 
     /**
-     * @param SearchQueryInterface $query
+     * @param Query $query
      */
-    public function __construct(SearchQueryInterface $query)
+    public function __construct(Query $query)
     {
         $this->query = $query;
     }
 
     /**
-     * @return SearchQueryInterface
+     * @return Query
      */
     public function getQuery()
     {
