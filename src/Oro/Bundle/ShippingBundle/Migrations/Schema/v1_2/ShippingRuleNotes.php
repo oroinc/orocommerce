@@ -10,7 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
-class Notes implements Migration, NoteExtensionAwareInterface
+class ShippingRuleNotes implements Migration, NoteExtensionAwareInterface
 {
     /** @var NoteExtension */
     protected $noteExtension;
