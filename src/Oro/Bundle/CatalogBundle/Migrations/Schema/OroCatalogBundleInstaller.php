@@ -262,7 +262,7 @@ class OroCatalogBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
-    
+
     /**
      * Add oro_catalog_category_long_description foreign keys.
      *

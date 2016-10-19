@@ -2,7 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Rounding;
 
-use Oro\Bundle\ProductBundle\Exception\InvalidRoundingTypeException;
+use Oro\Bundle\CurrencyBundle\Exception\InvalidRoundingTypeException;
+use Oro\Bundle\CurrencyBundle\Rounding\AbstractRoundingService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 

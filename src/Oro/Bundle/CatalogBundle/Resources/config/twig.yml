@@ -3,8 +3,7 @@ services:
     oro_catalog.twig.category_extension:
         class: 'Oro\Bundle\CatalogBundle\Twig\CategoryExtension'
         public: false
-        arguments:
-            - '@oro_catalog.category_tree_handler'
-            - '@translator'
+        calls:
+            - [setContainer, ["@service_container"]]
         tags:
             - { name: twig.extension }

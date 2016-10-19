@@ -3,16 +3,18 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
+use Oro\Bundle\PricingBundle\Async\NotificationMessages;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\NotificationMessage\Message;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelations;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedules;
@@ -25,6 +27,8 @@ use Symfony\Component\Intl\Intl;
 
 /**
  * @dbIsolation
+ * @group CommunityEdition
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class PriceListControllerTest extends WebTestCase
 {
@@ -36,6 +40,7 @@ class PriceListControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -177,6 +182,40 @@ class PriceListControllerTest extends WebTestCase
         return $id;
     }
 
+    public function testViewWithNotificationMessage()
+    {
+        // Create price list
+        $priceListName = 'Price list with notification message';
+        $priceList = new PriceList();
+        $priceList->setName($priceListName);
+
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(PriceList::class);
+
+        $em->persist($priceList);
+        $em->flush();
+
+        // Create notification message for price list
+        $expectedErrorMessage = 'Test error notification message';
+        $this->getContainer()->get('oro_pricing.notification_message.messenger')->send(
+            NotificationMessages::CHANNEL_PRICE_LIST,
+            NotificationMessages::TOPIC_ASSIGNED_PRODUCTS_BUILD,
+            Message::STATUS_ERROR,
+            $expectedErrorMessage,
+            PriceList::class,
+            $priceList->getId()
+        );
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_pricing_price_list_view', ['id' => $priceList->getId()])
+        );
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $this->assertContains($priceListName, $crawler->html());
+        $this->assertContains($expectedErrorMessage, $crawler->html());
+    }
+
     public function testPriceGeneration()
     {
         $this->markTestIncomplete(
@@ -292,9 +331,14 @@ class PriceListControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertContains(self::PRICE_LIST_NAME_EDIT, $crawler->html());
-        $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName(self::CURRENCY), $crawler->html());
+        $this->checkCurrenciesOnPage($crawler);
 
         return $id;
+    }
+
+    protected function checkCurrenciesOnPage($crawler)
+    {
+        return true;
     }
 
     public function testUpdateCurrenciesError()
@@ -344,7 +388,7 @@ class PriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains(self::PRICE_LIST_NAME_EDIT, $crawler->html());
-        $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName(self::CURRENCY), $crawler->html());
+        $this->checkCurrenciesOnPage($crawler);
     }
 
     /**

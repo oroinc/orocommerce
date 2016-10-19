@@ -3,23 +3,11 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry'
         public: false
 
-    oro_shipping.shipping_method.flat_rate:
-        class: 'Oro\Bundle\ShippingBundle\Method\FlatRateShippingMethod'
+    oro_shipping.shipping_method_provider.flat_rate:
+        class: 'Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodProvider'
         public: false
         tags:
-            - { name: oro_shipping_method }
-
-    oro_shipping.provider.shipping_rules:
-        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider'
-        arguments:
-            - '@oro_entity.doctrine_helper'
-
-    oro_shipping.form_event_subscriber.rule_configuration_subscriber:
-        class: 'Oro\Bundle\ShippingBundle\Form\EventSubscriber\RuleConfigurationSubscriber'
-        arguments:
-            - '@form.factory'
-            - '@oro_shipping.shipping_method.registry'
-            - '@doctrine'
+            - { name: oro_shipping_method_provider }
 
     oro_shipping.formatter.shipping_method_label:
         class: 'Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter'

@@ -25,18 +25,9 @@ class OrderShippingMethodProvider
      */
     public function getData(Order $order)
     {
-        $methodLabel = $this->shippingMethodLabelFormatter->formatShippingMethodLabel($order->getShippingMethod());
-        if (!$methodLabel) {
-            return false;
-        }
-        $methodTypeLabel = $this->shippingMethodLabelFormatter->formatShippingMethodTypeLabel(
+        return $this->shippingMethodLabelFormatter->formatShippingMethodWithType(
             $order->getShippingMethod(),
             $order->getShippingMethodType()
         );
-        if (!$methodTypeLabel) {
-            return $methodLabel;
-        }
-
-        return sprintf('%s, %s', $methodLabel, $methodTypeLabel);
     }
 }

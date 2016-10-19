@@ -8,8 +8,8 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 
 /**
  * @dbIsolation
@@ -22,11 +22,12 @@ class AccountControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadInternalRating',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadInternalRating',
                 'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes'
             ]
         );
@@ -34,7 +35,7 @@ class AccountControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_account_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_account_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -51,8 +52,8 @@ class AccountControllerTest extends WebTestCase
 
         /** @var Account $taxAccount */
         $taxAccount = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:Account')
-            ->getRepository('OroAccountBundle:Account')
+            ->getManagerForClass('OroCustomerBundle:Account')
+            ->getRepository('OroCustomerBundle:Account')
             ->findOneBy(['name' => self::ACCOUNT_NAME]);
         $this->assertNotEmpty($taxAccount);
 
@@ -67,7 +68,7 @@ class AccountControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_view', ['id' => $id])
+            $this->getUrl('oro_customer_account_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -169,7 +170,7 @@ class AccountControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_account_view', ['id' => $id])
+            $this->getUrl('oro_customer_account_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -181,7 +182,7 @@ class AccountControllerTest extends WebTestCase
         $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_2);
 
         $this->assertContains($accountTaxCode->getCode(), $html);
-        $this->assertContains('(Defined for Account Group)', $html);
+        $this->assertContains('(Defined for Customer Group)', $html);
     }
 
     /**
@@ -217,7 +218,7 @@ class AccountControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Account has been saved', $html);
+        $this->assertContains('Customer has been saved', $html);
         $this->assertViewPage($html, $name, $parent, $group, $internalRating, $accountTaxCode);
     }
 

@@ -33,6 +33,7 @@ class AddressACLTest extends AbstractAddressACLTest
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->role = $this->getContainer()
             ->get('doctrine')
@@ -41,10 +42,10 @@ class AddressACLTest extends AbstractAddressACLTest
             ->findOneBy(['role' => User::ROLE_ADMINISTRATOR]);
 
         $this->loadFixtures([
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses',
             'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders'
         ]);
     }
