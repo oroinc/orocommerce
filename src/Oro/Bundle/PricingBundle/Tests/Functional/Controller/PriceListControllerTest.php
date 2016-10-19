@@ -29,6 +29,7 @@ use Symfony\Component\Intl\Intl;
  * @dbIsolation
  * @group CommunityEdition
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @group CommunityEdition
  */
 class PriceListControllerTest extends WebTestCase
 {
