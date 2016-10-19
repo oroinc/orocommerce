@@ -198,7 +198,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 ->setOwner($businessUnit)
                 ->setOrganization($organization)
                 ->setUsername($item['username'])
-                ->setPlainPassword($item['password'] . '1Q')
+                ->setPlainPassword($item['password'])
                 ->setEnabled(true)
             ;
             $userManager->updateUser($user);
@@ -260,7 +260,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 ->setOrganization($organization)
                 ->addRole($this->getReference($item['role']))
                 ->setSalt('')
-                ->setPlainPassword($item['password'] . '1Q')
+                ->setPlainPassword($item['password'])
                 ->setEnabled(true)
             ;
 

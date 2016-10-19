@@ -8,7 +8,7 @@ use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 
 class ProcessorTest extends AbstractProcessorTest
 {
-    const PASSWORD = '123456Q';
+    const PASSWORD = '123456';
 
     /**
      * @var Processor|\PHPUnit_Framework_MockObject_MockObject

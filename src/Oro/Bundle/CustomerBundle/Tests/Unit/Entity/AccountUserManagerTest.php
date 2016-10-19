@@ -81,7 +81,7 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testConfirmRegistration()
     {
-        $password = 'test1Q';
+        $password = 'test';
 
         $user = new AccountUser();
         $user->setConfirmed(false);
@@ -103,7 +103,7 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testSendWelcomeEmail($sendPassword)
     {
-        $password = 'test1Q';
+        $password = 'test';
 
         $user = new AccountUser();
         $user->setPlainPassword($password);
