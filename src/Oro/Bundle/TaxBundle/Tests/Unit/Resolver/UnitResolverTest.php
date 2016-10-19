@@ -71,7 +71,6 @@ class UnitResolverTest extends \PHPUnit_Framework_TestCase
         $this->resolver->resolveUnitPrice($result, [], $amount);
 
         $this->assertEquals($resultElement, $result->getUnit());
-
     }
 
     /**

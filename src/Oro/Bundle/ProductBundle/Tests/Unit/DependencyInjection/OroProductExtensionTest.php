@@ -18,7 +18,6 @@ class OroProductExtensionTest extends ExtensionTestCase
 
         $expectedDefinitions = [
             'oro_product.form.type.product',
-            'oro_product.service.quantity_rounding',
             'oro_product.form.type.product_step_one',
             'oro_product.service.product_create_step_one_handler',
             'oro_product.provider.default_product_unit_provider.chain',

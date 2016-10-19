@@ -29,6 +29,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'scope' => 'app',
                     'value' => [],
                 ],
+                'manage_inventory' => [
+                    'value' => false,
+                    'scope' => 'app'
+                ]
             ],
         ];
 

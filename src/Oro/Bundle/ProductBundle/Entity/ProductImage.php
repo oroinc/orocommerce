@@ -11,8 +11,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ProductBundle\Model\ExtendProductImage;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity()
  * @ORM\Table(name="oro_product_image")
+ * @ORM\HasLifecycleCallbacks
  * @Config
  */
 class ProductImage extends ExtendProductImage
@@ -67,6 +68,23 @@ class ProductImage extends ExtendProductImage
      */
     protected $types;
 
+    /**
+     * @var \DateTime $updatedAt
+     *
+     * @ORM\Column(name="updated_at", type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.updated_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $updatedAt;
+
     public function __construct()
     {
         parent::__construct();
@@ -115,6 +133,8 @@ class ProductImage extends ExtendProductImage
             $productImageType = new ProductImageType($type);
             $productImageType->setProductImage($this);
             $this->types->set($type, $productImageType);
+
+            $this->preUpdate();
         }
     }
 
@@ -125,6 +145,8 @@ class ProductImage extends ExtendProductImage
     {
         if ($this->types->containsKey($type)) {
             $this->types->remove($type);
+
+            $this->preUpdate();
         }
     }
 
@@ -135,6 +157,30 @@ class ProductImage extends ExtendProductImage
     public function hasType($type)
     {
         return $this->types->containsKey($type);
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     */
+    public function setUpdatedAt(\DateTime $updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**

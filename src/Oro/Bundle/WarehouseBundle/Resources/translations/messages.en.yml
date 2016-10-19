@@ -49,10 +49,12 @@ oro:
                 title: Export Options
                 options.label: Exported data
             template_popup:
-                title: Import Options
+                title: Data Template Options
             detailed_inventory_levels: "Detailed inventory levels"
 
         import:
+            popup:
+                title: Import Options
             error:
                 inventory_status: Multiple products found having different Inventory Status
                 warehouse_inexistent: Expecting at least one warehouse in the system and found none
@@ -77,8 +79,17 @@ oro:
             groups:
                 warehouse.title: Warehouses
                 warehouse_configuration.title: Warehouse Configuration
+                product_options.title: Product Options
+                product_inventory_options.title: Product Inventory Options
             fields:
                 enabled_warehouses.label: Enabled Warehouses
+                manage_inventory.label: Manage Inventory
+
+        manage_inventory:
+            label: Manage Inventory
+            choice:
+                'true': Yes
+                'false': No
 
     order:
         orderlineitem:

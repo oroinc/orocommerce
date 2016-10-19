@@ -27,7 +27,9 @@ services:
             - "@oro_config.manager"
 
     oro_rfp.processor.quick_add:
+        class: 'Oro\Bundle\RFPBundle\ComponentProcessor\DataStorageComponentProcessor'
         parent: oro_product.component_processor.data_storage_aware.processor
+        arguments: ['@oro_rfp.form.type.extension.frontend_request_data_storage']
         calls:
             - [setName, ['oro_rfp_quick_add_processor']]
             - [setRedirectRouteName, ['oro_rfp_frontend_request_create']]

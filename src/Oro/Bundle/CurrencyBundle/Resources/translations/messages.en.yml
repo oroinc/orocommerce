@@ -1,8 +1,0 @@
-oro.currency:
-    system_configuration:
-        groups:
-            currency.title: 'Currency'
-            currency_settings.title: 'Currency settings'
-        fields:
-            allowed_currencies.label: 'Allowed Currencies'
-    currency.form.choose: 'Choose Currency...'

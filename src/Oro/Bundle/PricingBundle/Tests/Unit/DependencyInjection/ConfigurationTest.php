@@ -5,8 +5,9 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\DependencyInjection;
 use Symfony\Component\Config\Definition\Processor;
 
 use Oro\DBAL\Types\MoneyType;
+
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
-use Oro\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\PricingBundle\DependencyInjection\OroPricingExtension;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase

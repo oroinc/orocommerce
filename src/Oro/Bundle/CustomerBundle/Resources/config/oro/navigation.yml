@@ -1,0 +1,259 @@
+navigation:
+    menu_config:
+        templates:
+            frontend_dots_menu:
+                template: 'OroNavigationBundle:Menu:dots_menu.html.twig'
+            frontend_favorite:
+                template: 'OroNavigationBundle:Menu:favorites.html.twig'
+            frontend_pinbar:
+                template: 'OroNavigationBundle:Menu:pinbar.html.twig'
+            frontend_history:
+                template: 'OroNavigationBundle:Menu:history.html.twig'
+                rootClass: 'extra-list'
+                currentAsLink: false
+            frontend_mostviewed:
+                template: 'OroNavigationBundle:Menu:mostviewed.html.twig'
+                rootClass: 'extra-list'
+
+        items:
+
+            # TODO move to an appropriate "distrubution" bundle
+            activities_tab:
+                extras:
+                    position: 2000
+            reports_tab:
+                extras:
+                    position: 3000
+            system_tab:
+                extras:
+                    position: 4000
+
+            frontend_favorite:
+                label: 'oro.navigation.menu.favorite.label'
+                extras:
+                    icon: 'icon-star-empty'
+                uri: '#'
+            frontend_pinbar:
+                label: 'oro.navigation.menu.pinbar.label'
+                extras:
+                    icon: 'icon-folder-close'
+                    maxItems: 10
+                uri: '#'
+            frontend_history:
+                label: 'oro.navigation.menu.history.label'
+                extras:
+                    icon: 'icon-time'
+                    activeIfFirstIsEmpty: true
+                uri: '#'
+            frontend_mostviewed:
+                label: 'oro.navigation.menu.mostviewed.label'
+                extras:
+                    icon: 'icon-flag'
+                uri: '#'
+
+            customers_tab:
+                label:           'oro.customer.menu.customers_tab.label'
+                uri:             '#'
+                extras:
+                    icon:        icon-user
+                    position:    200
+
+            # This is temporary solution to remove navigation key duplication
+            # @todo: renaming of navigation keys will be finished in BB-2679
+            customer_list:
+                label:           'oro.customer.account.entity_plural_label'
+                route:           'oro_customer_account_index'
+                extras:
+                    position:    10
+                    routes:
+                        - 'oro_customer_account_index'
+                        - 'oro_customer_account_view'
+                        - 'oro_customer_account_create'
+                        - 'oro_customer_account_update'
+                    description: 'oro.customer.menu.account_list.description'
+
+            account_group_list:
+                label:           'oro.customer.accountgroup.entity_plural_label'
+                route:           'oro_customer_account_group_index'
+                extras:
+                    position:    20
+                    routes:
+                        - 'oro_customer_account_group_index'
+                        - 'oro_customer_account_group_view'
+                        - 'oro_customer_account_group_create'
+                        - 'oro_customer_account_group_update'
+                    description: 'oro.customer.menu.account_group_list.description'
+
+            shortcut_account_list:
+                label:           'oro.customer.account.entity_plural_label'
+                route:           'oro_customer_account_index'
+                extras:
+                    description: 'oro.customer.menu.shortcut_account_list.description'
+
+            shortcut_account_group_list:
+                label:           'oro.customer.accountgroup.entity_plural_label'
+                route:           'oro_customer_account_group_index'
+                extras:
+                    description: 'oro.customer.menu.shortcut_account_list.description'
+
+            account_users:
+                label: 'oro.customer.accountuser.entity_plural_label'
+                route: 'oro_customer_account_user_index'
+                extras:
+                    position: 30
+                    routes: ['/^oro_customer_account_user/']
+                    description: 'oro.customer.menu.account_users.description'
+
+            shortcut_new_account_user:
+                label: 'oro.customer.menu.shortcut_new_account_user.label'
+                route: 'oro_customer_account_user_create'
+                extras:
+                    description: 'oro.customer.menu.shortcut_new_account_user.description'
+
+            shortcut_list_account_users:
+                label: 'oro.customer.menu.shortcut_list_account_users.label'
+                route: 'oro_customer_account_user_index'
+                extras:
+                    description: 'oro.customer.menu.shortcut_list_account_users.description'
+
+            frontend_shortcut_list_account_users:
+                label: 'oro.customer.menu.shortcut_list_account_users.label'
+                route: 'oro_customer_frontend_account_user_index'
+                extras:
+                    description: 'oro.customer.menu.shortcut_list_account_users.description'
+
+            account_user_roles:
+                label: 'oro.customer.accountuserrole.entity_plural_label'
+                route: 'oro_customer_account_user_role_index'
+                extras:
+                    position: 40
+                    routes:
+                        - 'oro_customer_account_user_role_index'
+                        - 'oro_customer_account_user_role_view'
+                        - 'oro_customer_account_user_role_update'
+                        - 'oro_customer_account_user_role_create'
+                    description: 'oro.customer.menu.account_user_roles.description'
+
+            shortcut_new_account_user_role:
+                label: 'oro.customer.menu.shortcut_new_account_user_role.label'
+                route: 'oro_customer_account_user_role_create'
+                extras:
+                    description: 'oro.customer.menu.shortcut_new_account_user_role.description'
+
+            shortcut_list_account_user_groups:
+                label: 'oro.customer.menu.shortcut_list_account_user_roles.label'
+                route: 'oro_customer_account_user_role_index'
+                extras:
+                    description: 'oro.customer.menu.shortcut_list_account_user_roles.description'
+
+            oro_account_frontend_account_user_profile:
+                label: 'oro.customer.menu.account_user_profile.label'
+                route: 'oro_customer_frontend_account_user_profile'
+                extras:
+                    position: 10
+
+            frontend_configuration_tab:
+                label: 'oro.customer.menu.frontend_configuration_tab'
+                uri: '#'
+                extras:
+                    position: 900
+
+            frontend_account_users:
+                label: 'oro.customer.accountuser.entity_plural_label'
+                route: 'oro_customer_frontend_account_user_index'
+                extras:
+                    position: 100
+                    routes: ['/^oro_customer_frontend_account_user/']
+                    description: 'oro.customer.menu.account_users.description'
+
+            frontend_account_user_roles:
+                 label: 'oro.customer.menu.frontend_account_user_roles.label'
+                 route: 'oro_customer_frontend_account_user_role_index'
+                 extras:
+                     position: 200
+                     routes: ['/^oro_customer_frontend_account_user_role/']
+
+        tree:
+            application_menu:
+                children:
+                    customers_tab:
+                        children:
+                            customer_list: ~
+                            account_group_list: ~
+                            account_users: ~
+                            account_user_roles: ~
+            frontend_menu:
+                type: application_menu
+                area: frontend
+                children:
+                    frontend_configuration_tab:
+                        children:
+                            frontend_account_users: ~
+                            frontend_account_user_roles: ~
+
+            frontend_dots_menu:
+                type: dots_menu
+                area: frontend
+                read_only: true
+                children:
+                    frontend_history: ~
+                    frontend_favorite: ~
+                    frontend_mostviewed: ~
+
+            account_usermenu:
+                area: frontend
+                children:
+                    oro_account_frontend_account_user_profile: ~
+
+            shortcuts:
+                children:
+                    shortcut_account_list: ~
+                    shortcut_account_group_list: ~
+                    shortcut_new_account_user: ~
+                    shortcut_list_account_users: ~
+                    shortcut_new_account_user_role: ~
+                    shortcut_list_account_user_groups: ~
+
+    titles:
+        oro_account_pinbar_help: 'How To Use Pinbar'
+
+        oro_customer_account_index: ~
+        oro_customer_account_view:  '%%title%%'
+        oro_customer_account_update: %%accountName%% - oro.ui.edit
+        oro_customer_account_create: oro.ui.create_entity
+
+        oro_customer_account_group_index: ~
+        oro_customer_account_group_view:  '%%title%%'
+        oro_customer_account_group_update: %%accountGroupName%% - oro.ui.edit
+        oro_customer_account_group_create: oro.ui.create_entity
+
+        oro_customer_account_user_index:   ~
+        oro_customer_account_user_view:    '%%email%%'
+        oro_customer_account_user_update:  %%email%% - oro.ui.edit
+        oro_customer_account_user_create:  oro.ui.create_entity
+
+        oro_customer_frontend_account_user_index:   ~
+        oro_customer_frontend_account_user_view:    '%%email%%'
+        oro_customer_frontend_account_user_update:  %%email%% - oro.ui.edit
+        oro_customer_frontend_account_user_create:  oro.ui.create_entity
+
+        oro_customer_account_user_role_index:     ~
+        oro_customer_account_user_role_view:      '%%label%% - oro.ui.view'
+        oro_customer_account_user_role_update:    '%%label%% - oro.ui.edit'
+        oro_customer_account_user_role_create:    oro.ui.create_entity
+
+        oro_customer_frontend_account_user_profile: '%%email%%'
+        oro_customer_frontend_account_user_profile_update: oro.customer.accountuser.profile.edit
+
+        oro_customer_account_user_security_login: oro.customer.accountuser.profile.login
+        oro_customer_frontend_account_user_register: oro.customer.accountuser.profile.registration.title
+        oro_customer_frontend_account_user_reset_request: oro.customer.accountuser.profile.forgot_password
+        oro_customer_frontend_account_user_reset_check_email: oro.customer.accountuser.profile.check_email.title
+        oro_customer_frontend_account_user_password_reset: oro.customer.accountuser.profile.reset_password.title
+
+        oro_customer_frontend_account_user_role_index:  ~
+        oro_customer_frontend_account_user_role_view:   '%%label%% - oro.ui.view'
+        oro_customer_frontend_account_user_role_update: '%%label%% - oro.ui.edit'
+        oro_customer_frontend_account_user_role_create: oro.ui.create_entity
+
+        oro_product_visibility_edit: '%%sku%% - %%name%% - Edit'
