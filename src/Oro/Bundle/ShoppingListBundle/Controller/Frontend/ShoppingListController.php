@@ -27,19 +27,18 @@ class ShoppingListController extends Controller
      *      id="oro_shopping_list_frontend_view",
      *      type="entity",
      *      class="OroShoppingListBundle:ShoppingList",
-     *      permission="ACCOUNT_VIEW",
+     *      permission="VIEW",
      *      group_name="commerce"
      * )
      *
-     * @param int|null $id
-     *
+     * @param ShoppingList $shoppingList
      * @return array
+     *
      */
-    public function viewAction($id = null)
+    public function viewAction(ShoppingList $shoppingList = null)
     {
         /** @var ShoppingListRepository $repo */
         $repo = $this->getDoctrine()->getRepository('OroShoppingListBundle:ShoppingList');
-        $shoppingList = $repo->findOneByIdWithRelations($id);
 
         if (!$shoppingList) {
             $user = $this->getUser();

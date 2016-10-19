@@ -476,8 +476,8 @@ oro.customer:
         security:
             access-level:
                 BASIC: 'Individual'
-                LOCAL: 'All'
-                DEEP: 'Сorporate'
+                LOCAL: 'Сorporate'
+                DEEP: 'All'
                 GLOBAL: 'Not supported'
                 SYSTEM: 'System'
                 NONE: 'None'
