@@ -301,8 +301,11 @@
 {% endmacro %}
 
 {% block oro_rfp_frontend_request_product_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-role': 'lineitem-product'
+    }) %}
     <div class="request-form-editline__product">
-        {{ form_widget(form.product, {attr: attr|merge({'data-role' : 'lineitem-product'})}) }}
+        {{ form_widget(form.product, {attr: attr}) }}
         {{ form_errors(form.product) }}
     </div>
     <div class="rfp-lineitem-requested request-form-editline__lines">
@@ -443,28 +446,36 @@
 {% endmacro %}
 
 {% block oro_rfp_request_product_item_widget %}
+    {% set attr_quantity = layout_attr_defaults(attr, {
+        'data-role': 'lineitem-quantity'
+    }) %}
     <td class="request-form-lineitem-unit">
-        {{ form_widget(form.quantity, {attr: attr|merge({'data-role' : 'lineitem-quantity'})}) }}
+        {{ form_widget(form.quantity, {attr: attr_quantity}) }}
         {{ form_errors(form.quantity) }}
     </td>
+    {% set attr_unit = layout_attr_defaults(attr, {
+        class: 'rfp-requestproductitem-productunit-select',
+        'data-role': 'lineitem-unit'
+    }) %}
     <td class="request-form-lineitem-unit">
-        {{ form_widget(form.productUnit, {
-            attr: attr|merge({
-                class: 'rfp-requestproductitem-productunit-select',
-                'data-role': "lineitem-unit"
-            })
-        }) }}
+        {{ form_widget(form.productUnit, {attr: attr_unit}) }}
         {{ form_errors(form.productUnit) }}
     </td>
     <td class="request-form-lineitem-unit--text-node">
         <label>Target price:</label>
     </td>
+    {% set attr_price = layout_attr_defaults(attr, {
+        'data-role': 'lineitem-price'
+    }) %}
     <td class="request-form-lineitem-unit">
-        {{ form_widget(form.price.value, {attr: attr|merge({'data-role' : 'lineitem-price'})}) }}
+        {{ form_widget(form.price.value, {attr: attr_price}) }}
         {{ form_errors(form.price.value) }}
     </td>
+    {% set attr_currency = layout_attr_defaults(attr, {
+        'data-role': 'lineitem-currency'
+    }) %}
     <td class="request-form-lineitem-unit hide">
-        {{ form_widget(form.price.currency, {attr: attr|merge({'data-role' : 'lineitem-currency'})}) }}
+        {{ form_widget(form.price.currency, {attr: attr_currency}) }}
         {{ form_errors(form.price.currency) }}
     </td>
 {% endblock %}
