@@ -84,13 +84,22 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('current_slug_id', 'integer', ['notnull' => false]);
-        $table->addColumn('parent_id', 'integer', ['notnull' => false]);
+
+//@TODO will be handled in BB-4943
+//        $table->addColumn('parent_id', 'integer', ['notnull' => false]);
+
         $table->addColumn('title', 'string', ['length' => 255]);
-        $table->addColumn('content', 'text', []);
-        $table->addColumn('tree_left', 'integer', []);
-        $table->addColumn('tree_level', 'integer', []);
-        $table->addColumn('tree_right', 'integer', []);
-        $table->addColumn('tree_root', 'integer', ['notnull' => false]);
+
+        //@TODO will be handled in BB-4943
+        $table->addColumn('content', 'text', ['notnull' => false]);
+        //$table->addColumn('content', 'text', []);
+
+//@TODO will be handled in BB-4943
+//        $table->addColumn('tree_left', 'integer', []);
+//        $table->addColumn('tree_level', 'integer', []);
+//        $table->addColumn('tree_right', 'integer', []);
+//        $table->addColumn('tree_root', 'integer', ['notnull' => false]);
+
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addUniqueIndex(['current_slug_id']);
@@ -131,12 +140,13 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_cms_page'),
-            ['parent_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
+//@TODO will be handled in BB-4943
+//        $table->addForeignKeyConstraint(
+//            $schema->getTable('oro_cms_page'),
+//            ['parent_id'],
+//            ['id'],
+//            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+//        );
     }
 
     /**
