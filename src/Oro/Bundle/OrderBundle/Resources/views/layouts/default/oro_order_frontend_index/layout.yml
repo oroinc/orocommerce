@@ -14,7 +14,7 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'oro.account.menu.account_user.label'
+                - 'oro.customer.menu.account_user.label'
                 - 'oro.order.order_history.label'
 
         - '@setOption':

@@ -1,0 +1,6 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{{ UI.button({
+    'path': path('oro_product_visibility_edit', { 'id': entity.id }),
+    'label': 'oro.customer.product.visibility.label'|trans,
+    'iCss': 'icon-eye-open'
+}) }}
