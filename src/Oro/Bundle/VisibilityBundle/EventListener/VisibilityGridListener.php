@@ -40,7 +40,6 @@ class VisibilityGridListener
      */
     protected $scopeManager;
 
-
     /**
      * @param ManagerRegistry $registry
      * @param VisibilityChoicesProvider $visibilityChoicesProvider
@@ -91,27 +90,14 @@ class VisibilityGridListener
             $scopeId = $params->get('scope_id');
             $config->offsetSetByPath(
                 $selectorPath,
-                sprintf(
-                    '%s-%d',
-                    $config->offsetGetByPath($selectorPath),
-                    $scopeId
-                )
+                sprintf('%s-%d', $config->offsetGetByPath($selectorPath), $scopeId)
             );
             $config->offsetSetByPath(
                 $scopePath,
-                sprintf(
-                    '%s-%d',
-                    $config->offsetGetByPath($scopePath),
-                    $scopeId
-                )
+                sprintf('%s-%d', $config->offsetGetByPath($scopePath), $scopeId)
             );
         }
-        $this->setVisibilityChoices(
-            $targetEntity,
-            $config,
-            '[columns][visibility]',
-            $visibilityClass
-        );
+        $this->setVisibilityChoices($targetEntity, $config, '[columns][visibility]', $visibilityClass);
         $this->setVisibilityChoices(
             $targetEntity,
             $config,
