@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class LoadProductSearchIndexes extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
+class LoadProductSearchIndex extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     use ContainerAwareTrait;
 

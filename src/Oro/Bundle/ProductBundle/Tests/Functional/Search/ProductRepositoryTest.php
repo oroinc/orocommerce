@@ -3,12 +3,13 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Search;
 
 use Doctrine\ORM\Query;
+
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductSearchIndexes;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductSearchIndex;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -21,7 +22,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->initClient();
         $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->loadFixtures([
-            LoadProductSearchIndexes::class,
+            LoadProductSearchIndex::class,
         ]);
     }
 

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductSearchIndexes;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductSearchIndex;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -21,7 +21,7 @@ class AjaxProductControllerTest extends WebTestCase
 
         $this->loadFixtures([
             LoadProductData::class,
-            LoadProductSearchIndexes::class,
+            LoadProductSearchIndex::class,
         ]);
     }
 
