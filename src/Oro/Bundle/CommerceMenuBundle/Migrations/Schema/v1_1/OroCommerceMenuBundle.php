@@ -31,11 +31,28 @@ class OroCommerceMenuBundle implements Migration, RenameExtensionAwareInterface
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Table updates **/
-        $this->renameOroCommerceMenuUpdateAndMenuUpdateTitleTables($schema, $queries);
         $this->updateOroCommerceMenuUpdateTable($schema);
+        $this->renameOroCommerceMenuUpdateAndMenuUpdateTitleTables($schema, $queries);
     }
 
     /**
+     * Update oro_commerce_menu_upd
+     *
+     * @param Schema $schema
+     */
+    protected function updateOroCommerceMenuUpdateTable(Schema $schema)
+    {
+        $table = $schema->getTable('oro_front_nav_menu_upd');
+        $table->addColumn('is_divider', 'boolean', []);
+        $table->addColumn('is_custom', 'boolean', []);
+        $table->changeColumn('ownership_type', ['type' => StringType::getType('string')]);
+        $table->removeForeignKey('FK_1B58D24F18F45C82');
+        $table->dropColumn('website_id');
+    }
+
+    /**
+     * Rename oro_front_nav_menu_upd and oro_commerce_menu_upd_title tables
+     *
      * @param Schema $schema
      * @param QueryBag $queries
      */
@@ -54,19 +71,5 @@ class OroCommerceMenuBundle implements Migration, RenameExtensionAwareInterface
             'oro_front_nav_menu_upd_title',
             'oro_commerce_menu_upd_title'
         );
-    }
-
-    /**
-     * Update oro_commerce_menu_upd
-     *
-     * @param Schema $schema
-     */
-    protected function updateOroCommerceMenuUpdateTable(Schema $schema)
-    {
-        $table = $schema->getTable('oro_commerce_menu_upd');
-        $table->addColumn('is_divider', 'boolean', []);
-        $table->addColumn('is_custom', 'boolean', []);
-        $table->changeColumn('ownership_type', ['type' => StringType::getType('string')]);
-        $table->dropColumn('website_id');
     }
 }
