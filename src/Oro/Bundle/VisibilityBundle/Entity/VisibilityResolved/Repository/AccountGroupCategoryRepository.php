@@ -24,12 +24,12 @@ class AccountGroupCategoryRepository extends EntityRepository
 
     /**
      * @param Category $category
-     * @param Scope $scope
      * @param int $configValue
+     * @param Scope $scope
      * @return bool
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function isCategoryVisible(Category $category, Scope $scope, $configValue)
+    public function isCategoryVisible(Category $category, $configValue, Scope $scope)
     {
         $visibility = $this->getFallbackToGroupVisibility($category, $scope);
         if ($visibility === AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {

@@ -7,6 +7,8 @@ use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -40,6 +42,11 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
      */
     protected $resolver;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ScopeManager
+     */
+    protected $scopeManager;
+
     public function setUp()
     {
         $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
@@ -55,7 +62,11 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->with('oro_visibility.category_visibility')
             ->willReturn(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE);
 
-        $this->resolver = new CategoryVisibilityResolver($this->registry, $this->configManager);
+        $this->scopeManager = $this->getMockBuilder(ScopeManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->resolver = new CategoryVisibilityResolver($this->registry, $this->configManager, $this->scopeManager);
     }
 
     public function testIsCategoryVisible()
@@ -159,6 +170,9 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', ['id' => 42]);
 
+        $scope = $this->getEntity(Scope::class, ['id' => 1]);
+        $this->scopeManager->method('findOrCreate')->willReturn($scope);
+
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -172,7 +186,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository->expects($this->once())
             ->method('isCategoryVisible')
-            ->with($category, $accountGroup, BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE)
+            ->with($category, BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE, $scope)
             ->willReturn(false);
 
         $em->expects($this->once())
@@ -192,6 +206,9 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', ['id' => 42]);
 
+        $scope = $this->getEntity(Scope::class, ['id' => 1]);
+        $this->scopeManager->method('findOrCreate')->willReturn($scope);
+
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -207,7 +224,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->method('getCategoryIdsByVisibility')
             ->with(
                 BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
-                $accountGroup,
+                $scope,
                 BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE
             )
             ->willReturn($this->visibleCategoryIds);
@@ -232,6 +249,9 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', ['id' => 42]);
 
+        $scope = $this->getEntity(Scope::class, ['id' => 1]);
+        $this->scopeManager->method('findOrCreate')->willReturn($scope);
+
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -247,7 +267,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->method('getCategoryIdsByVisibility')
             ->with(
                 BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
-                $accountGroup,
+                $scope,
                 BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE
             )
             ->willReturn($this->hiddenCategoryIds);
@@ -270,10 +290,17 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
     public function testIsCategoryVisibleForAccount()
     {
         /** @var Category $category */
-        $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', ['id' => 10]);
+        $category = $this->getEntity(Category::class, ['id' => 10]);
 
         /** @var Account $account */
-        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 20]);
+        $account = $this->getEntity(Account::class, ['id' => 20]);
+        $account->setGroup($this->getEntity(AccountGroup::class, ['id' => 1]));
+
+        $scope = $this->getEntity(Scope::class, ['id' => 1]);
+        $this->scopeManager->method('findOrCreate')->willReturn($scope);
+
+        $groupScope = $this->getEntity(Scope::class, ['id' => 2]);
+        $this->scopeManager->method('find')->willReturn($groupScope);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -288,7 +315,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository->expects($this->once())
             ->method('isCategoryVisible')
-            ->with($category, $account, BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE)
+            ->with($category, BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE, $scope, $groupScope)
             ->willReturn(true);
 
         $em->expects($this->once())
@@ -306,7 +333,14 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
     public function testGetVisibleCategoryIdsForAccount()
     {
         /** @var Account $account */
-        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 20]);
+        $account = $this->getEntity(Account::class, ['id' => 20]);
+        $account->setGroup($this->getEntity(AccountGroup::class, ['id' => 1]));
+
+        $scope = $this->getEntity(Scope::class, ['id' => 1]);
+        $this->scopeManager->method('findOrCreate')->willReturn($scope);
+
+        $groupScope = $this->getEntity(Scope::class, ['id' => 2]);
+        $this->scopeManager->method('find')->willReturn($groupScope);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -323,8 +357,9 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->method('getCategoryIdsByVisibility')
             ->with(
                 BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
-                $account,
-                BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE
+                BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                $scope,
+                $groupScope
             )
             ->willReturn($this->visibleCategoryIds);
 
@@ -346,7 +381,14 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
     public function testGetHiddenCategoryIdsForAccount()
     {
         /** @var Account $account */
-        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 20]);
+        $account = $this->getEntity(Account::class, ['id' => 20]);
+        $account->setGroup($this->getEntity(AccountGroup::class, ['id' => 1]));
+
+        $scope = $this->getEntity(Scope::class, ['id' => 1]);
+        $this->scopeManager->method('findOrCreate')->willReturn($scope);
+
+        $groupScope = $this->getEntity(Scope::class, ['id' => 2]);
+        $this->scopeManager->method('find')->willReturn($groupScope);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -363,8 +405,9 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->method('getCategoryIdsByVisibility')
             ->with(
                 BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
-                $account,
-                BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE
+                BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                $scope,
+                $groupScope
             )
             ->willReturn($this->hiddenCategoryIds);
 

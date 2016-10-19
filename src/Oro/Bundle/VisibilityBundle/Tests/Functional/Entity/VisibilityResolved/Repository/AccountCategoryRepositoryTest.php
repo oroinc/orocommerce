@@ -3,12 +3,12 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
 use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @dbIsolation
@@ -114,7 +114,7 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         /** @var Account $account */
         $account = $this->getReference($accountName);
 
-        $actualVisibility = $this->repository->isCategoryVisible($category, $account, $configValue);
+        $actualVisibility = $this->repository->isCategoryVisible($category, $configValue, $account);
 
         $this->assertEquals($expectedVisibility, $actualVisibility);
     }

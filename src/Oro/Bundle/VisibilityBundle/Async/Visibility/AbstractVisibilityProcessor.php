@@ -92,7 +92,7 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
                     $message->getBody()
                 )
             );
-            throw $e;
+
             return self::REJECT;
         } catch (\Exception $e) {
             $em->rollback();
@@ -100,7 +100,7 @@ abstract class AbstractVisibilityProcessor implements MessageProcessorInterface
                 'Unexpected exception occurred during Product Visibility resolve',
                 ['exception' => $e]
             );
-            throw $e;
+
             if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
                 return self::REQUEUE;
             } else {

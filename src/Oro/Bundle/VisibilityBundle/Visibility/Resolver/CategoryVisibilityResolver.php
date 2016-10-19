@@ -93,8 +93,8 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
             ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
             ->isCategoryVisible(
                 $category,
-                $scope,
-                $this->getCategoryVisibilityConfigValue()
+                $this->getCategoryVisibilityConfigValue(),
+                $scope
             );
     }
 
@@ -153,7 +153,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
         return $this->registry
             ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
             ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->isCategoryVisible($category, $scope, $accountGroupScope, $this->getCategoryVisibilityConfigValue());
+            ->isCategoryVisible($category, $this->getCategoryVisibilityConfigValue(), $scope, $accountGroupScope);
     }
 
     /**

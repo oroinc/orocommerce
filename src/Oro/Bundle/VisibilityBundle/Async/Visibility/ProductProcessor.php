@@ -93,7 +93,7 @@ class ProductProcessor implements MessageProcessorInterface
                     $message->getBody()
                 )
             );
-            throw $e;
+
             return self::REJECT;
         } catch (\Exception $e) {
             $em->rollback();
@@ -101,7 +101,7 @@ class ProductProcessor implements MessageProcessorInterface
                 'Unexpected exception occurred during Product Visibility resolve by Product',
                 ['exception' => $e]
             );
-            throw $e;
+
             if ($e instanceof DriverException && $this->databaseExceptionHelper->isDeadlock($e)) {
                 return self::REQUEUE;
             } else {

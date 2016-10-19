@@ -25,13 +25,13 @@ class AccountCategoryRepository extends EntityRepository
     /**
      * @param Category $category
      * @param Scope $accountScope
-     * @param Scope $accountGroupScope
+     * @param Scope|null $accountGroupScope
      * @return int visible|hidden|config
      */
     public function getFallbackToAccountVisibility(
         Category $category,
         Scope $accountScope,
-        Scope $accountGroupScope
+        Scope $accountGroupScope = null
     ) {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
@@ -170,7 +170,7 @@ class AccountCategoryRepository extends EntityRepository
      * @param int $configValue
      * @return bool
      */
-    public function isCategoryVisible(Category $category, Scope $scope, Scope $groupScope, $configValue)
+    public function isCategoryVisible(Category $category, $configValue, Scope $scope, Scope $groupScope = null)
     {
         $visibility = $this->getFallbackToAccountVisibility($category, $scope, $groupScope);
         if ($visibility === AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {

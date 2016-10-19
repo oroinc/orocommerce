@@ -7,8 +7,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ScopeBundle\Entity\Repository\ScopeRepository;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Manager\ScopeCriteriaProviderInterface;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Stub\StubScope;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Stub\StubScopeCriteriaProvider;
@@ -69,7 +69,7 @@ class ScopeManagerTest extends \PHPUnit_Framework_TestCase
         $this->manager->addProvider('test', new StubScopeCriteriaProvider());
         $scope = new StubScope();
         $scope->setScopeField('expected_value');
-
+        $this->entityFieldProvider->method('getRelations')->willReturn([]);
         $this->assertSame(
             [StubScopeCriteriaProvider::STUB_FIELD => 'expected_value'],
             $this->manager->getCriteriaByScope($scope, 'test')->toArray()
