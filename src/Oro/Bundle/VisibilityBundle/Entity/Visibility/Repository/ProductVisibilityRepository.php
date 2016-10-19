@@ -27,7 +27,6 @@ class ProductVisibilityRepository extends AbstractProductVisibilityRepository
             ->select(
                 [
                     'product.id',
-                    (string)$qb->expr()->literal($scope->getWebsite()->getId()),
                     (string)$qb->expr()->literal($scope->getId()),
                     (string)$qb->expr()->literal(ProductVisibility::CONFIG)
                 ]
@@ -59,7 +58,7 @@ class ProductVisibilityRepository extends AbstractProductVisibilityRepository
 
         $executor->execute(
             'OroVisibilityBundle:Visibility\ProductVisibility',
-            ['product', 'website', 'scope', 'visibility'],
+            ['product', 'scope', 'visibility'],
             $qb
         );
     }

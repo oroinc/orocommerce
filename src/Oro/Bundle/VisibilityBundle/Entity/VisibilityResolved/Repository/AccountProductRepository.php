@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -95,50 +96,10 @@ class AccountProductRepository extends AbstractVisibilityRepository
         }
 
         if ($category) {
-            $configValue = AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
-            $qb = $this->getEntityManager()
-                ->getRepository('OroVisibilityBundle:Visibility\AccountProductVisibility')
-                ->createQueryBuilder('apv');
-            $qb->select([
-                'apv.id',
-                'IDENTITY(apv.product)',
-                'IDENTITY(apv.scope)',
-                'COALESCE(' .
-                    'acvr.visibility, agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configValue) .
-                ')',
-                (string)AccountProductVisibilityResolved::SOURCE_CATEGORY,
-                (string)$category->getId()
-            ])
-            ->innerJoin('apv.scope', 'scope')
-            ->innerJoin('apv.account', 'account')
-            ->leftJoin(
-                'OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
-                'acvr',
-                'WITH',
-                'acvr.scope = apv.scope AND acvr.category = :category'
-            )
-            ->leftJoin(
-                'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
-                'agcvr',
-                'WITH',
-                'agcvr.accountGroup = account.group AND agcvr.category = :category'
-            )
-            ->leftJoin('agcvr.scope', 'agcvr_scope')
-            ->andWhere('agcvr_scope.visibility IS NULL OR agcvr_scope.accountGroup = account.group')
-            ->leftJoin(
-                'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
-                'cvr',
-                'WITH',
-                'cvr.category = :category'
-            )
-            ->andWhere('apv.product = :product')
-            ->andWhere('apv.visibility = :visibility')
-            ->setParameter('category', $category)
-            ->setParameter('product', $product)
-            ->setParameter('visibility', AccountProductVisibility::CATEGORY);
-
             $fields[] = 'category';
-            $insertFromSelect->execute($this->getEntityName(), $fields, $qb);
+            $this->insertByAccountCategoryVisibility($product, $insertFromSelect, $category, $fields);
+            $this->insertByAccountGroupCategoryVisibility($product, $insertFromSelect, $category, $fields);
+            $this->insertByCategoryVisibility($product, $insertFromSelect, $category, $fields);
         }
     }
 
@@ -258,5 +219,179 @@ VISIBILITY;
             ],
             $queryBuilder
         );
+    }
+
+    /**
+     * @param Product $product
+     * @param InsertFromSelectQueryExecutor $insertFromSelect
+     * @param Category $category
+     * @param array $fields
+     */
+    protected function insertByAccountCategoryVisibility(
+        Product $product,
+        InsertFromSelectQueryExecutor $insertFromSelect,
+        Category $category,
+        array $fields
+    ) {
+        $qb = $this->getEntityManager()
+            ->getRepository('OroVisibilityBundle:Visibility\AccountProductVisibility')
+            ->createQueryBuilder('apv');
+        $qb->select([
+            'apv.id',
+            'IDENTITY(apv.product)',
+            'acvr.visibility',
+            (string)AccountProductVisibilityResolved::SOURCE_CATEGORY,
+            'IDENTITY(apv.scope)',
+        ])
+            ->innerJoin('apv.scope', 'scope')
+            ->innerJoin('OroAccountBundle:Account', 'ac', 'WITH', 'scope.account = ac.account')
+
+            ->innerJoin(
+                'OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
+                'acvr',
+                'WITH',
+                'acvr.category = :category'
+            )
+            ->innerJoin(
+                'OroScopeBundle:Scope',
+                'acs',
+                'WITH',
+                'acvr.scope = acs.scope AND acs.account = scope.account'
+            )
+            ->andWhere('apv.product = :product')
+            ->andWhere('apv.visibility = :visibility')
+            ->setParameter('category', $category)
+            ->setParameter('product', $product)
+            ->setParameter('visibility', AccountProductVisibility::CATEGORY);
+
+        $insertFromSelect->execute($this->getEntityName(), $fields, $qb);
+    }
+
+    /**
+     * @param Product $product
+     * @param InsertFromSelectQueryExecutor $insertFromSelect
+     * @param Category $category
+     * @param array $fields
+     */
+    protected function insertByAccountGroupCategoryVisibility(
+        Product $product,
+        InsertFromSelectQueryExecutor $insertFromSelect,
+        Category $category,
+        array $fields
+    ) {
+        $qb = $this->getEntityManager()
+            ->getRepository('OroVisibilityBundle:Visibility\AccountProductVisibility')
+            ->createQueryBuilder('apv');
+
+        $parentAlias = $this->getRootAlias($qb);
+        $subQueryBuilder = $this->getSubQueryOfExistsVisibilities($parentAlias);
+
+        $qb->select([
+            'apv.id',
+            'IDENTITY(apv.product)',
+            'agcvr.visibility',
+            (string)AccountProductVisibilityResolved::SOURCE_CATEGORY,
+            'IDENTITY(apv.scope)',
+        ])
+            ->innerJoin('apv.scope', 'scope')
+            ->innerJoin('OroAccountBundle:Account', 'ac', 'WITH', 'scope.account = ac.account')
+
+            ->innerJoin(
+                'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+                'agcvr',
+                'WITH',
+                'agcvr.category = :category'
+            )
+            ->innerJoin(
+                'OroScopeBundle:Scope',
+                'gcs',
+                'WITH',
+                'agcvr.scope = gcs.scope AND gcs.accountgroup = scope.accountgroup'
+            )
+            ->andWhere('apv.product = :product')
+            ->andWhere('apv.visibility = :visibility')
+            ->andWhere($qb->expr()->not($qb->expr()->exists($subQueryBuilder->getQuery()->getDQL())))
+            ->setParameter('category', $category)
+            ->setParameter('product', $product)
+            ->setParameter('visibility', AccountProductVisibility::CATEGORY);
+
+        $insertFromSelect->execute($this->getEntityName(), $fields, $qb);
+    }
+
+    /**
+     * @param Product $product
+     * @param InsertFromSelectQueryExecutor $insertFromSelect
+     * @param Category $category
+     * @param array $fields
+     */
+    protected function insertByCategoryVisibility(
+        Product $product,
+        InsertFromSelectQueryExecutor $insertFromSelect,
+        Category $category,
+        array $fields
+    ) {
+        $configValue = AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
+
+        $qb = $this->getEntityManager()
+            ->getRepository('OroVisibilityBundle:Visibility\AccountProductVisibility')
+            ->createQueryBuilder('apv');
+
+        $parentAlias = $this->getRootAlias($qb);
+        $subQueryBuilder = $this->getSubQueryOfExistsVisibilities($parentAlias);
+
+        $qb->select([
+            'apv.id',
+            'IDENTITY(apv.product)',
+            'COALESCE(' . 'cvr.visibility' . $qb->expr()->literal($configValue) .
+            ')',
+            'IDENTITY(apv.scope)',
+        ])
+            ->innerJoin('apv.scope', 'scope')
+            ->innerJoin('OroAccountBundle:Account', 'ac', 'WITH', 'scope.account = ac.account')
+
+            ->innerJoin(
+                'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'cvr',
+                'WITH',
+                'cvr.category = :category'
+            )
+            ->andWhere('apv.product = :product')
+            ->andWhere('apv.visibility = :visibility')
+            ->andWhere($qb->expr()->not($qb->expr()->exists($subQueryBuilder->getQuery()->getDQL())))
+            ->setParameter('category', $category)
+            ->setParameter('product', $product)
+            ->setParameter('visibility', AccountProductVisibility::CATEGORY);
+
+        $insertFromSelect->execute($this->getEntityName(), $fields, $qb);
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @return string
+     */
+    protected function getRootAlias(QueryBuilder $qb)
+    {
+        $aliases = $qb->getRootAliases();
+
+        return reset($aliases);
+    }
+
+    /**
+     * @param $parentAlias
+     * @return QueryBuilder
+     */
+    protected function getSubQueryOfExistsVisibilities($parentAlias)
+    {
+        $subQueryBuilder = $this->getEntityManager()
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved')
+            ->createQueryBuilder('apvr');
+        $subQueryBuilder->where(
+            $subQueryBuilder->expr()->andX(
+                $subQueryBuilder->expr()->eq('apvr.product', ':product'),
+                $subQueryBuilder->expr()->eq('relation.priceList', $parentAlias . '.scope')
+            )
+        );
+
+        return $subQueryBuilder;
     }
 }

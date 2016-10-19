@@ -4,9 +4,11 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\Visibility\Reposit
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRepository;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 
 /**
  * @dbIsolation
@@ -25,14 +27,14 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->repository = $this->getContainer()
+        $this->repository = static::getContainer()
             ->get('doctrine')
             ->getRepository(ProductVisibility::class);
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
-                'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+                LoadCategoryProductData::class,
+                LoadProductVisibilityData::class,
             ]
         );
     }
@@ -47,14 +49,14 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
         /** @var Category $category */
         $category = $this->getReference($categoryName);
         $this->deleteCategory($category);
-        $queryHelper = $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
-        $scopes = $this->getContainer()->get('oro_scope.scope_manager')->findRelatedScopes('product_visibility');
+        $queryHelper = static::getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
+        $scopes = static::getContainer()->get('oro_scope.scope_manager')->findRelatedScopes('product_visibility');
         foreach ($scopes as $scope) {
             $this->repository->setToDefaultWithoutCategory($queryHelper, $scope);
-            $actual = $this->getProductsByVisibilities($scope);
-            $this->assertSameSize($expected, $actual);
+            $actual = $this->getProductsByVisibilitiesScope($scope);
+            static::assertSameSize($expected, $actual);
             foreach ($actual as $value) {
-                $this->assertContains($value, $expected);
+                static::assertContains($value, $expected);
             }
         }
     }
@@ -109,10 +111,8 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
      * @param Scope $scope
      * @return array
      */
-    protected function getProductsByVisibilities(Scope $scope)
+    protected function getProductsByVisibilitiesScope(Scope $scope)
     {
-        $visibilities = $this->repository->findBy(['scope' => $scope]);
-
         return array_map(
             function (ProductVisibility $visibility) {
                 return [
@@ -120,7 +120,7 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
                     'visibility' => $visibility->getVisibility()
                 ];
             },
-            $visibilities
+            $this->repository->findBy(['scope' => $scope])
         );
     }
 }
