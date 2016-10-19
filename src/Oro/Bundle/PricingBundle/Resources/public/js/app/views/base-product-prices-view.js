@@ -5,7 +5,6 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var layout = require('oroui/js/layout');
-    var NumberFormatter = require('orolocale/js/formatter/number');
     var _ = require('underscore');
     var $ = require('jquery');
 
@@ -13,7 +12,6 @@ define(function(require) {
         autoRender: true,
 
         options: {
-            unitLabel: 'oro.product.product_unit.%s.label.full',
             defaultQuantity: 1
         },
 
@@ -184,10 +182,9 @@ define(function(require) {
                 this.getElement('price').addClass('hidden');
                 this.getElement('priceNotFound').removeClass('hidden');
             } else {
-                this.getElement('unit').html(_.__(this.options.unitLabel.replace('%s', price.unit)));
+                this.getElement('unit').html(price.formatted_unit);
 
-                price = NumberFormatter.formatCurrency(price.price, price.currency);
-                this.getElement('priceValue').html(price);
+                this.getElement('priceValue').html(price.formatted_price);
 
                 this.getElement('priceNotFound').addClass('hidden');
                 this.getElement('price').removeClass('hidden');
