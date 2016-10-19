@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class AccountCategoryVisibilityRepository extends AbstractCategoryVisibilityRepository
 {
@@ -42,24 +41,4 @@ class AccountCategoryVisibilityRepository extends AbstractCategoryVisibilityRepo
         return $ids;
     }
 
-    /**
-     * @param array $categoryIds
-     * @param int $visibility
-     * @param Scope $scope
-     */
-    public function updateAccountCategoryVisibilityByCategory(Scope $scope, array $categoryIds, $visibility)
-    {
-        if (!$categoryIds) {
-            return;
-        }
-
-        $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->update('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved', 'acvr')
-            ->set('acvr.visibility', $visibility)
-            ->where($qb->expr()->eq('acvr.scope', ':scope'))
-            ->andWhere($qb->expr()->in('IDENTITY(acvr.category)', ':categoryIds'))
-            ->setParameters(['account' => $scope, 'categoryIds' => $categoryIds]);
-
-        $qb->getQuery()->execute();
-    }
 }

@@ -2,17 +2,14 @@
 
 namespace Oro\Bundle\CatalogBundle\Controller;
 
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class CategoryController extends Controller
 {
@@ -78,14 +75,6 @@ class CategoryController extends Controller
      */
     protected function update(Category $category)
     {
-        $visibility = $this->getDoctrine()->getRepository(CategoryVisibility::class)
-            ->findOneBy(['category' => $category]);
-        if ($visibility) {
-            $this->get('oro_visibility.visibility.cache.product.category.cache_builder')
-                ->resolveVisibilitySettings($visibility);
-
-        }
-
         $form = $this->createForm(CategoryType::NAME, $category);
         $handler = new CategoryHandler(
             $form,

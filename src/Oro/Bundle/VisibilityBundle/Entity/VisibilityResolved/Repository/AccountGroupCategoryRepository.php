@@ -200,7 +200,7 @@ class AccountGroupCategoryRepository extends EntityRepository
         $configFallback = AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
 
         $qb->select(
-            'accountGroup.id as accountGroupId',
+            'IDENTITY(scope.accountGroup) as accountGroupId',
             'COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configFallback).') as visibility'
         )
         ->from('OroAccountBundle:AccountGroup', 'accountGroup')
@@ -208,18 +208,16 @@ class AccountGroupCategoryRepository extends EntityRepository
             'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr',
             Join::WITH,
-            $qb->expr()->andX(
-                $qb->expr()->eq('agcvr.category', ':category'),
-                $qb->expr()->eq('agcvr.scope', 'scope')
-            )
+            $qb->expr()->eq('agcvr.category', ':category')
         )
+        ->leftJoin('agcvr.scope', 'scope')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
             'cvr',
             Join::WITH,
             $qb->expr()->eq('cvr.category', ':category')
         )
-        ->where($qb->expr()->in('accountGroup.id', ':accountGroupIds'))
+        ->where($qb->expr()->in('scope.accountGroup', ':accountGroupIds'))
         ->setParameters([
             'category' => $category,
             'accountGroupIds' => $accountGroupIds

@@ -250,8 +250,10 @@ services:
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.product_visibility.class%', event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.product_visibility.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_product_visibility.class%', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_product_visibility.class%', event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_product_visibility.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_group_product_visibility.class%', event: preUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_group_product_visibility.class%', event: preRemove }
             - { name: doctrine.orm.entity_listener, entity: '%oro_visibility.entity.account_group_product_visibility.class%', event: postPersist }
 
     oro_visibility.entity_listener.category_visibility_change:

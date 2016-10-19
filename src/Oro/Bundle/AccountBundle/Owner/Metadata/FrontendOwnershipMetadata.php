@@ -45,7 +45,7 @@ class FrontendOwnershipMetadata extends OwnershipMetadata
         if (!$this->hasOwner()) {
             return [
                 AccessLevel::NONE_LEVEL => AccessLevel::NONE_LEVEL_NAME,
-                AccessLevel::SYSTEM_LEVEL => AccessLevel::getAccessLevelName(AccessLevel::SYSTEM_LEVEL),
+                AccessLevel::LOCAL_LEVEL => AccessLevel::getAccessLevelName(AccessLevel::LOCAL_LEVEL),
             ];
         }
 

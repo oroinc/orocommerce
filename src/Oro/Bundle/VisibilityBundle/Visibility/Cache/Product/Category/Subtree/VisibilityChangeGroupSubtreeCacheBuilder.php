@@ -31,7 +31,8 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         $this->updateGroupCategoryVisibility($childCategoryIds, $visibility, $scope);
 
         $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
-        $this->updateProductVisibilityByCategory($categoryIds, $visibility, $scope);
+        $productScopes = $this->scopeManager->findRelatedScopeIds('account_group_product_visibility', $scope);
+        $this->updateProductVisibilityByCategory($categoryIds, $visibility, $productScopes);
 
         $this->category = $category;
         $this->accountGroup = $scope->getAccountGroup();
@@ -183,7 +184,7 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
      * @param int $visibility
      * @param Scope $scope
      */
-    protected function updateProductVisibilityByCategory(array $categoryIds, $visibility, Scope $scope)
+    protected function updateProductVisibilityByCategory(array $categoryIds, $visibility, array $scopes)
     {
         if (!$categoryIds) {
             return;
@@ -196,9 +197,9 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
 
         $qb->update('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved', 'agpvr')
             ->set('agpvr.visibility', $visibility)
-            ->where($qb->expr()->eq('agpvr.scope', ':scope'))
+            ->where($qb->expr()->in('agpvr.scope', ':scopes'))
             ->andWhere($qb->expr()->in('IDENTITY(agpvr.category)', ':categoryIds'))
-            ->setParameters(['scope' => $scope, 'categoryIds' => $categoryIds]);
+            ->setParameters(['scopes' => $scopes, 'categoryIds' => $categoryIds]);
 
         $qb->getQuery()->execute();
     }

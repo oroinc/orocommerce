@@ -140,8 +140,7 @@ class AccountCategoryRepository extends EntityRepository
             'agcvr',
             Join::WITH,
             $qb->expr()->andX(
-                $qb->expr()->eq('agcvr.category', ':category'),
-                $qb->expr()->eq('agcvr.accountGroup', 'account.group')
+                $qb->expr()->eq('agcvr.category', ':category')
             )
         )
         ->leftJoin('agcvr.scope', 'agcvr_scope')
@@ -152,7 +151,7 @@ class AccountCategoryRepository extends EntityRepository
             Join::WITH,
             $qb->expr()->eq('cvr.category', ':category')
         )
-        ->where($qb->expr()->in('account', ':accountIds'))
+        ->andWhere($qb->expr()->in('account', ':accountIds'))
         ->setParameter('category', $category)
         ->setParameter('accountIds', $accountIds);
 
@@ -372,5 +371,26 @@ class AccountCategoryRepository extends EntityRepository
                 $queryBuilder
             );
         }
+    }
+
+    /**
+     * @param array $categoryIds
+     * @param int $visibility
+     * @param Scope $scope
+     */
+    public function updateAccountCategoryVisibilityByCategory(Scope $scope, array $categoryIds, $visibility)
+    {
+        if (!$categoryIds) {
+            return;
+        }
+
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->update('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved', 'acvr')
+            ->set('acvr.visibility', $visibility)
+            ->where($qb->expr()->eq('acvr.scope', ':scope'))
+            ->andWhere($qb->expr()->in('IDENTITY(acvr.category)', ':categoryIds'))
+            ->setParameters(['scope' => $scope, 'categoryIds' => $categoryIds]);
+
+        $qb->getQuery()->execute();
     }
 }

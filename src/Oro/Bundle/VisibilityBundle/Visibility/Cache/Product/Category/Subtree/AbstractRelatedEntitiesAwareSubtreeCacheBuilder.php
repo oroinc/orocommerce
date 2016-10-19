@@ -296,7 +296,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             return;
         }
         $scopes = $this->scopeManager->findRelatedScopeIds(
-            'account_group_category_visibility',
+            'account_group_product_visibility',
             ['accountGroup' => $accountGroupIds]
         );
         if (!$scopes) {
@@ -331,7 +331,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             return;
         }
         $scopes = $this->scopeManager->findRelatedScopeIds(
-            'account_category_visibility',
+            'account_product_visibility',
             ['account' => $accountIds]
         );
         if (!$scopes) {

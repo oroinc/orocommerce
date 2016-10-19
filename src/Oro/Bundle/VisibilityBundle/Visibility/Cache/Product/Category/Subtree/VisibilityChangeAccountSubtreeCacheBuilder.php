@@ -7,8 +7,8 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountCategoryVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
 
 class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBuilder
 {
@@ -21,7 +21,7 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
     {
         $childCategoryIds = $this->getChildCategoryIdsForUpdate($category, $scope);
 
-        /** @var AccountCategoryVisibilityRepository $repository */
+        /** @var AccountCategoryRepository $repository */
         $repository = $this->registry->getManagerForClass(AccountCategoryVisibilityResolved::class)
             ->getRepository(AccountCategoryVisibilityResolved::class);
 
@@ -61,6 +61,8 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
         if (!$categoryIds) {
             return;
         }
+        $productScopes = $this->scopeManager->findRelatedScopeIds('account_product_visibility', $scope);
+
         /** @var QueryBuilder $qb */
         $qb = $this->registry
             ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved')
@@ -68,9 +70,9 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
 
         $qb->update('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved', 'apvr')
             ->set('apvr.visibility', $visibility)
-            ->where($qb->expr()->eq('apvr.scope', ':scope'))
+            ->where($qb->expr()->in('apvr.scope', ':scopes'))
             ->andWhere($qb->expr()->in('IDENTITY(apvr.category)', ':categoryIds'))
-            ->setParameters(['scope' => $scope, 'categoryIds' => $categoryIds]);
+            ->setParameters(['scopes' => $productScopes, 'categoryIds' => $categoryIds]);
 
         $qb->getQuery()->execute();
     }
