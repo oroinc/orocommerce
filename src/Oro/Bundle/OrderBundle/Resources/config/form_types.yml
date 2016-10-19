@@ -108,3 +108,20 @@ services:
         arguments:
             - '@oro_order.order.total.total_helper'
             - '@oro_order.pricing.price_matcher'
+
+    oro_order.form.type.order_shipping_tracking:
+        class: 'Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingType'
+        arguments:
+            - "@=parameter('kernel.bundles')['OroShippingBundle']? service('oro_shipping.shipping_method.registry').getTrackingAwareShippingMethods()"
+        tags:
+            - { name: form.type }
+
+    oro_order.form.type.order_shipping_tracking_collection:
+        class: 'Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingCollectionType'
+        tags:
+            - { name: form.type }
+
+    oro_order.form.type.select_switch_input:
+        class: 'Oro\Bundle\OrderBundle\Form\Type\SelectSwitchInputType'
+        tags:
+            - { name: form.type }

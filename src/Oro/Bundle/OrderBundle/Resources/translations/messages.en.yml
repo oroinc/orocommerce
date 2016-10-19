@@ -47,6 +47,11 @@ oro:
         order_history.label: Order History
         top_selling_items.label: Top Selling Items
 
+        shipping_trackings:
+            label: Shipping Trackings
+            method.label: Method
+            number.label: Number
+
         orderdiscount:
             entity_label: Order Discount
             entity_plural_label: Order Discounts
@@ -137,6 +142,7 @@ oro:
 
         widgets:
             order_information: Order Information
+            shipping_tracking: Shipping Tracking
 
         controller:
             order.saved.message: Order has been saved
