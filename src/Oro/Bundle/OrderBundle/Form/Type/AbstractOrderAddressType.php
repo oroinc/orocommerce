@@ -14,9 +14,9 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
-use Oro\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
@@ -131,7 +131,7 @@ abstract class AbstractOrderAddressType extends AbstractType
                 'isEditEnabled' => true,
             ])
             ->setAllowedValues('addressType', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
-            ->setAllowedTypes('object', 'Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface');
+            ->setAllowedTypes('object', 'Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface');
     }
 
     /**

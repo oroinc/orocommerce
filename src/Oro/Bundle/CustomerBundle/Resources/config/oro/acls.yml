@@ -1,0 +1,40 @@
+acls:
+    oro_account_delete:
+        type: entity
+        permission: DELETE
+        class: OroCustomerBundle:Account
+        category: 'account_management'
+
+    oro_account_account_user_delete:
+        type: entity
+        permission: DELETE
+        class: OroCustomerBundle:AccountUser
+        category: 'account_management'
+
+    oro_account_frontend_account_user_view:
+        type: entity
+        permission: VIEW
+        class: OroCustomerBundle:AccountUser
+        group_name: "commerce"
+        category: 'account_management'
+
+    oro_account_frontend_account_user_role_view:
+        type: entity
+        permission: VIEW
+        class: OroCustomerBundle:AccountUserRole
+        group_name: "commerce"
+        category: 'account_management'
+
+    oro_account_frontend_account_user_role_update:
+        type: entity
+        class: OroCustomerBundle:AccountUserRole
+        permission: EDIT
+        group_name: "commerce"
+        category: 'account_management'
+
+    oro_account_frontend_account_user_role_delete:
+        type: entity
+        class: OroCustomerBundle:AccountUserRole
+        permission: DELETE
+        group_name: "commerce"
+        category: 'account_management'

@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -23,8 +23,8 @@ class LoadMenuUpdateData extends AbstractFixture implements
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
             'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData'
         ];
     }

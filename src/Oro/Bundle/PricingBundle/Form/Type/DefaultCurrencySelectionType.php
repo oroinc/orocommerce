@@ -11,9 +11,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Intl\Intl;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
-use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration as LocaleConfiguration;
+use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigInterface;
+use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
+use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguration;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
 class DefaultCurrencySelectionType extends CurrencySelectionType
@@ -34,18 +35,20 @@ class DefaultCurrencySelectionType extends CurrencySelectionType
     protected $requestStack;
 
     /**
-     * @param ConfigManager $configManager
+     * @param CurrencyConfigInterface $configManager
      * @param LocaleSettings $localeSettings
      * @param TranslatorInterface $translator
      * @param RequestStack $requestStack
+     * @param CurrencyNameHelper $nameHelper
      */
     public function __construct(
-        ConfigManager $configManager,
+        CurrencyConfigInterface $configManager,
         LocaleSettings $localeSettings,
         TranslatorInterface $translator,
-        RequestStack $requestStack
+        RequestStack $requestStack,
+        CurrencyNameHelper $nameHelper
     ) {
-        parent::__construct($configManager, $localeSettings);
+        parent::__construct($configManager, $localeSettings, $nameHelper);
         $this->translator = $translator;
         $this->requestStack = $requestStack;
     }
@@ -108,10 +111,10 @@ class DefaultCurrencySelectionType extends CurrencySelectionType
      * @param array $defaultCurrencyData
      * @return string
      */
-    protected function getDefaultCurrency(array $defaultCurrencyData)
+    protected function getDefaultCurrency(array $defaultCurrencyData = [])
     {
         if (isset($defaultCurrencyData['use_parent_scope_value'])) {
-            $defaultCurrency = LocaleConfiguration::DEFAULT_CURRENCY;
+            $defaultCurrency = CurrencyConfiguration::DEFAULT_CURRENCY;
         } elseif (isset($defaultCurrencyData['value'])) {
             $defaultCurrency = $defaultCurrencyData['value'];
         } else {
@@ -128,7 +131,7 @@ class DefaultCurrencySelectionType extends CurrencySelectionType
     protected function getEnabledCurrencies(array $enabledCurrenciesData)
     {
         if (isset($enabledCurrenciesData['use_parent_scope_value'])) {
-            $enabledCurrencies = [LocaleConfiguration::DEFAULT_CURRENCY];
+            $enabledCurrencies = [CurrencyConfiguration::DEFAULT_CURRENCY];
         } elseif (isset($enabledCurrenciesData['value'])) {
             $enabledCurrencies = $enabledCurrenciesData['value'];
         } else {

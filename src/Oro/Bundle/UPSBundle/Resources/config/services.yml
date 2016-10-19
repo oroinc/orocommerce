@@ -1,0 +1,53 @@
+services:
+    # Providers
+    oro_ups.provider.channel:
+        class: 'Oro\Bundle\UPSBundle\Provider\ChannelType'
+        tags:
+            - { name: oro_integration.channel, type: ups }
+
+    oro_ups.provider.transport:
+        class: 'Oro\Bundle\UPSBundle\Provider\UPSTransport'
+        arguments:
+            - '@doctrine'
+            - '@logger'
+        calls:
+            - [setRestClientFactory, ['@oro_integration.transport.rest.client_factory']]
+        tags:
+            - { name: oro_integration.transport, type: ups, channel_type: ups }
+
+    oro_ups.shipping_method_provider.ups:
+        class: 'Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider'
+        public: false
+        arguments:
+            - '@oro_ups.provider.transport'
+            - '@doctrine'
+            - '@oro_ups.factory.price_request_factory'
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: oro_shipping_method_provider }
+
+
+    oro_ups.validator.remove_used_shipping_service:
+        class: 'Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator'
+        arguments:
+            - "@doctrine"
+            - "@oro_shipping.shipping_method.registry"
+        tags:
+            - { name: validator.constraint_validator, alias: oro_ups_remove_used_shipping_service_validator }
+
+    oro_ups.entity_listener.channel:
+        class: 'Oro\Bundle\UPSBundle\EventListener\UPSChannelEntityListener'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: preRemove }
+
+
+    oro_ups.entity_listener.transport:
+        class: 'Oro\Bundle\UPSBundle\EventListener\UPSTransportEntityListener'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\UPSBundle\Entity\UPSTransport', event: postUpdate }
+
+    oro_ups.factory.price_request_factory:
+        class: 'Oro\Bundle\UPSBundle\Factory\PriceRequestFactory'
+        public: false
+        arguments:
+            - '@doctrine'

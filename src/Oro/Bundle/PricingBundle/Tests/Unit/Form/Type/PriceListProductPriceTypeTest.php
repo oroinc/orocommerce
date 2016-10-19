@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -77,20 +76,26 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             ProductUnitSelectionType::NAME
         );
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
-        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CurrencyConfigManager $configManager */
+        $configManager = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Config\CurrencyConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
 
         $configManager->expects($this->any())
-            ->method('get')
-            ->with('oro_currency.allowed_currencies')
+            ->method('getCurrencyList')
             ->will($this->returnValue(['USD', 'EUR']));
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localeSettings */
         $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
             ->disableOriginalConstructor()
             ->getMock();
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper */
+        $currencyNameHelper = $this
+            ->getMockBuilder('Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
 
         $productSelect = new ProductSelectTypeStub();
 
@@ -103,7 +108,11 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
                     ProductSelectType::NAME => $productSelect,
                     ProductUnitSelectionType::NAME => $productUnitSelection,
                     PriceType::NAME => $priceType,
-                    CurrencySelectionType::NAME => new CurrencySelectionType($configManager, $localeSettings),
+                    CurrencySelectionType::NAME => new CurrencySelectionType(
+                        $configManager,
+                        $localeSettings,
+                        $currencyNameHelper
+                    ),
                     QuantityTypeTrait::$name => $this->getQuantityType()
                 ],
                 []
@@ -226,7 +235,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     public function testSubmitPriceWithInvalidCurrency()
     {
         $priceList = new PriceList();
-        $priceList->setCurrencies(['USD']);
+        $priceList->setCurrencies(['USD', 'UAH']);
         $defaultProductPrice = new ProductPrice();
         $defaultProductPrice->setPriceList($priceList);
         $submittedData = [

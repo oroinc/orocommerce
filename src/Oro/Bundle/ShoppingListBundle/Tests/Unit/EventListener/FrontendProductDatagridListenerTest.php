@@ -11,7 +11,7 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -250,18 +250,18 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             [
                 [
-                    'shopping_list_id' => 1,
-                    'shopping_list_label' => 'Shopping List1',
+                    'id' => 1,
+                    'label' => 'Shopping List1',
                     'is_current' => true,
-                    'line_items' => [['line_item_id' => 1, 'unit' => 'unt1','quantity' => 1]]
+                    'line_items' => [['id' => 1, 'unit' => 'unt1','quantity' => 1]]
                 ],
                 [
-                    'shopping_list_id' => 2,
-                    'shopping_list_label' => 'Shopping List2',
+                    'id' => 2,
+                    'label' => 'Shopping List2',
                     'is_current' => false,
                     'line_items' => [
-                        ['line_item_id' => 2, 'unit' => 'unt2','quantity' => 2],
-                        ['line_item_id' => 3, 'unit' => 'unt3','quantity' => 5],
+                        ['id' => 2, 'unit' => 'unt2','quantity' => 2],
+                        ['id' => 3, 'unit' => 'unt3','quantity' => 5],
                     ],
                 ],
             ],

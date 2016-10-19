@@ -14,8 +14,8 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
@@ -51,8 +51,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
             'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
-            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
-            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
             'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
             'Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestDemoData'
         ];
@@ -118,7 +118,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected function getAccounts(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroAccountBundle:Account')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository('OroCustomerBundle:Account')->findBy([], null, 10));
     }
 
     /**

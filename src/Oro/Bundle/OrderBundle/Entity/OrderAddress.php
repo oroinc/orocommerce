@@ -6,9 +6,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\AccountBundle\Entity\AccountAddress;
-use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
-use Oro\Bundle\AccountBundle\Entity\AddressPhoneAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\AddressPhoneAwareInterface;
 use Oro\Bundle\OrderBundle\Model\ExtendOrderAddress;
 
 /**
@@ -37,7 +37,7 @@ class OrderAddress extends ExtendOrderAddress implements AddressPhoneAwareInterf
     /**
      * @var AccountAddress
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountAddress")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountAddress")
      * @ORM\JoinColumn(name="account_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $accountAddress;
@@ -45,7 +45,7 @@ class OrderAddress extends ExtendOrderAddress implements AddressPhoneAwareInterf
     /**
      * @var AccountUserAddress
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountUserAddress")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUserAddress")
      * @ORM\JoinColumn(name="account_user_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $accountUserAddress;

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InvoiceBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
@@ -51,12 +51,13 @@ class InvoiceControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader()));
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
                 'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
                 'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             ]
         );
@@ -326,6 +327,6 @@ class InvoiceControllerTest extends WebTestCase
     {
         $doctrine = $this->getContainer()->get('doctrine');
 
-        return $doctrine->getRepository('OroAccountBundle:Account')->findOneBy([]);
+        return $doctrine->getRepository('OroCustomerBundle:Account')->findOneBy([]);
     }
 }

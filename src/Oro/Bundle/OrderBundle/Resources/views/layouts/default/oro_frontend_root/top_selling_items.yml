@@ -19,6 +19,10 @@ layout:
             id: top_selling_products
             optionName: slider_options
             optionValue: {arrows: true, responsive: [{breakpoint: 1100, settings: {arrows: false}}, {breakpoint: 924, settings: {slidesToShow: 3, arrows: false}}, {breakpoint: 480, settings: {slidesToShow: 2, arrows: false}}]}
+        - '@setOption':
+            id: top_selling_product_line_item_form
+            optionName: instance_name
+            optionValue: top_selling_products
         - '@add':
             id: top_selling_items_container
             parentId: content

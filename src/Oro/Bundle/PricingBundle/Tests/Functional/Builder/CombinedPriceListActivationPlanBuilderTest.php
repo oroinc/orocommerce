@@ -39,6 +39,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->cplActivationPlanBuilder = $this->getContainer()
             ->get('oro_pricing.builder.combined_price_list_activation_plan_builder');
         $this->now = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -178,7 +179,6 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
                 $this->assertEquals($rule->isActive(), $expectedData['active']);
                 $this->assertEquals($rule->getActivateAt(), $activeAt);
                 $this->assertEquals($rule->getExpireAt(), $expireAt);
-
             }
             $this->assertSame(count($combinedPriceListsChanges[$cplKey]), $totalRules);
         }

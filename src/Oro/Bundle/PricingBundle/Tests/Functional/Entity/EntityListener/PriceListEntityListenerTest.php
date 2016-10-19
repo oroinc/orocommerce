@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
+use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -21,16 +22,15 @@ class PriceListEntityListenerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient();
         $this->loadFixtures([
             LoadProductPrices::class
         ]);
-        $this->topic = Topics::CALCULATE_RULE;
     }
 
     public function testPreRemove()
     {
-        $this->cleanQueueMessageTraces();
+        $this->cleanScheduledMessages();
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
 
@@ -38,25 +38,22 @@ class PriceListEntityListenerTest extends WebTestCase
         $priceList = $this->getReference('price_list_1');
         $em->remove($priceList);
 
-        $this->assertEquals(
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
-                [
-                    'topic' => Topics::REBUILD_PRICE_LISTS,
-                    'message' => [
-                        PriceListRelationTrigger::WEBSITE => null,
-                        PriceListRelationTrigger::ACCOUNT => null,
-                        PriceListRelationTrigger::ACCOUNT_GROUP => null,
-                        PriceListRelationTrigger::FORCE => true,
-                    ]
-                ],
-            ],
-            $this->getMessageProducer()->getSentMessages()
+                PriceListRelationTrigger::WEBSITE => null,
+                PriceListRelationTrigger::ACCOUNT => null,
+                PriceListRelationTrigger::ACCOUNT_GROUP => null,
+                PriceListRelationTrigger::FORCE => true,
+            ]
         );
     }
 
     public function testPreUpdate()
     {
-        $this->cleanQueueMessageTraces();
+        $this->cleanScheduledMessages();
 
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
@@ -67,14 +64,20 @@ class PriceListEntityListenerTest extends WebTestCase
         $em->persist($priceList);
         $em->flush();
 
-        $traces = $this->getQueueMessageTraces();
-        $this->assertCount(1, $traces);
-        $this->assertEquals($priceList->getId(), $this->getPriceListIdFromTrace($traces[0]));
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            [
+                PriceListTriggerFactory::PRICE_LIST => $priceList->getId(),
+                PriceListTriggerFactory::PRODUCT => null
+            ]
+        );
     }
 
     public function testPreUpdateAssignmentNotChanged()
     {
-        $this->cleanQueueMessageTraces();
+        $this->cleanScheduledMessages();
 
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
@@ -85,12 +88,14 @@ class PriceListEntityListenerTest extends WebTestCase
         $em->persist($priceList);
         $em->flush();
 
-        $this->assertEmpty($this->getQueueMessageTraces());
+        $this->sendScheduledMessages();
+
+        self::assertEmptyMessages(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS);
     }
 
     public function testPrePersistEmptyAssignmentRule()
     {
-        $this->cleanQueueMessageTraces();
+        $this->cleanScheduledMessages();
 
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
@@ -102,12 +107,15 @@ class PriceListEntityListenerTest extends WebTestCase
         $em->flush();
 
         $this->assertTrue($priceList->isActual());
-        $this->assertEmpty($this->getQueueMessageTraces());
+
+        $this->sendScheduledMessages();
+
+        self::assertEmptyMessages(Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS);
     }
 
     public function testPrePersistWithAssignmentRule()
     {
-        $this->cleanQueueMessageTraces();
+        $this->cleanScheduledMessages();
 
         /** @var EntityManagerInterface $em */
         $em = $this->getContainer()->get('doctrine')->getManager();
@@ -121,8 +129,14 @@ class PriceListEntityListenerTest extends WebTestCase
 
         $this->assertFalse($priceList->isActual());
 
-        $traces = $this->getQueueMessageTraces();
-        $this->assertCount(1, $traces);
-        $this->assertEquals($priceList->getId(), $this->getPriceListIdFromTrace($traces[0]));
+        $this->sendScheduledMessages();
+
+        self::assertMessageSent(
+            Topics::RESOLVE_PRICE_LIST_ASSIGNED_PRODUCTS,
+            [
+                PriceListTriggerFactory::PRICE_LIST => $priceList->getId(),
+                PriceListTriggerFactory::PRODUCT => null
+            ]
+        );
     }
 }
