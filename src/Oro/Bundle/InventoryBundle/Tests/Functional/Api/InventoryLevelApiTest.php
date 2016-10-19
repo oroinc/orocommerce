@@ -1001,6 +1001,8 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @param array $expectedContent
      * @param array $includedItems
      * @return array
