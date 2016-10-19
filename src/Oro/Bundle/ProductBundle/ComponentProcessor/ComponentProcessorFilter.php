@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\ComponentProcessor;
 
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use Oro\Bundle\ProductBundle\Search\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class ComponentProcessorFilter implements ComponentProcessorFilterInterface
