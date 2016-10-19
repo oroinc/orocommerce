@@ -11,7 +11,7 @@
     display: inline-block;
 
     @media (max-width: $screen-md) {
-      padding: 0 0 20px 15px;
+      padding: 8px 0 7px 15px;
     }
 
     ul {
@@ -37,7 +37,7 @@
           padding: 5px 0;
 
           text-transform: uppercase;
-
+          font-weight: bold;
         }
       }
     }

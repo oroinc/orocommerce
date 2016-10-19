@@ -1,9 +1,12 @@
 .main-menu {
   position: relative;
 
-  max-height: 49px;
 
   border-bottom: 1px solid $theme-lighter-gray-color;
+
+  @media (min-height: $breakpoint-desktop) {
+    max-height: 49px;
+  }
 
   @media (max-width: $screen-sm) {
     display: none;
@@ -29,8 +32,11 @@
 
   &__item {
     display: block;
-    min-height: 49px;
     flex-grow: 1;
+
+    @media(min-width: $breakpoint-desktop) {
+      min-height: 49px;
+    }
 
     &[data-dropdown-trigger] {
       &:hover {
@@ -74,7 +80,9 @@
 
     &--ancestor {
       .main-menu__link {
-        text-indent: 4px;
+        @media(min-width: $breakpoint-desktop) {
+          text-indent: 4px;
+        }
       }
 
       &:hover {
@@ -125,13 +133,16 @@
 
   &__link {
     display: block;
-    min-height: 49px;
     padding: 14px 0;
 
     color: $base-font-color-lighter;
     line-height: 1.5;
     text-transform: uppercase;
     text-align: center;
+
+    @media(min-width: $breakpoint-desktop) {
+      min-height: 49px;
+    }
 
     @media (max-width: 1069px) {
       font-size: 13px;

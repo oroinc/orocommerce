@@ -65,7 +65,13 @@
 
 @include breakpoint('tablet') {
     .quick-access {
+        padding-top: 7px;
+
+        border-bottom: 1px solid $theme-slight-lightest-gray-color;
+
         &__list {
+            margin-bottom: 8px;
+
             text-align: left;
         }
 
@@ -73,7 +79,7 @@
             display: block;
 
             margin: 0;
-            padding: 10px 16px;
+            padding: 8px 15px 7px 10px;
 
             text-transform: uppercase;
         }

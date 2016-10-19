@@ -29,15 +29,14 @@
     .main-menu {
         display: block;
 
-        max-height: none;
-        padding: 10px 15px 0 15px;
+        padding: 7px 15px 8px 15px;
 
-        &__item {
-            min-height: 0;
-        }
+        font-weight: bold;
+
+        border-bottom: 1px solid $theme-slight-lightest-gray-color;
 
         &__link {
-            padding: 5px 0;
+            padding: 8px 0 7px;
 
             text-align: left;
         }
