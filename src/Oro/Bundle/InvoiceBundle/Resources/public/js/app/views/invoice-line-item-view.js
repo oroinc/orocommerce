@@ -1,11 +1,10 @@
 define(function(require) {
-    //'use strict';
+    'use strict';
 
     var LineItemView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var BaseView = require('oroui/js/app/views/base/view');
-    var ProductPricesComponent = require('oropricing/js/app/components/product-prices-component');
+    var LineItemProductView = require('oroproduct/js/app/views/line-item-product-view');
     var ProductUnitComponent = require('oroproduct/js/app/components/product-unit-component');
     var TotalsListener = require('oropricing/js/app/listener/totals-listener');
     var NumberFormatter = require('orolocale/js/formatter/number');
@@ -17,12 +16,7 @@ define(function(require) {
      * @extends oroui.app.views.base.View
      * @class orob2invoice.app.views.LineItemView
      */
-    LineItemView = BaseView.extend({
-        /**
-         * @property {jQuery.Element}
-         */
-        $currency: null,
-
+    LineItemView = LineItemProductView.extend({
         options: {
             priceTypes: {
                 'BUNDLE': 20,
@@ -37,8 +31,7 @@ define(function(require) {
                 freeFormType: '.invoice-line-item-type-free-form',
                 totalPrice: '.invoice-line-item-total-price'
             },
-            currency: localeSettings.defaults.currency,
-            precision: 4
+            currency: localeSettings.defaults.currency
         },
 
         pricesComponent: null,
@@ -51,7 +44,7 @@ define(function(require) {
             this.$el.on('click', '.removeLineItem', $.proxy(this._removeRow, this));
             mediator.on('update:currency', this._updateCurrency, this);
 
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            LineItemView.__super__.initialize.apply(this, arguments);
         },
 
         /**
@@ -68,7 +61,6 @@ define(function(require) {
             this.initSubtotalListener();
             this.initUnitLoader();
             this.initTypeSwitcher();
-            this.initPrices();
             this.initProduct();
             this.initItemTotal();
             mediator.trigger('invoice-line-item:created', this.$el);
@@ -96,19 +88,6 @@ define(function(require) {
             };
 
             this.subview('productUnitComponent', new ProductUnitComponent(_.extend({}, defaultOptions, options || {})));
-        },
-
-        initPrices: function() {
-            this.subview('productPricesComponents', new ProductPricesComponent({
-                _sourceElement: this.$el,
-                $product: this.fieldsByName.product,
-                $priceValue: this.fieldsByName.priceValue,
-                $priceType: this.fieldsByName.priceType,
-                $productUnit: this.fieldsByName.productUnit,
-                $quantity: this.fieldsByName.quantity,
-                $currency: this.fieldsByName.priceCurrency,
-                precision: this.options.precision
-            }));
         },
 
         initTypeSwitcher: function() {
@@ -229,8 +208,8 @@ define(function(require) {
             }
 
             this.$el.off('click', '.removeLineItem', $.proxy(this._removeRow, this));
-            mediator.off('update:currency', this._updateCurrency, this);
             this.fieldsByName.priceValue.off('change', $.proxy(this._setTotalPrice, this));
+            mediator.off(null, null, this);
 
             LineItemView.__super__.dispose.call(this);
         }
