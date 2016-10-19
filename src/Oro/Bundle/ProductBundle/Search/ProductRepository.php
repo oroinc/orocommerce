@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Search;
 
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
-use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
@@ -12,7 +11,7 @@ class ProductRepository extends WebsiteSearchRepository
 {
     /**
      * @param array $skus
-     * @return Query|SearchQueryInterface
+     * @return SearchQueryInterface
      */
     public function getFilterSkuQuery($skus)
     {

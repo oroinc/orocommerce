@@ -42,7 +42,7 @@ class ComponentProcessorFilter implements ComponentProcessorFilterInterface
         }
 
         $searchQuery      = $this->repository->getFilterSkuQuery(array_keys($products));
-        $searchQuery      = $this->productManager->restrictSearchQuery($searchQuery);
+        $this->productManager->restrictSearchQuery($searchQuery->getQuery());
         $filteredProducts = $searchQuery->getResult()->toArray();
 
         foreach ($filteredProducts as $product) {
