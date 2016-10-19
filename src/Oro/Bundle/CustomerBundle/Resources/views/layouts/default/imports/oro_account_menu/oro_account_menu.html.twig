@@ -58,3 +58,7 @@
         {% endfor %}
     </ul>
 {% endblock %}
+
+{% block _account_sidebar_sign_out_widget %}
+    <a {{ block('block_attributes') }} href="{{ path(route_name) }}"><i class="icon-signout"></i> {{ text|trans }}</a>
+{% endblock %}
