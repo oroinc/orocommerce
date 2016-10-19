@@ -128,8 +128,12 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
         // clear table
         $resolvedRepository->clearTable();
 
+        if (!$scope) {
+            $scope = $this->scopeManager->findOrCreate('category_visibility');
+        }
+
         // resolve static values
-        $resolvedRepository->insertStaticValues($this->insertFromSelectQueryExecutor);
+        $resolvedRepository->insertStaticValues($this->insertFromSelectQueryExecutor, $scope);
 
         // resolved parent category values
         $categoryVisibilities = $this->indexVisibilities($repository->getCategoriesVisibilities(), 'category_id');
@@ -145,7 +149,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
                 $categoryIds[$resolvedVisibility][] = $categoryId;
             }
         }
-        $scope = $this->scopeManager->findOrCreate('category_visibility');
+
         foreach ($categoryIds as $visibility => $ids) {
             $resolvedRepository->insertParentCategoryValues(
                 $this->insertFromSelectQueryExecutor,

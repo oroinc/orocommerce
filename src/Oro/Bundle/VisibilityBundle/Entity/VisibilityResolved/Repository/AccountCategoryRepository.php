@@ -353,7 +353,6 @@ class AccountCategoryRepository extends EntityRepository
             ->select(
                 'acv.id',
                 'IDENTITY(acv.category)',
-                'IDENTITY(acv.account)',
                 (string)$visibility,
                 (string)AccountCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
                 'IDENTITY(acv.scope)'
@@ -367,7 +366,7 @@ class AccountCategoryRepository extends EntityRepository
             $queryBuilder->setParameter('visibilityIds', $ids);
             $insertExecutor->execute(
                 $this->getClassName(),
-                ['sourceCategoryVisibility', 'category', 'account', 'visibility', 'source', 'scope'],
+                ['sourceCategoryVisibility', 'category', 'visibility', 'source', 'scope'],
                 $queryBuilder
             );
         }

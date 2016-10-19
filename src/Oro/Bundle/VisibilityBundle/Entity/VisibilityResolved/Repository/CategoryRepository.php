@@ -100,8 +100,9 @@ class CategoryRepository extends EntityRepository
 
     /**
      * @param InsertFromSelectQueryExecutor $insertExecutor
+     * @param Scope $scope
      */
-    public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor)
+    public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor, Scope $scope)
     {
         $visibilityCondition = sprintf(
             "CASE WHEN cv.visibility = '%s' THEN %s ELSE %s END",
@@ -115,7 +116,8 @@ class CategoryRepository extends EntityRepository
                 'cv.id',
                 'IDENTITY(cv.category)',
                 $visibilityCondition,
-                (string)CategoryVisibilityResolved::SOURCE_STATIC
+                (string)CategoryVisibilityResolved::SOURCE_STATIC,
+                (string)$scope->getId()
             )
             ->from('OroVisibilityBundle:Visibility\CategoryVisibility', 'cv')
             ->where('cv.visibility != :config')
@@ -123,7 +125,7 @@ class CategoryRepository extends EntityRepository
 
         $insertExecutor->execute(
             $this->getClassName(),
-            ['sourceCategoryVisibility', 'category', 'visibility', 'source'],
+            ['sourceCategoryVisibility', 'category', 'visibility', 'source', 'scope'],
             $queryBuilder
         );
     }
