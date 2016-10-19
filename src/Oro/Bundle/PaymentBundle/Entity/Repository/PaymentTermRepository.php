@@ -4,8 +4,8 @@ namespace Oro\Bundle\PaymentBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class PaymentTermRepository extends EntityRepository

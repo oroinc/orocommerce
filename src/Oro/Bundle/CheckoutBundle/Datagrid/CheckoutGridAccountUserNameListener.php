@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Component\Config\Common\ConfigObject;
-use Oro\Bundle\AccountBundle\Security\AccountUserProvider;
+use Oro\Bundle\CustomerBundle\Security\AccountUserProvider;
 
 class CheckoutGridAccountUserNameListener
 {
