@@ -7,7 +7,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilit
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -17,6 +17,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class CategoryListenerTest extends WebTestCase
 {
+    use MessageQueueExtension;
+
     /**
      * @var EntityManager
      */
@@ -26,11 +28,6 @@ class CategoryListenerTest extends WebTestCase
      * @var CategoryRepository
      */
     protected $categoryRepository;
-
-    /**
-     * @var MessageCollector
-     */
-    protected $messageProducer;
 
     protected function setUp()
     {
@@ -43,9 +40,7 @@ class CategoryListenerTest extends WebTestCase
 
         $this->loadFixtures([LoadProductVisibilityData::class]);
 
-        $this->messageProducer = $this->getContainer()->get('oro_message_queue.client.message_producer');
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
-        $this->messageProducer->clear();
     }
 
     public function testCreateProduct()
@@ -65,16 +60,8 @@ class CategoryListenerTest extends WebTestCase
         $em->flush();
 
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
-        $messages = $this->messageProducer->getSentMessages();
-        $visibilityMessages = array_filter(
-            $messages,
-            function ($message) {
-                return array_key_exists('topic', $message)
-                    && $message['topic'] === 'oro_account.visibility.change_product_category';
-            }
-        );
 
-        $this->assertEmpty($visibilityMessages);
+        self::assertEmptyMessages('oro_customer.visibility.change_product_category');
     }
 
     public function testChangeProductCategory()
@@ -91,15 +78,8 @@ class CategoryListenerTest extends WebTestCase
         $newCategory->addProduct($product);
         $this->categoryManager->flush();
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
-        $messages = $this->messageProducer->getSentMessages();
-        $expectedMessages[] = [
-            'topic' => 'oro_customer.visibility.change_product_category',
-            'message' => ['id' => $product->getId()],
-        ];
-        $this->assertEquals(
-            $expectedMessages,
-            $messages
-        );
+
+        $this->assertMessageSent('oro_customer.visibility.change_product_category', ['id' => $product->getId()]);
     }
 
     public function testRemoveProductFromCategoryAndAddProductToCategory()
@@ -111,27 +91,14 @@ class CategoryListenerTest extends WebTestCase
         $category->removeProduct($product);
         $this->categoryManager->flush();
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
-        $messages = $this->messageProducer->getSentMessages();
-        $expectedMessages[] = [
-            'topic' => 'oro_customer.visibility.change_product_category',
-            'message' => ['id' => $product->getId()],
-        ];
-        $this->assertEquals(
-            $expectedMessages,
-            $messages
-        );
+
+        $this->assertMessageSent('oro_customer.visibility.change_product_category', ['id' => $product->getId()]);
+
         $category->addProduct($product);
         $this->categoryManager->flush();
 
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
-        $messages = $this->messageProducer->getSentMessages();
-        $expectedMessages[] = [
-            'topic' => 'oro_customer.visibility.change_product_category',
-            'message' => ['id' => $product->getId()],
-        ];
-        $this->assertEquals(
-            $expectedMessages,
-            $messages
-        );
+
+        $this->assertMessageSent('oro_customer.visibility.change_product_category', ['id' => $product->getId()]);
     }
 }
