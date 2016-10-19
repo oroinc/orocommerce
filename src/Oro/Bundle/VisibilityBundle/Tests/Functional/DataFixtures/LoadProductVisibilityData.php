@@ -79,7 +79,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
             ->setVisibility($data['all']['visibility']);
 
         $scope = $this->container->get('oro_scope.scope_manager')
-            ->findOrCreate('product_visibility', $productVisibility);
+            ->findOrCreate('product_visibility', null);
         $productVisibility->setScope($scope);
 
         $manager->persist($productVisibility);
@@ -110,7 +110,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
                 ->setVisibility($accountGroupData['visibility']);
 
             $scopeManager = $this->container->get('oro_scope.scope_manager');
-            $scope = $scopeManager->findOrCreate('account_group_product_visibility', $accountGroup);
+            $scope = $scopeManager->findOrCreate('account_group_product_visibility', ['accountGroup' => $accountGroup]);
 
             $accountGroupProductVisibility->setScope($scope);
 
@@ -138,8 +138,8 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
             $accountProductVisibility->setProduct($product)
                 ->setVisibility($accountData['visibility']);
 
-            $scopeManager = $this->container->get('oro_scope.scope_manager', $account);
-            $scope = $scopeManager->findOrCreate('account_product_visibility', $accountProductVisibility);
+            $scopeManager = $this->container->get('oro_scope.scope_manager');
+            $scope = $scopeManager->findOrCreate('account_product_visibility', ['account' => $account]);
             $accountProductVisibility->setScope($scope);
 
             $manager->persist($accountProductVisibility);
