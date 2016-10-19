@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Autocomplete;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 
+
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -25,6 +26,7 @@ use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
 
 use Oro\Bundle\SearchBundle\Engine\Indexer;
+use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\SearchBundle\Query\SearchRepository;
@@ -205,7 +207,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
             ->getMock();
         $this->results->method('getElements')->willReturn(self::TEST_RESULTS);
 
-        $this->searchQuery = $this->getMockBuilder(SearchQueryInterface::class)
+        $this->searchQuery = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()
             ->setMethods([
                 'addSelect', 'getSelect', 'getSelectAliases',

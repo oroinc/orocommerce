@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Event;
 
+use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\EventDispatcher\Event;
 
-use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 
 /**
  * This event is fired by the Product Manager when
@@ -24,7 +24,7 @@ class ProductSearchQueryRestrictionEvent extends Event
     /**
      * @param SearchQueryInterface $query
      */
-    public function __construct(SearchQueryInterface $query)
+    public function __construct(Query $query)
     {
         $this->query = $query;
     }
