@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CustomerBundle\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query;
 
 use Oro\Bundle\CustomerBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -15,7 +14,8 @@ use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\ProductVisibilityResolve
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 
-class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
+class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements
+    ProductCaseCacheBuilderInterface
 {
     /**
      * @param VisibilityInterface|ProductVisibility $visibilitySettings
@@ -68,6 +68,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         }
 
         $this->executeDbQuery($er, $insert, $delete, $update, $where);
+        $this->triggerProductReindexation($product, $website);
     }
 
     /**
@@ -166,3 +167,4 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         return $this->registry->getManagerForClass($this->cacheClass);
     }
 }
+

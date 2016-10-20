@@ -1,15 +1,15 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\Driver;
+namespace Oro\Bundle\CustomerBundle\Tests\Functional\Driver;
 
-use Oro\Bundle\AccountBundle\Driver\AccountPartialUpdateDriverInterface;
-use Oro\Bundle\AccountBundle\Driver\OrmAccountPartialUpdateDriver;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
-use Oro\Bundle\AccountBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
-use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Driver\AccountPartialUpdateDriverInterface;
+use Oro\Bundle\CustomerBundle\Driver\OrmAccountPartialUpdateDriver;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\CustomerBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
+use Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
@@ -20,8 +20,8 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
  */
 abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebTestCase
 {
-    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_account.product_visibility';
-    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_account.category_visibility';
+    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_customer.product_visibility';
+    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_customer.category_visibility';
 
     /**
      * @var ConfigManager
@@ -41,13 +41,13 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
 
         $anonymousGroupId = $this->getContainer()
             ->get('oro_config.global')
-            ->get('oro_account.anonymous_account_group');
+            ->get('oro_customer.anonymous_account_group');
 
         $this->configManager = $this->getContainer()->get('oro_config.global');
-        $this->configManager->set('oro_account.anonymous_account_group', $anonymousGroupId);
+        $this->configManager->set('oro_customer.anonymous_account_group', $anonymousGroupId);
 
         $this->driver = $this->getDriver();
-        $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
     }
 
     /**
@@ -155,7 +155,7 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
         $visibilityManager->persist($productVisibility);
         $visibilityManager->flush();
 
-        $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
 
         $this->driver->updateAccountVisibility($account);
 

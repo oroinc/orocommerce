@@ -4,6 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Visibility\Cache\Product\Ca
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+
 use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryData;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationQueryTrait;

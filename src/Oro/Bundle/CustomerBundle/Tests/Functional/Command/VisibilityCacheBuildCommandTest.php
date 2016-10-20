@@ -89,41 +89,41 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
             'withoutParam' => [
                 'params' => [],
                 'expectedMessages' =>
-                [
-                    'Start the process of building the cache for all websites',
-                    'The cache is updated successfully',
-                ],
+                    [
+                        'Start the process of building the cache for all websites',
+                        'The cache is updated successfully',
+                    ],
                 'expectedCounts' => [
                     'categoryVisibility' => 8,
                     'accountGroupCategoryVisibility' => 14,
                     'accountCategoryVisibility' => 35,
                     'productVisibility' => 27,
-                    'accountGroupProductVisibility' => 8,
+                    'accountGroupProductVisibility' => 10,
                     'accountProductVisibility' => 5,
                 ]
             ],
             'withExitsIdParam' => [
                 'params' => ['--website_id=1'],
                 'expectedMessages' =>
-                [
-                    'Start the process of building the cache for website "Default"',
-                    'The cache is updated successfully',
-                ],
+                    [
+                        'Start the process of building the cache for website "Default"',
+                        'The cache is updated successfully',
+                    ],
                 'expectedCounts' => [
                     'categoryVisibility' => 8,
                     'accountGroupCategoryVisibility' => 14,
                     'accountCategoryVisibility' => 35,
                     'productVisibility' => 3,
-                    'accountGroupProductVisibility' => 6,
+                    'accountGroupProductVisibility' => 8,
                     'accountProductVisibility' => 4,
                 ]
             ],
             'withWrongIdParam' => [
                 'params' => ['--website_id=0'],
                 'expectedMessages' =>
-                [
-                    'Website id is not valid',
-                ],
+                    [
+                        'Website id is not valid',
+                    ],
                 'expectedCounts' => [
                     'categoryVisibility' => 0,
                     'accountGroupCategoryVisibility' => 0,
@@ -278,3 +278,4 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
             ->execute();
     }
 }
+

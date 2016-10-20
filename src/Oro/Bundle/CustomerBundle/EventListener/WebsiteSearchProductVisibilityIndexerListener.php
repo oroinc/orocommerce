@@ -1,9 +1,8 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\EventListener;
+namespace Oro\Bundle\CustomerBundle\EventListener;
 
-use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CustomerBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 

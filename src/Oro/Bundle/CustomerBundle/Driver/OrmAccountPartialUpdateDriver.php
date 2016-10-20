@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Driver;
+namespace Oro\Bundle\CustomerBundle\Driver;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query as OrmQuery;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
-use Oro\Bundle\AccountBundle\Visibility\Provider\ProductVisibilityProvider;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Indexer\ProductVisibilityIndexer;
+use Oro\Bundle\CustomerBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;

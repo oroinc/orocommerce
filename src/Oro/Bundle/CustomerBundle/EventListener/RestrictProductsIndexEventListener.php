@@ -1,16 +1,16 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\EventListener;
+namespace Oro\Bundle\CustomerBundle\EventListener;
 
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;

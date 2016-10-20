@@ -10,13 +10,16 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\ProductVisibility;
+use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadProductVisibilityData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -39,10 +42,10 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
-            'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+            LoadGroups::class,
+            LoadAccounts::class,
+            LoadCategoryProductData::class,
+            LoadWebsiteData::class
         ];
     }
 
@@ -98,13 +101,36 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     protected function getWebsite($websiteName)
     {
         if ($websiteName === 'Default') {
-            return $this->container
+            $website = $this->container
                 ->get('doctrine')
                 ->getManagerForClass('OroWebsiteBundle:Website')
                 ->getRepository('OroWebsiteBundle:Website')->findOneBy(['name' => $websiteName]);
+        } else {
+            /** @var Website $website */
+            $website = $this->getReference($websiteName);
         }
 
-        return $this->getReference($websiteName);
+        return $website;
+    }
+
+    /**
+     * @param string $groupReference
+     * @return AccountGroup
+     */
+    private function getAccountGroup($groupReference)
+    {
+        if ($groupReference === 'account_group.anonymous') {
+            $accountGroup = $this->container
+                ->get('doctrine')
+                ->getManagerForClass('OroCustomerBundle:AccountGroup')
+                ->getRepository('OroCustomerBundle:AccountGroup')
+                ->findOneBy(['name' => LoadAnonymousAccountGroup::GROUP_NAME_NON_AUTHENTICATED]);
+        } else {
+            /** @var AccountGroup $accountGroup */
+            $accountGroup = $this->getReference($groupReference);
+        }
+
+        return $accountGroup;
     }
 
     /**
@@ -121,7 +147,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     ) {
         foreach ($accountGroupsData as $groupReference => $accountGroupData) {
             /** @var AccountGroup $accountGroup */
-            $accountGroup = $this->getReference($groupReference);
+            $accountGroup = $this->getAccountGroup($groupReference);
 
             $accountGroupProductVisibility = (new AccountGroupProductVisibility())
                 ->setProduct($product)
@@ -175,3 +201,4 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         return Yaml::parse(file_get_contents($fixturesFileName));
     }
 }
+

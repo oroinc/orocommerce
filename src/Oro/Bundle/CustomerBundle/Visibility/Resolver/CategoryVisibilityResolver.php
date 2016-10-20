@@ -8,12 +8,16 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
-use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 
 class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
 {
+    const OPTION_CATEGORY_VISIBILITY = 'oro_customer.category_visibility';
+
     /**
      * @var Registry
      */
@@ -40,8 +44,8 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     public function isCategoryVisible(Category $category)
     {
         return $this->registry
-            ->getManagerForClass('OroCustomerBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroCustomerBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getManagerForClass(CategoryVisibilityResolved::class)
+            ->getRepository(CategoryVisibilityResolved::class)
             ->isCategoryVisible($category, $this->getCategoryVisibilityConfigValue());
     }
 
@@ -51,8 +55,8 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     public function getVisibleCategoryIds()
     {
         return $this->registry
-            ->getManagerForClass('OroCustomerBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroCustomerBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getManagerForClass(CategoryVisibilityResolved::class)
+            ->getRepository(CategoryVisibilityResolved::class)
             ->getCategoryIdsByVisibility(
                 BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 $this->getCategoryVisibilityConfigValue()
@@ -65,8 +69,8 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     public function getHiddenCategoryIds()
     {
         return $this->registry
-            ->getManagerForClass('OroCustomerBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroCustomerBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getManagerForClass(CategoryVisibilityResolved::class)
+            ->getRepository(CategoryVisibilityResolved::class)
             ->getCategoryIdsByVisibility(
                 BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 $this->getCategoryVisibilityConfigValue()
@@ -81,8 +85,8 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     public function isCategoryVisibleForAccountGroup(Category $category, AccountGroup $accountGroup)
     {
         return $this->registry
-            ->getManagerForClass('OroCustomerBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getRepository('OroCustomerBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getManagerForClass(AccountGroupCategoryVisibilityResolved::class)
+            ->getRepository(AccountGroupCategoryVisibilityResolved::class)
             ->isCategoryVisible(
                 $category,
                 $accountGroup,
@@ -97,8 +101,8 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     public function getVisibleCategoryIdsForAccountGroup(AccountGroup $accountGroup)
     {
         return $this->registry
-            ->getManagerForClass('OroCustomerBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getRepository('OroCustomerBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getManagerForClass(AccountGroupCategoryVisibilityResolved::class)
+            ->getRepository(AccountGroupCategoryVisibilityResolved::class)
             ->getCategoryIdsByVisibility(
                 BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 $accountGroup,
@@ -113,8 +117,8 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     public function getHiddenCategoryIdsForAccountGroup(AccountGroup $accountGroup)
     {
         return $this->registry
-            ->getManagerForClass('OroCustomerBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getRepository('OroCustomerBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getManagerForClass(AccountGroupCategoryVisibilityResolved::class)
+            ->getRepository(AccountGroupCategoryVisibilityResolved::class)
             ->getCategoryIdsByVisibility(
                 BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 $accountGroup,
@@ -130,8 +134,8 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     public function isCategoryVisibleForAccount(Category $category, Account $account)
     {
         return $this->registry
-            ->getManagerForClass('OroCustomerBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroCustomerBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getManagerForClass(AccountCategoryVisibilityResolved::class)
+            ->getRepository(AccountCategoryVisibilityResolved::class)
             ->isCategoryVisible($category, $account, $this->getCategoryVisibilityConfigValue());
     }
 
@@ -142,8 +146,8 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     public function getVisibleCategoryIdsForAccount(Account $account)
     {
         return $this->registry
-            ->getManagerForClass('OroCustomerBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroCustomerBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getManagerForClass(AccountCategoryVisibilityResolved::class)
+            ->getRepository(AccountCategoryVisibilityResolved::class)
             ->getCategoryIdsByVisibility(
                 BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 $account,
@@ -158,8 +162,8 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     public function getHiddenCategoryIdsForAccount(Account $account)
     {
         return $this->registry
-            ->getManagerForClass('OroCustomerBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroCustomerBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getManagerForClass(AccountCategoryVisibilityResolved::class)
+            ->getRepository(AccountCategoryVisibilityResolved::class)
             ->getCategoryIdsByVisibility(
                 BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 $account,
@@ -172,8 +176,9 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     protected function getCategoryVisibilityConfigValue()
     {
-        return ($this->configManager->get('oro_customer.category_visibility') === CategoryVisibility::HIDDEN)
+        return ($this->configManager->get(self::OPTION_CATEGORY_VISIBILITY) === CategoryVisibility::HIDDEN)
             ? BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN
             : BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE;
     }
 }
+

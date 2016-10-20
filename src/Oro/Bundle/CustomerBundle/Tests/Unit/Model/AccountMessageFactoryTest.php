@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Unit\Model;
+namespace Oro\Bundle\CustomerBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\Repository\AccountRepository;
-use Oro\Bundle\AccountBundle\Model\AccountMessageFactory;
-use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
+use Oro\Bundle\CustomerBundle\Model\AccountMessageFactory;
+use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;

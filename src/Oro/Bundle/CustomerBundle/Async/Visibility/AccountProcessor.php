@@ -1,12 +1,12 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Async\Visibility;
+namespace Oro\Bundle\CustomerBundle\Async\Visibility;
 
-use Oro\Bundle\AccountBundle\Driver\AccountPartialUpdateDriverInterface;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\AccountBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\AccountBundle\Model\MessageFactoryInterface;
+use Oro\Bundle\CustomerBundle\Driver\AccountPartialUpdateDriverInterface;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\CustomerBundle\Model\Exception\InvalidArgumentException;
+use Oro\Bundle\CustomerBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;

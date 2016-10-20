@@ -2,20 +2,21 @@
 
 namespace Oro\Bundle\CustomerBundle\EventListener;
 
-use Doctrine\ORM\Event\OnFlushEventArgs;
-use Doctrine\ORM\PersistentCollection;
+use Oro\Bundle\CatalogBundle\Event\ProductsChangeRelationEvent;
 use Oro\Bundle\CatalogBundle\Model\CategoryMessageHandler;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
 
 class CategoryListener
 {
-    const FIELD_PRODUCTS = 'products';
-
     /**
      * @var CategoryMessageHandler
      */
     protected $categoryMessageHandler;
+
+    /**
+     * @var string
+     */
+    protected $topic = '';
 
     /**
      * @param ProductMessageHandler $productMessageHandler
@@ -26,37 +27,29 @@ class CategoryListener
     }
 
     /**
-     * @param OnFlushEventArgs $event
+     * @param $topic
      */
-    public function onFlush(OnFlushEventArgs $event)
+    public function setTopic($topic)
     {
-        $this->handleProductsChange($event);
+        $this->topic = (string)$topic;
     }
 
     /**
-     * @param OnFlushEventArgs $event
+     * @param ProductsChangeRelationEvent $event
      */
-    protected function handleProductsChange(OnFlushEventArgs $event)
+    public function onProductsChangeRelation(ProductsChangeRelationEvent $event)
     {
-        $unitOfWork = $event->getEntityManager()->getUnitOfWork();
-        $collections = $unitOfWork->getScheduledCollectionUpdates();
-        foreach ($collections as $collection) {
-            if ($collection instanceof PersistentCollection
-                && $collection->getMapping()['fieldName'] === self::FIELD_PRODUCTS
-                && $collection->isDirty() && $collection->isInitialized()
-            ) {
-                /** @var Product $product */
-                foreach (array_merge($collection->getInsertDiff(), $collection->getDeleteDiff()) as $product) {
-                    // Message should be send only for already existing products
-                    // New products has own queue message for visibility calculation
-                    if ($product->getId()) {
-                        $this->productMessageHandler->addProductMessageToSchedule(
-                            'oro_customer.visibility.change_product_category',
-                            $product
-                        );
-                    }
-                }
+        $products = $event->getProducts();
+        foreach ($products as $product) {
+            // Message should be send only for already existing products
+            // New products has own queue message for visibility calculation
+            if ($product->getId()) {
+                $this->productMessageHandler->addProductMessageToSchedule(
+                    $this->topic,
+                    $product
+                );
             }
         }
     }
 }
+

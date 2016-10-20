@@ -1,11 +1,11 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\EventListener;
+namespace Oro\Bundle\CustomerBundle\Tests\Functional\EventListener;
 
-use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\AccountBundle\EventListener\RestrictProductsIndexEventListener;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\CustomerBundle\EventListener\RestrictProductsIndexEventListener;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
@@ -18,8 +18,8 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
  */
 class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
 {
-    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_account.product_visibility';
-    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_account.category_visibility';
+    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_customer.product_visibility';
+    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_customer.category_visibility';
 
     /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
     private $configManager;
@@ -52,7 +52,7 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
 
         $this->loadFixtures([LoadProductVisibilityData::class]);
 
-        $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
     }
 
     /**

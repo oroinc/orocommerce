@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\Visibility\Provider;
+namespace Oro\Bundle\CustomerBundle\Tests\Functional\Visibility\Provider;
 
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\AccountBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
-use Oro\Bundle\AccountBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
+use Oro\Bundle\CustomerBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 
@@ -16,8 +16,8 @@ use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
  */
 class ProductVisibilityProviderTest extends WebTestCase
 {
-    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_account.product_visibility';
-    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_account.category_visibility';
+    const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_customer.product_visibility';
+    const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_customer.category_visibility';
 
     /**
      * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
@@ -38,9 +38,9 @@ class ProductVisibilityProviderTest extends WebTestCase
 
         $this->loadFixtures([
             'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
         ]);
 
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
@@ -52,7 +52,7 @@ class ProductVisibilityProviderTest extends WebTestCase
             $this->configManager
         );
 
-        $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
     }
 
     /**
@@ -62,8 +62,8 @@ class ProductVisibilityProviderTest extends WebTestCase
     {
         $accountGroupRepository = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroAccountBundle:AccountGroup')
-            ->getRepository('OroAccountBundle:AccountGroup');
+            ->getManagerForClass('OroCustomerBundle:AccountGroup')
+            ->getRepository('OroCustomerBundle:AccountGroup');
 
         /** @var AccountGroup $accountGroup */
         $accountGroup = $accountGroupRepository
@@ -130,7 +130,7 @@ class ProductVisibilityProviderTest extends WebTestCase
             ->withConsecutive(
                 [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
                 [self::CATEGORY_VISIBILITY_CONFIGURATION_PATH],
-                ['oro_account.anonymous_account_group']
+                ['oro_customer.anonymous_account_group']
             )
             ->willReturnOnConsecutiveCalls(
                 VisibilityInterface::HIDDEN,

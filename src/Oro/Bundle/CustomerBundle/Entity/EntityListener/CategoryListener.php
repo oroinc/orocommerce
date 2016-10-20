@@ -8,8 +8,6 @@ use Oro\Bundle\CatalogBundle\Model\CategoryMessageHandler;
 
 class CategoryListener
 {
-    const FIELD_PARENT_CATEGORY = 'parentCategory';
-
     /**
      * @var CategoryMessageHandler
      */
@@ -29,7 +27,7 @@ class CategoryListener
      */
     public function preUpdate(Category $category, PreUpdateEventArgs $event)
     {
-        if ($event->hasChangedField(self::FIELD_PARENT_CATEGORY)) {
+        if ($event->hasChangedField(Category::FIELD_PARENT_CATEGORY)) {
             $this->categoryMessageHandler->addCategoryMessageToSchedule(
                 'oro_customer.visibility.category_position_change',
                 $category

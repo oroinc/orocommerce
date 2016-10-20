@@ -24,7 +24,7 @@ class CategoryListenerTest extends WebTestCase
      */
     protected $categoryManager;
 
-    /**
+    /*r
      * @var CategoryRepository
      */
     protected $categoryRepository;

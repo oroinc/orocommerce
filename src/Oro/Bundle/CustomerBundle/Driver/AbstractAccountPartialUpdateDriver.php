@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Driver;
+namespace Oro\Bundle\CustomerBundle\Driver;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;

@@ -8,12 +8,16 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
 use Oro\Bundle\CustomerBundle\Visibility\Cache\CacheBuilderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
 {
@@ -38,15 +42,23 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     protected $visibilityFromConfig;
 
     /**
+     * @var ProductIndexScheduler
+     */
+    protected $indexScheduler;
+
+    /**
      * @param ManagerRegistry $registry
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
+     * @param ProductIndexScheduler $indexScheduler
      */
     public function __construct(
         ManagerRegistry $registry,
-        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
+        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
+        ProductIndexScheduler $indexScheduler
     ) {
         $this->registry = $registry;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
+        $this->indexScheduler = $indexScheduler;
     }
 
     /**
@@ -159,4 +171,22 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
 
         return $indexedVisibilities;
     }
+
+    /**
+     * @param Product $product
+     * @param Website $website
+     */
+    protected function triggerProductReindexation(Product $product, Website $website)
+    {
+        $this->indexScheduler->triggerReindexationRequestEvent([$product->getId()], $website->getId(), false);
+    }
+
+    /**
+     * @param Category $category
+     */
+    protected function triggerCategoryReindexation(Category $category)
+    {
+        $this->indexScheduler->scheduleProductsReindex([$category], null, false);
+    }
 }
+

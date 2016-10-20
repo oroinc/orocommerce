@@ -11,6 +11,7 @@ use Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\CategoryResolved
 use Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\Subtree\PositionChangeCategorySubtreeCacheBuilder;
 use Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCategorySubtreeCacheBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
@@ -31,10 +32,14 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
         $container = $this->client->getContainer();
-
+        $indexScheduler = new ProductIndexScheduler(
+            $container->get('oro_entity.doctrine_helper'),
+            $container->get('event_dispatcher')
+        );
         $this->builder = new CategoryResolvedCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_entity.orm.insert_from_select_query_executor')
+            $container->get('oro_entity.orm.insert_from_select_query_executor'),
+            $indexScheduler
         );
         $this->builder->setCacheClass(
             $container->getParameter('oro_customer.entity.category_visibility_resolved.class')
@@ -284,3 +289,4 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
             ->getArrayResult();
     }
 }
+

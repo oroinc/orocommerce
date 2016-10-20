@@ -1,15 +1,15 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Visibility;
+namespace Oro\Bundle\CustomerBundle\Visibility;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -47,7 +47,7 @@ trait ProductVisibilityTrait
         Website $website
     ) {
         $queryBuilder->leftJoin(
-            'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
+            'Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
             'account_group_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
@@ -81,7 +81,7 @@ trait ProductVisibilityTrait
         Website $website
     ) {
         $queryBuilder->leftJoin(
-            'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',
+            'Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',
             'account_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
@@ -123,7 +123,7 @@ TERM;
     private function getProductVisibilityResolvedTermByWebsite(QueryBuilder $queryBuilder, Website $website)
     {
         $queryBuilder->leftJoin(
-            'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved',
+            'Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\ProductVisibilityResolved',
             'product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(

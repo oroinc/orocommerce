@@ -109,6 +109,7 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
             $account,
             $visibility
         );
+        $this->triggerCategoryReindexation($category);
     }
 
     /**
@@ -182,14 +183,14 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
             $resolvedVisibility = $parentGroupVisibilityResolved !== null
                 ? $parentGroupVisibilityResolved
                 : $parentCategoryVisibilityResolved;
-        // category fallback (visibility to all)
+            // category fallback (visibility to all)
         } elseif ($parentVisibility === AccountCategoryVisibility::CATEGORY) {
             $resolvedVisibility = $parentCategoryVisibilityResolved;
-        // parent category fallback
+            // parent category fallback
         } elseif ($parentVisibility === AccountCategoryVisibility::PARENT_CATEGORY) {
             $parentGroup = $accountVisibilities[$parentVisibilityId];
             $resolvedVisibility = $this->resolveVisibility($accountVisibilities, $parentGroup);
-        // static visibility
+            // static visibility
         } else {
             $resolvedVisibility
                 = $this->convertVisibility($parentVisibility === AccountCategoryVisibility::VISIBLE);
@@ -244,3 +245,4 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         }
     }
 }
+

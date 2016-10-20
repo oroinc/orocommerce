@@ -4,6 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Visibility\Cache\Product\Ca
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\CategoryVisibility;
@@ -13,6 +14,7 @@ use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseCategoryVisibilityRe
 use Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\AccountGroupCategoryResolvedCacheBuilder;
 use Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeGroupSubtreeCacheBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
@@ -37,14 +39,20 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
 
         $container = $this->client->getContainer();
 
+        $indexScheduler = new ProductIndexScheduler(
+            $container->get('oro_entity.doctrine_helper'),
+            $container->get('event_dispatcher')
+        );
+
         $this->builder = new AccountGroupCategoryResolvedCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_entity.orm.insert_from_select_query_executor')
+            $container->get('oro_entity.orm.insert_from_select_query_executor'),
+            $indexScheduler
         );
         $this->builder->setCacheClass(
             $container->getParameter('oro_customer.entity.account_group_category_visibility_resolved.class')
         );
-        
+
         $subtreeBuilder = new VisibilityChangeGroupSubtreeCacheBuilder(
             $container->get('doctrine'),
             $container->get('oro_customer.visibility.resolver.category_visibility_resolver'),
@@ -357,3 +365,4 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
             ->getArrayResult();
     }
 }
+

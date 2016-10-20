@@ -1,15 +1,15 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Visibility\Provider;
+namespace Oro\Bundle\CustomerBundle\Visibility\Provider;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\AccountBundle\Visibility\ProductVisibilityTrait;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\CustomerBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -156,7 +156,7 @@ class ProductVisibilityProvider
      */
     private function getAnonymousAccountGroup()
     {
-        $anonymousGroupId = $this->configManager->get('oro_account.anonymous_account_group');
+        $anonymousGroupId = $this->configManager->get('oro_customer.anonymous_account_group');
 
         return $this->doctrineHelper
             ->getEntityRepository(AccountGroup::class)
@@ -201,7 +201,7 @@ class ProductVisibilityProvider
     private function getAllAccountsProductVisibilityResolvedTerm(QueryBuilder $queryBuilder, Website $website)
     {
         $queryBuilder->leftJoin(
-            'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',
+            'Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',
             'account_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
@@ -242,7 +242,7 @@ TERM;
     private function getAllAccountGroupsProductVisibilityResolvedTerm(QueryBuilder $queryBuilder, Website $website)
     {
         $queryBuilder->leftJoin(
-            'Oro\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
+            'Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
             'account_group_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(

@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
 use Oro\Bundle\CustomerBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -78,6 +77,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         }
 
         $this->executeDbQuery($er, $insert, $delete, $update, $where);
+        $this->triggerProductReindexation($product, $website);
     }
 
     /**
@@ -145,3 +145,4 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
             ->getManagerForClass('OroCustomerBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
     }
 }
+

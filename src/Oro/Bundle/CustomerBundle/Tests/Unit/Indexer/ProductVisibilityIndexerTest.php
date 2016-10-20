@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Unit\Indexer;
+namespace Oro\Bundle\CustomerBundle\Tests\Unit\Indexer;
 
-use Oro\Bundle\AccountBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\AccountBundle\Indexer\ProductVisibilityIndexer;
-use Oro\Bundle\AccountBundle\Visibility\Provider\ProductVisibilityProvider;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
+use Oro\Bundle\CustomerBundle\Indexer\ProductVisibilityIndexer;
+use Oro\Bundle\CustomerBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;

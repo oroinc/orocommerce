@@ -4,11 +4,14 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Visibility\Resolver;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 
@@ -80,7 +83,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroCustomerBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->with(CategoryVisibilityResolved::class)
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -111,7 +114,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroCustomerBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->with(CategoryVisibilityResolved::class)
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -142,7 +145,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroCustomerBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->with(CategoryVisibilityResolved::class)
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -178,7 +181,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroCustomerBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->with(AccountGroupCategoryVisibilityResolved::class)
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -215,7 +218,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroCustomerBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->with(AccountGroupCategoryVisibilityResolved::class)
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -255,7 +258,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroCustomerBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->with(AccountGroupCategoryVisibilityResolved::class)
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -294,7 +297,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroCustomerBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->with(AccountCategoryVisibilityResolved::class)
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -331,7 +334,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroCustomerBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->with(AccountCategoryVisibilityResolved::class)
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -371,7 +374,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroCustomerBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->with(AccountCategoryVisibilityResolved::class)
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())

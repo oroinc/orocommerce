@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Functional\Driver;
+namespace Oro\Bundle\CustomerBundle\Tests\Functional\Driver;
 
-use Oro\Bundle\AccountBundle\Driver\OrmAccountPartialUpdateDriver;
+use Oro\Bundle\CustomerBundle\Driver\OrmAccountPartialUpdateDriver;
 
 /**
  * @dbIsolationPerTest
@@ -14,6 +14,6 @@ class OrmAccountPartialUpdateDriverTest extends AbstractAccountPartialUpdateDriv
      */
     protected function getDriver()
     {
-        return $this->getContainer()->get('oro_account.driver.orm_account_partial_update_driver');
+        return $this->getContainer()->get('oro_customer.driver.orm_account_partial_update_driver');
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Indexer;
+namespace Oro\Bundle\CustomerBundle\Indexer;
 
-use Oro\Bundle\AccountBundle\Visibility\Provider\ProductVisibilityProvider;
+use Oro\Bundle\CustomerBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
 

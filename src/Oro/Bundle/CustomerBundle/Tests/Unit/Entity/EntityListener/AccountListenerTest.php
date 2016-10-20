@@ -1,14 +1,14 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity\EntityListener;
+namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity\EntityListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
-use Oro\Bundle\AccountBundle\Driver\AccountPartialUpdateDriverInterface;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Entity\EntityListener\AccountListener;
-use Oro\Bundle\AccountBundle\Model\MessageFactoryInterface;
+use Oro\Bundle\CustomerBundle\Driver\AccountPartialUpdateDriverInterface;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\EntityListener\AccountListener;
+use Oro\Bundle\CustomerBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 

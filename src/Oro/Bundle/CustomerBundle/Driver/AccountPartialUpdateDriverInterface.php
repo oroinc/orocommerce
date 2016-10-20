@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Driver;
+namespace Oro\Bundle\CustomerBundle\Driver;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 
 interface AccountPartialUpdateDriverInterface
 {
