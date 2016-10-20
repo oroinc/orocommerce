@@ -68,7 +68,7 @@ class AccountRepository extends EntityRepository implements BatchIteratorInterfa
 
         $qb->select('account.id')
             ->join(
-                'OroCustomerBundle:Visibility\AccountCategoryVisibility',
+                'OroVisibilityBundle:Visibility\AccountCategoryVisibility',
                 'accountCategoryVisibility',
                 Join::WITH,
                 $qb->expr()->eq('accountCategoryVisibility.account', 'account')

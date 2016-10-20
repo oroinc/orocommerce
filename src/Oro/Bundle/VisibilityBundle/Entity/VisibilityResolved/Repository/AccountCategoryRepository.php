@@ -92,7 +92,7 @@ class AccountCategoryRepository extends EntityRepository
             'acvr.visibility, agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configFallback) .
             ') as visibility'
         )
-        ->from('OroAccountBundle:Account', 'account')
+        ->from('OroCustomerBundle:Account', 'account')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
             'acvr',
@@ -103,7 +103,7 @@ class AccountCategoryRepository extends EntityRepository
             )
         )
         ->leftJoin(
-            'OroAccountBundle:AccountGroup',
+            'OroCustomerBundle:AccountGroup',
             'accountGroup',
             Join::WITH,
             $qb->expr()->eq('account.group', 'accountGroup')
@@ -328,7 +328,7 @@ class AccountCategoryRepository extends EntityRepository
             'acv.visibility = ' . $qb->expr()->literal(AccountCategoryVisibility::PARENT_CATEGORY)
         )
         // join to related account
-        ->innerJoin('OroAccountBundle:Account', 'a', 'WITH', 'acv.account = a')
+        ->innerJoin('OroCustomerBundle:Account', 'a', 'WITH', 'acv.account = a')
         // join to parent category visibility
         ->leftJoin(
             'OroVisibilityBundle:Visibility\AccountCategoryVisibility',

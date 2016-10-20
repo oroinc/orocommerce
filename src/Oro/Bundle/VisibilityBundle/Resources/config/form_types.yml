@@ -40,5 +40,5 @@ services:
         tags:
             - { name: form.type, alias: oro_visibility_entity_visibility_type }
         calls:
-            - [setAccountClass,['%oro_account.entity.account.class%']]
-            - [setAccountGroupClass,['%oro_account.entity.account_group.class%']]
+            - [setAccountClass,['%oro_customer.entity.account.class%']]
+            - [setAccountGroupClass,['%oro_customer.entity.account_group.class%']]

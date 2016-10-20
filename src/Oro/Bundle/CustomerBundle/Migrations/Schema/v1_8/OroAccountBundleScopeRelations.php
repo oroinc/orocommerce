@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Migrations\Schema\v1_8;
+namespace Oro\Bundle\CustomerBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\AccountBundle\Migrations\Schema\OroAccountBundleInstaller;
+use Oro\Bundle\CustomerBundle\Migrations\Schema\OroAccountBundleInstaller;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;

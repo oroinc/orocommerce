@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Controller;
 
+use Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +13,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\AccountBundle\Form\Handler\WebsiteScopedDataHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -38,7 +38,7 @@ class ProductVisibilityController extends Controller
             ]
         );
 
-        $handler = new WebsiteScopedDataHandler($form, $request, $this->get('event_dispatcher'));
+        $handler = new VisibilityFormDataHandler($form, $request, $this->get('event_dispatcher'));
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $product,

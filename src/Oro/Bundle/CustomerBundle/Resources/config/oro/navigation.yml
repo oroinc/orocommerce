@@ -251,5 +251,3 @@ navigation:
         oro_customer_frontend_account_user_role_view:   '%%label%% - oro.ui.view'
         oro_customer_frontend_account_user_role_update: '%%label%% - oro.ui.edit'
         oro_customer_frontend_account_user_role_create: oro.ui.create_entity
-
-        oro_product_visibility_edit: '%%sku%% - %%name%% - Edit'

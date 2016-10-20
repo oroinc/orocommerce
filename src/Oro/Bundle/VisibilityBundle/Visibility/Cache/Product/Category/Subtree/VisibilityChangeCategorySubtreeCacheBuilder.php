@@ -111,11 +111,11 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
     {
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroAccountBundle:AccountGroup')
+            ->getManagerForClass('OroCustomerBundle:AccountGroup')
             ->createQueryBuilder();
 
         $qb->select('accountGroup.id')
-            ->from('OroAccountBundle:AccountGroup', 'accountGroup')
+            ->from('OroCustomerBundle:AccountGroup', 'accountGroup')
             ->leftJoin(
                 'OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility',
                 'accountGroupCategoryVisibility',

@@ -1,9 +1,10 @@
 <?php
 
-namespace Oro\Bundle\CustomerBundle\Tests\Functional;
+namespace Oro\Bundle\VisibilityBundle\Tests\Functional;
 
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\ProductBundle\Model\ProductMessageHandler;
+use Oro\Component\MessageQueue\Client\TraceableMessageProducer;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -12,6 +13,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 trait MessageQueueTrait
 {
     use MessageQueueAssertTrait;
+
+    /**
+     * @var string
+     */
+    protected $topic;
 
     protected function cleanScheduledMessages()
     {
@@ -30,5 +36,33 @@ trait MessageQueueTrait
         if ($this->getMessageHandler()) {
             $this->getMessageHandler()->sendScheduledMessages();
         }
+    }
+
+    /**
+     * @return array
+     */
+    protected function getQueueMessageTraces()
+    {
+        $this->sendScheduledMessages();
+
+        return array_filter(
+            $this->getMessageProducer()->getTraces(),
+            function (array $trace) {
+                return $this->topic === $trace['topic'];
+            }
+        );
+    }
+//    protected function sendScheduledMessages()
+//    {
+//        self::getContainer()->get('oro_customer.visibility_message_handler')
+//            ->sendScheduledMessages();
+//    }
+
+    /**
+     * @return TraceableMessageProducer
+     */
+    protected function getMessageProducer()
+    {
+        return self::getContainer()->get('oro_message_queue.message_producer');
     }
 }

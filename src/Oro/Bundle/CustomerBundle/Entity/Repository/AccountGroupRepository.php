@@ -39,7 +39,7 @@ class AccountGroupRepository extends EntityRepository implements BatchIteratorIn
 
         $qb->select('accountGroup.id')
             ->leftJoin(
-                'OroCustomerBundle:Visibility\AccountGroupCategoryVisibility',
+                'OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility',
                 'AccountGroupCategoryVisibility',
                 Join::WITH,
                 $qb->expr()->eq('AccountGroupCategoryVisibility.accountGroup', 'accountGroup')
@@ -53,7 +53,7 @@ class AccountGroupRepository extends EntityRepository implements BatchIteratorIn
 
         if ($restrictedAccountGroupIds !== null) {
             $qb->andWhere($qb->expr()->in('accountGroup.id', ':restrictedAccountGroupIds'))
-            ->setParameter('restrictedAccountGroupIds', $restrictedAccountGroupIds);
+                ->setParameter('restrictedAccountGroupIds', $restrictedAccountGroupIds);
         }
 
         // Return only account group ids

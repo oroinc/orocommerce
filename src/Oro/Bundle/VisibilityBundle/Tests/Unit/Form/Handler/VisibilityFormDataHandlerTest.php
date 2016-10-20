@@ -1,14 +1,14 @@
 <?php
 
-namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Handler;
 
+use Oro\Bundle\VisibilityBundle\Form\Handler\VisibilityFormDataHandler;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
-use Oro\Bundle\CustomerBundle\Form\Handler\WebsiteScopedDataHandler;
 
-class WebsiteScopedDataHandlerTest extends FormHandlerTestCase
+class VisibilityFormDataHandlerTest extends FormHandlerTestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
@@ -30,7 +30,7 @@ class WebsiteScopedDataHandlerTest extends FormHandlerTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->handler = new WebsiteScopedDataHandler(
+        $this->handler = new VisibilityFormDataHandler(
             $this->form,
             $this->request,
             $this->eventDispatcher

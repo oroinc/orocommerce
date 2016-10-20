@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CustomerBundle\Form\Handler;
+namespace Oro\Bundle\VisibilityBundle\Form\Handler;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class WebsiteScopedDataHandler
+class VisibilityFormDataHandler
 {
     /**
      * @var FormInterface

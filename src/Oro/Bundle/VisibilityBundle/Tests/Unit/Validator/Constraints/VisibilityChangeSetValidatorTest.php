@@ -6,14 +6,12 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSet;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSetValidator;
 
 class VisibilityChangeSetValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    const ENTITY_CLASS = 'Oro\Bundle\AccountBundle\Entity\Account';
-
     /** @var  VisibilityChangeSet */
     protected $constraint;
 
@@ -31,7 +29,7 @@ class VisibilityChangeSetValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->constraint = new VisibilityChangeSet(['entityClass' => self::ENTITY_CLASS]);
+        $this->constraint = new VisibilityChangeSet(['entityClass' => Account::class]);
         $this->value = new ArrayCollection();
         $this->visibilityChangeSetValidator = new VisibilityChangeSetValidator();
         $this->context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');

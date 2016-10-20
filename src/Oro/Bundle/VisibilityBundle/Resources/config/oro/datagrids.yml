@@ -8,7 +8,7 @@ datagrids:
                     - account.name
                     - visibilityAlias
                 from:
-                    - { table: %oro_account.entity.account.class%, alias: account }
+                    - { table: %oro_customer.entity.account.class%, alias: account }
                 join:
                     left:
                         - { join: %oro_visibility.entity.account_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.account = account AND visibilityAlias.category = :target_entity_id' }
@@ -57,7 +57,7 @@ datagrids:
                     - accountGroup.id
                     - accountGroup.name
                 from:
-                    - { table: %oro_account.entity.account_group.class%, alias: accountGroup }
+                    - { table: %oro_customer.entity.account_group.class%, alias: accountGroup }
                 join:
                     left:
                         - { join: %oro_visibility.entity.account_group_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.accountGroup = accountGroup AND visibilityAlias.category = :target_entity_id' }
@@ -108,7 +108,7 @@ datagrids:
                     - account.name
                     - visibilityAlias
                 from:
-                    - { table: %oro_account.entity.account.class%, alias: account }
+                    - { table: %oro_customer.entity.account.class%, alias: account }
                 join:
                     left:
                         - { join: %oro_visibility.entity.account_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.account = account AND visibilityAlias.product = :target_entity_id  AND visibilityAlias.website = :website_id' }
@@ -159,7 +159,7 @@ datagrids:
                     - accountGroup.id
                     - accountGroup.name
                 from:
-                    - { table: %oro_account.entity.account_group.class%, alias: accountGroup }
+                    - { table: %oro_customer.entity.account_group.class%, alias: accountGroup }
                 join:
                     left:
                         - { join: %oro_visibility.entity.account_group_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.accountGroup = accountGroup AND visibilityAlias.product = :target_entity_id AND visibilityAlias.website = :website_id' }

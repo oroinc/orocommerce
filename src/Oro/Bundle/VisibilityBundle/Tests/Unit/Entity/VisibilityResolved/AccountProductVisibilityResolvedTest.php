@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\Visibility;
+namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\VisibilityResolved;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;

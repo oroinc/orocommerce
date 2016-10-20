@@ -182,8 +182,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         array $restrictedAccountGroupIds = null
     ) {
         return $this->registry
-            ->getManagerForClass('OroAccountBundle:AccountGroup')
-            ->getRepository('OroAccountBundle:AccountGroup')
+            ->getManagerForClass('OroCustomerBundle:AccountGroup')
+            ->getRepository('OroCustomerBundle:AccountGroup')
             ->getCategoryAccountGroupIdsByVisibility(
                 $category,
                 AccountGroupCategoryVisibility::PARENT_CATEGORY,
@@ -199,8 +199,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
     protected function getAccountIdsWithFallbackToParent(Category $category, array $restrictedAccountIds = null)
     {
         return $this->registry
-            ->getManagerForClass('OroAccountBundle:Account')
-            ->getRepository('OroAccountBundle:Account')
+            ->getManagerForClass('OroCustomerBundle:Account')
+            ->getRepository('OroCustomerBundle:Account')
             ->getCategoryAccountIdsByVisibility(
                 $category,
                 AccountCategoryVisibility::PARENT_CATEGORY,
@@ -215,8 +215,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
     protected function getAccountIdsWithFallbackToAll(Category $category)
     {
         return $this->registry
-            ->getManagerForClass('OroAccountBundle:Account')
-            ->getRepository('OroAccountBundle:Account')
+            ->getManagerForClass('OroCustomerBundle:Account')
+            ->getRepository('OroCustomerBundle:Account')
             ->getCategoryAccountIdsByVisibility($category, AccountCategoryVisibility::CATEGORY);
     }
 
@@ -233,11 +233,11 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroAccountBundle:Account')
+            ->getManagerForClass('OroCustomerBundle:Account')
             ->createQueryBuilder();
 
         $qb->select('account.id')
-            ->from('OroAccountBundle:Account', 'account')
+            ->from('OroCustomerBundle:Account', 'account')
             ->leftJoin(
                 'OroVisibilityBundle:Visibility\AccountCategoryVisibility',
                 'accountCategoryVisibility',
