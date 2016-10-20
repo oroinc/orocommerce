@@ -143,9 +143,9 @@ services:
         public: false
         arguments:
             - "@oro_product.product.manager"
-            - "@oro_product.product.repository"
+            - "@oro_product.website_search.repository.product"
 
-    oro_product.product.repository:
+    oro_product.website_search.repository.product:
         parent: oro_website_search.repository.abstract
         class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
         arguments:

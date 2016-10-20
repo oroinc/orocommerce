@@ -34,7 +34,7 @@ class ProductRepositoryTest extends WebTestCase
             ->getRepository(Product::class);
         /** @var ProductSearchRepository $searchRepository */
         $searchRepository = $this->client->getContainer()
-            ->get('oro_product.search.repository.product');
+            ->get('oro_product.website_search.repository.product');
 
         $productsFromOrm = $ormRepository->createQueryBuilder('p')
             ->setMaxResults(3)

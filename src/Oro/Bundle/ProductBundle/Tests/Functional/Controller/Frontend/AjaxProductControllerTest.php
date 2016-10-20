@@ -2,7 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductSearchIndex;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -21,8 +22,11 @@ class AjaxProductControllerTest extends WebTestCase
 
         $this->loadFixtures([
             LoadProductData::class,
-            LoadProductSearchIndex::class,
+            LoadProductVisibilityData::class
         ]);
+
+        $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 
     /**

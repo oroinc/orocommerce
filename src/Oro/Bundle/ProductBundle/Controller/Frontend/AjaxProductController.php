@@ -32,7 +32,7 @@ class AjaxProductController extends Controller
             return new JsonResponse($names);
         }
 
-        $products = $this->get('oro_product.search.repository.product')->searchFilteredBySkus($skus);
+        $products = $this->get('oro_product.website_search.repository.product')->searchFilteredBySkus($skus);
         $names    = $this->prepareNamesData($products);
 
         return new JsonResponse($names);
