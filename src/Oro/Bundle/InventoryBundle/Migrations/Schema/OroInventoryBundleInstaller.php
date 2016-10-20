@@ -54,6 +54,9 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $this->addManageInventoryFieldToProduct($schema);
+        $this->addManageInventoryFieldToCategory($schema);
+
         if (($schema->hasTable(self::OLD_WAREHOUSE_INVENTORY_TABLE) ||
                 $schema->hasTable(self::ORO_B2B_WAREHOUSE_INVENTORY_TABLE))
             && !$schema->hasTable(self::INVENTORY_LEVEL_TABLE_NAME)
@@ -68,9 +71,6 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
 
         /** Foreign keys generation **/
         $this->addOroInventoryLevelForeignKeys($schema);
-
-        $this->addManageInventoryFieldToProduct($schema);
-        $this->addManageInventoryFieldToCategory($schema);
 
         $queries->addPostQuery(
             new RenameInventoryConfigSectionQuery('oro_warehouse', 'oro_inventory', 'manage_inventory')
