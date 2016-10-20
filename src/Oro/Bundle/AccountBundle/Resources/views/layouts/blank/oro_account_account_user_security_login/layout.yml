@@ -5,7 +5,7 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: 'oro.account.accountuser.profile.register'
+            optionValue: 'oro.account.menu.account_user_login.label'
         - '@addTree':
             items:
                 login_page_wrapper:
@@ -106,3 +106,5 @@ layout:
                                     login_form_register: ~
                                 login_form_target: ~
                                 login_form_csrf: ~
+    imports:
+        - 'only_content'

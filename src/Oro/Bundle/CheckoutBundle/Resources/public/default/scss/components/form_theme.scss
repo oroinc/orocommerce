@@ -196,4 +196,18 @@
       text-align: right;
     }
   }
+
+  &__req-text {
+    position: absolute;
+    left: 230px;
+    top: 18px;
+
+    color: get-color('primary', 'dark');
+
+    @media (max-width: $screen-md) {
+      position: static;
+
+      margin: 0 0 20px 5px;
+    }
+  }
 }

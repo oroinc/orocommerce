@@ -10,8 +10,5 @@ layout:
             optionValue: 'oro.account.accountuser.profile.register'
         - @remove:
             id: main
-        - @move:
-            id: registration_page_wrapper
-            parentId: wrapper_content
     imports:
         - 'only_content'

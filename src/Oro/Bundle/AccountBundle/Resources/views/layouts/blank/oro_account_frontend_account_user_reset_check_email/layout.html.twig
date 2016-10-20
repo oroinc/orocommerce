@@ -1,0 +1,32 @@
+{% block _check_email_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' check-email'
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _check_email_label_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-title'
+    }) %}
+    <h1{{ block('block_attributes') }}>{{ block_widget(block) }}</h1>
+{% endblock %}
+
+{% block _check_email_message_widget %}
+    <p class="notifications notifications--success">
+        {{ block_widget(block) }}
+    </p>
+{% endblock %}
+
+{% block _check_email_return_to_login_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' link'
+    }) %}
+
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+
