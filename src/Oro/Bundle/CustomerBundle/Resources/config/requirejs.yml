@@ -1,0 +1,15 @@
+config:
+    paths:
+        'orocustomer/js/app/components/account-user-component': 'bundles/orocustomer/js/app/components/account-user-component.js'
+        'orocustomer/js/app/components/password-generate': 'bundles/orocustomer/js/app/components/password-generate.js'
+        'orocustomer/js/app/components/account-address-component': 'bundles/orocustomer/js/app/components/account-address-component.js'
+        'orocustomer/js/app/components/account-address-book-component': 'bundles/orocustomer/js/app/components/account-address-book-component.js'
+        'orocustomer/js/app/components/account-user-role-component': 'bundles/orocustomer/js/app/components/account-user-role-component.js'
+        'orocustomer/js/app/components/account-selection-component': 'bundles/orocustomer/js/app/components/account-selection-component.js'
+        'oro/select2-autocomplete-accountuser-component': 'bundles/orocustomer/js/app/components/select2-autocomplete-accountuser-component.js'
+        'orocustomer/js/app/modules/views-module': 'bundles/orocustomer/js/app/modules/views-module.js'
+        'orocustomer/js/app/views/account-role-view': 'bundles/orocustomer/js/app/views/account-role-view.js'
+        'orocustomer/js/address-book': 'bundles/orocustomer/js/address-book.js'
+        'orocustomer/js/app/components/frontend-account-address-book-component': 'bundles/orocustomer/js/app/components/frontend-account-address-book-component.js'
+    appmodules:
+        - orocustomer/js/app/modules/views-module

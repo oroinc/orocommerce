@@ -4,10 +4,9 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
-use Oro\Bundle\AccountBundle\Tests\Functional\MessageQueueTrait;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -18,6 +17,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageFactory;
 use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\MessageQueueTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)

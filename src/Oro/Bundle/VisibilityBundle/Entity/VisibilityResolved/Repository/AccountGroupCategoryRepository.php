@@ -203,7 +203,7 @@ class AccountGroupCategoryRepository extends EntityRepository
             'IDENTITY(scope.accountGroup) as accountGroupId',
             'COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configFallback).') as visibility'
         )
-        ->from('OroAccountBundle:AccountGroup', 'accountGroup')
+        ->from('OroCustomerBundle:AccountGroup', 'accountGroup')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr',

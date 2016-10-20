@@ -244,7 +244,7 @@ VISIBILITY;
             'IDENTITY(apv.scope)',
         ])
             ->innerJoin('apv.scope', 'scope')
-            ->innerJoin('OroAccountBundle:Account', 'ac', 'WITH', 'scope.account = ac.account')
+            ->innerJoin('OroCustomerBundle:Account', 'ac', 'WITH', 'scope.account = ac.account')
 
             ->innerJoin(
                 'OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
@@ -294,7 +294,7 @@ VISIBILITY;
             'IDENTITY(apv.scope)',
         ])
             ->innerJoin('apv.scope', 'scope')
-            ->innerJoin('OroAccountBundle:Account', 'ac', 'WITH', 'scope.account = ac.account')
+            ->innerJoin('OroCustomerBundle:Account', 'ac', 'WITH', 'scope.account = ac.account')
 
             ->innerJoin(
                 'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
@@ -347,7 +347,7 @@ VISIBILITY;
             'IDENTITY(apv.scope)',
         ])
             ->innerJoin('apv.scope', 'scope')
-            ->innerJoin('OroAccountBundle:Account', 'ac', 'WITH', 'scope.account = ac.account')
+            ->innerJoin('OroCustomerBundle:Account', 'ac', 'WITH', 'scope.account = ac.account')
 
             ->innerJoin(
                 'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',

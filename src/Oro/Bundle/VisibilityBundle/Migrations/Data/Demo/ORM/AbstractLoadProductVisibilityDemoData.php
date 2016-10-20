@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadScopeAccountGroupDemoData;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadScopeAccountGroupDemoData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;

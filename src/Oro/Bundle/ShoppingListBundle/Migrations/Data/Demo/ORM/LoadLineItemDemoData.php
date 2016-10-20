@@ -11,6 +11,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -43,9 +44,12 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
      */
     public function load(ObjectManager $manager)
     {
-        $accountUser = $manager->getRepository('OroAccountBundle:AccountUser')->findOneBy([]);
+        $accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')->findOneBy([]);
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroShoppingListBundle/Migrations/Data/Demo/ORM/data/shopping_lists.csv');
+
+        /** @var User $user */
+        $owner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
 
         if (is_array($filePath)) {
             $filePath = current($filePath);
@@ -76,6 +80,7 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
                 $lineItem = (new LineItem())
                     ->setAccountUser($accountUser)
                     ->setOrganization($accountUser->getOrganization())
+                    ->setOwner($owner)
                     ->setShoppingList($shoppingList)
                     ->setNotes(sprintf('Line item %d notes', $id + 1))
                     ->setProduct($product)

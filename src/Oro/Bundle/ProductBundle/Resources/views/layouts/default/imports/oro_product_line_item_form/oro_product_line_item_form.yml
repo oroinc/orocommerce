@@ -5,27 +5,21 @@ layout:
         - '@addTree':
             items:
                 __line_item_form:
-                    blockType: container
-                __line_item_form_start:
-                    blockType: form_start
-                    options:
-                        form: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
-                __line_item_form_fields:
-                    blockType: form_fields
+                    blockType: form
                     options:
                         preferred_fields: [quantity]
-                        form: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
-                        class_prefix: line_item_form_fields
-                __line_item_form_end:
-                    blockType: form_end
-                    options:
-                        form: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
+                        form: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"], instance_name)'
                 __line_item_form_buttons:
                     blockType: container
             tree:
                 __root:
                     __line_item_form:
-                        __line_item_form_start: ~
-                        __line_item_form_fields: ~
                         __line_item_form_buttons: ~
-                        __line_item_form_end: ~
+        - '@move':
+            id: __line_item_form_buttons
+            parentId: __line_item_form
+            siblingId: __line_item_form_fields
+        - '@setOption':
+            id: __line_item_form_fields
+            optionName: class_prefix
+            optionValue: line_item_form_fields

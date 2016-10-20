@@ -3,8 +3,8 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Visibility\Resolver;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ScopeBundle\Entity\Scope;

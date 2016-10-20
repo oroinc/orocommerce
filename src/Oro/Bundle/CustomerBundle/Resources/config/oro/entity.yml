@@ -1,0 +1,28 @@
+oro_entity:
+    entity_aliases:
+        # This is temporary solution to remove alias duplication
+        # @todo: renaming of entities will be finished in BB-2679
+        Oro\Bundle\CustomerBundle\Entity\Account:
+            alias:        customer
+            plural_alias: customers
+        Oro\Bundle\CustomerBundle\Entity\Audit:
+            alias:        account_user_audit
+            plural_alias: account_user_audits
+        Oro\Bundle\CustomerBundle\Entity\AuditField:
+            alias:        account_user_audit_field
+            plural_alias: account_user_audit_fields
+        Oro\Bundle\CustomerBundle\Entity\NavigationHistoryItem:
+            alias:        account_user_navigation_history_item
+            plural_alias: account_user_navigation_history_items
+        Oro\Bundle\CustomerBundle\Entity\NavigationItem:
+            alias:        account_user_navigation_item
+            plural_alias: account_user_navigation_items
+        Oro\Bundle\CustomerBundle\Entity\PinbarTab:
+            alias:        account_user_pinbar_tab
+            plural_alias: account_user_pinbar_tabs
+        Oro\Bundle\CustomerBundle\Entity\PageState:
+            alias:        account_user_page_state
+            plural_alias: account_user_page_states
+        Oro\Bundle\CustomerBundle\Entity\WindowsState:
+            alias:        account_user_windows_state
+            plural_alias: account_user_windows_states

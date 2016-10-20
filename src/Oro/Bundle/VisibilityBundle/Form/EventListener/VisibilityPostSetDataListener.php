@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
-use Oro\Bundle\AccountBundle\Entity\AccountAwareInterface;
-use Oro\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\AccountAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroupAwareInterface;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Symfony\Component\Form\FormEvent;

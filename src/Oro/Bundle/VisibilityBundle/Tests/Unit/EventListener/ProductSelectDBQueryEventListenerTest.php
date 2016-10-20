@@ -2,9 +2,6 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;

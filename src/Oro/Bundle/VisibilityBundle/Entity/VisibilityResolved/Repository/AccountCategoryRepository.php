@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -126,7 +126,7 @@ class AccountCategoryRepository extends EntityRepository
             'acvr.visibility, agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configFallback) .
             ') as visibility'
         )
-        ->from('OroAccountBundle:Account', 'account')
+        ->from('OroCustomerBundle:Account', 'account')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
             'acvr',
@@ -302,7 +302,6 @@ class AccountCategoryRepository extends EntityRepository
         ->join('acv_scope.account', 'a')
         // join to category that includes only parent category entities
         ->innerJoin('acv.category', 'c')
-        // join to related account
         // join to parent category visibility
         ->leftJoin(
             'OroVisibilityBundle:Visibility\AccountCategoryVisibility',

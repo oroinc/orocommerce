@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
@@ -232,7 +232,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroAccountBundle:Account')
+            ->getManagerForClass('OroCustomerBundle:Account')
             ->createQueryBuilder();
 
         /** @var QueryBuilder $subQb */
@@ -249,7 +249,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             ->andWhere($qb->expr()->eq('scope.account', 'account.id'));
 
         $qb->select('account.id')
-            ->from('OroAccountBundle:Account', 'account')
+            ->from('OroCustomerBundle:Account', 'account')
             ->where($qb->expr()->not($qb->expr()->exists($subQb->getDQL())))
 
             ->setParameters([

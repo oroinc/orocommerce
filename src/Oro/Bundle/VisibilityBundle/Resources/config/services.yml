@@ -91,7 +91,7 @@ services:
         class: 'Oro\Bundle\VisibilityBundle\EventListener\CategoryTreeHandlerListener'
         arguments:
             - "@oro_visibility.visibility.resolver.category_visibility_resolver"
-            - "@oro_account.provider.account_user_relations_provider"
+            - "@oro_customer.provider.account_user_relations_provider"
         tags:
             - {name: kernel.event_listener, event: oro_catalog.category.tree.create_after, method: onCreateAfter }
 
@@ -360,3 +360,12 @@ services:
         class: 'Oro\Bundle\VisibilityBundle\Provider\VisibilityRootScopesProvider'
         arguments:
             - '@oro_scope.scope_manager'
+
+    oro_visibility.event_listener.category_listener:
+        class: 'Oro\Bundle\VisibilityBundle\EventListener\CategoryListener'
+        public: false
+        arguments:
+            - '@oro_product.model.product_message_handler'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+
