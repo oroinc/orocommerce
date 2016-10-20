@@ -47,8 +47,18 @@ oro:
             transition:
                 continue_to_shipping_address:
                     label: Continue
+                    attribute:
+                        save_billing_address:
+                            label: 'Save address'
+                        ship_to_billing_address:
+                            label: 'Ship to this address'
                 continue_to_shipping_method:
                     label: Continue
+                    attribute:
+                        save_shipping_address:
+                            label: 'Save address'
+                        ship_to_billing_address:
+                            label: 'Use billing address'
                 continue_to_payment:
                     label: Continue
                 continue_to_order_review:
