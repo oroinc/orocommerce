@@ -4,8 +4,12 @@ namespace Oro\Bundle\WebCatalogBundle\JsTree;
 
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
+use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
+/**
+ * @method ContentNodeRepository getEntityRepository()
+ */
 class ContentNodeTreeHandler extends AbstractTreeHandler
 {
     /**
@@ -77,5 +81,14 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
                 $entityRepository->persistAsFirstChildOf($node, $parentNode);
             }
         }
+    }
+
+    /**
+     * @param WebCatalog $webCatalog
+     * @return ContentNode
+     */
+    public function getTreeRootByWebCatalog(WebCatalog $webCatalog)
+    {
+        return $this->getEntityRepository()->getRootNodeByWebCatalog($webCatalog);
     }
 }

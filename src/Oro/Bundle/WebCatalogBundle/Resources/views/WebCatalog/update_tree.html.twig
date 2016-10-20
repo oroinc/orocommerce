@@ -1,0 +1,70 @@
+{# TODO replace this stub with real logic BB-3306 #}
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+
+{% set web_catalogId = web_catalog.id %}
+
+{% oro_title_set({params : {"%title%": web_catalog.name, '%entityName%': 'oro.webcatalog.entity_label'|trans} }) %}
+
+{% block ownerLink %}
+    {% if isDesktopVersion() and web_catalog is not null %}
+        {% set ownerLink = UI.entityOwnerLink(web_catalog) %}
+        <li>{{ ownerLink }}{% placeholder additional_owner_info with {entity: web_catalog} %}</li>
+    {% endif %}
+{% endblock ownerLink %}
+
+{% block pageHeader %}
+    {% if web_catalogId %}
+        {% set breadcrumbs = {
+            'entity':      web_catalog,
+            'indexPath':   path('oro_web_catalog_index'),
+            'indexLabel': 'oro.webcatalog.entity_plural_label'|trans,
+            'entityTitle': web_catalog.name|default('N/A'|trans)
+        } %}
+        {{ parent() }}
+    {% else %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.cms.page.entity_label'|trans}) %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'web-catalog-tree-edit' %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'oro.webcatalog.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'title': '',
+                'data': [
+                    "Content Node Form goes HERE " ~ entity.name
+                ]
+            }]
+        }
+    ] %}
+
+    {% set data = {
+        'dataBlocks': dataBlocks
+    }%}
+
+    <div class="cms-page-container tree-component-container">
+        <div class="page page-tree tree-component">
+            {% set treeOptions = {
+                'key' : 'web-catalog',
+                'data' : oro_web_catalog_tree(web_catalog),
+                'updateAllowed' : resource_granted('oro_web_catalog_update'),
+                'onRootSelectRoute': 'oro_web_catalog_update_tree',
+                'onSelectRoute' : 'oro_web_catalog_update_tree_node',
+                'onMoveRoute' : 'oro_web_catalog_move',
+                'reloadWidget': 'page-info-widget'
+            } %}
+            <div
+                data-page-component-module="orocms/js/app/components/tree-manage-component"
+                data-page-component-options="{{ treeOptions|json_encode }}"
+            ></div>
+        </div>
+    </div>
+    <div class="cms-page-data">
+        {{ parent() }}
+    </div>
+{% endblock content_data %}

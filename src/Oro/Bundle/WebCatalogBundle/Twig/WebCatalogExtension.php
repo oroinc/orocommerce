@@ -2,21 +2,22 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Twig;
 
-use Oro\Component\Tree\Handler\AbstractTreeHandler;
+use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 
 class WebCatalogExtension extends \Twig_Extension
 {
     const NAME = 'oro_web_catalog_extension';
 
     /**
-     * @var AbstractTreeHandler
+     * @var ContentNodeTreeHandler
      */
     protected $treeHandler;
 
     /**
-     * @param AbstractTreeHandler $treeHandler
+     * @param ContentNodeTreeHandler $treeHandler
      */
-    public function __construct(AbstractTreeHandler $treeHandler)
+    public function __construct(ContentNodeTreeHandler $treeHandler)
     {
         $this->treeHandler = $treeHandler;
     }
@@ -35,16 +36,18 @@ class WebCatalogExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('oro_web_catalog_nodes_tree', [$this, 'getNodesTree']),
+            new \Twig_SimpleFunction('oro_web_catalog_tree', [$this, 'getNodesTree']),
         ];
     }
 
     /**
+     * @param WebCatalog $webCatalog
      * @return array
      */
-    public function getNodesTree()
+    public function getNodesTree(WebCatalog $webCatalog)
     {
-        // TODO: allow to get empty tree (several roots?)
-        return $this->treeHandler->createTree();
+        $root = $this->treeHandler->getTreeRootByWebCatalog($webCatalog);
+
+        return $this->treeHandler->createTree($root, true);
     }
 }

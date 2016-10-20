@@ -11,7 +11,6 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendContentNode;
 use Oro\Component\Tree\Entity\TreeTrait;
@@ -24,11 +23,6 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      defaultValues={
- *          "ownership"={
- *              "owner_type"="BUSINESS_UNIT",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="business_unit_owner_id"
- *          },
  *          "dataaudit"={
  *              "auditable"=true
  *          }
@@ -41,7 +35,6 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
 {
     use TreeTrait;
     use DatesAwareTrait;
-    use BusinessUnitAwareTrait;
 
     const MATERIALIZED_PATH_DELIMITER = '_';
 
@@ -182,6 +175,14 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      * @ORM\Column(name="materialized_path", type="string", length=1024, nullable=true)
      */
     protected $materializedPath;
+
+    /**
+     * @var WebCatalog
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebCatalogBundle\Entity\WebCatalog")
+     * @ORM\JoinColumn(name="web_catalog_id", referencedColumnName="id",onDelete="CASCADE",nullable=false)
+     */
+    protected $webCatalog;
 
     /**
      * ContentNode Constructor
@@ -449,6 +450,25 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     public function setMaterializedPath($materializedPath)
     {
         $this->materializedPath = $materializedPath;
+
+        return $this;
+    }
+
+    /**
+     * @return WebCatalog
+     */
+    public function getWebCatalog()
+    {
+        return $this->webCatalog;
+    }
+
+    /**
+     * @param WebCatalog $webCatalog
+     * @return $this
+     */
+    public function setWebCatalog(WebCatalog $webCatalog)
+    {
+        $this->webCatalog = $webCatalog;
 
         return $this;
     }
