@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\WebsiteLocalizationConfigListener;
 
 class WebsiteLocalizationConfigListenerTest extends \PHPUnit_Framework_TestCase
