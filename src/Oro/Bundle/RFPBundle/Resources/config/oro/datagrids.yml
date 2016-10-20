@@ -427,8 +427,7 @@ datagrids:
                     data_name: request.shipUntil
                 createdAt:
                     data_name: request.createdAt
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+            disable_default_sorting: true
         filters:
             columns:
                 accountUserName:
