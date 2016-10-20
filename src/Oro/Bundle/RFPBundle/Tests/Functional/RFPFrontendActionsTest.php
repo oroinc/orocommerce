@@ -33,7 +33,7 @@ class RFPFrontendActionsTest extends WebTestCase
             ]
         );
 
-        $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
         $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 

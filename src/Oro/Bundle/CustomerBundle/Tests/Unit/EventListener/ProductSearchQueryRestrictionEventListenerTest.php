@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\AccountBundle\EventListener\ProductSearchQueryRestrictionEventListener;
+use Oro\Bundle\CustomerBundle\EventListener\ProductSearchQueryRestrictionEventListener;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\SearchBundle\Query\Modifier\QueryModifierInterface;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\EventListener;
+namespace Oro\Bundle\CustomerBundle\EventListener;
 
-use Oro\Bundle\AccountBundle\Model\ProductVisibilitySearchQueryModifier;
+use Oro\Bundle\CustomerBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\SearchBundle\Query\Modifier\QueryModifierInterface;
