@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\NavigationBundle\Menu\Provider\AbstractOwnershipProvider;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 
 class AccountOwnershipProvider extends AbstractOwnershipProvider
 {

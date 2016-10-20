@@ -6,8 +6,8 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CommerceMenuBundle\Provider\AccountOwnershipProvider;
 
 class AccountOwnershipProviderTest extends \PHPUnit_Framework_TestCase
