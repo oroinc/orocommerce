@@ -1,12 +1,13 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Handler;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Handler;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
-use Oro\Bundle\OrderBundle\Form\Handler\OrderShippingTrackingHandler;
+use Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,41 +43,20 @@ class OrderShippingTrackingHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
         $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $managerRegistry */
+        $managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($this->manager);
+
+        $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
         $this->order = $this->getMock('Oro\Bundle\OrderBundle\Entity\Order');
-        $this->request = new Request();
 
-        $this->handler = new OrderShippingTrackingHandler(
-            $this->form,
-            $this->manager,
-            $this->request,
-            $this->order
-        );
-    }
-
-    public function testProcessGet()
-    {
-        $this->form->expects(static::never())
-            ->method('submit');
-
-        $this->handler->process();
-    }
-
-    public function testProcessInvalidForm()
-    {
-        $this->request->setMethod('POST');
-
-        $this->form->expects(static::once())
-            ->method('submit')
-            ->with($this->request);
-        $this->form->expects(static::once())
-            ->method('isValid')
-            ->willReturn(false);
-        $this->form->expects(static::never())
-            ->method('getData');
-
-        $this->handler->process();
+        $this->handler = new OrderShippingTrackingHandler($managerRegistry);
     }
 
     /**
@@ -88,14 +68,11 @@ class OrderShippingTrackingHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcess($formData, ArrayCollection $existingEntities, $persistedQty, $removedQty)
     {
-        $this->request->setMethod('POST');
-
         $this->form->expects(static::once())
-            ->method('submit')
-            ->with($this->request);
-        $this->form->expects(static::once())
-            ->method('isValid')
-            ->willReturn(true);
+            ->method('get')
+            ->with('shippingTrackings')
+            ->willReturnSelf();
+        
         $this->form->expects(static::once())
             ->method('getData')
             ->willReturn($formData);
@@ -125,10 +102,10 @@ class OrderShippingTrackingHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getShippingTrackings')
             ->willReturn($existingEntities);
 
-        $this->manager->expects($formData && count($formData) ? static::once() : static::never())
+        $this->manager->expects($formData ? static::once() : static::never())
             ->method('flush');
 
-        $this->handler->process();
+        $this->handler->process($this->order, $this->form);
 
         static::assertCount($persistedQty, $persistedEntities);
         static::assertCount($removedQty, $removedEntities);

@@ -8,17 +8,6 @@ placeholders:
             items:
                 order_quick_add: ~
 
-        view_navButtons_after:
-                    items:
-                        shipping_tracking_button:
-                            order: 100
-
     items:
         line_item_templates:
             template: OroOrderBundle:Js:line_item_templates.js.twig
-
-        shipping_tracking_button:
-            template: OroOrderBundle:OrderShippingTracking:shippingTrackingButton.html.twig
-            applicable:
-                - "@oro_ui.placeholder.filter->isInstanceOf($entity$, %oro_order.entity.order.class%)"
-                - "@oro_frontend.placeholder.filter->isBackendRoute()"

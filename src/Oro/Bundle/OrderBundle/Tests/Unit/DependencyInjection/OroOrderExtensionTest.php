@@ -26,7 +26,8 @@ class OroOrderExtensionTest extends ExtensionTestCase
             'oro_order.layout.provider.order_shipping_method',
             'oro_order.form.type.order_shipping_tracking',
             'oro_order.form.type.order_shipping_tracking_collection',
-            'oro_order.form.type.select_switch_input'
+            'oro_order.form.type.select_switch_input',
+            'oro_order.handler.order_shipping_tracking'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

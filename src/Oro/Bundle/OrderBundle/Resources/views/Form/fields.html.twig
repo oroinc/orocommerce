@@ -329,20 +329,22 @@
             <div>
                 <table class="grid table table-condensed table-bordered table-hover">
                     <thead>
-                    <th>{{ 'oro.order.shipping_trackings.method.label'|trans }}</th>
-                    <th>{{ 'oro.order.shipping_trackings.number.label'|trans }}</th>
-                    <th></th>
+                        <tr>
+                            <th>{{ 'oro.order.shipping_trackings.method.label'|trans }}</th>
+                            <th>{{ 'oro.order.shipping_trackings.number.label'|trans }}</th>
+                            <th></th>
+                        </tr>
                     </thead>
                     <tbody {{ block('widget_container_attributes') }} data-last-index="{{ form.children|length}}" data-row-count-add="{{ form.vars.row_count_add }}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
-                    {% if form.children|length %}
-                        {% for child in form.children %}
-                            {{ _self.oro_order_shipping_tracking_collection_item_prototype(child) }}
-                        {% endfor %}
-                    {% elseif show_form_when_empty and prototype_html is defined %}
-                        {% for i in 0..(form.vars.row_count_initial - 1) %}
-                            {{ prototype_html|replace({(prototype_name): i})|raw }}
-                        {% endfor %}
-                    {% endif %}
+                        {% if form.children|length %}
+                            {% for child in form.children %}
+                                {{ _self.oro_order_shipping_tracking_collection_item_prototype(child) }}
+                            {% endfor %}
+                        {% elseif show_form_when_empty and prototype_html is defined %}
+                            {% for i in 0..(form.vars.row_count_initial - 1) %}
+                                {{ prototype_html|replace({(prototype_name): i})|raw }}
+                            {% endfor %}
+                        {% endif %}
                     </tbody>
                 </table>
             </div>

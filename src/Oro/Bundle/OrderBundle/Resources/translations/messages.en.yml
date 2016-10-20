@@ -51,6 +51,8 @@ oro:
             label: Shipping Trackings
             method.label: Method
             number.label: Number
+            flash:
+                save_success: Shipping Trackings have been updated
 
         orderdiscount:
             entity_label: Order Discount

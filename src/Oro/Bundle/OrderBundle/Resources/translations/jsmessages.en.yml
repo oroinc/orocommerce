@@ -4,7 +4,3 @@ oro:
             edit: Edit Notes
             add: Add Notes
             remove: Remove Notes
-
-        shipping_trackings:
-            flash:
-                save_success: Shipping Trackings have been updated

@@ -65,6 +65,9 @@
         {% else %}
             {{ UI.renderHtmlProperty('oro.order.shipping_cost.label'|trans, 'N/A'|trans) }}
         {% endif %}
+        {% if entity.shippingTrackings is not null %}
+            {{ UI.renderHtmlProperty('oro.order.shipping_trackings.label'|trans, dataGrid.renderGrid('order-shipping-trackings-grid', { order_id: entity.id })) }}
+        {% endif %}
     {% endset %}
 
     {% set paymentTerm %}

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Type\OroEntityCreateOrSelectChoiceType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
@@ -14,13 +13,16 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderShippingTrackingType extends AbstractType
 {
     const NAME = 'oro_order_shipping_tracking';
 
-    /** @var array */
+    /**
+     * @var array
+     */
     protected $tracking;
 
     /**
@@ -40,7 +42,11 @@ class OrderShippingTrackingType extends AbstractType
             }
         }
     }
-    
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
@@ -146,6 +152,10 @@ class OrderShippingTrackingType extends AbstractType
         }
     }
 
+    /**
+     * @param OptionsResolver $resolver
+     * @throws AccessException
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

@@ -1,0 +1,24 @@
+{% extends 'OroActionBundle:Operation:form.html.twig' %}
+
+{% block form %}
+    {% set buttonOptions = operation.definition.buttonOptions %}
+    {% set pageComponentOptions = {} %}
+    <div class="widget-content">
+        <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
+              method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
+                {% if buttonOptions.page_component_module is defined %}data-page-component-module="{{ buttonOptions.page_component_module }}"{% endif %}
+        >
+            {{ form_row(form.shippingTrackings) }}
+
+            <div class="hidden">
+                {{ form_rest(form) }}
+            </div>
+
+            <div class="widget-actions">
+                <button type="reset" class="btn">{{ 'oro.shoppinglist.lineitem.action.cancel'|trans }}</button>
+                <button type="submit" class="btn btn-success">{{ 'oro.shoppinglist.lineitem.action.save'|trans }}</button>
+            </div>
+        </form>
+        {{ oro_form_js_validation(form) }}
+    </div>
+{% endblock %}

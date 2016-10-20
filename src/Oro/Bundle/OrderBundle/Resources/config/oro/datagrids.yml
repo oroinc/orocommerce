@@ -620,3 +620,31 @@ datagrids:
             toolbarOptions:
                 placement:
                     bottom: true
+
+    order-shipping-trackings-grid:
+        extended_entity_name: %oro_order.entity.order_shipping_tracking.class%
+        options:
+            entityHint: order_shipping_tracking
+            entity_pagination: false
+            toolbarOptions:
+                hide: true
+                pagination:
+                    onePage: true
+        source:
+            type: orm
+            query:
+                select:
+                    - shipping_tracking.method
+                    - shipping_tracking.number
+                from:
+                    - { table: %oro_order.entity.order_shipping_tracking.class%, alias: shipping_tracking }
+                where:
+                    and:
+                        - shipping_tracking.order = :order_id
+            bind_parameters:
+                - order_id
+        columns:
+            method:
+                label: oro.order.shipping_trackings.method.label
+            number:
+                label: oro.order.shipping_trackings.number.label

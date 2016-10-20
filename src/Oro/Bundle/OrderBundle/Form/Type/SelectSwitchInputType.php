@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Type\OroEntityCreateOrSelectChoiceType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
@@ -52,6 +51,9 @@ class SelectSwitchInputType extends AbstractType
         return self::NAME;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParent()
     {
         return ChoiceType::class;

@@ -3,11 +3,6 @@ oro_order:
     type:         annotation
     prefix:       /order
 
-oro_order_shipping_tracking:
-    resource:     "@OroOrderBundle/Controller/OrderShippingTrackingController.php"
-    type:         annotation
-    prefix:       /order/shipping-tracking
-
 oro_order_frontend:
     resource:     "@OroOrderBundle/Controller/Frontend/OrderController.php"
     type:         annotation
