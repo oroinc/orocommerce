@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
@@ -18,7 +19,14 @@ class WebsiteLocalizationConfigListenerTest extends \PHPUnit_Framework_TestCase
         $eventDispatcher = $this->getEventDispatcherMock();
         $eventDispatcher
             ->expects($this->once())
-            ->method('dispatch');
+            ->method('dispatch')
+            ->with(
+                ReindexationRequestEvent::EVENT_NAME,
+                $this->callback(function ($reindexationEvent) {
+                    /** @var ReindexationRequestEvent $reindexationEvent */
+                    return count($reindexationEvent->getWebsitesIds()) === 0;
+                })
+            );
 
         $listener = new WebsiteLocalizationConfigListener($eventDispatcher);
         $listener->onLocalizationSettingsChange($eventWithLocalizationChange);
