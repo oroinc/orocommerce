@@ -25,6 +25,12 @@
     }
 }
 
+@include breakpoint('desktop') {
+    .main-menu {
+        display: flex !important;
+    }
+}
+
 @include breakpoint('tablet') {
     .main-menu {
         display: block;
