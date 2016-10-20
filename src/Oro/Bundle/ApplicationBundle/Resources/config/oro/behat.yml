@@ -1,5 +1,5 @@
 elements:
-  Registration:
+  Registration Form:
     class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
     selector: "form[id^='oro_account_frontend_account_user_register']"
     options:

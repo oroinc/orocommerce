@@ -1,21 +1,17 @@
 {% block _product_prices_widget %}
-    {% set minimumQuantities = {} %}
-    {% for price in productPrices %}
-        {% if minimumQuantities[price.unit] is not defined or price.quantity < minimumQuantities[price.unit] %}
-            {% set minimumQuantities = minimumQuantities|merge({ (price.unit): price.quantity }) %}
-        {% endif %}
-    {% endfor %}
-
-    {% set attr = attr|merge({
-        'data-page-component-module': 'oropricing/js/app/components/product-minimum-quantity-component',
-        'data-page-component-options': {
-            quantities: minimumQuantities,
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'oropricing/js/app/views/base-product-prices-view',
+            changeQuantity: true,
+            modelAttr: {
+                prices: productPrices
+            }
         },
-        class: attr.class|default('') ~ "product__qnty"
+        '~class': ' product__qnty'
     }) %}
 
     <div {{ block('block_attributes') }}>
-
         <table class="table">
             <thead>
             <tr>

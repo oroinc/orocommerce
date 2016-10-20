@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -58,7 +58,7 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
     {
         $qb = $this->getEntityManager()->createQueryBuilder()
             ->select('distinct accountGroup')
-            ->from('OroAccountBundle:AccountGroup', 'accountGroup');
+            ->from('OroCustomerBundle:AccountGroup', 'accountGroup');
 
         $qb->innerJoin(
             'OroPricingBundle:PriceListToAccountGroup',

@@ -38,7 +38,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         $currentUser = $this->getContainer()->get('doctrine')
             ->getManager()
-            ->getRepository('OroAccountBundle:AccountUser')
+            ->getRepository('OroCustomerBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
 
         $currentShoppingList = $this->getContainer()->get('doctrine')
