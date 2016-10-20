@@ -11,24 +11,18 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendContentNode;
 use Oro\Component\Tree\Entity\TreeTrait;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository")
  * @ORM\Table(name="oro_web_catalog_content_node")
  * @Gedmo\Tree(type="nested")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      defaultValues={
- *          "ownership"={
- *              "owner_type"="BUSINESS_UNIT",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="business_unit_owner_id"
- *          },
  *          "dataaudit"={
  *              "auditable"=true
  *          }
@@ -41,7 +35,8 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
 {
     use TreeTrait;
     use DatesAwareTrait;
-    use BusinessUnitAwareTrait;
+
+    const FIELD_PARENT_NODE = 'parentNode';
     
     /**
      * @ORM\Id
@@ -180,6 +175,14 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     protected $materializedPath;
 
     /**
+     * @var WebCatalog
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebCatalogBundle\Entity\WebCatalog")
+     * @ORM\JoinColumn(name="web_catalog_id", referencedColumnName="id",onDelete="CASCADE",nullable=false)
+     */
+    protected $webCatalog;
+
+    /**
      * ContentNode Constructor
      */
     public function __construct()
@@ -192,7 +195,15 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
         $this->contentVariantSlugs = new ArrayCollection();
         $this->contentVariants = new ArrayCollection();
     }
-    
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->getDefaultTitle();
+    }
+
     /**
      * @return int
      */
@@ -437,6 +448,25 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     public function setMaterializedPath($materializedPath)
     {
         $this->materializedPath = $materializedPath;
+
+        return $this;
+    }
+
+    /**
+     * @return WebCatalog
+     */
+    public function getWebCatalog()
+    {
+        return $this->webCatalog;
+    }
+
+    /**
+     * @param WebCatalog $webCatalog
+     * @return $this
+     */
+    public function setWebCatalog(WebCatalog $webCatalog)
+    {
+        $this->webCatalog = $webCatalog;
 
         return $this;
     }

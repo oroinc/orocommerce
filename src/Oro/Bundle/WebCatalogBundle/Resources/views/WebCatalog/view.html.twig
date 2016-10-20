@@ -13,6 +13,11 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
+{% block navButtons %}
+    {{ UI.button({path: path('oro_web_catalog_update_tree', {id: entity.id}), label: "Tree"}) }}
+    {{ parent() }}
+{% endblock navButtons %}
+
 {% block content_data %}
     {% set dataBlocks = [
         {
