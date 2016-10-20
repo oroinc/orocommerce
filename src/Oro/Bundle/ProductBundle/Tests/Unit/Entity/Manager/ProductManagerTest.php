@@ -4,11 +4,11 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\Manager;
 
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
-use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 
@@ -22,14 +22,14 @@ class ProductManagerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
         $this->productManager = new ProductManager($this->eventDispatcher);
     }
 
     public function testRestrictQueryBuilder()
     {
         /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $qb */
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')->disableOriginalConstructor()->getMock();
+        $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
         $params = ['some' => 'params'];
 
         $this->eventDispatcher->expects($this->once())
