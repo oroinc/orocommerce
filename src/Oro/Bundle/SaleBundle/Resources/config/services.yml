@@ -89,8 +89,8 @@ services:
             - "@doctrine"
             - '%oro_sale.entity.quote_address.class%'
         calls:
-            - [addEntity, ['a', '%oro_account.entity.account_address.class%']]
-            - [addEntity, ['au', '%oro_account.entity.account_user_address.class%']]
+            - [addEntity, ['a', '%oro_customer.entity.account_address.class%']]
+            - [addEntity, ['au', '%oro_customer.entity.account_user_address.class%']]
 
     oro_sale.provider.quote_address:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider'
@@ -99,24 +99,24 @@ services:
             - "@oro_security.security_facade"
             - "@doctrine"
             - "@oro_security.acl_helper"
-            - '%oro_account.entity.account_address.class%'
-            - '%oro_account.entity.account_user_address.class%'
+            - '%oro_customer.entity.account_address.class%'
+            - '%oro_customer.entity.account_user_address.class%'
 
     oro_sale.provider.quote_address_security:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider'
         arguments:
             - "@oro_security.security_facade"
             - "@oro_sale.provider.quote_address"
-            - '%oro_account.entity.account_address.class%'
-            - '%oro_account.entity.account_user_address.class%'
+            - '%oro_customer.entity.account_address.class%'
+            - '%oro_customer.entity.account_user_address.class%'
 
     oro_sale.service.quote_request_handler:
         class: 'Oro\Bundle\SaleBundle\Model\QuoteRequestHandler'
         arguments:
             - "@doctrine"
             - "@request_stack"
-            - '%oro_account.entity.account.class%'
-            - '%oro_account.entity.account_user.class%'
+            - '%oro_customer.entity.account.class%'
+            - '%oro_customer.entity.account_user.class%'
 
     oro_sale.data_provider.checkout_line_item:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteCheckoutLineItemDataProvider'
