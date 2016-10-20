@@ -3,10 +3,10 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\PreFlushEventArgs;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 
@@ -15,7 +15,7 @@ class ProductImageListener
     /**
      * @var int[]
      */
-    protected $processedImageIds = [];
+    protected $updatedProductImageIds = [];
 
     /**
      * @var EventDispatcherInterface
@@ -29,16 +29,6 @@ class ProductImageListener
     {
         $this->eventDispatcher = $eventDispatcher;
     }
-
-    /**
-     * @param ProductImage $productImage
-     * @param LifecycleEventArgs $args
-     */
-    public function postUpdate(ProductImage $productImage, LifecycleEventArgs $args)
-    {
-        $this->dispatchEvent($productImage);
-    }
-
     /**
      * @param ProductImage $productImage
      * @param LifecycleEventArgs $args
@@ -50,25 +40,38 @@ class ProductImageListener
 
     /**
      * @param ProductImage $productImage
-     * @param PreFlushEventArgs $args
+     * @param LifecycleEventArgs $args
      */
-    public function preFlush(ProductImage $productImage, PreFlushEventArgs $args)
+    public function postUpdate(ProductImage $productImage, LifecycleEventArgs $args)
     {
-        if ($productImage->getId() && $productImage->hasUploadedFile()) {
-            $productImage->setUpdatedAtToNow();
+        if (!in_array($productImage->getId(), $this->updatedProductImageIds)) {
+            $this->dispatchEvent($productImage);
+            $this->updatedProductImageIds[] = $productImage->getId();
+        }
+    }
+
+    /**
+     * @param File $file
+     * @param LifecycleEventArgs $args
+     */
+    public function filePostUpdate(File $file, LifecycleEventArgs $args)
+    {
+        /** @var ProductImage $productImage */
+        $productImage = $args->getEntityManager()->getRepository(ProductImage::class)->findOneBy(['image' => $file]);
+        if ($productImage && !in_array($productImage->getId(), $this->updatedProductImageIds)) {
+            $this->dispatchEvent($productImage);
+            $this->updatedProductImageIds[] = $productImage->getId();
         }
     }
 
     /**
      * @param ProductImage $productImage
      */
-    private function dispatchEvent(ProductImage $productImage)
+    protected function dispatchEvent(ProductImage $productImage)
     {
-        if (!$productImage->getTypes() || in_array($productImage->getId(), $this->processedImageIds)) {
+        if (!$productImage->getTypes()) {
             return;
         }
-
-        $this->processedImageIds[] = $productImage->getId();
 
         $this->eventDispatcher->dispatch(
             ProductImageResizeEvent::NAME,

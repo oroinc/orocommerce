@@ -189,14 +189,6 @@ class ProductImage extends ExtendProductImage
     }
 
     /**
-     * @return bool
-     */
-    public function hasUploadedFile()
-    {
-        return $this->getImage() && $this->getImage()->getFile();
-    }
-
-    /**
      * @return string
      */
     public function __toString()

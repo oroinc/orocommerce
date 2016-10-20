@@ -4,6 +4,8 @@ namespace Oro\Bundle\AccountBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManager;
 
+use Symfony\Component\HttpFoundation\File\File;
+
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -14,10 +16,8 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use Symfony\Component\HttpFoundation\File\File;
-
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class ProductImageListenerTest extends WebTestCase
 {
@@ -33,12 +33,18 @@ class ProductImageListenerTest extends WebTestCase
      */
     protected $messageCollector;
 
+    /**
+     * @var string
+     */
+    protected $imageResizeTopic;
+
     protected function setUp()
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
 
         $this->em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductImage::class);
+        $this->imageResizeTopic = ProductImageResizeListener::IMAGE_RESIZE_TOPIC;
 
         $this->loadFixtures([LoadProductImageData::class]);
 
@@ -63,9 +69,9 @@ class ProductImageListenerTest extends WebTestCase
         $this->em->persist($productImage);
         $this->em->flush($productImage);
 
-        $this->assertCount(1, $this->getSentMessages());
+        $this->assertCount(1, $this->getSentMessagesByTopic($this->imageResizeTopic));
         $this->assertMessageSent(
-            ProductImageResizeListener::IMAGE_RESIZE_TOPIC,
+            $this->imageResizeTopic,
             $this->prepareExpectedMessage($productImage)
         );
     }
@@ -73,26 +79,26 @@ class ProductImageListenerTest extends WebTestCase
     public function testUpdateTypesOnProductImage()
     {
         /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
         $productImage = new ProductImage();
-        $productImage->setProduct($product1);
+        $productImage->setProduct($product);
 
         $this->em->persist($productImage);
-        $this->em->flush($productImage);
+        $this->em->flush();
 
         /* nothing sent if product image have no types */
-        $this->assertEmptyMessages(ProductImageResizeListener::IMAGE_RESIZE_TOPIC);
+        $this->assertEmptyMessages($this->imageResizeTopic);
 
         /* message sent if product image has been updated */
         $productImage->addType(ProductImageType::TYPE_MAIN);
         $productImage->addType(ProductImageType::TYPE_LISTING);
         $productImage->addType(ProductImageType::TYPE_ADDITIONAL);
 
-        $this->em->flush($productImage);
+        $this->em->flush();
 
-        $this->assertCount(1, $this->getSentMessages());
+        $this->assertCount(1, $this->getSentMessagesByTopic($this->imageResizeTopic));
         $this->assertMessageSent(
-            ProductImageResizeListener::IMAGE_RESIZE_TOPIC,
+            $this->imageResizeTopic,
             $this->prepareExpectedMessage($productImage)
         );
     }
@@ -100,18 +106,58 @@ class ProductImageListenerTest extends WebTestCase
     public function testUpdateFileOnProductImage()
     {
         /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_2);
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var ProductImage $productImage */
         $productImage = $product ->getImages()->first();
 
-        $productImage->getImage()->setFile(new File('test.file', false));
-        $this->em->flush($productImage);
+        $image = $productImage->getImage();
+        $image->setFile(new File('test.file', false));
+        $image->preUpdate();
 
-        $this->assertCount(1, $this->getSentMessages());
+        $this->em->flush();
+
+        $this->assertCount(1, $this->getSentMessagesByTopic($this->imageResizeTopic));
         $this->assertMessageSent(
-            ProductImageResizeListener::IMAGE_RESIZE_TOPIC,
+            $this->imageResizeTopic,
             $this->prepareExpectedMessage($productImage)
+        );
+    }
 
+    public function testUpdateFileAndTypesOnProductImage()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var ProductImage $productImage */
+        $productImage = $product->getImages()->first();
+        $productImage->removeType(ProductImageType::TYPE_MAIN);
+        $productImage->addType(ProductImageType::TYPE_ADDITIONAL);
+
+        $image = $productImage->getImage();
+        $image->setFile(new File('test.file', false));
+        $image->preUpdate();
+
+        $this->em->flush();
+
+        $this->assertCount(1, $this->getSentMessagesByTopic($this->imageResizeTopic));
+        $this->assertMessageSent(
+            $this->imageResizeTopic,
+            $this->prepareExpectedMessage($productImage)
+        );
+    }
+
+    public function testDuplicateProductImage()
+    {
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $productCopy = $this->getContainer()->get('oro_product.service.duplicator')->duplicate($product);
+        $this->em->refresh($productCopy);
+        /** @var ProductImage $productImageCopy */
+        $productImageCopy = $productCopy->getImages()->first();
+
+        $this->assertCount(1, $this->getSentMessagesByTopic($this->imageResizeTopic));
+        $this->assertMessageSent(
+            $this->imageResizeTopic,
+            $this->prepareExpectedMessage($productImageCopy)
         );
     }
 
