@@ -149,7 +149,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             ],
         ];
 
-        $fields = ['sourceProductVisibility', 'product', 'scope', 'accountGroup', 'visibility', 'source'];
+        $fields = ['sourceProductVisibility', 'product', 'scope', 'visibility', 'source'];
 
         foreach ($visibilityMap as $visibility => $productVisibility) {
             $qb = $this->getEntityManager()
@@ -159,7 +159,6 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
                 'productVisibility.id',
                 'IDENTITY(productVisibility.product)',
                 'IDENTITY(productVisibility.scope)',
-                'IDENTITY(productVisibility.accountGroup)',
                 (string)$productVisibility['visibility'],
                 (string)$productVisibility['source'],
             ])
@@ -180,17 +179,19 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
                 'productVisibility.id',
                 'IDENTITY(productVisibility.product)',
                 'IDENTITY(productVisibility.scope)',
-                'IDENTITY(productVisibility.accountGroup)',
                 'COALESCE(agcvr.visibility, cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
                 (string)AccountGroupProductVisibilityResolved::SOURCE_CATEGORY,
                 (string)$category->getId()
             ])
+            ->join('productVisibility.scope', 'scope')
             ->leftJoin(
                 'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
                 'agcvr',
                 'WITH',
                 'agcvr.accountGroup = productVisibility.accountGroup AND agcvr.category = :category'
             )
+            ->leftJoin('agcvr.scope', 'agcvr_scope')
+            ->andWhere('agcvr.visibility IS NULL OR agcvr_scope.accountGroup = scope.accountGroup')
             ->leftJoin(
                 'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
                 'cvr',

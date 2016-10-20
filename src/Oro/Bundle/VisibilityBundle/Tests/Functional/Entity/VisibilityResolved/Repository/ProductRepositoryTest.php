@@ -11,6 +11,7 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository as ProductEntityRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -20,7 +21,6 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepo
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -67,7 +67,7 @@ class ProductRepositoryTest extends WebTestCase
 
     public function testClearTableByWebsite()
     {
-        $scope = $this->scopeManager->findOrCreate('product_visibility', ['website' => $this->website]);
+        $scope = $this->getScope();
         $defaultWebsiteProductVisibilitiesCount = count($this->repository->findBy(['scope' => $scope]));
 
         $deleted = $this->repository->clearTable($scope);
@@ -80,9 +80,8 @@ class ProductRepositoryTest extends WebTestCase
     public function testFindByPrimaryKey()
     {
         /** @var ProductVisibilityResolved $actualEntity */
-        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $scope = $this->scopeManager->findOrCreate('product_visibility', ['website' => $website]);
+        $scope = $this->getScope();
         $entity = new ProductVisibilityResolved($scope, $product);
         $this->getResolvedVisibilityManager()->persist($entity);
         $this->getResolvedVisibilityManager()->flush();
@@ -119,50 +118,34 @@ class ProductRepositoryTest extends WebTestCase
     {
         $this->repository->clearTable();
 
-        $scopes = $this->scopeManager->findRelatedScopes('product_visibility');
-        foreach ($scopes as $scope) {
-            $this->repository->insertByCategory($this->getInsertFromSelectExecutor(), $scope);
-        }
+        $qb = $this->getContainer()->get('doctrine')
+            ->getManagerForClass(ProductVisibility::class)
+            ->getRepository(ProductVisibility::class)
+            ->createQueryBuilder('visibility');
+        $qb->delete(ProductVisibility::class, 'visibillity')->getQuery()->execute();
+
+        $scope = $this->getScope();
+        $categoryScope = $this->scopeManager->findOrCreate('category_visibility', $scope);
+
+        $this->repository->insertByCategory($this->getInsertFromSelectExecutor(), $scope, $categoryScope);
+
         $actual = $this->getActualArray();
 
-        $this->assertCount(24, $actual);
+        $this->assertCount(8, $actual);
         $this->assertInsertedByCategory($actual);
-    }
-
-    public function testInsertFromBaseTableByWebsite()
-    {
-        $this->repository->clearTable();
-
-        $this->repository->insertStatic($this->getInsertFromSelectExecutor(), $this->website);
-        $actual = $this->getActualArray();
-
-        $this->assertCount(3, $actual);
-        $this->assertInsertedFromBaseTable($actual);
-    }
-
-    public function testInsertByCategoryForWebsite()
-    {
-        $this->repository->clearTable();
-
-        $this->repository->insertByCategory(
-            $this->getInsertFromSelectExecutor(),
-            $this->website
-        );
-
-        $actual = $this->getActualArray();
-        $this->assertCount(0, $actual);
     }
 
     public function testInsertUpdateDeleteAndHasEntity()
     {
+        $scope = $this->getScope();
+        $categoryScope = $this->scopeManager->findOrCreate('category_visibility', $scope);
         $this->repository->clearTable();
         $this->repository->insertStatic($this->getInsertFromSelectExecutor());
-        $this->repository->insertByCategory($this->getInsertFromSelectExecutor());
+        $this->repository->insertByCategory($this->getInsertFromSelectExecutor(), $scope, $categoryScope);
 
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
 
-        $where = ['product' => $product, 'website' => $website];
+        $where = ['product' => $product, 'scope' => $scope];
         $this->assertTrue($this->repository->hasEntity($where));
 
         $this->assertDelete($this->repository, $where);
@@ -171,7 +154,8 @@ class ProductRepositoryTest extends WebTestCase
             $this->repository,
             $where,
             BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-            BaseProductVisibilityResolved::SOURCE_STATIC
+            BaseProductVisibilityResolved::SOURCE_STATIC,
+            $scope
         );
         $this->assertUpdate(
             $this->entityManager,
@@ -202,32 +186,28 @@ class ProductRepositoryTest extends WebTestCase
 
     /**
      * @param array $actual
-     * @param Website $website
      */
-    protected function assertInsertedByCategory(array $actual, Website $website = null)
+    protected function assertInsertedByCategory(array $actual)
     {
         $pv = $this->getProductVisibilities();
         $products = $this->getProducts();
-        $websites = $website ? [$website] : $this->getWebsiteRepository()->getAllWebsites();
-
+        $scope = $this->getScope();
         foreach ($products as $product) {
-            foreach ($websites as $website) {
-                if (array_filter($pv, function (ProductVisibility $item) use ($website, $product) {
-                    return $website === $item->getWebsite() && $product === $item->getProduct();
-                })) {
-                    continue;
-                }
-
-                $expected = [
-                    'website' => $website->getId(),
-                    'product' => $product->getId(),
-                    'sourceProductVisibility' => null,
-                    'visibility' => BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
-                    'source' => ProductVisibilityResolved::SOURCE_CATEGORY,
-                    'category' => $this->getCategoryRepository()->findOneByProduct($product)->getId()
-                ];
-                $this->assertContains($expected, $actual);
+            if (array_filter($pv, function (ProductVisibility $item) use ($product) {
+                return $product === $item->getProduct();
+            })) {
+                continue;
             }
+
+            $expected = [
+                'scope' => $scope->getId(),
+                'product' => $product->getId(),
+                'sourceProductVisibility' => null,
+                'visibility' => BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+                'source' => ProductVisibilityResolved::SOURCE_CATEGORY,
+                'category' => $this->getCategoryRepository()->findOneByProduct($product)->getId()
+            ];
+            $this->assertContains($expected, $actual);
         }
     }
 
@@ -241,7 +221,7 @@ class ProductRepositoryTest extends WebTestCase
 
             if (null !== $visibility) {
                 $expected = [
-                    'website' => $pv->getWebsite()->getId(),
+                    'scope' => $pv->getScope()->getId(),
                     'product' => $pv->getProduct()->getId(),
                     'sourceProductVisibility' => $pv->getId(),
                     'visibility' => $visibility,
@@ -369,6 +349,7 @@ class ProductRepositoryTest extends WebTestCase
             $this->getInsertFromSelectExecutor(),
             $product,
             ProductVisibilityResolved::VISIBILITY_HIDDEN,
+            $this->getScope(),
             $category
         );
         $this->repository->deleteByProduct($product);
@@ -386,30 +367,11 @@ class ProductRepositoryTest extends WebTestCase
             $this->getInsertFromSelectExecutor(),
             $product,
             ProductVisibilityResolved::VISIBILITY_VISIBLE,
+            $this->getScope(),
             $category
         );
         $visibilities = $this->repository->findBy(['product' => $product]);
-        $this->assertCount(3, $visibilities, 'Not expected count of resolved visibilities');
-        $resolvedVisibility = $this->repository->findOneBy(
-            [
-                'product' => $product,
-                'website' => $this->getWebsiteRepository()->getDefaultWebsite()
-            ]
-        );
-        /** @var $resolvedVisibility ProductVisibility  */
-        $this->assertNull($resolvedVisibility, 'Not expected of resolved visibilities');
-
-        $product = $this->getReference(LoadProductData::PRODUCT_4);
-        $category = $this->getCategoryByProduct($product);
-        $this->repository->deleteByProduct($product);
-        $this->repository->insertByProduct(
-            $this->getInsertFromSelectExecutor(),
-            $product,
-            ProductVisibilityResolved::VISIBILITY_HIDDEN,
-            $category
-        );
-        $visibilities = $this->repository->findBy(['product' => $product]);
-        $this->assertCount(4, $visibilities, 'Not expected count of resolved visibilities');
+        $this->assertCount(1, $visibilities, 'Not expected count of resolved visibilities');
     }
 
     /**
@@ -422,5 +384,13 @@ class ProductRepositoryTest extends WebTestCase
             ->getManagerForClass('OroCatalogBundle:Category')
             ->getRepository('OroCatalogBundle:Category')
             ->findOneByProduct($product);
+    }
+
+    /**
+     * @return Scope
+     */
+    protected function getScope()
+    {
+        return $this->getContainer()->get('oro_scope.scope_manager')->findOrCreate('product_visibility');
     }
 }

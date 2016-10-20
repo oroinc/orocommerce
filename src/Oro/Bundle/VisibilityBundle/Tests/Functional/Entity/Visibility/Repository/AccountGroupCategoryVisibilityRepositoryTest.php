@@ -8,6 +8,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountGroupCategoryVisibilityRepository;
 
+/**
+ * @dbIsolation
+ */
 class AccountGroupCategoryVisibilityRepositoryTest extends WebTestCase
 {
     /**

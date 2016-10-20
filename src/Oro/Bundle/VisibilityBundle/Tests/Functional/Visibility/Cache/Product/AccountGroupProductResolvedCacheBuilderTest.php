@@ -56,7 +56,8 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
 
         $builder = new AccountGroupProductResolvedCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_entity.orm.insert_from_select_query_executor')
+            $container->get('oro_entity.orm.insert_from_select_query_executor'),
+            $container->get('oro_scope.scope_manager')
         );
         $builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.account_group_product_visibility_resolved.class')

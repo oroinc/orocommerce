@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\Visibility\Repository;
 
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CategoryVisibilityRepository;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 
 /**
  * @dbIsolation
@@ -26,8 +27,9 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
         $this->repository = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroVisibilityBundle:Visibility\CategoryVisibility');
-
-        $this->loadFixtures(['Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData']);
+        $a = $this->repository->getCategoriesVisibilities();
+        $this->loadFixtures([LoadCategoryVisibilityData::class]);
+        $a = $this->repository->getCategoriesVisibilities();
     }
 
     /**
@@ -36,7 +38,8 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
      */
     public function testGetCategoriesVisibilities(array $expectedData)
     {
-        $this->assertVisibilities($expectedData, $this->repository->getCategoriesVisibilities());
+        $categoriesVisibilities = $this->repository->getCategoriesVisibilities();
+        $this->assertVisibilities($expectedData, $categoriesVisibilities);
     }
 
     /**

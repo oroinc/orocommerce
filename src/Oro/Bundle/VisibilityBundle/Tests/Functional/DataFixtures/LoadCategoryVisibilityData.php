@@ -7,7 +7,10 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
@@ -64,9 +67,9 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
+            LoadAccounts::class,
+            LoadGroups::class,
+            LoadCategoryData::class,
         ];
     }
 

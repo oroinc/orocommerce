@@ -36,6 +36,7 @@ abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
         /** @var Category $category */
         $category = $this->getReference($categoryName);
         $this->deleteCategory($category);
+        $this->repository->setToDefaultWithoutCategory();
         foreach ($deletedCategoryProducts as $deletedCategoryProduct) {
             static::assertNotContains($deletedCategoryProduct, $this->getProductsByVisibilities());
         }

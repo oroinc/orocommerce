@@ -4,19 +4,16 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\ClassUtils;
-
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
  * @dbIsolation
@@ -24,11 +21,6 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 class DefaultVisibilityListenerTest extends WebTestCase
 {
     use EntityTrait;
-
-    /**
-     * @var Website
-     */
-    protected $website;
 
     /**
      * @var Product
@@ -62,7 +54,6 @@ class DefaultVisibilityListenerTest extends WebTestCase
             'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
         ]);
 
-        $this->website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
         $this->account = $this->getReference('account.level_1');
@@ -123,27 +114,46 @@ class DefaultVisibilityListenerTest extends WebTestCase
         return [
             'category visibility' => [
                 'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility',
-                'parameters' => ['category'],
+                'parameters' => [
+                    'category' => 'category',
+                    'scope' => ['category_visibility', []]
+                ],
             ],
             'account category visibility' => [
                 'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility',
-                'parameters' => ['category', 'account'],
+                'parameters' => [
+                    'category' => 'category',
+                    'scope' => ['account_category_visibility', ['account']]
+                ],
             ],
             'account group category visibility' => [
                 'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility',
-                'parameters' => ['category', 'accountGroup'],
+                'parameters' => [
+                    'category' => 'category',
+                    'scope' => ['account_group_category_visibility', ['accountGroup']]
+                ],
             ],
             'product visibility' => [
                 'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility',
-                'parameters' => ['website', 'product'],
+                'parameters' => [
+                    'product' => 'product',
+                    'scope' => ['product_visibility', []]
+                ],
             ],
             'account product visibility' => [
                 'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility',
-                'parameters' => ['website', 'product', 'account'],
+                'parameters' => [
+                    'product' => 'product',
+                    'scope' => ['account_product_visibility', ['account']]
+                ],
             ],
             'account group product visibility' => [
                 'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility',
-                'parameters' => ['website', 'product', 'accountGroup'],
+                'parameters' => [
+                    'product' => 'product',
+                    'scope' => ['account_group_product_visibility', ['accountGroup']]
+                ],
+
             ],
         ];
     }
@@ -155,14 +165,19 @@ class DefaultVisibilityListenerTest extends WebTestCase
     protected function getProperties(array $parameters)
     {
         $registry = $this->getContainer()->get('doctrine');
-
+        $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
         $properties = [];
-        foreach ($parameters as $parameter) {
-            $fixtureValue = $this->$parameter;
-            $entityClass = ClassUtils::getClass($fixtureValue);
-            $entityManager = $registry->getManagerForClass($entityClass);
-            $identifier = $entityManager->getClassMetadata($entityClass)->getIdentifierValues($fixtureValue);
-            $properties[$parameter] = $entityManager->getRepository($entityClass)->find($identifier);
+        foreach ($parameters as $key => $parameter) {
+            if ($key == 'scope') {
+                $scope = $scopeManager->findOrCreate($parameter[0], $parameter[1]);
+                $properties[$key] = $scope;
+            } else {
+                $fixtureValue = $this->$parameter;
+                $entityClass = ClassUtils::getClass($fixtureValue);
+                $entityManager = $registry->getManagerForClass($entityClass);
+                $identifier = $entityManager->getClassMetadata($entityClass)->getIdentifierValues($fixtureValue);
+                $properties[$key] = $entityManager->getRepository($entityClass)->find($identifier);
+            }
         }
 
         return $properties;

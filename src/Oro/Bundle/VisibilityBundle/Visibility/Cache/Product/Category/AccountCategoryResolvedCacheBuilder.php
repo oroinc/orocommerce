@@ -77,17 +77,17 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 $delete = true;
             }
 
-//            if ($accountGroup) {
+            if ($scope->getAccount()->getGroup()) {
                 $visibility = $this->registry
                     ->getManagerForClass(AccountGroupCategoryVisibilityResolved::class)
                     ->getRepository(AccountGroupCategoryVisibilityResolved::class)
                     ->getFallbackToGroupVisibility($category, $scope);
-//            } else {
-//                $visibility = $this->registry
-//                    ->getManagerForClass(CategoryVisibilityResolved::class)
-//                    ->getRepository(CategoryVisibilityResolved::class)
-//                    ->getFallbackToAllVisibility($category);
-//            }
+            } else {
+                $visibility = $this->registry
+                    ->getManagerForClass(CategoryVisibilityResolved::class)
+                    ->getRepository(CategoryVisibilityResolved::class)
+                    ->getFallbackToAllVisibility($category);
+            }
         } elseif ($selectedVisibility === AccountCategoryVisibility::PARENT_CATEGORY) {
             list($visibility, $source) = $this->getParentCategoryVisibilityAndSource($category, $scope);
             $update = [
