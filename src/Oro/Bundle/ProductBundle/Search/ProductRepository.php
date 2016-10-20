@@ -20,7 +20,7 @@ class ProductRepository extends WebsiteSearchRepository
         // Convert to uppercase for insensitive search in all DB
         $upperCaseSkus = array_map("strtoupper", $skus);
 
-        $searchQuery->setFrom('product')
+        $searchQuery->setFrom('oro_product_WEBSITE_ID')
             ->addSelect('sku')
             ->getCriteria()
             ->andWhere(Criteria::expr()->contains('sku_uppercase', implode(', ', $upperCaseSkus)));

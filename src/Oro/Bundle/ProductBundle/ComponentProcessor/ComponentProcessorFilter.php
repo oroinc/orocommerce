@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\ComponentProcessor;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Oro\Bundle\SearchBundle\Query\Result\Item;
 
 class ComponentProcessorFilter implements ComponentProcessorFilterInterface
 {
@@ -43,10 +44,12 @@ class ComponentProcessorFilter implements ComponentProcessorFilterInterface
 
         $searchQuery      = $this->repository->getFilterSkuQuery(array_keys($products));
         $this->productManager->restrictSearchQuery($searchQuery->getQuery());
+        /** @var Item[] $filteredProducts */
         $filteredProducts = $searchQuery->getResult()->toArray();
 
         foreach ($filteredProducts as $product) {
-            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = $products[strtoupper($product['sku'])];
+            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] =
+                $products[strtoupper($product->getSelectedData()['sku'])];
         }
 
         return $data;
