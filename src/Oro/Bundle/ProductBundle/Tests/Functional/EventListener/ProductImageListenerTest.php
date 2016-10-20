@@ -69,7 +69,7 @@ class ProductImageListenerTest extends WebTestCase
         $this->em->persist($productImage);
         $this->em->flush($productImage);
 
-        $this->assertCount(1, $this->getSentMessagesByTopic($this->imageResizeTopic));
+        $this->assertMessagesCount($this->imageResizeTopic, 1);
         $this->assertMessageSent(
             $this->imageResizeTopic,
             $this->prepareExpectedMessage($productImage)
@@ -96,7 +96,7 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->em->flush();
 
-        $this->assertCount(1, $this->getSentMessagesByTopic($this->imageResizeTopic));
+        $this->assertMessagesCount($this->imageResizeTopic, 1);
         $this->assertMessageSent(
             $this->imageResizeTopic,
             $this->prepareExpectedMessage($productImage)
@@ -116,7 +116,7 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->em->flush();
 
-        $this->assertCount(1, $this->getSentMessagesByTopic($this->imageResizeTopic));
+        $this->assertMessagesCount($this->imageResizeTopic, 1);
         $this->assertMessageSent(
             $this->imageResizeTopic,
             $this->prepareExpectedMessage($productImage)
@@ -138,7 +138,7 @@ class ProductImageListenerTest extends WebTestCase
 
         $this->em->flush();
 
-        $this->assertCount(1, $this->getSentMessagesByTopic($this->imageResizeTopic));
+        $this->assertMessagesCount($this->imageResizeTopic, 1);
         $this->assertMessageSent(
             $this->imageResizeTopic,
             $this->prepareExpectedMessage($productImage)
@@ -154,7 +154,7 @@ class ProductImageListenerTest extends WebTestCase
         /** @var ProductImage $productImageCopy */
         $productImageCopy = $productCopy->getImages()->first();
 
-        $this->assertCount(1, $this->getSentMessagesByTopic($this->imageResizeTopic));
+        $this->assertMessagesCount($this->imageResizeTopic, 1);
         $this->assertMessageSent(
             $this->imageResizeTopic,
             $this->prepareExpectedMessage($productImageCopy)
