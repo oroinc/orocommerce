@@ -2,52 +2,59 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Model;
 
-use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 
 class ContentNodeMaterializedPathModifier
 {
+    const MATERIALIZED_PATH_DELIMITER = '_';
+
     /**
-     * @var ExtraActionEntityStorageInterface
+     * @var ManagerRegistry
      */
-    protected $storage;
-    
+    protected $registry;
+
     /**
-     * @param ExtraActionEntityStorageInterface $storage
+     * @param ManagerRegistry $registry
      */
-    public function __construct(ExtraActionEntityStorageInterface $storage)
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->storage = $storage;
-    }
-    
-    /**
-     * @param ContentNode $contentNode
-     * @param array $children
-     */
-    public function updateMaterializedPathNested(ContentNode $contentNode, array $children = [])
-    {
-        $this->calculateMaterializedPath($contentNode);
-        
-        foreach ($children as $child) {
-            $this->calculateMaterializedPath($child, true);
-        }
+        $this->registry = $registry;
     }
 
     /**
      * @param ContentNode $contentNode
-     * @param bool $scheduleForInsert
+     * @return ContentNode[]
      */
-    public function calculateMaterializedPath(ContentNode $contentNode, $scheduleForInsert = false)
+    public function calculateChildrenMaterializedPath(ContentNode $contentNode)
+    {
+        $repository = $this->registry->getManagerForClass(ContentNode::class)
+            ->getRepository(ContentNode::class);
+
+        $children = $repository->children($contentNode);
+        
+        $childNodes = [];
+        foreach ($children as $child) {
+            $childNodes[] = $this->calculateMaterializedPath($child);
+        }
+        
+        return $childNodes;
+    }
+
+    /**
+     * @param ContentNode $contentNode
+     * @return ContentNode
+     */
+    public function calculateMaterializedPath(ContentNode $contentNode)
     {
         $path = (string) $contentNode->getId();
         $parent = $contentNode->getParentNode();
         if ($parent && $parent->getMaterializedPath()) {
-            $path = $parent->getMaterializedPath() . ContentNode::MATERIALIZED_PATH_DELIMITER . $path;
+            $path = $parent->getMaterializedPath() . self::MATERIALIZED_PATH_DELIMITER . $path;
         }
 
         $contentNode->setMaterializedPath($path);
-        if ($scheduleForInsert) {
-            $this->storage->scheduleForExtraInsert($contentNode);
-        }
+        
+        return $contentNode;
     }
 }

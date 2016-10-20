@@ -1,6 +1,7 @@
 parameters:
     oro_web_catalog.entity.web_catalog.class: Oro\Bundle\WebCatalogBundle\Entity\WebCatalog
     oro_web_catalog.entity.content_node.class: Oro\Bundle\WebCatalogBundle\Entity\ContentNode
+    oro_web_catalog.entity.content_variant.class: Oro\Bundle\WebCatalogBundle\Entity\ContentVariant
 
 services:
     oro_web_catalog.content_node_tree_handler:
@@ -22,6 +23,7 @@ services:
         public: false
         arguments:
             - '@oro_web_catalog.model.content_node_materialized_path_modifier'
+            - '@oro_b2bentity.extra_insert_entity_storage'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: preUpdate }
@@ -30,7 +32,7 @@ services:
         class: 'Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier'
         public: false
         arguments:
-            - '@oro_b2bentity.extra_insert_entity_storage'
+            - '@doctrine'
 
     oro_web_catalog.form.type.web_catalog:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType

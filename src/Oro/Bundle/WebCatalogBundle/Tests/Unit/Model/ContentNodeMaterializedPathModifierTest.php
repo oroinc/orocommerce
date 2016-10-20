@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Model;
 
-use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -12,9 +12,9 @@ class ContentNodeMaterializedPathModifierTest extends \PHPUnit_Framework_TestCas
     use EntityTrait;
 
     /**
-     * @var ExtraActionEntityStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry
      */
-    protected $storage;
+    protected $registry;
 
     /**
      * @var ContentNodeMaterializedPathModifier
@@ -23,11 +23,11 @@ class ContentNodeMaterializedPathModifierTest extends \PHPUnit_Framework_TestCas
 
     protected function setUp()
     {
-        $this->storage = $this->getMock(ExtraActionEntityStorageInterface::class);
-        $this->modifier = new ContentNodeMaterializedPathModifier($this->storage);
+        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->modifier = new ContentNodeMaterializedPathModifier($this->registry);
     }
 
-    public function testCalculateMaterializedPathWithScheduleForInsert()
+    public function testCalculateMaterializedPath()
     {
         $parentNode = new ContentNode();
         $parentNode->setMaterializedPath('1_2');
@@ -36,31 +36,11 @@ class ContentNodeMaterializedPathModifierTest extends \PHPUnit_Framework_TestCas
         $node = $this->getEntity(ContentNode::class, ['id' => 3]);
         $node->setParentNode($parentNode);
 
-        $this->storage->expects($this->once())
-            ->method('scheduleForExtraInsert')
-            ->with($node);
-
-        $this->modifier->calculateMaterializedPath($node, true);
-        $this->assertEquals('1_2_3', $node->getMaterializedPath());
-    }
-    
-    public function testCalculateMaterializedPathWithoutScheduleForInsert()
-    {
-        $parentNode = new ContentNode();
-        $parentNode->setMaterializedPath('1_2');
-
-        /** @var ContentNode $node */
-        $node = $this->getEntity(ContentNode::class, ['id' => 3]);
-        $node->setParentNode($parentNode);
-
-        $this->storage->expects($this->never())
-            ->method('scheduleForExtraInsert');
-
-        $this->modifier->calculateMaterializedPath($node, false);
-        $this->assertEquals('1_2_3', $node->getMaterializedPath());
+        $actual = $this->modifier->calculateMaterializedPath($node);
+        $this->assertEquals('1_2_3', $actual->getMaterializedPath());
     }
 
-    public function testUpdateMaterializedPathNested()
+    public function calculateChildrenMaterializedPath()
     {
         /** @var ContentNode $parentNode */
         $parentNode = $this->getEntity(ContentNode::class, ['id' => 1]);
@@ -69,14 +49,9 @@ class ContentNodeMaterializedPathModifierTest extends \PHPUnit_Framework_TestCas
         $node = $this->getEntity(ContentNode::class, ['id' => 2]);
         $node->setParentNode($parentNode);
 
-        $children = [$node];
-        
-        $this->storage->expects($this->once())
-            ->method('scheduleForExtraInsert');
+        $childNodes = $this->modifier->calculateChildrenMaterializedPath($parentNode);
+        $actual = $childNodes[0];
 
-        $this->modifier->updateMaterializedPathNested($parentNode, $children);
-
-        $this->assertEquals('1', $parentNode->getMaterializedPath());
-        $this->assertEquals('1_2', $node->getMaterializedPath());
+        $this->assertEquals('1_2', $actual->getMaterializedPath());
     }
 }

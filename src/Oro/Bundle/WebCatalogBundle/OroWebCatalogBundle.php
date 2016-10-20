@@ -34,7 +34,8 @@ class OroWebCatalogBundle extends Bundle
                 new DefaultFallbackExtensionPass(
                     [
                         ContentNode::class => [
-                            'title' => 'titles'
+                            'title' => 'titles',
+                            'slug' => 'slugs'
                         ]
                     ]
                 )
