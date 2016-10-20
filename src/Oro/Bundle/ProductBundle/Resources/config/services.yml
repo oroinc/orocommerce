@@ -143,9 +143,16 @@ services:
         public: false
         arguments:
             - "@oro_product.product.manager"
-            - "@doctrine"
+            - "@oro_product.website_search.repository.product"
+
+    oro_product.website_search.repository.product:
+        parent: oro_website_search.repository.abstract
+        class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
+        arguments:
+            - "@oro_search.query_factory"
+            - "@oro_search.provider.search_mapping"
         calls:
-            - [setProductClass, ['%oro_product.entity.product.class%']]
+            - [setEntityName, ['%oro_product.entity.product.class%']]
 
     oro_product.component_processor.registry:
         class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry'
@@ -450,12 +457,6 @@ services:
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
-
-    oro_product.search.repository.product:
-        parent: oro_website_search.repository.abstract
-        class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
-        calls:
-            - [setEntityName, ['%oro_product.entity.product.class%']]
 
     oro_product.product_visibility_restriction_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener'
