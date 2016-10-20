@@ -184,7 +184,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $account = $this->getReference('account.level_1.2');
         $response = $this->client->requestFrontendGrid(
             [
-                'gridName' => 'frontend-products-grid',
+                'gridName' => 'frontend-product-search-grid',
                 PriceListRequestHandler::ACCOUNT_ID_KEY => $account->getId(),
             ],
             $filter,
@@ -242,42 +242,45 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         return [
             'equal 1.1 USD per bottle' => [
                 'filter' => [
-                    'frontend-products-grid[_filter][minimum_price][value]' => 1.1,
-                    'frontend-products-grid[_filter][minimum_price][type]'  => null,
-                    'frontend-products-grid[_filter][minimum_price][unit]'  => 'bottle'
+                    'frontend-product-search-grid[_filter][minimum_price][value]' => 1.1,
+                    'frontend-product-search-grid[_filter][minimum_price][type]'  => null,
+                    'frontend-product-search-grid[_filter][minimum_price][unit]'  => 'bottle'
                 ],
                 'expected' => []
             ],
             'equal 10 USD per liter' => [
                 'filter' => [
-                    'frontend-products-grid[_filter][minimum_price][value]' => 10,
-                    'frontend-products-grid[_filter][minimum_price][type]'  => null,
-                    'frontend-products-grid[_filter][minimum_price][unit]'  => 'liter'
+                    'frontend-product-search-grid[_filter][minimum_price][value]' => 10,
+                    'frontend-product-search-grid[_filter][minimum_price][type]'  => null,
+                    'frontend-product-search-grid[_filter][minimum_price][unit]'  => 'liter'
                 ],
                 'expected' => ['product.1']
             ],
             'greater equal 12.2 USD per liter' => [
                 'filter' => [
-                    'frontend-products-grid[_filter][minimum_price][value]' => 12.2,
-                    'frontend-products-grid[_filter][minimum_price][type]' => NumberFilterType::TYPE_GREATER_EQUAL,
-                    'frontend-products-grid[_filter][minimum_price][unit]' => 'liter'
+                    'frontend-product-search-grid[_filter][minimum_price][value]' => 12.2,
+                    'frontend-product-search-grid[_filter][minimum_price][type]' =>
+                        NumberFilterType::TYPE_GREATER_EQUAL,
+                    'frontend-product-search-grid[_filter][minimum_price][unit]' => 'liter'
                 ],
                 'expected' => ['product.1', 'product.2']
             ],
             'less 10 USD per liter' => [
                 'filter' => [
-                    'frontend-products-grid[_filter][minimum_price][value]' => 10,
-                    'frontend-products-grid[_filter][minimum_price][type]'  => NumberFilterType::TYPE_LESS_THAN,
-                    'frontend-products-grid[_filter][minimum_price][unit]'  => 'liter'
+                    'frontend-product-search-grid[_filter][minimum_price][value]' => 10,
+                    'frontend-product-search-grid[_filter][minimum_price][type]'  =>
+                        NumberFilterType::TYPE_LESS_THAN,
+                    'frontend-product-search-grid[_filter][minimum_price][unit]'  => 'liter'
                 ],
                 'expected' => ['product.3']
             ],
             'greater 10 USD per liter AND less 20 EUR per bottle' => [
                 'filter' => [
-                    'frontend-products-grid[_filter][minimum_price][value]' => 1,
-                    'frontend-products-grid[_filter][minimum_price][value_end]' => 10,
-                    'frontend-products-grid[_filter][minimum_price][type]'  => NumberRangeFilterType::TYPE_BETWEEN,
-                    'frontend-products-grid[_filter][minimum_price][unit]'  => 'liter',
+                    'frontend-product-search-grid[_filter][minimum_price][value]' => 1,
+                    'frontend-product-search-grid[_filter][minimum_price][value_end]' => 10,
+                    'frontend-product-search-grid[_filter][minimum_price][type]'  =>
+                        NumberRangeFilterType::TYPE_BETWEEN,
+                    'frontend-product-search-grid[_filter][minimum_price][unit]'  => 'liter',
                 ],
                 'expected' => ['product.1', 'product.3']
             ],

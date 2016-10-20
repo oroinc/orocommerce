@@ -113,63 +113,6 @@ datagrids:
                 acl_resource:  oro_product_view
                 rowAction:     true
 
-    frontend-products-grid:
-        extended_entity_name: %oro_product.entity.product.class%
-        options:
-            entityHint:        product
-            entity_pagination: true
-            displayOptions:
-                selector: '.catalog__filter-controls__item_display-options'
-            requireJSModules:
-                - oroproduct/js/app/datagrid/frontend-product-display-options-builder
-        source:
-            type:         orm
-            query:
-                select:
-                    - product.id
-                    - product.sku
-                    - productInventoryStatus.id as inventoryStatusId
-                    - productInventoryStatus.name as inventoryStatusName
-                from:
-                    - { table: %oro_product.entity.product.class%, alias: product }
-                join:
-                    left:
-                        - { join: product.inventory_status, alias: productInventoryStatus}
-        columns:
-            sku:
-                label: oro.product.sku.label
-            name:
-                label: oro.product.names.label
-        properties:
-            id: ~
-            name:
-                type: localized_value
-                data_name: names
-            view_link:
-                type:  url
-                route: oro_product_frontend_product_view
-                params: [ id ]
-        sorters:
-            columns:
-                sku:
-                    data_name: product.sku
-                    type: string
-            default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
-            toolbar_sorting: true
-        filters:
-            columns:
-                sku:
-                    type:      string
-                    data_name: product.sku
-        actions:
-            view:
-                type:          navigate
-                label:         oro.grid.action.view
-                link:          view_link
-                icon:          eye-open
-                rowAction:     true
-
     oro_product-product_variants:
         acl_resource: oro_product_view
         options:

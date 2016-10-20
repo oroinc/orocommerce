@@ -327,7 +327,7 @@ class AjaxLineItemControllerTest extends WebTestCase
             $this->getUrl(
                 'oro_shopping_list_add_products_massaction',
                 [
-                    'gridName' => 'frontend-products-grid',
+                    'gridName' => 'frontend-product-search-grid',
                     'actionName' => 'oro_shoppinglist_frontend_addlineitemlist' . $shoppingList->getId(),
                     'shoppingList' => $shoppingList->getId(),
                     'inset' => 1,
@@ -356,7 +356,7 @@ class AjaxLineItemControllerTest extends WebTestCase
             $this->getUrl(
                 'oro_shopping_list_add_products_to_new_massaction',
                 [
-                    'gridName' => 'frontend-products-grid',
+                    'gridName' => 'frontend-product-search-grid',
                     'actionName' => 'oro_shoppinglist_frontend_addlineitemnew',
                     '_widgetContainer' => 'dialog',
                     '_wid' => 'test-uuid',
@@ -374,7 +374,7 @@ class AjaxLineItemControllerTest extends WebTestCase
             $this->getUrl(
                 'oro_shopping_list_add_products_to_new_massaction',
                 [
-                    'gridName' => 'frontend-products-grid',
+                    'gridName' => 'frontend-product-search-grid',
                     'actionName' => 'oro_shoppinglist_frontend_addlineitemnew',
                     'inset' => 1,
                     'values' => $product->getId(),
