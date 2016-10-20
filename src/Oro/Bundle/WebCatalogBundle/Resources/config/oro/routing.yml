@@ -1,0 +1,4 @@
+oro_web_catalog:
+    resource:     "@OroWebCatalogBundle/Controller/WebCatalogController.php"
+    type:         annotation
+    prefix:       /webcatalog

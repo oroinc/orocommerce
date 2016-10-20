@@ -13,3 +13,6 @@ oro.catalog.category.meta_keywords.label: Meta keywords
 oro.cms.page.meta_titles.label: Meta title
 oro.cms.page.meta_descriptions.label: Meta description
 oro.cms.page.meta_keywords.label: Meta keywords
+
+oro.webcatalog.contentnode.meta_descriptions.label: Meta description
+oro.webcatalog.contentnode.meta_keywords.label: Meta keywords

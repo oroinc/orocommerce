@@ -19,8 +19,6 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class PageTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'Oro\Bundle\CMSBundle\Entity\Page';
-
     /**
      * @var PageType
      */
@@ -42,7 +40,6 @@ class PageTypeTest extends FormIntegrationTestCase
             ->getFormFactory();
 
         $this->type = new PageType();
-        $this->type->setDataClass(self::DATA_CLASS);
     }
 
     /**
@@ -113,7 +110,7 @@ class PageTypeTest extends FormIntegrationTestCase
                 'parentPage',
                 EntityIdentifierType::NAME,
                 [
-                    'class' => self::DATA_CLASS,
+                    'class' => Page::class,
                     'multiple' => false
                 ]
             )
@@ -151,18 +148,18 @@ class PageTypeTest extends FormIntegrationTestCase
 
     public function testSetDefaultOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
+            ->disableOriginalConstructor()
+            ->getMock();
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class' => self::DATA_CLASS,
-                    'intention' => 'page',
-                    'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+                    'data_class' => Page::class
                 ]
             );
 
-        $this->type->setDefaultOptions($resolver);
+        $this->type->configureOptions($resolver);
     }
 
     public function testGetName()

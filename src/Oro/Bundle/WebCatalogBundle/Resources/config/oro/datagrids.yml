@@ -1,0 +1,65 @@
+datagrids:
+    web-catalog-grid:
+        acl_resource: oro_web_catalog_view
+        options:
+            entityHint: 'web catalog'
+        source:
+            type: orm
+            query:
+                select:
+                    - web_catalog.id
+                    - web_catalog.name
+                    - web_catalog.createdAt
+                    - web_catalog.updatedAt
+                from:
+                    - { table: '%oro_web_catalog.entity.web_catalog.class%', alias: web_catalog }
+        columns:
+            id:
+                label: oro.webcatalog.id.label
+            name:
+                label: oro.webcatalog.name.label
+            createdAt:
+                label: oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label: oro.ui.updated_at
+                frontend_type: datetime
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: oro_web_catalog_view
+                params:
+                    - id
+        sorters:
+            columns:
+                id:
+                    data_name: web_catalog.id
+                name:
+                    data_name: web_catalog.name
+                createdAt:
+                    data_name: web_catalog.createdAt
+                updatedAt:
+                    data_name: web_catalog.updatedAt
+        filters:
+            columns:
+                id:
+                    type: number
+                    data_name: web_catalog.id
+                name:
+                    type: string
+                    data_name: web_catalog.name
+                createdAt:
+                    type:      datetime
+                    data_name: web_catalog.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: web_catalog.updatedAt
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  oro_web_catalog_view
+                rowAction:     true

@@ -19,3 +19,8 @@ services:
         public: false
         arguments:
             - '@doctrine'
+
+    oro_web_catalog.form.type.web_catalog:
+        class: Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType
+        tags:
+            - { name: form.type, alias: oro_web_catalog }

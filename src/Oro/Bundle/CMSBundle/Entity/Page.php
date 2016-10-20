@@ -38,6 +38,10 @@ use Oro\Component\Tree\Entity\TreeTrait;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "form"={
+ *              "form_type"="oro_cms_page_select",
+ *              "grid_name"="cms-page-select-grid"
  *          }
  *      }
  * )
