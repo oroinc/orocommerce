@@ -4,6 +4,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductType'
         arguments:
             - "@oro_product.provider.default_product_unit_provider.chain"
+            - "@event_dispatcher"
         calls:
             - [setDataClass, ['%oro_product.entity.product.class%']]
         tags:

@@ -10,7 +10,14 @@
 {% endblock %}
 
 {% block _shopping_list_view_container_content_widget %}
-    <div {{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }}
+            id="shopping_list_view_container_content"
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'oroui/js/app/views/layout-subtree-view',
+                rootId : block.vars.id,
+                reloadEvents: ['product:quantity-unit:update']
+            }|json_encode }}">
         {{ block_widget(block) }}
     </div>
 {% endblock %}

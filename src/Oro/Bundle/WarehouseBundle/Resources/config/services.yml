@@ -55,14 +55,21 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_warehouse_unique_warehouse_validator }
 
-    oro_warehouse.validator.product_quantity_to_order_validator:
+    oro_warehouse.validator.product_row_quantity_validator:
         class: 'Oro\Bundle\WarehouseBundle\Validator\Constraints\ProductRowQuantityValidator'
         arguments:
             - "@oro_warehouse.validator.quantity_to_order_validator"
             - "@oro_entity.doctrine_helper"
             - "@translator"
         tags:
-            - { name: validator.constraint_validator, alias: oro_warehouse_unique_warehouse_validator }
+            - { name: validator.constraint_validator, alias: oro_warehouse_product_row_validator }
+
+    oro_warehouse.validator.product_quantity_to_order_limit_validator:
+        class: 'Oro\Bundle\WarehouseBundle\Validator\Constraints\ProductQuantityToOrderLimitValidator'
+        arguments:
+            - "@oro_entity.fallback.resolver.entity_fallback_resolver"
+        tags:
+            - { name: validator.constraint_validator, alias: oro_warehouse_product_quantity_to_order_limit_validator }
 
     oro_warehouse.event_listener.system_config:
         class: 'Oro\Bundle\WarehouseBundle\EventListener\WarehouseSystemConfigSubscriber'
@@ -143,6 +150,11 @@ services:
             - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }
 
     oro_warehouse.event_listener.product_row_type_listener:
-        class: Oro\Bundle\WarehouseBundle\Form\Extension\ProductRowTypeListener
+        class: Oro\Bundle\WarehouseBundle\EventListener\ProductRowTypeListener
         tags:
             - { name: kernel.event_listener, event: product_row_type.constraints, method: onConstraintsConfigureOptions }
+
+    oro_warehouse.event_listener.product_type_listener:
+        class: Oro\Bundle\WarehouseBundle\EventListener\ProductTypeListener
+        tags:
+            - { name: kernel.event_listener, event: product_type.constraints, method: onConstraintsConfigureOptions }

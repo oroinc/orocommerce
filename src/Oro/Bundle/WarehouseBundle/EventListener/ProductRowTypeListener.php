@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Form\Extension;
+namespace Oro\Bundle\WarehouseBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\Event\FormTypeConfigureOptionsEvent;
 use Oro\Bundle\WarehouseBundle\Validator\Constraints\ProductRowQuantity;

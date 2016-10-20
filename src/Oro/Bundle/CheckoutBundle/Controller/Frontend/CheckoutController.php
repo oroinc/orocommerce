@@ -252,7 +252,9 @@ class CheckoutController extends Controller
         $errorHandler->addFlashWorkflowStateWarning($errors);
 
         if ($errorHandler->isCheckoutRestartRequired($errors)) {
-            $this->getWorkflowManager()->resetWorkflowItem($workflowItem);
+            $workflow = $this->getWorkflowManager()->getWorkflow($workflowItem->getWorkflowName());
+            $start = $workflow->getTransitionManager()->getStartTransitions()->first();
+            $this->getWorkflowManager()->transit($workflowItem, $start);
 
             return $this->getWorkflowItem($checkout);
         }

@@ -101,14 +101,14 @@ oro:
                 minimum_quantity_to_order.label: Minimum Quantity To Order
                 maximum_quantity_to_order.label: Maximum Quantity To Order
 
+        product:
+            error:
+                quantity_over_max_limit: 'You cannot order more than %limit% units of %sku%: %product_name%'
+                quantity_below_min_limit: 'You cannot order less than %limit% units of %sku%: %product_name%'
+
     order:
         orderlineitem:
             warehouse:
                 label: Warehouse
         warehouse:
             label: Warehouse
-
-    product:
-        error:
-            quantity_over_max_limit: 'You cannot order more than %limit% units of %sku%: %product_name%'
-            quantity_below_min_limit: 'You cannot order less than %limit% units of %sku%: %product_name%'

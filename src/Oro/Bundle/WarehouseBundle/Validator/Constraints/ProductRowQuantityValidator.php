@@ -74,7 +74,7 @@ class ProductRowQuantityValidator extends ConstraintValidator
     protected function addViolation(Product $product, $limit, $errorSuffix)
     {
         $message = $this->translator->trans(
-            'oro.product.error.' . $errorSuffix,
+            'oro.warehouse.product.error.' . $errorSuffix,
             [
                 '%limit%' => $limit,
                 '%sku%' => $product->getSku(),

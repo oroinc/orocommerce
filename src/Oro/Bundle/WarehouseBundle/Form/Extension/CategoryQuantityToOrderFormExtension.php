@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use Oro\Bundle\WarehouseBundle\Migrations\Schema\v1_2\AddQuantityToOrderFields;
 
 class CategoryQuantityToOrderFormExtension extends AbstractTypeExtension
@@ -31,7 +31,7 @@ class CategoryQuantityToOrderFormExtension extends AbstractTypeExtension
             [
                 'label' => 'oro.warehouse.fields.category.minimum_quantity_to_order.label',
                 'value_options' => [
-                    'constraints' => new Integer(),
+                    'constraints' => new Decimal(),
                 ],
             ]
         )->add(
@@ -40,7 +40,7 @@ class CategoryQuantityToOrderFormExtension extends AbstractTypeExtension
             [
                 'label' => 'oro.warehouse.fields.category.maximum_quantity_to_order.label',
                 'value_options' => [
-                    'constraints' => new Integer(),
+                    'constraints' => new Decimal(),
                 ],
             ]
         );
