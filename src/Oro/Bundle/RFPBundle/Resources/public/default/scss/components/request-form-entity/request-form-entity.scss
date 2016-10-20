@@ -1,13 +1,13 @@
-.request-form-flexbox {
+.request-form-entity {
     @extend .flexible-container;
     
-    &__side {
+    &__set {
         @extend .flexible-container__side;
         
         padding-left: 5px;
     }
     
-    &__base {
+    &__selector {
         @extend .flexible-container__base;
     }
 }

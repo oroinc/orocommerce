@@ -2,7 +2,7 @@ layout:
     imports:
         -
             id: oro_rfp_frontend_request_edit
-            root: oro_rfp_request_form_container
+            root: content
         - oro_account_menu
     actions:
         - '@setBlockTheme':
@@ -28,11 +28,6 @@ layout:
 
         - '@add':
             id: oro_rfp_request_form_title
-            parentId: oro_rfp_request_form_container
+            parentId: content
             prepend: true
             blockType: text
-
-        - '@add':
-            id: oro_rfp_request_form_container
-            parentId: content
-            blockType: container
