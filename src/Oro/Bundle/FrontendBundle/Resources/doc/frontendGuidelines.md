@@ -88,7 +88,7 @@ This gives the following advantages:
 <div class="product">
     <p class="product__name">Product name</p>
     <div class="product__prices">...</div>
-    <div class="product__ifo">...</div>
+    <div class="product__info">...</div>
 </div>
 ```
 
@@ -224,7 +224,7 @@ div.element {
     ...
 }
 
-div.#element {
+div#element {
     ...
 }
 ```
@@ -490,9 +490,9 @@ After each group leaves behind an empty string.
 ##### Acceptable
 ```scss
 // variables
-$element-color: #000;
-$element-font: 12px;
-$element-line-height: 1.2;
+$element-color: #000 !default;
+$element-font: 12px !default;
+$element-line-height: 1.2 !default;
 
 .element {
     // positioning
@@ -724,8 +724,8 @@ Helper mixin for organizing @media rules
 ## Best practices
 
 ```scss
-$list-font-title: 'Tahoma';
-$list-offset: 10px;
+$list-font-title: 'Tahoma' !default;
+$list-offset: 10px !default;
 
 .list {
     @include clearfix;
