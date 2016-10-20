@@ -87,6 +87,10 @@ class TaxValueManager
     public function saveTaxValue(TaxValue $taxValue, $flush = true)
     {
         $em = $this->getTaxValueEntityManager();
+
+        /** todo: BB-3483  */
+        $em->getUnitOfWork()->scheduleExtraUpdate($taxValue, ['result' => [null, $taxValue->getResult()]]);
+
         $em->persist($taxValue);
 
         if ($flush) {

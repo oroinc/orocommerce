@@ -33,7 +33,7 @@ class LoadShippingOriginConfigurationDemoData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $configManager = $this->container->get('oro_config.scope.global');
+        $configManager = $this->container->get('oro_config.global');
 
         foreach (self::$configurations as $option => $value) {
             $configManager->set(
