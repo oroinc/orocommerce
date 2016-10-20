@@ -27,7 +27,7 @@
     {% if prototype is defined %}
         {% set prototype_html = _self.oro_rfp_frontend_request_lineitem_prototype(form, prototype_name) %}
     {% endif %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'grid-container' }) %}
     {% set id = id ~ '_collection' %}
 
     <div class="request-form">
@@ -159,7 +159,8 @@
                 data-prototype-name="{{ prototype_name }}"
                 {% if prototype_html is defined %}
                     data-prototype="{{ prototype_html|escape }}"
-                {% endif %}>
+                {% endif %}
+                data-role="product-container">
 
                 {% if form.children|length %}
                     {% for key, child in form.children %}
@@ -172,7 +173,7 @@
             </div>
 
             <div class="request-form-footer">
-                <a class="add-list-item" data-container=".oro-item-collection" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.add'|trans }}</a>
+                <a class="add-list-item" data-container="[data-role='product-container']" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.add'|trans }}</a>
             </div>
         </div>
     </div>
@@ -367,7 +368,7 @@
     {% if prototype is defined %}
         {% set prototype_html = _self.oro_rfp_frontend_request_lineitem_requested_prototype(form) %}
     {% endif %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'grid-container' }) %}
     {% set id = id ~ '_collection' %}
     <div class="row-oro">
         {% set prototype_name = form.vars.prototype_name %}
@@ -391,7 +392,7 @@
                 </tbody>
             </table>
         </div>
-        <a class="add-list-item" data-role="lineitem-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
+        <a class="add-list-item" data-role="lineitem-add" data-container="[data-role='lineitems']" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.rfp.frontend.request.lineitem.requested.add'|trans }}</a>
     </div>
 {% endblock %}
 
