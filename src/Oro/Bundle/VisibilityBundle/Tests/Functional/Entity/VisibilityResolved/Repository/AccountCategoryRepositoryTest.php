@@ -99,25 +99,29 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         ];
     }
 
-//    /**
-//     * @dataProvider isCategoryVisibleDataProvider
-//     * @param string $categoryName
-//     * @param string $accountName
-//     * @param int $configValue
-//     * @param bool $expectedVisibility
-//     */
-//    public function testIsCategoryVisible($categoryName, $accountName, $configValue, $expectedVisibility)
-//    {
-//        /** @var Category $category */
-//        $category = $this->getReference($categoryName);
-//
-//        /** @var Account $account */
-//        $account = $this->getReference($accountName);
-//
-//        $actualVisibility = $this->repository->isCategoryVisible($category, $configValue, $account);
-//
-//        $this->assertEquals($expectedVisibility, $actualVisibility);
-//    }
+    /**
+     * @dataProvider isCategoryVisibleDataProvider
+     * @param string $categoryName
+     * @param string $accountName
+     * @param int $configValue
+     * @param bool $expectedVisibility
+     */
+    public function testIsCategoryVisible($categoryName, $accountName, $configValue, $expectedVisibility)
+    {
+        /** @var Category $category */
+        $category = $this->getReference($categoryName);
+
+        /** @var Account $account */
+        $account = $this->getReference($accountName);
+        $scope = $this->scopeManager->findOrCreate('account_category_visibility', ['account' => $account]);
+        $groupScope = $this->scopeManager->findOrCreate(
+            'account_group_category_visibility',
+            ['accountGroup' => $account->getGroup()]
+        );
+        $actualVisibility = $this->repository->isCategoryVisible($category, $configValue, $scope, $groupScope);
+
+        $this->assertEquals($expectedVisibility, $actualVisibility);
+    }
 
     /**
      * @return array
@@ -372,7 +376,7 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 
         $expectedEntity = $this->repository->findByPrimaryKey(
             $actualEntity->getCategory(),
-            $actualEntity->getAccount()
+            $actualEntity->getScope()
         );
 
         $this->assertEquals(spl_object_hash($expectedEntity), spl_object_hash($actualEntity));
@@ -412,7 +416,7 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
             $visibility = $indexedVisibilities[$id];
 
             $this->assertEquals($visibility->getCategory()->getId(), $resolvedVisibility['category']);
-            $this->assertEquals($visibility->getAccount()->getId(), $resolvedVisibility['account']);
+            $this->assertEquals($visibility->getScope()->getId(), $resolvedVisibility['scope']);
             $this->assertEquals(AccountCategoryVisibilityResolved::SOURCE_STATIC, $resolvedVisibility['source']);
             if ($visibility->getVisibility() === AccountCategoryVisibility::VISIBLE) {
                 $this->assertEquals(
@@ -459,7 +463,7 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
             $visibility = $indexedVisibilities[$id];
 
             $this->assertEquals($visibility->getCategory()->getId(), $resolvedVisibility['category']);
-            $this->assertEquals($visibility->getAccount()->getId(), $resolvedVisibility['account']);
+            $this->assertEquals($visibility->getScope()->getId(), $resolvedVisibility['scope']);
             $this->assertEquals(AccountCategoryVisibilityResolved::SOURCE_STATIC, $resolvedVisibility['source']);
             $this->assertEquals($visibility->getVisibility(), AccountCategoryVisibility::CATEGORY);
         }
@@ -469,7 +473,7 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     {
         /** @var Account $account */
         $account = $this->getReference('account.level_1.1');
-
+        $scope = $this->scopeManager->find('account_category_visibility', ['account' => $account]);
         $parentCategoryFallbackCategories = ['category_1_2','category_1_2_3'];
         $parentCategoryFallbackCategoryIds = [];
         foreach ($parentCategoryFallbackCategories as $categoryReference) {
@@ -495,7 +499,7 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         );
 
         $resolvedVisibilities = $this->getResolvedVisibilities();
-        $resolvedVisibilities = $this->filterVisibilitiesByAccount($resolvedVisibilities, $account->getId());
+        $resolvedVisibilities = $this->filterVisibilitiesByAccount($resolvedVisibilities, $scope->getId());
 
         // static visibilities should not be inserted
         $this->assertSameSize($parentCategoryFallbackCategoryIds, $resolvedVisibilities);
@@ -508,14 +512,14 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 
     /**
      * @param array $visibilities
-     * @param $accountId
+     * @param $scopeId
      * @return array
      */
-    protected function filterVisibilitiesByAccount(array $visibilities, $accountId)
+    protected function filterVisibilitiesByAccount(array $visibilities, $scopeId)
     {
         $currentAccountVisibilities = [];
         foreach ($visibilities as $visibility) {
-            if ($visibility['account'] == $accountId) {
+            if ($visibility['scope'] == $scopeId) {
                 $currentAccountVisibilities[] = $visibility;
             }
         }
@@ -570,7 +574,7 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
             ->select(
                 'IDENTITY(entity.sourceCategoryVisibility) as sourceCategoryVisibility',
                 'IDENTITY(entity.category) as category',
-                'IDENTITY(entity.account) as account',
+                'IDENTITY(entity.scope) as scope',
                 'entity.visibility',
                 'entity.source'
             )

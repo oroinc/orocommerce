@@ -593,14 +593,14 @@ services:
         public: false
         tags:
             - { name: oro_service_link, service: oro_customer.account_group_scope_criteria_provider }
-            - { name: oro_scope.provider, scopeType: category_visibility, priority: 30 }
+            - { name: oro_scope.provider, scopeType: account_group_category_visibility, priority: 30 }
             - { name: oro_scope.provider, scopeType: account_group_product_visibility, priority: 30 }
 
     oro_customer.account_scope_criteria_provider.link:
         public: false
         tags:
             - { name: oro_service_link, service: oro_customer.account_scope_criteria_provider }
-            - { name: oro_scope.provider, scopeType: category_visibility, priority: 30 }
+            - { name: oro_scope.provider, scopeType: account_category_visibility, priority: 30 }
             - { name: oro_scope.provider, scopeType: account_product_visibility, priority: 30 }
 
     oro_customer.entity_ownership.listener:

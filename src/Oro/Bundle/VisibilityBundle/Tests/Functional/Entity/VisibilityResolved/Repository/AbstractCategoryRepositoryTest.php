@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 abstract class AbstractCategoryRepositoryTest extends WebTestCase
@@ -17,9 +18,15 @@ abstract class AbstractCategoryRepositoryTest extends WebTestCase
      */
     protected $repository;
 
+    /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
             'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData'

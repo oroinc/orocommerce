@@ -5,12 +5,12 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
@@ -105,6 +105,7 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
         $this->setReference($data['reference'], $categoryVisibility);
 
         $this->em->persist($categoryVisibility);
+        $this->em->flush($categoryVisibility);
     }
 
     /**
@@ -129,6 +130,7 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
             $this->setReference($data['reference'], $accountGroupCategoryVisibility);
 
             $this->em->persist($accountGroupCategoryVisibility);
+            $this->em->flush($accountGroupCategoryVisibility);
         }
     }
 
@@ -151,6 +153,7 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
             $this->setReference($data['reference'], $accountCategoryVisibility);
 
             $this->em->persist($accountCategoryVisibility);
+            $this->em->flush($accountCategoryVisibility);
         }
     }
 
