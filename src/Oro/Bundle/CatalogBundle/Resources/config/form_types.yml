@@ -23,8 +23,8 @@ services:
 
     oro_catalog.form.type.category_tree:
         class: 'Oro\Bundle\CatalogBundle\Form\Type\CategoryTreeType'
-        calls:
-            - [setEntityClass, ['%oro_catalog.entity.category.class%']]
+        arguments:
+            - '@oro_catalog.category_tree_handler'
         tags:
             - { name: form.type, alias: oro_catalog_category_tree }
 
