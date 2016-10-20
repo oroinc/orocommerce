@@ -229,4 +229,3 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
         }
     }
 }
-

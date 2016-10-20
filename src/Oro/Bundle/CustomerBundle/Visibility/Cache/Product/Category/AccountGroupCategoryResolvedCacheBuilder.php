@@ -217,4 +217,3 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
         return $resolvedVisibility;
     }
 }
-

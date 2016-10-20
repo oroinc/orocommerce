@@ -6,9 +6,6 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Command\VisibilityCacheBuildCommand;
-use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
-use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
-use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 
 /**
  * @dbIsolation
@@ -278,4 +275,3 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
             ->execute();
     }
 }
-

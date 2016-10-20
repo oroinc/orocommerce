@@ -365,4 +365,3 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
             ->getArrayResult();
     }
 }
-

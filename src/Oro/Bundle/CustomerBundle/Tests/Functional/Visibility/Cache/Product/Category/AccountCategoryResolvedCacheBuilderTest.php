@@ -517,4 +517,3 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         $this->assertEquals($expectedVisibility, $categoryVisibilityResolved['visibility']);
     }
 }
-

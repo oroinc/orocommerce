@@ -189,4 +189,3 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
         $this->indexScheduler->scheduleProductsReindex([$category], null, false);
     }
 }
-

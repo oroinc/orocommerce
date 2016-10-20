@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Search;
 use Doctrine\ORM\Query;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;

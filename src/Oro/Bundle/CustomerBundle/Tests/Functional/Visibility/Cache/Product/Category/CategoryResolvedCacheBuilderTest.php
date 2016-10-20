@@ -289,4 +289,3 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
             ->getArrayResult();
     }
 }
-

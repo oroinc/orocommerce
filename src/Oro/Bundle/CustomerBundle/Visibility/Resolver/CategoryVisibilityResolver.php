@@ -181,4 +181,3 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
             : BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE;
     }
 }
-

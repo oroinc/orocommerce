@@ -245,4 +245,3 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         }
     }
 }
-

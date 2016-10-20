@@ -167,4 +167,3 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         return $this->registry->getManagerForClass($this->cacheClass);
     }
 }
-

@@ -69,4 +69,3 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         return $builder;
     }
 }
-

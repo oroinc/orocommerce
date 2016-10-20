@@ -148,4 +148,3 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
         return $this->registry->getManagerForClass($this->cacheClass);
     }
 }
-

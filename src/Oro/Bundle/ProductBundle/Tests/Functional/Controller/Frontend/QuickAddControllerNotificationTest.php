@@ -47,7 +47,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
         $this->loadFixtures(
             [
                 'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData'
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData'
             ]
         );
 

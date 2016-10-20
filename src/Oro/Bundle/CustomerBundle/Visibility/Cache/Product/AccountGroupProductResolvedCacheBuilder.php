@@ -9,7 +9,6 @@ use Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
 use Oro\Bundle\CustomerBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -145,4 +144,3 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
             ->getManagerForClass('OroCustomerBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
     }
 }
-

@@ -72,4 +72,3 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
         return $builder;
     }
 }
-

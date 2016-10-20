@@ -251,4 +251,3 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         return $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
     }
 }
-
