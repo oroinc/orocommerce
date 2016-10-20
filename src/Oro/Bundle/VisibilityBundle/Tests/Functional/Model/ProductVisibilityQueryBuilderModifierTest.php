@@ -4,10 +4,13 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Model;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData as AccountLoadAccountUserData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 
 /**
  * @dbIsolation
@@ -38,10 +41,9 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
-            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+            LoadAccountUserData::class,
+            LoadCategoryVisibilityData::class,
+            LoadProductVisibilityData::class
         ]);
 
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
@@ -191,6 +193,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
     /**
      * @param object|null $user
+     * todo fix BB-4506
      */
     protected function setupTokenStorage($user = null)
     {
@@ -212,10 +215,5 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass(Product::class)
             ->getRepository(Product::class);
-    }
-
-    protected function getDefaultWebsite()
-    {
-        return $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
     }
 }

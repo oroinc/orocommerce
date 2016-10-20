@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\Type;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\ScopeBundle\Form\FormScopeCriteriaResolver;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;

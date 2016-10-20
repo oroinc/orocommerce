@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Resolver;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 
 interface CategoryVisibilityResolverInterface

@@ -4,9 +4,11 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\Visibility\Reposit
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountGroupCategoryVisibilityRepository;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 
 /**
  * @dbIsolation
@@ -28,9 +30,9 @@ class AccountGroupCategoryVisibilityRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-                'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-                'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
+                LoadGroups::class,
+                LoadCategoryData::class,
+                LoadCategoryVisibilityData::class
             ]
         );
     }

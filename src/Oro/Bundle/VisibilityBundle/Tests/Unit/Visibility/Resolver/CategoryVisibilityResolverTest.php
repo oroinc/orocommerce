@@ -168,7 +168,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
         $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', ['id' => 123]);
 
         /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', ['id' => 42]);
+        $accountGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', ['id' => 42]);
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);
@@ -204,7 +204,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
     public function testGetVisibleCategoryIdsForAccountGroup()
     {
         /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', ['id' => 42]);
+        $accountGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', ['id' => 42]);
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);
@@ -247,7 +247,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
     public function testGetHiddenCategoryIdsForAccountGroup()
     {
         /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', ['id' => 42]);
+        $accountGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', ['id' => 42]);
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);

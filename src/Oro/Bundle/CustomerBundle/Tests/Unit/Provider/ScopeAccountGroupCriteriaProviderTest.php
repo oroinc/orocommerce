@@ -1,11 +1,11 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\CustomerBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Provider\ScopeAccountGroupCriteriaProvider;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class ScopeAccountGroupCriteriaProviderTest extends \PHPUnit_Framework_TestCase

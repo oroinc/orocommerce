@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -47,11 +48,10 @@ class DefaultVisibilityListenerTest extends WebTestCase
         $this->initClient();
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            LoadProductData::class,
+            LoadCategoryData::class,
+            LoadGroups::class,
+            LoadAccounts::class
         ]);
 
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);

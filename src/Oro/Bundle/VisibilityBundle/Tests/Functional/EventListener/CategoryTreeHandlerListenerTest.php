@@ -10,6 +10,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 
 /**
  * @dbIsolation
@@ -22,8 +23,8 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         $this->initClient();
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
+            LoadAccountUserData::class,
+            LoadCategoryVisibilityData::class
         ]);
     }
 

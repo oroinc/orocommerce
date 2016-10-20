@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Provider;
+namespace Oro\Bundle\CustomerBundle\Provider;
 
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ScopeBundle\Manager\AbstractScopeCriteriaProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\PropertyAccess\PropertyAccessor;

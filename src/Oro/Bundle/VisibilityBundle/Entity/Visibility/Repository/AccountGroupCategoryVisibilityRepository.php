@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 
 class AccountGroupCategoryVisibilityRepository extends AbstractCategoryVisibilityRepository
 {

@@ -6,7 +6,7 @@ operations:
             - account-product-visibility-grid
     DELETE:
         exclude_entities:
-            - Oro\Bundle\AccountBundle\Entity\AccountGroup
+            - Oro\Bundle\CustomerBundle\Entity\AccountGroup
         exclude_datagrids:
             - account-category-visibility-grid
             - account-group-category-visibility-grid

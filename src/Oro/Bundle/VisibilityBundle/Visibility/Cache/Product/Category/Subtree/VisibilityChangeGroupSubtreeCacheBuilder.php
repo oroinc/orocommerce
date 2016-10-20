@@ -138,7 +138,7 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
 
         /** @var QueryBuilder $subQb */
         $subQb = $this->registry
-            ->getManagerForClass('OroAccountBundle:Account')
+            ->getManagerForClass('OroCustomerBundle:Account')
             ->createQueryBuilder();
 
         $subQb->select('1')
