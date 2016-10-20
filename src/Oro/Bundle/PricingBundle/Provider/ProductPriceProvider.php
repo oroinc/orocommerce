@@ -42,10 +42,11 @@ class ProductPriceProvider
 
         if ($prices) {
             foreach ($prices as $price) {
-                $result[$price->getProduct()->getId()][$price->getUnit()->getCode()][] = [
+                $result[$price->getProduct()->getId()][] = [
                     'price' => $price->getPrice()->getValue(),
                     'currency' => $price->getPrice()->getCurrency(),
-                    'qty' => $price->getQuantity()
+                    'quantity' => $price->getQuantity(),
+                    'unit' => $price->getUnit()->getCode(),
                 ];
             }
         }
