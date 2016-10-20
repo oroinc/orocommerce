@@ -17,6 +17,9 @@ class LoadContentNodesData extends AbstractFixture implements DependentFixtureIn
     const CATALOG_1_ROOT_SUBNODE_2 = 'web_catalog.node.1.2';
     const CATALOG_2_ROOT = 'web_catalog.node.2.root';
 
+    /**
+     * @var array
+     */
     protected static $data = [
         LoadWebCatalogData::CATALOG_1 => [
             self::CATALOG_1_ROOT => [

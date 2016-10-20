@@ -32,29 +32,6 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
     /**
      * {@inheritdoc}
      */
-    protected function getNodes($root, $includeRoot)
-    {
-        $entities = parent::getNodes($root, $includeRoot);
-        $rootNodes = [];
-
-        /** @var ContentNode $node */
-        foreach ($entities as $key => $node) {
-            if (!$node->getParentNode()) {
-                unset($entities[$key]);
-                $rootNodes[] = $node;
-            }
-        }
-
-        uasort($rootNodes, function (ContentNode $a, ContentNode $b) {
-            return $a->getId() > $b->getId() ? 1 : -1;
-        });
-
-        return array_merge($rootNodes, $entities);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function moveProcessing($entityId, $parentId, $position)
     {
         /** @var ContentNodeRepository $entityRepository */
