@@ -7,8 +7,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 
 /**
@@ -32,7 +32,7 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 class AccountTaxCode extends AbstractTaxCode
 {
     /**
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\Account")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\Account")
      * @ORM\JoinTable(
      *      name="oro_tax_acc_tax_code_acc",
      *      joinColumns={
@@ -48,7 +48,7 @@ class AccountTaxCode extends AbstractTaxCode
     protected $accounts;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\AccountBundle\Entity\AccountGroup")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountGroup")
      * @ORM\JoinTable(
      *      name="oro_tax_acc_grp_tc_acc_grp",
      *      joinColumns={

@@ -14,9 +14,7 @@ define(function (require) {
          */
         options: {
             tierPrices: null,
-            matchedPrices: {},
             tierPricesRoute: '',
-            matchedPricesRoute: '',
             selectors: {
                 lineItem: '.invoice-line-item',
                 lineItemIndex: '.invoice-line-item-index',
@@ -36,11 +34,8 @@ define(function (require) {
             this.subview('productsPricesComponent', new ProductsPricesComponent({
                 _sourceElement: this.$el,
                 tierPrices: this.options.tierPrices,
-                matchedPrices: this.options.matchedPrices,
                 currency: this.options.currency,
-                priceList: this.options.priceList,
-                tierPricesRoute: this.options.tierPricesRoute,
-                matchedPricesRoute: this.options.matchedPricesRoute
+                tierPricesRoute: this.options.tierPricesRoute
             }));
 
             this.$el.on('content:changed', $.proxy(this._reindexLineItems, this));
