@@ -74,7 +74,7 @@ class Page extends ExtendPage
     /**
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
