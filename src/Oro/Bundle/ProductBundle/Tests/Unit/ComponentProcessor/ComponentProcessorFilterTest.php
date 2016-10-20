@@ -70,6 +70,17 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
         return $this->productRepository;
     }
 
+    public function testFilterDataOnEmptyInput()
+    {
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => []
+        ];
+        $dataParameters = [];
+
+        $result = $this->filter->filterData($data, $dataParameters);
+        $this->assertEquals($result, $data);
+    }
+
     public function testFilterData()
     {
         $skus           = ['visibleSku1', 'invisibleSku1', 'visibleSku2'];
