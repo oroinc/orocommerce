@@ -104,13 +104,11 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
             /** @var Product $product */
             $product = $this->getReference($productReference);
             $this->createProductVisibility($product);
-            $this->em->flush();
             foreach ($this->accountGroups as $accountGroupReference) {
                 /** @var AccountGroup $accountGroup */
                 $accountGroup = $this->getReference($accountGroupReference);
                 $this->createAccountGroupProductVisibilityResolved($accountGroup, $product);
             }
-            $this->em->flush();
             foreach ($this->accounts as $accountReference) {
                 /** @var Account $account */
                 $account = $this->getReference($accountReference);
@@ -143,7 +141,7 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
     protected function createAccountGroupProductVisibilityResolved(AccountGroup $accountGroup, Product $product)
     {
         $scope = $this->scopeManager->findOrCreate(
-            'product_visibility',
+            'account_group_product_visibility',
             ['accountGroup' => $accountGroup]
         );
         $accountGroupVisibility = (new AccountGroupProductVisibility())
@@ -161,7 +159,7 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
     protected function createAccountProductVisibilityResolved(Account $account, Product $product)
     {
         $scope = $this->scopeManager->findOrCreate(
-            'product_visibility',
+            'account_product_visibility',
             ['account' => $account]
         );
         $accountVisibility = (new AccountProductVisibility())

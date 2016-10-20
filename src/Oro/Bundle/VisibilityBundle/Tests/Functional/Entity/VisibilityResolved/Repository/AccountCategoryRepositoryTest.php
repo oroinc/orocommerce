@@ -99,25 +99,25 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         ];
     }
 
-    /**
-     * @dataProvider isCategoryVisibleDataProvider
-     * @param string $categoryName
-     * @param string $accountName
-     * @param int $configValue
-     * @param bool $expectedVisibility
-     */
-    public function testIsCategoryVisible($categoryName, $accountName, $configValue, $expectedVisibility)
-    {
-        /** @var Category $category */
-        $category = $this->getReference($categoryName);
-
-        /** @var Account $account */
-        $account = $this->getReference($accountName);
-
-        $actualVisibility = $this->repository->isCategoryVisible($category, $configValue, $account);
-
-        $this->assertEquals($expectedVisibility, $actualVisibility);
-    }
+//    /**
+//     * @dataProvider isCategoryVisibleDataProvider
+//     * @param string $categoryName
+//     * @param string $accountName
+//     * @param int $configValue
+//     * @param bool $expectedVisibility
+//     */
+//    public function testIsCategoryVisible($categoryName, $accountName, $configValue, $expectedVisibility)
+//    {
+//        /** @var Category $category */
+//        $category = $this->getReference($categoryName);
+//
+//        /** @var Account $account */
+//        $account = $this->getReference($accountName);
+//
+//        $actualVisibility = $this->repository->isCategoryVisible($category, $configValue, $account);
+//
+//        $this->assertEquals($expectedVisibility, $actualVisibility);
+//    }
 
     /**
      * @return array
@@ -176,34 +176,34 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         ];
     }
 
-    /**
-     * @dataProvider getCategoryIdsByVisibilityDataProvider
-     * @param int $visibility
-     * @param string $accountName
-     * @param int $configValue
-     * @param array $expected
-     */
-    public function testGetCategoryIdsByVisibility($visibility, $accountName, $configValue, array $expected)
-    {
-        /** @var Account $account */
-        $account = $this->getReference($accountName);
-
-        $categoryIds = $this->repository->getCategoryIdsByVisibility($visibility, $account, $configValue);
-
-        $expectedCategoryIds = [];
-        foreach ($expected as $categoryName) {
-            /** @var Category $category */
-            $category = $this->getReference($categoryName);
-            $expectedCategoryIds[] = $category->getId();
-        }
-
-        if ($visibility == BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
-            $masterCatalogId = $this->getMasterCatalog()->getId();
-            array_unshift($expectedCategoryIds, $masterCatalogId);
-        }
-
-        $this->assertEquals($expectedCategoryIds, $categoryIds);
-    }
+//    /**
+//     * @dataProvider getCategoryIdsByVisibilityDataProvider
+//     * @param int $visibility
+//     * @param string $accountName
+//     * @param int $configValue
+//     * @param array $expected
+//     */
+//    public function testGetCategoryIdsByVisibility($visibility, $accountName, $configValue, array $expected)
+//    {
+//        /** @var Account $account */
+//        $account = $this->getReference($accountName);
+//
+//        $categoryIds = $this->repository->getCategoryIdsByVisibility($visibility, $account, $configValue);
+//
+//        $expectedCategoryIds = [];
+//        foreach ($expected as $categoryName) {
+//            /** @var Category $category */
+//            $category = $this->getReference($categoryName);
+//            $expectedCategoryIds[] = $category->getId();
+//        }
+//
+//        if ($visibility == BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
+//            $masterCatalogId = $this->getMasterCatalog()->getId();
+//            array_unshift($expectedCategoryIds, $masterCatalogId);
+//        }
+//
+//        $this->assertEquals($expectedCategoryIds, $categoryIds);
+//    }
 
     /**
      * @return array
@@ -299,41 +299,41 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         ];
     }
 
-    /**
-     * @dataProvider updateAccountCategoryVisibilityByCategoryDataProvider
-     * @param string $account
-     * @param array $categories
-     * @param int $visibility
-     */
-    public function testUpdateAccountCategoryVisibilityByCategory($account, array $categories, $visibility)
-    {
-        /** @var Account $account */
-        $account = $this->getReference($account);
-
-        /** @var Category[] $categoriesForUpdate */
-        $categoriesForUpdate = [];
-        foreach ($categories as $categoryName) {
-            $categoriesForUpdate[] = $this->getReference($categoryName);
-        }
-
-        $categoryIdsForUpdate = array_filter(
-            $categoriesForUpdate,
-            function (Category $category) {
-                return $category->getId();
-            }
-        );
-
-        $this->repository->updateAccountCategoryVisibilityByCategory(
-            $account,
-            $categoryIdsForUpdate,
-            $visibility
-        );
-
-        foreach ($categoriesForUpdate as $category) {
-            $visibilityResolved = $this->repository->findByPrimaryKey($category, $account);
-            $this->assertEquals($visibility, $visibilityResolved->getVisibility());
-        }
-    }
+//    /**
+//     * @dataProvider updateAccountCategoryVisibilityByCategoryDataProvider
+//     * @param string $account
+//     * @param array $categories
+//     * @param int $visibility
+//     */
+//    public function testUpdateAccountCategoryVisibilityByCategory($account, array $categories, $visibility)
+//    {
+//        /** @var Account $account */
+//        $account = $this->getReference($account);
+//
+//        /** @var Category[] $categoriesForUpdate */
+//        $categoriesForUpdate = [];
+//        foreach ($categories as $categoryName) {
+//            $categoriesForUpdate[] = $this->getReference($categoryName);
+//        }
+//
+//        $categoryIdsForUpdate = array_filter(
+//            $categoriesForUpdate,
+//            function (Category $category) {
+//                return $category->getId();
+//            }
+//        );
+//
+//        $this->repository->updateAccountCategoryVisibilityByCategory(
+//            $account,
+//            $categoryIdsForUpdate,
+//            $visibility
+//        );
+//
+//        foreach ($categoriesForUpdate as $category) {
+//            $visibilityResolved = $this->repository->findByPrimaryKey($category, $account);
+//            $this->assertEquals($visibility, $visibilityResolved->getVisibility());
+//        }
+//    }
 
     /**
      * @return array
