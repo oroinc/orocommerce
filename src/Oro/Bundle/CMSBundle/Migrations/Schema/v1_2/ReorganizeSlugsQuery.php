@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CMSBundle\Migrations\Schema\v1_2;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
@@ -11,25 +10,12 @@ use Psr\Log\LoggerInterface;
 class ReorganizeSlugsQuery extends ParametrizedMigrationQuery
 {
     /**
-     * @var Connection
-     */
-    protected $connection;
-
-    /**
      * @var array
      * [
      *      'page_id' => 'slug',
      * ]
      */
     protected $relations = [];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setConnection(Connection $connection)
-    {
-        $this->connection = $connection;
-    }
 
     /**
      * {@inheritdoc}
@@ -65,7 +51,8 @@ class ReorganizeSlugsQuery extends ParametrizedMigrationQuery
      */
     protected function prepareRelations(LoggerInterface $logger)
     {
-        $query = 'SELECT p.id, REVERSE(SUBSTR(REVERSE(url), 1, POSITION(\'/\' in SUBSTR(REVERSE(url), 1)) - 1)) as slug
+        $query = 'SELECT
+p.id, REVERSE(SUBSTR(REVERSE(s.url), 1, POSITION(\'/\' in SUBSTR(REVERSE(s.url), 1)) - 1)) as slug
 FROM oro_cms_page p
 LEFT JOIN oro_redirect_slug s ON (p.current_slug_id = s.id);';
 
@@ -86,7 +73,7 @@ LEFT JOIN oro_redirect_slug s ON (p.current_slug_id = s.id);';
         foreach ($this->relations as $pageId => $slug) {
             $localizationValueQuery = 'INSERT INTO oro_fallback_localization_val (string) VALUES (:values);';
             $params = ['values' => $slug];
-            $types = ['ids' => 'string'];
+            $types = ['values' => 'string'];
 
             $this->logQuery($logger, $localizationValueQuery, $params, $types);
 
@@ -95,7 +82,7 @@ LEFT JOIN oro_redirect_slug s ON (p.current_slug_id = s.id);';
             }
 
             $localizationValueQuery = 'INSERT INTO oro_cms_page_slug (page_id, localized_value_id)
- VALUES (:pageId, :localizationValueId);';
+VALUES (:pageId, :localizationValueId);';
 
             $params = ['pageId' => $pageId, 'localizationValueId' => $this->connection->lastInsertId()];
             $types = ['pageId' => Type::INTEGER, 'localizationValueId' => Type::INTEGER ];
