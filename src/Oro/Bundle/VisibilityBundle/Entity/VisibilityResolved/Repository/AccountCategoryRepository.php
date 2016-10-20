@@ -310,14 +310,13 @@ class AccountCategoryRepository extends EntityRepository
             'acv_parent.scope = acv.scope AND acv_parent.category = c.parentCategory'
         )
         // join to resolved group visibility for parent category
+        ->leftJoin('OroScopeBundle:Scope', 'agcvr_parent_scope', 'WITH', 'a.group = agcvr_parent_scope.accountGroup')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr_parent',
             'WITH',
-            'agcvr_parent.category = c.parentCategory'
+            'agcvr_parent.category = c.parentCategory AND agcvr_parent.scope = agcvr_parent_scope'
         )
-        ->leftJoin('agcvr_parent.scope', 'agcvr_parent_scope')
-        ->andWhere('(agcvr_parent.visibility IS NULL OR agcvr_parent_scope.accountGroup = a.group)')
         // join to resolved category visibility for parent category
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
