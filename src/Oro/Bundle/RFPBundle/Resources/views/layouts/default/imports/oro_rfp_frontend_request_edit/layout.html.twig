@@ -1,17 +1,3 @@
-{% block __oro_rfp_frontend_request_edit__rfp_page_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
-    }) %}
-    <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
-{% endblock %}
-
-{% block __oro_rfp_frontend_request_edit__rfp_form_container_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }}__form_container"
-    }) %}
-    <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
-{% endblock %}
-
 {% block __oro_rfp_frontend_request_edit__rfp_page_title_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " {{ class_prefix }}__title"
