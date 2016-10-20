@@ -161,6 +161,16 @@ oro:
                     add: 'Add Another Product'
                     cancel: 'Cancel'
                     update: 'Update'
+                    pieces: 'pieces'
+                    qty: 'QTY:'
+                    unit.price: 'Unit Price:'
+                    row.total: 'Row Total:'
+                    price:
+                        unit: 'Unit Price:'
+                        total: 'Row Total:'
+                    target:
+                        unit: 'Target Unit Price:'
+                        total: 'Target Row Total:'
         feature:
             label: 'Request For Quote'
             description: 'Request For Quote allows users to place Requests for chosen products'

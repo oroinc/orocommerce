@@ -1,13 +1,10 @@
 .request-form {
     &__title {
-        margin: 0 0 20px;
-        padding-bottom: 14px;
+        margin: 0 0 12px;
 
         font-size: 20px;
 
         text-transform: uppercase;
-
-        border-bottom: 1px solid get-color('additional', 'light');
     }
 
     &__row {
