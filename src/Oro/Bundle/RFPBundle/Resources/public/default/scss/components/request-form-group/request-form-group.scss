@@ -1,0 +1,10 @@
+.request-form-group {
+    margin: -5px 0 0 -5px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    &__item {
+        padding: 5px 0 0 5px;
+    }
+}

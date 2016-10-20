@@ -1,0 +1,14 @@
+.request-form-footer {
+    margin-bottom: 20px;
+    padding: 13px 0;
+
+    border-top: 1px solid get-color('additional', 'light');
+    border-bottom: 1px solid get-color('additional', 'light');
+}
+
+@include breakpoint('tablet') {
+    .request-form-footer {
+        margin-bottom: 15px;
+        padding: 7px 0;
+    }
+}

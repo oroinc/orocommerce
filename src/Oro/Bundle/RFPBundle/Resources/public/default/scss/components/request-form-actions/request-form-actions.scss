@@ -5,3 +5,21 @@
         @extend %form-actions__item;
     }
 }
+
+@include breakpoint('mobile') {
+    .request-form-actions {
+        display: flex;
+        flex-direction: column;
+        
+        text-align: left;
+
+        &__item {
+            margin-left: 0;
+            margin-bottom: 20px;
+        }
+
+        &__back {
+            order: 1;
+        }
+    }
+}

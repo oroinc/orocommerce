@@ -43,6 +43,7 @@ class RequestProductItemType extends AbstractType
                     'currency_empty_value' => null,
                     'required' => true,
                     'label' => 'oro.rfp.requestproductitem.price.label',
+                    'hide_currency' => true,
                     'validation_groups' => ['Optional'],
                 ]
             )

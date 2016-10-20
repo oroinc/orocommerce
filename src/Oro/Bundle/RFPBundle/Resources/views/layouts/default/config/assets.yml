@@ -1,3 +1,4 @@
 styles:
     inputs:
+        - 'bundles/ororfp/default/scss/variables/entity-select-btn-config.scss'
         - 'bundles/ororfp/default/scss/styles.scss'

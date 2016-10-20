@@ -1,4 +1,6 @@
 .entity-select-btn {
+    padding: $entity-select-btn-padding;
+
     background: get-color('additional', 'ultra');
 
     line-height: 1;
