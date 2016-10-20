@@ -72,7 +72,7 @@ class ShoppingListRepositoryTest extends WebTestCase
 
     public function testFindByUser()
     {
-        $shoppingLists = $this->getRepository()->findByUser($this->accountUser, ['list.updatedAt' => 'asc']);
+        $shoppingLists = $this->getRepository()->findByUser($this->accountUser, ['list.updatedAt' => 'ASC']);
         $this->assertTrue(count($shoppingLists) > 0);
         /** @var ShoppingList $secondShoppingList */
         $shoppingList = array_shift($shoppingLists);
