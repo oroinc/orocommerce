@@ -24,6 +24,9 @@ class UPSTransport extends Transport
     const UNIT_OF_WEIGHT_KGS = 'KGS';
     const UNIT_OF_WEIGHT_LBS = 'LBS';
 
+    const UNIT_OF_LENGTH_INCH = 'IN';
+    const UNIT_OF_LENGTH_CM = 'CM';
+
     /**
      * @var string
      *
