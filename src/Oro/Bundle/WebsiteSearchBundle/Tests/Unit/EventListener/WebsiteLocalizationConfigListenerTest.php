@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\EventListener;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\WebsiteLocalizationConfigListener;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class WebsiteLocalizationConfigListenerTest extends \PHPUnit_Framework_TestCase
 {
