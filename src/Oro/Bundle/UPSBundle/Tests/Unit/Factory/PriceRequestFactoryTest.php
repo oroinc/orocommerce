@@ -5,8 +5,6 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Method;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
@@ -19,15 +17,19 @@ use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
+use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
+use Oro\Bundle\UPSBundle\Provider\UnitsMapper;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
+
     /**
      * @var UPSTransport|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -44,6 +46,16 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
+     * @var MeasureUnitConversion|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $measureUnitConversion;
+
+    /**
+     * @var UnitsMapper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $unitsMapper;
+
+    /**
      * @var PriceRequestFactory
      */
     protected $priceRequestFactory;
@@ -55,7 +67,6 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
 
         $this->shippingService = $this->getMock(ShippingService::class);
-
 
         $this->transport = $this->getEntity(
             UPSTransport::class,
@@ -72,7 +83,24 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->priceRequestFactory = new PriceRequestFactory($this->registry);
+        $this->measureUnitConversion = $this->getMockBuilder(MeasureUnitConversion::class)
+            ->disableOriginalConstructor()->getMock();
+        $this->measureUnitConversion->expects(static::any())->method('convert')->willReturnCallback(
+            function () {
+                $args = func_get_args();
+                return $args[0];
+            }
+        );
+
+        $this->unitsMapper = $this->getMockBuilder(UnitsMapper::class)
+            ->disableOriginalConstructor()->getMock();
+        $this->unitsMapper->expects(static::any())->method('getShippingUnitCode')->willReturn('lbs');
+
+        $this->priceRequestFactory = new PriceRequestFactory(
+            $this->registry,
+            $this->measureUnitConversion,
+            $this->unitsMapper
+        );
     }
 
     /**
@@ -181,8 +209,7 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
                 'productWeight' => 50,
                 'unitOfWeight' => UPSTransport::UNIT_OF_WEIGHT_LBS,
                 'expectedPackages' => [
-                    $this->createPackage(14, 14, 14, 100, UPSTransport::UNIT_OF_WEIGHT_LBS),
-                    $this->createPackage(7, 7, 7, 50, UPSTransport::UNIT_OF_WEIGHT_LBS),
+                    $this->createPackage(21, 21, 21, 150, UPSTransport::UNIT_OF_WEIGHT_LBS),
                 ]
             ],
             'OnePackage-KGS' => [
@@ -294,16 +321,14 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
         $productsParamsByUnitReflection = self::getMethod('getProductsParamsByUnit');
         $productsByUnit = $productsParamsByUnitReflection->invokeArgs(
             $this->priceRequestFactory,
-            [[$lineItem]]
+            [[$lineItem], 'kg']
         );
-
 
         $this->assertCount(1, $productsByUnit);
         $this->assertArrayHasKey('IN', $productsByUnit);
-        $this->assertArrayHasKey('KG', $productsByUnit['IN']);
-        $this->assertCount(1, $productsByUnit['IN']['KG']);
+        $this->assertCount(1, $productsByUnit['IN']);
 
-        $productByUnit = reset($productsByUnit['IN']['KG']);
+        $productByUnit = reset($productsByUnit['IN']);
 
         $this->assertEquals('inch', $productByUnit['dimensionUnit']);
         $this->assertEquals(9, $productByUnit['dimensionHeight']);
@@ -323,7 +348,6 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
      */
     protected function createPackage($length, $width, $height, $weight, $unitOfWeight)
     {
-
         $expectedPackage = new Package();
         $expectedPackage
             ->setPackagingTypeCode('00')
