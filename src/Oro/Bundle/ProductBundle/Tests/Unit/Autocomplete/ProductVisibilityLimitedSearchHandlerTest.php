@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Autocomplete;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 
-
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -42,7 +41,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
     const TEST_FIRST_RESULT = 30;
     const TEST_MAX_RESULTS = 10;
     const TEST_BACKEND_PREFIX = '/admin';
-    const TEST_RESULTS = [1, 2, 3, 4];
+    const TEST_RESULTS = array(1, 2, 3, 4);
 
     /**
      * @var array
@@ -117,6 +116,11 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
      * @var Result|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $results;
+
+    /**
+     * @var FrontendHelper
+     */
+    protected $frontendHelper;
 
     /**
      * @var SearchRepository|\PHPUnit_Framework_MockObject_MockObject
@@ -211,10 +215,8 @@ class ProductVisibilityLimitedSearchHandlerTest extends \PHPUnit_Framework_TestC
             ->disableOriginalConstructor()
             ->setMethods([
                 'addSelect', 'getSelect', 'getSelectAliases',
-                'getQuery', 'getSelectDataFields', 'setFrom',
-                'addWhere', 'setOrderBy', 'getSortBy',
-                'execute', 'getResult', 'getTotalCount',
-                'getSortOrder', 'setFirstResult', 'getFirstResult',
+                'getSelectDataFields',
+                'setOrderBy', 'setFirstResult', 'getFirstResult',
                 'setMaxResults', 'getMaxResults' ])
             ->getMock();
         $this->searchQuery->method('getResult')->withAnyParameters()->willReturn($this->results);

@@ -30,8 +30,6 @@ class ProductRepositoryTest extends \PHPUnit_Framework_TestCase
     public function testGetProductSearchQuery()
     {
         $entityClass = 'Oro\Bundle\ProductBundle\Entity\Product';
-        $entityAlias = 'product_WEBSITE_ID';
-
         $query = $this->getMock(SearchQueryInterface::class);
 
         $this->queryFactory->expects($this->atLeastOnce())

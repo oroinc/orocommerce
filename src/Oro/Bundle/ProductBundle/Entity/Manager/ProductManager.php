@@ -43,8 +43,8 @@ class ProductManager
     }
 
     /**
-     * @param SearchQueryInterface $query
-     * @return SearchQueryInterface
+     * @param Query $query
+     * @return Query
      */
     public function restrictSearchQuery(Query $query)
     {
