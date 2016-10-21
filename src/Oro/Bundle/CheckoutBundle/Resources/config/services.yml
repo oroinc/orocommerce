@@ -402,5 +402,4 @@ services:
             - '@oro_action.context_accessor'
             - '@oro_checkout.mapper.order_mapper'
         tags:
-            - { name: oro_workflow.action, alias: create_order }
             - { name: oro_action.action, alias: create_order }
