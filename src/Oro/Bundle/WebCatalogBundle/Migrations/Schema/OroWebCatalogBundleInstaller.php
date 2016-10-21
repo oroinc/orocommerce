@@ -103,9 +103,8 @@ class OroWebCatalogBundleInstaller implements
     {
         $table = $schema->createTable('oro_web_catalog_content_node');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
-        $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
+        $table->addColumn('web_catalog_id', 'integer', []);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('materialized_path', 'string', ['notnull' => false, 'length' => 1024]);
         $table->addColumn('tree_left', 'integer', []);
@@ -197,16 +196,10 @@ class OroWebCatalogBundleInstaller implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_organization'),
-            ['organization_id'],
+            $schema->getTable('oro_web_catalog'),
+            ['web_catalog_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_business_unit'),
-            ['business_unit_owner_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 

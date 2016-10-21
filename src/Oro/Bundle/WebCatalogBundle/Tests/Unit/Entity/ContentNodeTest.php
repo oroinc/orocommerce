@@ -6,6 +6,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ContentNodeTest extends \PHPUnit_Framework_TestCase
@@ -16,6 +17,7 @@ class ContentNodeTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertPropertyAccessors(new ContentNode(), [
             ['parentNode', new ContentNode()],
+            ['webCatalog', new WebCatalog()],
             ['name', 'Node name'],
             ['materializedPath', 'path/to/node'],
             ['left', 30],

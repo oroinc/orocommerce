@@ -114,13 +114,12 @@ class Page extends ExtendPage implements DatesAwareInterface
     protected $slugs;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function __construct()
     {
         parent::__construct();
 
-        $this->slugs      = new ArrayCollection();
         $this->slugs = new ArrayCollection();
     }
 
@@ -188,8 +187,10 @@ class Page extends ExtendPage implements DatesAwareInterface
         if (!$this->slugs->contains($slug)) {
             $this->slugs->add($slug);
         }
+
         return $this;
     }
+
     /**
      * @param LocalizedFallbackValue $slug
      *
@@ -200,6 +201,7 @@ class Page extends ExtendPage implements DatesAwareInterface
         if ($this->slugs->contains($slug)) {
             $this->slugs->removeElement($slug);
         }
+
         return $this;
     }
 

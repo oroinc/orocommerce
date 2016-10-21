@@ -61,12 +61,12 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
     {
         /** Tables generation **/
         $this->createOroCmsPageTable($schema);
-        $this->createOroCmsPageToSlugTable($schema);
+        $this->createOroCmsPageSlugTable($schema);
         $this->createOroCmsLoginPageTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroCmsPageForeignKeys($schema);
-        $this->addOroCmsPageToSlugForeignKeys($schema);
+        $this->addOroCmsPageSlugForeignKeys($schema);
 
         $this->addImageAssociations($schema);
         
@@ -83,41 +83,11 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
         $table = $schema->createTable('oro_cms_page');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
-        $table->addColumn('current_slug_id', 'integer', ['notnull' => false]);
-
-//@TODO will be handled in BB-4943
-//        $table->addColumn('parent_id', 'integer', ['notnull' => false]);
-
         $table->addColumn('title', 'string', ['length' => 255]);
-
-        //@TODO will be handled in BB-4943
-        $table->addColumn('content', 'text', ['notnull' => false]);
-        //$table->addColumn('content', 'text', []);
-
-//@TODO will be handled in BB-4943
-//        $table->addColumn('tree_left', 'integer', []);
-//        $table->addColumn('tree_level', 'integer', []);
-//        $table->addColumn('tree_right', 'integer', []);
-//        $table->addColumn('tree_root', 'integer', ['notnull' => false]);
-
+        $table->addColumn('content', 'text', []);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
-        $table->addUniqueIndex(['current_slug_id']);
         $table->setPrimaryKey(['id']);
-    }
-
-    /**
-     * Create oro_cms_page_to_slug table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroCmsPageToSlugTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_cms_page_to_slug');
-        $table->addColumn('page_id', 'integer', []);
-        $table->addColumn('slug_id', 'integer', []);
-        $table->setPrimaryKey(['page_id', 'slug_id']);
-        $table->addUniqueIndex(['slug_id']);
     }
 
     /**
@@ -133,41 +103,6 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
             ['organization_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_redirect_slug'),
-            ['current_slug_id'],
-            ['id'],
-            ['onDelete' => null, 'onUpdate' => null]
-        );
-//@TODO will be handled in BB-4943
-//        $table->addForeignKeyConstraint(
-//            $schema->getTable('oro_cms_page'),
-//            ['parent_id'],
-//            ['id'],
-//            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-//        );
-    }
-
-    /**
-     * Add oro_cms_page_to_slug foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroCmsPageToSlugForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_cms_page_to_slug');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_cms_page'),
-            ['page_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_redirect_slug'),
-            ['slug_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -205,6 +140,42 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
             'backgroundImage',
             [],
             self::MAX_BACKGROUND_IMAGE_SIZE_IN_MB
+        );
+    }
+
+    /**
+     * Create oro_cms_page_slug table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroCmsPageSlugTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_cms_page_slug');
+        $table->addColumn('page_id', 'integer', []);
+        $table->addColumn('localized_value_id', 'integer', []);
+        $table->setPrimaryKey(['page_id', 'localized_value_id']);
+        $table->addUniqueIndex(['localized_value_id']);
+    }
+
+    /**
+     * Add oro_cms_page_slug foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroCmsPageSlugForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_cms_page_slug');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_cms_page'),
+            ['page_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_fallback_localization_val'),
+            ['localized_value_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
