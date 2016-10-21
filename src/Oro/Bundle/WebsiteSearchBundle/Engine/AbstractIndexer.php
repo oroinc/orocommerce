@@ -179,10 +179,10 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     protected function getWebsiteIdsToIndex(array $context)
     {
-        if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
-            return is_array($context[self::CONTEXT_WEBSITE_ID_KEY])
-                ? $context[self::CONTEXT_WEBSITE_ID_KEY]
-                : [$context[self::CONTEXT_WEBSITE_ID_KEY]];
+        if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])
+            && count((array)$context[self::CONTEXT_WEBSITE_ID_KEY]) > 0
+        ) {
+            return (array)$context[self::CONTEXT_WEBSITE_ID_KEY];
         }
 
         /** @var WebsiteRepository $websiteRepository */
