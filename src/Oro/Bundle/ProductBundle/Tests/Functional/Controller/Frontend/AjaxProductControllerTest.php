@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -18,11 +20,13 @@ class AjaxProductControllerTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
 
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
-            ]
-        );
+        $this->loadFixtures([
+            LoadProductData::class,
+            LoadProductVisibilityData::class
+        ]);
+
+        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 
     /**
@@ -35,7 +39,7 @@ class AjaxProductControllerTest extends WebTestCase
         $this->client->request(
             'POST',
             $this->getUrl('oro_product_frontend_ajax_names_by_skus'),
-            ['skus'=> $skus]
+            ['skus' => $skus]
         );
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
@@ -48,7 +52,7 @@ class AjaxProductControllerTest extends WebTestCase
     {
         return [
             'restricted' => [
-                'skus' => [
+                'skus'         => [
                     'not a sku',
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -61,8 +65,8 @@ class AjaxProductControllerTest extends WebTestCase
                     LoadProductData::PRODUCT_3 => ['name' => 'product.3.names.default'],
                 ],
             ],
-            'allowed' => [
-                'skus' => [
+            'allowed'    => [
+                'skus'         => [
                     'not a sku',
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,

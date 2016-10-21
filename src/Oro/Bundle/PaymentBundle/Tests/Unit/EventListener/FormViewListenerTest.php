@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentBundle\EventListener\FormViewListener;
 
@@ -103,7 +103,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroAccountBundle:Account', $accountId)
+            ->with('OroCustomerBundle:Account', $accountId)
             ->willReturn($account);
 
         $this->doctrineHelper->expects($this->any())
@@ -197,7 +197,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroAccountBundle:AccountGroup', $accountGroupId)
+            ->with('OroCustomerBundle:AccountGroup', $accountGroupId)
             ->willReturn($accountGroup);
 
         $this->doctrineHelper->expects($this->once())

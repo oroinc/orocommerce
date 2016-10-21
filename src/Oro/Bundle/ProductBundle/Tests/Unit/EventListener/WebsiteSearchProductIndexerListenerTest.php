@@ -153,6 +153,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
 
         $expected[$product->getId()] = [
             'sku' => 'sku123',
+            'sku_uppercase' => 'SKU123',
             'status' => Product::STATUS_ENABLED,
             'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
             'title' => [
