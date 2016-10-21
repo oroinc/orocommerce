@@ -3,10 +3,22 @@
 namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 
 abstract class AbstractVisibilityRepository extends EntityRepository
 {
+    /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
+    /**
+     * @var InsertFromSelectQueryExecutor
+     */
+    protected $insertExecutor;
+
     /**
      * @param Scope $scope
      * @return int
@@ -23,5 +35,21 @@ abstract class AbstractVisibilityRepository extends EntityRepository
 
         return $qb->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param ScopeManager $scopeManager
+     */
+    public function setScopeManager($scopeManager)
+    {
+        $this->scopeManager = $scopeManager;
+    }
+
+    /**
+     * @param InsertFromSelectQueryExecutor $insertExecutor
+     */
+    public function setInsertExecutor($insertExecutor)
+    {
+        $this->insertExecutor = $insertExecutor;
     }
 }

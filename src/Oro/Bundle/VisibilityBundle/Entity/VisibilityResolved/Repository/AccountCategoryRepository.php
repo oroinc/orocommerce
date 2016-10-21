@@ -215,10 +215,7 @@ class AccountCategoryRepository extends EntityRepository
             ->execute();
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     */
-    public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor)
+    public function insertStaticValues()
     {
         $visibilityCondition = sprintf(
             "CASE WHEN acv.visibility = '%s' THEN %s ELSE %s END",
@@ -242,17 +239,14 @@ class AccountCategoryRepository extends EntityRepository
                 [AccountCategoryVisibility::VISIBLE, AccountCategoryVisibility::HIDDEN]
             );
 
-        $insertExecutor->execute(
+        $this->insertExecutor->execute(
             $this->getClassName(),
             ['sourceCategoryVisibility', 'category', 'scope', 'visibility', 'source'],
             $queryBuilder
         );
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     */
-    public function insertCategoryValues(InsertFromSelectQueryExecutor $insertExecutor)
+    public function insertCategoryValues()
     {
         $visibilityCondition = sprintf(
             'CASE WHEN cvr.visibility IS NOT NULL THEN cvr.visibility ELSE %s END',
@@ -277,7 +271,7 @@ class AccountCategoryRepository extends EntityRepository
             ->where('acv.visibility = :category')
             ->setParameter('category', AccountCategoryVisibility::CATEGORY);
 
-        $insertExecutor->execute(
+        $this->insertExecutor->execute(
             $this->getClassName(),
             ['sourceCategoryVisibility', 'category', 'scope', 'visibility', 'source'],
             $queryBuilder
@@ -350,12 +344,10 @@ class AccountCategoryRepository extends EntityRepository
     }
 
     /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
      * @param array $visibilityIds
      * @param int $visibility
      */
     public function insertParentCategoryValues(
-        InsertFromSelectQueryExecutor $insertExecutor,
         array $visibilityIds,
         $visibility
     ) {
@@ -378,7 +370,7 @@ class AccountCategoryRepository extends EntityRepository
 
         foreach (array_chunk($visibilityIds, CategoryRepository::INSERT_BATCH_SIZE) as $ids) {
             $queryBuilder->setParameter('visibilityIds', $ids);
-            $insertExecutor->execute(
+            $this->insertExecutor->execute(
                 $this->getClassName(),
                 ['sourceCategoryVisibility', 'category', 'visibility', 'source', 'scope'],
                 $queryBuilder

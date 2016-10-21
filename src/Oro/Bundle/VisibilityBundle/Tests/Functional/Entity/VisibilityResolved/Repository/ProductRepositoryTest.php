@@ -19,8 +19,6 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResol
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\ResolvedEntityRepositoryTestTrait;
-use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @dbIsolation
@@ -41,11 +39,6 @@ class ProductRepositoryTest extends WebTestCase
     protected $repository;
 
     /**
-     * @var Website
-     */
-    protected $website;
-
-    /**
      * @var ScopeManager
      */
     protected $scopeManager;
@@ -54,13 +47,13 @@ class ProductRepositoryTest extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->website = $this->getWebsiteRepository()->getDefaultWebsite();
 
         $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
 
         $this->entityManager = $this->getResolvedVisibilityManager();
-        $this->repository = $this->entityManager
-            ->getRepository(ProductVisibilityResolved::class);
+        $this->repository = $this->getContainer()
+            ->get('oro_visibility.product_repository_holder')
+            ->getRepository();
 
         $this->loadFixtures([LoadProductVisibilityData::class]);
     }
@@ -107,7 +100,7 @@ class ProductRepositoryTest extends WebTestCase
     {
         $this->repository->clearTable();
 
-        $this->repository->insertStatic($this->getInsertFromSelectExecutor());
+        $this->repository->insertStatic();
         $actual = $this->getActualArray();
 
         $this->assertCount(3, $actual);
@@ -127,7 +120,7 @@ class ProductRepositoryTest extends WebTestCase
         $scope = $this->getScope();
         $categoryScope = $this->scopeManager->findOrCreate('category_visibility', $scope);
 
-        $this->repository->insertByCategory($this->getInsertFromSelectExecutor(), $scope, $categoryScope);
+        $this->repository->insertByCategory($scope, $categoryScope);
 
         $actual = $this->getActualArray();
 
@@ -140,8 +133,8 @@ class ProductRepositoryTest extends WebTestCase
         $scope = $this->getScope();
         $categoryScope = $this->scopeManager->findOrCreate('category_visibility', $scope);
         $this->repository->clearTable();
-        $this->repository->insertStatic($this->getInsertFromSelectExecutor());
-        $this->repository->insertByCategory($this->getInsertFromSelectExecutor(), $scope, $categoryScope);
+        $this->repository->insertStatic();
+        $this->repository->insertByCategory($scope, $categoryScope);
 
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
@@ -321,16 +314,6 @@ class ProductRepositoryTest extends WebTestCase
     }
 
     /**
-     * @return WebsiteRepository
-     */
-    protected function getWebsiteRepository()
-    {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass(Website::class)
-            ->getRepository(Website::class);
-    }
-
-    /**
      * @return InsertFromSelectQueryExecutor
      */
     protected function getInsertFromSelectExecutor()
@@ -346,7 +329,6 @@ class ProductRepositoryTest extends WebTestCase
         $category = $this->getCategoryByProduct($product);
         $this->repository->deleteByProduct($product);
         $this->repository->insertByProduct(
-            $this->getInsertFromSelectExecutor(),
             $product,
             ProductVisibilityResolved::VISIBILITY_HIDDEN,
             $this->getScope(),
@@ -364,7 +346,6 @@ class ProductRepositoryTest extends WebTestCase
         $category = $this->getCategoryByProduct($product);
         $this->repository->deleteByProduct($product);
         $this->repository->insertByProduct(
-            $this->getInsertFromSelectExecutor(),
             $product,
             ProductVisibilityResolved::VISIBILITY_VISIBLE,
             $this->getScope(),
@@ -391,6 +372,6 @@ class ProductRepositoryTest extends WebTestCase
      */
     protected function getScope()
     {
-        return $this->getContainer()->get('oro_scope.scope_manager')->findOrCreate('product_visibility');
+        return $this->getContainer()->get('oro_scope.scope_manager')->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
     }
 }

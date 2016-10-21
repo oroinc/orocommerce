@@ -104,7 +104,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         }
 
         $this->getRepository()->deleteByProduct($product);
-        $this->getRepository()->insertByProduct($product, $this->insertFromSelectQueryExecutor, $category);
+        $this->getRepository()->insertByProduct($product, $category);
     }
 
     /**
@@ -116,8 +116,8 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         try {
             $repository = $this->getRepository();
             $repository->clearTable($scope);
-            $repository->insertStatic($this->insertFromSelectQueryExecutor, $scope);
-            $repository->insertByCategory($this->insertFromSelectQueryExecutor, $scope);
+            $repository->insertStatic($scope);
+            $repository->insertByCategory($scope);
             $this->getManager()->commit();
         } catch (\Exception $exception) {
             $this->getManager()->rollback();
@@ -130,9 +130,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
      */
     protected function getRepository()
     {
-        return $this
-            ->getManager()
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
+        return $this->repositoryHolder->getRepository();
     }
 
     /**

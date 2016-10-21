@@ -76,7 +76,7 @@ class ProductVisibilityListenerTest extends WebTestCase
 
     public function testChangeProductVisibilityToHidden()
     {
-        $scope = $this->getScopeManager()->findOrCreate('product_visibility');
+        $scope = $this->getScopeManager()->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
         $entityManager = $this->getManagerForProductVisibility();
         $visibility = $entityManager->getRepository(ProductVisibility::class)->findOneBy(
             ['product' => $this->product, 'scope' => $scope]
@@ -190,7 +190,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeAccountGroupProductVisibilityToHidden()
     {
         $scope = $this->getScopeManager()->findOrCreate(
-            'account_group_product_visibility',
+            AccountGroupProductVisibility::VISIBILITY_TYPE,
             ['accountGroup' => $this->accountGroup]
         );
         // Create new account group product visibility entity

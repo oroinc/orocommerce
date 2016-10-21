@@ -4,15 +4,17 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\ClassUtils;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -137,7 +139,7 @@ class DefaultVisibilityListenerTest extends WebTestCase
                 'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility',
                 'parameters' => [
                     'product' => 'product',
-                    'scope' => ['product_visibility', []]
+                    'scope' => [ProductVisibility::VISIBILITY_TYPE, []]
                 ],
             ],
             'account product visibility' => [
@@ -151,7 +153,7 @@ class DefaultVisibilityListenerTest extends WebTestCase
                 'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility',
                 'parameters' => [
                     'product' => 'product',
-                    'scope' => ['account_group_product_visibility', ['accountGroup']]
+                    'scope' => [AccountGroupProductVisibility::VISIBILITY_TYPE, ['accountGroup']]
                 ],
 
             ],

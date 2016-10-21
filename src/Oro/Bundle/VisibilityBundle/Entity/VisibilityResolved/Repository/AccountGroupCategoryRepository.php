@@ -88,10 +88,7 @@ class AccountGroupCategoryRepository extends EntityRepository
             ->execute();
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     */
-    public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor)
+    public function insertStaticValues()
     {
         $visibilityCondition = sprintf(
             "CASE WHEN agcv.visibility = '%s' THEN %s ELSE %s END",
@@ -112,7 +109,7 @@ class AccountGroupCategoryRepository extends EntityRepository
             ->where('agcv.visibility != :parentCategory')
             ->setParameter('parentCategory', AccountGroupCategoryVisibility::PARENT_CATEGORY);
 
-        $insertExecutor->execute(
+        $this->insertExecutor->execute(
             $this->getClassName(),
             ['sourceCategoryVisibility', 'category', 'scope', 'visibility', 'source'],
             $queryBuilder
@@ -120,12 +117,10 @@ class AccountGroupCategoryRepository extends EntityRepository
     }
 
     /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
      * @param array $visibilityIds
      * @param int $visibility
      */
     public function insertParentCategoryValues(
-        InsertFromSelectQueryExecutor $insertExecutor,
         array $visibilityIds,
         $visibility
     ) {
@@ -155,7 +150,7 @@ class AccountGroupCategoryRepository extends EntityRepository
 
         foreach (array_chunk($visibilityIds, CategoryRepository::INSERT_BATCH_SIZE) as $ids) {
             $queryBuilder->setParameter('visibilityIds', $ids);
-            $insertExecutor->execute(
+            $this->insertExecutor->execute(
                 $this->getClassName(),
                 ['sourceCategoryVisibility', 'category', 'visibility', 'source', 'scope'],
                 $queryBuilder

@@ -114,7 +114,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
         }
 
         $this->getRepository()->deleteByProduct($product);
-        $this->getRepository()->insertByProduct($product, $this->insertFromSelectQueryExecutor, $category);
+        $this->getRepository()->insertByProduct($product, $category);
     }
 
     /**
@@ -126,8 +126,8 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
         try {
             $repository = $this->getRepository();
             $repository->clearTable($scope);
-            $repository->insertStatic($this->insertFromSelectQueryExecutor, $scope);
-            $repository->insertByCategory($this->insertFromSelectQueryExecutor, $scope);
+            $repository->insertStatic($scope);
+            $repository->insertByCategory($scope);
             $this->getManager()->commit();
         } catch (\Exception $exception) {
             $this->getManager()->rollback();
@@ -140,9 +140,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
      */
     protected function getRepository()
     {
-        return $this->registry
-            ->getManagerForClass($this->cacheClass)
-            ->getRepository($this->cacheClass);
+        return $this->repositoryHolder->getRepository();
     }
 
     /**

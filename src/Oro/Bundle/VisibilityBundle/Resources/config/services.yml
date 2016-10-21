@@ -111,7 +111,6 @@ services:
         abstract: true
         arguments:
             - "@doctrine"
-            - "@oro_entity.orm.insert_from_select_query_executor"
             - "@oro_scope.scope_manager"
 
     oro_visibility.visibility.cache.product.account_group_product_resolved_cache_builder:
@@ -120,6 +119,7 @@ services:
         parent: oro_visibility.visibility.cache.product.cache_builder.abstract
         calls:
             - [setCacheClass, ['%oro_visibility.entity.account_group_product_visibility_resolved.class%']]
+            - [setRepositoryHolder, ['@oro_visibility.account_group_product_repository_holder']]
 
     oro_visibility.visibility.cache.product.account_product_resolved_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AccountProductResolvedCacheBuilder'
@@ -127,6 +127,7 @@ services:
         parent: oro_visibility.visibility.cache.product.cache_builder.abstract
         calls:
             - [setCacheClass, ['%oro_visibility.entity.account_product_visibility_resolved.class%']]
+            - [setRepositoryHolder, ['@oro_visibility.account_product_repository_holder']]
 
     oro_visibility.visibility.cache.product.product_resolved_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder'
@@ -135,6 +136,7 @@ services:
         calls:
             - [setCacheClass, ['%oro_visibility.entity.product_visibility_resolved.class%']]
             - [setScopeManager, ['@oro_scope.scope_manager']]
+            - [setRepositoryHolder, ['@oro_visibility.product_repository_holder']]
 
     oro_visibility.visibility.cache.product.cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CacheBuilder'
@@ -150,6 +152,7 @@ services:
         calls:
             - [setCacheClass, ['%oro_visibility.entity.account_group_category_visibility_resolved.class%']]
             - [setVisibilityChangeAccountSubtreeCacheBuilder, ["@oro_visibility.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder"]]
+            - [setCategoryVisibilityHolder, ['@oro_visibility.account_group_category_repository_holder']]
 
     oro_visibility.visibility.cache.product.category.account_category_resolved_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\AccountCategoryResolvedCacheBuilder'
@@ -158,6 +161,7 @@ services:
         calls:
             - [setCacheClass, ['%oro_visibility.entity.account_category_visibility_resolved.class%']]
             - [setVisibilityChangeAccountSubtreeCacheBuilder, ["@oro_visibility.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder"]]
+            - [setCategoryVisibilityHolder, ['@oro_visibility.account_category_repository_holder']]
 
     oro_visibility.visibility.cache.product.category.category_resolved_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CategoryResolvedCacheBuilder'
@@ -167,6 +171,7 @@ services:
             - [setCacheClass, ['%oro_visibility.entity.category_visibility_resolved.class%']]
             - [setVisibilityChangeCategorySubtreeCacheBuilder, ["@oro_visibility.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder"]]
             - [setPositionChangeCategorySubtreeCacheBuilder, ["@oro_visibility.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder"]]
+            - [setCategoryVisibilityRepositoryHolder, ['@oro_visibility.category_repository_holder']]
 
     oro_visibility.visibility.cache.product.category.cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CacheBuilder'
@@ -371,6 +376,52 @@ services:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
+
+    oro_visibility.product_repository:
+        class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository
+        parent: oro_entity.abstract_repository
+        arguments:
+            - Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved
+
+    oro_visibility.product_repository_holder:
+        class: Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder
+        arguments:
+            - '@oro_visibility.product_repository'
+        calls:
+            - [setScopeManager, ['@oro_scope.scope_manager']]
+            - [setInsertExecutor, ['@oro_entity.orm.insert_from_select_query_executor']]
+
+
+    oro_visibility.account_product_repository:
+        class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountProductRepository
+        parent: oro_entity.abstract_repository
+        arguments:
+            - Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved
+
+    oro_visibility.account_product_repository_holder:
+        class: Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder
+        arguments:
+            - '@oro_visibility.account_product_repository'
+        calls:
+            - [setScopeManager, ['@oro_scope.scope_manager']]
+            - [setInsertExecutor, ['@oro_entity.orm.insert_from_select_query_executor']]
+
+
+    oro_visibility.account_group_product_repository:
+        class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository
+        parent: oro_entity.abstract_repository
+        arguments:
+            - Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved
+
+    oro_visibility.account_group_product_repository_holder:
+        class: Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder
+        arguments:
+            - '@oro_visibility.account_group_product_repository'
+        calls:
+            - [setScopeManager, ['@oro_scope.scope_manager']]
+            - [setInsertExecutor, ['@oro_entity.orm.insert_from_select_query_executor']]
+
+
     oro_visibility.account_category_repository:
         class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository
         parent: oro_entity.abstract_repository
@@ -381,6 +432,21 @@ services:
         class: Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder
         arguments:
             - '@oro_visibility.account_category_repository'
+        calls:
+            - [setScopeManager, ['@oro_scope.scope_manager']]
+            - [setInsertExecutor, ['@oro_entity.orm.insert_from_select_query_executor']]
+
+
+    oro_visibility.category_repository:
+        class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository
+        parent: oro_entity.abstract_repository
+        arguments:
+            - Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved
+
+    oro_visibility.category_repository_holder:
+        class: Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder
+        arguments:
+            - '@oro_visibility.category_repository'
         calls:
             - [setScopeManager, ['@oro_scope.scope_manager']]
             - [setInsertExecutor, ['@oro_entity.orm.insert_from_select_query_executor']]

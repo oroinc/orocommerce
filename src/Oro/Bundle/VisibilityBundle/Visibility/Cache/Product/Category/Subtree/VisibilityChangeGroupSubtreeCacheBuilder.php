@@ -5,11 +5,12 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
 
 class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAwareSubtreeCacheBuilder
@@ -31,7 +32,8 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         $this->updateGroupCategoryVisibility($childCategoryIds, $visibility, $scope);
 
         $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
-        $productScopes = $this->scopeManager->findRelatedScopeIds('account_group_product_visibility', $scope);
+        $productScopes = $this->scopeManager
+            ->findRelatedScopeIds(AccountGroupProductVisibility::VISIBILITY_TYPE, $scope);
         $this->updateProductVisibilityByCategory($categoryIds, $visibility, $productScopes);
 
         $this->category = $category;

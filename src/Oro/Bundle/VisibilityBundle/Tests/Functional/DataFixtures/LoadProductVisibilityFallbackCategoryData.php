@@ -6,10 +6,10 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -125,7 +125,7 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
      */
     protected function createProductVisibility(Product $product)
     {
-        $scope = $this->scopeManager->findOrCreate('product_visibility');
+        $scope = $this->scopeManager->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
         $productVisibility = (new ProductVisibility())
             ->setProduct($product)
             ->setScope($scope)
@@ -141,7 +141,7 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
     protected function createAccountGroupProductVisibilityResolved(AccountGroup $accountGroup, Product $product)
     {
         $scope = $this->scopeManager->findOrCreate(
-            'account_group_product_visibility',
+            AccountGroupProductVisibility::VISIBILITY_TYPE,
             ['accountGroup' => $accountGroup]
         );
         $accountGroupVisibility = (new AccountGroupProductVisibility())

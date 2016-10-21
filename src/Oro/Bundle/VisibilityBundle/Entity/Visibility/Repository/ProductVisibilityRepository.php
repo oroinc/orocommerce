@@ -6,19 +6,28 @@ use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 
 class ProductVisibilityRepository extends AbstractProductVisibilityRepository
 {
     /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
+    /**
+     * @var InsertFromSelectQueryExecutor
+     */
+    protected $insertExecutor;
+
+    /**
      * Update to 'config' ProductVisibility for products without category with fallback to 'category'.
      *
-     * @param InsertFromSelectQueryExecutor $executor
      * @param Scope $scope
      * @param Product|null $product
      */
     public function setToDefaultWithoutCategory(
-        InsertFromSelectQueryExecutor $executor,
         Scope $scope,
         Product $product = null
     ) {
@@ -56,10 +65,26 @@ class ProductVisibilityRepository extends AbstractProductVisibilityRepository
                 ->setParameter('product', $product);
         }
 
-        $executor->execute(
+        $this->insertExecutor->execute(
             'OroVisibilityBundle:Visibility\ProductVisibility',
             ['product', 'scope', 'visibility'],
             $qb
         );
+    }
+
+    /**
+     * @param ScopeManager $scopeManager
+     */
+    public function setScopeManager($scopeManager)
+    {
+        $this->scopeManager = $scopeManager;
+    }
+
+    /**
+     * @param InsertFromSelectQueryExecutor $insertExecutor
+     */
+    public function setInsertExecutor($insertExecutor)
+    {
+        $this->insertExecutor = $insertExecutor;
     }
 }

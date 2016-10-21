@@ -7,9 +7,8 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\UnitOfWork;
-
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
@@ -29,11 +28,6 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     protected $registry;
 
     /**
-     * @var InsertFromSelectQueryExecutor
-     */
-    protected $insertFromSelectQueryExecutor;
-
-    /**
      * @var string
      */
     protected $cacheClass;
@@ -44,17 +38,19 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     protected $visibilityFromConfig;
 
     /**
+     * @var RepositoryHolder
+     */
+    protected $repositoryHolder;
+
+    /**
      * @param ManagerRegistry $registry
-     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      * @param ScopeManager $scopeManager
      */
     public function __construct(
         ManagerRegistry $registry,
-        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
         ScopeManager $scopeManager
     ) {
         $this->registry = $registry;
-        $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
         $this->scopeManager = $scopeManager;
     }
 
@@ -167,5 +163,13 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
         }
 
         return $indexedVisibilities;
+    }
+
+    /**
+     * @param RepositoryHolder $repositoryHolder
+     */
+    public function setRepositoryHolder($repositoryHolder)
+    {
+        $this->repositoryHolder = $repositoryHolder;
     }
 }

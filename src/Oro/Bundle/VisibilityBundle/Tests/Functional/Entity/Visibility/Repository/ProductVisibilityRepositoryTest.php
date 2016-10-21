@@ -50,7 +50,8 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
         $category = $this->getReference($categoryName);
         $this->deleteCategory($category);
         $queryHelper = static::getContainer()->get('oro_entity.orm.insert_from_select_query_executor');
-        $scopes = static::getContainer()->get('oro_scope.scope_manager')->findRelatedScopes('product_visibility');
+        $scopes = static::getContainer()->get('oro_scope.scope_manager')
+            ->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
         foreach ($scopes as $scope) {
             $this->repository->setToDefaultWithoutCategory($queryHelper, $scope);
             $actual = $this->getProductsByVisibilitiesScope($scope);

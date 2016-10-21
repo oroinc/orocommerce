@@ -452,7 +452,7 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         }
 
         $this->repository->clearTable();
-        $this->repository->insertCategoryValues($this->getInsertExecutor());
+        $this->repository->insertCategoryValues();
 
         $resolvedVisibilities = $this->getResolvedVisibilities();
 
@@ -493,7 +493,6 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $visibility = CategoryVisibilityResolved::VISIBILITY_VISIBLE;
         $this->repository->clearTable();
         $this->repository->insertParentCategoryValues(
-            $this->getInsertExecutor(),
             array_merge($parentCategoryVisibilities, $staticCategoryVisibilities),
             $visibility
         );

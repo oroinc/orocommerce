@@ -514,7 +514,6 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $visibility = CategoryVisibilityResolved::VISIBILITY_VISIBLE;
         $this->repository->clearTable();
         $this->repository->insertParentCategoryValues(
-            $this->getInsertExecutor(),
             array_merge($parentCategoryVisibilities, $staticCategoryVisibilities),
             $visibility
         );

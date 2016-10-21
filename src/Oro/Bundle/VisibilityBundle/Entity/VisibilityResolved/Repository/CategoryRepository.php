@@ -7,6 +7,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 
@@ -21,6 +22,16 @@ class CategoryRepository extends EntityRepository
     use BasicOperationRepositoryTrait;
 
     const INSERT_BATCH_SIZE = 500;
+
+    /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
+    /**
+     * @var InsertFromSelectQueryExecutor
+     */
+    protected $insertExecutor;
 
     /**
      * @param Category $category
@@ -99,10 +110,9 @@ class CategoryRepository extends EntityRepository
     }
 
     /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
      * @param Scope $scope
      */
-    public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor, Scope $scope)
+    public function insertStaticValues(Scope $scope)
     {
         $visibilityCondition = sprintf(
             "CASE WHEN cv.visibility = '%s' THEN %s ELSE %s END",
@@ -123,7 +133,7 @@ class CategoryRepository extends EntityRepository
             ->where('cv.visibility != :config')
             ->setParameter('config', CategoryVisibility::CONFIG);
 
-        $insertExecutor->execute(
+        $this->insertExecutor->execute(
             $this->getClassName(),
             ['sourceCategoryVisibility', 'category', 'visibility', 'source', 'scope'],
             $queryBuilder
@@ -131,13 +141,11 @@ class CategoryRepository extends EntityRepository
     }
 
     /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
      * @param array $categoryIds
      * @param int $visibility
      * @param Scope $scope
      */
     public function insertParentCategoryValues(
-        InsertFromSelectQueryExecutor $insertExecutor,
         array $categoryIds,
         $visibility,
         Scope $scope
@@ -166,7 +174,7 @@ class CategoryRepository extends EntityRepository
 
         foreach (array_chunk($categoryIds, self::INSERT_BATCH_SIZE) as $ids) {
             $queryBuilder->setParameter('categoryIds', $ids);
-            $insertExecutor->execute(
+            $this->insertExecutor->execute(
                 $this->getClassName(),
                 ['category', 'visibility', 'source', 'scope'],
                 $queryBuilder
@@ -214,5 +222,21 @@ class CategoryRepository extends EntityRepository
             ->setParameter('categoryIds', $categoryIds);
 
         $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param ScopeManager $scopeManager
+     */
+    public function setScopeManager($scopeManager)
+    {
+        $this->scopeManager = $scopeManager;
+    }
+
+    /**
+     * @param InsertFromSelectQueryExecutor $insertExecutor
+     */
+    public function setInsertExecutor($insertExecutor)
+    {
+        $this->insertExecutor = $insertExecutor;
     }
 }

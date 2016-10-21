@@ -4,7 +4,6 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -21,11 +20,10 @@ class ProductRepository extends AbstractVisibilityRepository
     use BasicOperationRepositoryTrait;
 
     /**
-     * @param InsertFromSelectQueryExecutor $executor
      * @param Scope $scope
      * @param Scope $categoryScope
      */
-    public function insertByCategory(InsertFromSelectQueryExecutor $executor, Scope $scope, Scope $categoryScope)
+    public function insertByCategory(Scope $scope, Scope $categoryScope)
     {
 
         $qb = $this->getEntityManager()
@@ -57,7 +55,7 @@ class ProductRepository extends AbstractVisibilityRepository
         ->setParameter('scope', $scope)
         ->setParameter('cat_scope', $categoryScope);
 
-        $executor->execute(
+        $this->insertExecutor->execute(
             $this->getClassName(),
             ['scope', 'product', 'visibility', 'source', 'category'],
             $qb
@@ -65,12 +63,10 @@ class ProductRepository extends AbstractVisibilityRepository
     }
 
     /**
-     * @param InsertFromSelectQueryExecutor $executor
      * @param Scope|null $scope
      * @param Product|null $product
      */
     public function insertStatic(
-        InsertFromSelectQueryExecutor $executor,
         Scope $scope = null,
         $product = null
     ) {
@@ -103,7 +99,7 @@ class ProductRepository extends AbstractVisibilityRepository
                 ->setParameter('product', $product);
         }
 
-        $executor->execute(
+        $this->insertExecutor->execute(
             $this->getClassName(),
             ['sourceProductVisibility', 'scope', 'product', 'visibility', 'source'],
             $qb
@@ -134,26 +130,24 @@ class ProductRepository extends AbstractVisibilityRepository
     }
 
     /**
-     * @param InsertFromSelectQueryExecutor $executor
      * @param Product $product
      * @param int $visibility
      * @param Scope $scope
      * @param Category $category
      */
     public function insertByProduct(
-        InsertFromSelectQueryExecutor $executor,
         Product $product,
         $visibility,
         Scope $scope,
         Category $category
     ) {
-        $this->insertStatic($executor, null, $product);
+        $this->insertStatic(null, $product);
 
         $qb = $this->getVisibilitiesByCategoryQb($visibility, [$category->getId()], $scope);
         $qb->andWhere('product = :product')
             ->setParameter('product', $product);
 
-        $executor->execute(
+        $this->insertExecutor->execute(
             $this->getClassName(),
             ['scope', 'product', 'visibility', 'source', 'category'],
             $qb

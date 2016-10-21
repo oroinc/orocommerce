@@ -6,6 +6,8 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
@@ -81,7 +83,7 @@ class ProductVisibilityQueryBuilderModifier
      */
     protected function getProductVisibilityResolvedTerm(QueryBuilder $queryBuilder)
     {
-        $scope = $this->scopeManager->find('product_visibility');
+        $scope = $this->scopeManager->find(ProductVisibility::VISIBILITY_TYPE);
         if (!$scope) {
             $scope = 0;
         }
@@ -111,7 +113,7 @@ class ProductVisibilityQueryBuilderModifier
     protected function getAccountGroupProductVisibilityResolvedTerm(
         QueryBuilder $queryBuilder
     ) {
-        $scope = $this->scopeManager->find('account_group_product_visibility');
+        $scope = $this->scopeManager->find(AccountGroupProductVisibility::VISIBILITY_TYPE);
         if (!$scope) {
             $scope = 0;
         }
