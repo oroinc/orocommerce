@@ -58,6 +58,11 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
 
+    oro_shipping.event_listener.order_shipping_tracking_datagrid:
+        class: 'Oro\Bundle\ShippingBundle\EventListener\Datagrid\OrderShippingTrackingDatagridListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-shipping-trackings-grid, method: onBuildBefore }
+
     oro_shipping.event_listener.product_shipping_options_datagrid:
         class: 'Oro\Bundle\ShippingBundle\EventListener\Datagrid\ProductShippingOptionsDatagridListener'
         arguments:

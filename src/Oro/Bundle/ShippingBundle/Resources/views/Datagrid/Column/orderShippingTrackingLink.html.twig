@@ -1,0 +1,7 @@
+{% set shippingMethod  =  record.getValue('method') %}
+{% set trackingNumber  =  record.getValue('number') %}
+{%- if trackingNumber and shippingMethod -%}
+    {{ get_shipping_method_tracking_link(shippingMethod, trackingNumber)|raw }}
+{%- else -%}
+    {{ 'oro.ui.empty'|trans }}
+{%- endif -%}
