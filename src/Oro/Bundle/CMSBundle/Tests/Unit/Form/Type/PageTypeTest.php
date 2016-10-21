@@ -109,7 +109,7 @@ class PageTypeTest extends FormIntegrationTestCase
             ->method('add')
             ->with(
                 'title',
-                'Symfony\Component\Form\Extension\Core\Type\TextType',
+                TextType::class,
                 [
                     'label' => 'oro.cms.page.title.label',
                     'required' => true,

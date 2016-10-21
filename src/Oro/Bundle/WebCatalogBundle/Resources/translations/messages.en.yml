@@ -27,6 +27,7 @@ oro:
             parent_node.label: Parent Content Node
             slugs.label: Slugs
             titles.label: Titles
+            web_catalog.label: Web catalog
 
         contentvariant:
             entity_label: Content Variant
