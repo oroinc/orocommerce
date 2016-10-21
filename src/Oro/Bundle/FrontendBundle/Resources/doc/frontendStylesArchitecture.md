@@ -97,8 +97,16 @@ We just change settings and add additional CSS(SASS).
 
 ## Theme extending
 
-If you put a flag in theme.yml parent: theme_name, you get access to parent styles.
-That is, in the main file added imports with the inherited themes.
+In order to inherite one theme from another you should define parent theme in **theme.yml** file.<br>
+
+For example: if you need to inherit default theme from blank do as follows:
+
+*/theme.yml*		
+```		
+parent: blank		
+```
+
+It allows you to inherit all styles from parent theme and have access to all mixins, variables, etc from parent theme.
 
 Let's look at an example using default theme.
 In default theme we'd like to change global and form elements styles.
