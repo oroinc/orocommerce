@@ -33,21 +33,23 @@ system_configuration:
                     false: oro.warehouse.manage_inventory.choice.false
                     true: oro.warehouse.manage_inventory.choice.true
         oro_warehouse.minimum_quantity_to_order:
-            data_type: integer
-            type: integer
+            data_type: decimal
+            type: number
             priority: 10
             options:
                 label: oro.warehouse.system_configuration.fields.minimum_quantity_to_order.label
+                scale: 2
                 constraints:
-                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
         oro_warehouse.maximum_quantity_to_order:
-            data_type: integer
-            type: integer
+            data_type: decimal
+            type: number
             priority: 5
             options:
                 label: oro.warehouse.system_configuration.fields.maximum_quantity_to_order.label
+                scale: 2
                 constraints:
-                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
 
     tree:
         system_configuration:

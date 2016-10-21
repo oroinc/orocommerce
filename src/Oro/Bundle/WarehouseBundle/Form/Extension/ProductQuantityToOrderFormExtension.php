@@ -9,7 +9,6 @@ use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use Oro\Bundle\WarehouseBundle\Migrations\Schema\v1_2\AddQuantityToOrderFields;
 
 class ProductQuantityToOrderFormExtension extends AbstractTypeExtension
@@ -46,18 +45,12 @@ class ProductQuantityToOrderFormExtension extends AbstractTypeExtension
             EntityFieldFallbackValueType::NAME,
             [
                 'label' => 'oro.warehouse.fields.product.minimum_quantity_to_order.label',
-                'value_options' => [
-                    'constraints' => [new Decimal()],
-                ],
             ]
         )->add(
             AddQuantityToOrderFields::FIELD_MAXIMUM_QUANTITY_TO_ORDER,
             EntityFieldFallbackValueType::NAME,
             [
                 'label' => 'oro.warehouse.fields.product.maximum_quantity_to_order.label',
-                'value_options' => [
-                    'constraints' => [new Decimal()],
-                ],
             ]
         );
     }
