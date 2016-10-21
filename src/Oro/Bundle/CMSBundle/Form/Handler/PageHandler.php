@@ -50,8 +50,6 @@ class PageHandler
             $this->form->submit($this->request);
 
             if ($this->form->isValid()) {
-                $this->slugManager->makeUrlUnique($page->getCurrentSlug());
-
                 $this->manager->persist($page);
                 $this->manager->flush();
 

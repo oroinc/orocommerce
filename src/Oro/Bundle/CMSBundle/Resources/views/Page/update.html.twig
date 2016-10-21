@@ -50,7 +50,7 @@
                 'title': '',
                 'data': [
                     form_row(form.title),
-                    form_row(form.slug)
+                    form_row(form.slugs)
                 ]
             }]
         },
@@ -69,13 +69,15 @@
     }%}
 
     {{ parent() }}
+
     {% set options = {
         'targetInput': '#' ~ form.title.vars.id,
-        'recipientInput': '#' ~ form.slug.slug.vars.id,
+        'recipientInput': "input[name='oro_cms_page[slugs][values][default]']",
         'modeName': 'oro_cms_page[slug][mode]'
     } %}
     <div
         data-page-component-module="orocms/js/app/components/slugify-component"
         data-page-component-options="{{ options|json_encode }}"
     ></div>
+    {{ dump(form) }}
 {% endblock content_data %}

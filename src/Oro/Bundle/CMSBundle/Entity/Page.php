@@ -5,14 +5,13 @@ namespace Oro\Bundle\CMSBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableOrganizationAwareTrait;
 use Oro\Bundle\CMSBundle\Model\ExtendPage;
-use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 /**
  * @ORM\Table(name="oro_cms_page")
@@ -76,7 +75,7 @@ class Page extends ExtendPage implements DatesAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(type="text")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -88,36 +87,27 @@ class Page extends ExtendPage implements DatesAwareInterface
     protected $content;
 
     /**
-     * @var Slug
+     * @var Collection|LocalizedFallbackValue[]
      *
-     * @ORM\OneToOne(targetEntity="Oro\Bundle\RedirectBundle\Entity\Slug", cascade={"ALL"})
-     * @ORM\JoinColumns({
-     *     @ORM\JoinColumn(name="current_slug_id", referencedColumnName="id")
-     * })
+     * @ORM\ManyToMany(
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="oro_cms_page_slug",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="page_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
      *          }
-     *      }
-     * )
-     */
-    protected $currentSlug;
-
-    /**
-     * @var Collection|Slug[]
-     *
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\RedirectBundle\Entity\Slug",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(name="oro_cms_page_to_slug",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="page_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true, onDelete="CASCADE")
      *      }
      * )
      */
@@ -131,10 +121,7 @@ class Page extends ExtendPage implements DatesAwareInterface
         parent::__construct();
 
         $this->slugs      = new ArrayCollection();
-        $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
-
-        $this->setCurrentSlug(new Slug());
+        $this->slugs = new ArrayCollection();
     }
 
     /**
@@ -184,62 +171,7 @@ class Page extends ExtendPage implements DatesAwareInterface
     }
 
     /**
-     * Set current slug
-     *
-     * @param Slug $currentSlug
-     * @return $this
-     */
-    public function setCurrentSlug(Slug $currentSlug)
-    {
-        $this->currentSlug = $currentSlug;
-        $this->addSlug($currentSlug);
-        $this->refreshSlugUrls();
-
-        return $this;
-    }
-
-    /**
-     * Get slugs related to current page
-     *
-     * @return Slug[]
-     */
-    public function getRelatedSlugs()
-    {
-        return array_diff($this->slugs->toArray(), [$this->currentSlug]);
-    }
-
-    /**
-     * Get currentSlug
-     *
-     * @return Slug
-     */
-    public function getCurrentSlug()
-    {
-        return $this->currentSlug;
-    }
-
-    /**
-     * @param $url
-     * @return $this
-     */
-    public function setCurrentSlugUrl($url)
-    {
-        $this->currentSlug->setUrl($url);
-        $this->refreshSlugUrls();
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCurrentSlugUrl()
-    {
-        return $this->currentSlug->getUrl();
-    }
-
-    /**
-     * @return Collection|Slug[]
+     * @return Collection|LocalizedFallbackValue[]
      */
     public function getSlugs()
     {
@@ -247,29 +179,37 @@ class Page extends ExtendPage implements DatesAwareInterface
     }
 
     /**
-     * @param Slug $slug
+     * @param LocalizedFallbackValue $slug
+     *
      * @return $this
      */
-    public function addSlug(Slug $slug)
+    public function addSlug(LocalizedFallbackValue $slug)
     {
         if (!$this->slugs->contains($slug)) {
             $this->slugs->add($slug);
         }
-
         return $this;
     }
-
     /**
-     * @param Slug $slug
+     * @param LocalizedFallbackValue $slug
+     *
      * @return $this
      */
-    public function removeSlug(Slug $slug)
+    public function removeSlug(LocalizedFallbackValue $slug)
     {
         if ($this->slugs->contains($slug)) {
             $this->slugs->removeElement($slug);
         }
-
         return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**
@@ -286,14 +226,5 @@ class Page extends ExtendPage implements DatesAwareInterface
     public function __toString()
     {
         return (string)$this->getTitle();
-    }
-
-    /**
-     * Refresh slug URLs for current page
-     */
-    protected function refreshSlugUrls()
-    {
-        $slugUrl = $this->currentSlug->getSlugUrl();
-        $this->currentSlug->setUrl(Slug::DELIMITER . $slugUrl);
     }
 }
