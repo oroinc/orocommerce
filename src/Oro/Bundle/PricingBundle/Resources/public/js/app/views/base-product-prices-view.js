@@ -21,7 +21,7 @@ define(function(require) {
             priceValue: '[data-name="price-value"]',
             priceNotFound: '[data-name="price-not-found"]',
             pricesHint: '[data-name="prices-hint"]',
-            pricesHintContent: '[data-name="prices-hint-content"]'
+            pricesHintContent: '[data-name="product-prices-hint-content"]'
         },
 
         modelAttr: {
@@ -81,11 +81,12 @@ define(function(require) {
 
         renderHint: function() {
             var $pricesHint = this.getElement('pricesHint');
-            if (!$pricesHint.length) {
+            var content = this.getHintContent();
+
+            if (!$pricesHint.length || !content.length) {
                 return;
             }
 
-            var content = this.getHintContent();
             $pricesHint.toggleClass('disabled', content.length === 0);
 
             if (!$pricesHint.data('popover')) {
@@ -98,7 +99,7 @@ define(function(require) {
         },
 
         getHintContent: function() {
-            return this.getElement('pricesHintContent').html();
+            return this.getElement('pricesHintContent').html() || $([]);
         },
 
         setPrices: function() {

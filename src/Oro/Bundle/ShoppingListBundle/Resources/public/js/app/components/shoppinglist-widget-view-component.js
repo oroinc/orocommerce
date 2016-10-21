@@ -30,7 +30,6 @@ define(function(require) {
 
             mediator.on('shopping-list-event:' + this.eventChannelId + ':shopping-list-id', this.getShoppingListId, this);
             mediator.on('shopping-list-event:' + this.eventChannelId + ':update', this.updateTitle, this);
-            mediator.on('shopping-list:change-current', this.setCurrentShoppingList, this);
 
             this.$el.on('change', this.elements.radio, _.bind(this._onCurrentShoppingListChange, this));
         },
@@ -74,10 +73,6 @@ define(function(require) {
                     Error.handle({}, xhr, {enforce: true});
                 }
             });
-        },
-
-        setCurrentShoppingList: function(shoppingListId) {
-            this.$el.find(this.elements.radio).filter('[value="' + shoppingListId + '"]').click();
         },
 
         /**
