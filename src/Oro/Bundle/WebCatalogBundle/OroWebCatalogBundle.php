@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle;
 
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
+use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\WebCatalogCompilerPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -27,7 +28,7 @@ class OroWebCatalogBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        parent::build($container);
+        $container->addCompilerPass(new WebCatalogCompilerPass());
 
         $container
             ->addCompilerPass(

@@ -4,6 +4,10 @@ parameters:
     oro_web_catalog.entity.content_variant.class: Oro\Bundle\WebCatalogBundle\Entity\ContentVariant
 
 services:
+    oro_web_catalog.page_type.registry:
+        class: 'Oro\Bundle\WebCatalogBundle\PageType\PageTypeRegistry'
+        public: false
+
     oro_web_catalog.content_node_tree_handler:
         class: Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler
         arguments:
@@ -33,6 +37,13 @@ services:
         public: false
         arguments:
             - '@doctrine'
+
+    oro_web_catalog.form.type.content_node_select:
+        class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeSelectType
+        arguments:
+            - '@oro_web_catalog.content_node_tree_handler'
+        tags:
+            - { name: form.type, alias: oro_web_catalog_content_node_select }
 
     oro_web_catalog.form.type.web_catalog:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType
