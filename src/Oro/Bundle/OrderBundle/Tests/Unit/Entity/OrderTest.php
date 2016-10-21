@@ -3,9 +3,9 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
@@ -98,7 +98,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
 
         /** @var Account|\PHPUnit_Framework_MockObject_MockObject $account */
-        $account = $this->getMock('Oro\Bundle\AccountBundle\Entity\Account');
+        $account = $this->getMock('Oro\Bundle\CustomerBundle\Entity\Account');
         $account->expects($this->any())
             ->method('getId')
             ->will($this->returnValue(1));

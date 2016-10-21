@@ -31,7 +31,7 @@ services:
             - "@doctrine"
             - "@security.token_storage"
             - "@translator"
-            - "@oro_currency.service.quantity_rounding"
+            - "@oro_product.service.quantity_rounding"
             - '@oro_pricing.user_currency_manager'
             - "@oro_website.manager"
             - "@oro_shopping_list.manager.shopping_list_total"
@@ -123,6 +123,7 @@ services:
     oro_shopping_list.layout.data_provider.frontend_shopping_list_products:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider'
         arguments:
+            - '@oro_shopping_list.repository.line_item'
             - '@oro_shopping_list.data_provider.frontend_product_prices'
             - '@oro_shopping_list.data_provider.shopping_list_line_items'
             - '@oro_pricing.formatter.product_price_formatter'
@@ -185,6 +186,12 @@ services:
             - '@oro_shopping_list.data_provider.product_shopping_lists'
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_product_units_quantity }
+
+    oro_shopping_list.repository.shopping_list:
+        class: 'Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_shopping_list.entity.shopping_list.class%'
 
     oro_shopping_list.repository.line_item:
         class: 'Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository'

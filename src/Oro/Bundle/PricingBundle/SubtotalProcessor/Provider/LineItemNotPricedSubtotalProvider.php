@@ -6,7 +6,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;

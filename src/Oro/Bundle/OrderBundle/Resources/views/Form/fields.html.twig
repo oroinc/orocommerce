@@ -141,8 +141,11 @@
                     <div class="fields-row">
                         {% for subSectionName, subSection in sections.data %}
                             <div
-                                {% if subSection.page_component is defined %} data-page-component-module="{{ subSection.page_component }}"
-                                    {% if subSection.page_component_options is defined %} data-page-component-options="{{ subSection.page_component_options }}"{% endif %}
+                                {% if subSection.page_component is defined %}
+                                    data-page-component-module="{{ subSection.page_component }}"
+                                    {% if subSection.page_component_options is defined %}
+                                        data-page-component-options="{{ subSection.page_component_options is iterable ? subSection.page_component_options|json_encode : subSection.page_component_options }}"
+                                    {% endif %}
                                 {% endif %}>
                                 {% placeholder 'order_edit_subsection_' ~ subSectionName ~ '_before' with {subSection: subSection} %}
                                 {% if subSectionName in form|keys %}

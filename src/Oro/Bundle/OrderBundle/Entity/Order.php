@@ -5,10 +5,10 @@ namespace Oro\Bundle\OrderBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\AccountBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -413,7 +413,6 @@ class Order extends ExtendOrder implements
 
     /**
      * @param OrderAddress|null $billingAddress
-     *
      * @return Order
      */
     public function setBillingAddress(OrderAddress $billingAddress = null)
@@ -433,7 +432,6 @@ class Order extends ExtendOrder implements
 
     /**
      * @param OrderAddress|null $shippingAddress
-     *
      * @return Order
      */
     public function setShippingAddress(OrderAddress $shippingAddress = null)
@@ -632,7 +630,6 @@ class Order extends ExtendOrder implements
 
     /**
      * @param OrderLineItem $lineItem
-     *
      * @return bool
      */
     public function hasLineItem(OrderLineItem $lineItem)
@@ -644,7 +641,6 @@ class Order extends ExtendOrder implements
      * Add line item
      *
      * @param OrderLineItem $lineItem
-     *
      * @return Order
      */
     public function addLineItem(OrderLineItem $lineItem)
@@ -661,7 +657,6 @@ class Order extends ExtendOrder implements
      * Remove line item
      *
      * @param OrderLineItem $lineItem
-     *
      * @return Order
      */
     public function removeLineItem(OrderLineItem $lineItem)
@@ -675,7 +670,6 @@ class Order extends ExtendOrder implements
 
     /**
      * @param Collection|OrderLineItem[] $lineItems
-     *
      * @return Order
      */
     public function setLineItems(Collection $lineItems)
@@ -713,7 +707,6 @@ class Order extends ExtendOrder implements
 
     /**
      * @param Website $website
-     *
      * @return Order
      */
     public function setWebsite(Website $website)
@@ -745,7 +738,6 @@ class Order extends ExtendOrder implements
      * Set shipping cost
      *
      * @param Price $shippingCost
-     *
      * @return Order
      */
     public function setShippingCost(Price $shippingCost = null)
@@ -794,7 +786,6 @@ class Order extends ExtendOrder implements
      * Set Source Entity Class
      *
      * @param string $sourceEntityClass
-     *
      * @return Order
      */
     public function setSourceEntityClass($sourceEntityClass)
@@ -818,7 +809,6 @@ class Order extends ExtendOrder implements
      * Set Source Entity Id
      *
      * @param integer $sourceEntityId
-     *
      * @return Order
      */
     public function setSourceEntityId($sourceEntityId)
@@ -838,7 +828,6 @@ class Order extends ExtendOrder implements
 
     /**
      * @param string|null $sourceEntityIdentifier
-     *
      * @return Order
      */
     public function setSourceEntityIdentifier($sourceEntityIdentifier = null)
@@ -862,7 +851,6 @@ class Order extends ExtendOrder implements
      * Set total discounts
      *
      * @param Price $totalDiscounts
-     *
      * @return Order
      */
     public function setTotalDiscounts(Price $totalDiscounts = null)
@@ -885,7 +873,6 @@ class Order extends ExtendOrder implements
 
     /**
      * @param OrderDiscount $discount
-     *
      * @return bool
      */
     public function hasDiscount(OrderDiscount $discount)
@@ -897,7 +884,6 @@ class Order extends ExtendOrder implements
      * Add discount
      *
      * @param OrderDiscount $discount
-     *
      * @return Order
      */
     public function addDiscount(OrderDiscount $discount)
@@ -914,7 +900,6 @@ class Order extends ExtendOrder implements
      * Remove discount
      *
      * @param OrderDiscount $discount
-     *
      * @return Order
      */
     public function removeDiscount(OrderDiscount $discount)
@@ -970,7 +955,6 @@ class Order extends ExtendOrder implements
 
     /**
      * @param string $shippingMethod
-     *
      * @return Order
      */
     public function setShippingMethod($shippingMethod)
@@ -990,7 +974,6 @@ class Order extends ExtendOrder implements
 
     /**
      * @param string $shippingMethodType
-     *
      * @return Order
      */
     public function setShippingMethodType($shippingMethodType)
@@ -1010,7 +993,6 @@ class Order extends ExtendOrder implements
 
     /**
      * @param Collection|OrderShippingTracking[] $shippingTrackings
-     *
      * @return Order
      */
     public function setShippingTrackings($shippingTrackings)
@@ -1022,7 +1004,6 @@ class Order extends ExtendOrder implements
 
     /**
      * @param OrderShippingTracking $shippingTracking
-     *
      * @return bool
      */
     public function hasShippingTracking(OrderShippingTracking $shippingTracking)
@@ -1032,7 +1013,6 @@ class Order extends ExtendOrder implements
 
     /**
      * @param OrderShippingTracking $shippingTracking
-     *
      * @return Order
      */
     public function addShippingTracking(OrderShippingTracking $shippingTracking)
@@ -1047,7 +1027,6 @@ class Order extends ExtendOrder implements
 
     /**
      * @param OrderShippingTracking $shippingTracking
-     *
      * @return Order
      */
     public function removeShippingTracking(OrderShippingTracking $shippingTracking)

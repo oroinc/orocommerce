@@ -62,8 +62,8 @@ class MenuUpdateProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetUpdates()
     {
         $organization = $this->getMock('Oro\Bundle\OrganizationBundle\Entity\Organization');
-        $account = $this->getMock('Oro\Bundle\AccountBundle\Entity\Account');
-        $accountUser = $this->getMock('Oro\Bundle\AccountBundle\Entity\AccountUser');
+        $account = $this->getMock('Oro\Bundle\CustomerBundle\Entity\Account');
+        $accountUser = $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountUser');
         $website = $this->getMock('Oro\Bundle\WebsiteBundle\Entity\Website');
 
         $accountUser->expects($this->once())
