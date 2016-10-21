@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
 use Symfony\Component\Form\Forms;
@@ -14,8 +15,8 @@ use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
 use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\CMSBundle\Form\Type\SlugType;
-use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 
 class PageTypeTest extends FormIntegrationTestCase
 {
@@ -92,7 +93,7 @@ class PageTypeTest extends FormIntegrationTestCase
                     EntityIdentifierType::NAME => $entityIdentifierType,
                     'text' => new TextType(),
                     OroRichTextType::NAME => new OroRichTextType($configManager, $htmlTagProvider),
-                    SlugType::NAME => new SlugType()
+                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
                 ],
                 []
             )
@@ -131,6 +132,18 @@ class PageTypeTest extends FormIntegrationTestCase
                 ]
             )
             ->will($this->returnSelf());
+        $builder->expects($this->at(2))
+                ->method('add')
+                ->with(
+                    'slugs',
+                    LocalizedFallbackValueCollectionType::NAME,
+                    [
+                        'label'    => 'oro.cms.page.slugs.label',
+                        'required' => true,
+                        'options'  => ['constraints' => [new NotBlank()]],
+                    ]
+                )
+                ->will($this->returnSelf());
 
         $this->type->buildForm($builder, []);
     }
@@ -167,14 +180,9 @@ class PageTypeTest extends FormIntegrationTestCase
     {
         if ($defaultData) {
             $existingPage = new Page();
-            $this->setId($existingPage, 1);
             $existingPage->setTitle($defaultData['title']);
             $existingPage->setContent($defaultData['content']);
-
-            $existingSlug = new Slug();
-            $this->setId($existingSlug, 1);
-            $existingSlug->setUrl($defaultData['slug']['slug']);
-            $existingPage->setCurrentSlug($existingSlug);
+            $existingPage->addSlug((new LocalizedFallbackValue())->setString('slug'));
 
             $defaultData = $existingPage;
         }
@@ -190,24 +198,8 @@ class PageTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
-        /** @var Page $result */
-        $result = $form->getData();
-        $this->assertEquals($expectedData['title'], $result->getTitle());
-        $this->assertEquals($expectedData['content'], $result->getContent());
-        $this->assertEquals($expectedData['slug'], $result->getCurrentSlug()->getUrl());
-    }
 
-    /**
-     * @param mixed $obj
-     * @param mixed $val
-     */
-    protected function setId($obj, $val)
-    {
-        $class = new \ReflectionClass($obj);
-        $prop  = $class->getProperty('id');
-        $prop->setAccessible(true);
-
-        $prop->setValue($obj, $val);
+        $this->assertEquals($expectedData, $form->getData());
     }
 
     /**
@@ -223,89 +215,29 @@ class PageTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'title' => 'First test page',
                     'content' => 'Page content',
-                    'slug' => [
-                        'mode' => 'new',
-                        'slug' => '/first-page'
-                    ]
+                    'slugs'  => [['string' => 'slug']],
                 ],
-                'expectedData' => [
-                    'title' => 'First test page',
-                    'content' => 'Page content',
-                    'mode' => 'new',
-                    'slug' => '/first-page'
-                ],
+                'expectedData' => (new Page())
+                    ->setTitle('First test page')
+                    ->setContent('Page content')
+                    ->addSlug((new LocalizedFallbackValue())->setString('slug')),
             ],
-            'update current page without redirect' => [
+            'update page' => [
                 'options' => [],
                 'defaultData' => [
                     'title' => 'First test page',
                     'content' => 'Page content',
-                    'slug' => [
-                        'mode' => 'new',
-                        'slug' => '/first-page'
-                    ]
+                    'slugs'  => [['string' => 'slug']],
                 ],
                 'submittedData' => [
                     'title' => 'Updated first test page',
                     'content' => 'Updated page content',
-                    'slug' => [
-                        'mode' => 'new',
-                        'slug' => '/updated-first-page'
-                    ]
+                    'slugs'  => [['string' => 'slug-updated']],
                 ],
-                'expectedData' => [
-                    'title' => 'Updated first test page',
-                    'content' => 'Updated page content',
-                    'slug' => '/updated-first-page'
-                ],
-            ],
-            'update current page with redirect' => [
-                'options' => [],
-                'defaultData' => [
-                    'title' => 'First test page',
-                    'content' => 'Page content',
-                    'slug' => [
-                        'mode' => 'new',
-                        'slug' => '/first-page'
-                    ]
-                ],
-                'submittedData' => [
-                    'title' => 'Updated first test page',
-                    'content' => 'Updated page content',
-                    'slug' => [
-                        'mode' => 'new',
-                        'redirect' => true,
-                        'slug' => '/updated-first-page'
-                    ]
-                ],
-                'expectedData' => [
-                    'title' => 'Updated first test page',
-                    'content' => 'Updated page content',
-                    'slug' => '/updated-first-page'
-                ],
-            ],
-            'update current page with old slug' => [
-                'options' => [],
-                'defaultData' => [
-                    'title' => 'First test page',
-                    'content' => 'Page content',
-                    'slug' => [
-                        'mode' => 'old',
-                        'slug' => '/first-page'
-                    ]
-                ],
-                'submittedData' => [
-                    'title' => 'Updated first test page',
-                    'content' => 'Updated page content',
-                    'slug' => [
-                        'mode' => 'old',
-                    ]
-                ],
-                'expectedData' => [
-                    'title' => 'Updated first test page',
-                    'content' => 'Updated page content',
-                    'slug' => '/first-page'
-                ],
+                'expectedData' => (new Page())
+                    ->setTitle('Updated first test page')
+                    ->setContent('Updated page content')
+                    ->addSlug((new LocalizedFallbackValue())->setString('slug-updated')),
             ],
         ];
     }

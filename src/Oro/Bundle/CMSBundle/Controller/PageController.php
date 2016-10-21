@@ -11,7 +11,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\CMSBundle\Form\Handler\PageHandler;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
 
 class PageController extends Controller
@@ -106,17 +105,9 @@ class PageController extends Controller
      */
     protected function update(Page $page)
     {
-        $form = $this->createForm(PageType::NAME);
-        $handler = new PageHandler(
-            $form,
-            $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroCMSBundle:Page'),
-            $this->get('oro_redirect.slug.manager')
-        );
-
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $page,
-            $form,
+            $this->createForm(PageType::NAME, $page),
             function (Page $page) {
                 return [
                     'route' => 'oro_cms_page_update',
@@ -129,8 +120,7 @@ class PageController extends Controller
                     'parameters' => ['id' => $page->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.cms.controller.page.saved.message'),
-            $handler
+            $this->get('translator')->trans('oro.cms.controller.page.saved.message')
         );
     }
 }
