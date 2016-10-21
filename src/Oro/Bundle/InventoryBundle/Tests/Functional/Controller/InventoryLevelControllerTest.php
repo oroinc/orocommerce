@@ -13,6 +13,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
+ * @group CommunityEdition
  */
 class InventoryLevelControllerTest extends WebTestCase
 {

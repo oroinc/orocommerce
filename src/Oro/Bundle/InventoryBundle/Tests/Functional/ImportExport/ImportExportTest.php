@@ -16,6 +16,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
+ * @group CommunityEdition
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */

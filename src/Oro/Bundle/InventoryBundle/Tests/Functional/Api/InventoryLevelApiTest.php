@@ -14,6 +14,7 @@ use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevelW
 
 /**
  * @dbIsolation
+ * @group CommunityEdition
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */

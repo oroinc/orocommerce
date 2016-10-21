@@ -7,10 +7,14 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
+use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
+use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\RenameInventoryConfigSectionQuery;
+use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\UpdateEntityConfigExtendClassQuery;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
@@ -107,6 +111,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         $warehouseForeignKey = $this->getConstraintName($inventoryTable, 'warehouse_id');
         $inventoryTable->removeForeignKey($warehouseForeignKey);
         $inventoryTable->dropColumn('warehouse_id');
+
+        $this->addEntityConfigUpdateQueries($queries);
     }
 
     /**
@@ -156,6 +162,11 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     protected function addManageInventoryFieldToProduct(Schema $schema)
     {
         $productTable = $schema->getTable('oro_product');
+        
+        if ($productTable->hasColumn('manageinventory_id')) {
+            return;
+        }
+        
         $fallbackTable = $schema->getTable('oro_entity_fallback_value');
         $this->extendExtension->addManyToOneRelation(
             $schema,
@@ -193,6 +204,11 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     protected function addManageInventoryFieldToCategory(Schema $schema)
     {
         $categoryTable = $schema->getTable('oro_catalog_category');
+
+        if ($categoryTable->hasColumn('manageinventory_id')) {
+            return;
+        }
+
         $fallbackTable = $schema->getTable('oro_entity_fallback_value');
         $this->extendExtension->addManyToOneRelation(
             $schema,
@@ -222,6 +238,50 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                 ],
             ]
         );
+    }
+
+    /**
+     * @param QueryBag $queries
+     */
+    protected function addEntityConfigUpdateQueries(QueryBag $queries)
+    {
+        $configData = [
+            'id' => 'oro.inventory.inventorylevel.id.label',
+            'product' => 'oro.inventory.inventorylevel.product.label',
+            'quantity' => 'oro.inventory.inventorylevel.quantity.label',
+            'productUnitPrecision' => 'oro.inventory.inventorylevel.product_unit_precision.label',
+            'warehouse' => 'oro.inventory.inventorylevel.warehouse.label',
+        ];
+
+        foreach ($configData as $fieldName => $value) {
+            $queries->addPostQuery(new UpdateEntityConfigFieldValueQuery(
+                InventoryLevel::class,
+                $fieldName,
+                'entity',
+                'label',
+                $value
+            ));
+        }
+
+        $queries->addPostQuery(new UpdateEntityConfigEntityValueQuery(
+            InventoryLevel::class,
+            'entity',
+            'label',
+            'oro.inventory.inventorylevel.entity_label'
+        ));
+
+        $queries->addPostQuery(new UpdateEntityConfigEntityValueQuery(
+            InventoryLevel::class,
+            'entity',
+            'plural_label',
+            'oro.inventory.inventorylevel.entity_plural_label'
+        ));
+
+        $queries->addPostQuery(new UpdateEntityConfigExtendClassQuery(
+            InventoryLevel::class,
+            'Extend\Entity\EX_OroWarehouseBundle_WarehouseInventoryLevel',
+            'Extend\Entity\EX_OroInventoryBundle_InventoryLevel'
+        ));
     }
 
     /**
