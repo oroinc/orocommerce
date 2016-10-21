@@ -95,8 +95,11 @@
             </span>
             <span class="shopping-list-dropdown__desc">
                 {% for product in shoppingListProducts[shoppingList.id]|default([]) %}
-                    {{ loop.index == 3 ? '...' : product.name }}
-                    {{ loop.last ?'': '<br/>'|raw }}
+                    {% if loop.index == 3 %}
+                        <span class="shopping-list-dropdown__ellipsis">...</span>
+                    {% else %}
+                        {{ product.name }}
+                    {% endif %}
                 {% endfor %}
             </span>
             <span class="shopping-list-dropdown__info">{{ 'oro.frontend.shoppinglist.view.view_details.label'|trans }} <i class="cf-right-open-mini"></i></span>
