@@ -1,7 +1,7 @@
 # ORO Frontend Styles Architecture
 
-* [Theme structure](#user-content-theme-structure-1)
-* [Extend theme](#user-content-extend-theme-1)
+* [Theme structure](#user-content-theme-structure)
+* [Extend theme](#user-content-extend-theme)
 * [Themes settings and useful recommendations](#user-content-themes-settings-and-useful-recommendation)
 
 Overview how to customize, develop and supported styles in **ORO commerce** project.
@@ -191,9 +191,9 @@ In the main file for default theme we see:
 
 
 @import "../bundles/oroui/**blank**/scss/**settings**/global-settings.scss";<br>
-<span style="color: grey;">*// Update global setting for main styles*</span><br>
+*// Update global setting for main styles*<br>
 @import "../bundles/orofrontend/**default**/scss/**settings**/global-settings.scss";<br>
-<span style="color: grey;">*// Update global setting  for FormBundle styles*</span><br>
+*// Update global setting  for FormBundle styles*<br>
 @import "../bundles/**oroform**/**default**/scss/**settings**/global-settings.scss";<br>
 @import "../bundles/oroui/**blank**/scss/**variables**/base-config.scss";</span><br>
 @import "../bundles/oroui/**blank**/scss/**variables**/page-container-config.scss";<br>
@@ -201,11 +201,11 @@ In the main file for default theme we see:
 @import "../bundles/oroui/**blank**/scss/**variables**/page-content-config.scss";<br>
 @import "../bundles/oroui/**blank**/scss/**variables**/page-footer-config.scss";<br>
 @import "../bundles/oroui/**blank**/scss/**variables**/page-title-config.scss";<br>
-<span style="color: grey;">*// Update setting from global components*</span><br>
+*// Update setting from global components*<br>
 @import "../bundles/orofrontend/**default**/scss/**variables**/page-content-config.scss"<br>
 @import "../bundles/orofrontend/**default**/scss/**variables**/page-footer-config.scss"<br>
 @import "../bundles/orofrontend/**default**/scss/**variables**/page-title-config.scss"<br>
-<span style="color: grey;">*// Update settings for input component*</span><br>
+*// Update settings for input component*<br>
 @import "../bundles/oroform/**default**/scss/**variables**/input-config.scss"<br>
 @import "../bundles/oroaccount/**blank**/scss/**styles.scss**";<br>
 @import "../bundles/orofrontend/**default**/scss/**styles.scss**";<br>
