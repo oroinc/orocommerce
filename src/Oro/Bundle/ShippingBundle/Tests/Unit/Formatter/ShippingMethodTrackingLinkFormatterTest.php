@@ -84,16 +84,16 @@ class ShippingMethodTrackingLinkFormatterTest extends \PHPUnit_Framework_TestCas
     {
         return [
             [
-                'shippingMethod'          => 'shipping_method_1',
-                'trackingNumber'          => '1z999999999',
-                'trackingAware'           => true,
-                'expectedResult'          => "<a href='http://tracking.com?number=1z999999999'>1z999999999",
+                'shippingMethod' => 'shipping_method_1',
+                'trackingNumber' => '1z999999999',
+                'trackingAware' => true,
+                'expectedResult' => "<a target='_blank' href='http://tracking.com?number=1z999999999'>1z999999999</a>",
             ],
             [
-                'shippingMethod'          => 'shipping_method_2',
-                'trackingNumber'          => '1z111111111',
-                'trackingAware'           => false,
-                'expectedResult'          => '1z111111111',
+                'shippingMethod' => 'shipping_method_2',
+                'trackingNumber' => '1z111111111',
+                'trackingAware' => false,
+                'expectedResult' => '1z111111111',
             ],
         ];
     }
