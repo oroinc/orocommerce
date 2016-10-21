@@ -37,6 +37,7 @@ class OroFrontendNavigationBundle implements Migration
         $table->addColumn('is_custom', 'boolean', []);
         $table->changeColumn('ownership_type', ['type' => StringType::getType('string')]);
         $table->dropColumn('website_id');
+        $table->addUniqueIndex(['key', 'ownership_type'], 'unq_menu_key');
     }
 
     /**

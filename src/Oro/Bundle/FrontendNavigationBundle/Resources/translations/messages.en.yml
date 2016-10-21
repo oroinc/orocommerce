@@ -16,3 +16,6 @@ oro:
             image.label: Image
             condition.label: Condition
             website.label: Website
+            custom.label: Is Custom
+            divider.label: Is Divider
+            descriptions.label: Description

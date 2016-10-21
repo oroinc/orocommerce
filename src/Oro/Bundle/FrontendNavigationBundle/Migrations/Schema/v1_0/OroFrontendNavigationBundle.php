@@ -62,13 +62,12 @@ class OroFrontendNavigationBundle implements
         $table->addColumn('uri', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('menu', 'string', ['length' => 100]);
         $table->addColumn('ownership_type', 'integer', []);
-        $table->addColumn('owner_id', 'integer', ['notnull' => true]);
+        $table->addColumn('owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('is_active', 'boolean', []);
         $table->addColumn('priority', 'integer', ['notnull' => false]);
         $table->addColumn('condition', 'string', ['length' => 512, 'notnull' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['key', 'ownership_type'], 'unq_qroup');
     }
 
     /**
