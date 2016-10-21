@@ -132,11 +132,9 @@ workflows:
                                 disabled: $disallow_billing_address_edit
                         save_billing_address:
                             options:
-                                label: Save address
                         ship_to_billing_address:
                             form_type: oro_ship_to_billing_address
                             options:
-                                label: Ship to this address
                         state_token:
                             form_type: hidden
                             options:
@@ -169,11 +167,9 @@ workflows:
                                         validationGroups: ['Default', 'Frontend']
                         save_shipping_address:
                             options:
-                                label: Save address
                         ship_to_billing_address:
                             form_type: oro_ship_to_billing_address
                             options:
-                                label: Use billing address
                         state_token:
                             form_type: hidden
                             options:
