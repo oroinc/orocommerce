@@ -78,6 +78,12 @@ services:
         tags:
             - { name: oro_datagrid.extension.action.type, type: payment-delete }
 
+    oro_payment.provider.surcharge:
+        class: 'Oro\Bundle\PaymentBundle\Provider\SurchargeProvider'
+        public: false
+        arguments:
+            - '@event_dispatcher'
+
     oro_payment.provider.payment_term:
         class: 'Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider'
         public: false

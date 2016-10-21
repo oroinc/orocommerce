@@ -18,7 +18,8 @@ services:
         class: Oro\Bundle\PayPalBundle\Form\Type\CurrencySelectionType
         public: true
         arguments:
-            - '@oro_config.manager'
+            - '@oro_currency.config.currency'
             - '@oro_locale.settings'
+            - '@oro_currency.helper.currency_name'
         tags:
             - { name: form.type, alias: oro_paypal_currency_selection }

@@ -1,6 +1,6 @@
 oro:
-  ups:
-    transport:
-      shipping_service:
-        blank: 'Should be configured at least one Shipping Service'
-        used: 'Shipping Service "{{ service }}" used in Shipping Rules.Please disable it before removal. '
+    ups:
+        transport:
+            shipping_service:
+                blank: 'At least one shipping service should be selected.'
+                used: 'Shipping Service "{{ service }}" used in Shipping Rules.Please disable it before removal.'

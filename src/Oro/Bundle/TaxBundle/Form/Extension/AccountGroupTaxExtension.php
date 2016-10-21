@@ -5,11 +5,11 @@ namespace Oro\Bundle\TaxBundle\Form\Extension;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
-use Oro\Bundle\AccountBundle\Form\Type\AccountGroupType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountGroupType;
 
 class AccountGroupTaxExtension extends AbstractTaxExtension
 {

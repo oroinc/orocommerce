@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Unit\Entity;
+namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\TaxBundle\Model\TaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
