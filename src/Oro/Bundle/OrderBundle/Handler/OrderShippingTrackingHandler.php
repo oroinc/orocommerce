@@ -30,7 +30,6 @@ class OrderShippingTrackingHandler
      * @param FormInterface $form
      * @throws AlreadySubmittedException
      * @throws \OutOfBoundsException
-     * @return bool
      */
     public function process(Order $order, FormInterface $form)
     {
