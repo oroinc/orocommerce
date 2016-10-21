@@ -21,7 +21,7 @@ define(function(require) {
             priceValue: '[data-name="price-value"]',
             priceNotFound: '[data-name="price-not-found"]',
             pricesHint: '[data-name="prices-hint"]',
-            pricesHintContent: '[data-name="product-prices-hint-content"]'
+            pricesHintContent: '[data-name="prices-hint-content"]'
         },
 
         modelAttr: {
