@@ -550,9 +550,8 @@ class AccountCategoryRepositoryTest extends AbstractCategoryRepositoryTest
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+        return $this->getContainer()->get('oro_visibility.account_category_repository_holder')
+            ->getRepository();
     }
 
     /**

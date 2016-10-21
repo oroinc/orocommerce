@@ -4,10 +4,11 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
@@ -21,6 +22,16 @@ class AccountGroupCategoryRepository extends EntityRepository
 {
     use CategoryVisibilityResolvedTermTrait;
     use BasicOperationRepositoryTrait;
+
+    /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
+    /**
+     * @var InsertFromSelectQueryExecutor
+     */
+    protected $insertExecutor;
 
     /**
      * @param Category $category
@@ -201,30 +212,38 @@ class AccountGroupCategoryRepository extends EntityRepository
 
         $qb->select(
             'IDENTITY(scope.accountGroup) as accountGroupId',
-            'COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configFallback).') as visibility'
+            'COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configFallback).') as visibility',
+            'agcvr.visibility as a',
+            'cvr.visibility as b'
         )
         ->from('OroCustomerBundle:AccountGroup', 'accountGroup')
+        ->leftJoin('OroScopeBundle:Scope', 'scope', 'WITH', 'scope.accountGroup = accountGroup')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr',
             Join::WITH,
-            $qb->expr()->eq('agcvr.category', ':category')
+            $qb->expr()->andX(
+                $qb->expr()->eq('agcvr.category', ':category'),
+                $qb->expr()->eq('agcvr.scope', 'scope')
+            )
         )
-        ->leftJoin('agcvr.scope', 'scope')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
             'cvr',
             Join::WITH,
             $qb->expr()->eq('cvr.category', ':category')
         )
-        ->where($qb->expr()->in('scope.accountGroup', ':accountGroupIds'))
+        ->where($qb->expr()->in('accountGroup.id', ':accountGroupIds'))
         ->setParameters([
             'category' => $category,
             'accountGroupIds' => $accountGroupIds
         ]);
+        $this->scopeManager->getCriteriaForRelatedScopes(AccountGroupCategoryVisibility::VISIBILITY_TYPE, []);
+
 
         $fallBackToGroupVisibilities = [];
-        foreach ($qb->getQuery()->getArrayResult() as $resultItem) {
+        $arrayResult = $qb->getQuery()->getArrayResult();
+        foreach ($arrayResult as $resultItem) {
             $fallBackToGroupVisibilities[(int)$resultItem['accountGroupId']] = (int)$resultItem['visibility'];
         }
 
@@ -285,5 +304,21 @@ class AccountGroupCategoryRepository extends EntityRepository
         ->addOrderBy('c.left', 'ASC')
         ->getQuery()
         ->getScalarResult();
+    }
+
+    /**
+     * @param ScopeManager $scopeManager
+     */
+    public function setScopeManager($scopeManager)
+    {
+        $this->scopeManager = $scopeManager;
+    }
+
+    /**
+     * @param InsertFromSelectQueryExecutor $insertExecutor
+     */
+    public function setInsertExecutor($insertExecutor)
+    {
+        $this->insertExecutor = $insertExecutor;
     }
 }

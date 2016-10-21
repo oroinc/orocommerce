@@ -199,6 +199,8 @@ services:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\PositionChangeCategorySubtreeCacheBuilder'
         public: false
         parent: oro_visibility.visibility.cache.product.category.subtree.category_subtree_cache_builder
+        calls:
+            - [setAccountCategoryRepositoryHolder, ['@oro_visibility.account_category_repository_holder']]
 
     oro_visibility.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder'
@@ -369,3 +371,31 @@ services:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
+    oro_visibility.account_category_repository:
+        class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository
+        parent: oro_entity.abstract_repository
+        arguments:
+            - Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved
+
+    oro_visibility.account_category_repository_holder:
+        class: Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder
+        arguments:
+            - '@oro_visibility.account_category_repository'
+        calls:
+            - [setScopeManager, ['@oro_scope.scope_manager']]
+            - [setInsertExecutor, ['@oro_entity.orm.insert_from_select_query_executor']]
+
+
+    oro_visibility.account_group_category_repository:
+        class: Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository
+        parent: oro_entity.abstract_repository
+        arguments:
+            - Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved
+
+    oro_visibility.account_group_category_repository_holder:
+        class: Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder
+        arguments:
+            - '@oro_visibility.account_group_category_repository'
+        calls:
+            - [setScopeManager, ['@oro_scope.scope_manager']]
+            - [setInsertExecutor, ['@oro_entity.orm.insert_from_select_query_executor']]

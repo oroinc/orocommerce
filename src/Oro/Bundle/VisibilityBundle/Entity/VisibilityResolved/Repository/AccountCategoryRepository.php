@@ -4,11 +4,13 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 
@@ -21,6 +23,16 @@ class AccountCategoryRepository extends EntityRepository
 {
     use CategoryVisibilityResolvedTermTrait;
     use BasicOperationRepositoryTrait;
+
+    /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
+    /**
+     * @var InsertFromSelectQueryExecutor
+     */
+    protected $insertExecutor;
 
     /**
      * @param Category $category
@@ -116,10 +128,9 @@ class AccountCategoryRepository extends EntityRepository
      */
     public function getVisibilitiesForAccounts(Category $category, array $accountIds)
     {
-        $qb = $this->getEntityManager()->createQueryBuilder();
-
         $configFallback = BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
 
+        $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select(
             'account.id as accountId',
             'COALESCE(' .
@@ -127,24 +138,20 @@ class AccountCategoryRepository extends EntityRepository
             ') as visibility'
         )
         ->from('OroCustomerBundle:Account', 'account')
+        ->leftJoin('OroScopeBundle:Scope', 'acvr_scope', 'WITH', 'acvr_scope.account = account')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
             'acvr',
             Join::WITH,
-            $qb->expr()->eq('acvr.category', ':category')
+            'acvr.category = :category AND acvr_scope = acvr.scope'
         )
-        ->leftJoin('acvr.scope', 'acvr_scope')
-        ->andWhere('acvr.visibility IS NULL OR acvr_scope.account = account')
+        ->leftJoin('OroScopeBundle:Scope', 'agcvr_scope', 'WITH', 'agcvr_scope.accountGroup = account.group')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr',
             Join::WITH,
-            $qb->expr()->andX(
-                $qb->expr()->eq('agcvr.category', ':category')
-            )
+            'agcvr.category = :category AND agcvr_scope = agcvr.scope'
         )
-        ->leftJoin('agcvr.scope', 'agcvr_scope')
-        ->andWhere('agcvr.visibility IS NULL OR agcvr_scope.accountGroup = account.group')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
             'cvr',
@@ -155,8 +162,17 @@ class AccountCategoryRepository extends EntityRepository
         ->setParameter('category', $category)
         ->setParameter('accountIds', $accountIds);
 
+        $this->scopeManager
+            ->getCriteriaForRelatedScopes(AccountCategoryVisibility::VISIBILITY_TYPE, [])
+            ->applyToJoin($qb, 'acvr_scope');
+
+        $this->scopeManager
+            ->getCriteriaForRelatedScopes(AccountGroupCategoryVisibility::VISIBILITY_TYPE, [])
+            ->applyToJoin($qb, 'agcvr_scope');
+
         $fallBackToAccountVisibilities = [];
-        foreach ($qb->getQuery()->getArrayResult() as $resultItem) {
+        $arrayResult = $qb->getQuery()->getArrayResult();
+        foreach ($arrayResult as $resultItem) {
             $fallBackToAccountVisibilities[(int)$resultItem['accountId']] = (int)$resultItem['visibility'];
         }
 
@@ -389,5 +405,21 @@ class AccountCategoryRepository extends EntityRepository
             ->setParameters(['scope' => $scope, 'categoryIds' => $categoryIds]);
 
         $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param ScopeManager $scopeManager
+     */
+    public function setScopeManager($scopeManager)
+    {
+        $this->scopeManager = $scopeManager;
+    }
+
+    /**
+     * @param InsertFromSelectQueryExecutor $insertExecutor
+     */
+    public function setInsertExecutor($insertExecutor)
+    {
+        $this->insertExecutor = $insertExecutor;
     }
 }

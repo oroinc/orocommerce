@@ -89,7 +89,7 @@ class ScopeManager
      */
     public function findRelatedScopes($scopeType, $context = null)
     {
-        $criteria = $this->prepareCriteriaForRelatedScopes($scopeType, $context);
+        $criteria = $this->getCriteriaForRelatedScopes($scopeType, $context);
 
         /** @var ScopeRepository $scopeRepository */
         $scopeRepository = $this->registry->getManagerForClass(Scope::class)
@@ -106,7 +106,7 @@ class ScopeManager
     public function findRelatedScopeIds($scopeType, $context = null)
     {
 
-        $criteria = $this->prepareCriteriaForRelatedScopes($scopeType, $context);
+        $criteria = $this->getCriteriaForRelatedScopes($scopeType, $context);
 
         /** @var ScopeRepository $scopeRepository */
         $scopeRepository = $this->registry->getManagerForClass(Scope::class)
@@ -257,7 +257,7 @@ class ScopeManager
      * @param $context
      * @return ScopeCriteria
      */
-    protected function prepareCriteriaForRelatedScopes($scopeType, $context)
+    public function getCriteriaForRelatedScopes($scopeType, $context)
     {
         $criteria = $this->getNullContext();
         /** @var ScopeCriteriaProviderInterface[] $providers */

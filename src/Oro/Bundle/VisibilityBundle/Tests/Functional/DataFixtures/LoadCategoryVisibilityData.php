@@ -96,7 +96,7 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
             return;
         }
 
-        $scope = $this->scopeManager->findOrCreate('category_visibility', []);
+        $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE, []);
         $categoryVisibility = (new CategoryVisibility())
             ->setCategory($category)
             ->setScope($scope)
@@ -118,7 +118,7 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
             /** @var AccountGroup $accountGroup */
             $accountGroup = $this->getReference($accountGroupReference);
             $scope = $this->scopeManager->findOrCreate(
-                'account_group_category_visibility',
+                AccountGroupCategoryVisibility::VISIBILITY_TYPE,
                 ['accountGroup' => $accountGroup]
             );
 
@@ -143,7 +143,10 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
         foreach ($accountVisibilityData as $accountReference => $data) {
             /** @var Account $account */
             $account = $this->getReference($accountReference);
-            $scope = $this->scopeManager->findOrCreate('account_category_visibility', ['account' => $account]);
+            $scope = $this->scopeManager->findOrCreate(
+                AccountCategoryVisibility::VISIBILITY_TYPE,
+                ['account' => $account]
+            );
 
             $accountCategoryVisibility = (new AccountCategoryVisibility())
                 ->setCategory($category)
