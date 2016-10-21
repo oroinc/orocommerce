@@ -1,8 +1,8 @@
 # ORO Frontend Styles Architecture
 
-## [Theme structure](#theme-structure)
-## [Extend theme](#extend-theme)
-## [Themes settings and useful recommendations](#themes-settings-and-useful-recommendations)
+* [Theme structure](#user-content-theme-structure-1)
+* [Extend theme](#user-content-extend-theme-1)
+* [Themes settings and useful recommendations](#user-content-themes-settings-and-useful-recommendation)
 
 Overview how to customize, develop and supported styles in **ORO commerce** project.
 In the project selected [SASS](http://sass-lang.com/) preprocessor.
@@ -190,26 +190,26 @@ In the main file for default theme we see:
 *application/commerce/web/css/layout/default/styles.css.scss*
 
 
-@import "../bundles/oroui/**blank**/scss/**settings**/global-settings.scss";
-*// Update global setting for main styles*
-@import "../bundles/orofrontend/**default**/scss/**settings**/global-settings.scss";
-*// Update global setting  for FormBundle styles*
-@import "../bundles/**oroform**/**default**/scss/**settings**/global-settings.scss";
-@import "../bundles/oroui/**blank**/scss/**variables**/base-config.scss";
-@import "../bundles/oroui/**blank**/scss/**variables**/page-container-config.scss";
-@import "../bundles/oroui/**blank**/scss/**variables**/page-header-config.scss";
-@import "../bundles/oroui/**blank**/scss/**variables**/page-content-config.scss";
-@import "../bundles/oroui/**blank**/scss/**variables**/page-footer-config.scss";
-@import "../bundles/oroui/**blank**/scss/**variables**/page-title-config.scss";
-*// Update setting from global components*
-@import "../bundles/orofrontend/**default**/scss/**variables**/page-content-config.scss"
-@import "../bundles/orofrontend/**default**/scss/**variables**/page-footer-config.scss"
-@import "../bundles/orofrontend/**default**/scss/**variables**/page-title-config.scss"
-*// Update settings for input component*
-@import "../bundles/oroform/**default**/scss/**variables**/input-config.scss"
-@import "../bundles/oroaccount/**blank**/scss/**styles.scss**";
-@import "../bundles/orofrontend/**default**/scss/**styles.scss**";
-@import "../bundles/oroform/**default**/scss/**styles.scss**";
+@import "../bundles/oroui/**blank**/scss/**settings**/global-settings.scss";<br>
+<span style="color: grey;">*// Update global setting for main styles*</span><br>
+@import "../bundles/orofrontend/**default**/scss/**settings**/global-settings.scss";<br>
+<span style="color: grey;">*// Update global setting  for FormBundle styles*</span><br>
+@import "../bundles/**oroform**/**default**/scss/**settings**/global-settings.scss";<br>
+@import "../bundles/oroui/**blank**/scss/**variables**/base-config.scss";</span><br>
+@import "../bundles/oroui/**blank**/scss/**variables**/page-container-config.scss";<br>
+@import "../bundles/oroui/**blank**/scss/**variables**/page-header-config.scss";<br>
+@import "../bundles/oroui/**blank**/scss/**variables**/page-content-config.scss";<br>
+@import "../bundles/oroui/**blank**/scss/**variables**/page-footer-config.scss";<br>
+@import "../bundles/oroui/**blank**/scss/**variables**/page-title-config.scss";<br>
+<span style="color: grey;">*// Update setting from global components*</span><br>
+@import "../bundles/orofrontend/**default**/scss/**variables**/page-content-config.scss"<br>
+@import "../bundles/orofrontend/**default**/scss/**variables**/page-footer-config.scss"<br>
+@import "../bundles/orofrontend/**default**/scss/**variables**/page-title-config.scss"<br>
+<span style="color: grey;">*// Update settings for input component*</span><br>
+@import "../bundles/oroform/**default**/scss/**variables**/input-config.scss"<br>
+@import "../bundles/oroaccount/**blank**/scss/**styles.scss**";<br>
+@import "../bundles/orofrontend/**default**/scss/**styles.scss**";<br>
+@import "../bundles/oroform/**default**/scss/**styles.scss**";<br>
 
 ## Themes settings and useful recommendation
 
@@ -219,9 +219,9 @@ In the main file for default theme we see:
     * typography: package/platform/src/Oro/Bundle/UIBundle/Resources/public/blank/scss/settings/partials/typography
     * color pallet: package/platform/src/Oro/Bundle/UIBundle/Resources/public/blank/scss/settings/partials/color-palette/_colors.scss
 
-2. Form styles **blank theme**: package/platform/src/Oro/Bundle/FormBundle/Resources/public/blank/scss
+2. Form styles for **blank theme**: package/platform/src/Oro/Bundle/FormBundle/Resources/public/blank/scss
 
-3. Main styles **default theme** package/commerce/src/Oro/Bundle/FrontendBundle/Resources/public/default/scss
+3. Main styles for **default theme** package/commerce/src/Oro/Bundle/FrontendBundle/Resources/public/default/scss
     * mixins: package/commerce/src/Oro/Bundle/FrontendBundle/Resources/public/default/scss/settings/_mixins.scss
     * variables: package/platform/src/Oro/Bundle/FormBundle/Resources/public/default/scss/settings/_variables.scss
     * typography: package/platform/src/Oro/Bundle/FormBundle/Resources/public/default/scss/settings/_typography.scss
@@ -229,7 +229,7 @@ In the main file for default theme we see:
 
 4. Form styles **default theme**: package/platform/src/Oro/Bundle/FormBundle/Resources/public/default/scss
 
-**PAY ATTENTION !!
+**PAY ATTENTION !!<br>
 In default theme FormBundle included a first because there is a setting not related to this bundle.**
 
 
@@ -246,13 +246,12 @@ Example:
 }
 ```
 
-If you need darker, lighter or more transparent color use native Sass functions:
+If you need darker, lighter or more transparent color use native Sass functions: **darken()**, **lighten()**, **transparentize()**
 
 ```scss
 .component {
     border-color: darken(get-color('additional', 'light'));
     color: lighten(get-color('primary', 'main'));
-    background-color: transparent(get-color('primary', 'main'), .8);
+    background-color: transparentize(get-color('primary', 'main'), .8);
 }
-
 ```
