@@ -109,7 +109,6 @@ class VisibilityFormPostSubmitDataHandler
             /** @var Account|AccountGroup $visibilityToEntity */
             $visibilityToEntity = $visibilityData['entity'];
 
-            // todo: skip saving if visibility wasn't changed BB-4506
             if (isset($visibilitiesEntity[$visibilityToEntity->getId()])) {
                 $visibilityEntity = $visibilitiesEntity[$visibilityToEntity->getId()];
             } else {
