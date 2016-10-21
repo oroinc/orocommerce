@@ -12,8 +12,8 @@ use Oro\Bundle\PaymentBundle\Form\Extension\AccountFormExtension;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Form\Type\AccountGroupType;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountGroupType;
 use Oro\Bundle\PaymentBundle\Form\Extension\AccountGroupFormExtension;
 
 /**
@@ -59,7 +59,7 @@ class AccountGroupFormExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
-            ->with('OroAccountBundle:AccountGroup', $accountGroupId)
+            ->with('OroCustomerBundle:AccountGroup', $accountGroupId)
             ->willReturn(new AccountGroup());
 
         $this->doctrineHelper->expects($this->any())
@@ -272,7 +272,7 @@ class AccountGroupFormExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createAccountGroupEntity($id = null)
     {
-        return $this->createEntity('Oro\Bundle\AccountBundle\Entity\AccountGroup', $id);
+        return $this->createEntity('Oro\Bundle\CustomerBundle\Entity\AccountGroup', $id);
     }
 
     /**

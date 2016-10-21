@@ -3,8 +3,8 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 

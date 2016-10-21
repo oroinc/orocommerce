@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\FrontendNavigationBundle\Tests\Functional\DataFixtures\LoadMenuUpdateData;
 use Oro\Bundle\FrontendNavigationBundle\Entity\Repository\MenuUpdateRepository;
 

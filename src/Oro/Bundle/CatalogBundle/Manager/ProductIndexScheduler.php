@@ -53,7 +53,8 @@ class ProductIndexScheduler
     public function triggerReindexationRequestEvent(array $productIds, $websiteId = null, $isScheduled = true)
     {
         if ($productIds) {
-            $event = new ReindexationRequestEvent([Product::class], [$websiteId], $productIds, $isScheduled);
+            $websiteId = is_null($websiteId) ? [] : [$websiteId];
+            $event = new ReindexationRequestEvent([Product::class], $websiteId, $productIds, $isScheduled);
             $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
         }
     }

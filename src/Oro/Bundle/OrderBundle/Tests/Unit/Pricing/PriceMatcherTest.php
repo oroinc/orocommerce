@@ -3,7 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Pricing;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;

@@ -9,8 +9,8 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
@@ -97,7 +97,7 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
 
         /** @var Account|\PHPUnit_Framework_MockObject_MockObject $account */
-        $account = $this->getMock('Oro\Bundle\AccountBundle\Entity\Account');
+        $account = $this->getMock('Oro\Bundle\CustomerBundle\Entity\Account');
         $account->expects($this->any())
             ->method('getId')
             ->will($this->returnValue(1));

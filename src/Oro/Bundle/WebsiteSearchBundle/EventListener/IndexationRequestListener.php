@@ -145,12 +145,12 @@ class IndexationRequestListener implements OptionalListenerInterface
                 $ids[] = $entity->getId();
             }
 
-            $websiteId = $this->websiteManager->getCurrentWebsite() !== null ?
-                $this->websiteManager->getCurrentWebsite()->getId() : null;
+            $websitesIds = $this->websiteManager->getCurrentWebsite() !== null ?
+                [$this->websiteManager->getCurrentWebsite()->getId()] : [];
 
             $ReindexationRequestEvent = new ReindexationRequestEvent(
                 [$class],
-                [$websiteId],
+                $websitesIds,
                 $ids
             );
 

@@ -15,7 +15,7 @@ use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
