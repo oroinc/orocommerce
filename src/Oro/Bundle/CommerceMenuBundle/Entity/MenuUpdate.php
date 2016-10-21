@@ -46,7 +46,7 @@ use Oro\Bundle\NavigationBundle\Entity\MenuUpdateTrait;
  *      @ORM\AssociationOverride(
  *          name="descriptions",
  *          joinTable=@ORM\JoinTable(
- *              name="oro_front_nav_menu_upd_descr",
+ *              name="oro_commerce_menu_upd_descr",
  *              joinColumns={
  *                  @ORM\JoinColumn(
  *                      name="menu_update_id",
