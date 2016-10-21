@@ -38,7 +38,8 @@ class OroShippingExtensionTest extends ExtensionTestCase
             'oro_shipping.twig.shipping_method_extension',
             'oro_shipping.formatter.shipping_method_tracking_link',
             'oro_shipping.shipping_price.provider',
-            'oro_shipping.event_listener.order_shipping_tracking_datagrid'
+            'oro_shipping.provider.measure_units.conversion',
+            'oro_shipping.event_listener.order_shipping_tracking_datagrid',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

@@ -4,36 +4,88 @@ define(function(require) {
     var LineItemView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var ProductPricesComponent = require('oropricing/js/app/components/product-prices-component');
-    var LineItemAbstractView = require('oroorder/js/app/views/line-item-abstract-view');
+    var mediator = require('oroui/js/mediator');
+    var ProductUnitComponent = require('oroproduct/js/app/components/product-unit-component');
+    var LineItemProductView = require('oroproduct/js/app/views/line-item-product-view');
 
     /**
      * @export oroorder/js/app/views/line-item-view
      * @extends oroui.app.views.base.View
      * @class oroorder.app.views.LineItemView
      */
-    LineItemView = LineItemAbstractView.extend({
+    LineItemView = LineItemProductView.extend({
+        /**
+         * @property {Object}
+         */
+        options: {
+            selectors: {
+                productSelector: '.order-line-item-type-product [data-name="field__product"]',
+                quantitySelector: '.order-line-item-quantity input',
+                unitSelector: '.order-line-item-quantity select',
+                productSku: '.order-line-item-sku .order-line-item-type-product',
+                productType: '.order-line-item-type-product',
+                freeFormType: '.order-line-item-type-free-form'
+            },
+            freeFormUnits: null
+        },
+
+        /**
+         * @property {jQuery}
+         */
+        $form: null,
+
+        /**
+         * @property {jQuery}
+         */
+        $fields: null,
+
+        /**
+         * @property {Object}
+         */
+        fieldsByName: null,
+
         /**
          * @inheritDoc
          */
-        initialize: function() {
-            this.options = $.extend(true, {
-                selectors: {
-                    productType: '.order-line-item-type-product',
-                    freeFormType: '.order-line-item-type-free-form'
-                }
-            }, this.options);
+        initialize: function(options) {
+            this.options = $.extend(true, {}, this.options, options || {});
 
             LineItemView.__super__.initialize.apply(this, arguments);
 
+            this.delegate('click', '.removeLineItem', this.removeRow);
             this.initializeUnitLoader();
         },
 
         /**
-         * @inheritDoc
+         * Initialize unit loader component
+         */
+        initializeUnitLoader: function() {
+            var defaultOptions = {
+                _sourceElement: this.$el,
+                productSelector: this.options.selectors.productSelector,
+                quantitySelector: this.options.selectors.quantitySelector,
+                unitSelector: this.options.selectors.unitSelector,
+                loadingMaskEnabled: false,
+                dropQuantityOnLoad: false,
+                defaultValues: this.options.freeFormUnits
+            };
+
+            this.subview('productUnitComponent', new ProductUnitComponent(_.extend({}, defaultOptions)));
+        },
+
+        /**
+         * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            LineItemView.__super__.handleLayoutInit.apply(this, arguments);
+            this.$form = this.$el.closest('form');
+            this.$fields = this.$el.find(':input[name]');
+
+            this.fieldsByName = {};
+            this.$fields.each(_.bind(function(i, field) {
+                this.fieldsByName[this.formFieldName(field)] = $(field);
+            }, this));
+
+            this.initProduct();
 
             this.fieldsByName.currency = this.$form
                 .find(':input[data-ftid="' + this.$form.attr('name') + '_currency"]');
@@ -46,19 +98,8 @@ define(function(require) {
             ]);
 
             this.initTypeSwitcher();
-            this.initPrices();
-        },
 
-        initPrices: function() {
-            this.subview('productPricesComponents', new ProductPricesComponent({
-                _sourceElement: this.$el,
-                $product: this.fieldsByName.product,
-                $priceValue: this.fieldsByName.priceValue,
-                $priceType: this.fieldsByName.priceType,
-                $productUnit: this.fieldsByName.productUnit,
-                $quantity: this.fieldsByName.quantity,
-                $currency: this.fieldsByName.currency
-            }));
+            LineItemView.__super__.handleLayoutInit.apply(this, arguments);
         },
 
         initTypeSwitcher: function() {
@@ -94,13 +135,62 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @param {Object} field
+         * @returns {String}
          */
+        formFieldName: function(field) {
+            var name = '';
+            var nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
+            var namePart;
+
+            for (var i = 0, iMax = nameParts.length; i < iMax; i++) {
+                namePart = nameParts[i];
+                if (!namePart.length) {
+                    continue;
+                }
+                if (name.length === 0) {
+                    name += namePart;
+                } else {
+                    name += namePart[0].toUpperCase() + namePart.substr(1);
+                }
+            }
+            return name;
+        },
+
+        /**
+         * @param {jQuery|Array} $fields
+         */
+        subtotalFields: function($fields) {
+            _.each($fields, function(field) {
+                $(field).attr('data-entry-point-trigger', true);
+            });
+
+            mediator.trigger('entry-point:order:init');
+        },
+
+        removeRow: function() {
+            this.$el.trigger('content:remove');
+            this.remove();
+
+            mediator.trigger('entry-point:order:trigger');
+        },
+
         resetData: function() {
-            LineItemView.__super__.resetData.apply(this, arguments);
+            this.model.set('quantity', 1);
 
             if (this.fieldsByName.hasOwnProperty('priceValue')) {
-                this.fieldsByName.priceValue.val(null).addClass('matched-price');
+                this.fieldsByName.priceValue.val(0).addClass('matched-price');
+            }
+        },
+
+        initProduct: function() {
+            if (this.fieldsByName.product) {
+                this.fieldsByName.product.change(_.bind(function() {
+                    this.resetData();
+
+                    var data = this.fieldsByName.product.inputWidget('data') || {};
+                    this.$el.find(this.options.selectors.productSku).html(data.sku || null);
+                }, this));
             }
         }
     });
