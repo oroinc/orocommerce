@@ -89,7 +89,16 @@ class AccountUserShoppingListsProvider
                 $this->totalManager->setSubtotals($shoppingLists, false);
             }
 
-            $this->options['shoppingLists'] = $shoppingLists;
+            $orderedShoppingLists = [];
+            foreach ($shoppingLists as $shoppingList) {
+                if ($shoppingList->isCurrent()) {
+                    array_unshift($orderedShoppingLists, $shoppingList);
+                } else {
+                    $orderedShoppingLists[] = $shoppingList;
+                }
+            }
+
+            $this->options['shoppingLists'] = $orderedShoppingLists;
         }
 
         return $this->options['shoppingLists'];
