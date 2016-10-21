@@ -13,18 +13,14 @@ search:
                 target_type:            text
                 target_fields:          [title]
             -
-                name:                   currentSlug
-                relation_type:          many-to-one
-                relation_fields:
-                    -
-                        name:           url
-                        target_type:    text
-                        target_fields:  [currentSlug]
+                name:                   defaultSlug
+                target_type:            text
+                target_fields:          [defaultSlug]
             -
-                name:                   slugs
-                relation_type:          many-to-many
+                name: slugs
+                relation_type: many-to-many
                 relation_fields:
                     -
-                        name:           url
-                        target_type:    text
-                        target_fields:  [slugs]
+                        name: text
+                        target_type: text
+                        target_fields: [slugs]

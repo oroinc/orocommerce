@@ -12,20 +12,6 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_cms_page, acl_resource: oro_cms_page_view }
 
-    oro_cms.page_tree_handler:
-        class: 'Oro\Bundle\CMSBundle\JsTree\PageTreeHandler'
-        arguments:
-            - '%oro_cms.entity.page.class%'
-            - "@doctrine"
-            - "@oro_redirect.slug.manager"
-
-    oro_cms.listener.page_slug_listener:
-        class: 'Oro\Bundle\CMSBundle\EventListener\PageSlugListener'
-        tags:
-            - { name: doctrine.event_listener, event: postPersist }
-            - { name: doctrine.event_listener, event: postUpdate }
-            - { name: doctrine.event_listener, event: preRemove }
-
     oro_cms.provider.login_page_data_provider:
         class: 'Oro\Bundle\CMSBundle\Layout\DataProvider\LoginPageProvider'
         arguments:
