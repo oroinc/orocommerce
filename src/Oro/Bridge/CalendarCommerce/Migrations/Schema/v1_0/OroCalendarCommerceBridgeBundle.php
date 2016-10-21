@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bridge\CalendarB2B\Migrations\Schema\v1_0;
+namespace Oro\Bridge\CalendarCommerce\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -9,7 +9,7 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterfac
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroCalendarB2BBridgeBundle implements Migration, ActivityExtensionAwareInterface
+class OroCalendarCommerceBridgeBundle implements Migration, ActivityExtensionAwareInterface
 {
     const CALENDAR_EVENT_TABLE = 'oro_calendar_event';
 

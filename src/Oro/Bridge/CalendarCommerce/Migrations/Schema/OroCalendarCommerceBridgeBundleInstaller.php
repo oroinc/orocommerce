@@ -1,16 +1,16 @@
 <?php
 
-namespace Oro\Bridge\CalendarB2B\Migrations\Schema;
+namespace Oro\Bridge\CalendarCommerce\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bridge\CalendarB2B\Migrations\Schema\v1_0\OroCalendarB2BBridgeBundle;
+use Oro\Bridge\CalendarCommerce\Migrations\Schema\v1_0\OroCalendarCommerceBridgeBundle;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroCalendarB2BBridgeBundleInstaller implements Installation, ActivityExtensionAwareInterface
+class OroCalendarCommerceBridgeBundleInstaller implements Installation, ActivityExtensionAwareInterface
 {
     /** @var ActivityExtension */
     protected $activityExtension;
@@ -36,6 +36,6 @@ class OroCalendarB2BBridgeBundleInstaller implements Installation, ActivityExten
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        OroCalendarB2BBridgeBundle::addCalendarActivityAssociations($schema, $this->activityExtension);
+        OroCalendarCommerceBridgeBundle::addCalendarActivityAssociations($schema, $this->activityExtension);
     }
 }
