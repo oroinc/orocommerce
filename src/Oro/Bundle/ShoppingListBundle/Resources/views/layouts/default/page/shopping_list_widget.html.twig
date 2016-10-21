@@ -90,8 +90,11 @@
                     <span class="shopping-list-dropdown__name-inner shopping-list-dropdown__name-inner--{{ shoppingList.id }}" title="{{ shoppingList.label }}">{{ shoppingList.label }}</span>
                 </span>
                 <span class="shopping-list-dropdown__details">
-                {{ 'oro.frontend.shoppinglist.view.items.label'|transchoice(shoppingList.lineItems|length) }}
-                | {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}</span>
+                    {{ 'oro.frontend.shoppinglist.view.items.label'|transchoice(shoppingList.lineItems|length) }}
+                    {% if shoppingList.lineItems|length > 0 %}
+                        | {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
+                    {% endif %}
+                </span>
             </span>
             <span class="shopping-list-dropdown__desc">
                 {% for product in shoppingListProducts[shoppingList.id]|default([]) %}
