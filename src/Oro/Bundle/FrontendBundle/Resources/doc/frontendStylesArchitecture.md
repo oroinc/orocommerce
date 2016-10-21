@@ -1,42 +1,35 @@
 # ORO Frontend Styles Architecture
 
+* [Terminology](#user-content-theme-terminology)
 * [Theme structure](#user-content-theme-structure)
-* [Extend theme](#user-content-extend-theme)
+* [Theme extending](#user-content-theme-extending)
 * [Themes settings and useful recommendations](#user-content-themes-settings-and-useful-recommendation)
 
-Overview how to customize, develop and supported styles in **ORO commerce** project.
-In the project selected [SASS](http://sass-lang.com/) preprocessor.
-All styles are divided into bundles and themes and placed in *BundleName/Resources/public/theme_name/scss/*.
-In project has three themes: **blank**, **default**, **custom**.
+A mostly reasonable approach to develop and maintain CSS and [SASS](http://sass-lang.com/) in **ORO commerce** project.
 
-1. **blank** - the main theme in project there are basic @mixins, @functions, variables, color palette and typography for the site.
-Blank theme includes basic functionality without reference to the design;*
-2. **default** - expanded theme with their settings and dependencies based on the **blank** theme;
+## Terminology
+
+ORO Commerce project consists of bundles. Each bundle of the project has own set of CSS related to particular bundle. 
+Additionally ORO Commerce project has three themes: **blank**, **default**, **custom**. CSS for each theme is located in particular theme folder: *BundleName/Resources/public/theme_name/scss/*.
+
+1. **blank** - skeleton theme. It has basic @mixins, @functions, variables, color palette and typography. Blank theme includes basic functionality without reference to design;*
+2. **default** - expanded theme with own settings and dependencies. It is based on the **blank** theme;
 3. **custom** - slightly modified **default** theme;
 
-In order to inherit the theme should be put in theme.yml attribute: parent: theme_name.
-For example default theme inherit blank:
-*BundleName/Resources/views/layouts/default/theme.yml*
-
-*/theme.ym*
-```yml
-parent: blank
-```
 
 ## Theme structure
 
-Core styles placed in UIBundle(*UIBundle/Resources/public/blank/scss/*).
-For styles we have three main folders: **components**, **settings**, **variables**.
+Core styles are located in UIBundle: *UIBundle/Resources/public/blank/scss/*.
+CSS structure has three folders: **components**, **settings**, **variables**.
 
 1. **components** - folder for bundle components;
-2. **settings** - folder settings for bundle or theme styles, here we pull @mixins, @functions, common settings etc.
-3. **variables** - folder for configs bundle components
+2. **settings** - folder for @mixins, @functions, settings, etc for particular theme
+3. **variables** - folder for all configuration variables for particular bundle
 
-Each bundle has its own **styles.scss**.
-In **styles.scss** include only components and additional styles, others connect *BundleName/Resources/views/layouts/theme_name/config/assets.yml*
-This is due to the assembly of styles.
+Each bundle has its own **styles.scss**, that gathers all variables, settings, components styles.
+To enable css for particular theme, you should add styles.scss file to **assets.yml** file in an appropriate bundle: *BundleName/Resources/views/layouts/theme_name/config/assets.yml*
 
-Example:
+Folders tree structure example:
 
 ```
 components/
@@ -81,13 +74,13 @@ styles:
     output: 'css/layout/blank/styles.css'
 ```
 
-Assetic collects all styles in one file for the theme.
-Sort by priority, at the top are files with **settings folder**, then the **variables**, and in the end all **styles.scss**, and then compile in css.
+Compiler collects all styles in one file for the theme.
+All files should be sorted by priority: there are files with **settings folder** at the top, then **variables**, and in the end all **styles.scss**.
 
 Example:
 
 *application/commerce/web/css/layout/base/styles.css.scss*
-
+```
 @import "../bundles/oroui/blank/scss/**settings**/global-settings.scss";
 @import "../bundles/oroui/blank/scss/**variables**/base-config.scss";
 @import "../bundles/oroui/blank/scss/**variables**/page-container-config.scss";
@@ -96,20 +89,20 @@ Example:
 @import "../bundles/oroui/blank/scss/**variables**/page-footer-config.scss";
 @import "../bundles/oroui/blank/scss/**variables**/page-title-config.scss";
 @import "../bundles/oroaccount/blank/scss/**styles.scss**";
+```
 
-This is done so that we can change styles for components in the bundle level, elements and in a child theme.
-So we will not have to interrupt the child theme styles from parent theme.
-We change only settings and appends styles that are missing.
+This structure allows us to change styles for components on bundle level, on component level and just for particular theme.
+The main idea of this approach not to override styles from parent theme in child theme. 
+We just change settings and add additional CSS(SASS).
 
-## Extend theme
+## Theme extending
 
 If you put a flag in theme.yml parent: theme_name, you get access to parent styles.
 That is, in the main file added imports with the inherited themes.
 
-Consider the example in default theme.
-In default theme we want change global and form elements styles.
-in the corresponding bundles(FrontEndBundle, FormBundle) we create a folder (folder name - theme name) after that updates styles.
-In FrontEndBundle we want changes same settings and in FormBundle updated styles.
+Let's look at an example using default theme.
+In default theme we'd like to change global and form elements styles.
+In corresponding bundles (FrontEndBundle, FormBundle) we create theme folders and some scss files.
 
 
 *FrontEndBundle/Resources/public/default/scss/*
@@ -147,19 +140,20 @@ variables/
 styles.scss
 ```
 
+
+Update and add new variables for this component
+
 *input-config.scss*
 ``` scss
-// Update and added new variables for this component
-
 $input-padding: 10px 12px; // update the variable's value with blank theme
 $input-font-size: 13px; // update the variable's value with blank theme
 $input-offset: 5px; // new variable
 ```
 
+Add missing styles for this component
+
 *input.scss*
 ``` scss
-// Added missing styles for this component
-
 .input {
     margin: $input-offset;
 
@@ -185,31 +179,36 @@ assets.yml/
     output: 'css/layout/default/styles.css'
 ```
 
-In the main file for default theme we see:
+In the main file for default theme we have:
 
 *application/commerce/web/css/layout/default/styles.css.scss*
 
+```
+@import "../bundles/oroui/**blank**/scss/**settings**/global-settings.scss";
 
-@import "../bundles/oroui/**blank**/scss/**settings**/global-settings.scss";<br>
-*// Update global setting for main styles*<br>
-@import "../bundles/orofrontend/**default**/scss/**settings**/global-settings.scss";<br>
-*// Update global setting  for FormBundle styles*<br>
-@import "../bundles/**oroform**/**default**/scss/**settings**/global-settings.scss";<br>
-@import "../bundles/oroui/**blank**/scss/**variables**/base-config.scss";</span><br>
-@import "../bundles/oroui/**blank**/scss/**variables**/page-container-config.scss";<br>
-@import "../bundles/oroui/**blank**/scss/**variables**/page-header-config.scss";<br>
-@import "../bundles/oroui/**blank**/scss/**variables**/page-content-config.scss";<br>
-@import "../bundles/oroui/**blank**/scss/**variables**/page-footer-config.scss";<br>
-@import "../bundles/oroui/**blank**/scss/**variables**/page-title-config.scss";<br>
-*// Update setting from global components*<br>
-@import "../bundles/orofrontend/**default**/scss/**variables**/page-content-config.scss"<br>
-@import "../bundles/orofrontend/**default**/scss/**variables**/page-footer-config.scss"<br>
-@import "../bundles/orofrontend/**default**/scss/**variables**/page-title-config.scss"<br>
-*// Update settings for input component*<br>
-@import "../bundles/oroform/**default**/scss/**variables**/input-config.scss"<br>
-@import "../bundles/oroaccount/**blank**/scss/**styles.scss**";<br>
-@import "../bundles/orofrontend/**default**/scss/**styles.scss**";<br>
-@import "../bundles/oroform/**default**/scss/**styles.scss**";<br>
+*// Update global setting for main styles*
+@import "../bundles/orofrontend/**default**/scss/**settings**/global-settings.scss";
+
+*// Update global setting  for FormBundle styles*
+@import "../bundles/**oroform**/**default**/scss/**settings**/global-settings.scss";
+@import "../bundles/oroui/**blank**/scss/**variables**/base-config.scss";
+@import "../bundles/oroui/**blank**/scss/**variables**/page-container-config.scss";
+@import "../bundles/oroui/**blank**/scss/**variables**/page-header-config.scss";
+@import "../bundles/oroui/**blank**/scss/**variables**/page-content-config.scss";
+@import "../bundles/oroui/**blank**/scss/**variables**/page-footer-config.scss";
+@import "../bundles/oroui/**blank**/scss/**variables**/page-title-config.scss";
+
+*// Update setting from global components*
+@import "../bundles/orofrontend/**default**/scss/**variables**/page-content-config.scss"
+@import "../bundles/orofrontend/**default**/scss/**variables**/page-footer-config.scss"
+@import "../bundles/orofrontend/**default**/scss/**variables**/page-title-config.scss"
+
+*// Update settings for input component*
+@import "../bundles/oroform/**default**/scss/**variables**/input-config.scss"
+@import "../bundles/oroaccount/**blank**/scss/**styles.scss**";
+@import "../bundles/orofrontend/**default**/scss/**styles.scss**";
+@import "../bundles/oroform/**default**/scss/**styles.scss**";
+```
 
 ## Themes settings and useful recommendation
 
@@ -229,13 +228,13 @@ In the main file for default theme we see:
 
 4. Form styles **default theme**: package/platform/src/Oro/Bundle/FormBundle/Resources/public/default/scss
 
-**PAY ATTENTION !!<br>
-In default theme FormBundle included a first because there is a setting not related to this bundle.**
+**PAY ATTENTION!!!**<br>
+In default theme FormBundle goes first because there is a settings, that are not related to this bundle.**
 
 
-### Work with colors
+### How to work with colors
 
-To work with color, use the function **get-color()**, which returns a color from a predetermined color scheme.
+To work with color, use **get-color()** function, which returns a color from a predefined color scheme.
 
 Example:
 
@@ -246,7 +245,7 @@ Example:
 }
 ```
 
-If you need darker, lighter or more transparent color use native Sass functions: **darken()**, **lighten()**, **transparentize()**
+If you need darker or lighter or more transparent color use native Sass functions: **darken()**, **lighten()**, **transparentize()**, etc
 
 ```scss
 .component {
