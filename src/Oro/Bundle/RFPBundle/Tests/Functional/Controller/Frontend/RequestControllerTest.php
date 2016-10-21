@@ -62,7 +62,6 @@ class RequestControllerTest extends WebTestCase
         $response = $this->client->requestGrid(
             [
                 'gridName' => 'frontend-requests-grid',
-                'frontend-requests-grid[_sort_by][id]' => 'ASC',
             ]
         );
 

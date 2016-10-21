@@ -1,0 +1,32 @@
+layout:
+    imports:
+        -
+            id: oro_account_user_role_form
+            root: content
+        - oro_account_menu
+        -
+            id: oro_account_user_role_permission_grid
+            root: account_user_role_container
+            namespace: account_user_role_form_privileges
+
+    actions:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.customer.menu.account_user.label'
+                - 'oro.customer.frontend.account_user.role.entity_plural_label'
+                - 'oro.customer.frontend.title.account_user_role.edit'
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue:
+                label: 'oro.customer.frontend.title.page.account_user_role.edit'
+        - '@setOption':
+            id: account_user_role_form_fields
+            optionName: vars
+            optionValue:
+                entity: '=data["entity"]'
+        - '@move':
+            id: account_user_role_form_privileges_datagrid
+            siblingId: account_user_role_form_fields

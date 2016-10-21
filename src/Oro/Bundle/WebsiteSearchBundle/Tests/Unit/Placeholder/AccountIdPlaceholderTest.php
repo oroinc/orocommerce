@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
 
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;

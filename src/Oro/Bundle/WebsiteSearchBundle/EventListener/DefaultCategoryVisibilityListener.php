@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Oro\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver;
+use Oro\Bundle\CustomerBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
