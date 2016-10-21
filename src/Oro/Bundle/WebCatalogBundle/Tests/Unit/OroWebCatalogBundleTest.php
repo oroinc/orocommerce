@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit;
 
+use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\WebCatalogPageProviderCompilerPass;
+use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\WebCatalogPageTypeCompilerPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
-use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\WebCatalogCompilerPass;
 use Oro\Bundle\WebCatalogBundle\OroWebCatalogBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -23,10 +24,11 @@ class OroWebCatalogBundleTest extends \PHPUnit_Framework_TestCase
         $passes = $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses();
 
         $this->assertInternalType('array', $passes);
-        $this->assertCount(2, $passes);
+        $this->assertCount(3, $passes);
 
         $expectedPasses = [
-            new WebCatalogCompilerPass(),
+            new WebCatalogPageTypeCompilerPass(),
+            new WebCatalogPageProviderCompilerPass(),
             new DefaultFallbackExtensionPass([
                 ContentNode::class => [
                     'title' => 'titles',

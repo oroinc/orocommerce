@@ -7,6 +7,11 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 interface PageProviderInterface
 {
     /**
+     * @return string
+     */
+    public function getName();
+    
+    /**
      * @param string $className
      * @return bool
      */
@@ -16,11 +21,14 @@ interface PageProviderInterface
      * @param object $entity
      * @return ContentVariantInterface[]
      */
-    public function getPagesByEntity($entity);
+    public function getContentVariantsByEntity($entity);
 
     /**
      * @param object[] $entities
-     * @return ContentVariantInterface[]
+     * @return array
+     * [
+     *    ENTITY_ID => [contentVariant, ...]
+     * ]
      */
-    public function getPagesByEntities(array $entities);
+    public function getContentVariantsByEntities(array $entities);
 }

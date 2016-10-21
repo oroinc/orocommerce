@@ -8,6 +8,16 @@ services:
         class: 'Oro\Bundle\WebCatalogBundle\PageType\PageTypeRegistry'
         public: false
 
+    oro_web_catalog.page_provider.registry:
+        class: 'Oro\Bundle\WebCatalogBundle\PageProvider\WebCatalogPageProviderRegistry'
+        public: false
+
+    oro_web_catalog.page_pprovider.provider:
+        class: 'Oro\Bundle\WebCatalogBundle\PageProvider\WebCatalogPageProvider'
+        arguments:
+            - '@oro_web_catalog.page_provider.registry'
+        public: false
+
     oro_web_catalog.content_node_tree_handler:
         class: Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler
         arguments:
