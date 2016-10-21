@@ -313,6 +313,7 @@ datagrids:
                 params: [ id ]
         sorters:
             toolbar_sorting: true
+            disable_default_sorting: true
             columns:
                 sku:
                     data_name: sku
