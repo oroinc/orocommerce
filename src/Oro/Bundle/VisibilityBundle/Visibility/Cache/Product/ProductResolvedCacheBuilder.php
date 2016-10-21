@@ -134,7 +134,8 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
             } else {
                 $scopes = $this->scopeManager->findRelatedScopes('product_visibility');
                 foreach ($scopes as $scope) {
-                    $repository->insertByCategory($this->insertFromSelectQueryExecutor, $scope);
+                    $categoryScope = $this->scopeManager->findOrCreate('category_visibility', $scope);
+                    $repository->insertByCategory($this->insertFromSelectQueryExecutor, $scope, $categoryScope);
                 }
             }
             $manager->commit();
