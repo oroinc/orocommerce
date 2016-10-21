@@ -16,6 +16,24 @@
     </div>
 {% endblock %}
 
+{% block _header_row_shopping_toggle_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroshoppinglist/js/app/components/shoppinglist-widget-view-component',
+        '~data-page-component-options': {
+            view: 'oroui/js/app/views/layout-subtree-view',
+            rootId : block.vars.id,
+            reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete'],
+            eventChannelId: 'shopping-list-title'
+        },
+        '~class': " header-row__toggle hidden-on-desktop"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <div class="header-row__dropdown-mobile">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
 {% block _main_menu_shopping_lists_dropdown_widget %}
     <div class="cart-widget__content">
         <span class="badge badge_md badge_circle badge_orange badge_i-block cart-widget__clipboard">
@@ -79,8 +97,9 @@
     <div {{ block('block_attributes') }}>
         <div class="shopping-list-dropdown__radio">
             <label class="custom-radio {{ shoppingList.isCurrent ? 'checked' }}" data-toggle="tooltip" title="Set as default">
-                <input class="custom-radio__control" type="radio" name="shopping-list-dropdown-radio" {{ shoppingList.isCurrent ? 'checked' }}
-                       value="{{ shoppingList.id }}" data-label="{{ shoppingList.label }}">
+                <input type="radio" name="{{ id }}-radio" data-role="set-default" {{ shoppingList.isCurrent ? 'checked' }}
+                       value="{{ shoppingList.id }}" data-label="{{ shoppingList.label }}"
+                       class="custom-radio__control">
                 <span class="custom-radio__text"></span>
             </label>
         </div>
