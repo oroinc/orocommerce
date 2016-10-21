@@ -688,6 +688,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
+    oro_customer.event_listener.product_search_query_restriction:
+        class: 'Oro\Bundle\CustomerBundle\EventListener\ProductSearchQueryRestrictionEventListener'
+        arguments:
+            - "@oro_frontend.request.frontend_helper"
+            - "@oro_customer.model.product_visibility_search_query_modifier"
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
+
     oro_customer.event_listener.category_listener:
         class: 'Oro\Bundle\CustomerBundle\EventListener\CategoryListener'
         arguments:

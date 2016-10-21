@@ -14,17 +14,17 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_Test
     /**
      * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $frontendHelper;
+    private $frontendHelper;
 
     /**
      * @var ProductVisibilityQueryBuilderModifier|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $modifier;
+    private $modifier;
 
     /**
      * @var ProductDBQueryRestrictionEventListener
      */
-    protected $listener;
+    private $listener;
 
     /**
      * {@inheritdoc}
