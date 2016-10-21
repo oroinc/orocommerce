@@ -89,16 +89,7 @@ class AccountUserShoppingListsProvider
                 $this->totalManager->setSubtotals($shoppingLists, false);
             }
 
-            $orderedShoppingLists = [];
-            foreach ($shoppingLists as $shoppingList) {
-                if ($shoppingList->isCurrent()) {
-                    array_unshift($orderedShoppingLists, $shoppingList);
-                } else {
-                    $orderedShoppingLists[] = $shoppingList;
-                }
-            }
-
-            $this->options['shoppingLists'] = $orderedShoppingLists;
+            $this->options['shoppingLists'] = $shoppingLists;
         }
 
         return $this->options['shoppingLists'];
@@ -109,7 +100,7 @@ class AccountUserShoppingListsProvider
      */
     protected function getSortOrder()
     {
-        $sortOrder = [];
+        $sortOrder = ['list.current' => Criteria::DESC];
         $request = $this->requestStack->getCurrentRequest();
         $sort = $request ? $request->get('shopping_list_sort') : self::DATA_SORT_BY_UPDATED;
 
