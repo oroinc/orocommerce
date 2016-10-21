@@ -79,15 +79,15 @@ All files should be sorted by priority: there are files with **settings folder**
 
 Example:
 
-*application/commerce/web/css/layout/base/styles.css.scss*
+*application/commerce/web/css/layout/base/styles.scss*
 ```
-@import "../bundles/oroui/blank/scss/**settings**/global-settings.scss";
-@import "../bundles/oroui/blank/scss/**variables**/base-config.scss";
-@import "../bundles/oroui/blank/scss/**variables**/page-container-config.scss";
-@import "../bundles/oroui/blank/scss/**variables**/page-header-config.scss";
-@import "../bundles/oroui/blank/scss/**variables**/page-content-config.scss";
-@import "../bundles/oroui/blank/scss/**variables**/page-footer-config.scss";
-@import "../bundles/oroui/blank/scss/**variables**/page-title-config.scss";
+@import "../bundles/oroui/blank/scss/settings/global-settings.scss";
+@import "../bundles/oroui/blank/scss/variables/base-config.scss";
+@import "../bundles/oroui/blank/scss/variables/page-container-config.scss";
+@import "../bundles/oroui/blank/scss/variables/page-header-config.scss";
+@import "../bundles/oroui/blank/scss/variables/page-content-config.scss";
+@import "../bundles/oroui/blank/scss/variables/page-footer-config.scss";
+@import "../bundles/oroui/blank/scss/variables/page-title-config.scss";
 @import "../bundles/oroaccount/blank/scss/**styles.scss**";
 ```
 
@@ -257,8 +257,8 @@ If you need darker or lighter or more transparent color use native Sass function
 
 ```scss
 .component {
-    border-color: darken(get-color('additional', 'light'));
-    color: lighten(get-color('primary', 'main'));
+    border-color: darken(get-color('additional', 'light'), 10%);
+    color: lighten(get-color('primary', 'main'), 10%);
     background-color: transparentize(get-color('primary', 'main'), .8);
 }
 ```
