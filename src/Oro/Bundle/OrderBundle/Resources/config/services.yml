@@ -200,7 +200,7 @@ services:
     oro_order.formatter.shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter'
         arguments:
-            - "@=service('oro_shipping.shipping_method.registry') ? service('oro_shipping.shipping_method.registry').getTrackingAwareShippingMethods()"
+            - "@=parameter('kernel.bundles')['OroShippingBundle']? service('oro_shipping.shipping_method.registry').getTrackingAwareShippingMethods()"
 
     oro_order.order.listener.total_calculate_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'
