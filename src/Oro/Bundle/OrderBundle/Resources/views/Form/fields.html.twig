@@ -327,14 +327,19 @@
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
         {% set id = id ~ '_collection' %}
-        <div class="row-oro">
+        <div class="row-oro"
+                {% import 'OroUIBundle::macros.html.twig' as UI %}
+                {{ UI.renderPageComponentAttributes({
+                    module: form.vars.page_component,
+                    options: form.vars.page_component_options
+                }) }}>
             {% set prototype_name = form.vars.prototype_name %}
             <div>
                 <table class="grid table table-condensed table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th>{{ 'oro.order.shipping_trackings.method.label'|trans }}</th>
-                            <th>{{ 'oro.order.shipping_trackings.number.label'|trans }}</th>
+                            <th>{{ 'oro.order.shipping_tracking.method.label'|trans }}</th>
+                            <th>{{ 'oro.order.shipping_tracking.number.label'|trans }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -375,12 +380,8 @@
     <div
         {% import 'OroUIBundle::macros.html.twig' as UI %}
         {{ UI.renderPageComponentAttributes({
-            module: 'oroorder/js/app/components/select-switch-input-component',
-            options: {
-                mode: form.vars.mode,
-                choices: form.vars.choices,
-                value: form.vars.value
-            }
+            module: form.vars.page_component,
+            options: form.vars.page_component_options
         }) }}>
         <div class="input-group select-switch-input-container">
             {{ form_widget(form) }}

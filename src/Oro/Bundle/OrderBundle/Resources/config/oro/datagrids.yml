@@ -645,6 +645,12 @@ datagrids:
                 - order_id
         columns:
             method:
-                label: oro.order.shipping_trackings.method.label
+                label: oro.order.shipping_tracking.method.label
+                type: twig
+                template: OroOrderBundle:Order:Datagrid/shippingTrackingMethod.html.twig
+                frontend_type: html
             number:
-                label: oro.order.shipping_trackings.number.label
+                label: oro.order.shipping_tracking.number.label
+                type: twig
+                template: OroOrderBundle:Order:Datagrid/shippingTrackingLink.html.twig
+                frontend_type: html

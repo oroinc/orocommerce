@@ -75,7 +75,7 @@ operations:
             icon: icon-list-alt
         frontend_options:
             template: OroOrderBundle:Action:shippingTrackingsChange.html.twig
-            title: oro.order.shipping_trackings.label
+            title: oro.order.shipping_tracking.entity_label
             options:
                 width: 500
                 modal: false
@@ -108,6 +108,6 @@ operations:
                 method: process
                 method_parameters: [$.data, $.form]
             - '@flash_message':
-                message: oro.order.shipping_trackings.flash.save_success
+                message: oro.order.shipping_tracking.flash.save_success
                 type: 'success'
             - '@refresh_grid': order-shipping-trackings-grid

@@ -14,16 +14,10 @@ services:
         arguments:
             - "@oro_shipping.shipping_method.registry"
 
-    oro_shipping.formatter.shipping_method_tracking_link:
-        class: 'Oro\Bundle\ShippingBundle\Formatter\ShippingMethodTrackingLinkFormatter'
-        arguments:
-            - "@oro_shipping.shipping_method.registry"
-
     oro_shipping.twig.shipping_method_extension:
         class: 'Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension'
         public: false
         arguments:
             - "@oro_shipping.formatter.shipping_method_label"
-            - "@oro_shipping.formatter.shipping_method_tracking_link"
         tags:
             - { name: twig.extension }

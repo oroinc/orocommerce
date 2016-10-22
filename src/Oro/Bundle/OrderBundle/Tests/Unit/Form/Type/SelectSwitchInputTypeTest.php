@@ -40,8 +40,9 @@ class SelectSwitchInputTypeTest extends FormIntegrationTestCase
      * @dataProvider finishViewDataProvider
      * @param array $options
      * @param string $data
+     * @param array $expected
      */
-    public function testFinishView(array $options, $data)
+    public function testFinishView(array $options, $data, $expected)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
@@ -52,11 +53,11 @@ class SelectSwitchInputTypeTest extends FormIntegrationTestCase
         $formView = new FormView();
         $this->type->finishView($formView, $form, $options);
 
-        static::assertArrayHasKey('mode', $formView->vars);
-        $options['mode'] = $formView->vars['mode'];
+        static::assertArrayHasKey('page_component', $formView->vars);
+        static::assertEquals($options['page_component'], $formView->vars['page_component']);
 
-        static::assertArrayHasKey('value', $formView->vars);
-        $options['data'] = $formView->vars['value'];
+        static::assertArrayHasKey('page_component_options', $formView->vars);
+        static::assertEquals($expected, $formView->vars['page_component_options']);
     }
 
     /**
@@ -67,15 +68,31 @@ class SelectSwitchInputTypeTest extends FormIntegrationTestCase
         return [
             'test1' => [
                 'options' => [
+                    'page_component' => 'page_component1',
+                    'page_component_options' => [],
                     'mode' => 'select',
+                    'choices' => [1]
                 ],
-                'data' => 'data1'
+                'data' => 'data1',
+                'expected' => [
+                    'mode' => 'select',
+                    'choices' => [1],
+                    'value' => 'data1'
+                ]
             ],
             'test2' => [
                 'options' => [
+                    'page_component' => 'page_component2',
+                    'page_component_options' => [],
                     'mode' => 'input',
+                    'choices' => [2]
                 ],
-                'data' => 'data2'
+                'data' => 'data2',
+                'expected' => [
+                    'mode' => 'input',
+                    'choices' => [2],
+                    'value' => 'data2'
+                ]
             ],
         ];
     }

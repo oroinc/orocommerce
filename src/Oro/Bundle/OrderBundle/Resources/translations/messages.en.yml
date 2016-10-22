@@ -47,12 +47,16 @@ oro:
         order_history.label: Order History
         top_selling_items.label: Top Selling Items
 
-        shipping_trackings:
-            label: Shipping Trackings
+        shipping_tracking:
+            entity_label: Shipping Tracking
+            entity_plural_label: Shipping Tracking Numbers
             method.label: Method
             number.label: Number
+            action:
+                cancel: Cancel
+                save: Save
             flash:
-                save_success: Shipping Trackings have been updated
+                save_success: shipping tracking numbers have been updated
 
         orderdiscount:
             entity_label: Order Discount

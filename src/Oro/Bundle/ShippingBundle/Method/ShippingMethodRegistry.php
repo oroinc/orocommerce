@@ -66,7 +66,7 @@ class ShippingMethodRegistry implements ShippingMethodProviderInterface
         foreach ($this->providers as $provider) {
             foreach ($provider->getShippingMethods() as $shippingMethod) {
                 if ($shippingMethod instanceof ShippingTrackingAwareInterface) {
-                    $result[] = $shippingMethod;
+                    $result[$shippingMethod->getIdentifier()] = $shippingMethod;
                 }
             }
         }

@@ -9,6 +9,8 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingType;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 
@@ -114,5 +116,45 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
     public function testGetBlockPrefix()
     {
         static::assertSame(OrderShippingTrackingCollectionType::NAME, $this->type->getBlockPrefix());
+    }
+
+    /**
+     * @dataProvider finishViewDataProvider
+     * @param array $options
+     */
+    public function testFinishView(array $options)
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $formView = new FormView();
+        $this->type->finishView($formView, $form, $options);
+
+        static::assertArrayHasKey('page_component', $formView->vars);
+        static::assertEquals($options['page_component'], $formView->vars['page_component']);
+
+        static::assertArrayHasKey('page_component_options', $formView->vars);
+        static::assertEquals($options['page_component_options'], $formView->vars['page_component_options']);
+    }
+
+    /**
+     * @return array
+     */
+    public function finishViewDataProvider()
+    {
+        return [
+            'test1' => [
+                'options' => [
+                    'page_component' => 'page_component1',
+                    'page_component_options' => [1, 2, 3],
+                ],
+            ],
+            'test2' => [
+                'options' => [
+                    'page_component' => 'page_component2',
+                    'page_component_options' => [3, 2, 1],
+                ],
+            ],
+        ];
     }
 }

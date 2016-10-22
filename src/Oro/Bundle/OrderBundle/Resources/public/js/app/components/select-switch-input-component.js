@@ -1,11 +1,12 @@
-define([
-    'underscore',
-    'jquery',
-    'oroui/js/app/components/base/component'
-], function(_, $, BaseComponent) {
+define(function (require) {
     'use strict';
 
-    return BaseComponent.extend({
+    var SelectSwitchInputComponent,
+        $ = require('jquery'),
+        _ = require('underscore'),
+        BaseComponent = require('oroui/js/app/components/base/component');
+
+    SelectSwitchInputComponent = BaseComponent.extend({
 
         MODE_SELECT: 'select',
         MODE_INPUT: 'input',
@@ -90,6 +91,20 @@ define([
             this.$el.find('select').prop('disabled', false);
             this.$el.find('.selector').show();
             this.$el.find(this.$select_to_input_btn).show();
+        },
+
+        dispose: function () {
+            if (this.disposed) {
+                return;
+            }
+
+            this.$el.find(this.$select_to_input_btn).off();
+            this.$el.find(this.$input_to_select_btn).off();
+
+            SelectSwitchInputComponent.__super__.dispose.call(this);
         }
     });
+
+
+    return SelectSwitchInputComponent;
 });
