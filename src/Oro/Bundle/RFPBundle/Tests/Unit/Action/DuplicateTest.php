@@ -5,9 +5,10 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Action;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Component\Action\Model\ContextAccessor;
 use Oro\Bundle\RFPBundle\Action\Duplicate;
 use Oro\Bundle\RFPBundle\Factory\DuplicatorFactory;
+
+use Oro\Component\Action\Model\ContextAccessor;
 
 class DuplicateTest extends \PHPUnit_Framework_TestCase
 {
@@ -124,9 +125,7 @@ class DuplicateTest extends \PHPUnit_Framework_TestCase
         $target = new \stdClass();
 
         /** @var ContextAccessor|\PHPUnit_Framework_MockObject_MockObject $contextAccessor */
-        $contextAccessor = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\ContextAccessor')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $contextAccessor = $this->getMockBuilder(ContextAccessor::class)->disableOriginalConstructor()->getMock();
 
         /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $eventDispatcher $eventDispatcher */
         $eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
