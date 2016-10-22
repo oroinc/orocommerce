@@ -51,7 +51,7 @@ class CategoryListener
                     // New products has own queue message for visibility calculation
                     if ($product->getId()) {
                         $this->productMessageHandler->addProductMessageToSchedule(
-                            'oro_customer.visibility.change_product_category',
+                            'oro_visibility.visibility.change_product_category',
                             $product
                         );
                     }

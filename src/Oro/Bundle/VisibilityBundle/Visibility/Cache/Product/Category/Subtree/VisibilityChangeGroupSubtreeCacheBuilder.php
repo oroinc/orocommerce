@@ -184,7 +184,7 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
     /**
      * @param array $categoryIds
      * @param int $visibility
-     * @param Scope $scope
+     * @param array $scopes
      */
     protected function updateProductVisibilityByCategory(array $categoryIds, $visibility, array $scopes)
     {

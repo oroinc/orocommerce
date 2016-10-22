@@ -7,7 +7,6 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CategoryVisibilityRepository;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
@@ -23,11 +22,6 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
 
     /** @var PositionChangeCategorySubtreeCacheBuilder */
     protected $positionChangeCategorySubtreeCacheBuilder;
-
-    /**
-     * @var RepositoryHolder
-     */
-    protected $categoryVisibilityRepositoryHolder;
 
     /**
      * @param VisibilityChangeCategorySubtreeCacheBuilder $visibilityChangeCategorySubtreeCacheBuilder
@@ -134,8 +128,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
         $resolvedRepository->clearTable();
 
         if (!$scope) {
-            $scope = $this->scopeManager->findOrCreate('account_group_cms_page');
-            $criteria = $this->scopeManager->getCriteria('account_group_cms_page');
+            $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
         }
 
         // resolve static values
@@ -221,7 +214,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
      */
     protected function getRepository()
     {
-        return $this->categoryVisibilityRepositoryHolder->getRepository();
+        return $this->repositoryHolder->getRepository();
     }
 
     /**
@@ -242,13 +235,5 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
                 CategoryVisibilityResolved::SOURCE_STATIC
             ];
         }
-    }
-
-    /**
-     * @param RepositoryHolder $categoryVisibilityRepositoryHolder
-     */
-    public function setCategoryVisibilityRepositoryHolder($categoryVisibilityRepositoryHolder)
-    {
-        $this->categoryVisibilityRepositoryHolder = $categoryVisibilityRepositoryHolder;
     }
 }

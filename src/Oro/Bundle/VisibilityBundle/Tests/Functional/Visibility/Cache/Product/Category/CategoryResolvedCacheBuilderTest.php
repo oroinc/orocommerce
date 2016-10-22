@@ -5,6 +5,8 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\
 use Doctrine\ORM\AbstractQuery;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
@@ -24,6 +26,16 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
     /** @var Category */
     protected $category;
 
+    /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
+    /**
+     * @var Scope
+     */
+    protected $scope;
+
     protected function setUp()
     {
         parent::setUp();
@@ -31,19 +43,22 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
         $this->category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
         $container = $this->client->getContainer();
-
+        $this->scopeManager = $container->get('oro_scope.scope_manager');
         $this->builder = new CategoryResolvedCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_entity.orm.insert_from_select_query_executor')
+            $this->scopeManager
         );
+        $this->scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
         $this->builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.category_visibility_resolved.class')
         );
+        $this->builder->setRepositoryHolder($container->get('oro_visibility.category_repository_holder'));
 
         $subtreeBuilder = new VisibilityChangeCategorySubtreeCacheBuilder(
             $container->get('doctrine'),
             $container->get('oro_visibility.visibility.resolver.category_visibility_resolver'),
-            $container->get('oro_config.manager')
+            $container->get('oro_config.manager'),
+            $this->scopeManager
         );
 
         $this->builder->setVisibilityChangeCategorySubtreeCacheBuilder($subtreeBuilder);
@@ -51,7 +66,14 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
         $positionChangeBuilder = new PositionChangeCategorySubtreeCacheBuilder(
             $container->get('doctrine'),
             $container->get('oro_visibility.visibility.resolver.category_visibility_resolver'),
-            $container->get('oro_config.manager')
+            $container->get('oro_config.manager'),
+            $this->scopeManager
+        );
+        $positionChangeBuilder->setAccountCategoryRepositoryHolder(
+            $container->get('oro_visibility.account_category_repository_holder')
+        );
+        $positionChangeBuilder->setAccountGroupCategoryRepositoryHolder(
+            $container->get('oro_visibility.account_group_category_repository_holder')
         );
 
         $this->builder->setPositionChangeCategorySubtreeCacheBuilder($positionChangeBuilder);
@@ -62,6 +84,7 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
     {
         $visibility = new CategoryVisibility();
         $visibility->setCategory($this->category);
+        $visibility->setScope($this->scope);
         $visibility->setVisibility(CategoryVisibility::HIDDEN);
 
         $em = $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\CategoryVisibility');

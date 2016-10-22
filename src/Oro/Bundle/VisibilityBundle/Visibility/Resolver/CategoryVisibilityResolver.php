@@ -3,11 +3,13 @@
 namespace Oro\Bundle\VisibilityBundle\Visibility\Resolver;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 
@@ -86,7 +88,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function isCategoryVisibleForAccountGroup(Category $category, AccountGroup $accountGroup)
     {
-        $scope = $this->scopeManager->findOrCreate('account_group_category_visibility', $accountGroup);
+        $scope = $this->scopeManager->findOrCreate(
+            AccountGroupCategoryVisibility::VISIBILITY_TYPE,
+            ['accountGroup' => $accountGroup]
+        );
 
         return $this->registry
             ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
@@ -105,7 +110,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     public function getVisibleCategoryIdsForAccountGroup(AccountGroup $accountGroup)
     {
         $scope = $this->scopeManager->findOrCreate(
-            'account_group_category_visibility',
+            AccountGroupCategoryVisibility::VISIBILITY_TYPE,
             ['accountGroup' => $accountGroup]
         );
 
@@ -126,7 +131,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
     public function getHiddenCategoryIdsForAccountGroup(AccountGroup $accountGroup)
     {
         $scope = $this->scopeManager->findOrCreate(
-            'account_group_category_visibility',
+            AccountGroupCategoryVisibility::VISIBILITY_TYPE,
             ['accountGroup' => $accountGroup]
         );
 
@@ -147,7 +152,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function isCategoryVisibleForAccount(Category $category, Account $account)
     {
-        $scope = $this->scopeManager->findOrCreate('account_category_visibility', ['account' => $account]);
+        $scope = $this->scopeManager->findOrCreate(AccountCategoryVisibility::VISIBILITY_TYPE, ['account' => $account]);
         $accountGroupScope = $this->getGroupScopeByAccount($account);
 
         return $this->registry
@@ -162,7 +167,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function getVisibleCategoryIdsForAccount(Account $account)
     {
-        $scope = $this->scopeManager->findOrCreate('account_category_visibility', $account);
+        $scope = $this->scopeManager->findOrCreate(AccountCategoryVisibility::VISIBILITY_TYPE, ['account' => $account]);
         $groupScope = $this->getGroupScopeByAccount($account);
 
         return $this->registry
@@ -182,7 +187,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function getHiddenCategoryIdsForAccount(Account $account)
     {
-        $scope = $this->scopeManager->findOrCreate('account_category_visibility', $account);
+        $scope = $this->scopeManager->findOrCreate(AccountCategoryVisibility::VISIBILITY_TYPE, ['account' => $account]);
         $groupScope = $this->getGroupScopeByAccount($account);
 
         return $this->registry
@@ -215,8 +220,8 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
         $accountGroupScope = null;
         if ($account->getGroup()) {
             $accountGroupScope = $this->scopeManager->find(
-                'account_group_category_visibility',
-                ['account' => $account->getGroup()]
+                AccountGroupCategoryVisibility::VISIBILITY_TYPE,
+                ['accountGroup' => $account->getGroup()]
             );
         }
         return $accountGroupScope;

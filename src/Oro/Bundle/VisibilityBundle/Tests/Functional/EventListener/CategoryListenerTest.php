@@ -61,6 +61,7 @@ class CategoryListenerTest extends WebTestCase
         $previousCategory->removeProduct($product);
         $newCategory->addProduct($product);
         $this->categoryManager->flush();
+        $this->messageProducer->clear();
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
         $messages = $this->messageProducer->getSentMessages();
         $expectedMessages[] = [
@@ -81,11 +82,14 @@ class CategoryListenerTest extends WebTestCase
 
         $category->removeProduct($product);
         $this->categoryManager->flush();
+        $this->messageProducer->clear();
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
         $messages = $this->messageProducer->getSentMessages();
-        $expectedMessages[] = [
-            'topic' => 'oro_visibility.visibility.change_product_category',
-            'message' => ['id' => $product->getId()],
+        $expectedMessages = [
+            [
+                'topic' => 'oro_visibility.visibility.change_product_category',
+                'message' => ['id' => $product->getId()],
+            ]
         ];
         $this->assertEquals(
             $expectedMessages,
@@ -94,11 +98,14 @@ class CategoryListenerTest extends WebTestCase
         $category->addProduct($product);
         $this->categoryManager->flush();
 
+        $this->messageProducer->clear();
         $this->getContainer()->get('oro_product.model.product_message_handler')->sendScheduledMessages();
         $messages = $this->messageProducer->getSentMessages();
-        $expectedMessages[] = [
-            'topic' => 'oro_visibility.visibility.change_product_category',
-            'message' => ['id' => $product->getId()],
+        $expectedMessages = [
+            [
+                'topic' => 'oro_visibility.visibility.change_product_category',
+                'message' => ['id' => $product->getId()],
+            ]
         ];
         $this->assertEquals(
             $expectedMessages,

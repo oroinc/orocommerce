@@ -6,8 +6,8 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class AbstractCacheBuilderTest extends WebTestCase
 {
@@ -19,7 +19,7 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
         $this->initClient();
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+            LoadProductVisibilityData::class,
         ]);
 
         $this->registry = $this->client->getContainer()->get('doctrine');
@@ -37,14 +37,12 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
      *
      * @param $expectedStaticCount
      * @param $expectedCategoryCount
-     * @param string|null $websiteReference
      */
-    public function testBuildCache($expectedStaticCount, $expectedCategoryCount, $websiteReference = null)
+    public function testBuildCache($expectedStaticCount, $expectedCategoryCount)
     {
         $repository = $this->getRepository();
-        $website = $this->getWebsite($websiteReference);
         $repository->clearTable();
-        $this->getCacheBuilder()->buildCache($website);
+        $this->getCacheBuilder()->buildCache();
 
         $actualTotalCount = (int)$repository->createQueryBuilder('entity')
             ->select('COUNT(entity.visibility)')
@@ -81,18 +79,4 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
      * @return CacheBuilderInterface
      */
     abstract protected function getCacheBuilder();
-
-    /**
-     * @param string $websiteReference
-     * @return Website
-     */
-    protected function getWebsite($websiteReference)
-    {
-        if ($websiteReference === 'default') {
-            return $this->registry->getManagerForClass('OroWebsiteBundle:Website')
-                ->getRepository('OroWebsiteBundle:Website')
-                ->getDefaultWebsite();
-        }
-        return $websiteReference ? $this->getReference($websiteReference) : null;
-    }
 }

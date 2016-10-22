@@ -2,14 +2,16 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 
 /**
@@ -18,9 +20,15 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibi
  */
 class CategoryTreeHandlerListenerTest extends WebTestCase
 {
+    /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
     protected function setUp()
     {
         $this->initClient();
+        $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
             LoadAccountUserData::class,
@@ -35,7 +43,12 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
      */
     public function testCheckCalculatedCategories(array $visibleCategories, array $invisibleCategories)
     {
-        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
+        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager->set('oro_visibility.category_visibility', CategoryVisibility::VISIBLE);
+        $configManager->flush();
+        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')
+            ->buildCache();
+
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -248,7 +261,11 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
 
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference('account_group.group1');
-        $accountGroupVisibility->setAccountGroup($accountGroup);
+        $scope = $this->scopeManager->findOrCreate(
+            AccountGroupCategoryVisibility::VISIBILITY_TYPE,
+            ['accountGroup' => $accountGroup]
+        );
+        $accountGroupVisibility->setScope($scope);
         $accountGroupVisibility->setCategory($category);
         $accountGroupVisibility->setVisibility($visibility);
 
@@ -271,12 +288,16 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference('account_group.group1');
         /** @var AccountGroupCategoryVisibility $accountGroupVisibility */
+        $scope = $this->scopeManager->findOrCreate(
+            AccountGroupCategoryVisibility::VISIBILITY_TYPE,
+            ['accountGroup' => $accountGroup]
+        );
         $accountGroupVisibility = $em
             ->getRepository('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility')
             ->findOneBy(
                 [
                     'category' => $category,
-                    'accountGroup' => $accountGroup
+                    'scope' => $scope
                 ]
             );
 
@@ -299,9 +320,10 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         /** @var Account $account */
         $account = $this->getReference('account.level_1');
         /** @var AccountCategoryVisibility $accountVisibility */
+        $scope = $this->scopeManager->findOrCreate(AccountCategoryVisibility::VISIBILITY_TYPE, ['account' => $account]);
         $accountVisibility = $em
-            ->getRepository('OroVisibilityBundle:Visibility\AccountCategoryVisibility')
-            ->findOneBy(['category' => $category, 'account' => $account]);
+            ->getRepository(AccountCategoryVisibility::class)
+            ->findOneBy(['category' => $category, 'scope' => $scope]);
 
         $accountVisibility->setVisibility($visibility);
 

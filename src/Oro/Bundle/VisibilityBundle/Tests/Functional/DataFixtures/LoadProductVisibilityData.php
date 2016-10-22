@@ -79,7 +79,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
             ->setVisibility($data['all']['visibility']);
 
         $scope = $this->container->get('oro_scope.scope_manager')
-            ->findOrCreate(ProductVisibility::VISIBILITY_TYPE, null);
+            ->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
         $productVisibility->setScope($scope);
 
         $manager->persist($productVisibility);

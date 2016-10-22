@@ -43,11 +43,11 @@ trait CategoryVisibilityResolvedTermTrait
             Join::WITH,
             $qb->expr()->andX(
                 $qb->expr()->eq($this->getRootAlias($qb), 'agcvr.category'),
-                $qb->expr()->eq('agcvr.scope', ':scope')
+                $qb->expr()->eq('agcvr.scope', ':groupScope')
             )
         );
 
-        $qb->setParameter('scope', $scope);
+        $qb->setParameter('groupScope', $scope);
 
         return sprintf(
             'COALESCE(CASE WHEN agcvr.visibility = %s THEN %s ELSE agcvr.visibility END, 0) * 10',
@@ -70,11 +70,11 @@ trait CategoryVisibilityResolvedTermTrait
             Join::WITH,
             $qb->expr()->andX(
                 $qb->expr()->eq($this->getRootAlias($qb), 'acvr.category'),
-                $qb->expr()->eq('acvr.scope', ':scope')
+                $qb->expr()->eq('acvr.scope', ':accountScope')
             )
         );
 
-        $qb->setParameter('scope', $scope);
+        $qb->setParameter('accountScope', $scope);
 
         return sprintf(
             'COALESCE(CASE WHEN acvr.visibility = %s THEN %s ELSE acvr.visibility END, 0) * 100',
