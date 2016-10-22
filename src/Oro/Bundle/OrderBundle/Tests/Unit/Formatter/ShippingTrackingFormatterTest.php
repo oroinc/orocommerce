@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\src\Oro\Bundle\OrderBundle\Tests\Unit\Formatter;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Tests\Unit\Formatter\Stub\ShippingMethodStub;

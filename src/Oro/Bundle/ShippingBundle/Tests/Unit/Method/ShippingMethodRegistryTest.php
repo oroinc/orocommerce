@@ -5,7 +5,6 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Method\Stub\TrackingAwareShippingMethodStub;
 
 class ShippingMethodRegistryTest extends \PHPUnit_Framework_TestCase

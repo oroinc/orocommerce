@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Method\Stub;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
 
 class TrackingAwareShippingMethodStub implements ShippingMethodInterface, ShippingTrackingAwareInterface
