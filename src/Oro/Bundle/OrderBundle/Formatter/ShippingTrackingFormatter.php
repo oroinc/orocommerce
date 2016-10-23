@@ -10,11 +10,22 @@ class ShippingTrackingFormatter
     protected $shippingTrackingMethods;
 
     /**
-     * @param array|null $shippingTrackingMethods
+     * @var null|object
      */
-    public function __construct(array $shippingTrackingMethods = null)
+    private $shippingMethodRegistry;
+
+    /**
+     * @param object|null $shippingMethodRegistry
+     */
+    public function setShippingMethodRegistry($shippingMethodRegistry = null)
     {
-        $this->shippingTrackingMethods = $shippingTrackingMethods;
+        $this->shippingMethodRegistry = $shippingMethodRegistry;
+        $this->shippingTrackingMethods = [];
+        if ($this->shippingMethodRegistry !== null &&
+            get_class($this->shippingMethodRegistry) === 'Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry'
+        ) {
+            $this->shippingTrackingMethods = $this->shippingMethodRegistry->getTrackingAwareShippingMethods();
+        }
     }
 
     /**

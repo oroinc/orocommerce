@@ -30,11 +30,23 @@ class OrderShippingTrackingType extends AbstractType
     protected $choices;
 
     /**
-     * @param array $methods
+     * @var null|object
      */
-    public function __construct(array $methods = null)
+    private $shippingMethodRegistry;
+
+    /**
+     * @param object $shippingMethodRegistry
+     */
+    public function setShippingMethodRegistry($shippingMethodRegistry = null)
     {
-        if (is_array($methods) && 0 < count($methods)) {
+        $this->shippingMethodRegistry = $shippingMethodRegistry;
+        $methods = [];
+        if ($this->shippingMethodRegistry !== null &&
+            get_class($this->shippingMethodRegistry) === 'Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry'
+        ) {
+            $methods = $this->shippingMethodRegistry->getTrackingAwareShippingMethods();
+        }
+        if (0 < count($methods)) {
             /** @var ShippingMethodInterface $method */
             foreach ($methods as $method) {
                 $this->choices[$method->getIdentifier()] = $method->getLabel();
