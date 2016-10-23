@@ -90,8 +90,6 @@ class ProductControllerTest extends WebTestCase
      */
     public function testIndex($category, array $metaTags)
     {
-        $this->markTestSkipped('TODO: Remove skip after category filtering will be implemented');
-
         $category = $this->getCategory($category);
 
         $crawler = $this->client->request(
