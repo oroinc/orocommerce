@@ -37,13 +37,24 @@ class OrderShippingTrackingType extends AbstractType
     /**
      * @param object $shippingMethodRegistry
      */
-    public function setShippingMethodRegistry($shippingMethodRegistry = null)
+    public function __construct($shippingMethodRegistry = null)
     {
         $this->shippingMethodRegistry = $shippingMethodRegistry;
+        $this->choices = null;
+    }
+
+    /**
+     * @return array|null
+     */
+    private function getTrackingMethodsChoices()
+    {
+        if ($this->choices) {
+            return $this->choices;
+        }
+
         $methods = [];
         if ($this->shippingMethodRegistry !== null &&
-            get_class($this->shippingMethodRegistry) === 'Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry'
-        ) {
+            get_class($this->shippingMethodRegistry) === 'Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry') {
             $methods = $this->shippingMethodRegistry->getTrackingAwareShippingMethods();
         }
         if (0 < count($methods)) {
@@ -62,14 +73,14 @@ class OrderShippingTrackingType extends AbstractType
     {
         parent::buildForm($builder, $options);
 
-        if (null !== $this->choices) {
+        if ($this->getTrackingMethodsChoices()) {
             $builder
                 ->add(
                     'method',
                     SelectSwitchInputType::class,
                     [
                         'required' => false,
-                        'choices' => $this->choices,
+                        'choices' => $this->getTrackingMethodsChoices(),
                         'mode' => SelectSwitchInputType::MODE_SELECT,
                         'error_bubbling' => true
                     ]
@@ -112,7 +123,7 @@ class OrderShippingTrackingType extends AbstractType
             $config = $form->get('method')->getConfig();
             $options = $config->getOptions();
 
-            if (null !== $this->choices) {
+            if ($this->getTrackingMethodsChoices()) {
                 if (null === $options['choices'] || !array_key_exists($data->getMethod(), $options['choices'])) {
                     $form->add(
                         'method',
@@ -144,10 +155,10 @@ class OrderShippingTrackingType extends AbstractType
         $config = $form->get('method')->getConfig();
         $options = $config->getOptions();
 
-        if (null !== $this->choices) {
+        if ($this->getTrackingMethodsChoices()) {
             if (null === $options['choices'] || !array_key_exists($data['method'], $options['choices'])) {
                 unset($options['choices'], $options['choice_list']);
-                $newChoices = $this->choices;
+                $newChoices = $this->getTrackingMethodsChoices();
                 $newChoices[$data['method']] = $data['method'];
                 $form->add(
                     'method',

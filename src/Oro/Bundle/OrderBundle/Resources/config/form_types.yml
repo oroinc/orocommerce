@@ -111,8 +111,8 @@ services:
 
     oro_order.form.type.order_shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingType'
-        calls:
-            - [setShippingMethodRegistry, ['@?oro_shipping.shipping_method.registry']]
+        arguments:
+            - '@?oro_shipping.shipping_method.registry'
         tags:
             - { name: form.type }
 

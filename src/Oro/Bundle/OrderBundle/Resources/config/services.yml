@@ -199,8 +199,8 @@ services:
 
     oro_order.formatter.shipping_tracking:
         class: 'Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter'
-        calls:
-            - [setShippingMethodRegistry, ['@?oro_shipping.shipping_method.registry']]
+        arguments:
+            - "@?oro_shipping.shipping_method.registry"
 
     oro_order.order.listener.total_calculate_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'

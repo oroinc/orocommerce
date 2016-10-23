@@ -20,12 +20,24 @@ class ShippingTrackingFormatter
     public function setShippingMethodRegistry($shippingMethodRegistry = null)
     {
         $this->shippingMethodRegistry = $shippingMethodRegistry;
+    }
+
+    /**
+     * @return array|null
+     */
+    private function getTrackingMethods()
+    {
+        if ($this->shippingTrackingMethods) {
+            return $this->shippingTrackingMethods;
+        }
+
         $this->shippingTrackingMethods = [];
         if ($this->shippingMethodRegistry !== null &&
             get_class($this->shippingMethodRegistry) === 'Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry'
         ) {
             $this->shippingTrackingMethods = $this->shippingMethodRegistry->getTrackingAwareShippingMethods();
         }
+        return $this->shippingTrackingMethods;
     }
 
     /**
@@ -34,8 +46,8 @@ class ShippingTrackingFormatter
      */
     public function formatShippingTrackingMethod($shippingMethodName)
     {
-        if ($this->shippingTrackingMethods && array_key_exists($shippingMethodName, $this->shippingTrackingMethods)) {
-            $label = $this->shippingTrackingMethods[$shippingMethodName]->getLabel();
+        if ($this->getTrackingMethods() && array_key_exists($shippingMethodName, $this->getTrackingMethods())) {
+            $label = $this->getTrackingMethods()[$shippingMethodName]->getLabel();
             if ($label) {
                 return $label;
             }
@@ -50,8 +62,8 @@ class ShippingTrackingFormatter
      */
     public function formatShippingTrackingLink($shippingMethodName, $trackingNumber)
     {
-        if ($this->shippingTrackingMethods && array_key_exists($shippingMethodName, $this->shippingTrackingMethods)) {
-            $link = $this->shippingTrackingMethods[$shippingMethodName]->getTrackingLink($trackingNumber);
+        if ($this->getTrackingMethods() && array_key_exists($shippingMethodName, $this->getTrackingMethods())) {
+            $link = $this->getTrackingMethods()[$shippingMethodName]->getTrackingLink($trackingNumber);
             if ($link) {
                 return $link;
             }
