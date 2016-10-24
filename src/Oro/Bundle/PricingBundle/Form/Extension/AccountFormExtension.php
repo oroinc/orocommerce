@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 
-use Oro\Bundle\AccountBundle\Form\Type\AccountType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountType;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\EventListener\AccountListener;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;

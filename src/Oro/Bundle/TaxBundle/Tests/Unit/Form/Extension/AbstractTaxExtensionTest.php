@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Form\Extension\AbstractTaxExtension;

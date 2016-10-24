@@ -11,8 +11,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField; // required by DatesAwareTrait
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
-use Oro\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\AccountBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
+use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;

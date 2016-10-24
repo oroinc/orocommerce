@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -38,7 +38,7 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
     {
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-            'Oro\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData'
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData'
         ];
     }
 
@@ -48,7 +48,7 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
      */
     public function load(ObjectManager $manager)
     {
-        $accountUser = $manager->getRepository('OroAccountBundle:AccountUser')->findOneBy([]);
+        $accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')->findOneBy([]);
 
         /** @var User $user */
         $owner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);

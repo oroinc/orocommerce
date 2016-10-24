@@ -8,8 +8,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 
 class FormViewListener
 {
@@ -49,7 +49,7 @@ class FormViewListener
     public function onAccountUserView(BeforeListRenderEvent $event)
     {
         /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntityFromRequestId('OroAccountBundle:AccountUser');
+        $accountUser = $this->getEntityFromRequestId('OroCustomerBundle:AccountUser');
         if ($accountUser) {
             $template = $event->getEnvironment()->render(
                 'OroOrderBundle:AccountUser:orders_view.html.twig',
@@ -65,7 +65,7 @@ class FormViewListener
     public function onAccountView(BeforeListRenderEvent $event)
     {
         /** @var Account $account */
-        $account = $this->getEntityFromRequestId('OroAccountBundle:Account');
+        $account = $this->getEntityFromRequestId('OroCustomerBundle:Account');
         if ($account) {
             $template = $event->getEnvironment()->render(
                 'OroOrderBundle:Account:orders_view.html.twig',
