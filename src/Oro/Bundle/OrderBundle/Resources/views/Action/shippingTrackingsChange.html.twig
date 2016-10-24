@@ -8,7 +8,9 @@
               method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
                 {% if buttonOptions.page_component_module is defined %}data-page-component-module="{{ buttonOptions.page_component_module }}"{% endif %}
         >
-            {{ form_row(form.shippingTrackings) }}
+            <div>
+                {{ form_widget(form.shippingTrackings) }}
+            </div>
 
             <div class="hidden">
                 {{ form_rest(form) }}

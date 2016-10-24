@@ -384,13 +384,17 @@
             options: form.vars.page_component_options
         }) }}>
         <div class="input-group select-switch-input-container">
-            {{ form_widget(form) }}
-            <span class="input-group-btn">
-                <button class="add-on btn input-to-select-btn"><i class="icon-bars"></i></button>
-            </span>
-            <span class="input-group-btn">
-                <button class="add-on btn select-to-input-btn"><i class="icon-plus"></i></button>
-            </span>
+            <div class="select-container">
+                {{ form_widget(form) }}
+                <span class="input-group-btn">
+                    <button class="add-on btn select-to-input-btn"><i class="icon-plus"></i></button>
+                </span>
+            </div>
+            <div class="input-container">
+                <span class="input-group-btn input-to-select">
+                    <button class="add-on btn input-to-select-btn"><i class="icon-bars"></i></button>
+                </span>
+            </div>
         </div>
         {{ form_errors(form) }}
     </div>

@@ -48,9 +48,9 @@ define(function (require) {
             var validation = this.$el.find('select').attr('data-validation');
             this.$input = $('<input type="text" style="width: 100px; margin-left: 5px;">')
                 .attr('id', id)
-                .attr('name', name)
-                .attr('data-validation', validation);
-            this.$el.find('.input-group').prepend(this.$input);
+                .attr('name', name);
+            this.$el.find('.input-container').prepend(this.$input);
+            this.$el.find('.input-container').attr('data-validation', validation);
             if (this.$mode == this.MODE_SELECT) {
                 this._onInputToSelect();
             }else if (this.$mode == this.MODE_INPUT) {
@@ -70,6 +70,7 @@ define(function (require) {
                 e.preventDefault();
             }
             this.$mode = this.MODE_INPUT;
+            this.$el.find('.validation-failed').remove();
             this.$el.find('select').prop('disabled', 'disabled');
             this.$el.find('.selector').hide();
             this.$el.find(this.$select_to_input_btn).hide();
@@ -86,6 +87,7 @@ define(function (require) {
                 e.preventDefault();
             }
             this.$mode = this.MODE_SELECT;
+            this.$el.find('.validation-failed').remove();
             this.$el.find('input').prop('disabled', 'disabled').hide();
             this.$el.find(this.$input_to_select_btn).hide();
             this.$el.find('select').prop('disabled', false);
