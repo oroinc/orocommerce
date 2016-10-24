@@ -460,6 +460,5 @@ services:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener'
         arguments:
             - '@oro_product.product.manager'
-#        @todo: BB-4191
-#        tags:
-#            - { name: kernel.event_listener, event: oro_website_search.before_search, method: process }
+        tags:
+            - { name: kernel.event_listener, event: oro_website_search.before_search, method: process }
