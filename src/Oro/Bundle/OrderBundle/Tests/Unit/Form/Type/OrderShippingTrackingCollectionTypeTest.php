@@ -95,7 +95,7 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     CollectionType::NAME => new CollectionType(),
-                    OrderShippingTrackingType::NAME => new OrderShippingTrackingType([]),
+                    OrderShippingTrackingType::NAME => new OrderShippingTrackingType(),
                 ],
                 []
             ),

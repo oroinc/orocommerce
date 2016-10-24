@@ -4,9 +4,26 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Formatter;
 
 use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Tests\Unit\Formatter\Stub\ShippingMethodStub;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 
 class ShippingTrackingFormatterTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ShippingMethodRegistry
+     */
+    protected $shippingMethodRegistry;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        $this->shippingMethodRegistry = $this
+            ->getMockBuilder(ShippingMethodRegistry::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
 
     /**
      * @param string|null $trackingLink
@@ -49,9 +66,14 @@ class ShippingTrackingFormatterTest extends \PHPUnit_Framework_TestCase
         $trackingAware,
         $expectedResult
     ) {
-        $formatter = new ShippingTrackingFormatter([
-            $shippingMethod => $this->shippingMethodMock($trackingNumber, null, $trackingAware)
-        ]);
+        $formatter = new ShippingTrackingFormatter($this->shippingMethodRegistry);
+
+        $this->shippingMethodRegistry
+            ->expects(static::any())
+            ->method('getTrackingAwareShippingMethods')
+            ->willReturn([
+                $shippingMethod => $this->shippingMethodMock($trackingNumber, null, $trackingAware)
+            ]);
 
         static::assertEquals(
             $expectedResult,
@@ -93,9 +115,14 @@ class ShippingTrackingFormatterTest extends \PHPUnit_Framework_TestCase
         $trackingAware,
         $expectedResult
     ) {
-        $formatter = new ShippingTrackingFormatter([
-            $shippingMethod => $this->shippingMethodMock(null, $label, $trackingAware)
-        ]);
+        $formatter = new ShippingTrackingFormatter($this->shippingMethodRegistry);
+
+        $this->shippingMethodRegistry
+            ->expects(static::any())
+            ->method('getTrackingAwareShippingMethods')
+            ->willReturn([
+                $shippingMethod => $this->shippingMethodMock(null, $label, $trackingAware)
+            ]);
 
         static::assertEquals(
             $expectedResult,

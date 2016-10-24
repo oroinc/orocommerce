@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\Form\Exception\LogicException;
@@ -30,17 +31,16 @@ class OrderShippingTrackingType extends AbstractType
     protected $choices;
 
     /**
-     * @var null|object
+     * @var ShippingMethodRegistry|null
      */
-    private $shippingMethodRegistry;
+    protected $shippingMethodRegistry;
 
     /**
-     * @param object $shippingMethodRegistry
+     * @param ShippingMethodRegistry $shippingMethodRegistry
      */
     public function __construct($shippingMethodRegistry = null)
     {
         $this->shippingMethodRegistry = $shippingMethodRegistry;
-        $this->choices = null;
     }
 
     /**
@@ -48,21 +48,20 @@ class OrderShippingTrackingType extends AbstractType
      */
     private function getTrackingMethodsChoices()
     {
-        if ($this->choices) {
+        if ($this->choices !== null) {
             return $this->choices;
         }
 
-        $methods = [];
-        if ($this->shippingMethodRegistry !== null &&
-            get_class($this->shippingMethodRegistry) === 'Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry') {
+        $this->choices = [];
+        if ($this->shippingMethodRegistry !== null) {
             $methods = $this->shippingMethodRegistry->getTrackingAwareShippingMethods();
-        }
-        if (0 < count($methods)) {
+
             /** @var ShippingMethodInterface $method */
             foreach ($methods as $method) {
                 $this->choices[$method->getIdentifier()] = $method->getLabel();
             }
         }
+        return $this->choices;
     }
 
     /**
