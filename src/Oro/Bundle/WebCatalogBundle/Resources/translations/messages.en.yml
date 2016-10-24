@@ -42,3 +42,12 @@ oro:
             webcatalog:
                 saved:
                     message: 'Web Catalog has been saved'
+
+        form:
+            choose: 'Choose a Web Catalog...'
+
+        system_configuration:
+            fields:
+                web_catalog:
+                    label: Web Catalog
+                    tooltip: Assign Web Catalog to Store Front

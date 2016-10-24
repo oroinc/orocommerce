@@ -1,5 +1,5 @@
 datagrids:
-    web-catalog-grid:
+    web-catalog-select-grid:
         acl_resource: oro_web_catalog_view
         options:
             entityHint: 'web catalog'
@@ -55,6 +55,11 @@ datagrids:
                 updatedAt:
                     type:      datetime
                     data_name: web_catalog.updatedAt
+
+    web-catalog-grid:
+        extends: web-catalog-select-grid
+        options:
+            entity_pagination: true
         actions:
             view:
                 type:          navigate

@@ -26,6 +26,10 @@ use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
  *          },
  *          "dataaudit"={
  *              "auditable"=true
+ *          },
+ *          "form"={
+ *              "form_type"="oro_web_catalog_select",
+ *              "grid_name"="web-catalog-select-grid"
  *          }
  *     }
  * )
