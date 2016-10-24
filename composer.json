@@ -29,7 +29,8 @@
         "nicholas-eden/math": "0.6.*",
         "myclabs/deep-copy": "1.5.*",
         "leafo/scssphp": "0.6.3",
-        "bower-asset/jquery-creditcardvalidator": "1.0"
+        "bower-asset/jquery-creditcardvalidator": "1.0",
+        "bower-asset/jquery-validate": "1.11.1"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
