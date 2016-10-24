@@ -244,7 +244,6 @@ class OroOrderBundleInstaller implements
         $table->addColumn('order_id', 'integer', ['notnull' => true]);
         $table->addColumn('method', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('number', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addIndex(['order_id'], 'IDX_F9A53B6A8D9F6D83', []);
         $table->setPrimaryKey(['id']);
     }
 
