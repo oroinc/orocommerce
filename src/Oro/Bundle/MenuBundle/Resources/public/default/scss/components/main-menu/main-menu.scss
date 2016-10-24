@@ -19,9 +19,24 @@
 
         padding: 14px 0;
 
+        line-height: 1.5;
+        text-align: center;
         text-transform: uppercase;
 
-        color: $theme-middle-gray-color;
+        color: get-color('additional', 'dark');
+
+        &:hover,
+        &:focus {
+            text-decoration: none;
+
+            color: get-color('additional', 'dark');
+        }
+    }
+}
+
+@include breakpoint('desktop') {
+    .main-menu {
+        display: flex !important;
     }
 }
 
@@ -29,13 +44,23 @@
     .main-menu {
         display: block;
 
+	max-height: none;
         padding: 7px 15px 8px 15px;
 
         font-weight: bold;
 
         border-bottom: 1px solid $theme-slight-lightest-gray-color;
 
+        &__item {
+            position: relative;
+
+            min-height: inherit;
+        }
+
         &__link {
+            font-size: 14px;
+            font-weight: bold;
+
             padding: 8px 0 7px;
 
             text-align: left;

@@ -552,7 +552,7 @@ services:
             - {name: kernel.event_listener, event: oro_catalog.category.tree.create_after, method: onCreateAfter }
 
     oro_customer.event_listener.frontend_dataaudit_history_grid_listener:
-        class: '%oro_dataaudit.event_listener.dataaudit_history_grid_listener.class%'
+        class: 'Oro\Bundle\DataAuditBundle\EventListener\AuditHistoryGridListener'
         arguments:
             - [objectClass, objectId]
         tags:

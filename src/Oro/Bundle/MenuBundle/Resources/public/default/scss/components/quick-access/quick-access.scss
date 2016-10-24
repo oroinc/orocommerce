@@ -66,8 +66,9 @@
 @include breakpoint('tablet') {
     .quick-access {
         padding-top: 7px;
+        padding-bottom: 16px;
 
-        border-bottom: 1px solid $theme-slight-lightest-gray-color;
+        border-bottom: 1px solid get-color('additional', 'light');
 
         &__list {
             margin-bottom: 8px;

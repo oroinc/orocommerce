@@ -88,25 +88,6 @@
     }
   }
 
-  &__link {
-    display: block;
-    padding: 14px 0;
-
-    color: $base-font-color-lighter;
-    line-height: 1.5;
-    text-transform: uppercase;
-    text-align: center;
-
-    > i {
-      margin: 0;
-    }
-
-    &:hover, &:focus {
-      color: $base-font-color-lighter;
-      text-decoration: none;
-    }
-  }
-
   &__sublist-container {
     position: absolute;
     top: 100%;
@@ -245,11 +226,6 @@
         padding-left: 13px;
         padding-right: 15px;
       }
-    }
-
-    &__link {
-      font-size: 13px;
-      line-height: 1.7;
     }
 
     &__sublist {

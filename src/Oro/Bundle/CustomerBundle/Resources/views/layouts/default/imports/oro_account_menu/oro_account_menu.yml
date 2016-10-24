@@ -43,3 +43,15 @@ layout:
                 visible: '=data["acl"].isGranted("oro_account_frontend_account_user_role_index")'
                 route_name: oro_customer_frontend_account_user_role_index
                 text: oro.customer.frontend.account_user.role.entity_plural_label
+        - '@add':
+            id: account_sidebar_sign_out
+            parentId: account_sidebar
+            blockType: link
+            options:
+                visible: '=data["acl"].isGranted("oro_account_frontend_account_user_view")'
+                route_name: oro_customer_account_user_security_logout
+                text: oro.customer.frontend.menu.account_user_sign_out.label
+        - '@move':
+            id: account_sidebar_sign_out
+            siblingId: account_sidebar_quote
+            prepend: false

@@ -1,0 +1,32 @@
+.main-menu-outer {
+    .main-menu-outer__trigger {
+        display: none;
+    }
+}
+
+@include breakpoint('tablet') {
+    .main-menu-outer {
+        margin-bottom: 10px;
+        padding: 14px 0 10px 0;
+
+        border-bottom: 1px solid get-color('additional', 'light');
+
+        .main-menu-outer__trigger {
+            font-size: 14px;
+            font-weight: bold;
+
+            display: block;
+
+            margin-left: 5px;
+            padding: 10px 16px;
+        }
+
+        &__badge {
+            margin-right: 5px;
+        }
+
+        &__text {
+            vertical-align: bottom;
+        }
+    }
+}
