@@ -123,31 +123,6 @@
     }
   }
 
-  &__link {
-    display: block;
-    min-height: 49px;
-    padding: 14px 0;
-
-    color: $base-font-color-lighter;
-    line-height: 1.5;
-    text-transform: uppercase;
-    text-align: center;
-
-    @media (max-width: 1069px) {
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    > i {
-      margin: 0;
-    }
-
-    &:hover, &:focus {
-      color: $base-font-color-lighter;
-      text-decoration: none;
-    }
-  }
-
   &__sublist-container {
     position: absolute;
     top: 100%;

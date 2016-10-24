@@ -1,5 +1,5 @@
 .main-menu-outer {
-    a.main-menu-outer__trigger {
+    .main-menu-outer__trigger {
         display: none;
     }
 }
@@ -11,7 +11,7 @@
 
         border-bottom: 1px solid get-color('additional', 'light');
 
-        a.main-menu-outer__trigger {
+        .main-menu-outer__trigger {
             font-size: 14px;
             font-weight: bold;
 

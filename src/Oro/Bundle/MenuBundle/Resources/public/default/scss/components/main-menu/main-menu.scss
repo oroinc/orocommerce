@@ -19,9 +19,18 @@
 
         padding: 14px 0;
 
+        line-height: 1.5;
+        text-align: center;
         text-transform: uppercase;
 
         color: get-color('additional', 'dark');
+
+        &:hover,
+        &:focus {
+            text-decoration: none;
+
+            color: get-color('additional', 'dark');
+        }
     }
 }
 
@@ -39,7 +48,9 @@
         padding: 10px 21px 0 21px;
 
         &__item {
-            min-height: 0;
+            position: relative;
+
+            min-height: inherit;
         }
 
         &__link {
