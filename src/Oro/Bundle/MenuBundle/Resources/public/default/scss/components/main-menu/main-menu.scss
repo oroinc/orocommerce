@@ -19,9 +19,24 @@
 
         padding: 14px 0;
 
+        line-height: 1.5;
+        text-align: center;
         text-transform: uppercase;
 
-        color: $theme-middle-gray-color;
+        color: get-color('additional', 'dark');
+
+        &:hover,
+        &:focus {
+            text-decoration: none;
+
+            color: get-color('additional', 'dark');
+        }
+    }
+}
+
+@include breakpoint('desktop') {
+    .main-menu {
+        display: flex !important;
     }
 }
 
@@ -30,13 +45,18 @@
         display: block;
 
         max-height: none;
-        padding: 10px 15px 0 15px;
+        padding: 10px 21px 0 21px;
 
         &__item {
-            min-height: 0;
+            position: relative;
+
+            min-height: inherit;
         }
 
         &__link {
+            font-size: 14px;
+            font-weight: bold;
+
             padding: 5px 0;
 
             text-align: left;

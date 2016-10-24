@@ -65,6 +65,10 @@
 
 @include breakpoint('tablet') {
     .quick-access {
+        padding-bottom: 16px;
+
+        border-bottom: 1px solid get-color('additional', 'light');
+
         &__list {
             text-align: left;
         }
