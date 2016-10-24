@@ -17,7 +17,6 @@ navigation:
 
         tree:
             application_menu:
-                read_only: true
                 children:
                     products_tab:
                         children:
