@@ -4,6 +4,7 @@ namespace Oro\Bundle\InventoryBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider;
 use Oro\Bundle\CatalogBundle\Fallback\Provider\ParentCategoryFallbackProvider;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
@@ -15,11 +16,13 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\RenameInventoryConfigSectionQuery;
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\UpdateEntityConfigExtendClassQuery;
+use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\UpdateFallbackEntitySystemOptionConfig;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareInterface, RenameExtensionAwareInterface
 {
@@ -252,16 +255,12 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             'productUnitPrecision' => 'oro.inventory.inventorylevel.product_unit_precision.label',
             'warehouse' => 'oro.inventory.inventorylevel.warehouse.label',
         ];
+        $this->addEntityFieldLabelConfigs($queries, InventoryLevel::class, $configData);
 
-        foreach ($configData as $fieldName => $value) {
-            $queries->addPostQuery(new UpdateEntityConfigFieldValueQuery(
-                InventoryLevel::class,
-                $fieldName,
-                'entity',
-                'label',
-                $value
-            ));
-        }
+
+        $configData = ['manageInventory' => 'oro.inventory.manage_inventory.label'];
+        $this->addEntityFieldLabelConfigs($queries, Product::class, $configData);
+        $this->addEntityFieldLabelConfigs($queries, Category::class, $configData);
 
         $queries->addPostQuery(new UpdateEntityConfigEntityValueQuery(
             InventoryLevel::class,
@@ -282,6 +281,35 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             'Extend\Entity\EX_OroWarehouseBundle_WarehouseInventoryLevel',
             'Extend\Entity\EX_OroInventoryBundle_InventoryLevel'
         ));
+
+        $queries->addPostQuery(new UpdateFallbackEntitySystemOptionConfig(
+            Product::class,
+            'manageInventory',
+            'oro_inventory.manage_inventory'
+        ));
+        $queries->addPostQuery(new UpdateFallbackEntitySystemOptionConfig(
+            Category::class,
+            'manageInventory',
+            'oro_inventory.manage_inventory'
+        ));
+    }
+
+    /**
+     * @param QueryBag $queries
+     * @param $class
+     * @param $data
+     */
+    protected function addEntityFieldLabelConfigs(QueryBag $queries, $class, $data)
+    {
+        foreach ($data as $fieldName => $value) {
+            $queries->addPostQuery(new UpdateEntityConfigFieldValueQuery(
+                $class,
+                $fieldName,
+                'entity',
+                'label',
+                $value
+            ));
+        }
     }
 
     /**

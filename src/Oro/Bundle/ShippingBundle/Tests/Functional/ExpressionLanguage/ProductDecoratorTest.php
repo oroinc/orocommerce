@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\ExpressionLanguage;
 
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadWarehousesAndInventoryLevels;
+
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 
 /**
@@ -23,7 +24,7 @@ class ProductDecoratorTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->loadFixtures([LoadWarehousesAndInventoryLevels::class]);
+        $this->loadFixtures([LoadInventoryLevels::class]);
     }
 
     /**
