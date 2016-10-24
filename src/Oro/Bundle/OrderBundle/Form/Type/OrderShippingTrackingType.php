@@ -81,8 +81,7 @@ class OrderShippingTrackingType extends AbstractType
                     [
                         'required' => false,
                         'choices' => $this->getTrackingMethodsChoices(),
-                        'mode' => SelectSwitchInputType::MODE_SELECT,
-                        'error_bubbling' => true
+                        'mode' => SelectSwitchInputType::MODE_SELECT
                     ]
                 );
         } else {

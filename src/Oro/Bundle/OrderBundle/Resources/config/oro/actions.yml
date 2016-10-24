@@ -77,7 +77,7 @@ operations:
             template: OroOrderBundle:Action:shippingTrackingsChange.html.twig
             title: oro.order.shipping_tracking.entity_label
             options:
-                width: 500
+                width: 550
                 modal: false
                 stateEnabled: false
                 incrementalPosition: false

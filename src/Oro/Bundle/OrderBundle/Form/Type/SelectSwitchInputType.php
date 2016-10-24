@@ -27,6 +27,7 @@ class SelectSwitchInputType extends AbstractType
         $resolver->setRequired(['mode']);
         $resolver->setDefaults(
             [
+                'placeholder' => false,
                 'mode' => self::MODE_SELECT,
                 'page_component' => 'oroorder/js/app/components/select-switch-input-component',
                 'page_component_options' => [],
