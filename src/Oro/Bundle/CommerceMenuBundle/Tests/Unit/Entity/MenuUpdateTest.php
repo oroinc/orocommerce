@@ -30,6 +30,7 @@ class MenuUpdateTest extends \PHPUnit_Framework_TestCase
         $update
             ->setImage($image)
             ->setCondition('test condition')
+            ->setIcon('test-icon')
             ->setPriority($priority)
             ->setDivider(true);
 
@@ -37,7 +38,8 @@ class MenuUpdateTest extends \PHPUnit_Framework_TestCase
             'image' => $image,
             'condition' => 'test condition',
             'divider' => true,
-            'position' => $priority
+            'position' => $priority,
+            'icon' => 'test-icon',
         ];
 
         $this->assertSame($expected, $update->getExtras());

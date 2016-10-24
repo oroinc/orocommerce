@@ -43,9 +43,11 @@ class OroCommerceMenuBundle implements Migration, RenameExtensionAwareInterface
     protected function updateOroCommerceMenuUpdateTable(Schema $schema)
     {
         $table = $schema->getTable('oro_front_nav_menu_upd');
+        $table->addColumn('icon', 'string', ['length' => 150, 'notnull' => false]);
         $table->addColumn('is_divider', 'boolean', []);
         $table->addColumn('is_custom', 'boolean', []);
         $table->changeColumn('ownership_type', ['type' => StringType::getType('string')]);
+        $table->changeColumn('uri', ['length' => 1023]);
         $table->removeForeignKey('FK_1B58D24F18F45C82');
         $table->dropColumn('website_id');
     }
