@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\CMSBundle\Model;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+
+/**
+ * @method LocalizedFallbackValue getSlug(Localization $localization = null)
+ * @method LocalizedFallbackValue getDefaultSlug()
+ */
 class ExtendPage
 {
     /**

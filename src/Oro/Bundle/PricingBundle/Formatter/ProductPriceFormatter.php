@@ -61,7 +61,7 @@ class ProductPriceFormatter
         $productData = [];
         foreach ($units as $unit => $pricesData) {
             foreach ($pricesData as $priceData) {
-                $quantity = $priceData['qty'];
+                $quantity = $priceData['quantity'];
                 $price = $priceData['price'];
                 $index = sprintf('%s_%s', $unit, $quantity);
                 $currencyIsoCode = $priceData['currency'];

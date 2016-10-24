@@ -1,0 +1,80 @@
+{% extends 'OroCustomerBundle:layouts/blank/oro_customer_account_user_security_login:layout.html.twig' %}
+
+{% block _login_form_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'id': 'form-login'
+    }) %}
+    {{ parent() }}
+    <script type="text/javascript">
+        require(['jquery', 'jquery.validate'],
+        function ($) {
+            $('#form-login').validate({});
+        });
+    </script>
+{% endblock %}
+
+{% block _login_form_username_widget %}
+    {% set label_attr = layout_attr_defaults(label_attr, {
+        '~class': " label label--full"
+    }) %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-validation': {"NotBlank":{"payload":null}},
+        '~class': "input input--full"
+    }) %}
+
+    <div class="grid__row">
+        {{ block_row(block, {
+            attr: attr,
+            label_attr: label_attr
+        }) }}
+    </div>
+{% endblock %}
+
+{% block _login_form_remenber_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' grid__row grid__row--offset-l'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _login_form_password_widget %}
+    {% set label_attr = layout_attr_defaults(label_attr, {
+        '~class': " label label--full"
+    }) %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-validation': {"NotBlank":{"payload":null}},
+        '~class': "input input--full"
+    }) %}
+
+    <div class="grid__row">
+        {{ block_row(block, {
+            attr: attr,
+            label_attr: label_attr
+        }) }}
+    </div>
+{% endblock %}
+
+{% block _login_form_forgot_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' grid__row grid__row--offset-none'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <div class="grid__group-column">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _login_form_register_item_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' grid__row grid__row--offset-none'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <div class="grid__group-column">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}

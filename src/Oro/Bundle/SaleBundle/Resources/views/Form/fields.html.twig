@@ -237,7 +237,7 @@
         {{ form_errors(form.quantity) }}
     </td>
     <td class="quote-lineitem-offers-unit">
-        {{ form_widget(form.productUnit, {attr: attr|merge({class: 'quote-lineitem-offer-unit-select'})}) }}
+        {{ form_widget(form.productUnit, {attr: form.productUnit.vars.attr|merge({class: 'quote-lineitem-offer-unit-select'})}) }}
         {{ form_errors(form.productUnit) }}
     </td>
     <td class="quote-lineitem-offers-more">
@@ -253,7 +253,11 @@
         {{ form_widget(form.priceType) }}
         {{ form_errors(form.priceType) }}
     </td>
-    <td class="quote-lineitem-offers-price">
+    <td class="quote-lineitem-offers-price"
+        data-page-component-module="oroui/js/app/components/view-component"
+        data-page-component-options="{{ {
+            view: 'oropricing/js/app/views/line-item-product-prices-view'
+        }|json_encode }}">
         {{ form_widget(form.price) }}
         {{ form_errors(form.price) }}
     </td>

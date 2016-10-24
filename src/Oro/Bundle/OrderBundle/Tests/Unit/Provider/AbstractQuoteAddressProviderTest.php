@@ -4,9 +4,9 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountAddress;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 
 use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -209,7 +209,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
      */
     protected function assertAccountAddressRepositoryCall()
     {
-        $repository = $this->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository')
+        $repository = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\AccountAddressRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -233,7 +233,7 @@ abstract class AbstractQuoteAddressProviderTest extends \PHPUnit_Framework_TestC
     protected function assertAccountUserAddressRepositoryCall()
     {
         $repository = $this
-            ->getMockBuilder('Oro\Bundle\AccountBundle\Entity\Repository\AccountUserAddressRepository')
+            ->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserAddressRepository')
             ->disableOriginalConstructor()
             ->getMock();
 

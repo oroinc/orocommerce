@@ -5,6 +5,7 @@ namespace Oro\Bundle\CMSBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -43,7 +44,7 @@ use Oro\Bundle\CMSBundle\Model\ExtendPage;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class Page extends ExtendPage
+class Page extends ExtendPage implements DatesAwareInterface
 {
     use AuditableOrganizationAwareTrait;
     use DatesAwareTrait;
@@ -202,6 +203,23 @@ class Page extends ExtendPage
         }
 
         return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**
