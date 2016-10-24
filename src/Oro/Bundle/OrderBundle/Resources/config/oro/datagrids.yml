@@ -556,6 +556,7 @@ datagrids:
                     - order_item.productSku
                     - order_item.freeFormProduct
                     - order_item.quantity
+                    - order_item.productUnitCode
                     - order_item.shipBy
                     - order_item.comment
                 from:
@@ -585,6 +586,8 @@ datagrids:
                 template:      OroOrderBundle:Order:Datagrid/product.html.twig
             quantity:
                 label: oro.order.orderlineitem.quantity.label
+            productUnitCode:
+                label: oro.order.orderlineitem.product_unit_code.label
             price:
                 label:         oro.order.orderlineitem.price.label
                 type:          twig
