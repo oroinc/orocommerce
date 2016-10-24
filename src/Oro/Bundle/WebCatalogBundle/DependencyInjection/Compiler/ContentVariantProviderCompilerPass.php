@@ -6,12 +6,12 @@ use Oro\Component\DependencyInjection\Compiler\TaggedServicesCompilerPassTrait;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class WebCatalogPageProviderCompilerPass implements CompilerPassInterface
+class ContentVariantProviderCompilerPass implements CompilerPassInterface
 {
     use TaggedServicesCompilerPassTrait;
     
-    const WEB_CATALOG_PAGE_PROVIDER_REGISTRY = 'oro_web_catalog.page_provider.registry';
-    const WEB_CATALOG_PAGE_PROVIDER_TAG = 'oro_web_catalog.page_provider';
+    const CONTENT_VARIANT_PROVIDER_REGISTRY = 'oro_web_catalog.content_variant_provider.registry';
+    const CONTENT_VARIANT_PROVIDER_TAG = 'oro_web_catalog.content_variant_provider';
 
     /**
      * {@inheritDoc}
@@ -20,9 +20,9 @@ class WebCatalogPageProviderCompilerPass implements CompilerPassInterface
     {
         $this->registerTaggedServices(
             $container,
-            self::WEB_CATALOG_PAGE_PROVIDER_REGISTRY,
-            self::WEB_CATALOG_PAGE_PROVIDER_TAG,
-            'addPageProvider'
+            self::CONTENT_VARIANT_PROVIDER_REGISTRY,
+            self::CONTENT_VARIANT_PROVIDER_TAG,
+            'addContentVariantProvider'
         );
     }
 }

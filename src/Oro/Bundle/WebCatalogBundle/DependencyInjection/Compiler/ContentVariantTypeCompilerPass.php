@@ -6,7 +6,7 @@ use Oro\Component\DependencyInjection\Compiler\TaggedServicesCompilerPassTrait;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class WebCatalogPageTypeCompilerPass implements CompilerPassInterface
+class ContentVariantTypeCompilerPass implements CompilerPassInterface
 {
     use TaggedServicesCompilerPassTrait;
     
@@ -22,7 +22,7 @@ class WebCatalogPageTypeCompilerPass implements CompilerPassInterface
             $container,
             self::WEB_CATALOG_PAGE_TYPE_REGISTRY,
             self::WEB_CATALOG_PAGE_TYPE_TAG,
-            'addPageType'
+            'addContentVariantType'
         );
     }
 }

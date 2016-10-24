@@ -1,20 +1,21 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\PageProvider;
+namespace Oro\Bundle\WebCatalogBundle\ContentVariantProvider;
 
+use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
-class WebCatalogPageProvider
+class ContentVariantProvider implements ContentVariantProviderInterface
 {
     /**
-     * @var WebCatalogPageProviderRegistry
+     * @var ContentVariantProviderRegistry
      */
     protected $providerRegistry;
 
     /**
-     * @param WebCatalogPageProviderRegistry $providerRegistry
+     * @param ContentVariantProviderRegistry $providerRegistry
      */
-    public function __construct(WebCatalogPageProviderRegistry $providerRegistry)
+    public function __construct(ContentVariantProviderRegistry $providerRegistry)
     {
         $this->providerRegistry = $providerRegistry;
     }

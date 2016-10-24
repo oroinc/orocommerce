@@ -1,46 +1,46 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\PageProvider;
+namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\ContentVariantProvider;
 
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
-use Oro\Bundle\WebCatalogBundle\PageProvider\WebCatalogPageProviderRegistry;
-use Oro\Bundle\WebCatalogBundle\PageProvider\WebCatalogPageProvider;
-use Oro\Component\WebCatalog\PageProviderInterface;
+use Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderRegistry;
+use Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProvider;
+use Oro\Component\WebCatalog\ContentVariantProviderInterface;
 
-class WebCatalogPageProviderTest extends \PHPUnit_Framework_TestCase
+class ContentVariantProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var WebCatalogPageProviderRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var ContentVariantProviderRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $providerRegistry;
 
     /**
-     * @var WebCatalogPageProvider
+     * @var ContentVariantProvider
      */
-    protected $webCatalogPageProvider;
+    protected $contentVariantProvider;
 
     protected function setUp()
     {
-        $this->providerRegistry = $this->getMock(WebCatalogPageProviderRegistry::class);
-        $this->webCatalogPageProvider = new WebCatalogPageProvider($this->providerRegistry);
+        $this->providerRegistry = $this->getMock(ContentVariantProviderRegistry::class);
+        $this->contentVariantProvider = new ContentVariantProvider($this->providerRegistry);
     }
 
     protected function tearDown()
     {
-        unset($this->providerRegistry, $this->webCatalogPageProvider);
+        unset($this->providerRegistry, $this->contentVariantProvider);
     }
 
     public function testSupportedClass()
     {
         $className = 'stdClass';
 
-        $provider1 = $this->getMock(PageProviderInterface::class);
+        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
             ->method('isSupportedClass')
             ->with($className)
             ->willReturn(false);
 
-        $provider2 = $this->getMock(PageProviderInterface::class);
+        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
         $provider2->expects($this->once())
             ->method('isSupportedClass')
             ->with($className)
@@ -53,20 +53,20 @@ class WebCatalogPageProviderTest extends \PHPUnit_Framework_TestCase
                 $provider2
             ]);
 
-        $this->assertTrue($this->webCatalogPageProvider->isSupportedClass($className));
+        $this->assertTrue($this->contentVariantProvider->isSupportedClass($className));
     }
 
     public function testNotSupportedClass()
     {
         $className = 'stdClass';
 
-        $provider1 = $this->getMock(PageProviderInterface::class);
+        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
             ->method('isSupportedClass')
             ->with($className)
             ->willReturn(false);
 
-        $provider2 = $this->getMock(PageProviderInterface::class);
+        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
         $provider2->expects($this->once())
             ->method('isSupportedClass')
             ->with($className)
@@ -79,7 +79,7 @@ class WebCatalogPageProviderTest extends \PHPUnit_Framework_TestCase
                 $provider2
             ]);
 
-        $this->assertFalse($this->webCatalogPageProvider->isSupportedClass($className));
+        $this->assertFalse($this->contentVariantProvider->isSupportedClass($className));
     }
 
     public function testGetContentVariantsByEntity()
@@ -97,7 +97,7 @@ class WebCatalogPageProviderTest extends \PHPUnit_Framework_TestCase
             $provider2ContentVariant1
         ];
 
-        $provider1 = $this->getMock(PageProviderInterface::class);
+        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
             ->method('getContentVariantsByEntity')
             ->with($entity)
@@ -106,7 +106,7 @@ class WebCatalogPageProviderTest extends \PHPUnit_Framework_TestCase
                 $provider1ContentVariant2
             ]);
 
-        $provider2 = $this->getMock(PageProviderInterface::class);
+        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
         $provider2->expects($this->once())
             ->method('getContentVariantsByEntity')
             ->with($entity)
@@ -121,7 +121,7 @@ class WebCatalogPageProviderTest extends \PHPUnit_Framework_TestCase
                 $provider2
             ]);
 
-        $actual = $this->webCatalogPageProvider->getContentVariantsByEntity($entity);
+        $actual = $this->contentVariantProvider->getContentVariantsByEntity($entity);
 
         $this->assertCount(count($expectedVariants), $actual);
 
@@ -165,7 +165,7 @@ class WebCatalogPageProviderTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        $provider1 = $this->getMock(PageProviderInterface::class);
+        $provider1 = $this->getMock(ContentVariantProviderInterface::class);
         $provider1->expects($this->once())
             ->method('getContentVariantsByEntities')
             ->with($entities)
@@ -174,7 +174,7 @@ class WebCatalogPageProviderTest extends \PHPUnit_Framework_TestCase
                 $secondEntityId => [$contentVariant2]
             ]);
 
-        $provider2 = $this->getMock(PageProviderInterface::class);
+        $provider2 = $this->getMock(ContentVariantProviderInterface::class);
         $provider2->expects($this->once())
             ->method('getContentVariantsByEntities')
             ->with($entities)
@@ -189,7 +189,7 @@ class WebCatalogPageProviderTest extends \PHPUnit_Framework_TestCase
                 $provider2
             ]);
 
-        $actual = $this->webCatalogPageProvider->getContentVariantsByEntities($entities);
+        $actual = $this->contentVariantProvider->getContentVariantsByEntities($entities);
 
         foreach ($expectedVariants as $entityId => $contentVariants) {
             $this->assertEquals($contentVariants, $actual[$entityId]);

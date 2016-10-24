@@ -4,13 +4,8 @@ namespace Oro\Component\WebCatalog;
 
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
-interface PageProviderInterface
+interface ContentVariantProviderInterface
 {
-    /**
-     * @return string
-     */
-    public function getName();
-    
     /**
      * @param string $className
      * @return bool
