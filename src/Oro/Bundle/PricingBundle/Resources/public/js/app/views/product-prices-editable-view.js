@@ -146,6 +146,9 @@ define(function(require) {
         },
 
         calcTotalPrice: function(price) {
+            if (price === null) {
+                return price;
+            }
             var quantity = 1;
             return +(price * quantity).toFixed(this.options.precision);
         },
