@@ -72,6 +72,7 @@ use Oro\Bundle\NavigationBundle\Entity\MenuUpdateTrait;
  *          }
  *      }
  * )
+ * @ORM\HasLifecycleCallbacks()
  */
 class MenuUpdate extends ExtendMenuUpdate implements
     MenuUpdateInterface

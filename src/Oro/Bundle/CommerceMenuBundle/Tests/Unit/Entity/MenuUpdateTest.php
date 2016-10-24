@@ -38,6 +38,7 @@ class MenuUpdateTest extends \PHPUnit_Framework_TestCase
             'image' => $image,
             'condition' => 'test condition',
             'divider' => true,
+            'translateDisabled' => false,
             'position' => $priority,
             'icon' => 'test-icon',
         ];
