@@ -4,6 +4,22 @@ parameters:
     oro_web_catalog.entity.content_variant.class: Oro\Bundle\WebCatalogBundle\Entity\ContentVariant
 
 services:
+    oro_web_catalog.provider.web_catalog_usage_provider:
+        class: Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider
+        arguments:
+            - '@oro_config.global'
+
+    oro_web_catalog.acl.voter.web_catalog:
+        class: Oro\Bundle\WebCatalogBundle\Acl\Voter\WebCatalogVoter
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_web_catalog.provider.web_catalog_usage_provider'
+        calls:
+            - [setClassName, ['%oro_web_catalog.entity.web_catalog.class%']]
+        tags:
+            - { name: security.voter, priority: 10 }
+
     oro_web_catalog.page_type.registry:
         class: 'Oro\Bundle\WebCatalogBundle\PageType\PageTypeRegistry'
         public: false
