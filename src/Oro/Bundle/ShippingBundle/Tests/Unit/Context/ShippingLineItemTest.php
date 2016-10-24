@@ -46,15 +46,6 @@ class ShippingLineItemTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage entityIdentifier is not defined.
-     */
-    public function testEntityIdentifierException()
-    {
-        $this->model->getEntityIdentifier();
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage product is not defined.
      */
     public function testGetProductSKUException()
