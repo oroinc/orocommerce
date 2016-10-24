@@ -45,7 +45,8 @@ class OrmIndexer extends AbstractIndexer
     protected function saveIndexData(
         $entityClass,
         array $entitiesData,
-        $entityAliasTemp
+        $entityAliasTemp,
+        array $context
     ) {
         $items = [];
         foreach ($entitiesData as $entityId => $indexData) {

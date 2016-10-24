@@ -61,12 +61,14 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param string $entityClass
      * @param array $entitiesData
      * @param string $entityAliasTemp
+     * @param array $context
      * @return int
      */
     abstract protected function saveIndexData(
         $entityClass,
         array $entitiesData,
-        $entityAliasTemp
+        $entityAliasTemp,
+        array $context
     );
 
     /**
@@ -274,7 +276,7 @@ abstract class AbstractIndexer implements IndexerInterface
             $entityConfig
         );
 
-        return $this->saveIndexData($entityClass, $entitiesData, $aliasToSave);
+        return $this->saveIndexData($entityClass, $entitiesData, $aliasToSave, $context);
     }
 
     /**
