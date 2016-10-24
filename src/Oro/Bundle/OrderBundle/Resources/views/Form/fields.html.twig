@@ -367,7 +367,7 @@
     {% set name = form.vars.full_name %}
 
     <tr data-content="{{ name }}" class="oro-multiselect-holder grid-row">
-        <td style="min-width: 190px;">{{ form_widget(form.method, { 'attr': {'class': 'order-shipping-tracking-method', 'style': 'width: 100px'}}) }}</td>
+        <td>{{ form_widget(form.method, { 'attr': {'class': 'order-shipping-tracking-method', 'style': 'width: 100px'}}) }}</td>
         <td>{{ form_widget(form.number, { 'attr': {'class': 'order-shipping-tracking-number', 'style': 'width: 150px'} }) }}</td>
         {% if form.parent.vars.allow_delete %}
             <td><button class="removeRow btn icons-holder" type="button" data-related="{{ name }}"><i class="icon-remove"></i></button></td>
