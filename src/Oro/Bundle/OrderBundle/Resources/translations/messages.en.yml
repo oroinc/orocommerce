@@ -36,6 +36,7 @@ oro:
         source_entity_identifier.label: Source Entity Identifier
         order_date.label: Order Date
         shipping_method.label: Shipping Method
+        shipping_trackings.label: Shipping Tracking Numbers
         payment.label: Payment
         frontend.order_information.title: 'Order Information'
         frontend.ordered_items.title: 'Items Ordered'
@@ -46,6 +47,17 @@ oro:
         discountitem.add_label: Add Discount
         order_history.label: Order History
         top_selling_items.label: Top Selling Items
+
+        shipping_tracking:
+            entity_label: Shipping Tracking
+            entity_plural_label: Shipping Tracking Numbers
+            method.label: Method
+            number.label: Number
+            action:
+                cancel: Cancel
+                save: Save
+            flash:
+                save_success: shipping tracking numbers have been updated
 
         orderdiscount:
             entity_label: Order Discount
@@ -137,6 +149,7 @@ oro:
 
         widgets:
             order_information: Order Information
+            shipping_tracking: Shipping Tracking
 
         controller:
             order.saved.message: Order has been saved

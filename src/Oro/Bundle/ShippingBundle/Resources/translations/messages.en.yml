@@ -106,13 +106,6 @@ oro:
                     label: Type
                     per_item.label: Per Item
                     per_order.label: Per Order
-            ups:
-                label: UPS
-                type.label: UPS
-                price.label: Price
-                handling_fee.label: Handling Fee
-                processing_type:
-                    label: Type
         methods:
             label: "Shipping Method"
             select_method: 'Select a Shipping Method'
