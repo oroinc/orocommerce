@@ -102,7 +102,6 @@ class MenuUpdate extends ExtendMenuUpdate implements
     public function getExtras()
     {
         $extras = [
-            'uri' => $this->getUri(),
             'image' => $this->getImage(),
             'condition' => $this->getCondition(),
             'divider' => $this->isDivider()
