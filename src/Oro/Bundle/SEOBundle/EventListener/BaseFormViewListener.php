@@ -43,8 +43,9 @@ abstract class BaseFormViewListener
 
     /**
      * @param BeforeListRenderEvent $event
+     * @param string $entityClass
      */
-    protected function addViewPageBlock(BeforeListRenderEvent $event, $entitiyClass)
+    protected function addViewPageBlock(BeforeListRenderEvent $event, $entityClass)
     {
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
@@ -56,7 +57,7 @@ abstract class BaseFormViewListener
             return;
         }
 
-        $object = $this->doctrineHelper->getEntityReference($entitiyClass, $objectId);
+        $object = $this->doctrineHelper->getEntityReference($entityClass, $objectId);
         if (!$object) {
             return;
         }

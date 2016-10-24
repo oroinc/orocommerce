@@ -20,7 +20,6 @@ class OroSEOBundle extends Bundle
         parent::build($container);
 
         $fields = [
-            'metaTitle' => 'metaTitles',
             'metaDescription' => 'metaDescriptions',
             'metaKeyword' => 'metaKeywords'
         ];

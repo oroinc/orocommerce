@@ -62,7 +62,6 @@ class FieldsProviderTest extends WebTestCase
                     'inventory_status',
                     'metaDescriptions',
                     'metaKeywords',
-                    'metaTitles',
                     'names',
                     'organization',
                     'owner',
