@@ -99,7 +99,7 @@ define(function(require) {
         },
 
         getHintContent: function() {
-            return this.getElement('pricesHintContent').html() || $([]);
+            return this.getElement('pricesHintContent').html() || '';
         },
 
         setPrices: function() {
