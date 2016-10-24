@@ -5,12 +5,14 @@ namespace Oro\Bundle\CommerceMenuBundle\Model;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\NavigationBundle\Entity\MenuUpdateInterface;
 
 /**
  * @method File getImage()
  * @method ExtendMenuUpdate setImage(File $image)
  */
-abstract class ExtendMenuUpdate
+abstract class ExtendMenuUpdate implements
+    MenuUpdateInterface
 {
     /**
      * Constructor

@@ -12,7 +12,15 @@ use Oro\Bundle\NavigationBundle\Entity\MenuUpdateTrait;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="oro_commerce_menu_upd")
+ * @ORM\Table(
+ *      name="oro_commerce_menu_upd",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="unq_menu_key",
+ *              columns={"key", "ownership_type"}
+ *          )
+ *      }
+ * )
  * @ORM\AssociationOverrides({
  *      @ORM\AssociationOverride(
  *          name="titles",
@@ -38,7 +46,7 @@ use Oro\Bundle\NavigationBundle\Entity\MenuUpdateTrait;
  *      @ORM\AssociationOverride(
  *          name="descriptions",
  *          joinTable=@ORM\JoinTable(
- *              name="oro_front_nav_menu_upd_descr",
+ *              name="oro_commerce_menu_upd_descr",
  *              joinColumns={
  *                  @ORM\JoinColumn(
  *                      name="menu_update_id",
@@ -94,6 +102,7 @@ class MenuUpdate extends ExtendMenuUpdate implements
     public function getExtras()
     {
         $extras = [
+            'uri' => $this->getUri(),
             'image' => $this->getImage(),
             'condition' => $this->getCondition(),
             'divider' => $this->isDivider()

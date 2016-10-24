@@ -1,5 +1,5 @@
 oro_entity:
     entity_aliases:
         Oro\Bundle\CommerceMenuBundle\Entity\MenuUpdate:
-            alias:        frontendmenuupdate
-            plural_alias: frontendmenuupdates
+            alias:        commercemenumenuupdate
+            plural_alias: commercemenumenuupdates
