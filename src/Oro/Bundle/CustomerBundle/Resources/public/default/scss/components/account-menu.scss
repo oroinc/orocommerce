@@ -29,6 +29,10 @@
         margin: 5px 0 0;
         padding: 0 0 0 18px;
 
+        &:last-child {
+            display: none;
+        }
+
         &--current {
             &:before {
                 top: 5px;
@@ -67,14 +71,6 @@
         .icon-minus,
         .icon-plus {
             opacity: 0;
-        }
-    }
-}
-
-@include breakpoint('tablet-small-up') {
-    .account-menu {
-        &__item:last-child {
-            display: none;
         }
     }
 }
@@ -132,6 +128,10 @@
             margin: 0;
 
             border-top: 1px solid get-color('additional', 'light');
+
+            &:last-child {
+                display: block;
+            }
 
             &--current {
                 &:before {
