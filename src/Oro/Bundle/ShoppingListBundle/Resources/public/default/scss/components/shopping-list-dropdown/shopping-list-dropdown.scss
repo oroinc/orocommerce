@@ -3,7 +3,6 @@
 
     &__item {
         display: table;
-        width: 100%;
 
         font-size: $base-font-size -1px;
 
@@ -20,6 +19,7 @@
     }
 
     &__link {
+        width: 100%;
         padding-left: 5px;
     }
 
@@ -92,3 +92,17 @@
         vertical-align: top;
     }
 }
+
+@include breakpoint('tablet-small') {
+    .shopping-list-dropdown__item {
+        .custom-radio {
+            &__text {
+                &::before {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+        }
+    }
+}
+
