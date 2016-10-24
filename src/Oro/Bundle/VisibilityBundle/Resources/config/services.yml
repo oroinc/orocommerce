@@ -206,6 +206,7 @@ services:
         parent: oro_visibility.visibility.cache.product.category.subtree.category_subtree_cache_builder
         calls:
             - [setAccountCategoryRepositoryHolder, ['@oro_visibility.account_category_repository_holder']]
+            - [setAccountGroupCategoryRepositoryHolder, ['@oro_visibility.account_group_category_repository_holder']]
 
     oro_visibility.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder'
