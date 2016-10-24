@@ -88,8 +88,11 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
             $query = $this->aclHelper->apply($queryBuilder);
             return $query->getResult();
         }
-        $searchQuery = $this->searchRepository->getProductSearchQuery($search, $firstResult, $maxResults);
-        $this->productManager->restrictSearchQuery($searchQuery);
+        $searchQuery = $this->searchRepository->getFilterSkuQuery([$search]);
+        $searchQuery->setFirstResult($firstResult);
+        $searchQuery->setMaxResults($maxResults);
+
+        $this->productManager->restrictSearchQuery($searchQuery->getQuery());
         $result = $searchQuery->getResult();
         return $result->getElements();
     }
