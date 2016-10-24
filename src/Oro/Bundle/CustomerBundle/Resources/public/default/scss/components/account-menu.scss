@@ -71,6 +71,14 @@
     }
 }
 
+@include breakpoint('tablet-small-up') {
+    .account-menu {
+        &__item:last-child {
+            display: none;
+        }
+    }
+}
+
 @include breakpoint('tablet') {
     .account-menu {
         .icon-minus,
