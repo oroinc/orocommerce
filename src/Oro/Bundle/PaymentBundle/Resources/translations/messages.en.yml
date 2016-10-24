@@ -48,6 +48,7 @@ oro:
                 display_options.title: 'Display Options'
             fields:
                 merchant_country.label: 'Merchant Country'
+                merchant_country.placeholder: 'Please select country'
                 enabled.label: 'Enabled'
                 label.label: 'Checkout Label'
                 label.tooltip: 'This label is used on the checkout screens'
