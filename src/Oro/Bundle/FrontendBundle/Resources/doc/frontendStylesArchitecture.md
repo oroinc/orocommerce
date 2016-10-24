@@ -97,7 +97,7 @@ We just change settings and add additional CSS(SASS).
 
 ## Theme extending
 
-In order to inherite one theme from another you should define parent theme in **theme.yml** file.<br>
+In order to inherit one theme from another you should define parent theme in **theme.yml** file.<br>
 
 For example: if you need to inherit default theme from blank do as follows:
 
@@ -109,7 +109,7 @@ parent: blank
 It allows you to inherit all styles from parent theme and have access to all mixins, variables, etc from parent theme.
 
 Let's look at an example using default theme.
-In default theme we'd like to change global and form elements styles.
+In default theme we'd like to change global settings and appearance of form elements.
 In corresponding bundles (FrontEndBundle, FormBundle) we create theme folders and some scss files.
 
 
@@ -237,7 +237,7 @@ In the main file for default theme we have:
 4. Form styles **default theme**: package/platform/src/Oro/Bundle/FormBundle/Resources/public/default/scss
 
 **PAY ATTENTION!!!**<br>
-In default theme FormBundle goes first because there is a settings, that are not related to this bundle.**
+In default theme FormBundle goes first because of settings, that are not related to this bundle.**
 
 
 ### How to work with colors
