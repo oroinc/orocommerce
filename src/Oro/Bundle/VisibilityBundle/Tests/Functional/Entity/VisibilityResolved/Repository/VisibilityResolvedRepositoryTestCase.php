@@ -11,11 +11,13 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\ResolvedEntityRepositoryTestTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -71,35 +73,30 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
     /**
      * @dataProvider insertByCategoryDataProvider
      *
-     * @param string $websiteReference
      * @param string $targetEntityReference
      * @param string $visibility
      * @param array $expectedData
      */
-    public function testInsertByCategory($websiteReference, $targetEntityReference, $visibility, array $expectedData)
+    public function testInsertByCategory($targetEntityReference, $visibility, array $expectedData)
     {
-        $this->markTestSkipped('Will be fixed in BB-4506');
         $targetEntity = $this->getReference($targetEntityReference);
         $this->getRepository()->clearTable();
-        $website = $websiteReference ? $this->getReference($websiteReference) : null;
-        $scope = null;
-        if ($website) {
-            $scope = $this->scopeManager->find('product_visibility', ['website' => $website]);
-        }
-        $repository = $this->getRepository();
-        $repository->insertByCategory(
-            $this->getInsertFromSelectExecutor(),
-            $scope
+
+        $scope = $this->scopeManager->find(
+            AccountGroupProductVisibility::VISIBILITY_TYPE,
+            ['accountGroup' => $targetEntity]
         );
+        /** @var AccountGroupProductRepository $repository */
+        $repository = $this->getRepository();
+        $repository->insertByCategory($scope);
         $resolvedEntities = $this->getResolvedValues();
         $this->assertCount(count($expectedData), $resolvedEntities);
         foreach ($expectedData as $data) {
             /** @var Product $product */
             $product = $this->getReference($data['product']);
             /** @var Website $website */
-            $scope = $this->scopeManager->findOrCreate('product_visibility');
 
-            $resolvedVisibility = $this->getResolvedVisibility($resolvedEntities, $product, $targetEntity, $scope);
+            $resolvedVisibility = $this->getResolvedVisibility($resolvedEntities, $product, $scope);
             $this->assertEquals($this->getCategory($product)->getId(), $resolvedVisibility->getCategory()->getId());
             $this->assertEquals($visibility, $resolvedVisibility->getVisibility());
         }
@@ -111,8 +108,10 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
      */
     public function testInsertStatic($expectedRows)
     {
-        $this->getRepository()->clearTable();
-        $this->getRepository()->insertStatic($this->getInsertFromSelectExecutor());
+        /** @var AccountGroupProductRepository $repository */
+        $repository = $this->getRepository();
+        $repository->clearTable();
+        $repository->insertStatic();
         $resolved = $this->getResolvedValues();
         $this->assertCount($expectedRows, $resolved);
         $visibilities = $this->getSourceRepository()->findAll();
@@ -201,12 +200,11 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
     /**
      * @param BaseProductVisibilityResolved[] $visibilities
      * @param Product $product
-     * @param object $targetEntity
      * @param Scope $scope
      *
      * @return BaseProductVisibilityResolved|null
      */
-    abstract protected function getResolvedVisibility($visibilities, Product $product, $targetEntity, Scope $scope);
+    abstract protected function getResolvedVisibility($visibilities, Product $product, Scope $scope);
 
     /**
      * @param VisibilityInterface[]|null $sourceVisibilities

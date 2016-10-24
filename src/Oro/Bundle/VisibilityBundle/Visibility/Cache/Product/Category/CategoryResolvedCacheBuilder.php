@@ -47,6 +47,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
         $category = $visibilitySettings->getCategory();
+        $scope = $visibilitySettings->getScope();
 
         $selectedVisibility = $visibilitySettings->getVisibility();
         $visibilitySettings = $this->refreshEntity($visibilitySettings);
@@ -70,6 +71,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
                 'visibility' => $visibility,
                 'sourceCategoryVisibility' => $visibilitySettings,
                 'source' => CategoryVisibilityResolved::SOURCE_STATIC,
+                'scope' => $scope,
             ];
         } elseif ($selectedVisibility === CategoryVisibility::CONFIG) {
             // fallback to config is default for account group and should be removed if exists
@@ -84,6 +86,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
                 'visibility' => $visibility,
                 'sourceCategoryVisibility' => $visibilitySettings,
                 'source' => $source,
+                'scope' => $scope,
             ];
         } else {
             throw new \InvalidArgumentException(sprintf('Unknown visibility %s', $selectedVisibility));
@@ -119,14 +122,17 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
         $repository = $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\CategoryVisibility')
             ->getRepository('OroVisibilityBundle:Visibility\CategoryVisibility');
         /** @var CategoryRepository $resolvedRepository */
-        $resolvedRepository = $this->registry->getManagerForClass($this->cacheClass)
-            ->getRepository($this->cacheClass);
+        $resolvedRepository = $this->getRepository();
 
         // clear table
         $resolvedRepository->clearTable();
 
+        if (!$scope) {
+            $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
+        }
+
         // resolve static values
-        $resolvedRepository->insertStaticValues($this->insertFromSelectQueryExecutor);
+        $resolvedRepository->insertStaticValues($scope);
 
         // resolved parent category values
         $categoryVisibilities = $this->indexVisibilities($repository->getCategoriesVisibilities(), 'category_id');
@@ -142,8 +148,13 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
                 $categoryIds[$resolvedVisibility][] = $categoryId;
             }
         }
+
         foreach ($categoryIds as $visibility => $ids) {
-            $resolvedRepository->insertParentCategoryValues($this->insertFromSelectQueryExecutor, $ids, $visibility);
+            $resolvedRepository->insertParentCategoryValues(
+                $ids,
+                $visibility,
+                $scope
+            );
         }
     }
 
@@ -203,8 +214,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
      */
     protected function getRepository()
     {
-        return $this->getEntityManager()
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved');
+        return $this->repositoryHolder->getRepository();
     }
 
     /**

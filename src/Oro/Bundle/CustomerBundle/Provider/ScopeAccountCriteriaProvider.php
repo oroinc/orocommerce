@@ -4,10 +4,10 @@ namespace Oro\Bundle\CustomerBundle\Provider;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\ScopeBundle\Manager\AbstractScopeProvider;
+use Oro\Bundle\ScopeBundle\Manager\AbstractScopeCriteriaProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-class ScopeAccountProvider extends AbstractScopeProvider
+class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
 {
     const ACCOUNT = 'account';
 

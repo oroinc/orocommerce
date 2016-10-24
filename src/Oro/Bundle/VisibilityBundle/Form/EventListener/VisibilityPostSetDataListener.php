@@ -5,11 +5,25 @@ namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 use Oro\Bundle\CustomerBundle\Entity\AccountAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroupAwareInterface;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 
-class VisibilityPostSetDataListener extends AbstractVisibilityListener
+class VisibilityPostSetDataListener
 {
+    /**
+     * @var VisibilityFormFieldDataProvider
+     */
+    protected $fieldDataProvider;
+
+    /**
+     * @param VisibilityFormFieldDataProvider $fieldDataProvider
+     */
+    public function __construct(VisibilityFormFieldDataProvider $fieldDataProvider)
+    {
+        $this->fieldDataProvider = $fieldDataProvider;
+    }
+
     /**
      * @param FormEvent $event
      */
@@ -31,14 +45,18 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
      */
     protected function setFormAllData(FormInterface $form)
     {
-        $visibility = $this->findFormFieldData($form, 'all');
+        $visibility = $this->fieldDataProvider
+            ->findFormFieldData($form, EntityVisibilityType::ALL_FIELD);
 
         if ($visibility instanceof VisibilityInterface) {
             $data = $visibility->getVisibility();
         } else {
-            $data = call_user_func([$form->getConfig()->getOption('allClass'), 'getDefault'], $form->getData());
+            $data = call_user_func(
+                [$form->getConfig()->getOption(EntityVisibilityType::ALL_CLASS), 'getDefault'],
+                $form->getData()
+            );
         }
-        $form->get('all')->setData($data);
+        $form->get(EntityVisibilityType::ALL_FIELD)->setData($data);
     }
 
     /**
@@ -46,19 +64,26 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
      */
     protected function setFormAccountGroupData(FormInterface $form)
     {
-        $visibilities = $this->findFormFieldData($form, 'accountGroup');
+        $visibilities = $this->fieldDataProvider
+            ->findFormFieldData($form, EntityVisibilityType::ACCOUNT_GROUP_FIELD);
 
-        $data = array_map(function ($visibility) {
-            /** @var VisibilityInterface|AccountGroupAwareInterface $visibility */
-            return [
-                'entity' => $visibility->getAccountGroup(),
-                'data' => [
-                    'visibility' => $visibility->getVisibility(),
-                ],
-            ];
-        }, $visibilities);
+        $data = array_map(
+            function ($visibility) {
+                /** @var VisibilityInterface|AccountGroupAwareInterface $visibility */
+                /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
+                $accountGroup = $visibility->getScope()->getAccountGroup();
 
-        $form->get('accountGroup')->setData($data);
+                return [
+                    'entity' => $accountGroup,
+                    'data' => [
+                        'visibility' => $visibility->getVisibility(),
+                    ],
+                ];
+            },
+            $visibilities
+        );
+
+        $form->get(EntityVisibilityType::ACCOUNT_GROUP_FIELD)->setData($data);
     }
 
     /**
@@ -66,18 +91,25 @@ class VisibilityPostSetDataListener extends AbstractVisibilityListener
      */
     protected function setFormAccountData(FormInterface $form)
     {
-        $visibilities = $this->findFormFieldData($form, 'account');
+        $visibilities = $this->fieldDataProvider
+            ->findFormFieldData($form, EntityVisibilityType::ACCOUNT_FIELD);
 
-        $data = array_map(function ($visibility) {
-            /** @var VisibilityInterface|AccountAwareInterface $visibility */
-            return [
-                'entity' => $visibility->getAccount(),
-                'data' => [
-                    'visibility' => $visibility->getVisibility(),
-                ],
-            ];
-        }, $visibilities);
+        $data = array_map(
+            function ($visibility) {
+                /** @var VisibilityInterface|AccountAwareInterface $visibility */
+                /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
+                $account = $visibility->getScope()->getAccount();
 
-        $form->get('account')->setData($data);
+                return [
+                    'entity' => $account,
+                    'data' => [
+                        'visibility' => $visibility->getVisibility(),
+                    ],
+                ];
+            },
+            $visibilities
+        );
+
+        $form->get(EntityVisibilityType::ACCOUNT_FIELD)->setData($data);
     }
 }

@@ -46,11 +46,18 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
                 ->getRepository('OroCatalogBundle:Category')
                 ->findOneByProduct($product);
             if ($category) {
-                //TODO: use scopes for category visibility
+                $categoryScope = $this->scopeManager->findOrCreate('account_category_visibility', $scope);
+                $groupScope = null;
+                if ($scope->getAccount()->getGroup()) {
+                    $groupScope = $this->scopeManager->find(
+                        'account_group_category_visibility',
+                        ['accountGroup' => $scope->getAccount()->getGroup()]
+                    );
+                }
                 $visibility = $this->registry
                     ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
                     ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-                    ->getFallbackToAccountVisibility($category, $scope->getAccount());
+                    ->getFallbackToAccountVisibility($category, $categoryScope, $groupScope);
                 $update = [
                     'sourceProductVisibility' => $visibilitySettings,
                     'visibility' => $visibility,
@@ -107,7 +114,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
         }
 
         $this->getRepository()->deleteByProduct($product);
-        $this->getRepository()->insertByProduct($product, $this->insertFromSelectQueryExecutor, $category);
+        $this->getRepository()->insertByProduct($product, $category);
     }
 
     /**
@@ -119,8 +126,8 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
         try {
             $repository = $this->getRepository();
             $repository->clearTable($scope);
-            $repository->insertStatic($this->insertFromSelectQueryExecutor, $scope);
-            $repository->insertByCategory($this->insertFromSelectQueryExecutor, $scope);
+            $repository->insertStatic($scope);
+            $repository->insertByCategory($scope);
             $this->getManager()->commit();
         } catch (\Exception $exception) {
             $this->getManager()->rollback();
@@ -133,9 +140,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
      */
     protected function getRepository()
     {
-        return $this->registry
-            ->getManagerForClass($this->cacheClass)
-            ->getRepository($this->cacheClass);
+        return $this->repositoryHolder->getRepository();
     }
 
     /**

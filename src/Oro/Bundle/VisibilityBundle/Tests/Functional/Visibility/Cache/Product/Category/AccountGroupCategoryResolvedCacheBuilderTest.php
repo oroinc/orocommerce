@@ -4,9 +4,11 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
@@ -29,6 +31,16 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
     /** @var AccountGroupCategoryResolvedCacheBuilder */
     protected $builder;
 
+    /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
+    /**
+     * @var Scope
+     */
+    protected $scope;
+
     protected function setUp()
     {
         parent::setUp();
@@ -36,19 +48,26 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
         $this->accountGroup = $this->getReference('account_group.group3');
 
         $container = $this->client->getContainer();
-
+        $this->scopeManager = $container->get('oro_scope.scope_manager');
+        $this->scope = $this->scopeManager->findOrCreate(
+            AccountGroupCategoryVisibility::VISIBILITY_TYPE,
+            ['accountGroup' => $this->accountGroup]
+        );
         $this->builder = new AccountGroupCategoryResolvedCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_entity.orm.insert_from_select_query_executor')
+            $this->scopeManager
         );
         $this->builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.account_group_category_visibility_resolved.class')
         );
-        
+        $this->builder->setCategoryVisibilityHolder(
+            $container->get('oro_visibility.account_group_category_repository_holder')
+        );
         $subtreeBuilder = new VisibilityChangeGroupSubtreeCacheBuilder(
             $container->get('doctrine'),
             $container->get('oro_visibility.visibility.resolver.category_visibility_resolver'),
-            $container->get('oro_config.manager')
+            $container->get('oro_config.manager'),
+            $container->get('oro_scope.scope_manager')
         );
 
         $this->builder->setVisibilityChangeAccountSubtreeCacheBuilder($subtreeBuilder);
@@ -58,7 +77,7 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
     {
         $visibility = new AccountGroupCategoryVisibility();
         $visibility->setCategory($this->category);
-        $visibility->setAccountGroup($this->accountGroup);
+        $visibility->setScope($this->scope);
         $visibility->setVisibility(CategoryVisibility::HIDDEN);
 
         $em = $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility');
@@ -138,12 +157,12 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
             ->where(
                 $qb->expr()->andX(
                     $qb->expr()->eq('accountCategoryVisibilityResolved.category', ':category'),
-                    $qb->expr()->eq('accountCategoryVisibilityResolved.accountGroup', ':accountGroup')
+                    $qb->expr()->eq('accountCategoryVisibilityResolved.scope', ':scope')
                 )
             )
             ->setParameters([
                 'category' => $this->category,
-                'accountGroup' => $this->accountGroup,
+                'scope' => $this->scope,
             ])
             ->getQuery()
             ->getOneOrNullResult(AbstractQuery::HYDRATE_ARRAY);
@@ -158,7 +177,7 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
     {
         return $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility')
             ->getRepository('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility')
-            ->findOneBy(['category' => $this->category, 'accountGroup' => $this->accountGroup]);
+            ->findOneBy(['category' => $this->category, 'scope' => $this->scope]);
     }
 
     /**
@@ -173,7 +192,7 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
     ) {
         $this->assertNotNull($categoryVisibilityResolved);
         $this->assertEquals($this->category->getId(), $categoryVisibilityResolved['category_id']);
-        $this->assertEquals($this->accountGroup->getId(), $categoryVisibilityResolved['account_group_id']);
+        $this->assertEquals($this->scope->getId(), $categoryVisibilityResolved['scope_id']);
         $this->assertEquals(
             AccountGroupCategoryVisibilityResolved::SOURCE_STATIC,
             $categoryVisibilityResolved['source']
@@ -349,10 +368,11 @@ class AccountGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolv
             ->createQueryBuilder('entity')
             ->select(
                 'IDENTITY(entity.category) as category',
-                'IDENTITY(entity.accountGroup) as accountGroup',
+                'IDENTITY(scope.accountGroup) as accountGroup',
                 'entity.visibility',
                 'entity.source'
             )
+            ->join('entity.scope', 'scope')
             ->getQuery()
             ->getArrayResult();
     }

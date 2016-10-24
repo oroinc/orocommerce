@@ -135,7 +135,7 @@ class CategoryProcessor implements MessageProcessorInterface
 
     protected function setToDefaultProductVisibilityWithoutCategory()
     {
-        $scopes = $this->scopeManager->findRelatedScopes('product_visibility');
+        $scopes = $this->scopeManager->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
         $repository = $this->registry->getManagerForClass(ProductVisibility::class)
             ->getRepository(ProductVisibility::class);
         foreach ($scopes as $scope) {

@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-class AccountProductVisibilityRepository extends EntityRepository
+class AccountProductVisibilityRepository extends AbstractProductVisibilityRepository
 {
     const BATCH_SIZE = 1000;
     

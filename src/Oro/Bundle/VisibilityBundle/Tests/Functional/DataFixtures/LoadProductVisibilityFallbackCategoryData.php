@@ -6,16 +6,16 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -34,9 +34,9 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
     protected $em;
 
     /**
-     * @var Website
+     * @var ScopeManager
      */
-    protected $website;
+    protected $scopeManager;
 
     /**
      * @var array
@@ -98,20 +98,17 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
     public function load(ObjectManager $manager)
     {
         $this->em = $manager;
-
-        $this->website = $this->getWebsite();
+        $this->scopeManager = $this->container->get('oro_scope.scope_manager');
 
         foreach ($this->products as $productReference) {
             /** @var Product $product */
             $product = $this->getReference($productReference);
             $this->createProductVisibility($product);
-
             foreach ($this->accountGroups as $accountGroupReference) {
                 /** @var AccountGroup $accountGroup */
                 $accountGroup = $this->getReference($accountGroupReference);
                 $this->createAccountGroupProductVisibilityResolved($accountGroup, $product);
             }
-
             foreach ($this->accounts as $accountReference) {
                 /** @var Account $account */
                 $account = $this->getReference($accountReference);
@@ -128,9 +125,10 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
      */
     protected function createProductVisibility(Product $product)
     {
+        $scope = $this->scopeManager->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
         $productVisibility = (new ProductVisibility())
             ->setProduct($product)
-            ->setWebsite($this->website)
+            ->setScope($scope)
             ->setVisibility(ProductVisibility::CATEGORY);
 
         $this->em->persist($productVisibility);
@@ -142,10 +140,13 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
      */
     protected function createAccountGroupProductVisibilityResolved(AccountGroup $accountGroup, Product $product)
     {
+        $scope = $this->scopeManager->findOrCreate(
+            AccountGroupProductVisibility::VISIBILITY_TYPE,
+            ['accountGroup' => $accountGroup]
+        );
         $accountGroupVisibility = (new AccountGroupProductVisibility())
             ->setProduct($product)
-            ->setAccountGroup($accountGroup)
-            ->setWebsite($this->website)
+            ->setScope($scope)
             ->setVisibility(AccountGroupProductVisibility::CATEGORY);
 
         $this->em->persist($accountGroupVisibility);
@@ -157,22 +158,15 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
      */
     protected function createAccountProductVisibilityResolved(Account $account, Product $product)
     {
+        $scope = $this->scopeManager->findOrCreate(
+            'account_product_visibility',
+            ['account' => $account]
+        );
         $accountVisibility = (new AccountProductVisibility())
             ->setProduct($product)
-            ->setAccount($account)
-            ->setWebsite($this->website)
+            ->setScope($scope)
             ->setVisibility(AccountProductVisibility::CATEGORY);
 
         $this->em->persist($accountVisibility);
-    }
-
-    /**
-     * @return Website
-     */
-    protected function getWebsite()
-    {
-        return $this->container->get('doctrine')->getManagerForClass('OroWebsiteBundle:Website')
-            ->getRepository('OroWebsiteBundle:Website')
-            ->findOneBy(['name' => 'Default']);
     }
 }

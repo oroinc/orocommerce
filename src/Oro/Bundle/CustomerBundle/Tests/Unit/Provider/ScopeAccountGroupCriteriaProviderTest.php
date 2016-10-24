@@ -3,16 +3,15 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupProvider;
+use Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-class ScopeAccountGroupProviderTest extends \PHPUnit_Framework_TestCase
+class ScopeAccountGroupCriteriaProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ScopeAccountGroupProvider
+     * @var ScopeAccountGroupCriteriaProvider
      */
     private $provider;
 
@@ -24,7 +23,7 @@ class ScopeAccountGroupProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)->disableOriginalConstructor()->getMock();
-        $this->provider = new ScopeAccountGroupProvider($this->securityFacade);
+        $this->provider = new ScopeAccountGroupCriteriaProvider($this->securityFacade);
     }
 
     public function testGetCriteriaForCurrentScope()
@@ -59,11 +58,7 @@ class ScopeAccountGroupProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function contextDataProvider()
     {
-        $account = new Account();
         $accountGroup = new AccountGroup();
-        $account->setGroup($accountGroup);
-        $accountAware = $this->getMock(AccountAwareInterface::class);
-        $accountAware->method('getAccount')->willReturn($account);
         $accountGroupAware = new \stdClass();
         $accountGroupAware->accountGroup = $accountGroup;
 
@@ -84,11 +79,7 @@ class ScopeAccountGroupProviderTest extends \PHPUnit_Framework_TestCase
                 'context' => $accountGroupAware,
                 'criteria' => ['accountGroup' => $accountGroup],
             ],
-            'object_context_account_aware' => [
-                'context' => $accountAware,
-                'criteria' => ['accountGroup' => $accountGroup],
-            ],
-            'object_context_not_account_or_account_group_aware' => [
+            'object_context_not_account_group_aware' => [
                 'context' => new \stdClass(),
                 'criteria' => [],
             ],

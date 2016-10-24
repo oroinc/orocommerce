@@ -49,12 +49,13 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
                 ->getRepository('OroCatalogBundle:Category')
                 ->findOneByProduct($product);
             if ($category) {
+                $categoryScope = $this->scopeManager->findOrCreate('account_group_category_visibility', $scope);
                 $visibility = $this->registry
                     ->getManagerForClass(
                         'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved'
                     )
                     ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-                    ->getFallbackToGroupVisibility($category, $accountGroup);
+                    ->getFallbackToGroupVisibility($category, $categoryScope);
                 $update = [
                     'sourceProductVisibility' => $visibilitySettings,
                     'visibility' => $visibility,
@@ -103,7 +104,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         }
 
         $this->getRepository()->deleteByProduct($product);
-        $this->getRepository()->insertByProduct($product, $this->insertFromSelectQueryExecutor, $category);
+        $this->getRepository()->insertByProduct($product, $category);
     }
 
     /**
@@ -115,8 +116,8 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         try {
             $repository = $this->getRepository();
             $repository->clearTable($scope);
-            $repository->insertStatic($this->insertFromSelectQueryExecutor, $scope);
-            $repository->insertByCategory($this->insertFromSelectQueryExecutor, $scope);
+            $repository->insertStatic($scope);
+            $repository->insertByCategory($scope);
             $this->getManager()->commit();
         } catch (\Exception $exception) {
             $this->getManager()->rollback();
@@ -129,9 +130,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
      */
     protected function getRepository()
     {
-        return $this
-            ->getManager()
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
+        return $this->repositoryHolder->getRepository();
     }
 
     /**

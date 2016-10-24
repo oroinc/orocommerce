@@ -4,6 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -19,15 +20,15 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizationCollectionTypeStub;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
-use Oro\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener;
 use Oro\Bundle\VisibilityBundle\Form\Extension\CategoryFormExtension;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
-use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
-use Oro\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
-use Oro\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
-use Oro\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
+use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
@@ -38,9 +39,6 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeS
 
 class CategoryFormExtensionTest extends FormIntegrationTestCase
 {
-    const ACCOUNT_CLASS = 'Oro\Bundle\AccountBundle\Entity\Account';
-    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountGroup';
-
     /** @var CategoryFormExtension|\PHPUnit_Framework_MockObject_MockObject */
     protected $categoryFormExtension;
 
@@ -117,7 +115,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         $form = $this->factory->create(
             CategoryType::NAME,
             new CategoryStub(),
-            ['data_class' => 'Oro\Bundle\CatalogBundle\Entity\Category']
+            ['data_class' => Category::class]
         );
         $this->assertTrue($form->has('visibility'));
     }

@@ -25,7 +25,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
      * @var CategoryVisibilityResolverInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $categoryVisibilityResolver;
-    
+
     /**
      * @var AccountUserRelationsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -57,13 +57,10 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->categoryVisibilityResolver = $this
-            ->getMockBuilder('Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->categoryVisibilityResolver = $this->getMock(CategoryVisibilityResolverInterface::class);
 
         $this->accountUserRelationsProvider = $this
-            ->getMockBuilder('Oro\Bundle\AccountBundle\Provider\AccountUserRelationsProvider')
+            ->getMockBuilder(AccountUserRelationsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -192,7 +189,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                 ],
                 'hiddenCategoryIds' => [3],
                 'user' => new AccountUser(),
-                'account' => $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 42])
+                'account' => $this->getEntity(Account::class, ['id' => 42])
             ]
         ];
     }
@@ -207,7 +204,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
         $categoriesCollection = [];
         foreach ($categories as $item) {
             /** @var Category $category */
-            $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', ['id' => $item['id']]);
+            $category = $this->getEntity(Category::class, ['id' => $item['id']]);
 
             $category->setParentCategory($this->getParent($item['parent'], $categoriesCollection));
             $categoriesCollection[$category->getId()] = $category;

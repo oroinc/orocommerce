@@ -22,7 +22,7 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 'category_visibility' => ['value' => CategoryVisibility::VISIBLE],
-                'product_visibility' => ['value' => ProductVisibility::VISIBLE],
+                ProductVisibility::VISIBILITY_TYPE => ['value' => ProductVisibility::VISIBLE],
             ]
         );
 

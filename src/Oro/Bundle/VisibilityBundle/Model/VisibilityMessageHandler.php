@@ -37,7 +37,7 @@ class VisibilityMessageHandler
      * @param string $topic
      * @param object $entity
      */
-    public function addVisibilityMessageToSchedule($topic, $entity)
+    public function addMessageToSchedule($topic, $entity)
     {
         $message = $this->messageFactory->createMessage($entity);
 

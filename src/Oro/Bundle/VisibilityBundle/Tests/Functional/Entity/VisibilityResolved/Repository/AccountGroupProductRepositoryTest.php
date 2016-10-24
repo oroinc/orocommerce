@@ -3,7 +3,6 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -12,7 +11,6 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
-use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -24,15 +22,14 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
         $repository = $this->getRepository();
 
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $accountGroup = $this->getReference(LoadGroups::GROUP1);
         $scope = $this->scopeManager->findOrCreate(
-            'account_group_product_visibility',
-            ['accountGroup' => $accountGroup, 'website' => $website]
+            AccountGroupProductVisibility::VISIBILITY_TYPE,
+            ['accountGroup' => $accountGroup]
         );
         $where = ['product' => $product, 'scope' => $scope];
         $this->assertFalse($repository->hasEntity($where));
-        $where = ['accountGroup' => $accountGroup, 'product' => $product, 'scope' => $scope];
+        $where = ['product' => $product, 'scope' => $scope];
         $this->assertInsert(
             $this->entityManager,
             $repository,
@@ -57,8 +54,7 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
     public function insertByCategoryDataProvider()
     {
         return [
-            'withoutWebsite' => [
-                'websiteReference' => null,
+            [
                 'accountGroupReference' => LoadGroups::GROUP1,
                 'visibility' => BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
                 'expectedData' => [
@@ -69,27 +65,6 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
                         'product' => LoadProductData::PRODUCT_8,
                     ],
                 ],
-            ],
-            'withWebsite1' => [
-                'websiteReference' => LoadWebsiteData::WEBSITE1,
-                'accountGroupReference' => LoadGroups::GROUP1,
-                'visibility' => BaseProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
-                'expectedData' => [
-                    [
-                        'product' => LoadProductData::PRODUCT_7,
-                        'website' => LoadWebsiteData::WEBSITE1,
-                    ],
-                    [
-                        'product' => LoadProductData::PRODUCT_8,
-                        'website' => LoadWebsiteData::WEBSITE1,
-                    ],
-                ],
-            ],
-            'withWebsite2' => [
-                'websiteReference' => LoadWebsiteData::WEBSITE2,
-                'accountGroupReference' => LoadGroups::GROUP1,
-                'visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-                'expectedData' => [],
             ],
         ];
     }
@@ -123,7 +98,6 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
     /**
      * @param AccountGroupProductVisibilityResolved[] $visibilities
      * @param Product $product
-     * @param AccountGroup $accountGroup
      * @param Scope $scope
      *
      * @return AccountGroupProductVisibilityResolved|null
@@ -131,12 +105,10 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
     protected function getResolvedVisibility(
         $visibilities,
         Product $product,
-        $accountGroup,
         Scope $scope
     ) {
         foreach ($visibilities as $visibility) {
             if ($visibility->getProduct()->getId() == $product->getId()
-                && $visibility->getAccountGroup()->getId() == $accountGroup->getId()
                 && $visibility->getScope()->getId() == $scope->getId()
             ) {
                 return $visibility;
@@ -155,7 +127,6 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
     {
         foreach ($sourceVisibilities as $visibility) {
             if ($resolveVisibility->getProduct()->getId() == $visibility->getProduct()->getId()
-                && $resolveVisibility->getAccountGroup()->getId() == $visibility->getAccountGroup()->getId()
                 && $resolveVisibility->getScope()->getId() == $visibility->getScope()->getId()
             ) {
                 return $visibility;
@@ -180,9 +151,8 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository(
-            'OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved'
-        );
+        return $this->getContainer()->get('oro_visibility.account_group_product_repository_holder')
+            ->getRepository();
     }
 
     /**

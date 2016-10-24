@@ -5,7 +5,6 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
-use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -18,20 +17,9 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     public function buildCacheDataProvider()
     {
         return [
-            'without_website' => [
+            [
                 'expectedStaticCount' => 3,
-                'expectedCategoryCount' => 24,
-                'websiteReference' => null,
-            ],
-            'with_website1' => [
-                'expectedStaticCount' => 0,
                 'expectedCategoryCount' => 0,
-                'websiteReference' => LoadWebsiteData::WEBSITE1,
-            ],
-            'with_website2' => [
-                'expectedStaticCount' => 0,
-                'expectedCategoryCount' => 0,
-                'websiteReference' => LoadWebsiteData::WEBSITE2,
             ],
         ];
     }
@@ -55,8 +43,9 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
 
         $builder = new ProductResolvedCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_entity.orm.insert_from_select_query_executor')
+            $container->get('oro_scope.scope_manager')
         );
+        $builder->setRepositoryHolder($this->getContainer()->get('oro_visibility.product_repository_holder'));
         $builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.product_visibility_resolved.class')
         );

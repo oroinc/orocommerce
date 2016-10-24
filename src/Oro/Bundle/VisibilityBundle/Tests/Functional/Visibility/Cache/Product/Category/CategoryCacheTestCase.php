@@ -87,7 +87,8 @@ abstract class CategoryCacheTestCase extends WebTestCase
             ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('agpvr')
             ->select('accountGroup.name as account_group_name')
-            ->join('agpvr.accountGroup', 'accountGroup')
+            ->join('agpvr.scope', 'scope')
+            ->join('scope.accountGroup', 'accountGroup')
             ->orderBy('accountGroup.name');
         $this->selectHiddenProductSku($queryBuilder, 'agpvr');
         $results = $queryBuilder->getQuery()
@@ -115,7 +116,8 @@ abstract class CategoryCacheTestCase extends WebTestCase
             ->select('accountGroup.name as account_group_name')
             ->addSelect('accountGroup.id')
             ->addSelect('agcvr.visibility')
-            ->join('agcvr.accountGroup', 'accountGroup')
+            ->join('agcvr.scope', 'scope')
+            ->join('scope.accountGroup', 'accountGroup')
             ->orderBy('accountGroup.name');
         $this->selectHiddenCategoryTitles($queryBuilder, 'agcvr');
         $results = $queryBuilder->getQuery()
@@ -141,7 +143,8 @@ abstract class CategoryCacheTestCase extends WebTestCase
             ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('apvr')
             ->select('account.name as account_name')
-            ->join('apvr.account', 'account')
+            ->join('apvr.scope', 'scope')
+            ->join('scope.account', 'account')
             ->orderBy('account.name');
         $this->selectHiddenProductSku($queryBuilder, 'apvr');
         $results = $queryBuilder->getQuery()
@@ -167,7 +170,8 @@ abstract class CategoryCacheTestCase extends WebTestCase
             ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('acvr')
             ->select('account.name as account_name')
-            ->join('acvr.account', 'account')
+            ->join('acvr.scope', 'scope')
+            ->join('scope.account', 'account')
             ->orderBy('account.name');
         $this->selectHiddenCategoryTitles($queryBuilder, 'acvr');
         $results = $queryBuilder->getQuery()

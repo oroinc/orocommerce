@@ -10,7 +10,7 @@ system_configuration:
     fields:
         oro_visibility.category_visibility:
             data_type: string
-            type: oro_account_catalog_default_visibility
+            type: oro_visibility_catalog_default_visibility
             priority: 10
             options:
                 label: oro.visibility.catalog.visibility.form_label
@@ -19,7 +19,7 @@ system_configuration:
                     - NotBlank: ~
         oro_visibility.product_visibility:
             data_type: string
-            type: oro_account_catalog_default_visibility
+            type: oro_visibility_product_default_visibility
             priority: 10
             options:
                 label: oro.visibility.catalog.visibility.form_label
