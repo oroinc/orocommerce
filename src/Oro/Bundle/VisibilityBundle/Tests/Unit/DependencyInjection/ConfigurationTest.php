@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\DependencyInjection;
 
+use Oro\Bundle\VisibilityBundle\DependencyInjection\Configuration;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Symfony\Component\Config\Definition\Processor;
-
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
-use Oro\Bundle\VisibilityBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
@@ -50,7 +49,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'value' => CategoryVisibility::VISIBLE,
                             'scope' => 'app'
                         ],
-                        'product_visibility' => [
+                        ProductVisibility::VISIBILITY_TYPE => [
                             'value' => ProductVisibility::VISIBLE,
                             'scope' => 'app'
                         ]

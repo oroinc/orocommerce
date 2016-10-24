@@ -6,10 +6,10 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\PDOException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\CatalogBundle\Model\CategoryMessageFactory;
+use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Async\Visibility\CategoryProcessor;
@@ -143,7 +143,7 @@ class CategoryProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->scopeManager->expects($this->once())
             ->method('findRelatedScopes')
-            ->with('product_visibility')
+            ->with(ProductVisibility::VISIBILITY_TYPE)
             ->willReturn($scope);
 
         $productVisibilityRepository = $this->getMockBuilder(ProductVisibilityRepository::class)

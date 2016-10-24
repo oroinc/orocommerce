@@ -2,64 +2,71 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
-use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\ProductVisibilityPostSubmitListener;
-
+use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityFormPostSubmitDataHandler;
 use Symfony\Component\Form\FormInterface;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- */
-class ProductPostSubmitVisibilityListenerTest extends AbstractVisibilityListenerTestCase
+class ProductVisibilityPostSubmitListenerTest extends \PHPUnit_Framework_TestCase
 {
-    const PRODUCT_ID = 42;
-
-    /** @var ProductVisibilityPostSubmitListener */
+    /**
+     * @var ProductVisibilityPostSubmitListener
+     */
     protected $listener;
 
     /**
-     * @return ProductVisibilityPostSubmitListener
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
-    public function getListener()
-    {
-        $listener = new ProductVisibilityPostSubmitListener($this->registry);
-        $listener->setVisibilityField(EntityVisibilityType::VISIBILITY);
+    protected $registry;
 
-        return $listener;
+    /**
+     * @var VisibilityFormPostSubmitDataHandler|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $dataHandler;
+
+    protected function setUp()
+    {
+        $this->registry = $this->getMock(ManagerRegistry::class);
+
+        $this->dataHandler = $this->getMockBuilder(VisibilityFormPostSubmitDataHandler::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = new ProductVisibilityPostSubmitListener($this->dataHandler, $this->registry);
     }
 
     public function testOnPostSubmit()
     {
-        $event = $this->getFormAwareEventMock();
+        $form = $this->getMock(FormInterface::class);
+        $product = new Product();
+        $form->method('getData')->willReturn($product);
 
+        $allForm = $this->getMock(FormInterface::class);
+        $accountForm = $this->getMock(FormInterface::class);
+        $accountGroupForm = $this->getMock(FormInterface::class);
+
+        $form->method('all')->willReturn([
+            $allForm,
+            $accountForm,
+            $accountGroupForm
+        ]);
+
+        $em = $this->getMock(EntityManagerInterface::class);
+        $this->registry->method('getManagerForClass')->willReturn($em);
+
+        // assert that all forms where saved trough data handler
+        $this->dataHandler->expects($this->exactly(3))
+            ->method('saveForm')
+            ->withConsecutive(
+                [$allForm, $product],
+                [$accountForm, $product],
+                [$accountGroupForm, $product]
+            );
+
+        $event = new AfterFormProcessEvent($form, $product);
         $this->listener->onPostSubmit($event);
-    }
-
-    /**
-     * @return AfterFormProcessEvent|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getFormAwareEventMock()
-    {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $visibilityForm = $this->getMock('Symfony\Component\Form\FormInterface');
-
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-
-        $form->expects($this->any())
-            ->method('all')
-            ->willReturn([$visibilityForm]);
-
-        /** @var AfterFormProcessEvent |\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-        
-        $event->expects($this->any())
-            ->method('getForm')
-            ->willReturn($form);
-
-        return $event;
     }
 }

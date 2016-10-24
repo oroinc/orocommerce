@@ -3,11 +3,15 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Command;
 
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Command\VisibilityCacheBuildCommand;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 
 /**
  * @dbIsolation
@@ -19,11 +23,10 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
         $this->initClient([]);
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
-            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
-            'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+            LoadCategoryProductData::class,
+            LoadGroups::class,
+            LoadCategoryVisibilityData::class,
+            LoadProductVisibilityData::class,
         ]);
     }
 

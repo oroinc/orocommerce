@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Entity\ScopeAwareInterface;
 
 /**
  * @ORM\Entity(
@@ -22,10 +23,11 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  * )
  * @Config
  */
-class AccountGroupProductVisibility implements VisibilityInterface
+class AccountGroupProductVisibility implements VisibilityInterface, ScopeAwareInterface
 {
     const CURRENT_PRODUCT = 'current_product';
     const CATEGORY = 'category';
+    const VISIBILITY_TYPE = 'account_group_product_visibility';
 
     /**
      * @var integer
@@ -169,5 +171,13 @@ class AccountGroupProductVisibility implements VisibilityInterface
         $this->scope = $scope;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getScopeType()
+    {
+        return self::VISIBILITY_TYPE;
     }
 }

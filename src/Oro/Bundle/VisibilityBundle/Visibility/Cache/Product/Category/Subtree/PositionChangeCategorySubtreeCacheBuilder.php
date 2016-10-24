@@ -3,11 +3,23 @@
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
 
 class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategorySubtreeCacheBuilder
 {
+    /**
+     * @var RepositoryHolder
+     */
+    protected $accountCategoryRepositoryHolder;
+
+    /**
+     * @var RepositoryHolder
+     */
+    protected $accountGroupCategoryRepositoryHolder;
+
     /** @var array */
     protected $accountGroupIdsWithInverseVisibility = [];
 
@@ -86,9 +98,7 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         $accountGroupIdsWithInverseVisibility = [];
         $accountGroupIdsWithConfigVisibility = [];
 
-        $parentAccountGroupsVisibilities = $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+        $parentAccountGroupsVisibilities = $this->getAccountGroupCategoryRepository()
             ->getVisibilitiesForAccountGroups(
                 $category->getParentCategory(),
                 $accountGroupIdsWithFallbackToParent
@@ -133,9 +143,7 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         $accountIdsWithInverseVisibility = [];
         $accountIdsWithConfigVisibility = [];
 
-        $parentAccountsVisibilities = $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+        $parentAccountsVisibilities = $this->getAccountCategoryRepository()
             ->getVisibilitiesForAccounts($category->getParentCategory(), $accountIdsWithFallbackToParent);
 
         foreach ($parentAccountsVisibilities as $accountId => $accountVisibility) {
@@ -232,5 +240,37 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
             $this->accountGroupIdsWithConfigVisibility,
             $this->accountIdsWithInverseVisibility
         );
+    }
+
+    /**
+     * @param RepositoryHolder $repositoryHolder
+     */
+    public function setAccountCategoryRepositoryHolder(RepositoryHolder $repositoryHolder)
+    {
+        $this->accountCategoryRepositoryHolder = $repositoryHolder;
+    }
+
+    /**
+     * @return AccountCategoryRepository
+     */
+    protected function getAccountCategoryRepository()
+    {
+        return $this->accountCategoryRepositoryHolder->getRepository();
+    }
+
+    /**
+     * @param RepositoryHolder $repositoryHolder
+     */
+    public function setAccountGroupCategoryRepositoryHolder(RepositoryHolder $repositoryHolder)
+    {
+        $this->accountGroupCategoryRepositoryHolder = $repositoryHolder;
+    }
+
+    /**
+     * @return AccountGroupCategoryRepository
+     */
+    protected function getAccountGroupCategoryRepository()
+    {
+        return $this->accountGroupCategoryRepositoryHolder->getRepository();
     }
 }

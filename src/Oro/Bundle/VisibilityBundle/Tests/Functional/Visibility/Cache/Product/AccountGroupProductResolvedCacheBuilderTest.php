@@ -3,10 +3,8 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AccountGroupProductResolvedCacheBuilder;
-use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -22,17 +20,6 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
             'without_website' => [
                 'expectedStaticCount' => 6,
                 'expectedCategoryCount' => 2,
-                'websiteReference' => null,
-            ],
-            'with_website1' => [
-                'expectedStaticCount' => 0,
-                'expectedCategoryCount' => 2,
-                'websiteReference' => LoadWebsiteData::WEBSITE1,
-            ],
-            'with_website2' => [
-                'expectedStaticCount' => 0,
-                'expectedCategoryCount' => 0,
-                'websiteReference' => LoadWebsiteData::WEBSITE2,
             ],
         ];
     }
@@ -42,9 +29,7 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository(
-            'OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved'
-        );
+        return $this->getContainer()->get('oro_visibility.account_group_product_repository_holder')->getRepository();
     }
 
     /**
@@ -56,11 +41,12 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
 
         $builder = new AccountGroupProductResolvedCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_entity.orm.insert_from_select_query_executor')
+            $container->get('oro_scope.scope_manager')
         );
         $builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.account_group_product_visibility_resolved.class')
         );
+        $builder->setRepositoryHolder($container->get('oro_visibility.account_group_product_repository_holder'));
 
         return $builder;
     }

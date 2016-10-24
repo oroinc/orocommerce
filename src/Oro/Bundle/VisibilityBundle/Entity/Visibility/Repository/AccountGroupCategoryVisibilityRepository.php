@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository;
 
-use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 
-class AccountGroupCategoryVisibilityRepository extends EntityRepository
+class AccountGroupCategoryVisibilityRepository extends AbstractCategoryVisibilityRepository
 {
     /**
      * @param AccountGroup $accountGroup
@@ -17,7 +16,8 @@ class AccountGroupCategoryVisibilityRepository extends EntityRepository
     {
         $result = $this->createQueryBuilder('accountGroupCategoryVisibility')
             ->select('accountGroupCategoryVisibility.visibility')
-            ->andWhere('accountGroupCategoryVisibility.accountGroup = :accountGroup')
+            ->join('accountGroupCategoryVisibility.scope', 'scope')
+            ->andWhere('scope.accountGroup = :accountGroup')
             ->andWhere('accountGroupCategoryVisibility.category = :category')
             ->setParameter('accountGroup', $accountGroup)
             ->setParameter('category', $category)
@@ -30,5 +30,39 @@ class AccountGroupCategoryVisibilityRepository extends EntityRepository
         } else {
             return null;
         }
+    }
+
+    /**
+     * @param Category $category
+     * @param string $visibility
+     * @param array $restrictedAccountGroupIds
+     * @return array
+     */
+    public function getCategoryAccountGroupIdsByVisibility(
+        Category $category,
+        $visibility,
+        array $restrictedAccountGroupIds = null
+    ) {
+        $qb = $this->createQueryBuilder('visibility');
+
+        $qb->select('IDENTITY(scope.accountGroup) as accountGroupId')
+            ->join('visibility.scope', 'scope')
+            ->where($qb->expr()->eq('visibility.category', ':category'))
+            ->andWhere($qb->expr()->eq('visibility.visibility', ':visibility'))
+            ->setParameters([
+                'category' => $category,
+                'visibility' => $visibility
+            ]);
+
+        if ($restrictedAccountGroupIds !== null) {
+            $qb->andWhere($qb->expr()->in('scope.accountGroup', ':restrictedAccountGroupIds'))
+                ->setParameter('restrictedAccountGroupIds', $restrictedAccountGroupIds);
+        }
+        $ids = [];
+        foreach ($qb->getQuery()->getScalarResult() as $accountGroup) {
+            $ids[] = $accountGroup['accountGroupId'];
+        }
+
+        return $ids;
     }
 }

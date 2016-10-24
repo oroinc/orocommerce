@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @dbIsolation
@@ -110,8 +110,11 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference($accountGroupName);
-
-        $actualVisibility = $this->repository->isCategoryVisible($category, $accountGroup, $configValue);
+        $scope = $this->scopeManager->findOrCreate(
+            AccountGroupCategoryVisibility::VISIBILITY_TYPE,
+            ['accountGroup' => $accountGroup]
+        );
+        $actualVisibility = $this->repository->isCategoryVisible($category, $configValue, $scope);
 
         $this->assertEquals($expectedVisibility, $actualVisibility);
     }
@@ -172,8 +175,11 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
     {
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference($accountGroupName);
-
-        $categoryIds = $this->repository->getCategoryIdsByVisibility($visibility, $accountGroup, $configValue);
+        $scope = $this->scopeManager->findOrCreate(
+            AccountGroupCategoryVisibility::VISIBILITY_TYPE,
+            ['accountGroup' => $accountGroup]
+        );
+        $categoryIds = $this->repository->getCategoryIdsByVisibility($visibility, $scope, $configValue);
 
         $expectedCategoryIds = [];
         foreach ($expected as $categoryName) {
@@ -468,7 +474,7 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
             $visibility = $indexedVisibilities[$id];
 
             $this->assertEquals($visibility->getCategory()->getId(), $resolvedVisibility['category']);
-            $this->assertEquals($visibility->getAccountGroup()->getId(), $resolvedVisibility['accountGroup']);
+            $this->assertEquals($visibility->getScope()->getAccountGroup()->getId(), $resolvedVisibility['accountGroup']);
             $this->assertEquals(AccountGroupCategoryVisibilityResolved::SOURCE_STATIC, $resolvedVisibility['source']);
             if ($visibility->getVisibility() === AccountGroupCategoryVisibility::VISIBLE) {
                 $this->assertEquals(
@@ -508,7 +514,6 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $visibility = CategoryVisibilityResolved::VISIBILITY_VISIBLE;
         $this->repository->clearTable();
         $this->repository->insertParentCategoryValues(
-            $this->getInsertExecutor(),
             array_merge($parentCategoryVisibilities, $staticCategoryVisibilities),
             $visibility
         );
@@ -565,9 +570,7 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
      */
     protected function getRepository()
     {
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
+        return $this->getContainer()->get('oro_visibility.account_group_category_repository_holder')->getRepository();
     }
 
     /**
@@ -579,10 +582,11 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
             ->select(
                 'IDENTITY(entity.sourceCategoryVisibility) as sourceCategoryVisibility',
                 'IDENTITY(entity.category) as category',
-                'IDENTITY(entity.accountGroup) as accountGroup',
+                'IDENTITY(scope.accountGroup) as accountGroup',
                 'entity.visibility',
                 'entity.source'
             )
+            ->join('entity.scope', 'scope')
             ->getQuery()
             ->getArrayResult();
     }

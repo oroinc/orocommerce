@@ -2,10 +2,32 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
-class ProductVisibilityPostSubmitListener extends AbstractPostSubmitVisibilityListener
+class ProductVisibilityPostSubmitListener
 {
+    /**
+     * @var VisibilityFormPostSubmitDataHandler
+     */
+    protected $postSubmitDataHandler;
+
+    /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
+     * @param VisibilityFormPostSubmitDataHandler $postSubmitDataHandler
+     * @param ManagerRegistry $registry
+     */
+    public function __construct(VisibilityFormPostSubmitDataHandler $postSubmitDataHandler, ManagerRegistry $registry)
+    {
+        $this->postSubmitDataHandler = $postSubmitDataHandler;
+        $this->registry = $registry;
+    }
+
     /**
      * @param AfterFormProcessEvent $event
      */
@@ -15,9 +37,9 @@ class ProductVisibilityPostSubmitListener extends AbstractPostSubmitVisibilityLi
         $targetEntity = $form->getData();
 
         foreach ($form->all() as $visibilityForm) {
-            $this->saveForm($visibilityForm, $targetEntity);
+            $this->postSubmitDataHandler->saveForm($visibilityForm, $targetEntity);
         }
 
-        $this->getEntityManager($targetEntity)->flush();
+        $this->registry->getManagerForClass(Product::class)->flush();
     }
 }

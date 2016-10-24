@@ -32,34 +32,34 @@
 {% block content_data %}
     {% set id = 'product-visibility-edit' %}
 
-    {% set websiteProductVisibilityTabsWidget %}
+    {% set productVisibilityWidget %}
         <div class="responsive-cell">
-            {% set websites = form.vars.websites %}
-            {% if websites|length == 1 %}
-                {% set website = websites|first %}
-                {% if website %}
+            {% set scopes = form.vars.scopes %}
+            {% if scopes|length == 1 %}
+                {% set scope = scopes|first %}
+                {% if scope %}
                     {% set content = '' %}
-                    {% if form.children[website.id] is defined  %}
-                        {% include 'OroVisibilityBundle:ProductVisibility/widget:website.html.twig' with {form: form.children[website.id]} %}
+                    {% if form.children[scope.id] is defined  %}
+                        {% include 'OroVisibilityBundle:ProductVisibility/widget:scope.html.twig' with {form: form.children[scope.id]} %}
                     {% endif %}
                 {% endif %}
             {% else %}
                 {% set tabs = [] %}
-                {% for website in websites %}
+                {% for label, scope in scopes %}
                     {% set content = '' %}
-                    {% if form.children[website.id] is defined  %}
+                    {% if form.children[scope.id] is defined  %}
                         {% set content %}
-                            {% include 'OroVisibilityBundle:ProductVisibility/widget:website.html.twig' with {form: form.children[website.id]} %}
+                            {% include 'OroVisibilityBundle:ProductVisibility/widget:scope.html.twig' with {form: form.children[scope.id]} %}
                         {% endset %}
                     {% endif %}
 
                     {% set tab = {
-                        'alias': website.id,
+                        'alias': scope.id,
                         'widgetType': 'block',
-                        'label': website.name|trans,
+                        'label': label,
                         'url': path(
-                            'oro_product_visibility_website',
-                            { productId: entity.id,  id: website.id}
+                            'oro_product_visibility_scoped',
+                            { productId: entity.id,  id: scope.id}
                         ),
                         'content': content
                     } %}
@@ -75,7 +75,7 @@
         {
             'title': 'Product visibility',
             'subblocks': [
-                {'data' : [websiteProductVisibilityTabsWidget] }
+                {'data' : [productVisibilityWidget] }
             ]
         }
     ] %}

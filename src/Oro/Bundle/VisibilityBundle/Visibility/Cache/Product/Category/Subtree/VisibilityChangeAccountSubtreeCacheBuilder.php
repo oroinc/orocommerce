@@ -4,27 +4,31 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\AccountBundle\Entity\Account;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
 
 class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBuilder
 {
     /**
      * @param Category $category
-     * @param Account $account
+     * @param Scope $scope
      * @param int $categoryVisibility visible|hidden|config
      */
-    public function resolveVisibilitySettings(Category $category, Account $account, $categoryVisibility)
+    public function resolveVisibilitySettings(Category $category, Scope $scope, $categoryVisibility)
     {
-        $childCategoryIds = $this->getChildCategoryIdsForUpdate($category, $account);
+        $childCategoryIds = $this->getChildCategoryIdsForUpdate($category, $scope);
 
-        $this->registry->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->updateAccountCategoryVisibilityByCategory($account, $childCategoryIds, $categoryVisibility);
+        /** @var AccountCategoryRepository $repository */
+        $repository = $this->registry->getManagerForClass(AccountCategoryVisibilityResolved::class)
+            ->getRepository(AccountCategoryVisibilityResolved::class);
+
+        $repository->updateAccountCategoryVisibilityByCategory($scope, $childCategoryIds, $categoryVisibility);
 
         $categoryIds = $this->getCategoryIdsForUpdate($category, $childCategoryIds);
-        $this->updateAccountProductVisibilityByCategory($categoryIds, $categoryVisibility, $account);
+        $this->updateAccountProductVisibilityByCategory($categoryIds, $categoryVisibility, $scope);
     }
 
     /**
@@ -50,13 +54,14 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
     /**
      * @param array $categoryIds
      * @param int $visibility
-     * @param Account $account
+     * @param Scope $scope
      */
-    protected function updateAccountProductVisibilityByCategory(array $categoryIds, $visibility, Account $account)
+    protected function updateAccountProductVisibilityByCategory(array $categoryIds, $visibility, Scope $scope)
     {
         if (!$categoryIds) {
             return;
         }
+        $productScopes = $this->scopeManager->findRelatedScopeIds('account_product_visibility', $scope);
 
         /** @var QueryBuilder $qb */
         $qb = $this->registry
@@ -65,9 +70,9 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
 
         $qb->update('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved', 'apvr')
             ->set('apvr.visibility', $visibility)
-            ->where($qb->expr()->eq('apvr.account', ':account'))
+            ->where($qb->expr()->in('apvr.scope', ':scopes'))
             ->andWhere($qb->expr()->in('IDENTITY(apvr.category)', ':categoryIds'))
-            ->setParameters(['account' => $account, 'categoryIds' => $categoryIds]);
+            ->setParameters(['scopes' => $productScopes, 'categoryIds' => $categoryIds]);
 
         $qb->getQuery()->execute();
     }
@@ -77,15 +82,16 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
      */
     protected function joinCategoryVisibility(QueryBuilder $qb, $target)
     {
+
         return $qb->leftJoin(
             'OroVisibilityBundle:Visibility\AccountCategoryVisibility',
             'cv',
             Join::WITH,
             $qb->expr()->andX(
                 $qb->expr()->eq('node', 'cv.category'),
-                $qb->expr()->eq('cv.account', ':account')
+                $qb->expr()->eq('cv.scope', ':scope')
             )
         )
-        ->setParameter('account', $target);
+        ->setParameter('scope', $target);
     }
 }

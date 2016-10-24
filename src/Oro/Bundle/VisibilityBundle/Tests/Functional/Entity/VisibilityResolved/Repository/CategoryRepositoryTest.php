@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @dbIsolation
@@ -138,7 +138,8 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
         }
 
         $this->repository->clearTable();
-        $this->repository->insertStaticValues($this->getInsertExecutor());
+        $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
+        $this->repository->insertStaticValues($scope);
 
         $resolvedVisibilities = $this->getResolvedVisibilities();
 
@@ -174,12 +175,12 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
         $staticCategoryId = $staticCategory->getId();
 
         $visibility = CategoryVisibilityResolved::VISIBILITY_VISIBLE;
-
+        $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
         $this->repository->clearTable();
         $this->repository->insertParentCategoryValues(
-            $this->getInsertExecutor(),
             array_merge($parentCategoryFallbackCategoryIds, [$staticCategoryId]),
-            $visibility
+            $visibility,
+            $scope
         );
 
         $resolvedVisibilities = $this->getResolvedVisibilities();
@@ -241,9 +242,7 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
      */
     protected function getRepository()
     {
-        return $this->getManagerRegistry()
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved');
+        return $this->getContainer()->get('oro_visibility.category_repository_holder')->getRepository();
     }
 
     /**

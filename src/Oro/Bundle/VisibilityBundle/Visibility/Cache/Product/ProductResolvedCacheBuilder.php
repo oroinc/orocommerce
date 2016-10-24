@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
@@ -95,21 +96,20 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         if ($category) {
             $visibility = $this->getCategoryVisibility($category);
         } else {
-            $scopes = $this->scopeManager->findRelatedScopes('product_visibility');
+            $scopes = $this->scopeManager->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
             foreach ($scopes as $scope) {
                 $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\ProductVisibility')
                     ->getRepository('OroVisibilityBundle:Visibility\ProductVisibility')
-                    ->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor, $scope, $product);
+                    ->setToDefaultWithoutCategory($scope, $product);
             }
             $visibility = ProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         }
 
         $repository = $this->getRepository();
         $repository->deleteByProduct($product);
-        $scopes = $this->scopeManager->findRelatedScopes('product_visibility');
+        $scopes = $this->scopeManager->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
         foreach ($scopes as $scope) {
             $repository->insertByProduct(
-                $this->insertFromSelectQueryExecutor,
                 $product,
                 $visibility,
                 $scope,
@@ -128,13 +128,15 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
         try {
             $repository = $this->getRepository();
             $repository->clearTable($scope);
-            $repository->insertStatic($this->insertFromSelectQueryExecutor, $scope);
+            $repository->insertStatic($scope);
             if ($scope) {
-                $repository->insertByCategory($this->insertFromSelectQueryExecutor, $scope);
+                $categoryScope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE, $scope);
+                $repository->insertByCategory($scope, $categoryScope);
             } else {
-                $scopes = $this->scopeManager->findRelatedScopes('product_visibility');
+                $scopes = $this->scopeManager->findRelatedScopes(ProductVisibility::VISIBILITY_TYPE);
                 foreach ($scopes as $scope) {
-                    $repository->insertByCategory($this->insertFromSelectQueryExecutor, $scope);
+                    $categoryScope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE, $scope);
+                    $repository->insertByCategory($scope, $categoryScope);
                 }
             }
             $manager->commit();
@@ -173,7 +175,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
      */
     protected function getRepository()
     {
-        return $this->getManager()->getRepository($this->cacheClass);
+        return $this->repositoryHolder->getRepository();
     }
 
     /**

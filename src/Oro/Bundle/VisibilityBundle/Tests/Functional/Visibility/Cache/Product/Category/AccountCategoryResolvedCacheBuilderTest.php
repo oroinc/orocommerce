@@ -3,9 +3,11 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\AbstractQuery;
-use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
@@ -19,14 +21,30 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\Visibi
  */
 class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
 {
-    /** @var Category */
+    /**
+     * @var Category
+     */
     protected $category;
 
-    /** @var Account */
+    /**
+     * @var Account
+     */
     protected $account;
 
-    /** @var AccountCategoryResolvedCacheBuilder */
+    /**
+     * @var Scope
+     */
+    protected $scope;
+
+    /**
+     * @var AccountCategoryResolvedCacheBuilder
+     */
     protected $builder;
+
+    /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
 
     protected function setUp()
     {
@@ -36,30 +54,37 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         $this->account = $this->getReference('account.level_1');
 
         $container = $this->client->getContainer();
+        $this->scopeManager = $container->get('oro_scope.scope_manager');
+        $this->scope = $this->scopeManager->findOrCreate(
+            AccountCategoryVisibility::VISIBILITY_TYPE,
+            ['account' => $this->account]
+        );
 
         $this->builder = new AccountCategoryResolvedCacheBuilder(
             $container->get('doctrine'),
-            $container->get('oro_entity.orm.insert_from_select_query_executor')
+            $this->scopeManager
         );
         $this->builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.account_category_visibility_resolved.class')
         );
-
+        $this->builder->setCategoryVisibilityHolder(
+            $container->get('oro_visibility.account_category_repository_holder')
+        );
         $subtreeBuilder = new VisibilityChangeAccountSubtreeCacheBuilder(
             $container->get('doctrine'),
             $container->get('oro_visibility.visibility.resolver.category_visibility_resolver'),
-            $container->get('oro_config.manager')
+            $container->get('oro_config.manager'),
+            $this->scopeManager
         );
 
         $this->builder->setVisibilityChangeAccountSubtreeCacheBuilder($subtreeBuilder);
-
     }
 
     public function testChangeAccountCategoryVisibilityToHidden()
     {
         $visibility = new AccountCategoryVisibility();
         $visibility->setCategory($this->category);
-        $visibility->setAccount($this->account);
+        $visibility->setScope($this->scope);
         $visibility->setVisibility(CategoryVisibility::HIDDEN);
 
         $em = $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\AccountCategoryVisibility');
@@ -161,12 +186,12 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
     public function testBuildCache(array $expectedVisibilities)
     {
         $expectedVisibilities = $this->replaceReferencesWithIds($expectedVisibilities);
-        usort($expectedVisibilities, [$this, 'sortByCategoryAndAccount']);
+        usort($expectedVisibilities, [$this, 'sortByCategoryAndScope']);
 
         $this->builder->buildCache();
 
         $actualVisibilities = $this->getResolvedVisibilities();
-        usort($actualVisibilities, [$this, 'sortByCategoryAndAccount']);
+        usort($actualVisibilities, [$this, 'sortByCategoryAndScope']);
 
         $this->assertEquals($expectedVisibilities, $actualVisibilities);
     }
@@ -400,7 +425,7 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
      * @param array $b
      * @return int
      */
-    protected function sortByCategoryAndAccount(array $a, array $b)
+    protected function sortByCategoryAndScope(array $a, array $b)
     {
         if ($a['category'] == $b['category']) {
             return $a['account'] > $b['account'] ? 1 : -1;
@@ -445,10 +470,11 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
             ->createQueryBuilder('entity')
             ->select(
                 'IDENTITY(entity.category) as category',
-                'IDENTITY(entity.account) as account',
+                'IDENTITY(scope.account) as account',
                 'entity.visibility',
                 'entity.source'
             )
+            ->join('entity.scope', 'scope')
             ->getQuery()
             ->getArrayResult();
     }
@@ -467,12 +493,12 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
             ->where(
                 $qb->expr()->andX(
                     $qb->expr()->eq('accountCategoryVisibilityResolved.category', ':category'),
-                    $qb->expr()->eq('accountCategoryVisibilityResolved.account', ':account')
+                    $qb->expr()->eq('accountCategoryVisibilityResolved.scope', ':scope')
                 )
             )
             ->setParameters([
                 'category' => $this->category,
-                'account' => $this->account,
+                'scope' => $this->scope,
             ])
             ->getQuery()
             ->getOneOrNullResult(AbstractQuery::HYDRATE_ARRAY);
@@ -487,7 +513,7 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
     {
         return $this->registry->getManagerForClass('OroVisibilityBundle:Visibility\AccountCategoryVisibility')
             ->getRepository('OroVisibilityBundle:Visibility\AccountCategoryVisibility')
-            ->findOneBy(['category' => $this->category, 'account' => $this->account]);
+            ->findOneBy(['category' => $this->category, 'scope' => $this->scope]);
     }
 
     /**
@@ -502,7 +528,7 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
     ) {
         $this->assertNotNull($categoryVisibilityResolved);
         $this->assertEquals($this->category->getId(), $categoryVisibilityResolved['category_id']);
-        $this->assertEquals($this->account->getId(), $categoryVisibilityResolved['account_id']);
+        $this->assertEquals($this->scope->getId(), $categoryVisibilityResolved['scope_id']);
         $this->assertEquals(AccountCategoryVisibilityResolved::SOURCE_STATIC, $categoryVisibilityResolved['source']);
         $this->assertEquals(
             $categoryVisibility->getVisibility(),

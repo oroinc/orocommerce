@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityResolvedData;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 
 abstract class AbstractProductResolvedCacheBuilderTest extends WebTestCase
 {
@@ -19,10 +19,10 @@ abstract class AbstractProductResolvedCacheBuilderTest extends WebTestCase
         $this->initClient();
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
-//            'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
-            LoadCategoryVisibilityResolvedData::class
+            LoadCategoryVisibilityData::class,
         ]);
 
+        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
         $this->registry = $this->client->getContainer()->get('doctrine');
     }
 

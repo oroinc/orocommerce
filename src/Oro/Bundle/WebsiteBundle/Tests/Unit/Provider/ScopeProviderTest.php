@@ -4,12 +4,12 @@ namespace Oro\Bundle\WebsiteBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Bundle\WebsiteBundle\Provider\ScopeProvider;
+use Oro\Bundle\WebsiteBundle\Provider\ScopeCriteriaProvider;
 
 class ScopeProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ScopeProvider
+     * @var ScopeCriteriaProvider
      */
     private $provider;
 
@@ -21,7 +21,7 @@ class ScopeProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->websiteManager = $this->getMockBuilder(WebsiteManager::class)->disableOriginalConstructor()->getMock();
-        $this->provider = new ScopeProvider($this->websiteManager);
+        $this->provider = new ScopeCriteriaProvider($this->websiteManager);
     }
 
     public function testGetCriteriaForCurrentScope()

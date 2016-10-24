@@ -82,21 +82,21 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
             ]);
 
         // Add same message twice
-        $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
+        $this->visibilityMessageHandler->addMessageToSchedule(
             'oro_visibility.visibility.resolve_product_visibility',
             $productVisibility
         );
-        $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
+        $this->visibilityMessageHandler->addMessageToSchedule(
             'oro_visibility.visibility.resolve_product_visibility',
             $productVisibility
         );
 
         // Add another messages
-        $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
+        $this->visibilityMessageHandler->addMessageToSchedule(
             'oro_visibility.visibility.resolve_product_visibility',
             $accountProductVisibility
         );
-        $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
+        $this->visibilityMessageHandler->addMessageToSchedule(
             'oro_visibility.visibility.resolve_product_visibility',
             $accountGroupProductVisibility
         );
@@ -143,7 +143,7 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('send')
             ->with('oro_visibility.visibility.resolve_product_visibility', $message);
 
-        $this->visibilityMessageHandler->addVisibilityMessageToSchedule(
+        $this->visibilityMessageHandler->addMessageToSchedule(
             'oro_visibility.visibility.resolve_product_visibility',
             $productVisibility
         );

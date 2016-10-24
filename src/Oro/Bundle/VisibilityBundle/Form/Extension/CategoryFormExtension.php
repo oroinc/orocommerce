@@ -2,23 +2,16 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\Extension;
 
+use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
-use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
-use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
-
 class CategoryFormExtension extends AbstractTypeExtension
 {
-    /** @var string */
-    protected $visibilityToAllClass;
-
-    /** @var string */
-    protected $visibilityToAccountGroupClass;
-
-    /** @var string */
-    protected $visibilityToAccountClass;
-
     /**
      * {@inheritdoc}
      */
@@ -38,35 +31,10 @@ class CategoryFormExtension extends AbstractTypeExtension
                 EntityVisibilityType::NAME,
                 [
                     'data' => $options['data'],
-                    'targetEntityField' => 'category',
-                    'allClass' => $this->visibilityToAllClass,
-                    'accountGroupClass' => $this->visibilityToAccountGroupClass,
-                    'accountClass' => $this->visibilityToAccountClass,
+                    EntityVisibilityType::ALL_CLASS => CategoryVisibility::class,
+                    EntityVisibilityType::ACCOUNT_GROUP_CLASS => AccountGroupCategoryVisibility::class,
+                    EntityVisibilityType::ACCOUNT_CLASS => AccountCategoryVisibility::class,
                 ]
             );
-    }
-
-    /**
-     * @param string $visibilityToAllClass
-     */
-    public function setVisibilityToAllClass($visibilityToAllClass)
-    {
-        $this->visibilityToAllClass = $visibilityToAllClass;
-    }
-
-    /**
-     * @param string $visibilityToAccountGroupClass
-     */
-    public function setVisibilityToAccountGroupClass($visibilityToAccountGroupClass)
-    {
-        $this->visibilityToAccountGroupClass = $visibilityToAccountGroupClass;
-    }
-
-    /**
-     * @param string $visibilityToAccountClass
-     */
-    public function setVisibilityToAccountClass($visibilityToAccountClass)
-    {
-        $this->visibilityToAccountClass = $visibilityToAccountClass;
     }
 }

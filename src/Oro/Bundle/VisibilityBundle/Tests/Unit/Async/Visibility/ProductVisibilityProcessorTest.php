@@ -10,7 +10,7 @@ use Oro\Bundle\VisibilityBundle\Async\Visibility\ProductVisibilityProcessor;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityMessageFactory;
+use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -25,7 +25,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
-     * @var ProductVisibilityMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var MessageFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $messageFactory;
 
@@ -44,7 +44,6 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected $databaseExceptionHelper;
 
-
     /**
      * @var ProductVisibilityProcessor
      */
@@ -53,7 +52,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->getMock(ManagerRegistry::class);
-        $this->messageFactory = $this->getMockBuilder(ProductVisibilityMessageFactory::class)
+        $this->messageFactory = $this->getMockBuilder(MessageFactoryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->cacheBuilder = $this->getMock(CacheBuilderInterface::class);

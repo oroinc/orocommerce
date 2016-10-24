@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\WebsiteBundle\Provider;
 
-use Oro\Bundle\ScopeBundle\Manager\AbstractScopeProvider;
+use Oro\Bundle\ScopeBundle\Manager\AbstractScopeCriteriaProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
-class ScopeProvider extends AbstractScopeProvider
+class ScopeCriteriaProvider extends AbstractScopeCriteriaProvider
 {
     const WEBSITE = 'website';
 

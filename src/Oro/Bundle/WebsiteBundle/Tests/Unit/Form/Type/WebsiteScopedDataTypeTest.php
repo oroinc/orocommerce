@@ -13,7 +13,7 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\SearchBundle\Tests\Unit\Fixture\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityVisibilityType;
+use Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Type\Stub\EntityVisibilityType;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteScopedDataTypeTest extends FormIntegrationTestCase

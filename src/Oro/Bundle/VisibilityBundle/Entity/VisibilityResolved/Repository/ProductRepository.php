@@ -4,7 +4,6 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -21,43 +20,41 @@ class ProductRepository extends AbstractVisibilityRepository
     use BasicOperationRepositoryTrait;
 
     /**
-     * @param InsertFromSelectQueryExecutor $executor
-     * @param Scope|null $scope
+     * @param Scope $scope
+     * @param Scope $categoryScope
      */
-    public function insertByCategory(InsertFromSelectQueryExecutor $executor, Scope $scope)
+    public function insertByCategory(Scope $scope, Scope $categoryScope)
     {
         $qb = $this->getEntityManager()
             ->getRepository('OroCatalogBundle:Category')
             ->createQueryBuilder('category');
 
-        $scopeJoinCondition = 'scope = :scope';
-        $qb->setParameter('scope', $scope);
-
         $configValue = ProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         $qb->select([
-            'scope.id',
+            (string)$scope->getId(),
             'product.id',
             'COALESCE(cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
             (string)ProductVisibilityResolved::SOURCE_CATEGORY,
             'category.id',
         ])
         ->innerJoin('category.products', 'product')
-        ->innerJoin('OroScopeBundle:Scope', 'scope', Join::WITH, $scopeJoinCondition)
         ->leftJoin(
             'OroVisibilityBundle:Visibility\ProductVisibility',
             'pv',
             'WITH',
-            'IDENTITY(pv.product) = product.id AND IDENTITY(pv.scope) = scope.id'
+            'IDENTITY(pv.product) = product.id AND IDENTITY(pv.scope) = :scope'
         )
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
             'cvr',
             'WITH',
-            'cvr.category = category'
+            'cvr.category = category AND cvr.scope = :cat_scope'
         )
-        ->where('pv.id is null');
+        ->where('pv.id is null')
+        ->setParameter('scope', $scope)
+        ->setParameter('cat_scope', $categoryScope);
 
-        $executor->execute(
+        $this->insertExecutor->execute(
             $this->getClassName(),
             ['scope', 'product', 'visibility', 'source', 'category'],
             $qb
@@ -65,12 +62,10 @@ class ProductRepository extends AbstractVisibilityRepository
     }
 
     /**
-     * @param InsertFromSelectQueryExecutor $executor
      * @param Scope|null $scope
      * @param Product|null $product
      */
     public function insertStatic(
-        InsertFromSelectQueryExecutor $executor,
         Scope $scope = null,
         $product = null
     ) {
@@ -103,7 +98,7 @@ class ProductRepository extends AbstractVisibilityRepository
                 ->setParameter('product', $product);
         }
 
-        $executor->execute(
+        $this->insertExecutor->execute(
             $this->getClassName(),
             ['sourceProductVisibility', 'scope', 'product', 'visibility', 'source'],
             $qb
@@ -134,26 +129,24 @@ class ProductRepository extends AbstractVisibilityRepository
     }
 
     /**
-     * @param InsertFromSelectQueryExecutor $executor
      * @param Product $product
      * @param int $visibility
      * @param Scope $scope
      * @param Category $category
      */
     public function insertByProduct(
-        InsertFromSelectQueryExecutor $executor,
         Product $product,
         $visibility,
         Scope $scope,
         Category $category
     ) {
-        $this->insertStatic($executor, null, $product);
+        $this->insertStatic(null, $product);
 
         $qb = $this->getVisibilitiesByCategoryQb($visibility, [$category->getId()], $scope);
         $qb->andWhere('product = :product')
             ->setParameter('product', $product);
 
-        $executor->execute(
+        $this->insertExecutor->execute(
             $this->getClassName(),
             ['scope', 'product', 'visibility', 'source', 'category'],
             $qb
@@ -173,24 +166,18 @@ class ProductRepository extends AbstractVisibilityRepository
             ->createQueryBuilder('category');
 
         $qb->select([
-            'scope.id as w_id',
+            (string)$scope->getId(),
             'product.id as p_id',
             (string)$visibility,
             (string)BaseProductVisibilityResolved::SOURCE_CATEGORY,
             'category.id as c_id',
         ])
             ->innerJoin('category.products', 'product')
-            ->innerJoin(
-                'OroScopeBundle:Scope',
-                'scope',
-                Join::WITH,
-                'scope.id = :scopeId'
-            )
             ->leftJoin(
                 'OroVisibilityBundle:Visibility\ProductVisibility',
                 'pv',
                 Join::WITH,
-                'IDENTITY(pv.product) = product.id AND IDENTITY(pv.scope) = scope.id'
+                'IDENTITY(pv.product) = product.id AND IDENTITY(pv.scope) = :scopeId'
             )
             ->where('pv.id is null')
             ->andWhere('category.id in (:ids)')

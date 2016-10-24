@@ -4,13 +4,13 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Provider\ScopeAccountProvider;
+use Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-class ScopeAccountProviderTest extends \PHPUnit_Framework_TestCase
+class ScopeAccountCriteriaProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ScopeAccountProvider
+     * @var ScopeAccountCriteriaProvider
      */
     private $provider;
 
@@ -22,7 +22,7 @@ class ScopeAccountProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)->disableOriginalConstructor()->getMock();
-        $this->provider = new ScopeAccountProvider($this->securityFacade);
+        $this->provider = new ScopeAccountCriteriaProvider($this->securityFacade);
     }
 
     public function testGetCriteriaForCurrentScope()

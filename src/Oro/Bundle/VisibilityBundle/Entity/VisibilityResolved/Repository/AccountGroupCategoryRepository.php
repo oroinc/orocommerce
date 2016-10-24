@@ -4,9 +4,11 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
@@ -22,15 +24,25 @@ class AccountGroupCategoryRepository extends EntityRepository
     use BasicOperationRepositoryTrait;
 
     /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
+    /**
+     * @var InsertFromSelectQueryExecutor
+     */
+    protected $insertExecutor;
+
+    /**
      * @param Category $category
-     * @param AccountGroup $accountGroup
      * @param int $configValue
+     * @param Scope $scope
      * @return bool
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function isCategoryVisible(Category $category, AccountGroup $accountGroup, $configValue)
+    public function isCategoryVisible(Category $category, $configValue, Scope $scope)
     {
-        $visibility = $this->getFallbackToGroupVisibility($category, $accountGroup);
+        $visibility = $this->getFallbackToGroupVisibility($category, $scope);
         if ($visibility === AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
             $visibility = $configValue;
         }
@@ -40,11 +52,11 @@ class AccountGroupCategoryRepository extends EntityRepository
 
     /**
      * @param int $visibility
-     * @param AccountGroup $accountGroup
+     * @param Scope $scope
      * @param int $configValue
      * @return array
      */
-    public function getCategoryIdsByVisibility($visibility, AccountGroup $accountGroup, $configValue)
+    public function getCategoryIdsByVisibility($visibility, Scope $scope, $configValue)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('category.id')
@@ -53,7 +65,7 @@ class AccountGroupCategoryRepository extends EntityRepository
 
         $terms = [
             $this->getCategoryVisibilityResolvedTerm($qb, $configValue),
-            $this->getAccountGroupCategoryVisibilityResolvedTerm($qb, $accountGroup, $configValue)
+            $this->getAccountGroupCategoryVisibilityResolvedTerm($qb, $scope, $configValue)
         ];
 
         if ($visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
@@ -76,10 +88,7 @@ class AccountGroupCategoryRepository extends EntityRepository
             ->execute();
     }
 
-    /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
-     */
-    public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor)
+    public function insertStaticValues()
     {
         $visibilityCondition = sprintf(
             "CASE WHEN agcv.visibility = '%s' THEN %s ELSE %s END",
@@ -92,7 +101,7 @@ class AccountGroupCategoryRepository extends EntityRepository
             ->select(
                 'agcv.id',
                 'IDENTITY(agcv.category)',
-                'IDENTITY(agcv.accountGroup)',
+                'IDENTITY(agcv.scope)',
                 $visibilityCondition,
                 (string)AccountGroupCategoryVisibilityResolved::SOURCE_STATIC
             )
@@ -100,20 +109,18 @@ class AccountGroupCategoryRepository extends EntityRepository
             ->where('agcv.visibility != :parentCategory')
             ->setParameter('parentCategory', AccountGroupCategoryVisibility::PARENT_CATEGORY);
 
-        $insertExecutor->execute(
+        $this->insertExecutor->execute(
             $this->getClassName(),
-            ['sourceCategoryVisibility', 'category', 'accountGroup', 'visibility', 'source'],
+            ['sourceCategoryVisibility', 'category', 'scope', 'visibility', 'source'],
             $queryBuilder
         );
     }
 
     /**
-     * @param InsertFromSelectQueryExecutor $insertExecutor
      * @param array $visibilityIds
      * @param int $visibility
      */
     public function insertParentCategoryValues(
-        InsertFromSelectQueryExecutor $insertExecutor,
         array $visibilityIds,
         $visibility
     ) {
@@ -131,9 +138,9 @@ class AccountGroupCategoryRepository extends EntityRepository
             ->select(
                 'agcv.id',
                 'IDENTITY(agcv.category)',
-                'IDENTITY(agcv.accountGroup)',
                 (string)$visibility,
-                $sourceCondition
+                $sourceCondition,
+                'IDENTITY(agcv.scope)'
             )
             ->from('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility', 'agcv')
             ->leftJoin('agcv.category', 'c')
@@ -143,9 +150,9 @@ class AccountGroupCategoryRepository extends EntityRepository
 
         foreach (array_chunk($visibilityIds, CategoryRepository::INSERT_BATCH_SIZE) as $ids) {
             $queryBuilder->setParameter('visibilityIds', $ids);
-            $insertExecutor->execute(
+            $this->insertExecutor->execute(
                 $this->getClassName(),
-                ['sourceCategoryVisibility', 'category', 'accountGroup', 'visibility', 'source'],
+                ['sourceCategoryVisibility', 'category', 'visibility', 'source', 'scope'],
                 $queryBuilder
             );
         }
@@ -153,10 +160,10 @@ class AccountGroupCategoryRepository extends EntityRepository
 
     /**
      * @param Category $category
-     * @param AccountGroup $accountGroup
+     * @param Scope $scope
      * @return int visible|hidden|config
      */
-    public function getFallbackToGroupVisibility(Category $category, AccountGroup $accountGroup)
+    public function getFallbackToGroupVisibility(Category $category, Scope $scope)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
@@ -175,13 +182,13 @@ class AccountGroupCategoryRepository extends EntityRepository
                 Join::WITH,
                 $qb->expr()->andX(
                     $qb->expr()->eq('agcvr.category', 'category'),
-                    $qb->expr()->eq('agcvr.accountGroup', ':accountGroup')
+                    $qb->expr()->eq('agcvr.scope', ':scope')
                 )
             )
             ->where($qb->expr()->eq('category', ':category'))
             ->setParameters([
                 'category' => $category,
-                'accountGroup' => $accountGroup
+                'scope' => $scope
             ]);
 
         return (int)$qb->getQuery()->getSingleScalarResult();
@@ -199,17 +206,20 @@ class AccountGroupCategoryRepository extends EntityRepository
         $configFallback = AccountGroupCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
 
         $qb->select(
-            'accountGroup.id as accountGroupId',
-            'COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configFallback).') as visibility'
+            'IDENTITY(scope.accountGroup) as accountGroupId',
+            'COALESCE(agcvr.visibility, cvr.visibility, '. $qb->expr()->literal($configFallback).') as visibility',
+            'agcvr.visibility as a',
+            'cvr.visibility as b'
         )
         ->from('OroCustomerBundle:AccountGroup', 'accountGroup')
+        ->leftJoin('OroScopeBundle:Scope', 'scope', 'WITH', 'scope.accountGroup = accountGroup')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr',
             Join::WITH,
             $qb->expr()->andX(
                 $qb->expr()->eq('agcvr.category', ':category'),
-                $qb->expr()->eq('agcvr.accountGroup', 'accountGroup')
+                $qb->expr()->eq('agcvr.scope', 'scope')
             )
         )
         ->leftJoin(
@@ -223,9 +233,12 @@ class AccountGroupCategoryRepository extends EntityRepository
             'category' => $category,
             'accountGroupIds' => $accountGroupIds
         ]);
+        $this->scopeManager->getCriteriaForRelatedScopes(AccountGroupCategoryVisibility::VISIBILITY_TYPE, []);
+
 
         $fallBackToGroupVisibilities = [];
-        foreach ($qb->getQuery()->getArrayResult() as $resultItem) {
+        $arrayResult = $qb->getQuery()->getArrayResult();
+        foreach ($arrayResult as $resultItem) {
             $fallBackToGroupVisibilities[(int)$resultItem['accountGroupId']] = (int)$resultItem['visibility'];
         }
 
@@ -272,7 +285,7 @@ class AccountGroupCategoryRepository extends EntityRepository
             'OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility',
             'agcv_parent',
             'WITH',
-            'agcv_parent.accountGroup = agcv.accountGroup AND agcv_parent.category = c.parentCategory'
+            'agcv_parent.scope = agcv.scope AND agcv_parent.category = c.parentCategory'
         )
         // join to resolved category visibility for parent category
         ->leftJoin(
@@ -286,5 +299,21 @@ class AccountGroupCategoryRepository extends EntityRepository
         ->addOrderBy('c.left', 'ASC')
         ->getQuery()
         ->getScalarResult();
+    }
+
+    /**
+     * @param ScopeManager $scopeManager
+     */
+    public function setScopeManager($scopeManager)
+    {
+        $this->scopeManager = $scopeManager;
+    }
+
+    /**
+     * @param InsertFromSelectQueryExecutor $insertExecutor
+     */
+    public function setInsertExecutor($insertExecutor)
+    {
+        $this->insertExecutor = $insertExecutor;
     }
 }

@@ -5,11 +5,11 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
@@ -79,7 +79,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
             ->setVisibility($data['all']['visibility']);
 
         $scope = $this->container->get('oro_scope.scope_manager')
-            ->findOrCreate('product_visibility', $productVisibility);
+            ->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
         $productVisibility->setScope($scope);
 
         $manager->persist($productVisibility);
@@ -107,12 +107,13 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
 
             $accountGroupProductVisibility = new AccountGroupProductVisibility();
             $accountGroupProductVisibility->setProduct($product)
-                ->setVisibility($accountGroupData['visibility'])
-            ;
+                ->setVisibility($accountGroupData['visibility']);
 
             $scopeManager = $this->container->get('oro_scope.scope_manager');
-            $scope = $scopeManager
-                ->findOrCreate('account_group_product_visibility', ['accountGroup' => $accountGroup]);
+            $scope = $scopeManager->findOrCreate(
+                AccountGroupProductVisibility::VISIBILITY_TYPE,
+                ['accountGroup' => $accountGroup]
+            );
 
             $accountGroupProductVisibility->setScope($scope);
 

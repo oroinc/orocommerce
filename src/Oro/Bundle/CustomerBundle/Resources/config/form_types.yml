@@ -184,7 +184,7 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_acl_access_level_selector }
 
-    oro_account.form.extension.select_or_create_inline:
+    oro_customer.form.extension.select_or_create_inline:
         class: 'Oro\Bundle\CustomerBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension'
         arguments:
             - '@security.token_storage'

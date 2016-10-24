@@ -3,12 +3,14 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
@@ -16,6 +18,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
+// todo fix BB-4507
 use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -83,11 +86,10 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
-                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+                LoadCategoryProductData::class,
+                LoadProductData::class,
+                LoadProductUnitPrecisions::class,
+                LoadAccounts::class,
             ]
         );
 

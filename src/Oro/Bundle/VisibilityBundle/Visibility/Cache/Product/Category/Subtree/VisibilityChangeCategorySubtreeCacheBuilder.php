@@ -4,8 +4,9 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 
 class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitiesAwareSubtreeCacheBuilder
 {
@@ -34,15 +35,15 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
      */
     protected function updateAccountGroupsFirstLevel(Category $category, $visibility)
     {
-        $accountGroupIdsForUpdate = $this->getAccountGroupIdsFirstLevel($category);
-        if ($accountGroupIdsForUpdate === null) {
+        $accountGroupIds = $this->getAccountGroupIdsFirstLevel($category);
+        if ($accountGroupIds === null) {
             return [];
         }
 
-        $this->updateAccountGroupsProductVisibility($category, $accountGroupIdsForUpdate, $visibility);
-        $this->updateAccountGroupsCategoryVisibility($category, $accountGroupIdsForUpdate, $visibility);
+        $this->updateAccountGroupsProductVisibility($category, $accountGroupIds, $visibility);
+        $this->updateAccountGroupsCategoryVisibility($category, $accountGroupIds, $visibility);
 
-        return $accountGroupIdsForUpdate;
+        return $accountGroupIds;
     }
 
     /**
@@ -114,18 +115,19 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
             ->getManagerForClass('OroCustomerBundle:AccountGroup')
             ->createQueryBuilder();
 
+        /** @var QueryBuilder $subQb */
+        $subQb = $this->registry
+            ->getManagerForClass(AccountGroupCategoryVisibility::class)
+            ->createQueryBuilder();
+        $subQb->select('1')
+            ->from(AccountGroupCategoryVisibility::class, 'accountGroupCategoryVisibility')
+            ->join('accountGroupCategoryVisibility.scope', 'scope')
+            ->where($qb->expr()->eq('accountGroupCategoryVisibility.category', ':category'))
+            ->andWhere('scope.accountGroup = accountGroup.id');
+
         $qb->select('accountGroup.id')
             ->from('OroCustomerBundle:AccountGroup', 'accountGroup')
-            ->leftJoin(
-                'OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility',
-                'accountGroupCategoryVisibility',
-                Join::WITH,
-                $qb->expr()->andX(
-                    $qb->expr()->eq('accountGroupCategoryVisibility.accountGroup', 'accountGroup'),
-                    $qb->expr()->eq('accountGroupCategoryVisibility.category', ':category')
-                )
-            )
-            ->where($qb->expr()->isNull('accountGroupCategoryVisibility.id'))
+            ->where($qb->expr()->not($qb->expr()->exists($subQb->getQuery()->getDQL())))
             ->setParameter('category', $category);
 
         return array_map('current', $qb->getQuery()->getScalarResult());
