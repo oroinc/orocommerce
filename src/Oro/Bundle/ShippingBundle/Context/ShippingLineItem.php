@@ -109,10 +109,6 @@ class ShippingLineItem implements ShippingLineItemInterface
      */
     public function getEntityIdentifier()
     {
-        if ($this->entityIdentifier === null) {
-            throw new \InvalidArgumentException('entityIdentifier is not defined.');
-        }
-
         return $this->entityIdentifier;
     }
 
@@ -223,7 +219,7 @@ class ShippingLineItem implements ShippingLineItemInterface
      * @param Dimensions $dimensions
      * @return $this
      */
-    public function setDimensions(Dimensions $dimensions)
+    public function setDimensions(Dimensions $dimensions = null)
     {
         $this->dimensions = $dimensions;
 

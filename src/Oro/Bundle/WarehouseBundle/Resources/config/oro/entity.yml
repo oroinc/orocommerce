@@ -1,0 +1,11 @@
+oro_entity:
+    virtual_relations:
+        Oro\Bundle\ProductBundle\Entity\Product:
+            warehouseInventoryLevels:
+                relation_type: oneToMany
+                related_entity_name: Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel
+                label: oro.warehouse.warehouseinventorylevel.entity_plural_label
+                query:
+                    join:
+                        left:
+                            - { join: 'Oro\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel', alias: warehouseInventoryLevel, conditionType: 'WITH', condition: 'warehouseInventoryLevel.product = entity' }
