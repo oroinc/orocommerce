@@ -10,8 +10,8 @@ class ContentVariantTypeCompilerPassTest extends \PHPUnit_Framework_TestCase
     public function testProcess()
     {
         $assertTaggedServicesCompilerPass = new AssertTaggedServicesCompilerPass();
-        $assertTaggedServicesCompilerPass->assertContainerConfigured(
-            ContentVariantTypeCompilerPass::class,
+        $assertTaggedServicesCompilerPass->assertTaggedServicesRegistered(
+            new ContentVariantTypeCompilerPass(),
             ContentVariantTypeCompilerPass::WEB_CATALOG_PAGE_TYPE_REGISTRY,
             ContentVariantTypeCompilerPass::WEB_CATALOG_PAGE_TYPE_TAG,
             'addContentVariantType'

@@ -19,14 +19,8 @@ class ContentVariantProviderRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testAddContentVariantProvider()
     {
-        $providerName = 'provider_name';
-
         /** @var ContentVariantProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
         $provider = $this->getMock(ContentVariantProviderInterface::class);
-        $provider->expects($this->any())
-            ->method('getName')
-            ->willReturn($providerName);
-
         $this->registry->addProvider($provider);
 
         $this->assertEquals([$provider], $this->registry->getProviders());

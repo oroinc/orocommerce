@@ -9,14 +9,14 @@ class ContentVariantProviderRegistry
     /**
      * @var ContentVariantProviderInterface[]
      */
-    protected $contentVariants = [];
+    protected $providers = [];
     
     /**
-     * @param ContentVariantProviderInterface $contentVariant
+     * @param ContentVariantProviderInterface $provider
      */
-    public function addProvider(ContentVariantProviderInterface $contentVariant)
+    public function addProvider(ContentVariantProviderInterface $provider)
     {
-        $this->contentVariants[] = $contentVariant;
+        $this->providers[] = $provider;
     }
 
     /**
@@ -24,6 +24,6 @@ class ContentVariantProviderRegistry
      */
     public function getProviders()
     {
-        return $this->contentVariants;
+        return $this->providers;
     }
 }
