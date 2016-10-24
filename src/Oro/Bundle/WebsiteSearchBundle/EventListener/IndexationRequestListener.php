@@ -4,8 +4,10 @@ namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\Common\Util\ClassUtils;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
@@ -88,6 +90,21 @@ class IndexationRequestListener implements OptionalListenerInterface
     }
 
     /**
+     * @param AfterFormProcessEvent $event
+     */
+    public function beforeEntityFlush(AfterFormProcessEvent $event)
+    {
+        $updatedEntity = $event->getData();
+        if (!$this->mappingProvider->isFieldsMappingExists(
+            $this->doctrineHelper->getEntityClass($updatedEntity)
+        )) {
+            return;
+        }
+
+        $this->scheduleForSendingWithEvent($updatedEntity);
+    }
+
+    /**
      * @param bool $enabled
      */
     public function setEnabled($enabled = true)
@@ -127,7 +144,9 @@ class IndexationRequestListener implements OptionalListenerInterface
             $this->changedEntities[$className] = [];
         }
 
-        $this->changedEntities[$className][] = $entity;
+        if (!array_key_exists(spl_object_hash($entity), $this->changedEntities[$className])) {
+            $this->changedEntities[$className][spl_object_hash($entity)] = $entity;
+        }
     }
 
     /**
