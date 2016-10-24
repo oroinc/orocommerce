@@ -105,7 +105,8 @@ class MenuUpdate extends ExtendMenuUpdate implements
             'uri' => $this->getUri(),
             'image' => $this->getImage(),
             'condition' => $this->getCondition(),
-            'divider' => $this->isDivider()
+            'divider' => $this->isDivider(),
+            'translateDisabled' => $this->getId() ? true : false
         ];
 
         if ($this->getPriority() !== null) {
