@@ -79,7 +79,7 @@ class IndexationRequestListener implements OptionalListenerInterface
             $this->getEntitiesWithUpdatedIndexedFields($unitOfWork),
             $unitOfWork->getScheduledEntityDeletions()
         ) as $updatedEntity) {
-            if (!$this->mappingProvider->isFieldsMappingExists(
+            if (!$this->mappingProvider->hasFieldsMapping(
                 $this->doctrineHelper->getEntityClass($updatedEntity)
             )) {
                 continue;
@@ -95,7 +95,7 @@ class IndexationRequestListener implements OptionalListenerInterface
     public function beforeEntityFlush(AfterFormProcessEvent $event)
     {
         $updatedEntity = $event->getData();
-        if (!$this->mappingProvider->isFieldsMappingExists(
+        if (!$this->mappingProvider->hasFieldsMapping(
             $this->doctrineHelper->getEntityClass($updatedEntity)
         )) {
             return;
