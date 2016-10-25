@@ -38,7 +38,7 @@ class LoadTaxJurisdictions extends BaseLoadTaxJurisdictions
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts'
         ];
     }
 

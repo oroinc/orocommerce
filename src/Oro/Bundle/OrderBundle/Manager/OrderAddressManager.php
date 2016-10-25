@@ -6,9 +6,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\AccountBundle\Entity\AbstractAddressToAddressType;
-use Oro\Bundle\AccountBundle\Entity\AccountAddress;
-use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\AbstractAddressToAddressType;
+use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 
@@ -77,12 +77,12 @@ class OrderAddressManager extends AbstractAddressManager
     {
         return array_merge(
             $this->getTypesMapping(
-                'OroAccountBundle:AccountAddressToAddressType',
+                'OroCustomerBundle:AccountAddressToAddressType',
                 self::ACCOUNT_LABEL,
                 $addresses
             ),
             $this->getTypesMapping(
-                'OroAccountBundle:AccountUserAddressToAddressType',
+                'OroCustomerBundle:AccountUserAddressToAddressType',
                 self::ACCOUNT_USER_LABEL,
                 $addresses
             )

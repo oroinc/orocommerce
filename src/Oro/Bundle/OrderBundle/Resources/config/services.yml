@@ -3,6 +3,7 @@ parameters:
     oro_order.entity.order_address.class: Oro\Bundle\OrderBundle\Entity\OrderAddress
     oro_order.entity.order_line_item.class: Oro\Bundle\OrderBundle\Entity\OrderLineItem
     oro_order.entity.order_discount_item.class: Oro\Bundle\OrderBundle\Entity\OrderDiscount
+    oro_order.entity.order_shipping_tracking.class: Oro\Bundle\OrderBundle\Entity\OrderShippingTracking
     oro_payment.entity.payment_transaction.class: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction
     oro_payment.entity.payment_status.class: Oro\Bundle\PaymentBundle\Entity\PaymentStatus
 
@@ -55,16 +56,16 @@ services:
             - '@oro_security.security_facade'
             - '@doctrine'
             - '@oro_security.acl_helper'
-            - '%oro_account.entity.account_address.class%'
-            - '%oro_account.entity.account_user_address.class%'
+            - '%oro_customer.entity.account_address.class%'
+            - '%oro_customer.entity.account_user_address.class%'
 
     oro_order.order.provider.order_address_security:
         class: 'Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider'
         arguments:
             - '@oro_security.security_facade'
             - '@oro_order.order.provider.order_address'
-            - '%oro_account.entity.account_address.class%'
-            - '%oro_account.entity.account_user_address.class%'
+            - '%oro_customer.entity.account_address.class%'
+            - '%oro_customer.entity.account_user_address.class%'
 
     oro_order.manager.order_address:
         class: 'Oro\Bundle\OrderBundle\Manager\OrderAddressManager'
@@ -74,16 +75,16 @@ services:
             - '@doctrine'
             - '%oro_order.entity.order_address.class%'
         calls:
-            - [addEntity, ['a', '%oro_account.entity.account_address.class%']]
-            - [addEntity, ['au', '%oro_account.entity.account_user_address.class%']]
+            - [addEntity, ['a', '%oro_customer.entity.account_address.class%']]
+            - [addEntity, ['au', '%oro_customer.entity.account_user_address.class%']]
 
     oro_order.request_handler.order_request_handler:
         class: 'Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler'
         arguments:
             - '@doctrine'
             - '@request_stack'
-            - '%oro_account.entity.account.class%'
-            - '%oro_account.entity.account_user.class%'
+            - '%oro_customer.entity.account.class%'
+            - '%oro_customer.entity.account_user.class%'
 
     oro_order.request_handler.frontend_order_data_handler:
         class: 'Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler'
@@ -103,6 +104,11 @@ services:
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+
+    oro_order.handler.order_shipping_tracking:
+        class: 'Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler'
+        arguments:
+            - "@doctrine"
 
     oro_order.event_listener.form_view:
         class: 'Oro\Bundle\OrderBundle\EventListener\FormViewListener'
@@ -181,6 +187,7 @@ services:
         public: false
         arguments:
             - '@oro_order.formatter.source_document'
+            - '@oro_order.formatter.shipping_tracking'
         tags:
             - { name: twig.extension }
 
@@ -189,6 +196,11 @@ services:
         public: false
         arguments:
             - '@oro_entity.entity_class_name_provider'
+
+    oro_order.formatter.shipping_tracking:
+        class: 'Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter'
+        arguments:
+            - "@?oro_shipping.shipping_method.registry"
 
     oro_order.order.listener.total_calculate_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'

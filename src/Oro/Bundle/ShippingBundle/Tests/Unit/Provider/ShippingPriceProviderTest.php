@@ -9,6 +9,7 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
@@ -16,6 +17,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory;
 use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
@@ -41,6 +43,11 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
      * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $registry;
+
+    /**
+     * @var LineItemDecoratorFactory|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $factory;
 
     /**
      * @var ShippingPriceProvider
@@ -75,7 +82,10 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
             ->with(FlatRatePricesAwareShippingMethod::IDENTIFIER)
             ->willReturn(new FlatRatePricesAwareShippingMethod());
 
-        $this->shippingPriceProvider = new ShippingPriceProvider($doctrineHelper, $this->registry);
+        $this->factory = $this->getMockBuilder(LineItemDecoratorFactory::class)
+            ->disableOriginalConstructor()->getMock();
+
+        $this->shippingPriceProvider = new ShippingPriceProvider($doctrineHelper, $this->registry, $this->factory);
     }
 
     /**
@@ -141,6 +151,40 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(Price::class, $price);
         $this->assertEquals(Price::create($expectedPrice, 'USD'), $price);
+    }
+
+    public function testGetPriceWithCondition()
+    {
+        $context = $this->createContext('USD', 'US');
+        $shippingAddress = $context->getShippingAddress();
+
+        $this->factory->expects(static::exactly(1))
+            ->method('createOrderLineItemDecorator')
+            ->with($context->getLineItems(), $context->getLineItems()[0])
+            ->willReturn($context->getLineItems()[0]);
+
+        $this->repository->expects($this->once())
+            ->method('getEnabledOrderedRulesByCurrencyAndCountry')
+            ->with($context->getCurrency(), $shippingAddress->getCountryIso2())
+            ->willReturn([
+                $this->createShippingRule([
+                    'name' => 'ShippingRule.1',
+                    'currency' => 'USD',
+                    'conditions' => 'lineItems.all(lineItem.product.id in [1])',
+                ], 12)
+            ]);
+
+        $methodIdentifier = 'flat_rate';
+        $typeIdentifier = 'primary';
+
+        $price = $this->shippingPriceProvider->getPrice(
+            $context,
+            $methodIdentifier,
+            $typeIdentifier
+        );
+
+        $this->assertInstanceOf(Price::class, $price);
+        $this->assertEquals(Price::create(12, 'USD'), $price);
     }
 
     /**
@@ -254,6 +298,9 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
                         'entityIdentifier' => 1,
                         'quantity' => 1,
                         'dimensions' => $this->getEntity(Dimensions::class),
+                        'product' => $this->getEntity(Product::class, [
+                            'id' => 1
+                        ]),
                     ]
                 )
             ]

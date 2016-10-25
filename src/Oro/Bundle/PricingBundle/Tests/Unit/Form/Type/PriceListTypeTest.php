@@ -24,8 +24,8 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceRuleType;
 
 class PriceListTypeTest extends FormIntegrationTestCase
 {
-    const ACCOUNT_CLASS = 'Oro\Bundle\AccountBundle\Entity\Account';
-    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\AccountBundle\Entity\AccountGroup';
+    const ACCOUNT_CLASS = 'Oro\Bundle\CustomerBundle\Entity\Account';
+    const ACCOUNT_GROUP_CLASS = 'Oro\Bundle\CustomerBundle\Entity\AccountGroup';
     const WEBSITE_CLASS = 'Oro\Bundle\WebsiteBundle\Entity\Website';
 
     /**

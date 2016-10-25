@@ -13,14 +13,6 @@
     </label>
 {% endblock %}
 
-{% block _header_row_shopping_toggle_widget %}
-    <div class="header-row__toggle hidden-on-desktop">
-        <div class="header-row__dropdown-mobile">
-            {{ block_widget(block) }}
-        </div>
-    </div>
-{% endblock %}
-
 {% block _main_menu_messages_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " main-menu__item main-menu__item--nested"

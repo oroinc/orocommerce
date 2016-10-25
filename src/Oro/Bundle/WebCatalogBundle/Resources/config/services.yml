@@ -8,6 +8,16 @@ services:
         class: 'Oro\Bundle\WebCatalogBundle\PageType\PageTypeRegistry'
         public: false
 
+    oro_web_catalog.content_variant_provider.registry:
+        class: 'Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderRegistry'
+        public: false
+
+    oro_web_catalog.page_pprovider.provider:
+        class: 'Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProvider'
+        arguments:
+            - '@oro_web_catalog.content_variant_provider.registry'
+        public: false
+
     oro_web_catalog.content_node_tree_handler:
         class: Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler
         arguments:
@@ -38,6 +48,23 @@ services:
         arguments:
             - '@doctrine'
 
+    oro_web_catalog.event_listener.system_config:
+        class: Oro\Bundle\WebCatalogBundle\EventListener\SystemConfigListener
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+
+    oro_web_catalog.form.autocomplete.web_catalog.search_handler:
+        public: false
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - '%oro_web_catalog.entity.web_catalog.class%'
+            - ["name"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_web_catalog, acl_resource: oro_web_catalog_view }
+
     oro_web_catalog.form.type.content_node_select:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeSelectType
         arguments:
@@ -49,6 +76,11 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType
         tags:
             - { name: form.type, alias: oro_web_catalog }
+
+    oro_web_catalog.form.type.web_catalog_select:
+        class: Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogSelectType
+        tags:
+            - { name: form.type, alias: oro_web_catalog_select }
 
     oro_web_catalog.form.type.content_node:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType
