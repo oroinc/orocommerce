@@ -4,8 +4,10 @@ namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\Common\Util\ClassUtils;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
@@ -77,7 +79,7 @@ class IndexationRequestListener implements OptionalListenerInterface
             $this->getEntitiesWithUpdatedIndexedFields($unitOfWork),
             $unitOfWork->getScheduledEntityDeletions()
         ) as $updatedEntity) {
-            if (!$this->mappingProvider->isFieldsMappingExists(
+            if (!$this->mappingProvider->hasFieldsMapping(
                 $this->doctrineHelper->getEntityClass($updatedEntity)
             )) {
                 continue;
@@ -85,6 +87,21 @@ class IndexationRequestListener implements OptionalListenerInterface
 
             $this->scheduleForSendingWithEvent($updatedEntity);
         }
+    }
+
+    /**
+     * @param AfterFormProcessEvent $event
+     */
+    public function beforeEntityFlush(AfterFormProcessEvent $event)
+    {
+        $updatedEntity = $event->getData();
+        if (!$this->mappingProvider->hasFieldsMapping(
+            $this->doctrineHelper->getEntityClass($updatedEntity)
+        )) {
+            return;
+        }
+
+        $this->scheduleForSendingWithEvent($updatedEntity);
     }
 
     /**
@@ -127,7 +144,9 @@ class IndexationRequestListener implements OptionalListenerInterface
             $this->changedEntities[$className] = [];
         }
 
-        $this->changedEntities[$className][] = $entity;
+        if (!array_key_exists(spl_object_hash($entity), $this->changedEntities[$className])) {
+            $this->changedEntities[$className][spl_object_hash($entity)] = $entity;
+        }
     }
 
     /**
