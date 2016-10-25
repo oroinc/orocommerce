@@ -72,7 +72,7 @@
 {% block checkout_transition_continue_widget %}
     {% if transitionData is defined and transitionData %}
     {{ _self.conditionMessagesStart(transitionData) }}
-    <button type="submit" class="btn {% if transitionData.isAllowed %}btn-orange{% endif %} btn_lg checkout__form__submit" {{ _self.transitionAttrbiutes(transitionData, checkout) }}>
+    <button type="submit" class="btn {% if transitionData.isAllowed %}btn-orange{% endif %} btn_lg checkout__form__submit" {{ _self.transitionAttrbiutes(transitionData, checkout) }} disabled="disabled">
         {{ transitionData.transition.label }}&nbsp;<i class="cf-right-open-mini va-m_md"></i>
     </button>
     {{ _self.conditionMessagesEnd(transitionData) }}
