@@ -31,11 +31,7 @@ class ProductRepositoryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetProductSearchQuery()
     {
-        $entityClass = 'Oro\Bundle\ProductBundle\Entity\Product';
-
-
         $criteria = $this->getMock(Criteria::class);
-
         $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()
             ->setMethods(['setFrom', 'addSelect', 'getCriteria', 'andWhere'])->getMock();
@@ -44,7 +40,6 @@ class ProductRepositoryTest extends \PHPUnit_Framework_TestCase
         $query->method('addSelect')->withAnyParameters()->willReturn($query);
         $query->method('getCriteria')->withAnyParameters()->willReturn($criteria);
         $query->method('andWhere')->withAnyParameters()->willReturn($query);
-
 
         $this->queryFactory->expects($this->atLeastOnce())
             ->method('create')

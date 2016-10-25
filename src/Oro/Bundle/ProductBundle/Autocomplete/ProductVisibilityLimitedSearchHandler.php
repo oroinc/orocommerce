@@ -77,23 +77,46 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     protected function searchEntities($search, $firstResult, $maxResults)
     {
         $request = $this->requestStack->getCurrentRequest();
+        if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
+            $params = [];
+        }
 
         if (is_null($this->frontendHelper) || (false === $this->frontendHelper->isFrontendRequest($request))) {
-            $queryBuilder = $this->entityRepository->getSearchQueryBuilder($search, $firstResult, $maxResults);
-
-            if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
-                $params = [];
-            }
-            $this->productManager->restrictQueryBuilder($queryBuilder, $params);
-            $query = $this->aclHelper->apply($queryBuilder);
-            return $query->getResult();
+            return $this->searchEntitiesOrm($search, $firstResult, $maxResults, $params);
+        } else {
+            return $this->searchEntitiesSearchEngine($search, $firstResult, $maxResults);
         }
+    }
+
+    /**
+     * @param $search
+     * @param $firstResult
+     * @param $maxResults
+     * @param $params
+     * @return array
+     */
+    protected function searchEntitiesOrm($search, $firstResult, $maxResults, $params)
+    {
+        $queryBuilder = $this->entityRepository->getSearchQueryBuilder($search, $firstResult, $maxResults);
+        $this->productManager->restrictQueryBuilder($queryBuilder, $params);
+        $query = $this->aclHelper->apply($queryBuilder);
+        return $query->getResult();
+    }
+
+    /**
+     * @param $search
+     * @param $firstResult
+     * @param $maxResults
+     * @return \Oro\Bundle\SearchBundle\Query\Result\Item[]
+     */
+    protected function searchEntitiesSearchEngine($search, $firstResult, $maxResults)
+    {
         $searchQuery = $this->searchRepository->getFilterSkuQuery([$search]);
         $searchQuery->setFirstResult($firstResult);
         $searchQuery->setMaxResults($maxResults);
-
         $this->productManager->restrictSearchQuery($searchQuery->getQuery());
         $result = $searchQuery->getResult();
+
         return $result->getElements();
     }
 }
