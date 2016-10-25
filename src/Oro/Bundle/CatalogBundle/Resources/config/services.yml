@@ -52,7 +52,6 @@ services:
             - [setDataClass, ['%oro_catalog.entity.category.class%']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.products-grid, method: onPreBuildProducts }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuildProducts }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid, method: onBuildBeforeProductsSelect }
 
     oro_catalog.event_listener.product_duplicate:
