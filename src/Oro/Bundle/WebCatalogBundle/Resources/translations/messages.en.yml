@@ -42,3 +42,21 @@ oro:
             webcatalog:
                 saved:
                     message: 'Web Catalog has been saved'
+
+        menu:
+            shortcut:
+                new_web_catalog:
+                    label: 'Create new web catalog'
+                    description: 'Create new web catalog'
+                web_catalog_list:
+                    label: 'Web Catalogs'
+                    description: 'Show list of existing web catalogs'
+
+        form:
+            choose: 'Choose a Web Catalog...'
+
+        system_configuration:
+            fields:
+                web_catalog:
+                    label: Web Catalog
+                    tooltip: Assign Web Catalog to Store Front

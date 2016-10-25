@@ -11,7 +11,7 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class AddWebCatalogPageTypes implements Migration, ExtendExtensionAwareInterface
+class AddContentVariantTypes implements Migration, ExtendExtensionAwareInterface
 {
     /**
      * @var ExtendExtension

@@ -113,7 +113,7 @@ class OroProductBundleInstaller implements
         $this->addNoteAssociations($schema);
         $this->addAttachmentAssociations($schema);
 
-        $this->addWebCatalogPageTypes($schema);
+        $this->addContentVariantTypes($schema);
     }
 
     /**
@@ -457,7 +457,7 @@ class OroProductBundleInstaller implements
     /**
      * @param Schema $schema
      */
-    public function addWebCatalogPageTypes(Schema $schema)
+    public function addContentVariantTypes(Schema $schema)
     {
         if ($schema->hasTable('oro_web_catalog_variant')) {
             $table = $schema->getTable('oro_web_catalog_variant');
