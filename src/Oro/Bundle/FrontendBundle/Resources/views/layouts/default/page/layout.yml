@@ -61,11 +61,3 @@ layout:
             id: sticky_element_notification
             parentId: sticky_panel_content
             blockType: block
-        - '@setOption':
-            id: title
-            optionName: separator
-            optionValue: ' - '
-        - '@setOption':
-            id: title
-            optionName: reverse
-            optionValue: true
