@@ -4,27 +4,35 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Autocomplete;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductVisibilityLimitedData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
+/**
+ * @dbIsolation
+ */
 class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
 {
     protected function setUp()
     {
         $this->initClient();
-
+        $this->getContainer()->get('request_stack')->push(Request::create(''));
+        $this->loadFixtures([
+            LoadProductVisibilityLimitedData::class
+        ]);
         $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
         $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 
     public function testVisibility()
     {
-        $this->getContainer()->get('request_stack')->push(Request::create(''));
+
         $url = $this->getUrl(
             'oro_frontend_autocomplete_search',
             array(
                 'per_page'=>10,
-                'query'=>'product.2',
+                'query'=>'product',
                 'name'=>'oro_product_visibility_limited'
             )
         );
@@ -43,7 +51,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
             'oro_frontend_autocomplete_search',
             array(
                 'per_page'=>10,
-                'query'=>'product.3',
+                'query'=>'product',
                 'name'=>'oro_product_visibility_limited'
             )
         );
