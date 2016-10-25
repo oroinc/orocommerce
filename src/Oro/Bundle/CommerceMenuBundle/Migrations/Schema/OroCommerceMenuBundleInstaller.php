@@ -80,7 +80,7 @@ class OroCommerceMenuBundleInstaller implements
         $table->addColumn('priority', 'integer', ['notnull' => false]);
         $table->addColumn('condition', 'string', ['length' => 512, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['key', 'ownership_type'], 'unq_menu_key');
+        $table->addUniqueIndex(['key', 'ownership_type'], 'oro_commerce_menu_upd_uidx');
     }
 
     /**

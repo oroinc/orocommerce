@@ -16,7 +16,7 @@ use Oro\Bundle\NavigationBundle\Entity\MenuUpdateTrait;
  *      name="oro_commerce_menu_upd",
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="unq_menu_key",
+ *              name="oro_commerce_menu_upd_uidx",
  *              columns={"key", "ownership_type"}
  *          )
  *      }
