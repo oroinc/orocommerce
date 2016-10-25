@@ -4,7 +4,7 @@ namespace Oro\Component\WebCatalog;
 
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
-interface PageProviderInterface
+interface ContentVariantProviderInterface
 {
     /**
      * @param string $className
@@ -16,11 +16,14 @@ interface PageProviderInterface
      * @param object $entity
      * @return ContentVariantInterface[]
      */
-    public function getPagesByEntity($entity);
+    public function getContentVariantsByEntity($entity);
 
     /**
      * @param object[] $entities
-     * @return ContentVariantInterface[]
+     * @return array
+     * [
+     *    ENTITY_ID => [contentVariant, ...]
+     * ]
      */
-    public function getPagesByEntities(array $entities);
+    public function getContentVariantsByEntities(array $entities);
 }

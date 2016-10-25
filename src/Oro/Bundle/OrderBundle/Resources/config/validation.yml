@@ -110,3 +110,10 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
             - Range:
                 min: 0
                 max: 999999999999999999
+
+Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
+    properties:
+        method:
+            - NotBlank: ~
+        number:
+            - NotBlank: ~
