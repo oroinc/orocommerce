@@ -51,7 +51,7 @@ class OroCommerceMenuBundle implements Migration, RenameExtensionAwareInterface
         $table->changeColumn('uri', ['length' => 1023]);
         $table->removeForeignKey('FK_1B58D24F18F45C82');
         $table->dropColumn('website_id');
-        $table->addUniqueIndex(['key', 'ownership_type'], 'oro_commerce_menu_upd_uidx');
+        $table->addUniqueIndex(['key', 'ownership_type', 'owner_id'], 'oro_commerce_menu_upd_uidx');
     }
 
     /**
