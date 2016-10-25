@@ -9,12 +9,29 @@ navigation:
                     routes: ['/^oro_web_catalog/']
                     description: 'oro.webcatalog.entity_description'
 
+            shortcut_new_web_catalog:
+                label: 'oro.webcatalog.menu.shortcut.new_web_catalog.label'
+                route: 'oro_web_catalog_create'
+                extras:
+                    description: 'oro.webcatalog.menu.shortcut.new_web_catalog.description'
+
+            shortcut_web_catalog_list:
+                label: 'oro.webcatalog.menu.shortcut.web_catalog_list.label'
+                route: 'oro_web_catalog_index'
+                extras:
+                    description: 'oro.webcatalog.menu.shortcut.web_catalog_list.description'
+
         tree:
             application_menu:
                 children:
                     marketing_tab:
                         children:
                             web_catalog_list: ~
+
+            shortcuts:
+                children:
+                    shortcut_new_web_catalog: ~
+                    shortcut_web_catalog_list: ~
 
     titles:
         oro_web_catalog_index: ~
