@@ -3,8 +3,6 @@
 namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\NameGeneratorAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
@@ -14,26 +12,12 @@ use Oro\Bundle\MigrationBundle\Tools\DbIdentifierNameGenerator;
 class DropMetaTitleFields implements
     Migration,
     OrderedMigrationInterface,
-    NameGeneratorAwareInterface,
-    ExtendExtensionAwareInterface
+    NameGeneratorAwareInterface
 {
     /**
      * @var DbIdentifierNameGenerator
      */
     protected $nameGenerator;
-    
-    /**
-     * @var ExtendExtension
-     */
-    protected $extendExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
 
     /**
      * {@inheritdoc}
@@ -48,7 +32,7 @@ class DropMetaTitleFields implements
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $queries->addQuery(new DropMetaTitleFieldsQuery($this->nameGenerator, $this->extendExtension));
+        $queries->addQuery(new DropMetaTitleFieldsQuery($this->nameGenerator));
     }
 
     /**

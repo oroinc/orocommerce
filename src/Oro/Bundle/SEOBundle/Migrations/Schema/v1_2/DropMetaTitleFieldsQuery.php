@@ -3,13 +3,16 @@
 namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Connection;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
+use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ConnectionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\NameGeneratorAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\MigrationQuery;
 use Oro\Bundle\MigrationBundle\Tools\DbIdentifierNameGenerator;
+use Oro\Bundle\TestFrameworkBundle\Entity\Product;
 use Psr\Log\LoggerInterface;
 
 class DropMetaTitleFieldsQuery implements
@@ -28,18 +31,11 @@ class DropMetaTitleFieldsQuery implements
     protected $nameGenerator;
 
     /**
-     * @var ExtendExtension
-     */
-    protected $extendExtension;
-
-    /**
      * @param DbIdentifierNameGenerator $nameGenerator
-     * @param ExtendExtension $extendExtension
      */
-    public function __construct(DbIdentifierNameGenerator $nameGenerator, ExtendExtension $extendExtension)
+    public function __construct(DbIdentifierNameGenerator $nameGenerator)
     {
         $this->nameGenerator = $nameGenerator;
-        $this->extendExtension = $extendExtension;
     }
 
     /**
@@ -56,14 +52,6 @@ class DropMetaTitleFieldsQuery implements
     public function setNameGenerator(DbIdentifierNameGenerator $nameGenerator)
     {
         $this->nameGenerator = $nameGenerator;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
     }
 
     /**
@@ -102,7 +90,7 @@ class DropMetaTitleFieldsQuery implements
      */
     protected function removeProductMetaTitles(LoggerInterface $logger, $dryRun = false)
     {
-        $this->removeMetaTitles('oro_product', $logger, $dryRun);
+        $this->removeMetaTitles(Product::class, $logger, $dryRun);
     }
 
     /**
@@ -111,7 +99,7 @@ class DropMetaTitleFieldsQuery implements
      */
     protected function removePageMetaTitles(LoggerInterface $logger, $dryRun = false)
     {
-        $this->removeMetaTitles('oro_cms_page', $logger, $dryRun);
+        $this->removeMetaTitles(Page::class, $logger, $dryRun);
     }
 
     /**
@@ -120,20 +108,24 @@ class DropMetaTitleFieldsQuery implements
      */
     protected function removeCategoryMetaTitles(LoggerInterface $logger, $dryRun = false)
     {
-        $this->removeMetaTitles('oro_catalog_category', $logger, $dryRun);
+        $this->removeMetaTitles(Category::class, $logger, $dryRun);
     }
 
     /**
-     * @param string $table
+     * @param string $sourceClassName
      * @param LoggerInterface $logger
      * @param bool $dryRun
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function removeMetaTitles($table, LoggerInterface $logger, $dryRun = false)
+    protected function removeMetaTitles($sourceClassName, LoggerInterface $logger, $dryRun = false)
     {
         $query = sprintf(
             'DELETE FROM oro_fallback_localization_val WHERE id IN (SELECT localizedfallbackvalue_id FROM %s);',
-            $this->getAssociationTableName($table, 'oro_fallback_localization_val')
+            $this->nameGenerator->generateManyToManyJoinTableName(
+                $sourceClassName,
+                'metaTitles',
+                LocalizedFallbackValue::class
+            )
         );
 
         $logger->info($query);
@@ -141,22 +133,5 @@ class DropMetaTitleFieldsQuery implements
         if (!$dryRun) {
             $this->connection->executeQuery($query);
         }
-    }
-
-    /**
-     * @param string $sourceTable
-     * @param string $targetTable
-     * @return string
-     */
-    protected function getAssociationTableName($sourceTable, $targetTable)
-    {
-        $sourceClassName = $this->extendExtension->getEntityClassByTableName($sourceTable);
-        $targetClassName = $this->extendExtension->getEntityClassByTableName($targetTable);
-
-        return $this->nameGenerator->generateManyToManyJoinTableName(
-            $sourceClassName,
-            'metaTitles',
-            $targetClassName
-        );
     }
 }
