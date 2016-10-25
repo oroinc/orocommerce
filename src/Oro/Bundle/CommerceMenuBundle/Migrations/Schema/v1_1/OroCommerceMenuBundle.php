@@ -5,6 +5,7 @@ namespace Oro\Bundle\CommerceMenuBundle\Migrations\Schema\v1_1;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\StringType;
 
+use Oro\Bundle\CommerceMenuBundle\Migrations\Schema\OroCommerceMenuBundleInstaller;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -33,6 +34,8 @@ class OroCommerceMenuBundle implements Migration, RenameExtensionAwareInterface
         /** Table updates **/
         $this->updateOroCommerceMenuUpdateTable($schema);
         $this->renameOroCommerceMenuUpdateAndMenuUpdateTitleTables($schema, $queries);
+        $this->createOroCommerceMenuUpdateDescriptionTable($schema);
+        $this->addOroCommerceMenuUpdateDescriptionForeignKeys($schema);
     }
 
     /**
@@ -52,6 +55,42 @@ class OroCommerceMenuBundle implements Migration, RenameExtensionAwareInterface
         $table->removeForeignKey('FK_1B58D24F18F45C82');
         $table->dropColumn('website_id');
         $table->addUniqueIndex(['key', 'ownership_type', 'owner_id'], 'oro_commerce_menu_upd_uidx');
+    }
+
+    /**
+     * Create `oro_navigation_menu_upd_descr` table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroCommerceMenuUpdateDescriptionTable(Schema $schema)
+    {
+        $table = $schema->createTable(OroCommerceMenuBundleInstaller::ORO_COMMERCE_MENU_UPDATE_DESCRIPTION_TABLE_NAME);
+        $table->addColumn('menu_update_id', 'integer', []);
+        $table->addColumn('localized_value_id', 'integer', []);
+        $table->setPrimaryKey(['menu_update_id', 'localized_value_id']);
+        $table->addUniqueIndex(['localized_value_id']);
+    }
+
+    /**
+     * Add `oro_navigation_menu_upd_descr` foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroCommerceMenuUpdateDescriptionForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(OroCommerceMenuBundleInstaller::ORO_COMMERCE_MENU_UPDATE_DESCRIPTION_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_fallback_localization_val'),
+            ['localized_value_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(OroCommerceMenuBundleInstaller::ORO_COMMERCE_MENU_UPDATE_TABLE_NAME),
+            ['menu_update_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
     }
 
     /**
