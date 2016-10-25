@@ -100,6 +100,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         $queryBuilder = $this->entityRepository->getSearchQueryBuilder($search, $firstResult, $maxResults);
         $this->productManager->restrictQueryBuilder($queryBuilder, $params);
         $query = $this->aclHelper->apply($queryBuilder);
+
         return $query->getResult();
     }
 

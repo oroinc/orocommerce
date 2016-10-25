@@ -36,10 +36,10 @@ class LoadProductVisibilityLimitedData extends AbstractFixture implements Depend
      */
     public function load(ObjectManager $manager)
     {
+        $i = 1;
         foreach (self::$products as $productReference) {
             /** @var Product $product */
             $product = $this->getReference($productReference);
-            $product->setSku($productReference);
             $manager->persist($product);
         }
         $manager->flush();
