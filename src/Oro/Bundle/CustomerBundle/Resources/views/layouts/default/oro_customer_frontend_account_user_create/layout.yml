@@ -1,0 +1,29 @@
+layout:
+    imports:
+        -
+            id: oro_account_user_form
+            root: content
+        - oro_account_menu
+    actions:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.customer.frontend.title.account_user.create'
+                - 'oro.customer.frontend.account_user.entity_plural_label'
+
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue:
+                label: 'oro.customer.frontend.title.account_user.create'
+
+        - '@setOption':
+            id: content
+            optionName: class_prefix
+            optionValue: 'user'
+
+        - '@setOption':
+            id: account_user_edit_form_actions_create
+            optionName: text
+            optionValue: oro.customer.form.action.create.label

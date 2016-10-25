@@ -5,7 +5,7 @@ databaseBefore:
     'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
-            account: { class: 'Oro\Bundle\AccountBundle\Entity\Account', query: {} }
+            account: { class: 'Oro\Bundle\CustomerBundle\Entity\Account', query: {} }
             currency: 'USD'
             billingAddress: { class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
             shippingAddress: { class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }

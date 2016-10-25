@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
@@ -29,6 +29,7 @@ use Symfony\Component\Intl\Intl;
  * @dbIsolation
  * @group CommunityEdition
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @group CommunityEdition
  */
 class PriceListControllerTest extends WebTestCase
 {

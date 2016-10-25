@@ -59,10 +59,11 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
-
-        $resolver->setDefault(
-            'page_component_options',
-            ['view' => 'oroorder/js/app/views/frontend-line-item-view']
+        $resolver->setDefaults(
+            [
+                'page_component' => '',
+                'page_component_options' => []
+            ]
         );
     }
 
