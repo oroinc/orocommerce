@@ -125,8 +125,6 @@ services:
         calls:
             - ['append', ['OroB2B', 'Oro']]
             - ['append', ['orob2b', 'oro']]
-            - ['append', ['FrontendNavigation', 'CommerceMenu']]
-            - ['append', ['frontendnavigation', 'commercemenu']]
 
     oro_frontend.listener.load_class_metadata:
         class: 'Oro\Bundle\FrontendBundle\EventListener\LoadClassMetadataEventListener'
