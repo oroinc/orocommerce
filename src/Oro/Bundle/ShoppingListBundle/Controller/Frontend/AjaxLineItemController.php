@@ -126,6 +126,60 @@ class AjaxLineItemController extends Controller
     }
 
     /**
+     * @Route("/{gridName}/massAction/{actionName}", name="oro_shopping_list_add_products_massaction")
+     * @AclAncestor("oro_shopping_list_line_item_frontend_add")
+     *
+     * @param Request $request
+     * @param string $gridName
+     * @param string $actionName
+     *
+     * @return JsonResponse
+     */
+    public function addProductsMassAction(Request $request, $gridName, $actionName)
+    {
+        /** @var MassActionDispatcher $massActionDispatcher */
+        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+
+        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $request);
+
+        $data = [
+            'successful' => $response->isSuccessful(),
+            'message' => $response->getMessage()
+        ];
+
+        return new JsonResponse(array_merge($data, $response->getOptions()));
+    }
+
+    /**
+     * @Route("/{gridName}/massAction/{actionName}/create", name="oro_shopping_list_add_products_to_new_massaction")
+     * @Template("OroShoppingListBundle:ShoppingList/Frontend:update.html.twig")
+     * @AclAncestor("oro_shopping_list_line_item_frontend_add")
+     *
+     * @param Request $request
+     * @param string $gridName
+     * @param string $actionName
+     *
+     * @return JsonResponse
+     */
+    public function addProductsToNewMassAction(Request $request, $gridName, $actionName)
+    {
+        $form = $this->createForm(ShoppingListType::NAME);
+        $manager = $this->get('oro_shopping_list.shopping_list.manager');
+        $response = $this->get('oro_form.model.update_handler')->handleUpdate($manager->create(), $form, [], [], null);
+
+        if ($form->isValid()) {
+            $manager->setCurrent($this->getUser(), $form->getData());
+
+            $result = $this->get('oro_datagrid.mass_action.dispatcher')
+                ->dispatchByRequest($gridName, $actionName, $request);
+
+            $response['message'] = $result->getMessage();
+        }
+
+        return $response;
+    }
+
+    /**
      * @param ShoppingList $shoppingList
      * @param string $translationKey
      * @return string
