@@ -45,11 +45,9 @@
         display: block;
 
         max-height: none;
-        padding: 7px 15px 8px 15px;
+        padding: 7px 15px 0 15px;
 
         font-weight: bold;
-
-        border-bottom: 1px solid $theme-slight-lightest-gray-color;
 
         &__item {
             position: relative;

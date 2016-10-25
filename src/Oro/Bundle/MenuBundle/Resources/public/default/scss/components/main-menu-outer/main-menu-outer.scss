@@ -7,7 +7,7 @@
 @include breakpoint('tablet') {
     .main-menu-outer {
         margin-bottom: 10px;
-        padding: 14px 0 10px 0;
+        padding: 12px 0 10px 0;
 
         border-bottom: 1px solid get-color('additional', 'light');
 
@@ -17,8 +17,7 @@
 
             display: block;
 
-            margin-left: 5px;
-            padding: 10px 16px;
+            padding: 10px 15px;
         }
 
         &__badge {
