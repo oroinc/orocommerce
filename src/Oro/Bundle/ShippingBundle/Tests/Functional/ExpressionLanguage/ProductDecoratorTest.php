@@ -66,12 +66,10 @@ class ProductDecoratorTest extends WebTestCase
 lineItems.all(
     lineItem.product.status in ['enabled']
     and
-    lineItem.product.warehouseInventoryLevels.any(
-        warehouseInventoryLevel.warehouse.name = 'First Warehouse' 
+    lineItem.product.inventoryLevels.any(
+        inventoryLevel.productUnitPrecision.unit.code = lineItem.productUnit.code
         and
-        warehouseInventoryLevel.productUnitPrecision.unit.code = lineItem.productUnit.code
-        and
-        warehouseInventoryLevel.quantity > lineItem.quantity
+        inventoryLevel.quantity > lineItem.quantity
     )
 )
 and 
