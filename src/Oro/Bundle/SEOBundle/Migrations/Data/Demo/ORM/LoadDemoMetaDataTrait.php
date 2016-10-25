@@ -7,12 +7,16 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 trait LoadDemoMetaDataTrait
 {
+    /**
+     * @param ObjectManager $manager
+     * @param array $entities
+     */
     public function addMetaFieldsData(ObjectManager $manager, array $entities)
     {
         foreach ($entities as $entity) {
-            $entity->addMetaTitles($this->getSeoMetaFieldData($manager, 'defaultMetaTitle'));
-            $entity->addMetaDescriptions($this->getSeoMetaFieldData($manager, 'defaultMetaDescription'));
-            $entity->addMetaKeywords($this->getSeoMetaFieldData($manager, 'defaultMetaKeywords'));
+            $entity->addMetaTitles($this->getSeoMetaFieldData($manager, 'defaultMetaTitle', true));
+            $entity->addMetaDescriptions($this->getSeoMetaFieldData($manager, 'defaultMetaDescription', false));
+            $entity->addMetaKeywords($this->getSeoMetaFieldData($manager, 'defaultMetaKeywords', false));
 
             $manager->persist($entity);
         }
@@ -23,12 +27,18 @@ trait LoadDemoMetaDataTrait
      *
      * @param ObjectManager $manager
      * @param $seoFieldValue
+     * @param bool $isString
      * @return LocalizedFallbackValue
      */
-    public function getSeoMetaFieldData(ObjectManager $manager, $seoFieldValue)
+    protected function getSeoMetaFieldData(ObjectManager $manager, $seoFieldValue, $isString)
     {
+        // TODO: add migration to move data from string to text field
         $seoField = new LocalizedFallbackValue();
-        $seoField->setString($seoFieldValue);
+        if ($isString) {
+            $seoField->setString($seoFieldValue);
+        } else {
+            $seoField->setText($seoFieldValue);
+        }
         $manager->persist($seoField);
 
         return $seoField;
