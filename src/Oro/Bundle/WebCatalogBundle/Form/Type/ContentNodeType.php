@@ -40,8 +40,6 @@ class ContentNodeType extends AbstractType
                 LocalizedFallbackValueCollectionType::NAME,
                 [
                     'label'    => 'oro.webcatalog.contentnode.titles.label',
-                    'required' => true,
-                    'options'  => ['constraints' => [new NotBlank()]],
                 ]
             )
             ->add(

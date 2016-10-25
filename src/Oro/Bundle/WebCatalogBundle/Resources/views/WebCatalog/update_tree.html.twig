@@ -1,9 +1,9 @@
-{# TODO replace this stub with real logic BB-3306 #}
-{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% extends 'OroUIBundle:actions:update.html.twig' %}
 
-{% set web_catalogId = web_catalog.id %}
+{% set web_catalog = entity.webCatalog %}
+{% set formAction = entity.id ? path('oro_web_catalog_update_tree_node', { 'id': entity.id }) : path('oro_web_catalog_update_tree', { 'id': web_catalog.id })  %}
 
-{% oro_title_set({params : {"%title%": web_catalog.name, '%entityName%': 'oro.webcatalog.entity_label'|trans} }) %}
+{% oro_title_set({params : {'%webCatalogName%': web_catalog.name} }) %}
 
 {% block ownerLink %}
     {% if isDesktopVersion() and web_catalog is not null %}
@@ -13,17 +13,20 @@
 {% endblock ownerLink %}
 
 {% block pageHeader %}
-    {% if web_catalogId %}
+    {% if web_catalog.id %}
         {% set breadcrumbs = {
             'entity':      web_catalog,
             'indexPath':   path('oro_web_catalog_index'),
             'indexLabel': 'oro.webcatalog.entity_plural_label'|trans,
-            'entityTitle': web_catalog.name|default('N/A'|trans)
+            'additional': [
+                {
+                    'indexPath': path('oro_web_catalog_view', {'id': web_catalog.id}),
+                    'indexLabel': web_catalog.name
+                }
+            ],
+            'entityTitle': 'oro.webcatalog.controller.webcatalog.content_tree.label'|trans
         } %}
         {{ parent() }}
-    {% else %}
-        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'oro.cms.page.entity_label'|trans}) %}
-        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
     {% endif %}
 {% endblock pageHeader %}
 
@@ -37,17 +40,24 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    "Content Node Form goes HERE " ~ entity.name
+                    form_row(form.parentNode),
+                    form_row(form.titles),
+                    form_row(form.slugs)
                 ]
             }]
         }
     ] %}
 
     {% set data = {
+        'formErrors': form_errors(form),
         'dataBlocks': dataBlocks
     }%}
 
-    <div class="cms-page-container tree-component-container">
+    {% set data = {
+        'dataBlocks': dataBlocks
+    }%}
+
+    <div class="web-catalog-page-container tree-component-container">
         <div class="page page-tree tree-component">
             {% set treeOptions = {
                 'key' : 'web-catalog',
@@ -59,12 +69,13 @@
                 'reloadWidget': 'page-info-widget'
             } %}
             <div
-                data-page-component-module="orocms/js/app/components/tree-manage-component"
+                data-page-component-module="orowebcatalog/js/app/components/web-catalog-tree-component"
                 data-page-component-options="{{ treeOptions|json_encode }}"
-            ></div>
+            >
+            </div>
         </div>
     </div>
-    <div class="cms-page-data">
+    <div class="web-catalog-page-data">
         {{ parent() }}
     </div>
 {% endblock content_data %}
