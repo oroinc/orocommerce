@@ -11,7 +11,7 @@ class ContentNodeFormExtension extends BaseMetaFormExtension
      */
     public function getExtendedType()
     {
-        return ContentNodeType::NAME;
+        return ContentNodeType::class;
     }
 
     /**
