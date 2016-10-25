@@ -6,7 +6,6 @@ use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -28,20 +27,11 @@ class ContentNodeType extends AbstractType
                 ['class' => ContentNode::class, 'multiple' => false]
             )
             ->add(
-                'name',
-                TextType::class,
-                [
-                    'label'    => 'oro.webcatalog.contentnode.name.label',
-                    'required' => true,
-                ]
-            )
-            ->add(
                 'titles',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
                     'label'    => 'oro.webcatalog.contentnode.titles.label',
-                    'required' => true,
-                    'options'  => ['constraints' => [new NotBlank()]],
+                    'required' => false,
                 ]
             )
             ->add(

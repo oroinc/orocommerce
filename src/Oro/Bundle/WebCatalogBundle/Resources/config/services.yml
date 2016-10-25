@@ -28,7 +28,9 @@ services:
         arguments:
             - '@oro_web_catalog.model.content_node_materialized_path_modifier'
             - '@oro_b2bentity.extra_insert_entity_storage'
+            - '@oro_web_catalog.content_node_utils.content_node_name_filler'
         tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: preUpdate }
 
@@ -54,3 +56,6 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType
         tags:
             - { name: form.type, alias: oro_web_catalog_content_node }
+
+    oro_web_catalog.content_node_utils.content_node_name_filler:
+        class: 'Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller'
