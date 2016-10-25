@@ -2,19 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Doctrine\ORM\QueryBuilder;
-
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
+use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\ProductBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener;
-use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 class RestrictDisabledProductsEventListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductVisibilityQueryBuilderModifier
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductVisibilitySearchQueryModifier
      */
     protected $modifier;
 
@@ -26,7 +25,7 @@ class RestrictDisabledProductsEventListenerTest extends \PHPUnit_Framework_TestC
     protected function setUp()
     {
         $this->modifier = $this
-            ->getMockBuilder('Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier')
+            ->getMockBuilder(ProductVisibilitySearchQueryModifier::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -35,16 +34,16 @@ class RestrictDisabledProductsEventListenerTest extends \PHPUnit_Framework_TestC
 
     public function testOnDBQuery()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|QueryBuilder $qb */
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Query $query */
+        $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $event = new ProductDBQueryRestrictionEvent($qb, new ParameterBag([]));
+        $event = new ProductSearchQueryRestrictionEvent($query, new ParameterBag([]));
         $this->modifier->expects($this->once())
             ->method('modifyByStatus')
-            ->with($qb, [Product::STATUS_ENABLED]);
+            ->with($query, [Product::STATUS_ENABLED]);
 
-        $this->listener->onDBQuery($event);
+        $this->listener->onSearchQuery($event);
     }
 }

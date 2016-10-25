@@ -267,6 +267,10 @@ services:
         class: 'Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier'
         public: false
 
+    oro_product.model.product_visibility_search_query_modifier:
+        class: 'Oro\Bundle\ProductBundle\Model\ProductVisibilitySearchQueryModifier'
+        public: false
+
     oro_product.autocomplete.product_visibility_limited.search_handler:
         class: 'Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler'
         public: false
@@ -289,9 +293,9 @@ services:
     oro_product.event_listener.restrict_disabled_products:
         class: 'Oro\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener'
         arguments:
-            - "@oro_product.model.product_visibility_query_builder_modifier"
+            - "@oro_product.model.product_visibility_search_query_modifier"
         tags:
-            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
+            - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
 
     oro_product.event_listener.abstract_product_db_query_restriction:
         abstract: true
@@ -307,6 +311,17 @@ services:
             - [setFrontendSystemConfigurationPath, ['oro_product.general_frontend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
+
+    oro_product.event_listener.product_search_query_restriction:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductSearchQueryRestrictionEventListener'
+        arguments:
+            - "@oro_config.manager"
+            - "@oro_product.model.product_visibility_search_query_modifier"
+            - "@oro_frontend.request.frontend_helper"
+        calls:
+            - [setFrontendSystemConfigurationPath, ['oro_product.general_frontend_product_visibility']]
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
 
     oro_product.repository.product:
         class: 'Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository'

@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
-use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
+use Oro\Bundle\ProductBundle\Model\ProductVisibilitySearchQueryModifier;
 
 /**
  * Hide all not enabled products
@@ -12,23 +12,23 @@ use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 class RestrictDisabledProductsEventListener
 {
     /**
-     * @var ProductVisibilityQueryBuilderModifier
+     * @var ProductVisibilitySearchQueryModifier
      */
     protected $modifier;
 
     /**
-     * @param ProductVisibilityQueryBuilderModifier $modifier
+     * @param ProductVisibilitySearchQueryModifier $modifier
      */
-    public function __construct(ProductVisibilityQueryBuilderModifier $modifier)
+    public function __construct(ProductVisibilitySearchQueryModifier $modifier)
     {
         $this->modifier = $modifier;
     }
 
     /**
-     * @param ProductDBQueryRestrictionEvent $event
+     * @param ProductSearchQueryRestrictionEvent $event
      */
-    public function onDBQuery(ProductDBQueryRestrictionEvent $event)
+    public function onSearchQuery(ProductSearchQueryRestrictionEvent $event)
     {
-        $this->modifier->modifyByStatus($event->getQueryBuilder(), [Product::STATUS_ENABLED]);
+        $this->modifier->modifyByStatus($event->getQuery(), [Product::STATUS_ENABLED]);
     }
 }

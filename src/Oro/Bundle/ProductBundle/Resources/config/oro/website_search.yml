@@ -23,7 +23,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: status
             type: text
         inventory_status:
-            name: status
+            name: inventory_status
             type: text
         all_text:
             name: all_text
