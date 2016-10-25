@@ -35,7 +35,7 @@
             {% endif %}
             <div class="hero-promo-item__picture">
                 <img class="hero-promo-item__img"
-                     src="{{ item.image }}">
+                     src="{{ asset(item.image) }}">
             </div>
             <div class="hero-promo-item__info">
                 {% if item.prelabel|default('') or item.label|default('') or item.link|default('') %}

@@ -401,7 +401,7 @@
   .oro-drop {
     position: relative;
 
-    flex-basis: 224px;
+    flex-basis: 225px;
     margin: 0 10px 5px 0;
 
     > .btn {
@@ -432,6 +432,12 @@
       min-width: 340px !important;
       margin-top: 0;
       padding: 20px;
+
+      &:not([style]),
+      &[style*=hidden] {
+        right: 0;
+        left: auto;
+      }
 
       &.dropdown-menu {
         @media (max-width: $screen-md) {
