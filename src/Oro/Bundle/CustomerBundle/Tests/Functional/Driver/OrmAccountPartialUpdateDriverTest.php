@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Driver;
 
-use Oro\Bundle\CustomerBundle\Driver\OrmAccountPartialUpdateDriver;
+use Oro\Bundle\SearchBundle\Engine\Orm;
 
 /**
  * @dbIsolationPerTest
@@ -10,10 +10,16 @@ use Oro\Bundle\CustomerBundle\Driver\OrmAccountPartialUpdateDriver;
 class OrmAccountPartialUpdateDriverTest extends AbstractAccountPartialUpdateDriverTest
 {
     /**
-     * @return OrmAccountPartialUpdateDriver
+     * {@inheritdoc}
      */
-    protected function getDriver()
+    protected function isTestSkipped()
     {
-        return $this->getContainer()->get('oro_customer.driver.orm_account_partial_update_driver');
+        if ($this->getContainer()->getParameter('oro_website_search.engine') !== Orm::ENGINE_NAME) {
+            $this->markTestSkipped('Should be tested only with ORM search engine');
+
+            return true;
+        }
+
+        return false;
     }
 }
