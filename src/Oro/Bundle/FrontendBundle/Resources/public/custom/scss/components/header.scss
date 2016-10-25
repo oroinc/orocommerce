@@ -1,0 +1,15 @@
+.header--custom {
+    &:after {
+        content: '';
+        position: absolute;
+        left: 15px;
+        right: 15px;
+        bottom: 0;
+
+        max-width: 1370px;
+        height: 1px;
+        margin: 0 auto;
+
+        background: get-color('additional', 'light');
+    }
+}
