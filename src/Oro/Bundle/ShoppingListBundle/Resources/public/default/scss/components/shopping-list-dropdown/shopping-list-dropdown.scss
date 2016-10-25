@@ -4,11 +4,11 @@
     &__item {
         display: table;
 
-        font-size: 13px;
+        font-size: $base-font-size -1px;
 
-        padding: 15px 9px;
+        padding: 10px 9px;
 
-        border-top: 1px solid #ebebeb
+        border-bottom: 1px solid #ebebeb
     }
 
     &__radio,
@@ -19,6 +19,7 @@
     }
 
     &__link {
+        width: 100%;
         padding-left: 5px;
     }
 
@@ -30,19 +31,17 @@
     }
 
     &__title {
-        display: table;
-        table-layout: fixed;
+        display: flex;
+        justify-content: space-between;
 
-        width: 100%;
-
-        margin-top: 2px;
+        white-space: nowrap;
     }
 
     &__name,
     &__details {
-        display: table-cell;
+        display: inline-block;
 
-        vertical-align: top;
+        vertical-align: middle;
     }
 
     &__name {
@@ -51,6 +50,9 @@
 
     &__name-inner {
         display: block;
+        max-width: 140px;
+        padding-right: 15px;
+
         overflow: hidden;
 
         text-overflow: ellipsis;
@@ -69,7 +71,7 @@
     &__desc {
         overflow: hidden;
 
-        margin: 4px 0;
+        margin-top: 4px;
 
         color: #b7b7b7;
     }
@@ -81,4 +83,26 @@
     &__link:hover &__info {
         text-decoration: underline;
     }
+
+    &__ellipsis {
+        display: inline-block;
+        width: 100%;
+
+        line-height: 0.8;
+        vertical-align: top;
+    }
 }
+
+@include breakpoint('tablet-small') {
+    .shopping-list-dropdown__item {
+        .custom-radio {
+            &__text {
+                &::before {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+        }
+    }
+}
+
