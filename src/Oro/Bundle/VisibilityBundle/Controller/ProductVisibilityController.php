@@ -32,7 +32,12 @@ class ProductVisibilityController extends Controller
     public function editAction(Request $request, Product $product)
     {
         $scopes = $this->get('oro_visibility.root_scopes_provider')->getScopes();
-        $form = $this->createScopedDataForm($product, [reset($scopes)]);
+        if (0 === count($scopes)) {
+            $preloadedScopes = [];
+        } else {
+            $preloadedScopes = [reset($scopes)];
+        }
+        $form = $this->createScopedDataForm($product, $preloadedScopes);
 
         $handler = new VisibilityFormDataHandler($form, $request, $this->get('event_dispatcher'));
 
