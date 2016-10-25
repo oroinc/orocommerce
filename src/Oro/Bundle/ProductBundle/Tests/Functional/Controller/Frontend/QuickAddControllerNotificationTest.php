@@ -47,11 +47,11 @@ class QuickAddControllerNotificationTest extends WebTestCase
         $this->loadFixtures(
             [
                 'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-                'Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData'
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData'
             ]
         );
 
-        $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
         $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
 
         $this->productInStock = $this->getReference(LoadProductData::PRODUCT_2);

@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Grid\Frontend;
 
+use Symfony\Component\HttpFoundation\Request;
+
 use Oro\Bundle\DataGridBundle\Extension\Sorter\AbstractSorterExtension;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\ProductBundle\Entity\Product;
-
-use Symfony\Component\HttpFoundation\Request;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 /**
  * @dbIsolation
@@ -39,9 +40,11 @@ class ProductSearchGridTest extends FrontendWebTestCase
         // load image filters for grid images
         $this->getContainer()->get('oro_layout.loader.image_filter')->load();
 
-        $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
-        // TODO: trigger immediate reindexation event instead
-        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
+        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('event_dispatcher')->dispatch(
+            ReindexationRequestEvent::EVENT_NAME,
+            new ReindexationRequestEvent([Product::class], [], [], false)
+        );
     }
 
     public function testSorters()

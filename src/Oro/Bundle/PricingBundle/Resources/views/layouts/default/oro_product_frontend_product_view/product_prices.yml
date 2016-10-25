@@ -10,7 +10,3 @@ layout:
             options:
                 visible: '=data["product"].getUnitPrecisions()!=null'
                 productPrices: '=data["frontend_product_prices"].getByProduct(data["product"])'
-        - '@setOption':
-            id: product_container
-            optionName: 'attr.data-page-component-options.modelAttr.prices'
-            optionValue: '=data["frontend_product_prices"].getByProduct(data["product"])'

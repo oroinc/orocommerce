@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\EventListener;
 
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;

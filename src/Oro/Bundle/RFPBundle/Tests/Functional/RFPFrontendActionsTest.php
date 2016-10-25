@@ -4,7 +4,7 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional;
 
 use Symfony\Component\DomCrawler\Crawler;
 
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
@@ -33,7 +33,7 @@ class RFPFrontendActionsTest extends WebTestCase
             ]
         );
 
-        $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
         $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 

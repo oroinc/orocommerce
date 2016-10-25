@@ -6,8 +6,8 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\FrontendNavigationBundle\Entity\MenuUpdate;
 
 class MenuUpdateRepository extends EntityRepository

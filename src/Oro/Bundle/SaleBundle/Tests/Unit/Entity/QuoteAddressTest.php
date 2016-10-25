@@ -4,8 +4,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\AccountBundle\Entity\AccountAddress;
-use Oro\Bundle\AccountBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 
 class QuoteAddressTest extends AbstractTest

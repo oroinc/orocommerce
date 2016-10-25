@@ -389,7 +389,7 @@ services:
             - '@oro_security.security_facade'
             - '@oro_pricing.model.price_list_tree_handler'
             - '@doctrine'
-            - '@oro_account.provider.account_user_relations_provider'
+            - '@oro_customer.provider.account_user_relations_provider'
             - '@oro_website.manager'
 
     oro_pricing.model.price_list_tree_handler:
@@ -695,8 +695,8 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.price_list_relation_trigger_handler'
         tags:
-            - { name: kernel.event_listener, event: oro_account.account_group.before_flush, method: onPostSubmit }
-            - { name: kernel.event_listener, event: oro_account.account_group.pre_remove, method: onGroupRemove }
+            - { name: kernel.event_listener, event: oro_customer.account_group.before_flush, method: onPostSubmit }
+            - { name: kernel.event_listener, event: oro_customer.account_group.pre_remove, method: onGroupRemove }
 
     oro_pricing.entity_listener.account:
         class: 'Oro\Bundle\PricingBundle\EventListener\AccountListener'
@@ -706,7 +706,7 @@ services:
             - '@oro_pricing.price_list_relation_trigger_handler'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_account_type, method: onPostSubmit }
-            - { name: kernel.event_listener, event: oro_account.account.on_account_group_change, method: onAccountGroupChange }
+            - { name: kernel.event_listener, event: oro_customer.account.on_account_group_change, method: onAccountGroupChange }
 
     oro_pricing.subtotal_processor.handler.request_handler:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler'

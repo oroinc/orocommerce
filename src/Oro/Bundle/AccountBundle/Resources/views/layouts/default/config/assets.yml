@@ -1,4 +1,0 @@
-styles:
-    inputs:
-        - 'bundles/oroaccount/default/scss/variables/login-form-config.scss'
-        - 'bundles/oroaccount/default/scss/styles.scss'

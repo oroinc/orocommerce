@@ -42,8 +42,8 @@ layout:
                             header: ~
                             sticky_panel:
                                 sticky_panel_content: ~
+                            notification: ~
                             main:
-                                notification: ~
                                 content:
                                     page_title_container:
                                         page_title: ~
