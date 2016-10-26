@@ -21,9 +21,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 class IndexDataProvider
 {
     const ALL_TEXT_FIELD = 'all_text';
-    const ALL_TEXT_FIELD_TEMPLATE = 'all_text';
-    const ALL_TEXT_L10N_FIELD = 'all_text_localization';
-    const ALL_TEXT_L10N_FIELD_TEMPLATE = 'all_text_LOCALIZATION_ID';
+    const ALL_TEXT_L10N_FIELD = 'all_text_LOCALIZATION_ID';
 
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
@@ -104,12 +102,12 @@ class IndexDataProvider
             return $preparedIndexData;
         }
 
-        $allText = $this->getFieldConfig($entityConfig, self::ALL_TEXT_FIELD, 'name', self::ALL_TEXT_FIELD_TEMPLATE);
+        $allText = $this->getFieldConfig($entityConfig, self::ALL_TEXT_FIELD, 'name', self::ALL_TEXT_FIELD);
         $allTextL10N = $this->getFieldConfig(
             $entityConfig,
             self::ALL_TEXT_L10N_FIELD,
             'name',
-            self::ALL_TEXT_L10N_FIELD_TEMPLATE
+            self::ALL_TEXT_L10N_FIELD
         );
 
         foreach ($indexData as $entityId => $fieldsValues) {
@@ -213,7 +211,19 @@ class IndexDataProvider
      */
     private function getFieldConfig(array $entityConfig, $fieldName, $configName, $default = null)
     {
-        if (!isset($entityConfig['fields'][$fieldName][$configName])) {
+        $fields = array_filter($entityConfig['fields'], function ($fieldConfig) use ($fieldName, $configName) {
+            if (!array_key_exists('name', $fieldConfig)) {
+                return false;
+            }
+
+            if (!array_key_exists($configName, $fieldConfig)) {
+                return false;
+            }
+
+            return $fieldConfig['name'] === $fieldName;
+        });
+
+        if (!$fields) {
             if ($default) {
                 return $default;
             }
@@ -227,7 +237,9 @@ class IndexDataProvider
             );
         }
 
-        return $entityConfig['fields'][$fieldName][$configName];
+        $field = end($fields);
+
+        return $field[$configName];
     }
 
     /**

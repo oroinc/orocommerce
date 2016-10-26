@@ -1,17 +1,8 @@
 Oro\Bundle\ProductBundle\Entity\Product:
     fields:
-        category_id:
-            name: cat_id
+        -
+            name: category_id
             type: integer
-        category_path:
-            name: cat_path
-            type: text
-        category_title:
-            name: cat_title_LOCALIZATION_ID
-            type: text
-        category_description:
-            name: cat_description_LOCALIZATION_ID
-            type: text
-        category_short_desc:
-            name: cat_short_desc_LOCALIZATION_ID
+        -
+            name: category_path
             type: text

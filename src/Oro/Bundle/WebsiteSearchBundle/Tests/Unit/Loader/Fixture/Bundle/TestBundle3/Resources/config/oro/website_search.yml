@@ -1,9 +1,9 @@
 Oro\Bundle\TestBundle3\Entity\Product:
     alias: product_WEBSITE_ID
     fields:
-        title:
+        -
             name: title_LOCALIZATION_ID
             type: text
-        price:
+        -
             name: price
             type: decimal
