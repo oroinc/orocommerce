@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\AccountBundle\Acl\Voter;
 
+use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
@@ -33,13 +34,20 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     /**
      * @var \Oro\Bundle\ProductBundle\Search\ProductRepository
      */
-    protected $searchRepository;
+    protected $productRepository;
+
+    /**
+     * @var TokenInterface
+     */
+    protected $currentToken;
 
     /**
      * {@inheritdoc}
     */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
+        $this->currentToken = $token;
+
         if ($this->frontendHelper && $this->frontendHelper->isFrontendRequest()) {
             return parent::vote($token, $object, $attributes);
         }
@@ -53,17 +61,9 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         if (in_array($attribute, $this->supportedAttributes, true)) {
+            $product = $this->productRepository->findOne($identifier);
 
-            $query = $this->searchRepository->createQuery();
-
-            $repository = $this->doctrineHelper
-                ->getEntityRepository($class);
-            /** @var $repository ProductRepository */
-            $qb = $repository->getProductsQueryBuilder([$identifier]);
-            $this->modifier->modify($qb);
-            $product = $qb->getQuery()->getOneOrNullResult();
-
-            if ($product) {
+            if ($product !== null) {
                 return self::ACCESS_GRANTED;
             }
 
@@ -90,10 +90,31 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     }
 
     /**
-     * @param \Oro\Bundle\ProductBundle\Search\ProductRepository $searchRepository
+     * @param ProductSearchRepository $productRepository
      */
-    public function setSearchRepository(ProductSearchRepository $searchRepository)
+    public function setProductSearchRepository(ProductSearchRepository $productRepository)
     {
-        $this->searchRepository = $searchRepository;
+        $this->productRepository = $productRepository;
     }
+//
+//    protected function modifyQuery(Query $query)
+//    {
+//        $accountUser = $this->currentToken->getUser();
+//        $visibilities = [$this->getProductVisibilityResolvedTerm($queryBuilder)];
+//
+//        $accountGroup = $this->relationsProvider->getAccountGroup($accountUser);
+//        if ($accountGroup) {
+//            $visibilities[] = $this->getAccountGroupProductVisibilityResolvedTerm(
+//                $queryBuilder,
+//                $accountGroup
+//            );
+//        }
+//
+//        $account = $this->relationsProvider->getAccount($accountUser);
+//        if ($account) {
+//            $visibilities[] = $this->getAccountProductVisibilityResolvedTerm($queryBuilder, $account);
+//        }
+//
+//        $queryBuilder->andWhere($queryBuilder->expr()->gt(implode(' + ', $visibilities), 0));
+//    }
 }

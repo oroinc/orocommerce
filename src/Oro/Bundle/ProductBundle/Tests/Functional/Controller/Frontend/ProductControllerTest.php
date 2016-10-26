@@ -65,6 +65,7 @@ class ProductControllerTest extends WebTestCase
         $this->getContainer()->get('oro_account.visibility.cache.product.cache_builder')->buildCache();
         // TODO: trigger immediate reindexation event instead
         $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
+
     }
 
     public function testIndexAction()
