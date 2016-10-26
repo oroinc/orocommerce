@@ -30,17 +30,10 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     protected $productRepository;
 
     /**
-     * @var TokenInterface
-     */
-    protected $currentToken;
-
-    /**
      * {@inheritdoc}
      */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
-        $this->currentToken = $token;
-
         if ($this->frontendHelper && $this->frontendHelper->isFrontendRequest()) {
             return parent::vote($token, $object, $attributes);
         }
