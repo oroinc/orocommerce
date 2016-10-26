@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Event\BeforeSearchEvent;
@@ -16,12 +17,20 @@ class ProductVisibilityRestrictionListener
     private $productManager;
 
     /**
+     * @var AbstractSearchMappingProvider
+     */
+    private $mappingProvider;
+
+    /**
      * @param ProductManager $productManager
+     * @param AbstractSearchMappingProvider $mappingProvider
      */
     public function __construct(
-        ProductManager $productManager
+        ProductManager $productManager,
+        AbstractSearchMappingProvider $mappingProvider
     ) {
         $this->productManager = $productManager;
+        $this->mappingProvider = $mappingProvider;
     }
 
     /**
@@ -39,7 +48,9 @@ class ProductVisibilityRestrictionListener
      */
     private function applyQueryRestrictions(Query $query)
     {
-        if ($query->getFrom() == [Product::class]) {
+        $productEntityAlias = $this->mappingProvider->getEntityAlias(Product::class);
+
+        if ($query->getFrom() == [Product::class] || $query->getFrom() == [$productEntityAlias]) {
             $this->productManager->restrictSearchQuery($query);
 
             return;
