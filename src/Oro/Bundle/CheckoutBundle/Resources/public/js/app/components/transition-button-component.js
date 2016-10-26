@@ -31,12 +31,20 @@ define(function(require) {
             this.inProgress = false;
 
             this.$el = options._sourceElement;
+
+            $(document).ready(this.onReady(this.$el, this.options.enabled));
             this.initializeTriggers();
             if (this.options.hasForm) {
                 this.$form = this.$el.closest('form');
                 this.$form.on('submit', $.proxy(this.onSubmit, this));
             } else {
                 this.$el.on('click', $.proxy(this.transit, this));
+            }
+        },
+        
+        onReady: function($el, enabled) {
+            if (enabled) {
+                $el.prop('disabled', false);
             }
         },
 
