@@ -78,7 +78,7 @@ abstract class AbstractAccountPartialUpdateDriver implements AccountPartialUpdat
                 }
             }
 
-            if ($productIds !== []) {
+            if ($productIds) {
                 $this->addAccountVisibility(
                     $productIds,
                     $productAlias,
