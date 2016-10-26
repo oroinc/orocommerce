@@ -2,14 +2,11 @@
 
 namespace Oro\Bundle\AccountBundle\Acl\Voter;
 
-use Oro\Bundle\SearchBundle\Query\Query;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
-use Oro\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
+use Oro\Bundle\ProductBundle\Search\ProductRepository;
 
 class ProductVisibilityVoter extends AbstractEntityVoter
 {
@@ -23,16 +20,12 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     ];
 
     /**
-     * @var ProductVisibilityQueryBuilderModifier
-     */
-    protected $modifier;
-
-    /**
      * @var FrontendHelper
      */
     protected $frontendHelper;
+
     /**
-     * @var \Oro\Bundle\ProductBundle\Search\ProductRepository
+     * @var ProductRepository
      */
     protected $productRepository;
 
@@ -74,14 +67,6 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     }
 
     /**
-     * @param ProductVisibilityQueryBuilderModifier $modifier A ProductVisibilityQueryBuilderModifier instance
-     */
-    public function setModifier(ProductVisibilityQueryBuilderModifier $modifier)
-    {
-        $this->modifier = $modifier;
-    }
-
-    /**
      * @param FrontendHelper $frontendHelper
      */
     public function setFrontendHelper(FrontendHelper $frontendHelper)
@@ -90,31 +75,10 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     }
 
     /**
-     * @param ProductSearchRepository $productRepository
+     * @param ProductRepository $productRepository
      */
-    public function setProductSearchRepository(ProductSearchRepository $productRepository)
+    public function setProductSearchRepository(ProductRepository $productRepository)
     {
         $this->productRepository = $productRepository;
     }
-//
-//    protected function modifyQuery(Query $query)
-//    {
-//        $accountUser = $this->currentToken->getUser();
-//        $visibilities = [$this->getProductVisibilityResolvedTerm($queryBuilder)];
-//
-//        $accountGroup = $this->relationsProvider->getAccountGroup($accountUser);
-//        if ($accountGroup) {
-//            $visibilities[] = $this->getAccountGroupProductVisibilityResolvedTerm(
-//                $queryBuilder,
-//                $accountGroup
-//            );
-//        }
-//
-//        $account = $this->relationsProvider->getAccount($accountUser);
-//        if ($account) {
-//            $visibilities[] = $this->getAccountProductVisibilityResolvedTerm($queryBuilder, $account);
-//        }
-//
-//        $queryBuilder->andWhere($queryBuilder->expr()->gt(implode(' + ', $visibilities), 0));
-//    }
 }
