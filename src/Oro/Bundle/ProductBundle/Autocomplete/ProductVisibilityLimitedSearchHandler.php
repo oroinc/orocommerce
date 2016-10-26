@@ -81,11 +81,11 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
             $params = [];
         }
 
-        if (is_null($this->frontendHelper) || (false === $this->frontendHelper->isFrontendRequest($request))) {
-            return $this->searchEntitiesOrm($search, $firstResult, $maxResults, $params);
-        } else {
-            return $this->searchEntitiesSearchEngine($search, $firstResult, $maxResults);
+        if (null === $this->frontendHelper || (false === $this->frontendHelper->isFrontendRequest($request))) {
+            return $this->searchEntitiesUsingOrm($search, $firstResult, $maxResults, $params);
         }
+
+        return $this->searchEntitiesUsingIndex($search, $firstResult, $maxResults);
     }
 
     /**
@@ -95,7 +95,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
      * @param $params
      * @return array
      */
-    protected function searchEntitiesOrm($search, $firstResult, $maxResults, $params)
+    protected function searchEntitiesUsingOrm($search, $firstResult, $maxResults, $params)
     {
         $queryBuilder = $this->entityRepository->getSearchQueryBuilder($search, $firstResult, $maxResults);
         $this->productManager->restrictQueryBuilder($queryBuilder, $params);
@@ -110,7 +110,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
      * @param $maxResults
      * @return \Oro\Bundle\SearchBundle\Query\Result\Item[]
      */
-    protected function searchEntitiesSearchEngine($search, $firstResult, $maxResults)
+    protected function searchEntitiesUsingIndex($search, $firstResult, $maxResults)
     {
         $searchQuery = $this->searchRepository->getFilterSkuQuery([$search]);
         $searchQuery->setFirstResult($firstResult);
