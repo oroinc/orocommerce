@@ -5,9 +5,9 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\AccountBundle\Entity\Account;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener;
@@ -48,10 +48,10 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
         /** @var Account $account1 */
-        $account1 = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 1]);
+        $account1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 1]);
 
         /** @var Account $account2 */
-        $account2 = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 2]);
+        $account2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 2]);
 
         $accountUser1 = new AccountUser();
         $accountUser1->setAccount($account1);
@@ -124,7 +124,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
         /** @var Account $account */
-        $account = $this->getEntity('Oro\Bundle\AccountBundle\Entity\Account', ['id' => 1]);
+        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 1]);
 
         $accountUser = new AccountUser();
         $accountUser->setAccount($account);

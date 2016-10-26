@@ -8,7 +8,7 @@ layout:
             id: title
             optionName: value
             optionValue:
-                - 'oro.account.menu.account_user.label'
+                - 'oro.customer.menu.account_user.label'
                 - 'oro.frontend.rfp.request.entity_plural_label'
                 -
                     label: 'oro.frontend.rfp.request.page_title.label'

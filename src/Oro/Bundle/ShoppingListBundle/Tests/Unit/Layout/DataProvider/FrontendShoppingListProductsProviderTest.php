@@ -8,11 +8,17 @@ use Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider
 use Oro\Bundle\ShoppingListBundle\DataProvider\ShoppingListLineItemsDataProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider;
 
 class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
+
+    /**
+     * @var LineItemRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $lineItemRepository;
 
     /**
      * @var FrontendProductPricesDataProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -36,6 +42,11 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCa
 
     public function setUp()
     {
+        $this->lineItemRepository = $this
+            ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->frontendProductPricesDataProvider = $this
             ->getMockBuilder('Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider')
             ->disableOriginalConstructor()
@@ -49,6 +60,7 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCa
             ->disableOriginalConstructor()->getMock();
 
         $this->provider = new FrontendShoppingListProductsProvider(
+            $this->lineItemRepository,
             $this->frontendProductPricesDataProvider,
             $this->shoppingListLineItemsDataProvider,
             $this->productPriceFormatter
@@ -139,5 +151,17 @@ class FrontendShoppingListProductsProviderTest extends \PHPUnit_Framework_TestCa
                 'entity' => null,
             ],
         ];
+    }
+
+    public function testGetLastProductsGroupedByShoppingList()
+    {
+        $shoppingLists = [$this->getEntity('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList')];
+        $productCount = 1;
+
+        $this->lineItemRepository->expects($this->once())
+            ->method('getLastProductsGroupedByShoppingList')
+            ->with($shoppingLists, $productCount);
+
+        $this->provider->getLastProductsGroupedByShoppingList($shoppingLists, $productCount);
     }
 }

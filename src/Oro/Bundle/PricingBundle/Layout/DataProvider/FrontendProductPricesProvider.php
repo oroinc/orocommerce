@@ -120,7 +120,7 @@ class FrontendProductPricesProvider
         $productsPrices = [];
         foreach ($prices as $price) {
             $productsPrices[$price->getProduct()->getId()][$price->getProductUnitCode()][] = [
-                'qty' => $price->getQuantity(),
+                'quantity' => $price->getQuantity(),
                 'price' => $price->getPrice()->getValue(),
                 'currency' => $price->getPrice()->getCurrency(),
                 'unit'  => $price->getUnit()->getCode(),

@@ -2,13 +2,17 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 /**
  * @dbIsolation
@@ -28,7 +32,12 @@ class ProductControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
-        $this->loadFixtures(['Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData']);
+        $this->loadFixtures([LoadCategoryProductData::class, LoadProductVisibilityData::class]);
+        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('event_dispatcher')->dispatch(
+            ReindexationRequestEvent::EVENT_NAME,
+            new ReindexationRequestEvent([Product::class], [], [], false)
+        );
     }
 
     /**
@@ -39,8 +48,6 @@ class ProductControllerTest extends WebTestCase
      */
     public function testView($includeSubcategories, $expected)
     {
-        $this->markTestSkipped('TODO: Remove skip after category filtering will be implemented');
-
         /** @var Category $secondLevelCategory */
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $response = $this->client->requestFrontendGrid(
@@ -107,8 +114,6 @@ class ProductControllerTest extends WebTestCase
      */
     public function testControllerActionWithCategoryId()
     {
-        $this->markTestSkipped('TODO: Remove skip after category filtering will be implemented');
-
         /** @var Category $secondLevelCategory */
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
 
@@ -133,8 +138,6 @@ class ProductControllerTest extends WebTestCase
      */
     public function testNavigationBar($category, array $expectedParts)
     {
-        $this->markTestSkipped('TODO: Remove skip after category filtering will be implemented');
-
         $category = $this->getReference($category);
 
         $requestParams = [

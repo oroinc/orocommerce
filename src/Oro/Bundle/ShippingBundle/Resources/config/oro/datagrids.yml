@@ -77,8 +77,7 @@ datagrids:
                     data_name: shipping_rule.priority
                 currency:
                     data_name: shipping_rule.currency
-            default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+            disable_default_sorting: true
         filters:
             columns:
                 id:

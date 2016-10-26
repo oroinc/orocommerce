@@ -34,13 +34,13 @@ Oro\Bundle\CurrencyBundle\Entity\Price(local):
        value: '1'
        currency: 'EUR'
 
-Oro\Bundle\AccountBundle\Entity\Account:
+Oro\Bundle\CustomerBundle\Entity\Account:
    account1:
        name: 'Company A'
        organization: '@organization'
        owner: '@admin'
 
-Oro\Bundle\AccountBundle\Entity\AccountUser:
+Oro\Bundle\CustomerBundle\Entity\AccountUser:
    amanda:
        email: 'AmandaRCole@example.org'
        username: 'AmandaRCole@example.org'
@@ -94,7 +94,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
        subtotalValue: '10.1'
        valid: true
 
-Oro\Bundle\AccountBundle\Entity\AccountUserAddress:
+Oro\Bundle\CustomerBundle\Entity\AccountUserAddress:
     address1:
         country: '@germany'
         region: '@berlin'
@@ -150,13 +150,13 @@ Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite:
         pricelist: '@combinedPriceList'
         website: '@website1'
 
-Oro\Bundle\AccountBundle\Entity\AccountUserSettings:
+Oro\Bundle\CustomerBundle\Entity\AccountUserSettings:
     accountUserSetting1:
         accountUser: '@amanda'
         __construct: ['@website1']
         currency: 'EUR'
 
-Oro\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType:
+Oro\Bundle\CustomerBundle\Entity\AccountUserAddressToAddressType:
     billing:
          address: '@address1'
          type: '@billingType'

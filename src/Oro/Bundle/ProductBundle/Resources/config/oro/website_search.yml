@@ -10,6 +10,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
         sku:
             name: sku
             type: text
+        sku_uppercase:
+            name: sku_uppercase
+            type: text
         description:
             name: description_LOCALIZATION_ID
             type: text

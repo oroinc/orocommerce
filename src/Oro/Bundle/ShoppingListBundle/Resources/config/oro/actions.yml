@@ -109,7 +109,7 @@ operations:
         label: oro.shoppinglist.product.add_to_shopping_list.label
         applications: [commerce]
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\ShoppingListBundle\Entity\LineItem]
-        datagrids: [frontend-products-grid]
+        datagrids: [frontend-product-search-grid]
         datagrid_options:
             mass_action_provider: oro_shopping_list_add_products
         button_options:
@@ -138,7 +138,7 @@ operations:
                     line_item: $.lineItem
                     form: $.form
             - '@flash_message: { message: $.success_message, type': success }
-            - '@refresh_grid': frontend-products-grid
+            - '@refresh_grid': frontend-product-search-grid
 
     oro_shoppinglist_lineitem_base:
         label: ' '

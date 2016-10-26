@@ -111,8 +111,12 @@
 
       .order-widget--dropdown-mode {
         top: 48px;
+        right: 0;
 
         display: none;
+        margin-right:10px;
+
+        font-size: $base-font-size - 1;
 
         .order-widget__item{
           &:first-child {
