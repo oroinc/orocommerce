@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle;
 
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
+use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\ChainContentVariantTitleProviderCompilerPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\ContentVariantProviderCompilerPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\ContentVariantTypeCompilerPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
@@ -31,6 +32,7 @@ class OroWebCatalogBundle extends Bundle
     {
         $container->addCompilerPass(new ContentVariantTypeCompilerPass());
         $container->addCompilerPass(new ContentVariantProviderCompilerPass());
+        $container->addCompilerPass(new ChainContentVariantTitleProviderCompilerPass());
 
         $container
             ->addCompilerPass(

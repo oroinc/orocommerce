@@ -28,10 +28,14 @@ services:
         class: 'Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderRegistry'
         public: false
 
-    oro_web_catalog.page_pprovider.provider:
+    oro_web_catalog.page_provider.provider:
         class: 'Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProvider'
         arguments:
             - '@oro_web_catalog.content_variant_provider.registry'
+        public: false
+
+    oro_web_catalog.content_variant_title_provider:
+        class: 'Oro\Component\WebCatalog\ChainContentVariantTitleProvider'
         public: false
 
     oro_web_catalog.content_node_tree_handler:
@@ -106,4 +110,7 @@ services:
             - { name: form.type, alias: oro_web_catalog_content_node }
 
     oro_web_catalog.content_node_utils.content_node_name_filler:
+        public: false
+        arguments:
+            - '@oro_web_catalog.content_variant_title_provider'
         class: 'Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller'

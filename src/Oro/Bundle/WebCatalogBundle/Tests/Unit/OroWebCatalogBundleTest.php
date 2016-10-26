@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit;
 
+use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\ChainContentVariantTitleProviderCompilerPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\ContentVariantProviderCompilerPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\Compiler\ContentVariantTypeCompilerPass;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
@@ -24,11 +25,12 @@ class OroWebCatalogBundleTest extends \PHPUnit_Framework_TestCase
         $passes = $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses();
 
         $this->assertInternalType('array', $passes);
-        $this->assertCount(3, $passes);
+        $this->assertCount(4, $passes);
 
         $expectedPasses = [
             new ContentVariantTypeCompilerPass(),
             new ContentVariantProviderCompilerPass(),
+            new ChainContentVariantTitleProviderCompilerPass(),
             new DefaultFallbackExtensionPass([
                 ContentNode::class => [
                     'title' => 'titles',

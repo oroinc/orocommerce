@@ -42,7 +42,9 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->storage = $this->getMock(ExtraActionEntityStorageInterface::class);
 
-        $this->contentNodeNameFiller = $this->getMock(ContentNodeNameFiller::class);
+        $this->contentNodeNameFiller = $this->getMockBuilder(ContentNodeNameFiller::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->contentNodeListener = new ContentNodeListener(
             $this->modifier,
