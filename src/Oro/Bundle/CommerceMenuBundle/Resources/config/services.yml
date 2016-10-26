@@ -21,3 +21,8 @@ services:
             - '@security.token_storage'
         tags:
             - { name: oro_navigation.ownership_provider, area: frontend, priority: 200 }
+
+    oro_commerce_menu.namespace_migration_provider:
+        class: 'Oro\Bundle\CommerceMenuBundle\CacheWarmer\NamespaceMigrationProvider'
+        tags:
+            - {name: oro_installer.namespace_migration_provider, priority: 15}
