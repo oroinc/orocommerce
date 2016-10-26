@@ -55,11 +55,7 @@
     {% endif %}
 
     {{ UI.cancelButton(cancelPath) }}
-    {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('oro_web_catalog_update') %}
-        {% set html = html ~ UI.saveAndStayButton() %}
-    {% endif %}
-    {{ UI.dropdownSaveButton({'html': html}) }}
+    {{ UI.saveAndStayButton() }}
 {% endblock navButtons %}
 
 {% block content_data %}
