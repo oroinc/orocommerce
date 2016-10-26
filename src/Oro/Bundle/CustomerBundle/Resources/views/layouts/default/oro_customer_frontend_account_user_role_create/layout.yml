@@ -4,6 +4,11 @@ layout:
             id: oro_account_user_role_form
             root: content
         - oro_account_menu
+        -
+            id: oro_account_user_role_permission_grid
+            root: account_user_role_container
+            namespace: account_user_role_form_privileges
+
     actions:
         - '@appendOption':
             id: title
@@ -25,3 +30,6 @@ layout:
             id: account_user_role_form_actions_update_bottom
             optionName: text
             optionValue: oro.customer.action.account_user_role.create_label
+        - '@move':
+            id: account_user_role_form_privileges_datagrid
+            siblingId: account_user_role_form_fields
