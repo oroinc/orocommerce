@@ -142,10 +142,12 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
                 'OroVisibilityBundle:Visibility\AccountCategoryVisibility',
                 'accountCategoryVisibility',
                 'WITH',
-                'accountCategoryVisibility.scope = scope'
+                $qb->expr()->andX(
+                    $qb->expr()->eq('accountCategoryVisibility.scope', 'scope'),
+                    $qb->expr()->eq('accountCategoryVisibility.category', ':category')
+                )
             )
             ->where($qb->expr()->in('account', ':accounts'))
-            ->andWhere($qb->expr()->eq('accountCategoryVisibility.category', ':category'))
             ->andWhere($qb->expr()->isNull('accountCategoryVisibility.visibility'))
             ->setParameters([
                 'category' => $category,
@@ -154,7 +156,8 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         $criteria = $this->scopeManager->getCriteriaForRelatedScopes(AccountCategoryVisibility::VISIBILITY_TYPE, []);
         $criteria->applyToJoin($qb, 'scope');
 
-        return array_map('current', $qb->getQuery()->getScalarResult());
+        $scalarResult = $qb->getQuery()->getScalarResult();
+        return array_map('current', $scalarResult);
     }
 
     /**
