@@ -205,6 +205,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onLocalizationSettingsChange }
 
+    oro_website_search.event_listener.reindex_demo_data:
+        class: Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataListener
+        arguments:
+            - "@event_dispatcher"
+        tags:
+            - { name: kernel.event_listener, event: console.terminate, method: afterExecute }
+
     oro_website_search.provider.placeholder_provider:
         class: 'Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider'
         arguments:
