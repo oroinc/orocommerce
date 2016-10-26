@@ -181,6 +181,7 @@ services:
             - '@oro_website.manager'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush, method: beforeEntityFlush }
             - { name: doctrine.event_listener, event: postFlush }
 
     oro_website_search.repository.abstract:
