@@ -11,26 +11,22 @@ class ProductRepository extends WebsiteSearchRepository
     public function findOne($id)
     {
         $searchQuery = $this->createQuery();
-//        $query->setFrom(Product::class);
-        //$query->getQuery()->getCriteria()->andWhere('id = ')
-//        $result = $query->getResult();
 
-
-//        $query->getCriteria()->orderBy(['stringValue' => Query::ORDER_ASC]);
-
-        $entityName = $this->getEntityName();
         $alias = $this->getMappingProvider()->getEntityAlias($this->getEntityName());
 
         $searchQuery->getQuery()->from([$alias]);
-        //$searchQuery->getQuery()->select(['id']);
         $searchQuery->getQuery()->getCriteria()->andWhere(
-            Criteria::expr()->eq('id', $id)
+            Criteria::expr()->eq('integer.product_id', $id)
         );
 
         $items = $searchQuery->getResult();
-        $items;
 
-        return $result;
-        //$product = $query->getFirstResult();
+        if ($items->getRecordsCount() < 1) {
+            return;
+        }
+
+        $item = $items->getElements()[0];
+
+        return $item;
     }
 }

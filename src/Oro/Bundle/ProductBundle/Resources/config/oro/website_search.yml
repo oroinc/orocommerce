@@ -1,8 +1,8 @@
 Oro\Bundle\ProductBundle\Entity\Product:
     alias: oro_product_WEBSITE_ID
     fields:
-        id:
-            name: id
+        product_id:
+            name: product_id
             type: integer
         title:
             name: title_LOCALIZATION_ID
