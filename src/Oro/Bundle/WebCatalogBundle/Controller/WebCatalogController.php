@@ -4,9 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Controller;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
-use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -107,67 +105,6 @@ class WebCatalogController extends Controller
                 return [
                     'route' => 'oro_web_catalog_view',
                     'parameters' => ['id' => $webCatalog->getId()]
-                ];
-            },
-            $this->get('translator')->trans('oro.webcatalog.controller.webcatalog.saved.message')
-        );
-    }
-
-    /**
-     * @Route("/update-tree/{id}", name="oro_web_catalog_update_tree", requirements={"id"="\d+"})
-     *
-     * @AclAncestor("oro_web_catalog_update")
-     * @Template("OroWebCatalogBundle:WebCatalog:update_tree.html.twig")
-     *
-     * @param WebCatalog $webCatalog
-     * @return array
-     */
-    public function updateTreeRootAction(WebCatalog $webCatalog)
-    {
-        $rootNode = $this->get('oro_web_catalog.content_node_tree_handler')->getTreeRootByWebCatalog($webCatalog);
-        if (!$rootNode) {
-            $rootNode = new ContentNode();
-            $rootNode->setWebCatalog($webCatalog);
-        }
-
-        return $this->updateTreeNode($rootNode);
-    }
-
-    /**
-     * @Route("/update-tree/node/{id}", name="oro_web_catalog_update_tree_node", requirements={"id"="\d+"})
-     *
-     * @AclAncestor("oro_web_catalog_update")
-     * @Template("OroWebCatalogBundle:WebCatalog:update_tree.html.twig")
-     *
-     * @param ContentNode $contentNode
-     * @return array
-     */
-    public function updateTreeNodeAction(ContentNode $contentNode)
-    {
-        return $this->updateTreeNode($contentNode);
-    }
-
-    /**
-     * @param ContentNode $node
-     * @return array|RedirectResponse
-     */
-    protected function updateTreeNode(ContentNode $node)
-    {
-        $form = $this->createForm(ContentNodeType::NAME, $node);
-
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
-            $node,
-            $form,
-            function (ContentNode $node) {
-                return [
-                    'route' => 'oro_web_catalog_update_tree_node',
-                    'parameters' => ['id' => $node->getId()]
-                ];
-            },
-            function (ContentNode $node) {
-                return [
-                    'route' => 'oro_web_catalog_update_tree_node',
-                    'parameters' => ['id' => $node->getId()]
                 ];
             },
             $this->get('translator')->trans('oro.webcatalog.controller.webcatalog.saved.message')

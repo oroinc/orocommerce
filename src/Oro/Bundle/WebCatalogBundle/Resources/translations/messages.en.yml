@@ -10,8 +10,8 @@ oro:
         entity_description: Represents web content information
 
         contentnode:
-            entity_plural_label: Content Node
-            entity_label: Content Nodes
+            entity_label: Content Node
+            entity_plural_label: Content Nodes
             id.label: Id
             left.label: Tree left index
             level.label: Tree level
@@ -38,9 +38,14 @@ oro:
             node.label: Content Node
         sections:
             general: 'General'
-        controller:
+        button:
             webcatalog:
-                content_tree.label: 'Content Tree'
+                edit_content_tree.label: 'Edit Content Tree'
+        controller:
+            contentnode:
+                saved:
+                        message: 'Content Node has been saved'
+            webcatalog:
                 saved:
                     message: 'Web Catalog has been saved'
 

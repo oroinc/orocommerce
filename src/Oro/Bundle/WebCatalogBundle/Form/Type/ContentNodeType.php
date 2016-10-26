@@ -8,6 +8,8 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -41,8 +43,31 @@ class ContentNodeType extends AbstractType
                 [
                     'label'    => 'oro.webcatalog.contentnode.titles.label',
                 ]
-            )
-            ->add(
+            );
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+
+        // TODO Replace with implementation from BB-5039
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) {
+                /** @var ContentNode $data */
+                $data = $event->getData();
+                if (method_exists($data, 'getDefaultTitle')) {
+                    $data->setName($data->getDefaultTitle());
+                }
+            }
+        );
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        $data = $event->getData();
+        if ($data instanceof ContentNode && $data->getParentNode() instanceof ContentNode) {
+            $event->getForm()->add(
                 'slugs',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
@@ -51,6 +76,7 @@ class ContentNodeType extends AbstractType
                     'options'  => ['constraints' => [new NotBlank()]],
                 ]
             );
+        }
     }
 
     /**

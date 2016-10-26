@@ -1,7 +1,12 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 
 {% set web_catalog = entity.webCatalog %}
-{% set formAction = entity.id ? path('oro_web_catalog_update_tree_node', { 'id': entity.id }) : path('oro_web_catalog_update_tree', { 'id': web_catalog.id })  %}
+
+{% if entity.id is empty %}
+    {% set formAction = path('oro_content_node_create', { 'id': entity.parentNode.id }) %}
+{% else %}
+    {% set formAction = path('oro_content_node_update', { 'id': entity.id }) %}
+{% endif %}
 
 {% oro_title_set({params : {'%webCatalogName%': web_catalog.name} }) %}
 
@@ -24,14 +29,50 @@
                     'indexLabel': web_catalog.name
                 }
             ],
-            'entityTitle': 'oro.webcatalog.controller.webcatalog.content_tree.label'|trans
+            'entityTitle': 'oro.webcatalog.contentnode.entity_plural_label'|trans
         } %}
         {{ parent() }}
     {% endif %}
 {% endblock pageHeader %}
 
+{% block navButtons %}
+    {{ parent() }}
+
+    {% if entity.parentNode is empty %}
+        {% set cancelPath = path('oro_web_catalog_index', { 'id': web_catalog.id }) %}
+    {% else %}
+        {% set cancelPath = path('oro_content_node_update', { 'id': entity.parentNode.id }) %}
+    {% endif %}
+
+    {% if entity.id is not empty and resource_granted('oro_web_catalog_update') %}
+        {{ UI.button({
+            'path' : path('oro_content_node_create', { 'id': entity.id }),
+            'iCss': 'icon-book',
+            'aCss': 'btn-primary',
+            'label': 'oro.ui.create_entity'|trans({'%entityName%': 'oro.webcatalog.contentnode.entity_label'|trans}),
+            'title': 'oro.ui.create_entity'|trans({'%entityName%': 'oro.webcatalog.contentnode.entity_label'|trans})
+        }) }}
+    {% endif %}
+
+    {{ UI.cancelButton(cancelPath) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if entity.id or resource_granted('oro_web_catalog_update') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
 {% block content_data %}
     {% set id = 'web-catalog-tree-edit' %}
+
+    {% set formRows = [
+        form_row(form.parentNode),
+        form_row(form.titles)
+    ] %}
+
+    {% if form.slugs is defined %}
+        {% set formRows = formRows|merge([form_row(form.slugs)]) %}
+    {% endif %}
 
     {% set dataBlocks = [
         {
@@ -39,11 +80,7 @@
             'class': 'active',
             'subblocks': [{
                 'title': '',
-                'data': [
-                    form_row(form.parentNode),
-                    form_row(form.titles),
-                    form_row(form.slugs)
-                ]
+                'data': formRows
             }]
         }
     ] %}
@@ -59,14 +96,20 @@
 
     <div class="web-catalog-page-container tree-component-container">
         <div class="page page-tree tree-component">
+            {% set nodeId = null %}
+            {% if entity.id %}
+                {% set nodeId = entity.id %}
+            {% elseif entity.parentNode is not empty %}
+                {% set nodeId = entity.parentNode.id %}
+            {% endif %}
             {% set treeOptions = {
                 'key' : 'web-catalog',
                 'data' : oro_web_catalog_tree(web_catalog),
                 'updateAllowed' : resource_granted('oro_web_catalog_update'),
-                'onRootSelectRoute': 'oro_web_catalog_update_tree',
-                'onSelectRoute' : 'oro_web_catalog_update_tree_node',
-                'onMoveRoute' : 'oro_web_catalog_move',
-                'reloadWidget': 'page-info-widget'
+                'onRootSelectRoute': 'oro_content_node_update',
+                'onSelectRoute' : 'oro_content_node_update',
+                'onMoveRoute' : 'oro_content_node_move',
+                'nodeId': nodeId
             } %}
             <div
                 data-page-component-module="orowebcatalog/js/app/components/web-catalog-tree-component"
