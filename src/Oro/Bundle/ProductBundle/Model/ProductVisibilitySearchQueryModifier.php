@@ -14,7 +14,7 @@ class ProductVisibilitySearchQueryModifier
     public function modifyByInventoryStatus(Query $query, array $productInventoryStatuses)
     {
         $query->getCriteria()->andWhere(
-            Criteria::expr()->contains('inventory_status', implode(', ', $productInventoryStatuses))
+            Criteria::expr()->in('inventory_status', $productInventoryStatuses)
         );
     }
 
@@ -25,7 +25,7 @@ class ProductVisibilitySearchQueryModifier
     public function modifyByStatus(Query $query, array $statuses)
     {
         $query->getCriteria()->andWhere(
-            Criteria::expr()->contains('status', implode(', ', $statuses))
+            Criteria::expr()->in('status', $statuses)
         );
     }
 }
