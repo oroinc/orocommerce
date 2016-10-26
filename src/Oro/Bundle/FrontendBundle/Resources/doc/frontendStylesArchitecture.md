@@ -88,7 +88,7 @@ Example:
 @import "../bundles/oroui/blank/scss/variables/page-content-config.scss";
 @import "../bundles/oroui/blank/scss/variables/page-footer-config.scss";
 @import "../bundles/oroui/blank/scss/variables/page-title-config.scss";
-@import "../bundles/oroaccount/blank/scss/**styles.scss**";
+@import "../bundles/orocustomer/blank/scss/**styles.scss**";
 ```
 
 This structure allows us to change styles for components on bundle level, on component level and just for particular theme.
@@ -213,7 +213,7 @@ In the main file for default theme we have:
 
 *// Update settings for input component*
 @import "../bundles/oroform/**default**/scss/**variables**/input-config.scss"
-@import "../bundles/oroaccount/**blank**/scss/**styles.scss**";
+@import "../bundles/orocustomer/**blank**/scss/**styles.scss**";
 @import "../bundles/orofrontend/**default**/scss/**styles.scss**";
 @import "../bundles/oroform/**default**/scss/**styles.scss**";
 ```

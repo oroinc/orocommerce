@@ -5,7 +5,7 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: 'oro.account.profile.register'
+            optionValue: 'oro.customer.profile.register'
         - '@addTree':
             items:
                 registration_page_wrapper:
@@ -13,11 +13,11 @@ layout:
                 registration_form_label:
                     blockType: text
                     options:
-                        text: oro.account.accountuser.profile.register
+                        text: oro.customer.accountuser.profile.register
                 registration_form_description:
                     blockType: text
                     options:
-                        text: 'oro.account.accountuser.profile.register.description'
+                        text: 'oro.customer.accountuser.profile.register.description'
                 registration_form_start:
                     blockType: form_start
                     options:
@@ -33,7 +33,7 @@ layout:
                     options:
                         type: input
                         action: submit
-                        text: oro.account.accountuser.profile.create_an_account
+                        text: oro.customer.accountuser.profile.create_an_account
                         style: auto
                 registration_form_end:
                     blockType: form_end
@@ -42,8 +42,8 @@ layout:
                 registration_back_btn:
                     blockType: link
                     options:
-                        route_name: oro_account_account_user_security_login
-                        text: oro.account.frontend.action.back_to_login.label
+                        route_name: oro_customer_account_user_security_login
+                        text: oro.customer.frontend.action.back_to_login.label
             tree:
                 wrapper:
                     registration_page_wrapper:

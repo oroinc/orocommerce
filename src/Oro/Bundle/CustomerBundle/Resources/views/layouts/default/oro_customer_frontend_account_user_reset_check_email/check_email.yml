@@ -3,7 +3,7 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: 'oro.account.accountuser.profile.check_email.title'
+            optionValue: 'oro.customer.accountuser.profile.check_email.title'
         - '@setOption':
             id: check_email
             optionName: attr.class

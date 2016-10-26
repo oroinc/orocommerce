@@ -7,7 +7,7 @@ layout:
         - '@appendOption':
             id: title
             optionName: value
-            optionValue: 'oro.account.accountuser.profile.register'
+            optionValue: 'oro.customer.accountuser.profile.register'
         - @remove:
             id: main
     imports:

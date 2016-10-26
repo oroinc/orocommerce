@@ -1,5 +1,5 @@
 styles:
     inputs:
-        - 'bundles/oroaccount/blank/scss/variables/single-form-page-config.scss'
-        - 'bundles/oroaccount/blank/scss/variables/check-email-config.scss'
-        - 'bundles/oroaccount/blank/scss/styles.scss'
+        - 'bundles/orocustomer/blank/scss/variables/single-form-page-config.scss'
+        - 'bundles/orocustomer/blank/scss/variables/check-email-config.scss'
+        - 'bundles/orocustomer/blank/scss/styles.scss'
