@@ -133,3 +133,37 @@
 
     {{ parent_block_widget(block) }}
 {% endblock %}
+
+{% block shipping_trackings_widget %}
+    {% if trackings|length > 0 %}
+        <div class="oro-datagrid">
+            <div class="order-shipping-tracking grid-container">
+                <table class="order-shipping-tracking-table grid table-hover table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>{{ 'oro.order.shipping_tracking.method.label'|trans }}</th>
+                            <th>{{ 'oro.order.shipping_tracking.number.label'|trans }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for tracking in trackings %}
+                        <tr>
+                            <td>{{ oro_order_format_shipping_tracking_method(tracking.method)|trans }}</td>
+                            <td>
+                                {% set link = oro_order_format_shipping_tracking_link(tracking.method, tracking.number) %}
+                                {%- if tracking.number != link -%}
+                                    <a target="_blank" href="{{ link }}">{{ tracking.number }}</a>
+                                {%- else -%}
+                                    {{ tracking.number }}
+                                {%- endif -%}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        {{ 'oro.ui.empty'|trans }}
+    {% endif %}
+{% endblock %}

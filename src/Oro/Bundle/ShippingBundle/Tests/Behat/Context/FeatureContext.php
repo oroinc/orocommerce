@@ -13,13 +13,13 @@ use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
-use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroElementFactoryAware;
-use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ElementFactoryDictionary;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
+use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 
-class FeatureContext extends OroFeatureContext implements OroElementFactoryAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
-    use ElementFactoryDictionary, KernelDictionary;
+    use PageObjectDictionary, KernelDictionary;
 
     /**
      * @var OroMainContext

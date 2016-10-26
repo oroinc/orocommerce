@@ -1,8 +1,8 @@
 <?php
 namespace Oro\Bundle\OrderBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 use Oro\Bundle\OrderBundle\DependencyInjection\OroOrderExtension;
+use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 class OroOrderExtensionTest extends ExtensionTestCase
 {
@@ -24,6 +24,11 @@ class OroOrderExtensionTest extends ExtensionTestCase
             'oro_order.form.type.order',
             'oro_order.order.manager.api',
             'oro_order.layout.provider.order_shipping_method',
+            'oro_order.form.type.order_shipping_tracking',
+            'oro_order.form.type.order_shipping_tracking_collection',
+            'oro_order.form.type.select_switch_input',
+            'oro_order.handler.order_shipping_tracking',
+            'oro_order.formatter.shipping_tracking',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
@@ -36,6 +41,6 @@ class OroOrderExtensionTest extends ExtensionTestCase
     public function testGetAlias()
     {
         $extension = new OroOrderExtension();
-        $this->assertEquals(OroOrderExtension::ALIAS, $extension->getAlias());
+        static::assertEquals(OroOrderExtension::ALIAS, $extension->getAlias());
     }
 }

@@ -9,4 +9,4 @@ config:
         'oroform/js/extend/validate':
             'jquery.validate': 'jquery.validate'
     paths:
-        'jquery.validate': 'bundles/oroform/lib/jquery.validate/jquery.validate.js'
+        'jquery.validate': 'bundles/bowerassets/jquery-validate/jquery.validate.js'
