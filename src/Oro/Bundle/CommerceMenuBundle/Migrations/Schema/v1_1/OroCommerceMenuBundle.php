@@ -33,9 +33,9 @@ class OroCommerceMenuBundle implements Migration, RenameExtensionAwareInterface
     {
         /** Table updates **/
         $this->updateOroCommerceMenuUpdateTable($schema);
-        $this->renameOroCommerceMenuUpdateAndMenuUpdateTitleTables($schema, $queries);
         $this->createOroCommerceMenuUpdateDescriptionTable($schema);
         $this->addOroCommerceMenuUpdateDescriptionForeignKeys($schema);
+        $this->renameOroCommerceMenuUpdateAndMenuUpdateTitleTables($schema, $queries);
     }
 
     /**
@@ -64,7 +64,7 @@ class OroCommerceMenuBundle implements Migration, RenameExtensionAwareInterface
      */
     protected function createOroCommerceMenuUpdateDescriptionTable(Schema $schema)
     {
-        $table = $schema->createTable(OroCommerceMenuBundleInstaller::ORO_COMMERCE_MENU_UPDATE_DESCRIPTION_TABLE_NAME);
+        $table = $schema->createTable('oro_commerce_menu_upd_descr');
         $table->addColumn('menu_update_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['menu_update_id', 'localized_value_id']);
@@ -78,7 +78,7 @@ class OroCommerceMenuBundle implements Migration, RenameExtensionAwareInterface
      */
     protected function addOroCommerceMenuUpdateDescriptionForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(OroCommerceMenuBundleInstaller::ORO_COMMERCE_MENU_UPDATE_DESCRIPTION_TABLE_NAME);
+        $table = $schema->getTable('oro_commerce_menu_upd_descr');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_fallback_localization_val'),
             ['localized_value_id'],
@@ -86,7 +86,7 @@ class OroCommerceMenuBundle implements Migration, RenameExtensionAwareInterface
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable(OroCommerceMenuBundleInstaller::ORO_COMMERCE_MENU_UPDATE_TABLE_NAME),
+            $schema->getTable('oro_front_nav_menu_upd'),
             ['menu_update_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
