@@ -79,13 +79,9 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
      */
     public function testInsertByCategory($targetEntityReference, $visibility, array $expectedData)
     {
-        $targetEntity = $this->getReference($targetEntityReference);
-        $this->getRepository()->clearTable();
 
-        $scope = $this->scopeManager->find(
-            AccountGroupProductVisibility::VISIBILITY_TYPE,
-            ['accountGroup' => $targetEntity]
-        );
+        $this->getRepository()->clearTable();
+        $scope = $this->getScope($targetEntityReference);
         /** @var AccountGroupProductRepository $repository */
         $repository = $this->getRepository();
         $repository->insertByCategory($scope);
@@ -101,6 +97,12 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
             $this->assertEquals($visibility, $resolvedVisibility->getVisibility());
         }
     }
+
+    /**
+     * @param string $targetEntityReference
+     * @return Scope
+     */
+    abstract public function getScope($targetEntityReference);
 
     /**
      * @dataProvider insertStaticDataProvider

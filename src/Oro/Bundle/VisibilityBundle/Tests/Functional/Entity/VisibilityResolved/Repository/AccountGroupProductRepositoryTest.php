@@ -166,4 +166,16 @@ class AccountGroupProductRepositoryTest extends VisibilityResolvedRepositoryTest
             $visibilityResolved->getScope()
         );
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getScope($targetEntityReference)
+    {
+        $targetEntity = $this->getReference($targetEntityReference);
+        return $this->scopeManager->find(
+            AccountGroupProductVisibility::VISIBILITY_TYPE,
+            ['accountGroup' => $targetEntity]
+        );
+    }
 }

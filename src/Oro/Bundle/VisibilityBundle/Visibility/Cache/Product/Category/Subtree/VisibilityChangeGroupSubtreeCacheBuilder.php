@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
@@ -129,35 +130,29 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         foreach ($groupAccounts as $account) {
             $groupAccountIds[] = $account->getId();
         }
-        $scopes = $this->scopeManager->findRelatedScopeIds(
-            'account_category_visibility',
-            ['account' => $groupAccountIds]
-        );
         /** @var QueryBuilder $qb */
         $qb = $this->registry
             ->getManagerForClass('OroCustomerBundle:Account')
             ->createQueryBuilder();
 
-        /** @var QueryBuilder $subQb */
-        $subQb = $this->registry
-            ->getManagerForClass('OroCustomerBundle:Account')
-            ->createQueryBuilder();
-
-        $subQb->select('1')
-            ->from('OroVisibilityBundle:Visibility\AccountCategoryVisibility', 'accountCategoryVisibility')
-            ->join('accountCategoryVisibility.scope', 'scope')
-            ->where($qb->expr()->andX(
-                $qb->expr()->in('accountCategoryVisibility.scope', ':scopes'),
-                $qb->expr()->eq('accountCategoryVisibility.category', ':category'),
-                $qb->expr()->eq('scope.account', 'account')
-            ));
         $qb->select('account.id')
             ->from('OroCustomerBundle:Account', 'account')
-            ->where($qb->expr()->not($qb->expr()->exists($subQb->getQuery()->getDQL())))
+            ->leftJoin('OroScopeBundle:Scope', 'scope', 'WITH', 'account = scope.account')
+            ->leftJoin(
+                'OroVisibilityBundle:Visibility\AccountCategoryVisibility',
+                'accountCategoryVisibility',
+                'WITH',
+                'accountCategoryVisibility.scope = scope'
+            )
+            ->where($qb->expr()->in('account', ':accounts'))
+            ->andWhere($qb->expr()->eq('accountCategoryVisibility.category', ':category'))
+            ->andWhere($qb->expr()->isNull('accountCategoryVisibility.visibility'))
             ->setParameters([
                 'category' => $category,
-                'scopes' => $scopes
+                'accounts' => $groupAccounts
             ]);
+        $criteria = $this->scopeManager->getCriteriaForRelatedScopes(AccountCategoryVisibility::VISIBILITY_TYPE, []);
+        $criteria->applyToJoin($qb, 'scope');
 
         return array_map('current', $qb->getQuery()->getScalarResult());
     }

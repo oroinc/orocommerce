@@ -221,7 +221,7 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
      */
     protected function getRepository()
     {
-        return $this->categoryVisibilityHolder->getRepository();
+        return $this->repositoryHolder->getRepository();
     }
 
     /**
@@ -250,13 +250,5 @@ class AccountCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 AccountCategoryVisibilityResolved::SOURCE_STATIC
             ];
         }
-    }
-
-    /**
-     * @param RepositoryHolder $categoryVisibilityHolder
-     */
-    public function setCategoryVisibilityHolder($categoryVisibilityHolder)
-    {
-        $this->categoryVisibilityHolder = $categoryVisibilityHolder;
     }
 }

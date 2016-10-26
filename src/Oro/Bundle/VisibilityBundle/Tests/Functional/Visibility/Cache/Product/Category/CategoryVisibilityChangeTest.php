@@ -6,6 +6,8 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\VisibilityTrait;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CategoryResolvedCacheBuilder;
 use Symfony\Component\Yaml\Yaml;
@@ -16,6 +18,17 @@ use Symfony\Component\Yaml\Yaml;
 class CategoryVisibilityChangeTest extends CategoryCacheTestCase
 {
     use VisibilityTrait;
+
+    /**
+     * @var ScopeManager
+     */
+    protected $scopeManager;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
+    }
 
     /**
      * @dataProvider visibilityChangeDataProvider
@@ -60,6 +73,8 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
         switch ($visibility['type']) {
             case 'all':
                 $visibilityEntity = $this->getCategoryVisibility($registry, $category);
+                $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
+                $visibilityEntity->setScope($scope);
                 break;
             case 'account':
                 /** @var Account $account */

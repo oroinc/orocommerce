@@ -40,5 +40,4 @@ class AccountCategoryVisibilityRepository extends AbstractCategoryVisibilityRepo
         // Return only account ids
         return $ids;
     }
-
 }

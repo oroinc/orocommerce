@@ -77,6 +77,6 @@ abstract class AbstractScopeCriteriaProvider implements ScopeCriteriaProviderInt
      */
     protected function isSupportedValue($value)
     {
-        return is_a($value, $this->getCriteriaValueType()) || $value === ScopeCriteria::IS_NOT_NULL;
+        return is_array($value) || is_a($value, $this->getCriteriaValueType()) || $value === ScopeCriteria::IS_NOT_NULL;
     }
 }

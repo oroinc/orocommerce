@@ -67,7 +67,7 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         $this->builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.account_category_visibility_resolved.class')
         );
-        $this->builder->setCategoryVisibilityHolder(
+        $this->builder->setRepositoryHolder(
             $container->get('oro_visibility.account_category_repository_holder')
         );
         $subtreeBuilder = new VisibilityChangeAccountSubtreeCacheBuilder(
