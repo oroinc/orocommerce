@@ -39,7 +39,6 @@ class ReindexDemoDataListener
         }
 
         if ($event->getInput()->getOption('fixtures-type') === LoadDataFixturesCommand::DEMO_FIXTURES_TYPE) {
-
             $event->getOutput()->writeln('Running full reindexation...');
             $this->dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, new ReindexationRequestEvent(
                 [],
