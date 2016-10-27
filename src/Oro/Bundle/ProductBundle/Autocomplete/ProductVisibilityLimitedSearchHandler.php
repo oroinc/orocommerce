@@ -83,16 +83,35 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
             $result[$this->idFieldName] = $this->getPropertyValue($this->idFieldName, $item);
         }
 
-        foreach ($this->properties as $property) {
+        foreach ($this->getProperties() as $destinationKey => $property) {
             if ($this->isItem($item)) {
-                $result[$property] = $this->getSelectedData($item, $property);
+                $result[$destinationKey] = $this->getSelectedData($item, $property);
                 continue;
             }
-            $result[$property] = $this->getPropertyValue($item, $property);
+            $result[$property] = $this->getPropertyValue($property, $item);
         }
 
         return $result;
     }
+
+    /**
+     * @return array
+     */
+    public function getProperties()
+    {
+        if (!isset($this->properties['orm'])) {
+            return $this->properties; // usual case
+        }
+
+        $request = $this->requestStack->getCurrentRequest();
+
+        if (null === $this->frontendHelper || (false === $this->frontendHelper->isFrontendRequest($request))) {
+            return $this->properties['orm'];
+        }
+
+        return $this->properties['search'];
+    }
+
 
     /**
      * {@inheritdoc}
@@ -138,7 +157,6 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         $searchQuery = $this->searchRepository->getSearchQuery($search, $firstResult, $maxResults);
         $searchQuery->setFirstResult($firstResult);
         $searchQuery->setMaxResults($maxResults);
-        $this->productManager->restrictSearchQuery($searchQuery->getQuery());
         $result = $searchQuery->getResult();
 
         return $result->getElements();
