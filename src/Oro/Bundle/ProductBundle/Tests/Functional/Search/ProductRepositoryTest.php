@@ -49,12 +49,19 @@ class ProductRepositoryTest extends WebTestCase
             LoadProductVisibilityData::class
         ]);
 
+        $NotFoundProduct = $this->client->getContainer()->get('oro_product.website_search.repository.product')->findOne(
+            1024
+        );
+        $this->assertNull($NotFoundProduct);
+
         $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
         $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 
     public function testSearchFilteredBySkus()
     {
+        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
         /** @var ProductRepository $ormRepository */
         $ormRepository = $this->client->getContainer()
             ->get('doctrine')
