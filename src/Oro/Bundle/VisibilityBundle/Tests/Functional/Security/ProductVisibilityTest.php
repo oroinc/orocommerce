@@ -9,6 +9,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 
 /**
+ * @group CommunityEdition
  * @dbIsolation
  */
 class ProductVisibilityTest extends WebTestCase
