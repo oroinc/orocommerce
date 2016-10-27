@@ -9,8 +9,6 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
 
 class FormViewListener
 {
@@ -20,74 +18,22 @@ class FormViewListener
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /** @var ShippingOriginProvider */
-    protected $shippingOriginProvider;
-
     /** @var RequestStack */
     protected $requestStack;
 
     /**
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
-     * @param ShippingOriginProvider $shippingOriginProvider
      * @param RequestStack $requestStack
      */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
-        ShippingOriginProvider $shippingOriginProvider,
         RequestStack $requestStack
     ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
-        $this->shippingOriginProvider = $shippingOriginProvider;
         $this->requestStack = $requestStack;
-    }
-
-    /**
-     * @param BeforeListRenderEvent $event
-     */
-    public function onWarehouseView(BeforeListRenderEvent $event)
-    {
-        $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
-            return;
-        }
-
-        $warehouseId = (int)$request->get('id');
-        if (!$warehouseId) {
-            return;
-        }
-
-        /** @var Warehouse $warehouse */
-        $warehouse = $this->doctrineHelper->getEntityReference('OroWarehouseBundle:Warehouse', $warehouseId);
-        if (!$warehouse) {
-            return;
-        }
-
-        $shippingOrigin = $this->shippingOriginProvider->getShippingOriginByWarehouse($warehouse);
-
-        if ($shippingOrigin->isEmpty()) {
-            return;
-        }
-
-        $template = $event->getEnvironment()->render(
-            'OroShippingBundle:Warehouse:shipping_origin_view.html.twig',
-            ['entity' => $shippingOrigin]
-        );
-        $this->addBlock($event->getScrollData(), $template, 'oro.shipping.warehouse.section.shipping_origin');
-    }
-
-    /**
-     * @param BeforeListRenderEvent $event
-     */
-    public function onWarehouseEdit(BeforeListRenderEvent $event)
-    {
-        $template = $event->getEnvironment()->render(
-            'OroShippingBundle:Warehouse:shipping_origin_update.html.twig',
-            ['form' => $event->getFormView()]
-        );
-        $this->addBlock($event->getScrollData(), $template, 'oro.shipping.warehouse.section.shipping_origin');
     }
 
     /**
