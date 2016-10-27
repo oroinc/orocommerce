@@ -1,0 +1,18 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set gridName = 'inventory-grid' %}
+{% set pageTitle = 'oro.inventory.inventorylevel.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% include 'OroImportExportBundle:ImportExport:buttons.html.twig' with {
+        entity_class: entity_class,
+        exportJob: 'inventory_level_export_to_csv',
+        exportTitle: 'oro.inventory.export.popup.title'|trans,
+        exportProcessor: exportProcessors,
+        importTitle: 'oro.inventory.import.popup.title'|trans,
+        importProcessor: 'oro_inventory.inventory_level',
+        exportTemplateProcessor: exportTemplateProcessors,
+        exportTemplateTitle: 'oro.inventory.export.template_popup.title'|trans,
+        dataGridName: gridName
+    } %}
+{% endblock %}

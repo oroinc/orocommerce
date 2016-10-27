@@ -176,9 +176,8 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\IndexationRequestListener'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_search.provider.search_mapping'
+            - '@oro_website_search.provider.search_mapping'
             - '@event_dispatcher'
-            - '@oro_website.manager'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush, method: beforeEntityFlush }
