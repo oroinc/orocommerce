@@ -3,12 +3,11 @@
 namespace Oro\Bundle\AlternativeCheckoutBundle\Model\Action;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\Action\Model\ContextAccessor;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 
 class AlternativeCheckoutByQuote extends AbstractAction
 {
@@ -64,7 +63,7 @@ class AlternativeCheckoutByQuote extends AbstractAction
     {
         /** @var Checkout $checkout */
         $quote = $this->contextAccessor->getValue($context, $this->options[self::QUOTE]);
-        $checkout = $this->getRepository()->getCheckoutByQuote($quote, 'alternative');
+        $checkout = $this->getRepository()->getCheckoutByQuote($quote);
 
         $this->contextAccessor->setValue($context, $this->options[self::CHECKOUT_ATTRIBUTE], $checkout);
     }

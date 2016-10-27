@@ -16,6 +16,11 @@ services:
             - '%oro_product.entity.product.class%'
             - "@doctrine.orm.entity_manager"
 
+    oro_product.service.quantity_rounding:
+        class: 'Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService'
+        public: false
+        parent: oro_currency.service.abstract_rounding
+
     oro_product.formatter.unit_value:
         abstract: true
         class: 'Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter'
@@ -155,7 +160,6 @@ services:
             - "@oro_security.security_facade"
             - "@session"
             - "@translator"
-            - "@service_container"
         calls:
             - [setComponentProcessorFilter,  ["@oro_product.component_processor.filter"]]
         abstract: true
@@ -305,6 +309,12 @@ services:
         arguments:
             - '%oro_product.entity.product.class%'
 
+    oro_product.repository.product_image:
+        class: 'Doctrine\ORM\EntityRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_product.entity.product_image.class%'
+
     oro_product.model.builder.quick_add_row_collection:
         class: 'Oro\Bundle\ProductBundle\Model\Builder\QuickAddRowCollectionBuilder'
         public: false
@@ -324,6 +334,7 @@ services:
             - '@oro_product.datagrid_theme_helper'
             - '@doctrine'
             - '@oro_attachment.manager'
+            - '@liip_imagine.cache.manager'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
@@ -367,6 +378,50 @@ services:
             - "@oro_product.product.manager"
         tags:
             - { name: layout.data_provider, alias: featured_products }
+
+    oro_product.event_listener.product_image_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageListener'
+        public: false
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_attachment.file.entity.class%', event: postUpdate, method: filePostUpdate }
+
+    oro_product.event_listener.product_image_resize_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener'
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.product_image.resize, method: resizeProductImage }
+
+    oro.product.event_listener.product_images_configuration_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductImagesConfigurationListener'
+        arguments:
+            - '@session'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+
+    oro.product.provider.watermark_image_filter:
+        class: 'Oro\Bundle\ProductBundle\Provider\WatermarkImageFilterProvider'
+        arguments:
+            - '@oro_config.global'
+            - '@oro_entity.doctrine_helper'
+            - '%oro_attachment.attachments_dir%'
+        tags:
+            - { name: layout.image_filter.provider }
+
+    oro.product.message_processor.image_resize:
+        class: 'Oro\Bundle\ProductBundle\MessageProcessor\ImageResizeMessageProcessor'
+        arguments:
+            - '@oro_product.repository.product_image'
+            - '@oro_layout.loader.image_filter'
+            - '@oro_layout.provider.image_type'
+            - '@oro_attachment.image_resizer'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
 
     oro_product.model.product_message_factory:
         class: 'Oro\Bundle\ProductBundle\Model\ProductMessageFactory'

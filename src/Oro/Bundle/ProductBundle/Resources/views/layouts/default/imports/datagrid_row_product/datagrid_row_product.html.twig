@@ -31,7 +31,7 @@
     <div {{ block('block_attributes') }}>
         {% set noImageUrl = Image.url(null, 'product_large') %}
         <a href="<%= model.view_link %>" class="view-product"
-           style="background-image: url('<% if (model.image) { %><%= model.image %><% } else { %>{{ noImageUrl }}<% } %>')">
+           style="background-image: url('<%= model.image %>')">
         </a>
     </div>
 {% endblock %}

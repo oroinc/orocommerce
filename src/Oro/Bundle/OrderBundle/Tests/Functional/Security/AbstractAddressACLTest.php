@@ -94,8 +94,8 @@ abstract class AbstractAddressACLTest extends WebTestCase
     protected function getAccountAddressIdentity()
     {
         return new AclPrivilegeIdentity(
-            'entity:Oro\Bundle\AccountBundle\Entity\AccountAddress',
-            'oro.account.accountaddress.entity_label'
+            'entity:Oro\Bundle\CustomerBundle\Entity\AccountAddress',
+            'oro.customer.accountaddress.entity_label'
         );
     }
 
@@ -105,8 +105,8 @@ abstract class AbstractAddressACLTest extends WebTestCase
     protected function getAccountAddressUserIdentity()
     {
         return new AclPrivilegeIdentity(
-            'entity:Oro\Bundle\AccountBundle\Entity\AccountUserAddress',
-            'oro.account.accountuseraddress.entity_label'
+            'entity:Oro\Bundle\CustomerBundle\Entity\AccountUserAddress',
+            'oro.customer.accountuseraddress.entity_label'
         );
     }
 

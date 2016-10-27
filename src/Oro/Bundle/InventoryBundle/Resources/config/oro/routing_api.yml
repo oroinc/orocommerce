@@ -1,0 +1,3 @@
+oro_inventory_product_api:
+    resource: "@OroInventoryBundle/Controller/Api/Rest/InventoryLevelController.php"
+    type:     rest

@@ -1,10 +1,4 @@
 //Mixins
-@mixin list-normalize() {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
 @mixin ellipsis() {
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -80,89 +74,5 @@
 
   &.input_warning {
     border: 1px solid $theme-warning-color;
-  }
-}
-
-.radio_custom {
-  cursor: pointer;
-
-  &:focus i {
-    outline: thin dotted;
-    outline: 5px auto -webkit-focus-ring-color;
-    outline-offset: -2px;
-  }
-
-  input[type="radio"] {
-    display: none;
-  }
-
-  &.radio_custom_abs {
-    position: relative;
-    padding-left: 28px;
-
-    .radio_checked,
-    .radio_not-checked {
-      position: absolute;
-      top: 2px;
-      left: 0;
-    }
-  }
-
-  &.checked {
-
-    .radio_checked {
-      display: inline-block;
-    }
-
-    .radio_not-checked {
-      display: none;
-    }
-  }
-
-  &.has-error {
-    .fa {
-      &.radio_not-checked {
-        color: $theme-input-error !important;
-      }
-    }
-  }
-
-  &.radio_custom_orange {
-
-    [class^="cf-"] {
-      color: $theme-orange-color;
-    }
-  }
-
-  &.radio_custom_blue {
-    [class^="cf-"] {
-      color: $base-checkbox-border-color;
-
-      &.radio_checked {
-        color: $theme-blue-color;
-      }
-    }
-
-    .fa {
-      &.radio_not-checked {
-        color: $base-font-color-lighter;
-      }
-
-      &.radio_checked {
-        color: $theme-blue-color;
-      }
-    }
-  }
-
-  .radio_checked {
-    display: none;
-  }
-
-  .radio_not-checked {
-    display: inline-block;
-  }
-
-  .radio_custom__text {
-    font-weight: 400;
   }
 }

@@ -1,0 +1,61 @@
+oro:
+    inventory:
+        menu:
+            inventory_tab.label:  Inventory
+            inventory_list.label: Manage Inventory
+
+        widgets:
+            inventory_management:  Inventory
+
+            actions:
+                save: Save
+                cancel: Cancel
+
+        sections:
+            general: General
+            additional: Additional
+
+        inventorylevel:
+            entity_label: Inventory Level
+            entity_plural_label: Inventory Levels
+            id.label: Id
+            quantity.label: Quantity
+            product.label: Product
+            product_unit_precision.label: Product Unit Precision
+            status.label: Status
+
+            error:
+                units: "Please add at least one Unit of Quantity to the current product to enable inventory management."
+
+        inventory_level_save.flash.success: Inventory Level has been saved
+        inventory:
+            entity_plural_label: Inventories
+
+        export:
+            popup:
+                title: Export Options
+                options.label: Exported data
+            template_popup:
+                title: Data Template Options
+            detailed_inventory_levels: "Detailed inventory levels"
+
+        import:
+            popup:
+                title: Import Options
+            error:
+                inventory_status: Multiple products found having different Inventory Status
+                not_found_entity: The specified %entity% has not been found in the system
+                general_error: General error:
+
+        system_configuration:
+            groups:
+                product_options.title: Product Options
+                product_inventory_options.title: Product Inventory Options
+            fields:
+                manage_inventory.label: Manage Inventory
+
+        manage_inventory:
+            label: Manage Inventory
+            choice:
+                'true': Yes
+                'false': No
