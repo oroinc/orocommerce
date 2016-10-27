@@ -296,8 +296,10 @@ services:
         class: 'Oro\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener'
         arguments:
             - "@oro_product.model.product_visibility_search_query_modifier"
+            - "@oro_product.model.product_visibility_query_builder_modifier"
         tags:
             - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
+            - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
     oro_product.event_listener.abstract_product_db_query_restriction:
         abstract: true
@@ -320,8 +322,7 @@ services:
             - "@oro_config.manager"
             - "@oro_product.model.product_visibility_search_query_modifier"
             - "@oro_frontend.request.frontend_helper"
-        calls:
-            - [setFrontendSystemConfigurationPath, ['oro_product.general_frontend_product_visibility']]
+            - "oro_product.general_frontend_product_visibility"
         tags:
             - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
 

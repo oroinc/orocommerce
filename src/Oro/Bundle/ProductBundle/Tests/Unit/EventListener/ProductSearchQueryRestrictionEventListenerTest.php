@@ -19,11 +19,6 @@ class ProductSearchQueryRestrictionEventListenerTest extends \PHPUnit_Framework_
     /**
      * @var string
      */
-    private $backendConfigPath = '/back/end/cfg/path';
-
-    /**
-     * @var string
-     */
     private $frontendConfigPath = '/front/end/cfg/path';
 
     public function setUp()
@@ -36,12 +31,10 @@ class ProductSearchQueryRestrictionEventListenerTest extends \PHPUnit_Framework_
     {
         $listener = new ProductSearchQueryRestrictionEventListener(
             $this->configManager,
-            $this->getQueryModifier(),
-            $this->getFrontendHelper(true)
+            $this->getQueryModifier($this->once()),
+            $this->getFrontendHelper(true),
+            $this->frontendConfigPath
         );
-
-        $listener->setBackendSystemConfigurationPath($this->backendConfigPath);
-        $listener->setFrontendSystemConfigurationPath($this->frontendConfigPath);
 
         $this->configManager->expects($this->once())
             ->method('get')
@@ -55,17 +48,10 @@ class ProductSearchQueryRestrictionEventListenerTest extends \PHPUnit_Framework_
     {
         $listener = new ProductSearchQueryRestrictionEventListener(
             $this->configManager,
-            $this->getQueryModifier(),
-            $this->getFrontendHelper(false)
+            $this->getQueryModifier($this->never()),
+            $this->getFrontendHelper(false),
+            $this->frontendConfigPath
         );
-
-        $listener->setBackendSystemConfigurationPath($this->backendConfigPath);
-        $listener->setFrontendSystemConfigurationPath($this->frontendConfigPath);
-
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with($this->backendConfigPath)
-            ->willReturn([]);
 
         $listener->onSearchQuery($this->getEvent());
     }
@@ -90,15 +76,17 @@ class ProductSearchQueryRestrictionEventListenerTest extends \PHPUnit_Framework_
     }
 
     /**
+     * @param \PHPUnit_Framework_MockObject_Matcher_Invocation $expectCall
+     *
      * @return ProductVisibilitySearchQueryModifier|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function getQueryModifier()
+    private function getQueryModifier(\PHPUnit_Framework_MockObject_Matcher_Invocation $expectCall)
     {
         /** @var ProductVisibilitySearchQueryModifier|\PHPUnit_Framework_MockObject_MockObject $queryModifier */
         $queryModifier = $this->getMockBuilder(ProductVisibilitySearchQueryModifier::class)->getMock();
 
         $queryModifier
-            ->expects($this->once())
+            ->expects($expectCall)
             ->method('modifyByInventoryStatus');
 
         return $queryModifier;

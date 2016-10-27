@@ -22,12 +22,12 @@ class ProductDBQueryRestrictionEventListener
     /**
      * @var string|null
      */
-    protected $backendSystemConfigurationPath = null;
+    protected $backendSystemConfigurationPath;
 
     /**
      * @var string|null
      */
-    protected $frontendSystemConfigurationPath = null;
+    protected $frontendSystemConfigurationPath;
 
     /**
      * @var FrontendHelper

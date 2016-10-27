@@ -12,62 +12,39 @@ class ProductSearchQueryRestrictionEventListener
     /**
      * @var ConfigManager
      */
-    protected $configManager;
+    private $configManager;
 
     /**
      * @var ProductVisibilitySearchQueryModifier
      */
-    protected $modifier;
+    private $modifier;
 
     /**
      * @var string|null
      */
-    protected $backendSystemConfigurationPath = null;
-
-    /**
-     * @var string|null
-     */
-    protected $frontendSystemConfigurationPath = null;
+    private $frontendSystemConfigurationPath;
 
     /**
      * @var FrontendHelper
      */
-    protected $frontendHelper;
+    private $frontendHelper;
 
     /**
-     * @var ProductSearchQueryRestrictionEvent
-     */
-    protected $event;
-
-    /**
-     * @param ConfigManager $configManager
+     * @param ConfigManager                        $configManager
      * @param ProductVisibilitySearchQueryModifier $modifier
-     * @param FrontendHelper $helper
+     * @param FrontendHelper                       $helper
+     * @param string                               $frontendSystemConfigurationPath
      */
     public function __construct(
         ConfigManager $configManager,
         ProductVisibilitySearchQueryModifier $modifier,
-        FrontendHelper $helper
+        FrontendHelper $helper,
+        $frontendSystemConfigurationPath
     ) {
-        $this->configManager = $configManager;
-        $this->modifier = $modifier;
-        $this->frontendHelper = $helper;
-    }
-
-    /**
-     * @param string|null $frontendSystemConfigurationPath
-     */
-    public function setFrontendSystemConfigurationPath($frontendSystemConfigurationPath = null)
-    {
+        $this->configManager                   = $configManager;
+        $this->modifier                        = $modifier;
+        $this->frontendHelper                  = $helper;
         $this->frontendSystemConfigurationPath = $frontendSystemConfigurationPath;
-    }
-
-    /**
-     * @param string|null $backendSystemConfigurationPath
-     */
-    public function setBackendSystemConfigurationPath($backendSystemConfigurationPath = null)
-    {
-        $this->backendSystemConfigurationPath = $backendSystemConfigurationPath;
     }
 
     /**
@@ -75,41 +52,16 @@ class ProductSearchQueryRestrictionEventListener
      */
     public function onSearchQuery(ProductSearchQueryRestrictionEvent $event)
     {
-        $this->event = $event;
-
-        if (!$this->isConditionsAcceptable()) {
-            return;
-        }
-
-        if ($this->isFrontendRequest() && $this->frontendSystemConfigurationPath) {
+        if ($this->isFrontendRequest()) {
             $inventoryStatuses = $this->configManager->get($this->frontendSystemConfigurationPath);
-        } elseif (!$this->isFrontendRequest() && $this->backendSystemConfigurationPath) {
-            $inventoryStatuses = $this->configManager->get($this->backendSystemConfigurationPath);
-        } else {
-            return;
+            $this->modifier->modifyByInventoryStatus($event->getQuery(), $inventoryStatuses);
         }
-
-        $this->modifier->modifyByInventoryStatus($event->getQuery(), $inventoryStatuses);
     }
 
     /**
      * @return bool
      */
-    protected function isConditionsAcceptable()
-    {
-        if (!$this->backendSystemConfigurationPath && !$this->frontendSystemConfigurationPath) {
-            throw new \LogicException(
-                'SystemConfigurationPath not configured for ProductDBQueryRestrictionEventListener'
-            );
-        }
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isFrontendRequest()
+    private function isFrontendRequest()
     {
         return $this->frontendHelper->isFrontendRequest();
     }

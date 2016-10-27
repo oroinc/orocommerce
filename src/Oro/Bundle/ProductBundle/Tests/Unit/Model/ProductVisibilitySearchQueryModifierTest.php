@@ -22,14 +22,12 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
     {
         $statuses = ['enabled', 'disabled'];
 
-        $implodedStatuses = implode(', ', $statuses);
-
         $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()->getMock();
 
         $criteria = $this->getMock(Criteria::class);
 
-        $expression = Criteria::expr()->contains('status', $implodedStatuses);
+        $expression = Criteria::expr()->in('status', $statuses);
 
         $criteria->expects($this->once())
             ->method('andWhere')
@@ -46,14 +44,12 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
     {
         $statuses = ['in_stock', 'out_of_stock'];
 
-        $implodedStatuses = implode(', ', $statuses);
-
         $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()->getMock();
 
         $criteria = $this->getMock(Criteria::class);
 
-        $expression = Criteria::expr()->contains('inventory_status', $implodedStatuses);
+        $expression = Criteria::expr()->in('inventory_status', $statuses);
 
         $criteria->expects($this->once())
             ->method('andWhere')
