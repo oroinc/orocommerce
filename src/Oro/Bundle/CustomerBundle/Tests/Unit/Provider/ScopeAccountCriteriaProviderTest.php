@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Provider;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ScopeAccountCriteriaProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,14 +15,14 @@ class ScopeAccountCriteriaProviderTest extends \PHPUnit_Framework_TestCase
     private $provider;
 
     /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $securityFacade;
+    private $tokenStorage;
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)->disableOriginalConstructor()->getMock();
-        $this->provider = new ScopeAccountCriteriaProvider($this->securityFacade);
+        $this->tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
+        $this->provider = new ScopeAccountCriteriaProvider($this->tokenStorage);
     }
 
     public function testGetCriteriaForCurrentScope()
@@ -30,9 +30,9 @@ class ScopeAccountCriteriaProviderTest extends \PHPUnit_Framework_TestCase
         $accUser = new AccountUser();
         $account = new Account();
         $accUser->setAccount($account);
-        $this->securityFacade
+        $this->tokenStorage
             ->expects($this->once())
-            ->method('getLoggedUser')
+            ->method('getToken')
             ->willReturn($accUser);
         $actual = $this->provider->getCriteriaForCurrentScope();
         $this->assertEquals(['account' => $account], $actual);

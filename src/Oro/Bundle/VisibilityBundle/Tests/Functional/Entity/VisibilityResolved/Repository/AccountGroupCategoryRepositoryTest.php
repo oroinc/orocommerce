@@ -474,7 +474,8 @@ class AccountGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
             $visibility = $indexedVisibilities[$id];
 
             $this->assertEquals($visibility->getCategory()->getId(), $resolvedVisibility['category']);
-            $this->assertEquals($visibility->getScope()->getAccountGroup()->getId(), $resolvedVisibility['accountGroup']);
+            $accountGroup = $visibility->getScope()->getAccountGroup();
+            $this->assertEquals($accountGroup->getId(), $resolvedVisibility['accountGroup']);
             $this->assertEquals(AccountGroupCategoryVisibilityResolved::SOURCE_STATIC, $resolvedVisibility['source']);
             if ($visibility->getVisibility() === AccountGroupCategoryVisibility::VISIBLE) {
                 $this->assertEquals(
