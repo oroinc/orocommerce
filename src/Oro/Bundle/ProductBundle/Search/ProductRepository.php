@@ -56,8 +56,8 @@ class ProductRepository extends WebsiteSearchRepository
             ->addSelect('title_LOCALIZATION_ID')
             ->getCriteria()
             ->andWhere(
-                Criteria::expr()->andX(
-                    Criteria::expr()->contains('sku', $search),
+                Criteria::expr()->orX(
+                    Criteria::expr()->contains('sku_uppercase', strtoupper($search)),
                     Criteria::expr()->contains('all_text_LOCALIZATION_ID', $search)
                 )
             )->orderBy(['id' => Criteria::ASC])
