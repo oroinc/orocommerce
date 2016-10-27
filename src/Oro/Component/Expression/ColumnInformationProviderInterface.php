@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Component\WebCatalog;
+namespace Oro\Component\Expression;
 
 use Oro\Component\Expression\Node\NodeInterface;
 
