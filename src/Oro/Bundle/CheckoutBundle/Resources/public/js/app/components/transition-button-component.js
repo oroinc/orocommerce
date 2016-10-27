@@ -29,10 +29,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.defaults, options);
             this.inProgress = false;
-
             this.$el = options._sourceElement;
-
-            $(document).ready(this.onReady(this.$el, this.options.enabled));
             this.initializeTriggers();
             if (this.options.hasForm) {
                 this.$form = this.$el.closest('form');
@@ -40,11 +37,12 @@ define(function(require) {
             } else {
                 this.$el.on('click', $.proxy(this.transit, this));
             }
+            this.onReady();
         },
         
-        onReady: function($el, enabled) {
-            if (enabled) {
-                $el.prop('disabled', false);
+        onReady: function() {
+            if (this.options.enabled) {
+                this.$el.prop('disabled', false);
             }
         },
 
