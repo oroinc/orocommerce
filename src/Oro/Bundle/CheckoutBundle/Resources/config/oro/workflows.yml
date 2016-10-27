@@ -672,6 +672,11 @@ workflows:
                         - '@not_empty':
                             message: Payment method was not selected
                             parameters: $checkout.paymentMethod
+                        - '@payment_method_applicable':
+                            message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
+                            parameters:
+                                payment_method: $checkout.paymentMethod
+                                entity: $checkout
                         - '@check_request':
                             message: Invalid request
                             parameters:
@@ -782,9 +787,15 @@ workflows:
                                         token: $state_token
 
                 preconditions:
-                    '@not_equal':
-                        message: Payment process is running for this checkout
-                        parameters: [$payment_in_progress, true]
+                    '@and':
+                        - '@not_equal':
+                            message: Payment process is running for this checkout
+                            parameters: [$payment_in_progress, true]
+                        - '@payment_method_applicable':
+                            message: oro.checkout.workflow.condition.payment_method_is_not_applicable_please_return_to_payment_step.message
+                            parameters:
+                                payment_method: $checkout.paymentMethod
+                                entity: $checkout
                 conditions:
                     '@and':
                         - '@or':
