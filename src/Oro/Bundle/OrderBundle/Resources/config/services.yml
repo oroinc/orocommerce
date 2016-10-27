@@ -281,3 +281,9 @@ services:
         class: 'Oro\Bundle\OrderBundle\EventListener\ExtractAddressOptionsListener'
         tags:
             - { name: kernel.event_listener, event: oro_payment.event.extract_address_options.orderaddress, method: onExtractShippingAddressOptions }
+
+    oro_order.factory.shipping_context_provider_factory:
+        class: 'Oro\Bundle\OrderBundle\Factory\ShippingContextProviderFactory'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@=?oro_shipping.factory.shipping_context_factory'
