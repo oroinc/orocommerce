@@ -362,8 +362,10 @@ services:
             - "@security.context"
             - "@doctrine.orm.entity_manager"
             - "@oro_navigation.item.factory"
+            - "@router"
         tags:
             - { name: oro_menu.builder, alias: frontend_pinbar }
+            - { name: oro_featuretogle.feature, feature: email }
 
     oro_customer.favorites_menu.builder:
         class: 'Oro\Bundle\NavigationBundle\Menu\NavigationItemBuilder'
@@ -372,8 +374,10 @@ services:
             - "@security.context"
             - "@doctrine.orm.entity_manager"
             - "@oro_navigation.item.factory"
+            - "@router"
         tags:
             - { name: oro_menu.builder, alias: frontend_favorite }
+            - { name: oro_featuretogle.feature, feature: email }
 
     oro_customer.history_menu.builder:
         class: 'Oro\Bundle\NavigationBundle\Menu\NavigationHistoryBuilder'
@@ -382,11 +386,13 @@ services:
             - "@security.context"
             - "@doctrine.orm.entity_manager"
             - "@oro_navigation.item.factory"
+            - "@router"
         calls:
             - [ setMatcher, [ "@knp_menu.matcher" ]]
             - [ setOptions, [ "@oro_config.user" ]]
         tags:
             - { name: oro_menu.builder, alias: frontend_history }
+            - { name: oro_featuretogle.feature, feature: email }
 
     oro_customer.mostviewed_menu.builder:
         class: 'Oro\Bundle\NavigationBundle\Menu\NavigationMostviewedBuilder'
@@ -395,10 +401,12 @@ services:
             - "@security.context"
             - "@doctrine.orm.entity_manager"
             - "@oro_navigation.item.factory"
+            - "@router"
         calls:
             - [ setOptions, [ "@oro_config.user" ]]
         tags:
             - { name: oro_menu.builder, alias: frontend_mostviewed }
+            - { name: oro_featuretogle.feature, feature: email }
 
     oro_customer.item.pinbar.post_persist_listener:
         class: 'Oro\Bundle\NavigationBundle\Entity\Listener\PinbarPostPersist'
