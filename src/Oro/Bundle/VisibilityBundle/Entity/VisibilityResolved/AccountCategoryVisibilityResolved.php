@@ -16,15 +16,6 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 class AccountCategoryVisibilityResolved extends BaseCategoryVisibilityResolved
 {
     /**
-     * @var Scope
-     *
-     * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
-     * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
-     */
-    protected $scope;
-
-    /**
      * @var AccountCategoryVisibility
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility")

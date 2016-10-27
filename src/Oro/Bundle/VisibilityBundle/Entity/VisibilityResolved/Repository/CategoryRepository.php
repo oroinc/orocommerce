@@ -13,7 +13,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityReso
 
 /**
  * Composite primary key fields order:
- *  - account
+ *  - scope
  *  - category
  */
 class CategoryRepository extends EntityRepository

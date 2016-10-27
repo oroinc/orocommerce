@@ -154,7 +154,7 @@ class OroVisibilityBundleInstaller implements Installation
         $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('scope_id', 'integer', ['notnull' => true]);
-        $table->setPrimaryKey(['category_id']);
+        $table->setPrimaryKey(['scope_id', 'category_id']);
     }
 
     /**

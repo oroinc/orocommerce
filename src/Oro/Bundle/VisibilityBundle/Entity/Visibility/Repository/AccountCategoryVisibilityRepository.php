@@ -8,7 +8,7 @@ class AccountCategoryVisibilityRepository extends AbstractCategoryVisibilityRepo
 {
     /**
      * @param Category $category
-     * @param $visibility
+     * @param string $visibility
      * @param array $restrictedAccountIds
      * @return array
      */

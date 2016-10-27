@@ -15,7 +15,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibility
 
 /**
  * Composite primary key fields order:
- *  - accountGroup
+ *  - scope
  *  - category
  */
 class AccountGroupCategoryRepository extends EntityRepository
