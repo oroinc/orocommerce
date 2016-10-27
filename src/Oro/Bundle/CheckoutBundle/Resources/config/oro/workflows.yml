@@ -655,12 +655,12 @@ workflows:
                                 attribute: $.result.successUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.id
+                                    id: $checkout.id
                             - '@assign_url':
                                 attribute: $.result.failureUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.id
+                                    id: $checkout.id
                                     transition: 'payment_error'
                             - '@payment_validate':
                                 conditions:
@@ -837,19 +837,19 @@ workflows:
                                 attribute: $.result.successUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.id
+                                    id: $checkout.id
                                     transition: 'finish_checkout'
                             - '@assign_url':
                                 attribute: $.result.failureUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.id
+                                    id: $checkout.id
                                     transition: 'payment_error'
                             - '@assign_url':
                                 attribute: $.result.failedShippingAddressUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.id
+                                    id: $checkout.id
                                     transition: 'back_to_shipping_address_on_fail_address'
                             - '@payment_purchase':
                                 attribute: $.result.responseData
@@ -871,7 +871,7 @@ workflows:
                                     action: 'validate'
                         route: oro_checkout_frontend_checkout
                         route_parameters:
-                            id: $.id
+                            id: $checkout.id
                             transition: finish_checkout
                     - '@redirect':
                         conditions:
@@ -882,7 +882,7 @@ workflows:
                                     action: 'validate'
                         route: oro_checkout_frontend_checkout
                         route_parameters:
-                            id: $.id
+                            id: $checkout.id
                             transition: payment_error
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
