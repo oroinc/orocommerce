@@ -49,7 +49,8 @@ class ReindexRequestListener
      */
     protected function processWithIndexer(ReindexationRequestEvent $event, IndexerInterface $indexer)
     {
-        $context = ContextFactory::createForReindexation($event);
+        $factory = new ContextFactory();
+        $context = $factory->createForReindexation($event);
         $indexer->reindex($event->getClassesNames(), $context);
     }
 }

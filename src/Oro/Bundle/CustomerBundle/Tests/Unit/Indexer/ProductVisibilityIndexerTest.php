@@ -37,7 +37,12 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
     {
         $entityIds = [1, 2, 3];
         $websiteId = 1;
-        $event = new IndexEntityEvent($entityIds, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $websiteId]);
+        $event = new IndexEntityEvent(
+            $entityIds,
+            [
+                AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $websiteId
+            ]
+        );
 
         $this->visibilityProvider
             ->expects($this->once())

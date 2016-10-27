@@ -7,6 +7,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
@@ -14,8 +15,11 @@ use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolverInterface;
 
 abstract class AbstractIndexer implements IndexerInterface
 {
-    const CONTEXT_WEBSITE_ID_KEY = 'website_id';
+    use ContextTrait;
+
+    const CONTEXT_CURRENT_WEBSITE_ID_KEY = 'current_website_id';
     const CONTEXT_ENTITIES_IDS_KEY = 'entityIds';
+    const CONTEXT_WEBSITE_IDS = 'websiteIds';
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;
@@ -73,6 +77,7 @@ abstract class AbstractIndexer implements IndexerInterface
      * Rename old index by aliases to new index
      * @param string $temporaryAlias
      * @param string $currentAlias
+     * @throws \LogicException
      */
     abstract protected function renameIndex($temporaryAlias, $currentAlias);
 
@@ -81,6 +86,10 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     public function reindex($classOrClasses = null, array $context = [])
     {
+        if (!is_string($classOrClasses) && $this->getContextEntityIds($context)) {
+            throw new \LogicException('Entity ids passed into context. Please provide single class of entity');
+        }
+
         $entityClassesToIndex = $this->getEntitiesToIndex($classOrClasses);
         $websiteIdsToIndex = $this->getWebsiteIdsToIndex($context);
         $handledItems = 0;
@@ -144,30 +153,19 @@ abstract class AbstractIndexer implements IndexerInterface
         $entitiesByClass = [];
         foreach ($entities as $entity) {
             $entityClass = $this->doctrineHelper->getEntityClass($entity);
-            $entitiesByClass[$entityClass][] = $entity;
+            $id = $this->doctrineHelper->getSingleEntityIdentifier($entity);
+            $entitiesByClass[$entityClass][$id] = $id;
         }
 
-        foreach (array_keys($entitiesByClass) as $entityClass) {
+        foreach ($entitiesByClass as $entityClass => $entityIds) {
             $this->ensureEntityClassIsSupported($entityClass);
         }
 
         $this->delete($entities, $context);
-        $websiteIdsToIndex = $this->getWebsiteIdsToIndex($context);
 
-        foreach ($websiteIdsToIndex as $websiteId) {
-            $websiteContext = $this->indexDataProvider->collectContextForWebsite($websiteId, $context);
-
-            foreach ($entitiesByClass as $entityClass => $entities) {
-                $currentAlias = $this->getEntityAlias($entityClass, $websiteContext);
-
-                $ids = [];
-                foreach ($entities as $entity) {
-                    $id = $this->doctrineHelper->getSingleEntityIdentifier($entity);
-                    $ids[$id] = $id;
-                }
-
-                $this->indexEntities($entityClass, $ids, $websiteContext, $currentAlias);
-            }
+        foreach ($entitiesByClass as $entityClass => $entityIds) {
+            $context = $this->setContextEntityIds($context, $entityIds);
+            $this->reindex($entityClass, $context);
         }
 
         return true;
@@ -179,10 +177,9 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     protected function getWebsiteIdsToIndex(array $context)
     {
-        if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])
-            && count((array)$context[self::CONTEXT_WEBSITE_ID_KEY]) > 0
-        ) {
-            return (array)$context[self::CONTEXT_WEBSITE_ID_KEY];
+        $websiteIds = $this->getContextWebsiteIds($context);
+        if ($websiteIds) {
+            return $websiteIds;
         }
 
         /** @var WebsiteRepository $websiteRepository */
@@ -207,6 +204,10 @@ abstract class AbstractIndexer implements IndexerInterface
         $queryBuilder = $entityRepository->createQueryBuilder('entity');
         $identifierName = $this->doctrineHelper->getSingleEntityIdentifierFieldName($entityClass);
         $queryBuilder->select("entity.$identifierName as id");
+        $contextEntityIds = $this->getContextEntityIds($context);
+        if ($contextEntityIds) {
+            $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", $contextEntityIds));
+        }
 
         $iterator = new BufferedQueryResultIterator($queryBuilder);
         $iterator->setBufferSize($this->getBatchSize());
@@ -311,10 +312,10 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     protected function getEntityAlias($entityClass, array $context)
     {
-        if (isset($context[self::CONTEXT_WEBSITE_ID_KEY])) {
+        if ($this->getContextCurrentWebsiteId($context)) {
             return $this->placeholder->replace(
                 $this->mappingProvider->getEntityAlias($entityClass),
-                [WebsiteIdPlaceholder::NAME => $context[self::CONTEXT_WEBSITE_ID_KEY]]
+                [WebsiteIdPlaceholder::NAME => $this->getContextCurrentWebsiteId($context)]
             );
         }
 
