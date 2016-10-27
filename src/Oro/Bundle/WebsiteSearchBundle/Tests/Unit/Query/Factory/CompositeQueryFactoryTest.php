@@ -19,11 +19,10 @@ class CompositeQueryFactoryTest extends \PHPUnit_Framework_TestCase
     /** @var SearchQueryInterface|\PHPUnit_Framework_MockObject_MockBuilder */
     protected $query;
 
-
     public function setUp()
     {
-        $this->query = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
-        $this->queryFactory = $this->getMockBuilder(QueryFactoryInterface::class)->setMethods(array('create'))->getMock();
+        $this->query        = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
+        $this->queryFactory = $this->getMockBuilder(QueryFactoryInterface::class)->setMethods(['create'])->getMock();
         $this->queryFactory->method('create')->willReturn($this->query);
         $this->engine = $this->getMock(EngineV2Interface::class);
     }
@@ -32,11 +31,11 @@ class CompositeQueryFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $configForWebsiteSearch = [
             'search_index' => 'website',
-            'query' => [
+            'query'        => [
                 'select' => [
                     'text.sku'
                 ],
-                'from' => [
+                'from'   => [
                     'product'
                 ]
             ]

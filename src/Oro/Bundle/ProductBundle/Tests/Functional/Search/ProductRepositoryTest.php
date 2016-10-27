@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Search;
 
 use Doctrine\ORM\Query;
+
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
@@ -35,9 +36,7 @@ class ProductRepositoryTest extends WebTestCase
     {
         $exampleProduct = $this->getReference(LoadProductData::PRODUCT_1);
 
-        /**
-         * @var $product \Oro\Bundle\SearchBundle\Query\Result\Item
-         */
+        /** @var $product \Oro\Bundle\SearchBundle\Query\Result\Item */
         $product = $this->client->getContainer()->get('oro_product.website_search.repository.product')->findOne(
             $exampleProduct->getId()
         );
