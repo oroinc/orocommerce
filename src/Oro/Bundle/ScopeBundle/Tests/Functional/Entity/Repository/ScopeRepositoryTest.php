@@ -12,9 +12,25 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ScopeRepositoryTest extends WebTestCase
 {
+    /**
+     * @var Scope
+     */
+    protected $testScope;
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+
+        $this->getRepository()
+            ->createQueryBuilder('s')
+            ->delete()
+            ->getQuery()
+            ->execute();
+
+        $this->testScope = new Scope();
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em->persist($this->testScope);
+        $em->flush();
     }
 
     public function testFindByCriteria()
@@ -35,7 +51,7 @@ class ScopeRepositoryTest extends WebTestCase
     {
         $criteria = new ScopeCriteria([]);
         $ids = $this->getRepository()->findIdentifiersByCriteria($criteria);
-        $this->assertSame([1], $ids);
+        $this->assertSame([$this->testScope->getId()], $ids);
     }
 
     /**

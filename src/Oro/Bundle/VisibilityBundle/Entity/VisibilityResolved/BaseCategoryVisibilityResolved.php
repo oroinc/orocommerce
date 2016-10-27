@@ -20,15 +20,6 @@ abstract class BaseCategoryVisibilityResolved extends BaseVisibilityResolved
     const SOURCE_PARENT_CATEGORY = 2;
 
     /**
-     * @var Category
-     *
-     * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CatalogBundle\Entity\Category")
-     * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    protected $category;
-
-    /**
      * @var Scope
      *
      * @ORM\Id
@@ -36,6 +27,15 @@ abstract class BaseCategoryVisibilityResolved extends BaseVisibilityResolved
      * @ORM\JoinColumn(name="scope_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $scope;
+
+    /**
+     * @var Category
+     *
+     * @ORM\Id
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CatalogBundle\Entity\Category")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $category;
 
     /**
      * @param Category $category
