@@ -34,5 +34,9 @@ class AccountGroupCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
         $visibilityList = AccountGroupCategoryVisibility::getVisibilityList($category);
         $this->assertInternalType('array', $visibilityList);
         $this->assertNotEmpty($visibilityList);
+        $this->assertEquals(
+            AccountGroupCategoryVisibility::VISIBILITY_TYPE,
+            AccountGroupCategoryVisibility::getScopeType()
+        );
     }
 }
