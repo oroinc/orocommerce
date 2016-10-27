@@ -83,7 +83,7 @@ class SearchCategoryFilteringEventListener
 
     /**
      * @param SearchQueryInterface $query
-     * @param array|int $categoryId
+     * @param int $categoryId
      * @param bool $includeSubcategories
      */
     private function applyCategoryToQuery(SearchQueryInterface $query, $categoryId, $includeSubcategories = false)
