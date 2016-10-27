@@ -23,6 +23,7 @@ class ProductRepository extends WebsiteSearchRepository
 
         $searchQuery->setFrom('oro_product_WEBSITE_ID')
             ->addSelect('sku')
+            ->addSelect('title_LOCALIZATION_ID')
             ->getCriteria()
             ->andWhere(Criteria::expr()->contains('sku_uppercase', implode(', ', $upperCaseSkus)));
 
@@ -36,8 +37,46 @@ class ProductRepository extends WebsiteSearchRepository
     public function searchFilteredBySkus(array $skus)
     {
         $searchQuery = $this->getFilterSkuQuery($skus);
-        $searchQuery->addSelect('title_LOCALIZATION_ID');
 
         return $searchQuery->getResult()->getElements();
+    }
+
+    /**
+     * @param string $search
+     * @param int $firstResult
+     * @param int $maxResults
+     * @return SearchQueryInterface
+     */
+    public function getSearchQuery($search, $firstResult, $maxResults)
+    {
+        $searchQuery = $this->createQuery();
+
+        $searchQuery->setFrom('oro_product_WEBSITE_ID')
+            ->addSelect('sku')
+            ->addSelect('title_LOCALIZATION_ID')
+            ->getCriteria()
+            ->andWhere(
+                Criteria::expr()->andX(
+                    Criteria::expr()->contains('sku', $search),
+                    Criteria::expr()->contains('all_text_LOCALIZATION_ID', $search)
+                )
+            )->orderBy(['id' => Criteria::ASC])
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults);
+
+//        $productsQueryBuilder
+//            ->innerJoin('p.names', 'pn', Expr\Join::WITH, $productsQueryBuilder->expr()->isNull('pn.localization'))
+//            ->where(
+//                $productsQueryBuilder->expr()->orX(
+//                    $productsQueryBuilder->expr()->like('LOWER(p.sku)', ':search'),
+//                    $productsQueryBuilder->expr()->like('LOWER(pn.string)', ':search')
+//                )
+//            )
+//            ->setParameter('search', '%' . strtolower($search) . '%')
+//            ->addOrderBy('p.id')
+//            ->setFirstResult($firstResult)
+//            ->setMaxResults($maxResults);
+
+        return $searchQuery;
     }
 }

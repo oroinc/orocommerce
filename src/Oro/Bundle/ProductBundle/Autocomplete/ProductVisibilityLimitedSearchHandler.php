@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Autocomplete;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
@@ -29,9 +30,9 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     protected $searchRepository;
 
     /**
-     * @param string $entityName
-     * @param array $properties
-     * @param RequestStack $requestStack
+     * @param string         $entityName
+     * @param array          $properties
+     * @param RequestStack   $requestStack
      * @param ProductManager $productManager
      */
     public function __construct(
@@ -40,7 +41,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         RequestStack $requestStack,
         ProductManager $productManager
     ) {
-        $this->requestStack = $requestStack;
+        $this->requestStack   = $requestStack;
         $this->productManager = $productManager;
         parent::__construct($entityName, $properties);
     }
@@ -69,6 +70,28 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     public function setSearchRepository(ProductSearchRepository $searchRepository)
     {
         $this->searchRepository = $searchRepository;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function convertItem($item)
+    {
+        $result = [];
+
+        if ($this->idFieldName) {
+            $result[$this->idFieldName] = $this->getPropertyValue($this->idFieldName, $item);
+        }
+
+        foreach ($this->properties as $property) {
+            if ($this->isItem($item)) {
+                $result[$property] = $this->getSelectedData($item, $property);
+                continue;
+            }
+            $result[$property] = $this->getPropertyValue($item, $property);
+        }
+
+        return $result;
     }
 
     /**
@@ -112,12 +135,48 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
      */
     protected function searchEntitiesUsingIndex($search, $firstResult, $maxResults)
     {
-        $searchQuery = $this->searchRepository->getFilterSkuQuery([$search]);
+        $searchQuery = $this->searchRepository->getSearchQuery($search, $firstResult, $maxResults);
         $searchQuery->setFirstResult($firstResult);
         $searchQuery->setMaxResults($maxResults);
         $this->productManager->restrictSearchQuery($searchQuery->getQuery());
         $result = $searchQuery->getResult();
 
         return $result->getElements();
+    }
+
+    /**
+     * @param Item   $item
+     * @param string $property
+     * @return null|string
+     */
+    protected function getSelectedData($item, $property)
+    {
+        $data = $item->getSelectedData();
+
+        if (empty($data)) {
+            return null;
+        }
+
+        foreach ($data as $key => $value) {
+            if ($key === $property) {
+                return (string)$value;
+            }
+
+            // support localized properties
+            if (strpos($key, $property) === 0) {
+                return (string)$value;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $object
+     * @return bool
+     */
+    protected function isItem($object)
+    {
+        return is_object($object) && method_exists($object, 'getSelectedData');
     }
 }
