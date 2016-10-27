@@ -51,24 +51,22 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         TestProduct::class => [
             'alias' => 'oro_product_WEBSITE_ID',
             'fields' => [
-                'title' =>
-                    [
-                        'name' => 'title_LOCALIZATION_ID',
-                        'type' => 'text'
-                    ]
-            ]
+                [
+                    'name' => 'title_LOCALIZATION_ID',
+                    'type' => 'text',
+                ],
+            ],
 
         ],
         TestEmployee::class => [
             'alias' => 'oro_employee_WEBSITE_ID',
             'fields' => [
-                'title' =>
-                    [
-                        'name' => 'title_LOCALIZATION_ID',
-                        'type' => 'text'
-                    ]
-            ]
-        ]
+                [
+                    'name' => 'title_LOCALIZATION_ID',
+                    'type' => 'text',
+                ],
+            ],
+        ],
     ];
 
     protected function setUp()
@@ -124,7 +122,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             foreach ($entities as $entity) {
                 $event->addField(
                     $entity->getId(),
-                    'title',
+                    'title_LOCALIZATION_ID',
                     sprintf('Reindexed product %s', $entity->getId())
                 );
             }

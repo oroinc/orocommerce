@@ -61,18 +61,23 @@ class WebsiteSearchProductIndexerListener
 
             // Localized fields
             $placeholders = [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION];
-            $event->addPlaceholderField($product->getId(), 'title', (string)$product->getDefaultName(), $placeholders);
+            $event->addPlaceholderField(
+                $product->getId(),
+                'title_LOCALIZATION_ID',
+                (string)$product->getDefaultName(),
+                $placeholders
+            );
 
             $event->addPlaceholderField(
                 $product->getId(),
-                'description',
+                'description_LOCALIZATION_ID',
                 (string)$product->getDefaultDescription(),
                 $placeholders
             );
 
             $event->addPlaceholderField(
                 $product->getId(),
-                'short_desc',
+                'short_description_LOCALIZATION_ID',
                 (string)$product->getDefaultShortDescription(),
                 $placeholders
             );
@@ -82,21 +87,21 @@ class WebsiteSearchProductIndexerListener
                 $placeholders = [LocalizationIdPlaceholder::NAME => $localizationId];
                 $event->addPlaceholderField(
                     $product->getId(),
-                    'title',
+                    'title_LOCALIZATION_ID',
                     (string)$product->getName($localization),
                     $placeholders
                 );
 
                 $event->addPlaceholderField(
                     $product->getId(),
-                    'description',
+                    'description_LOCALIZATION_ID',
                     (string)$product->getDescription($localization),
                     $placeholders
                 );
 
                 $event->addPlaceholderField(
                     $product->getId(),
-                    'short_desc',
+                    'short_description_LOCALIZATION_ID',
                     (string)$product->getShortDescription($localization),
                     $placeholders
                 );

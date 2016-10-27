@@ -90,7 +90,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
                 'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
                 'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                 'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                'visibility_account' => [
+                'visibility_account_ACCOUNT_ID' => [
                     new PlaceholderValue(1, ['ACCOUNT_ID' => 1]),
                 ]
             ],
@@ -98,7 +98,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
                 'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                 'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                 'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
-                'visibility_account' => [
+                'visibility_account_ACCOUNT_ID' => [
                     new PlaceholderValue(1, ['ACCOUNT_ID' => 3])
                 ]
             ],
@@ -106,7 +106,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
                 'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                 'visibility_new' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
                 'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                'visibility_account' => [
+                'visibility_account_ACCOUNT_ID' => [
                     new PlaceholderValue(1, ['ACCOUNT_ID' => 2]),
                 ]
             ]

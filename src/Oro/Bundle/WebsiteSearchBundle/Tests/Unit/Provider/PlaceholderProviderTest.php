@@ -58,13 +58,14 @@ class PlaceholderProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPlaceholderFieldNameWhenFieldExists()
     {
+        $name = 'name_LOCALIZATION_ID';
         $this->mappingProvider
             ->expects($this->once())
             ->method('getEntityMapParameter')
             ->with(TestProduct::class, 'fields')
             ->willReturn([
-                'name' => [
-                    'name' => 'name_LOCALIZATION_ID'
+                [
+                    'name' => $name
                 ]
             ]);
 
@@ -73,9 +74,9 @@ class PlaceholderProviderTest extends \PHPUnit_Framework_TestCase
         $this->placeholder
             ->expects($this->once())
             ->method('replace')
-            ->with('name_LOCALIZATION_ID', $placeholders);
+            ->with($name, $placeholders);
 
-        $this->provider->getPlaceholderFieldName(TestProduct::class, 'name', $placeholders);
+        $this->provider->getPlaceholderFieldName(TestProduct::class, $name, $placeholders);
     }
 
     public function testGetPlaceholderEntityAlias()

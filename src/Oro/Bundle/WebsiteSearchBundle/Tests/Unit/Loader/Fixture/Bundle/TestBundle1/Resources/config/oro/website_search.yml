@@ -1,5 +1,5 @@
 Oro\Bundle\TestBundle2\Entity\Page:
     fields:
-        custom_field:
+        -
             name: custom_field
             type: text
