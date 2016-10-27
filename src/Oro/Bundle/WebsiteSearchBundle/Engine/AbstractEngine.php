@@ -55,6 +55,7 @@ abstract class AbstractEngine implements EngineV2Interface
         $query = $event->getQuery();
 
         $this->queryPlaceholderResolver->replace($query);
+$where = $query->getCriteria()->getWhereExpression();
 
         return $this->doSearch($query, $context);
     }

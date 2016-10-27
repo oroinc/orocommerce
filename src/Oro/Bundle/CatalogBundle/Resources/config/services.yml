@@ -103,7 +103,7 @@ services:
         class: 'Oro\Bundle\CatalogBundle\EventListener\SearchCategoryFilteringEventListener'
         arguments:
             - "@oro_catalog.handler.request_product"
-            - '@doctrine'
+            - "@oro_catalog.repository.category"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-product-search-grid, method: onBuildAfter }
