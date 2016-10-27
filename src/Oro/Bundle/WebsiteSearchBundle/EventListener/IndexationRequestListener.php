@@ -7,11 +7,10 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
-use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\SearchBundle\EventListener\IndexationListenerTrait;
 
@@ -40,26 +39,18 @@ class IndexationRequestListener implements OptionalListenerInterface
     protected $dispatcher;
 
     /**
-     * @var WebsiteManager
-     */
-    protected $websiteManager;
-
-    /**
      * @param DoctrineHelper $doctrineHelper
-     * @param SearchMappingProvider $mappingProvider
+     * @param WebsiteSearchMappingProvider $mappingProvider
      * @param EventDispatcherInterface $dispatcher
-     * @param WebsiteManager $websiteManager
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        SearchMappingProvider $mappingProvider,
-        EventDispatcherInterface $dispatcher,
-        WebsiteManager $websiteManager
+        WebsiteSearchMappingProvider $mappingProvider,
+        EventDispatcherInterface $dispatcher
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->mappingProvider = $mappingProvider;
         $this->dispatcher = $dispatcher;
-        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -94,6 +85,10 @@ class IndexationRequestListener implements OptionalListenerInterface
      */
     public function beforeEntityFlush(AfterFormProcessEvent $event)
     {
+        if (!$this->enabled) {
+            return;
+        }
+
         $updatedEntity = $event->getData();
         if (!$this->mappingProvider->hasFieldsMapping(
             $this->doctrineHelper->getEntityClass($updatedEntity)
@@ -164,16 +159,13 @@ class IndexationRequestListener implements OptionalListenerInterface
                 $ids[] = $entity->getId();
             }
 
-            $websitesIds = $this->websiteManager->getCurrentWebsite() !== null ?
-                [$this->websiteManager->getCurrentWebsite()->getId()] : [];
-
-            $ReindexationRequestEvent = new ReindexationRequestEvent(
+            $reindexationRequestEvent = new ReindexationRequestEvent(
                 [$class],
-                $websitesIds,
+                [],
                 $ids
             );
 
-            $this->dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $ReindexationRequestEvent);
+            $this->dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $reindexationRequestEvent);
         }
 
         $this->changedEntities = [];
