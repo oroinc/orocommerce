@@ -27,7 +27,7 @@ class CompositeQueryFactoryTest extends \PHPUnit_Framework_TestCase
         $this->engine = $this->getMock(EngineV2Interface::class);
     }
 
-    public function testCreate()
+    public function testCreateFrontend()
     {
         $configForWebsiteSearch = [
             'search_index' => 'website',
@@ -41,22 +41,24 @@ class CompositeQueryFactoryTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
+        $factory = new CompositeQueryFactory($this->queryFactory, $this->engine);
+        $frontend = $factory->create($configForWebsiteSearch);
+
+        $this->assertInstanceOf(WebsiteSearchQuery::class, $frontend);
+    }
+
+    public function testCreateBackend()
+    {
         $configForBackendSearch = [
             'search_index' => null
         ];
-
         $this->queryFactory->expects($this->once())
             ->method('create')
             ->with($configForBackendSearch);
-
-        $factory = new CompositeQueryFactory($this->queryFactory, $this->engine);
 
         $backend = $factory->create($configForBackendSearch);
 
         $this->assertInstanceOf(SearchQueryInterface::class, $backend);
 
-        $frontend = $factory->create($configForWebsiteSearch);
-
-        $this->assertInstanceOf(WebsiteSearchQuery::class, $frontend);
     }
 }

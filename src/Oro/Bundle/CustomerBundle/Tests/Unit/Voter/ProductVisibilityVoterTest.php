@@ -91,6 +91,11 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
      */
     protected $product;
 
+    /**
+     * @var ProductVisibilityVoter
+     */
+    protected $voter;
+
     public function setUp()
     {
         $fakeRequestStack = new RequestStack();
@@ -138,27 +143,33 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->productRepository = $this->getMockBuilder(ProductRepository::class)
             ->setConstructorArgs([$this->queryFactory, $this->searchMappingProvider])
-            ->setMethods(['searchFilteredBySkus', 'findOne'])->getMock();
+            ->setMethods(['findOne'])->getMock();
         $this->productRepository->method('findOne')->willReturn($this->product);
 
         $this->item = $this->getMock(Item::class);
         $this->productRepository->method('findOne')->willReturn($this->product);
         $this->currentToken = $this->getMock(TokenInterface::class);
+
+        $this->voter = new ProductVisibilityVoter($this->doctrineHelper);
+        $this->voter->setFrontendHelper($this->frontendHelper);
+        $this->voter->setProductSearchRepository($this->productRepository);
+        $this->voter->setClassName(Product::class);
     }
 
-    public function testVote()
+    public function testVoteAbstain()
     {
-        $voter = new ProductVisibilityVoter($this->doctrineHelper);
-        $voter->setFrontendHelper($this->frontendHelper);
-        $voter->setProductSearchRepository($this->productRepository);
-        $voter->setClassName(Product::class);
         $object     = null;
         $attributes = [ProductVisibilityVoter::ATTRIBUTE_VIEW];
-        $vote       = $voter->vote($this->currentToken, $object, $attributes);
+        $vote       = $this->voter->vote($this->currentToken, $object, $attributes);
         $this->assertEquals($vote, ProductVisibilityVoter::ACCESS_ABSTAIN);
 
+
+    }
+
+    public function testVoteGranted()
+    {
         $attributes = [ProductVisibilityVoter::ATTRIBUTE_VIEW];
-        $vote       = $voter->vote($this->currentToken, $this->product, $attributes);
+        $vote       = $this->voter->vote($this->currentToken, $this->product, $attributes);
         $this->assertEquals($vote, ProductVisibilityVoter::ACCESS_GRANTED);
     }
 }

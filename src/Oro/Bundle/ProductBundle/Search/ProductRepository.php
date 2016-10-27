@@ -37,12 +37,11 @@ class ProductRepository extends WebsiteSearchRepository
         $items = $searchQuery->getResult();
 
         if ($items->getRecordsCount() < 1) {
+            /** @noinspection PhpInconsistentReturnPointsInspection */
             return;
         }
 
-        $item = $items->getElements()[0];
-
-        return $item;
+        return $items->getElements()[0];
     }
 
     /**
@@ -54,7 +53,7 @@ class ProductRepository extends WebsiteSearchRepository
         $searchQuery = $this->createQuery();
 
         // Convert to uppercase for insensitive search in all DB
-        $upperCaseSkus = array_map("strtoupper", $skus);
+        $upperCaseSkus = array_map('strtoupper', $skus);
 
         $searchQuery->setFrom('oro_product_WEBSITE_ID')
             ->addSelect('sku')
