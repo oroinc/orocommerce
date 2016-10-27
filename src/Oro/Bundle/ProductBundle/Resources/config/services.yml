@@ -385,13 +385,15 @@ services:
         tags:
             - { name: layout.data_provider, alias: featured_products }
 
-    oro_product.event_listener.product_listener:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductListener'
+    oro_product.event_listener.product_image_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageListener'
         public: false
         arguments:
             - '@event_dispatcher'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product.class%', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_attachment.file.entity.class%', event: postUpdate, method: filePostUpdate }
 
     oro_product.event_listener.product_image_resize_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener'
