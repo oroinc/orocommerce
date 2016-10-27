@@ -38,6 +38,7 @@ abstract class AbstractAccountPartialUpdateDriver implements AccountPartialUpdat
     /**
      * @param PlaceholderProvider $placeholderProvider
      * @param ProductVisibilityProvider $productVisibilityProvider
+     * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         PlaceholderProvider $placeholderProvider,
