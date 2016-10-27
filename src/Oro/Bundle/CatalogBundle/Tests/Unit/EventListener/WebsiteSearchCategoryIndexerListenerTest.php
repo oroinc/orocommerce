@@ -153,30 +153,26 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
         $expected[$product->getId()] = [
             'category_id' => 555,
             'category_path' => '1_555',
-            'category_title' => [
+            'all_text_LOCALIZATION_ID' => [
                 new PlaceholderValue(
                     $this->prepareLocalizedValue($defaultValueLocale, self::NAME_DEFAULT_LOCALE, null),
+                    [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
+                ),
+                new PlaceholderValue(
+                    $this->prepareLocalizedValue($defaultValueLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
+                    [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
+                ),
+                new PlaceholderValue(
+                    $this->prepareLocalizedValue($defaultValueLocale, null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE),
                     [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
                 ),
                 new PlaceholderValue(
                     $this->prepareLocalizedValue($customLocale, self::NAME_CUSTOM_LOCALE, null),
                     [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
                 ),
-            ],
-            'category_description' => [
-                new PlaceholderValue(
-                    $this->prepareLocalizedValue($defaultValueLocale, null, self::DESCRIPTION_DEFAULT_LOCALE),
-                    [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
-                ),
                 new PlaceholderValue(
                     $this->prepareLocalizedValue($customLocale, null, self::DESCRIPTION_CUSTOM_LOCALE),
                     [LocalizationIdPlaceholder::NAME => $customLocale->getId()]
-                ),
-            ],
-            'category_short_desc' => [
-                new PlaceholderValue(
-                    $this->prepareLocalizedValue($defaultValueLocale, null, self::SHORT_DESCRIPTION_DEFAULT_LOCALE),
-                    [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
                 ),
                 new PlaceholderValue(
                     $this->prepareLocalizedValue($customLocale, null, self::SHORT_DESCRIPTION_CUSTOM_LOCALE),

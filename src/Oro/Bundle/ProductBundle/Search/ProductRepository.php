@@ -56,26 +56,10 @@ class ProductRepository extends WebsiteSearchRepository
             ->addSelect('title_LOCALIZATION_ID')
             ->getCriteria()
             ->andWhere(
-                Criteria::expr()->orX(
-                    Criteria::expr()->contains('sku_uppercase', strtoupper($search)),
-                    Criteria::expr()->contains('all_text_LOCALIZATION_ID', $search)
-                )
+                Criteria::expr()->contains('all_text_LOCALIZATION_ID', $search)
             )->orderBy(['id' => Criteria::ASC])
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults);
-
-//        $productsQueryBuilder
-//            ->innerJoin('p.names', 'pn', Expr\Join::WITH, $productsQueryBuilder->expr()->isNull('pn.localization'))
-//            ->where(
-//                $productsQueryBuilder->expr()->orX(
-//                    $productsQueryBuilder->expr()->like('LOWER(p.sku)', ':search'),
-//                    $productsQueryBuilder->expr()->like('LOWER(pn.string)', ':search')
-//                )
-//            )
-//            ->setParameter('search', '%' . strtolower($search) . '%')
-//            ->addOrderBy('p.id')
-//            ->setFirstResult($firstResult)
-//            ->setMaxResults($maxResults);
 
         return $searchQuery;
     }

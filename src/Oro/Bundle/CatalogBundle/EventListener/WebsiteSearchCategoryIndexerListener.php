@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
@@ -71,41 +72,48 @@ class WebsiteSearchCategoryIndexerListener
                 $placeholders = [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION];
                 $event->addPlaceholderField(
                     $product->getId(),
-                    'category_title',
+                    IndexDataProvider::ALL_TEXT_L10N_FIELD,
                     (string)$category->getDefaultTitle(),
                     $placeholders
                 );
                 $event->addPlaceholderField(
                     $product->getId(),
-                    'category_description',
+                    IndexDataProvider::ALL_TEXT_L10N_FIELD,
                     (string)$category->getDefaultLongDescription(),
                     $placeholders
                 );
 
                 $event->addPlaceholderField(
                     $product->getId(),
-                    'category_short_desc',
+                    IndexDataProvider::ALL_TEXT_L10N_FIELD,
                     (string)$category->getDefaultShortDescription(),
                     $placeholders
                 );
 
                 // Localized fields
                 foreach ($localizations as $localization) {
-                    $localizedFields = [
-                        'category_title' => $category->getTitle($localization),
-                        'category_description' => $category->getLongDescription($localization),
-                        'category_short_desc' => $category->getShortDescription($localization)
-                    ];
+                    $placeholders = [LocalizationIdPlaceholder::NAME => $localization->getId()];
 
-                    foreach ($localizedFields as $fieldName => $fieldValue) {
-                        $placeholders = [LocalizationIdPlaceholder::NAME => $localization->getId()];
-                        $event->addPlaceholderField(
-                            $product->getId(),
-                            $fieldName,
-                            (string)$fieldValue,
-                            $placeholders
-                        );
-                    }
+                    $event->addPlaceholderField(
+                        $product->getId(),
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        (string)$category->getTitle($localization),
+                        $placeholders
+                    );
+
+                    $event->addPlaceholderField(
+                        $product->getId(),
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        (string)$category->getLongDescription($localization),
+                        $placeholders
+                    );
+
+                    $event->addPlaceholderField(
+                        $product->getId(),
+                        IndexDataProvider::ALL_TEXT_L10N_FIELD,
+                        (string)$category->getShortDescription($localization),
+                        $placeholders
+                    );
                 }
             }
         }
