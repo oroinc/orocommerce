@@ -16,7 +16,7 @@ layout:
                             -
                                 label: 'oro.checkout.title.step.label'
                                 parameters:
-                                    '%step_label%': '=data["workflowStep"].getLabel()'
+                                    '%step_label%': '=data["translator"].getTrans(data["workflowStep"].getLabel(),[],"workflows")'
                 body:
                     blockType: body
                 raw_notification:
