@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Expression;
 use Oro\Bundle\ProductBundle\Model\NodeExpressionQueryDesigner;
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 use Oro\Component\Expression\Node\NodeInterface;
-use Oro\Component\WebCatalog\ColumnInformationProviderInterface;
+use Oro\Component\Expression\ColumnInformationProviderInterface;
 
 class NodeToQueryDesignerConverter
 {
