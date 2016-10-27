@@ -120,8 +120,7 @@ class ProductControllerTest extends WebTestCase
         $this->client->request('GET', $this->getUrl(
             'oro_product_frontend_product_index',
             [
-                RequestProductHandler::CATEGORY_ID_KEY => $secondLevelCategory->getId(),
-                RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY => true
+                RequestProductHandler::CATEGORY_ID_KEY => $secondLevelCategory->getId()
             ]
         ));
 
