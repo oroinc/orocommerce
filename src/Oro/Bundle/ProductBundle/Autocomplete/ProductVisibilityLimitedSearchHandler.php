@@ -112,7 +112,6 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         return $this->properties['search'];
     }
 
-
     /**
      * {@inheritdoc}
      */
