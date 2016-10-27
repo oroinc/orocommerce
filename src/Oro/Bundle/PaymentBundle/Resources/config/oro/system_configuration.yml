@@ -18,6 +18,8 @@ system_configuration:
             type: oro_locale_country
             options:
                 label: oro.payment.system_configuration.fields.merchant_country.label
+                placeholder: oro.payment.system_configuration.fields.merchant_country.placeholder
+                data: 'US'
 
         # Payment Term
         oro_payment.payment_term_enabled:

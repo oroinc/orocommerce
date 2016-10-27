@@ -36,7 +36,7 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
     {
         parent::setUp();
 
-        $this->engine = $this->client->getContainer()->get('oro_website_search.engine');
+        $this->engine = $this->getContainer()->get('oro_website_search.engine');
 
         static::$testValue = 'test_' . uniqid();
 
@@ -45,7 +45,6 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
 
             $event->getQuery()->getCriteria()->andWhere($expr->eq('name', self::$testValue));
         };
-
 
         $this->dispatcher->addListener(ProductSearchQueryRestrictionEvent::NAME, $this->listener);
     }
@@ -57,14 +56,41 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
         parent::tearDown();
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     */
     public function testRestrictsVisibilityForJustProducts()
     {
         $query = new Query();
 
         $query->from([Product::class]);
+
+        $this->engine->search($query);
+
+        $where = $query->getCriteria()->getWhereExpression();
+
+        $foundSkuExpression    = false;
+        $foundCustomExpression = false;
+
+        if ($where instanceof CompositeExpression) {
+            list($foundSkuExpression, $foundCustomExpression) = $this->checkCompositeExpression($where);
+        }
+
+        if ($where instanceof Comparison) {
+            if (($where->getField() === 'name') && ($where->getValue()->getValue() === self::$testValue)) {
+                $foundCustomExpression = true;
+            }
+        }
+
+        $this->assertFalse($foundSkuExpression, 'Sku is null expression should not be applied.');
+        $this->assertTrue($foundCustomExpression, 'Custom expression from listener not found.');
+    }
+
+    public function testRestrictsVisibilityForJustProductsWithProductAlias()
+    {
+        $productAlias = $this->getContainer()->get('oro_website_search.provider.search_mapping')
+            ->getEntityAlias(Product::class);
+
+        $query = new Query();
+
+        $query->from([$productAlias]);
 
         $this->engine->search($query);
 
@@ -145,7 +171,6 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
 
         /** @var Comparison $expr */
         foreach ($where->getExpressionList() as $expr) {
-
             if ($expr instanceof CompositeExpression) {
                 list($foundSkuComposite, $foundCustomComposite) = $this->checkCompositeExpression($expr);
 
