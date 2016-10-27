@@ -35,6 +35,7 @@ class FrontendAccountUserRoleType extends AbstractAccountUserRoleType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $options['hide_self_managed'] = true;
         parent::buildForm($builder, $options);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'updateAccountUsers']);
