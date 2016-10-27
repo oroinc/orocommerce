@@ -7,9 +7,9 @@ oro.visibility:
         entity_label: Visibility to Accounts
         entity_plural_label: Account Category Visibilities
         id.label: ID
-        account.label: Account
         category.label: Category
         visibility.label: Visibility
+        scope.label: Scope
         choice:
             account_group: Account Group
             category: Visibility to All
@@ -21,9 +21,9 @@ oro.visibility:
         entity_label: Visibility to Account Groups
         entity_plural_label: Account Group Category Visibilities
         id.label: ID
-        account_group.label: Account Group
         category.label: Category
         visibility.label: Visibility
+        scope.label: Scope
         choice:
             category: Visibility to All
             parent_category: Parent Category
@@ -36,6 +36,7 @@ oro.visibility:
         id.label: ID
         category.label: Category
         visibility.label: Visibility
+        scope.label: Scope
         choice:
             parent_category: Parent Category
             config: Config
@@ -46,10 +47,9 @@ oro.visibility:
         entity_label: Visibility to Accounts
         entity_plural_label: Account Product Visibilities
         id.label: ID
-        account.label: Account
         product.label: Product
         visibility.label: Visibility
-        website.label: Website
+        scope.label: Scope
         choice:
             account_group: Account Group
             current_product: Current Product
@@ -61,10 +61,9 @@ oro.visibility:
         entity_label: Visibility to Account Groups
         entity_plural_label: Account Group Product Visibilities
         id.label: ID
-        account_group.label: Account Group
         product.label: Product
         visibility.label: Visibility
-        website.label: Website
+        scope.label: Scope
         choice:
             current_product: Current Product
             category: Category
@@ -77,7 +76,7 @@ oro.visibility:
         id.label: ID
         product.label: Product
         visibility.label: Visibility
-        website.label: Website
+        scope.label: Scope
         choice:
             category: Category
             config: Config

@@ -437,3 +437,7 @@ oro.customer:
     dataaudit:
         administrator: 'Administrator'
         module_label: 'Audit history for Customer User'
+
+oro.scope:
+    account.label: Account
+    account_group.label: Account Group
