@@ -34,7 +34,7 @@ class ScopeRepository extends EntityRepository
             ->getScalarResult();
         $ids = [];
         foreach ($scopes as $scope) {
-            $ids[] = $scope['id'];
+            $ids[] = (int)$scope['id'];
         }
         return $ids;
     }
