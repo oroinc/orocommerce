@@ -179,7 +179,7 @@ define(function(require) {
             this.model.set('quantity', 1);
 
             if (this.fieldsByName.hasOwnProperty('priceValue')) {
-                this.fieldsByName.priceValue.val(0).addClass('matched-price');
+                this.fieldsByName.priceValue.val(null).addClass('matched-price');
             }
         },
 

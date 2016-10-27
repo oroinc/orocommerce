@@ -54,7 +54,11 @@ class RequestManagerTest extends \PHPUnit_Framework_TestCase
         $expected->setAccount($account);
 
         $actual = $this->requestManager->create();
-        $this->assertEquals($expected, $actual);
+        $this->assertInstanceOf(Request::class, $actual);
+        $this->assertEquals($expected->getAccount(), $actual->getAccount());
+        $this->assertEquals($expected->getAccountUser(), $actual->getAccountUser());
+        $this->assertEquals($expected->getCreatedAt(), $actual->getCreatedAt(), '', 5);
+        $this->assertEquals($expected->getUpdatedAt(), $actual->getUpdatedAt(), '', 5);
     }
 
     public function testAddProductItemToRequest()
