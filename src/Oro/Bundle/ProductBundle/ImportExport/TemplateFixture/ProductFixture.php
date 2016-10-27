@@ -10,7 +10,6 @@ use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\WebsiteBundle\Entity\Locale;
 
 class ProductFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {

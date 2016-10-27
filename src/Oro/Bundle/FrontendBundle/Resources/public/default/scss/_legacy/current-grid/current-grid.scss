@@ -379,39 +379,6 @@
       &:before, &:after {
         display: none;
       }
-
-      @media (min-width: 1382px) {
-        &:nth-of-type(4) {
-          .filter-criteria {
-            &.dropdown-menu {
-              left: auto;
-              right: 0;
-            }
-          }
-        }
-      }
-
-      @media (min-width: 1148px) and (max-width: 1381px) {
-        &:nth-of-type(3n+3) {
-          .filter-criteria {
-            &.dropdown-menu {
-              left: auto;
-              right: 0;
-            }
-          }
-        }
-      }
-
-      @media (min-width: 992px) and (max-width: 1147px) {
-        &:nth-of-type(2n+2) {
-          .filter-criteria {
-            &.dropdown-menu {
-              left: auto;
-              right: 0;
-            }
-          }
-        }
-      }
     }
   }
 
@@ -432,7 +399,7 @@
   .oro-drop {
     position: relative;
 
-    flex-basis: 224px;
+    flex-basis: 225px;
     margin: 0 10px 5px 0;
 
     > .btn {
@@ -463,6 +430,12 @@
       min-width: 340px !important;
       margin-top: 0;
       padding: 20px;
+
+      &:not([style]),
+      &[style*=hidden] {
+        right: 0;
+        left: auto;
+      }
 
       &.dropdown-menu {
         @media (max-width: $screen-md) {
@@ -1334,9 +1307,9 @@
 }
 
 //Remove code below, when grid styles will be free of platform styles
-//'.oro-grid__row--has-child-grid' is used in account bundle on the address book page for addresses datagrid
+//'.grid__row--has-child-grid' is used in account bundle on the address book page for addresses datagrid
 //It should remove this class too
-.oro-grid__row--has-child-grid {
+.grid__row--has-child-grid {
   .oro-datagrid {
     .grid {
       .launchers-list {

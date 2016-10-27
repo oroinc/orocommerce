@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
 /**
@@ -22,15 +22,16 @@ class AccountControllersTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
             ]
         );
         $manager = $this->client->getContainer()->get('doctrine')->getManagerForClass(
-            'OroAccountBundle:AccountUser'
+            'OroCustomerBundle:AccountUser'
         );
-        $this->accountUser = $manager->getRepository('OroAccountBundle:AccountUser')->findOneBy(
+        $this->accountUser = $manager->getRepository('OroCustomerBundle:AccountUser')->findOneBy(
             ['username' => LoadOrders::ACCOUNT_USER]
         );
     }
@@ -39,7 +40,7 @@ class AccountControllersTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('oro_account_view', ['id' => $this->accountUser->getAccount()->getId()])
+            $this->getUrl('oro_customer_account_view', ['id' => $this->accountUser->getAccount()->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -59,7 +60,7 @@ class AccountControllersTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('oro_account_account_user_view', ['id' => $this->accountUser->getId()])
+            $this->getUrl('oro_customer_account_user_view', ['id' => $this->accountUser->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -81,6 +82,6 @@ class AccountControllersTest extends WebTestCase
     protected function checkDatagridResponse(Response $response)
     {
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertContains(sprintf('$%.2F', LoadOrders::SUBTOTAL), $result['data'][0]['subtotal']);
+        $this->assertContains(sprintf('USD %.2F', LoadOrders::SUBTOTAL), $result['data'][0]['subtotal']);
     }
 }

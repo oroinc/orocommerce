@@ -8,6 +8,7 @@ class LineItems extends AbstractOption implements OptionsDependentInterface
     const DESC = 'L_DESC%d';
     const COST = 'L_COST%d';
     const QTY = 'L_QTY%d';
+    const TAXAMT = 'L_TAXAMT%d';
 
     /**
      * {@inheritdoc}
@@ -24,6 +25,12 @@ class LineItems extends AbstractOption implements OptionsDependentInterface
                 Amount::getFloatValueNormalizer()
             );
             $this->configureResolver($resolver, sprintf(self::QTY, $i), ['integer']);
+            $this->configureResolver(
+                $resolver,
+                sprintf(self::TAXAMT, $i),
+                ['float', 'integer', 'string'],
+                Amount::getFloatValueNormalizer()
+            );
         }
     }
 
@@ -64,22 +71,25 @@ class LineItems extends AbstractOption implements OptionsDependentInterface
     {
         $result = [];
         $num = 0;
-        $sum = 0;
+        $itemSum = $taxSum = 0;
+
         foreach ($options as $option) {
             ++$num;
             foreach ([self::NAME, self::DESC] as $field) {
                 $result[sprintf($field, $num)] = self::getValue($option, $field);
             }
 
-            foreach ([self::COST, self::QTY] as $field) {
+            foreach ([self::COST, self::QTY, self::TAXAMT] as $field) {
                 $result[sprintf($field, $num)] = self::getValue($option, $field, 0);
             }
 
             // TODO: Need to use bignumbers. Should be updated in BB-2369
-            $sum += isset($option[self::COST], $option[self::QTY]) ? $option[self::COST] * $option[self::QTY] : 0;
+            $itemSum += isset($option[self::COST], $option[self::QTY]) ? $option[self::COST] * $option[self::QTY] : 0;
+            $taxSum += isset($option[self::TAXAMT], $option[self::QTY]) ? $option[self::TAXAMT] * $option[self::QTY]: 0;
         }
 
-        $result[Amount::ITEMAMT] = $sum;
+        $result[Amount::TAXAMT] = $taxSum;
+        $result[Amount::ITEMAMT] = $itemSum;
 
         return $result;
     }

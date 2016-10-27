@@ -41,7 +41,7 @@ class PriceListTriggerHandler
      * @param PriceList $priceList
      * @param Product|null $product
      */
-    public function addTriggersForPriceList($topic, PriceList $priceList, Product $product = null)
+    public function addTriggerForPriceList($topic, PriceList $priceList, Product $product = null)
     {
         if ($priceList->isActive()) {
             $trigger = $this->triggerFactory->create($priceList, $product);
@@ -60,7 +60,7 @@ class PriceListTriggerHandler
     public function addTriggersForPriceLists($topic, array $priceLists, Product $product = null)
     {
         foreach ($priceLists as $priceList) {
-            $this->addTriggersForPriceList($topic, $priceList, $product);
+            $this->addTriggerForPriceList($topic, $priceList, $product);
         }
     }
 
@@ -75,6 +75,7 @@ class PriceListTriggerHandler
                     }
                 );
 
+                /** @var PriceListTrigger[] $filteredTriggers */
                 $filteredTriggers = array_filter(
                     $triggers,
                     function (PriceListTrigger $trigger) use ($priceListTriggers) {

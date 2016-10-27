@@ -47,6 +47,7 @@ oro:
             select_existing_or_create_new: 'Please select a category on the left or create new one.'
         frontend:
             category.master_category.label: 'Master catalog'
+            root.title: 'Welcome'
 
         system_configuration:
             groups:
@@ -55,3 +56,7 @@ oro:
         featured_categories:
             view:
                 items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
+
+        fallback:
+            category.label: 'Category Defaults'
+            parent_category.label: 'Parent Category'

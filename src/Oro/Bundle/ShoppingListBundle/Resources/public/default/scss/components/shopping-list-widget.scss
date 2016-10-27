@@ -60,6 +60,10 @@
     font-size: 18px;
   }
 
+  @include breakpoint('mobile-portrait') {
+    position: static;
+  }
+
   @media (max-width: 360px) {
     position: static;
 
@@ -135,7 +139,7 @@
     border-top: .1rem solid $alt-border-color;
 
     background: $base-topbar-background-color;
-    color: $base-font-color;
+    color: get-color('ui', 'focus');
     text-align: center;
     text-decoration: none;
 
@@ -165,7 +169,7 @@
     padding: 0;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.3);
     border: 1px solid $base-border-color;
-    border-radius: 2px;
+    border-radius: 4px;
 
     background: #fff;
     text-align: left;

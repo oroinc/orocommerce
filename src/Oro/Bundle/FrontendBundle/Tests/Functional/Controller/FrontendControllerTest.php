@@ -15,7 +15,7 @@ class FrontendControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-
+        $this->client->useHashNavigation(true);
         $this->setTheme(self::DEFAULT_THEME);
 
         $this->loadFixtures([

@@ -5,6 +5,8 @@ namespace Oro\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @method PriceList getPriceList()
+ *
  * @ORM\Table(name="oro_price_list_currency")
  * @ORM\Entity()
  */

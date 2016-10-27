@@ -21,6 +21,7 @@ class AjaxQuoteProductControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -89,7 +90,7 @@ class AjaxQuoteProductControllerTest extends WebTestCase
                 [
                     'unit' => 'bottle',
                     'qty' => 2,
-                    'price' => '$2.00',
+                    'price' => 'USD 2.00',
                 ],
             ],
             'empty unit' => [LoadQuoteData::PRODUCT1, 'sale.quote.1.product.1.offer.2', null, 2],

@@ -41,7 +41,7 @@ class OpenOrdersControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertNotContains('Open Orders', $crawler->filter('h1.page-title')->html());
+        $this->assertNotContains('Open Orders', $crawler->filter('h2.user-page-title')->html());
 
         $this->assertNotContains('grid-frontend-checkouts-grid', $crawler->html());
 
@@ -63,7 +63,7 @@ class OpenOrdersControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Open Orders', $crawler->filter('h1.page-title')->html());
+        $this->assertContains('Open Orders', $crawler->filter('h2.user-page-title')->html());
 
         $this->assertContains('grid-frontend-checkouts-grid', $crawler->html());
 

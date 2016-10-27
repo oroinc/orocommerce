@@ -4,8 +4,8 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -21,6 +21,7 @@ class ShoppingListRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
             [
@@ -30,7 +31,7 @@ class ShoppingListRepositoryTest extends WebTestCase
 
         $this->accountUser = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroAccountBundle:AccountUser')
+            ->getRepository('OroCustomerBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 
@@ -49,7 +50,7 @@ class ShoppingListRepositoryTest extends WebTestCase
         $this->assertEquals($this->accountUser, $shoppingList->getAccountUser());
     }
 
-    public function findAvailableForAccountUser()
+    public function testFindAvailableForAccountUser()
     {
         // Isset current shopping list
         $currentShoppingList = $this->getRepository()->findCurrentForAccountUser($this->accountUser);
@@ -64,8 +65,8 @@ class ShoppingListRepositoryTest extends WebTestCase
 
         $availableShoppingList = $this->getRepository()->findAvailableForAccountUser($this->accountUser);
 
-        // Check shopping list is not current for account user
-        $this->assertFalse($availableShoppingList->isCurrent());
+        // Check shopping list is current for account user
+        $this->assertTrue($availableShoppingList->isCurrent());
         $this->assertEquals($this->accountUser, $availableShoppingList->getAccountUser());
     }
 
@@ -147,7 +148,7 @@ class ShoppingListRepositoryTest extends WebTestCase
      */
     public function getAccountUser()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroAccountBundle:AccountUser')
+        return $this->getContainer()->get('doctrine')->getRepository('OroCustomerBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 

@@ -33,7 +33,6 @@ class OroPricingBundle implements Migration, RenameExtensionAwareInterface
         $this->addOroriceListToProductForeignKeys($schema, $queries);
 
         $queries->addPostQuery(new FillPriceListToProduct());
-
     }
 
     /**

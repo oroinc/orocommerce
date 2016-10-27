@@ -13,13 +13,13 @@ use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
-use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroElementFactoryAware;
-use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ElementFactoryDictionary;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
+use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 
-class FeatureContext extends OroFeatureContext implements OroElementFactoryAware, KernelAwareContext
+class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
-    use ElementFactoryDictionary, KernelDictionary;
+    use PageObjectDictionary, KernelDictionary;
 
     /**
      * @var OroMainContext
@@ -103,7 +103,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     public function adminUserEditedWithNextData($shippingRule, TableNode $table)
     {
         $this->getMink()->setDefaultSessionName('second_session');
-        $this->getSession()->resizeWindow(1920, 1080, 'current');
+        $this->getSession()->resizeWindow(1920, 1880, 'current');
 
         $this->oroMainContext->loginAsUserWithPassword();
         $this->waitForAjax();
@@ -119,8 +119,9 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
 
         /** @var Form $form */
         $form = $this->createElement('Shipping Rule');
-        if (array_search('Country2', $table->getColumn(0))) {
-            $form->clickLink('Add');
+        if (in_array('Country2', $table->getColumn(0), true)) {
+            $destinationAdd = $form->find('css', '.add-list-item');
+            $destinationAdd->click();
         }
         $form->fill($table);
         $form->saveAndClose();
@@ -136,7 +137,7 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
     public function adminUserCreatedWithNextData($shoppingRuleName, TableNode $table)
     {
         $this->getMink()->setDefaultSessionName('second_session');
-        $this->getSession()->resizeWindow(1920, 1080, 'current');
+        $this->getSession()->resizeWindow(1920, 1880, 'current');
 
         $this->oroMainContext->loginAsUserWithPassword();
         $this->waitForAjax();
@@ -153,9 +154,17 @@ class FeatureContext extends OroFeatureContext implements OroElementFactoryAware
         $form = $this->createElement('Shipping Rule');
         $form->fillField('Name', $shoppingRuleName);
 
-        if (array_search('Country2', $table->getColumn(0))) {
+        // Add method type config
+        if (in_array('Type', $table->getColumn(0), true)) {
+            $shippingMethodConfigAdd = $form->find('css', '.add-method');
+            $shippingMethodConfigAdd->click();
+            $this->waitForAjax();
+        }
+
+        if (in_array('Country2', $table->getColumn(0), true)) {
             $form->fillField('Sort Order', '1');
-            $form->clickLink('Add');
+            $destinationAdd = $form->find('css', '.add-list-item');
+            $destinationAdd->click();
         }
 
         $form->fill($table);

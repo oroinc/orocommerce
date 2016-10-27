@@ -3,10 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\Action;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Provider\ShippingCostCalculationProvider;
 use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
+use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
 class DefaultShippingMethodSetter
 {
@@ -16,28 +14,20 @@ class DefaultShippingMethodSetter
     protected $contextProviderFactory;
 
     /**
-     * @var ShippingRulesProvider
+     * @var ShippingPriceProvider
      */
-    protected $rulesProvider;
-
-    /**
-     * @var ShippingCostCalculationProvider
-     */
-    protected $costCalculationProvider;
+    protected $priceProvider;
 
     /**
      * @param ShippingContextProviderFactory $contextProviderFactory
-     * @param ShippingRulesProvider $rulesProvider
-     * @param ShippingCostCalculationProvider $costCalculationProvider
+     * @param ShippingPriceProvider $priceProvider
      */
     public function __construct(
         ShippingContextProviderFactory $contextProviderFactory,
-        ShippingRulesProvider $rulesProvider,
-        ShippingCostCalculationProvider $costCalculationProvider
+        ShippingPriceProvider $priceProvider
     ) {
         $this->contextProviderFactory = $contextProviderFactory;
-        $this->rulesProvider = $rulesProvider;
-        $this->costCalculationProvider = $costCalculationProvider;
+        $this->priceProvider = $priceProvider;
     }
 
     /**
@@ -49,16 +39,14 @@ class DefaultShippingMethodSetter
             return;
         }
         $context = $this->contextProviderFactory->create($checkout);
-        $rules = $this->rulesProvider->getApplicableShippingRules($context);
-        if (count($rules) === 0) {
+        $methodsData = $this->priceProvider->getApplicableMethodsWithTypesData($context);
+        if (count($methodsData) === 0) {
             return;
         }
-        /** @var ShippingRule $rule */
-        $rule = reset($rules);
-        $config = $rule->getConfigurations()->first();
-        $checkout->setShippingMethod($config->getMethod());
-        $checkout->setShippingMethodType($config->getType());
-        $cost = $this->costCalculationProvider->calculatePrice($checkout, $config);
-        $checkout->setShippingCost($cost);
+        $methodData = reset($methodsData);
+        $typeData = reset($methodData['types']);
+        $checkout->setShippingMethod($methodData['identifier']);
+        $checkout->setShippingMethodType($typeData['identifier']);
+        $checkout->setShippingCost($typeData['price']);
     }
 }

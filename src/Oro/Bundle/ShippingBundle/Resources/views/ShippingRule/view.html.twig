@@ -1,6 +1,7 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroShippingBundle:ShippingRule:macros.html.twig' as ShipRuleMacro %}
 
 {% oro_title_set({params : {"%label%": entity.name|default('N/A') }}) %}
 
@@ -35,10 +36,10 @@
                     UI.renderList(entity.destinations)) }}
                 {% endif %}
 
-                {% if entity.configurations.count %}
+                {% if entity.methodConfigs.count %}
                     {{ UI.renderHtmlProperty(
-                    'oro.shipping.shippingrule.configurations.label'|trans,
-                    UI.renderList(entity.configurations)) }}
+                    'oro.shipping.shippingrule.method_configs.label'|trans,
+                    ShipRuleMacro.renderShippingMethodsConfigs(entity.methodConfigs)) }}
                 {% endif %}
             </div>
             <div class="responsive-block">
@@ -48,13 +49,13 @@
     {%- endset -%}
 
     {% set dataBlocks = [
-    {
-    'title': 'oro.entity_config.block_titles.general.label'|trans,
-    'class': 'active',
-    'subblocks': [
-    {'data' : [shippingRuleInformation]}
-    ]
-    }
+        {
+            'title': 'oro.entity_config.block_titles.general.label'|trans,
+            'class': 'active',
+            'subblocks': [
+                {'data' : [shippingRuleInformation]}
+            ]
+        }
     ] %}
 
     {% set id = 'shipping-rule-view' %}

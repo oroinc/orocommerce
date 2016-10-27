@@ -4,11 +4,11 @@ namespace Oro\Bundle\PricingBundle\Compiler;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
-use Oro\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter;
-use Oro\Bundle\PricingBundle\Expression\QueryExpressionBuilder;
-use Oro\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter;
+use Oro\Bundle\ProductBundle\Expression\NodeToQueryDesignerConverter;
+use Oro\Bundle\ProductBundle\Expression\QueryConverter;
+use Oro\Component\Expression\ExpressionParser;
+use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
+use Oro\Component\Expression\QueryExpressionBuilder;
 
 abstract class AbstractRuleCompiler
 {
@@ -18,12 +18,17 @@ abstract class AbstractRuleCompiler
     protected $expressionParser;
 
     /**
+     * @var ExpressionPreprocessorInterface
+     */
+    protected $expressionPreprocessor;
+
+    /**
      * @var NodeToQueryDesignerConverter
      */
     protected $nodeConverter;
 
     /**
-     * @var PriceListExpressionQueryConverter
+     * @var QueryConverter
      */
     protected $queryConverter;
 
@@ -39,19 +44,22 @@ abstract class AbstractRuleCompiler
 
     /**
      * @param ExpressionParser $parser
+     * @param ExpressionPreprocessorInterface $preprocessor
      * @param NodeToQueryDesignerConverter $nodeConverter
-     * @param PriceListExpressionQueryConverter $queryConverter
+     * @param QueryConverter $queryConverter
      * @param QueryExpressionBuilder $expressionBuilder
      * @param Cache $cache
      */
     public function __construct(
         ExpressionParser $parser,
+        ExpressionPreprocessorInterface $preprocessor,
         NodeToQueryDesignerConverter $nodeConverter,
-        PriceListExpressionQueryConverter $queryConverter,
+        QueryConverter $queryConverter,
         QueryExpressionBuilder $expressionBuilder,
         Cache $cache
     ) {
         $this->expressionParser = $parser;
+        $this->expressionPreprocessor = $preprocessor;
         $this->nodeConverter = $nodeConverter;
         $this->queryConverter = $queryConverter;
         $this->expressionBuilder = $expressionBuilder;
@@ -77,7 +85,7 @@ abstract class AbstractRuleCompiler
     {
         $select = [];
         foreach ($this->getOrderedFields() as $fieldName) {
-            $select[] = $fieldsMap[$fieldName];
+            $select[] = $fieldsMap[$fieldName] . ' ' . $fieldName;
         }
         $qb->select($select);
     }
