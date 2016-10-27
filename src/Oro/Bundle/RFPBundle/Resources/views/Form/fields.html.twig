@@ -70,8 +70,12 @@
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
     {% endif %}
-    <tr data-content="{{ name }}" data-validation-optional-group data-role="lineitem" {{ block('widget_container_attributes') }}
-        class="request-form-lineitem">
+    <tr data-content="{{ name }}"
+        data-validation-optional-group
+        data-role="lineitem" {{ block('widget_container_attributes') }}
+
+        class="request-form-lineitem"
+    >
         {{ form_widget(form) }}
         <td class="request-form-lineitem-unit--remove">
             <button type="button" class="removeRow item-remove button-icon gray fs18">
@@ -215,7 +219,7 @@
         <p class="request-form-note">
             Note: This item may be moved to a different quote later.
         </p>
-        
+
         <div class="row-oro">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}
@@ -263,9 +267,10 @@
     {% set page_component_options = form.vars.page_component_options|merge(form.vars.componentOptions|default({})) %}
     <div class="request-form-editline">
         <div data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
-            class="request-form-editline__inner"
-            data-page-component-module="{{ form.vars.page_component }}"
-            data-page-component-options="{{ page_component_options|json_encode }}"
+             class="request-form-editline__inner"
+             data-page-component-module="{{ form.vars.page_component }}"
+             data-page-component-options="{{ page_component_options|json_encode }}"
+             data-layout="separate"
             >
             {{ form_widget(form) }}
             {{ form_errors(form) }}
@@ -300,12 +305,14 @@
 {% endmacro %}
 
 {% block oro_rfp_request_product_collection_widget %}
-    <div class="rfp-lineitems"
-         data-page-component-module="oroui/js/app/components/view-component"
+    <div data-page-component-module="oroui/js/app/components/view-component"
          data-page-component-options="{{ {
              view: 'ororfp/js/app/views/line-items-view'
          }|json_encode }}"
-         data-layout="separate">
+         data-layout="separate"
+         data-layout-model="productModel"
+         class="rfp-lineitems"
+    >
         {{ block('oro_rfp_lineitem_collection_widget') }}
     </div>
 {% endblock %}
@@ -512,27 +519,44 @@
     {% set attr_quantity = layout_attr_defaults(attr, {
         'data-role': 'lineitem-quantity'
     }) %}
-    <td class="request-form-lineitem-unit">
+    <td class="request-form-lineitem-unit request-form-lineitem-unit--size-s">
         {{ form_widget(form.quantity, {attr: attr_quantity}) }}
         {{ form_errors(form.quantity) }}
     </td>
     {% set attr_unit = layout_attr_defaults(attr, {
-        class: 'rfp-requestproductitem-productunit-select',
+        '~class': 'select select--size-m select--full',
         'data-role': 'lineitem-unit'
     }) %}
-    <td class="request-form-lineitem-unit">
+    <td class="request-form-lineitem-unit request-form-lineitem-unit--size-m">
         {{ form_widget(form.productUnit, {attr: attr_unit}) }}
         {{ form_errors(form.productUnit) }}
     </td>
-    <td class="request-form-lineitem-unit--text-node">
-        <label>Target price:</label>
+    <td class="request-form-lineitem-unit"
+        data-page-component-module="oroui/js/app/components/view-component"
+        data-page-component-options="{{ {
+            view: 'oropricing/js/app/views/line-item-product-prices-view',
+            templates: {
+                pricesHint: '#frontend-product-prices-tier-button-template'
+            },
+            elements: {
+                priceValue: '[data-name="field__currency"]'
+            }
+        }|json_encode }}"
+        data-layout="separate"
+    >
+        {% set input_price = layout_attr_defaults(attr, {
+            '~class': 'request-form-lineitem-unit__input'
+        }) %}
+
+        {{ form_widget(form.price.value, {attr: input_price}) }}
+        {{ form_widget(form.price.currency) }}
+        {{ form_errors(form.price) }}
     </td>
     {% set attr_price = layout_attr_defaults(attr, {
         'data-role': 'lineitem-price'
     }) %}
-    <td class="request-form-lineitem-unit">
-        {{ form_widget(form.price.value, {attr: attr_price}) }}
-        {{ form_errors(form.price.value) }}
+    <td class="request-form-lineitem-unit--text-node">
+        <label>Target price:</label>
     </td>
     {% set attr_currency = layout_attr_defaults(attr, {
         'data-role': 'lineitem-currency'

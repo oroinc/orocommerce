@@ -57,7 +57,7 @@ define(function(require) {
             var prices = {};
 
             var productId = this.model.get('id');
-            if (productId.length !== 0) {
+            if (!_.isUndefined(productId) && productId.length !== 0) {
                 prices = tierPrices[productId] || {};
             }
 
@@ -76,7 +76,8 @@ define(function(require) {
          */
         collectLineItems: function(items) {
             var productId = this.model.get('id');
-            if (productId.length) {
+
+            if (!_.isUndefined(productId) && productId.length) {
                 items.push({
                     product: productId,
                     unit: this.model.get('unit'),

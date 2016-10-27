@@ -14,6 +14,15 @@ layout:
                 - 'oro.customer.menu.account_user.label'
                 - 'oro.frontend.rfp.request.entity_plural_label'
                 - 'oro.frontend.rfp.request.create_title.label'
+        - '@appendOption':
+            id: rfp_form_lineitems_container
+            optionName: vars.tierPrices
+            optionValue:
+                1:
+                    currency: 'USD'
+                    price: '17.0900'
+                    quantity: '1'
+                    unit: 'item'
 
         - '@add':
             id: oro_rfp_request_form_title

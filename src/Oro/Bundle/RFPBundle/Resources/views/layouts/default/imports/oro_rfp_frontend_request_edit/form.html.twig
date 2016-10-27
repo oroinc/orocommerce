@@ -50,7 +50,10 @@
 {%- endblock -%}
 
 {% block form_widget_simple %}
-    {% set attr = attr|merge({ class: attr.class|default('input input--full input--size-m') }) %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' input input--full input--size-m'
+    }) %}
+
     {{ parent() }}
 {% endblock %}
 

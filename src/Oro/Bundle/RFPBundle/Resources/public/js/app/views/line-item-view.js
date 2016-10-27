@@ -90,8 +90,7 @@ define(function(require) {
                 .on('change', this.options.selectors.productSelector, _.bind(this.onProductChanged, this))
                 .on('content:changed', _.bind(this.onContentChanged, this))
             ;
-
-            this.checkAddButton();
+            this.initLayout().done(_.bind(this.checkAddButton, this));
         },
 
         checkAddButton: function() {

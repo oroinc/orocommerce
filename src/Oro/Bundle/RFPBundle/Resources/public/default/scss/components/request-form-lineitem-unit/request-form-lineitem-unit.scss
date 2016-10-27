@@ -5,6 +5,24 @@
         padding-left: 5px;
     }
 
+    &__input {
+        width: 90px;
+
+        text-align: right;
+
+        border-radius: 3px 0 0 3px;
+    }
+
+    &--size {
+        &-s {
+            width: 50px;
+        }
+
+        &-m {
+            width: 90px;
+        }
+    }
+
     &--text-node {
         @extend .request-form-lineitem-unit;
         

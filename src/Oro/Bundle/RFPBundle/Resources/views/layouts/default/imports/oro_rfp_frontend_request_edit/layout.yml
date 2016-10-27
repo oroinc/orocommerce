@@ -18,6 +18,8 @@ layout:
                     blockType: form_fields
                     options:
                         form: '=data["oro_rfp_request_form"].getRequestForm(data["entity"])'
+                __rfp_form_lineitems_container:
+                    blockType: container
                 __rfp_form_lineitems:
                     blockType: form_fields
                     options:
@@ -47,7 +49,8 @@ layout:
                     __rfp_form_start: ~
                     __rfp_form_edit_container:
                         __rfp_form_fields: ~
-                    __rfp_form_lineitems: ~
+                    __rfp_form_lineitems_container:
+                        __rfp_form_lineitems: ~
                     __rfp_form_actions:
                         __rfp_form_actions_back: ~
                         __rfp_form_actions_create: ~

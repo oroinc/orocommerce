@@ -4,16 +4,15 @@ define(function(require) {
     var LineItemsView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var routing = require('routing');
-    var mediator = require('oroui/js/mediator');
-    var BaseView = require('oroui/js/app/views/base/view');
+    var LineItemProductView = require('oroproduct/js/app/views/line-item-product-view');
+    var ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
 
     /**
      * @export ororfp/js/app/views/line-items-view
      * @extends oroui.app.views.base.View
      * @class ororfp.app.views.LineItemsView
      */
-    LineItemsView = BaseView.extend({
+    LineItemsView = LineItemProductView.extend({
         /**
          * @property {Object}
          */
@@ -35,6 +34,16 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
+
+            LineItemsView.__super__.initialize.apply(this, arguments);
+
+            this.subview('productsPricesComponent', new ProductsPricesComponent({
+                _sourceElement: this.$el,
+                tierPrices: this.options.tierPrices,
+                currency: this.options.currency,
+                tierPricesRoute: this.options.tierPricesRoute
+            }));
+
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
         },
 
