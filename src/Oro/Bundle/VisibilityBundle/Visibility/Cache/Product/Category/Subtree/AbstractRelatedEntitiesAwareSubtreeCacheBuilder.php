@@ -9,6 +9,7 @@ use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 
 abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractSubtreeCacheBuilder
@@ -246,12 +247,12 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             ->join('accountCategoryVisibility.scope', 'scope')
             ->join('scope.account', 'scopeAccount')
             ->where($qb->expr()->eq('accountCategoryVisibility.category', ':category'))
-            ->andWhere($qb->expr()->in('scopeAccount.group', ':accountGroupIds'))
             ->andWhere($qb->expr()->eq('scope.account', 'account.id'));
 
         $qb->select('account.id')
             ->from('OroCustomerBundle:Account', 'account')
             ->where($qb->expr()->not($qb->expr()->exists($subQb->getDQL())))
+            ->andWhere($qb->expr()->in('account.group', ':accountGroupIds'))
 
             ->setParameters([
                 'category' => $category,
@@ -332,7 +333,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             return;
         }
         $scopes = $this->scopeManager->findRelatedScopeIds(
-            'account_product_visibility',
+            AccountProductVisibility::VISIBILITY_TYPE,
             ['account' => $accountIds]
         );
         if (!$scopes) {
@@ -352,7 +353,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
                 'category' => $category
             ]);
 
-        $qb->getQuery()->execute();
+        $res = $qb->getQuery()->execute();
     }
 
     /**
@@ -365,7 +366,10 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         if (!$accountIds) {
             return;
         }
-        $scopes = $this->scopeManager->findRelatedScopeIds('account_category_visibility', ['account' => $accountIds]);
+        $scopes = $this->scopeManager->findRelatedScopeIds(
+            AccountCategoryVisibility::VISIBILITY_TYPE,
+            ['account' => $accountIds]
+        );
         if (!$scopes) {
             return;
         }
@@ -401,7 +405,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             return;
         }
         $scopes = $this->scopeManager->findRelatedScopeIds(
-            'account_group_category_visibility',
+            AccountGroupCategoryVisibility::VISIBILITY_TYPE,
             ['accountGroup' => $accountGroupIds]
         );
         if (!$scopes) {

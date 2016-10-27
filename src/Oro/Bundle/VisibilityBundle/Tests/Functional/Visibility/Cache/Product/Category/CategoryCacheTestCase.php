@@ -28,14 +28,7 @@ abstract class CategoryCacheTestCase extends WebTestCase
      */
     protected function assertProductVisibilityResolvedCorrect(array $expectedData)
     {
-        $this->assertEquals($expectedData, [
-            'hiddenCategories' => $this->getHiddenCategories(),
-            'hiddenCategoriesByAccountGroups' => $this->getHiddenCategoriesByAccountGroups(),
-            'hiddenCategoriesByAccounts' => $this->getHiddenCategoriesByAccounts(),
-            'hiddenProducts' => $this->getHiddenProducts(),
-            'hiddenProductsByAccountGroups' => $this->getHiddenProductsByAccountGroups(),
-            'hiddenProductsByAccounts' => $this->getHiddenProductsByAccounts(),
-        ]);
+        $this->assertEquals($expectedData, $this->fetchVisibility());
     }
 
     /**
@@ -218,5 +211,20 @@ abstract class CategoryCacheTestCase extends WebTestCase
             ->addOrderBy('title');
 
         $this->joinDefaultLocalizedValue($queryBuilder, 'category.titles', 'categoryTitles', 'title');
+    }
+
+    /**
+     * @return array
+     */
+    protected function fetchVisibility()
+    {
+        return [
+            'hiddenCategories' => $this->getHiddenCategories(),
+            'hiddenCategoriesByAccountGroups' => $this->getHiddenCategoriesByAccountGroups(),
+            'hiddenCategoriesByAccounts' => $this->getHiddenCategoriesByAccounts(),
+            'hiddenProducts' => $this->getHiddenProducts(),
+            'hiddenProductsByAccountGroups' => $this->getHiddenProductsByAccountGroups(),
+            'hiddenProductsByAccounts' => $this->getHiddenProductsByAccounts(),
+        ];
     }
 }

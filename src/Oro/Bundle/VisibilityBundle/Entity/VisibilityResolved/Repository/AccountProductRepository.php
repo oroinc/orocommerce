@@ -14,8 +14,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityR
 
 /**
  * Composite primary key fields order:
- *  - account
- *  - website
+ *  - scope
  *  - product
  */
 class AccountProductRepository extends AbstractVisibilityRepository
@@ -122,14 +121,14 @@ class AccountProductRepository extends AbstractVisibilityRepository
         ->innerJoin('apv.scope', 'scope')
         ->innerJoin('scope.account', 'account')
         ->innerJoin('OroCatalogBundle:Category', 'category', 'WITH', 'apv.product MEMBER OF category.products')
-        ->innerJoin('OroScopeBundle:Scope', 'acvr_scope', 'WITH', 'acvr_scope.account = scope.account')
+        ->leftJoin('OroScopeBundle:Scope', 'acvr_scope', 'WITH', 'acvr_scope.account = scope.account')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
             'acvr',
             'WITH',
             'acvr.scope = acvr_scope AND acvr.category = category'
         )
-        ->innerJoin('OroScopeBundle:Scope', 'agcvr_scope', 'WITH', 'agcvr_scope.accountGroup = account.group')
+        ->leftJoin('OroScopeBundle:Scope', 'agcvr_scope', 'WITH', 'agcvr_scope.accountGroup = account.group')
         ->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
             'agcvr',

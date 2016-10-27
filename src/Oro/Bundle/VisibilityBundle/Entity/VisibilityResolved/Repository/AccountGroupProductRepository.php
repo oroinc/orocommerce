@@ -12,8 +12,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityR
 
 /**
  * Composite primary key fields order:
- *  - accountGroup
- *  - website
+ *  - scope
  *  - product
  */
 class AccountGroupProductRepository extends AbstractVisibilityRepository

@@ -152,7 +152,8 @@ services:
         calls:
             - [setCacheClass, ['%oro_visibility.entity.account_group_category_visibility_resolved.class%']]
             - [setVisibilityChangeAccountSubtreeCacheBuilder, ["@oro_visibility.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder"]]
-            - [setCategoryVisibilityHolder, ['@oro_visibility.account_group_category_repository_holder']]
+            - [setRepositoryHolder, ['@oro_visibility.category_repository_holder']]
+            - [setAccountGroupCategoryVisibilityHolder, ['@oro_visibility.account_group_category_repository_holder']]
 
     oro_visibility.visibility.cache.product.category.account_category_resolved_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\AccountCategoryResolvedCacheBuilder'
@@ -161,7 +162,7 @@ services:
         calls:
             - [setCacheClass, ['%oro_visibility.entity.account_category_visibility_resolved.class%']]
             - [setVisibilityChangeAccountSubtreeCacheBuilder, ["@oro_visibility.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder"]]
-            - [setCategoryVisibilityHolder, ['@oro_visibility.account_category_repository_holder']]
+            - [setRepositoryHolder, ['@oro_visibility.account_category_repository_holder']]
 
     oro_visibility.visibility.cache.product.category.category_resolved_cache_builder:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CategoryResolvedCacheBuilder'

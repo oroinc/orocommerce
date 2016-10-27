@@ -188,4 +188,16 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
             ->getManagerForClass('OroWebsiteBundle:Website')
             ->getRepository('OroWebsiteBundle:Website')->findOneBy(['name' => 'Default']);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getScope($targetEntityReference)
+    {
+        $targetEntity = $this->getReference($targetEntityReference);
+        return $this->scopeManager->find(
+            AccountProductVisibility::VISIBILITY_TYPE,
+            ['account' => $targetEntity]
+        );
+    }
 }

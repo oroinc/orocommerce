@@ -59,18 +59,21 @@ trait VisibilityTrait
         Category $category,
         AccountGroup $accountGroup
     ) {
+        $scope = $this->scopeManager->findOrCreate(
+            AccountGroupCategoryVisibility::VISIBILITY_TYPE,
+            ['accountGroup' => $accountGroup]
+        );
         $entity = $registry->getManagerForClass('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility')
             ->getRepository('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility')
             ->findOneBy([
                 'category' => $category,
-                'accountGroup' => $accountGroup,
+                'scope' => $scope,
             ]);
-
         if (!$entity) {
             $entity = (new AccountGroupCategoryVisibility());
             $entity->setTargetEntity($category)
                 ->setVisibility($entity->getDefault($entity->getTargetEntity()))
-                ->setAccountGroup($accountGroup);
+                ->setScope($scope);
         }
         return $entity;
     }
@@ -83,18 +86,22 @@ trait VisibilityTrait
      */
     public function getCategoryVisibilityForAccount(ManagerRegistry $registry, Category $category, Account $account)
     {
+        $scope = $this->scopeManager->findOrCreate(
+            AccountCategoryVisibility::VISIBILITY_TYPE,
+            ['account' => $account]
+        );
         $entity = $registry->getManagerForClass('OroVisibilityBundle:Visibility\AccountCategoryVisibility')
             ->getRepository('OroVisibilityBundle:Visibility\AccountCategoryVisibility')
             ->findOneBy([
                 'category' => $category,
-                'account' => $account,
+                'scope' => $scope,
             ]);
 
         if (!$entity) {
             $entity = (new AccountCategoryVisibility());
             $entity->setTargetEntity($category)
                 ->setVisibility($entity->getDefault($entity->getTargetEntity()))
-                ->setAccount($account);
+                ->setScope($scope);
         }
         return $entity;
     }

@@ -159,7 +159,7 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
     protected function createAccountProductVisibilityResolved(Account $account, Product $product)
     {
         $scope = $this->scopeManager->findOrCreate(
-            'account_product_visibility',
+            AccountProductVisibility::VISIBILITY_TYPE,
             ['account' => $account]
         );
         $accountVisibility = (new AccountProductVisibility())

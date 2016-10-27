@@ -2,15 +2,18 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Model;
 
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData as AccountLoadAccountUserData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * @dbIsolation
@@ -49,7 +52,11 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()->getMock();
 
-        $this->modifier = $this->getContainer()->get('oro_visibility.model.product_visibility_query_builder_modifier');
+        $this->modifier = new ProductVisibilityQueryBuilderModifier(
+            $this->configManager,
+            $this->getContainer()->get('oro_scope.scope_manager')
+        );
+
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
     }
 
@@ -62,12 +69,14 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      */
     public function testModify($configValue, $user, $expectedData)
     {
-        $this->markTestSkipped('Fix after issue BB-4606 will be solved');
-
         if ($user) {
+            /** @var AccountUser $user */
             $user = $this->getReference($user);
+            $token = new UsernamePasswordToken($user, $user->getPassword(), 'key');
+            $this->client->getContainer()->get('security.token_storage')->setToken($token);
+        } else {
+            $this->client->getContainer()->get('security.token_storage')->setToken(null);
         }
-        $this->setupTokenStorage($user);
 
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
             ->select('p.sku')->orderBy('p.sku');
@@ -104,6 +113,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.1',
                     'product.5',
                     'product.6',
+                    'product.7',
                 ]
             ],
             'config hidden' => [
@@ -111,7 +121,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'user' => AccountLoadAccountUserData::EMAIL,
                 'expectedData' => [
                     'product.1',
-                    'product.6',
+                    'product.7',
                 ]
             ],
             'anonymous config visible' => [
@@ -123,6 +133,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.3',
                     'product.5',
                     'product.6',
+                    'product.7',
+                    'product.8',
                 ]
             ],
             'anonymous config hidden' => [
@@ -131,7 +143,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'expectedData' => [
                     'product.2',
                     'product.3',
-                    'product.6',
                 ]
             ],
             'group config visible' => [
@@ -141,6 +152,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.1',
                     'product.3',
                     'product.6',
+                    'product.7',
+                    'product.8',
                 ]
             ],
             'account without group and config visible' => [
@@ -153,6 +166,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.4',
                     'product.5',
                     'product.6',
+                    'product.7',
+                    'product.8',
                 ]
             ],
             'account without group and config hidden' => [
@@ -162,7 +177,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.2',
                     'product.3',
                     'product.4',
-                    'product.6',
                 ]
             ],
         ];
@@ -170,7 +184,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
     public function testVisibilityProductSystemConfigurationPathNotSet()
     {
-        $this->markTestSkipped('Fix after issue BB-4606 will be solved');
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
             ->select('p.sku')->orderBy('p.sku');
 
@@ -181,7 +194,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
     public function testVisibilityProductCategoryConfigurationPathNotSet()
     {
-        $this->markTestSkipped('Fix after issue BB-4606 will be solved');
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
             ->select('p.sku')->orderBy('p.sku');
 
@@ -192,23 +204,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
     }
 
     /**
-     * @param object|null $user
-     * todo fix BB-4506
-     */
-    protected function setupTokenStorage($user = null)
-    {
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $token->expects($this->any())
-            ->method('getUser')
-            ->willReturn($user);
-
-        $this->tokenStorage->expects($this->any())
-            ->method('getToken')
-            ->willReturn($token);
-    }
-
-    /**
-     * @return \Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository
+     * @return ProductRepository
      */
     protected function getProductRepository()
     {

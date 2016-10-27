@@ -10,6 +10,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
@@ -67,7 +68,7 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
         $this->builder->setCacheClass(
             $container->getParameter('oro_visibility.entity.account_category_visibility_resolved.class')
         );
-        $this->builder->setCategoryVisibilityHolder(
+        $this->builder->setRepositoryHolder(
             $container->get('oro_visibility.account_category_repository_holder')
         );
         $subtreeBuilder = new VisibilityChangeAccountSubtreeCacheBuilder(
@@ -464,9 +465,12 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
      */
     protected function getResolvedVisibilities()
     {
-        return $this->getContainer()->get('doctrine')
+        /** @var AccountCategoryRepository $repository */
+        $repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+
+        return $repository
             ->createQueryBuilder('entity')
             ->select(
                 'IDENTITY(entity.category) as category',
@@ -486,7 +490,9 @@ class AccountCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCac
     {
         $em = $this->registry
             ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
-        $qb = $em->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+        /** @var AccountCategoryRepository $repository */
+        $repository = $em->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+        $qb = $repository
             ->createQueryBuilder('accountCategoryVisibilityResolved');
         $entity = $qb->select('accountCategoryVisibilityResolved', 'accountCategoryVisibility')
             ->leftJoin('accountCategoryVisibilityResolved.sourceCategoryVisibility', 'accountCategoryVisibility')

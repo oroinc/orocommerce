@@ -6,10 +6,11 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountGroupCategoryVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\RepositoryHolder;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeGroupSubtreeCacheBuilder;
 
@@ -21,7 +22,7 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
     /**
      * @var RepositoryHolder
      */
-    protected $categoryVisibilityHolder;
+    protected $accountGroupCategoryVisibilityHolder;
 
     /**
      * @param VisibilityChangeGroupSubtreeCacheBuilder $visibilityChangeAccountGroupSubtreeCacheBuilder
@@ -48,7 +49,7 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
         $update = [];
         $where = ['scope' => $scope, 'category' => $category];
 
-        $repository = $this->getRepository();
+        $repository = $this->getAccountGroupCategoryVisibilityRepository();
 
         $hasAccountGroupCategoryVisibilityResolved = $repository->hasEntity($where);
 
@@ -77,8 +78,7 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
                 $delete = true;
             }
 
-            $visibility = $this->getRepository()
-                ->getFallbackToAllVisibility($category);
+            $visibility = $this->getRepository()->getFallbackToAllVisibility($category);
         } elseif ($selectedVisibility === AccountGroupCategoryVisibility::PARENT_CATEGORY) {
             list($visibility, $source) = $this->getParentCategoryVisibilityAndSource($category, $scope);
             $update = [
@@ -105,7 +105,8 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
         $parentCategory = $category->getParentCategory();
         if ($parentCategory) {
             return [
-                $this->getRepository()->getFallbackToGroupVisibility($parentCategory, $scope),
+                $this->getAccountGroupCategoryVisibilityRepository()
+                    ->getFallbackToGroupVisibility($parentCategory, $scope),
                 AccountGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY
             ];
         } else {
@@ -114,23 +115,6 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
                 AccountGroupCategoryVisibilityResolved::SOURCE_STATIC
             ];
         }
-    }
-
-    /**
-     * @return EntityManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->registry
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
-    }
-
-    /**
-     * @return AccountGroupCategoryRepository
-     */
-    protected function getRepository()
-    {
-        return $this->categoryVisibilityHolder->getRepository();
     }
 
     /**
@@ -146,7 +130,7 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
      */
     public function buildCache(Scope $scope = null)
     {
-        $resolvedRepository = $this->getRepository();
+        $resolvedRepository = $this->getAccountGroupCategoryVisibilityRepository();
 
         // clear table
         $resolvedRepository->clearTable();
@@ -215,12 +199,36 @@ class AccountGroupCategoryResolvedCacheBuilder extends AbstractResolvedCacheBuil
         return $resolvedVisibility;
     }
 
-
     /**
      * @param RepositoryHolder $categoryVisibilityHolder
      */
-    public function setCategoryVisibilityHolder($categoryVisibilityHolder)
+    public function setAccountGroupCategoryVisibilityHolder($categoryVisibilityHolder)
     {
-        $this->categoryVisibilityHolder = $categoryVisibilityHolder;
+        $this->accountGroupCategoryVisibilityHolder = $categoryVisibilityHolder;
+    }
+
+    /**
+     * @return AccountGroupCategoryVisibilityRepository
+     */
+    protected function getAccountGroupCategoryVisibilityRepository()
+    {
+        return $this->accountGroupCategoryVisibilityHolder->getRepository();
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->registry
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
+    }
+
+    /**
+     * @return CategoryRepository
+     */
+    protected function getRepository()
+    {
+        return $this->repositoryHolder->getRepository();
     }
 }
