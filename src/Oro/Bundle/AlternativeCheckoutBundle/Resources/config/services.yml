@@ -17,7 +17,7 @@ services:
     oro_alternativecheckout.model.action.checkout_to_quote:
         class: 'Oro\Bundle\AlternativeCheckoutBundle\Model\Action\AlternativeCheckoutByQuote'
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@doctrine'
         tags:
             - { name: oro_action.action, alias: alternative_checkout_to_quote }

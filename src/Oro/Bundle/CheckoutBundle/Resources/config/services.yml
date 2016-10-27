@@ -60,7 +60,7 @@ services:
     oro_checkout.model.action.get_order_line_items:
         class: 'Oro\Bundle\CheckoutBundle\Model\Action\GetOrderLineItems'
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
             - { name: oro_action.action, alias: get_order_line_items }
@@ -78,7 +78,7 @@ services:
             - [setCheckoutClass, ['%oro_checkout.entity.checkout.class%']]
             - [setCheckoutRoute, ['oro_checkout_frontend_checkout']]
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@doctrine'
             - '@oro_website.manager'
             - '@oro_pricing.user_currency_manager'
@@ -300,7 +300,7 @@ services:
     oro_checkout.workflow_state.action.get_checkout_state:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Action\GetCheckoutStateAction'
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
         tags:
             - { name: oro_action.action, alias: get_checkout_state }
@@ -308,7 +308,7 @@ services:
     oro_checkout.workflow_state.action.save_checkout_state:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Action\SaveCheckoutStateAction'
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
         tags:
             - { name: oro_action.action, alias: save_checkout_state }
@@ -316,7 +316,7 @@ services:
     oro_checkout.workflow_state.action.delete_checkout_state:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Action\DeleteCheckoutStateAction'
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@oro_checkout.workflow_state.storage.checkout_state_diff_storage'
         tags:
             - { name: oro_action.action, alias: delete_checkout_state }
@@ -324,7 +324,7 @@ services:
     oro_checkout.workflow_state.action.generate_checkout_state_snapshot:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Action\GenerateCheckoutStateSnapshotAction'
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@oro_checkout.workflow_state.manager.checkout_state_diff'
         tags:
             - { name: oro_action.action, alias: generate_checkout_state_snapshot }
@@ -399,7 +399,7 @@ services:
     oro_checkout.model.action.create_order:
         class: 'Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder'
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@oro_checkout.mapper.order_mapper'
         tags:
             - { name: oro_action.action, alias: create_order }

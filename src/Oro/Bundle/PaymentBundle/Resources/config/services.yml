@@ -134,7 +134,7 @@ services:
     oro_payment.action.payment_method_action.abstract:
         abstract: true
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@oro_payment.payment_method.registry'
             - '@oro_payment.provider.payment_transaction'
             - '@router'

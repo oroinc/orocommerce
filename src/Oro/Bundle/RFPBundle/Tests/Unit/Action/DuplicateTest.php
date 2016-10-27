@@ -8,7 +8,7 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\RFPBundle\Action\Duplicate;
 use Oro\Bundle\RFPBundle\Factory\DuplicatorFactory;
 
-use Oro\Component\Action\Model\ContextAccessor;
+use Oro\Component\ConfigExpression\ContextAccessor;
 
 class DuplicateTest extends \PHPUnit_Framework_TestCase
 {

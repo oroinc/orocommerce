@@ -6,7 +6,7 @@ use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
-use Oro\Component\Action\Model\ContextAccessor;
+use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class AssignCurrentWebsite extends AbstractAction

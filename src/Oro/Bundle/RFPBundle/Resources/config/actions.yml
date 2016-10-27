@@ -2,7 +2,7 @@ services:
     oro_rfp.action.duplicate:
         class: 'Oro\Bundle\RFPBundle\Action\Duplicate'
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
         calls:
           - [setDuplicatorFactory, ['@oro_rfp.factory.duplicator_factory']]
         tags:
