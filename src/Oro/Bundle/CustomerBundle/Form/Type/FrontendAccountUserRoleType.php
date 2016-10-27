@@ -35,7 +35,6 @@ class FrontendAccountUserRoleType extends AbstractAccountUserRoleType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $options['hide_self_managed'] = true;
         parent::buildForm($builder, $options);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'updateAccountUsers']);
@@ -85,6 +84,7 @@ class FrontendAccountUserRoleType extends AbstractAccountUserRoleType
             [
                 'access_level_route' => 'oro_account_frontend_acl_access_levels',
                 'predefined_role' => null,
+                'hide_self_managed' => true
             ]
         );
     }
