@@ -24,20 +24,21 @@ define(function(require) {
             if (this.options.isMobile) {
                 var windowHeight = $(window).height();
                 var menuHeight =  windowHeight - this.options._sourceElement.height();
-                var dropdown = this.options._sourceElement.find('.header-row__dropdown-mobile');
-                var dropdownHeight = dropdown.height();
+                var dropdowns = this.options._sourceElement.find('.header-row__dropdown-mobile');
 
-                if (dropdownHeight >= windowHeight) {
-                    this.options._sourceElement
-                        .find('.header-row__dropdown-mobile')
-                        .addClass('header-row__dropdown-mobile--scroll');
+                $.each(dropdowns, function(index, dropdown) {
+                    var dropdownHeight = $(dropdown).height();
 
-                    this.options._sourceElement
-                        .find('.header-row__toggle')
-                        .css('height', menuHeight);
-                }
+                    if (dropdownHeight >= windowHeight) {
+                        $(dropdown)
+                            .addClass('header-row__dropdown-mobile--scroll');
+
+                        $(dropdown)
+                            .parent()
+                            .css('height', menuHeight);
+                    }
+                });
             }
-
         }
     });
 
