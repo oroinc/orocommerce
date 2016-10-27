@@ -2,32 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\ProductBundle\Event\FormTypeConfigureOptionsEvent;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 
 class ProductRowType extends AbstractProductAwareType
 {
     const NAME = 'oro_product_row';
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @param EventDispatcherInterface $eventDispatcher
-     */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
-    {
-        $this->eventDispatcher = $eventDispatcher;
-    }
 
     /**
      * {@inheritdoc}
@@ -59,21 +44,10 @@ class ProductRowType extends AbstractProductAwareType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $dispatcher = $this->eventDispatcher;
         $resolver->setDefaults(
             [
                 'validation_required' => false,
-                'data_class' => 'Oro\Bundle\ProductBundle\Model\ProductRow',
-                'constraints' => function (Options $options) use ($dispatcher) {
-                    // set basic constraints
-                    $selfConstraints = [];
-
-                    $event = new FormTypeConfigureOptionsEvent();
-                    $event->setOption('constraints', $selfConstraints);
-                    $dispatcher->dispatch('product_row_type.constraints', $event);
-
-                    return $event->getOption('constraints');
-                },
+                'data_class' => 'Oro\Bundle\ProductBundle\Model\ProductRow'
             ]
         );
         $resolver->setAllowedTypes('validation_required', 'bool');

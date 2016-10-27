@@ -1,3 +1,11 @@
+Oro\Bundle\ProductBundle\Entity\Product:
+    constraints:
+        - Oro\Bundle\WarehouseBundle\Validator\Constraints\ProductQuantityToOrderLimit: ~
+
+Oro\Bundle\ProductBundle\Model\ProductRow:
+    constraints:
+        - Oro\Bundle\WarehouseBundle\Validator\Constraints\ProductRowQuantity: { groups: [not_request_for_quote] }
+
 Oro\Bundle\WarehouseBundle\Entity\Warehouse:
     properties:
         owner:

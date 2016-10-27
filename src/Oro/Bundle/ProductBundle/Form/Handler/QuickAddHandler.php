@@ -82,13 +82,7 @@ class QuickAddHandler
         }
 
         $processor = $this->getProcessor($this->getComponentName($request));
-
-        $options = [];
-        $collection = $this->quickAddRowCollectionBuilder->buildFromRequest($request);
-        $options['products'] = $collection->getProducts();
-        if ($processor) {
-            $options['validation_required'] = $processor->isValidationRequired();
-        }
+        $options = $this->configureFormOptions($request, $processor);
 
         $form = $this->productFormProvider->getQuickAddForm([], $options)->getForm();
         $form->submit($request);
@@ -204,5 +198,33 @@ class QuickAddHandler
     protected function getProcessor($name)
     {
         return $this->componentRegistry->getProcessorByName($name);
+    }
+
+    /**
+     * @param Request $request
+     * @param ComponentProcessorInterface|null $processor
+     * @return array
+     */
+    protected function configureFormOptions(Request $request, ComponentProcessorInterface $processor = null)
+    {
+        $options = [];
+        $collection = $this->quickAddRowCollectionBuilder->buildFromRequest($request);
+        $options['products'] = $collection->getProducts();
+
+        if ($processor) {
+            $options['validation_required'] = $processor->isValidationRequired();
+        }
+
+        $formParams = $request->get(QuickAddType::NAME);
+        if ($formParams
+            && isset($formParams['component'])
+            && $formParams['component'] == 'oro_rfp_quick_add_processor'
+        ) {
+            $options['validation_groups'] = ['Default'];
+        } else {
+            $options['validation_groups'] = ['Default', 'not_request_for_quote'];
+        }
+
+        return $options;
     }
 }

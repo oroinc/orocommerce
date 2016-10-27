@@ -17,10 +17,12 @@ class ProductRowQuantityValidator extends ConstraintValidator
      * @var QuantityToOrderValidator
      */
     protected $quantityValidatorService;
+
     /**
      * @var DoctrineHelper
      */
     protected $doctrineHelper;
+
     /**
      * @var TranslatorInterface
      */

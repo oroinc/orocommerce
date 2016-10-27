@@ -148,13 +148,3 @@ services:
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }
-
-    oro_warehouse.event_listener.product_row_type_listener:
-        class: Oro\Bundle\WarehouseBundle\EventListener\ProductRowTypeListener
-        tags:
-            - { name: kernel.event_listener, event: product_row_type.constraints, method: onConstraintsConfigureOptions }
-
-    oro_warehouse.event_listener.product_type_listener:
-        class: Oro\Bundle\WarehouseBundle\EventListener\ProductTypeListener
-        tags:
-            - { name: kernel.event_listener, event: product_type.constraints, method: onConstraintsConfigureOptions }

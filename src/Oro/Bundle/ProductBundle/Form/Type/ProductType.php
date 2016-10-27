@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -16,7 +14,6 @@ use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Event\FormTypeConfigureOptionsEvent;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 
 class ProductType extends AbstractType
@@ -34,20 +31,12 @@ class ProductType extends AbstractType
     private $provider;
 
     /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
      * @param DefaultProductUnitProviderInterface $provider
-     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
-        DefaultProductUnitProviderInterface $provider,
-        EventDispatcherInterface $eventDispatcher
+        DefaultProductUnitProviderInterface $provider
     ) {
         $this->provider = $provider;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -244,22 +233,11 @@ class ProductType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $dispatcher = $this->eventDispatcher;
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
                 'intention' => 'product',
-                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
-                'constraints' => function (Options $options) use ($dispatcher) {
-                    // set basic constraints
-                    $selfConstraints = [];
-
-                    $event = new FormTypeConfigureOptionsEvent();
-                    $event->setOption('constraints', $selfConstraints);
-                    $dispatcher->dispatch('product_type.constraints', $event);
-
-                    return $event->getOption('constraints');
-                },
+                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
             ]
         );
     }
