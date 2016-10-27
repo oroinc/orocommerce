@@ -173,7 +173,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         $websiteSearchQuery->method('getQuery')
             ->will($this->returnValue($query));
 
-        $expr = Criteria::expr()->startsWith('text.cat_path', $this->category->getMaterializedPath());
+        $expr = Criteria::expr()->eq('text.cat_path', $this->category->getMaterializedPath());
 
         $websiteSearchQuery->expects($this->once())
             ->method('addWhere')

@@ -78,17 +78,22 @@ class SearchCategoryFilteringEventListener
             return;
         }
 
-        $this->applyCategoryToQuery($datasource->getSearchQuery(), $categoryId);
+        $this->applyCategoryToQuery($datasource->getSearchQuery(), $categoryId, $includeSubcategories);
     }
 
     /**
      * @param SearchQueryInterface $query
-     * @param array|int            $categoryId
+     * @param array|int $categoryId
+     * @param bool $includeSubcategories
      */
-    private function applyCategoryToQuery(SearchQueryInterface $query, $categoryId)
+    private function applyCategoryToQuery(SearchQueryInterface $query, $categoryId, $includeSubcategories = false)
     {
         $category = $this->repository->find($categoryId);
 
-        $query->addWhere(Criteria::expr()->startsWith('text.cat_path', $category->getMaterializedPath()));
+        if ($includeSubcategories) {
+            $query->addWhere(Criteria::expr()->startsWith('text.cat_path', $category->getMaterializedPath()));
+        } else {
+            $query->addWhere(Criteria::expr()->eq('text.cat_path', $category->getMaterializedPath()));
+        }
     }
 }
