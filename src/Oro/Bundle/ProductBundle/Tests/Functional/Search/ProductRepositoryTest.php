@@ -12,6 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -25,6 +26,29 @@ class ProductRepositoryTest extends WebTestCase
 
     protected function setUp()
     {
+        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->getContainer()->get('request_stack')->push(Request::create(''));
+
+        $this->loadFixtures([
+            LoadProductData::class,
+            LoadProductVisibilityData::class,
+        ]);
+
+        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
+    }
+
+    public function testFindOne()
+    {
+        $exampleProduct = $this->getReference(LoadProductData::PRODUCT_1);
+
+        /** @var $product \Oro\Bundle\SearchBundle\Query\Result\Item */
+        $product = $this->client->getContainer()->get('oro_product.website_search.repository.product')->findOne(
+            $exampleProduct->getId()
+        );
+
+        $this->assertNotNull($product);
+        $this->assertEquals($product->getSelectedData()['product_id'], $exampleProduct->getId());
         $this->initClient();
         $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->localizationHelper = $this->getContainer()->get('oro_locale.helper.localization');
@@ -33,12 +57,19 @@ class ProductRepositoryTest extends WebTestCase
             LoadProductVisibilityData::class
         ]);
 
+        $NotFoundProduct = $this->client->getContainer()->get('oro_product.website_search.repository.product')->findOne(
+            1024
+        );
+        $this->assertNull($NotFoundProduct);
+
         $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
         $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 
     public function testSearchFilteredBySkus()
     {
+        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
         /** @var ProductRepository $ormRepository */
         $ormRepository = $this->client->getContainer()
             ->get('doctrine')

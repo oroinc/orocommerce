@@ -4,10 +4,11 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Query\Factory;
 
 use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
+use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
+use Oro\Bundle\WebsiteSearchBundle\Query\Factory\WebsiteQueryFactory;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
-use Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory;
 
-class QueryFactoryTest extends \PHPUnit_Framework_TestCase
+class WebsiteQueryFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var QueryFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $queryFactory;
@@ -40,13 +41,11 @@ class QueryFactoryTest extends \PHPUnit_Framework_TestCase
             'search_index' => null
         ];
 
-        $this->queryFactory->expects($this->once())
-            ->method('create')
-            ->with($configForBackendSearch);
+        $factory = new WebsiteQueryFactory($this->engine);
 
-        $factory = new QueryFactory($this->queryFactory, $this->engine);
+        $result = $factory->create($configForBackendSearch);
 
-        $factory->create($configForBackendSearch);
+        $this->assertInstanceOf(SearchQueryInterface::class, $result);
 
         $result = $factory->create($configForWebsiteSearch);
 

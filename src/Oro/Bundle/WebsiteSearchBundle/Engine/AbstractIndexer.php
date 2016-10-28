@@ -86,7 +86,7 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     public function reindex($classOrClasses = null, array $context = [])
     {
-        if (!is_string($classOrClasses) && $this->getContextEntityIds($context)) {
+        if (!is_string($classOrClasses) && count($classOrClasses) !== 1 && $this->getContextEntityIds($context)) {
             throw new \LogicException('Entity ids passed into context. Please provide single class of entity');
         }
 

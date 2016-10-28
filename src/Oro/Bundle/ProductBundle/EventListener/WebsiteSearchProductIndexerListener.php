@@ -53,6 +53,7 @@ class WebsiteSearchProductIndexerListener
 
         foreach ($products as $product) {
             // Non localized fields
+            $event->addField($product->getId(), 'product_id', $product->getId());
             $event->addField($product->getId(), 'sku', $product->getSku());
             $event->addField($product->getId(), 'sku_uppercase', strtoupper($product->getSku()));
             $event->addField($product->getId(), 'status', $product->getStatus());

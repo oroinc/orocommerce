@@ -150,7 +150,7 @@ services:
         parent: oro_website_search.repository.abstract
         class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
         arguments:
-            - "@oro_search.query_factory"
+            - "@oro_website_search.query_factory"
             - "@oro_search.provider.search_mapping"
         calls:
             - [setEntityName, ['%oro_product.entity.product.class%']]

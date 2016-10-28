@@ -65,8 +65,8 @@ services:
             - "@oro_entity.doctrine_helper"
         calls:
             - [setClassName, ['%oro_product.entity.product.class%']]
-            - [setModifier, ["@oro_customer.model.product_visibility_query_builder_modifier"]]
             - [setFrontendHelper, ["@oro_frontend.request.frontend_helper"]]
+            - [setProductSearchRepository, ["@oro_product.website_search.repository.product"]]
         tags:
             - { name: security.voter }
 
