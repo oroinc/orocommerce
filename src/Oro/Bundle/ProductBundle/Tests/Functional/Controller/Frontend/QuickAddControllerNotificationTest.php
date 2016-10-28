@@ -10,6 +10,7 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
@@ -46,15 +47,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
         );
 
         $this->getContainer()->get('request_stack')->push(Request::create(''));
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData'
-            ]
-        );
-
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
-        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
+        $this->loadFixtures([LoadFrontendProductData::class]);
 
         $this->productInStock = $this->getReference(LoadProductData::PRODUCT_2);
         $this->productOutOfStock = $this->getReference(LoadProductData::PRODUCT_3);
