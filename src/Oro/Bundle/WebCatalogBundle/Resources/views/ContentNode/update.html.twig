@@ -2,7 +2,9 @@
 
 {% set web_catalog = entity.webCatalog %}
 
-{% if entity.id is empty %}
+{% if entity.parentNode is empty %}
+    {% set formAction = path('oro_content_node_update_root', { 'id': entity.webCatalog.id }) %}
+{% elseif entity.id is empty %}
     {% set formAction = path('oro_content_node_create', { 'id': entity.parentNode.id }) %}
 {% else %}
     {% set formAction = path('oro_content_node_update', { 'id': entity.id }) %}
