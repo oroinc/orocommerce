@@ -149,7 +149,7 @@ services:
         parent: oro_website_search.repository.abstract
         class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
         arguments:
-            - "@oro_search.query_factory"
+            - "@oro_website_search.query_factory"
             - "@oro_search.provider.search_mapping"
         calls:
             - [setEntityName, ['%oro_product.entity.product.class%']]
@@ -272,12 +272,14 @@ services:
         public: false
         arguments:
             - '%oro_product.entity.product.class%'
-            - ["sku", "defaultName.string"]
+            - { search: {sku: "sku", defaultName.string: "title"}, orm: ["sku", "defaultName.string"]}
             - "@request_stack"
             - "@oro_product.product.manager"
         calls:
             - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
             - [setAclHelper,["@oro_security.acl_helper"]]
+            - [setFrontendHelper,["@oro_frontend.request.frontend_helper"]]
+            - [setSearchRepository,["@oro_product.website_search.repository.product"]]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "oro_product_visibility_limited" }
 
@@ -401,13 +403,15 @@ services:
         tags:
             - { name: layout.data_provider, alias: featured_products }
 
-    oro_product.event_listener.product_listener:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductListener'
+    oro_product.event_listener.product_image_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageListener'
         public: false
         arguments:
             - '@event_dispatcher'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product.class%', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product_image.class%', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_attachment.file.entity.class%', event: postUpdate, method: filePostUpdate }
 
     oro_product.event_listener.product_image_resize_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageResizeListener'
@@ -460,5 +464,18 @@ services:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionListener'
         arguments:
             - '@oro_product.product.manager'
+            - '@oro_website_search.provider.search_mapping'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.before_search, method: process }
+
+    oro_product.acl.voter.visibility:
+        class: 'Oro\Bundle\ProductBundle\Acl\Voter\ProductVisibilityVoter'
+        public: false
+        arguments:
+            - "@oro_entity.doctrine_helper"
+        calls:
+            - [setClassName, ['%oro_product.entity.product.class%']]
+            - [setFrontendHelper, ["@oro_frontend.request.frontend_helper"]]
+            - [setProductSearchRepository, ["@oro_product.website_search.repository.product"]]
+        tags:
+            - { name: security.voter }

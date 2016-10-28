@@ -42,25 +42,25 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
             ->withConsecutive(
                 [
                     1,
-                    'all_text_localization',
+                    'all_text_LOCALIZATION_ID',
                     'Polish metaTitle Polish meta description Polish meta keywords',
                     [LocalizationIdPlaceholder::NAME => 1],
                 ],
                 [
                     1,
-                    'all_text_localization',
+                    'all_text_LOCALIZATION_ID',
                     'English metaTitle English meta description English meta keywords',
                     [LocalizationIdPlaceholder::NAME => 2],
                 ],
                 [
                     2,
-                    'all_text_localization',
+                    'all_text_LOCALIZATION_ID',
                     'Polish metaTitle Polish meta description Polish meta keywords',
                     [LocalizationIdPlaceholder::NAME => 1],
                 ],
                 [
                     2,
-                    'all_text_localization',
+                    'all_text_LOCALIZATION_ID',
                     'English metaTitle English meta description English meta keywords',
                     [LocalizationIdPlaceholder::NAME => 2],
                 ]

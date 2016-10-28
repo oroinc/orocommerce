@@ -25,12 +25,6 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
     {
         parent::setUp();
 
-        $this->loadFixtures(
-            [
-                LoadCategoryProductData::class,
-            ]
-        );
-
         $this->configManager = $this->getContainer()->get('oro_config.manager');
     }
 

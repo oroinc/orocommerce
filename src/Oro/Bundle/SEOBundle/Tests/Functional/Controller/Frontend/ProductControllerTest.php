@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -29,10 +30,9 @@ class ProductControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadProductMetaData',
-            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
-            'Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadCategoryMetaData',
+            LoadFrontendProductData::class,
+            LoadProductMetaData::class,
+            LoadCategoryMetaData::class,
         ]);
     }
 
@@ -90,8 +90,6 @@ class ProductControllerTest extends WebTestCase
      */
     public function testIndex($category, array $metaTags)
     {
-        $this->markTestSkipped('TODO: Remove skip after category filtering will be implemented');
-
         $category = $this->getCategory($category);
 
         $crawler = $this->client->request(

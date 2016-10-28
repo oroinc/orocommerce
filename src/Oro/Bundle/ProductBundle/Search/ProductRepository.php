@@ -10,6 +10,25 @@ use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 class ProductRepository extends WebsiteSearchRepository
 {
     /**
+     * @param int $id
+     * @return \Oro\Bundle\SearchBundle\Query\Result\Item|null
+     */
+    public function findOne($id)
+    {
+        $searchQuery = $this->createQuery()->addWhere(
+            Criteria::expr()->eq('integer.product_id', $id)
+        );
+
+        $items = $searchQuery->getResult();
+
+        if ($items->getRecordsCount() < 1) {
+            return null;
+        }
+
+        return $items->getElements()[0];
+    }
+
+    /**
      * @param array $skus
      * @return SearchQueryInterface
      */
@@ -22,8 +41,9 @@ class ProductRepository extends WebsiteSearchRepository
 
         $searchQuery->setFrom('oro_product_WEBSITE_ID')
             ->addSelect('sku')
+            ->addSelect('title_LOCALIZATION_ID as title')
             ->getCriteria()
-            ->andWhere(Criteria::expr()->contains('sku_uppercase', implode(', ', $upperCaseSkus)));
+            ->andWhere(Criteria::expr()->in('sku_uppercase', $upperCaseSkus));
 
         return $searchQuery;
     }
@@ -35,8 +55,30 @@ class ProductRepository extends WebsiteSearchRepository
     public function searchFilteredBySkus(array $skus)
     {
         $searchQuery = $this->getFilterSkuQuery($skus);
-        $searchQuery->addSelect('title_LOCALIZATION_ID');
 
         return $searchQuery->getResult()->getElements();
+    }
+
+    /**
+     * @param string $search
+     * @param int $firstResult
+     * @param int $maxResults
+     * @return SearchQueryInterface
+     */
+    public function getSearchQuery($search, $firstResult, $maxResults)
+    {
+        $searchQuery = $this->createQuery();
+
+        $searchQuery->setFrom('oro_product_WEBSITE_ID')
+            ->addSelect('sku')
+            ->addSelect('title_LOCALIZATION_ID')
+            ->getCriteria()
+            ->andWhere(
+                Criteria::expr()->contains('all_text_LOCALIZATION_ID', $search)
+            )->orderBy(['id' => Criteria::ASC])
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults);
+
+        return $searchQuery;
     }
 }

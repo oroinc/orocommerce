@@ -44,41 +44,35 @@ class OrmEngineTest extends WebTestCase
         TestEntity::class => [
             'alias' => 'oro_test_item_WEBSITE_ID',
             'fields' => [
-                'title' => [
+                [
                     'name' => 'title_LOCALIZATION_ID',
                     'type' => 'text'
                 ],
-                'stringValue' => [
+                [
                     'name' => 'stringValue',
                     'type' => 'text',
                 ],
-
-                'integerValue' => [
+                [
                     'name' => 'integerValue',
                     'type' => 'integer',
                 ],
-
-                'decimalValue' => [
+                [
                     'name' => 'decimalValue',
                     'type' => 'decimal',
                 ],
-
-                'floatValue' => [
+                [
                     'name' => 'floatValue',
                     'type' => 'decimal'
                 ],
-
-                'datetimeValue' => [
+                [
                     'name' => 'datetimeValue',
                     'type' => 'datetime'
                 ],
-
-                'blobValue' => [
+                [
                     'name' => 'blobValue',
                     'type' => 'text'
                 ],
-
-                'phone' => [
+                [
                     'name' => 'phone',
                     'type' => 'text'
                 ]
@@ -171,7 +165,7 @@ class OrmEngineTest extends WebTestCase
 
                 $event->addPlaceholderField(
                     $item->getId(),
-                    'title',
+                    'title_LOCALIZATION_ID',
                     "Some text with placeholder {$defaultLocalizationId} for {$item->stringValue}",
                     [LocalizationIdPlaceholder::NAME => $defaultLocalizationId]
                 );

@@ -4,6 +4,9 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Security;
 
 use Oro\Bundle\CustomerBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -22,11 +25,9 @@ class ProductVisibilityTest extends WebTestCase
         $this->initClient();
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
-            'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists',
+            LoadFrontendProductData::class,
+            LoadCombinedPriceLists::class,
         ]);
-        $this->getContainer()->get('oro_customer.visibility.cache.cache_builder')->buildCache();
     }
 
     /**
@@ -46,7 +47,7 @@ class ProductVisibilityTest extends WebTestCase
         $configManager->flush();
         foreach ($expectedData as $productSKU => $resultCode) {
             $product = $this->getReference($productSKU);
-            $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $product);
+            $this->assertInstanceOf(Product::class, $product);
             $this->client->request(
                 'GET',
                 $this->getUrl('oro_product_frontend_product_view', ['id' => $product->getId()])

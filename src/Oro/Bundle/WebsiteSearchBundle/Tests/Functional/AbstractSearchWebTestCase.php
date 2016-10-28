@@ -62,28 +62,26 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
 
 
     /** @var array */
-    protected $mappingConfig = [
+    private $mappingConfig = [
         TestProduct::class => [
             'alias' => 'oro_product_WEBSITE_ID',
             'fields' => [
-                'title' =>
-                    [
-                        'name' => 'title_LOCALIZATION_ID',
-                        'type' => 'text'
-                    ]
-            ]
+                [
+                    'name' => 'title_LOCALIZATION_ID',
+                    'type' => 'text',
+                ],
+            ],
 
         ],
         TestEmployee::class => [
             'alias' => 'oro_employee_WEBSITE_ID',
             'fields' => [
-                'title' =>
-                    [
-                        'name' => 'title_LOCALIZATION_ID',
-                        'type' => 'text'
-                    ]
-            ]
-        ]
+                [
+                    'name' => 'title_LOCALIZATION_ID',
+                    'type' => 'text',
+                ],
+            ],
+        ],
     ];
 
     /**
@@ -103,8 +101,12 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
      */
     abstract protected function getResultItems(array $options);
 
+    /**
+     * @param int $expectedCount
+     */
     abstract protected function assertItemsCount($expectedCount);
 
+    /** Check for engine before initialization but after init client */
     abstract protected function preSetUp();
 
     /**
@@ -162,7 +164,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             foreach ($entities as $entity) {
                 $event->addPlaceholderField(
                     $entity->getId(),
-                    'title',
+                    'title_LOCALIZATION_ID',
                     sprintf('Reindexed product %s', $entity->getId()),
                     [LocalizationIdPlaceholder::NAME => $this->getDefaultLocalizationId()]
                 );
@@ -240,7 +242,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->indexer->reindex(
             TestProduct::class,
             [
-                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
+                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
             ]
         );
 
@@ -250,6 +252,30 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->assertCount(2, $items);
         $this->assertContains('Reindexed product', $items[0]->getTitle());
         $this->assertContains('Reindexed product', $items[1]->getTitle());
+    }
+
+    public function testReindexForContextEntityIds()
+    {
+        $this->loadFixtures([LoadProductsToIndex::class]);
+        $this->setClassSupportedExpectation(1, TestProduct::class, true);
+        $this->setEntityAliasExpectation();
+        $this->setGetEntityConfigExpectation();
+        $this->listener = $this->setListener();
+        $productId = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2)->getId();
+
+        $this->indexer->reindex(
+            TestProduct::class,
+            [
+                AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [$productId],
+                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
+            ]
+        );
+
+        /** @var Item[] $items */
+        $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 1]);
+
+        $this->assertCount(1, $items);
+        $this->assertContains('Reindexed product', $items[0]->getTitle());
     }
 
     public function testReindexForSpecificWebsiteWithDependentEntities()
@@ -273,7 +299,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->indexer->reindex(
             TestProduct::class,
             [
-                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
+                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
             ]
         );
 
@@ -295,7 +321,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     public function testReindexForSpecificWebsiteWithCustomBatchSize()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->setEntityAliasExpectation(TestProduct::class, $this->mappingConfig[TestProduct::class]['alias']);
+        $this->setEntityAliasExpectation();
         $this->setClassSupportedExpectation(1, TestProduct::class, true);
         $this->setGetEntityConfigExpectation();
         $this->indexer->setBatchSize(2);
@@ -303,7 +329,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->indexer->reindex(
             TestProduct::class,
             [
-                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
+                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
             ]
         );
 
@@ -339,7 +365,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->indexer->reindex(
             TestProduct::class,
             [
-                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
+                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
             ]
         );
 
@@ -377,7 +403,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->indexer->reindex(
             TestProduct::class,
             [
-                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
+                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
             ]
         );
 
@@ -385,6 +411,42 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId()]);
 
         $this->assertCount(0, $items);
+    }
+
+    public function testResetIndexForSpecificClass()
+    {
+        $this->loadFixtures([LoadProductsToIndex::class]);
+        $this->setClassSupportedExpectation(1, TestProduct::class, true);
+        $this->setEntityAliasExpectation();
+        $this->setGetEntityConfigExpectation();
+
+        $restrictedProduct = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
+
+        $this->dispatcher->addListener(
+            $this->getRestrictEntityEventName(),
+            function (RestrictIndexEntityEvent $event) use ($restrictedProduct) {
+                $qb = $event->getQueryBuilder();
+                list($rootAlias) = $qb->getRootAliases();
+                $qb->where($qb->expr()->neq($rootAlias . '.id', ':id'))
+                    ->setParameter('id', $restrictedProduct->getId());
+            },
+            -255
+        );
+
+        $this->listener = $this->setListener();
+        $this->indexer->reindex(
+            TestProduct::class,
+            [
+
+                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
+            ]
+        );
+
+        /** @var Item[] $items */
+        $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 1]);
+
+        $this->assertCount(1, $items);
+        $this->assertContains('Reindexed product', $items[0]->getTitle());
     }
 
     public function testReindexOfAllWebsites()
@@ -472,7 +534,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->indexer->save(
             $product1,
             [
-                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
+                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
             ]
         );
 
@@ -509,7 +571,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->indexer->save(
             [$product1, $product2],
             [
-                AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
+                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
             ]
         );
         $this->assertItemsCount(2);
@@ -531,5 +593,19 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->indexer->save([$product1, $product2]);
 
         $this->assertItemsCount(4);
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Entity ids passed into context. Please provide single class of entity
+     */
+    public function testReindexException()
+    {
+        $this->indexer->reindex(
+            ['class1', 'class2'],
+            [
+                AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2]
+            ]
+        );
     }
 }

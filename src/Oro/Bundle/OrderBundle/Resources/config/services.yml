@@ -3,6 +3,7 @@ parameters:
     oro_order.entity.order_address.class: Oro\Bundle\OrderBundle\Entity\OrderAddress
     oro_order.entity.order_line_item.class: Oro\Bundle\OrderBundle\Entity\OrderLineItem
     oro_order.entity.order_discount_item.class: Oro\Bundle\OrderBundle\Entity\OrderDiscount
+    oro_order.entity.order_shipping_tracking.class: Oro\Bundle\OrderBundle\Entity\OrderShippingTracking
     oro_payment.entity.payment_transaction.class: Oro\Bundle\PaymentBundle\Entity\PaymentTransaction
     oro_payment.entity.payment_status.class: Oro\Bundle\PaymentBundle\Entity\PaymentStatus
 
@@ -104,6 +105,11 @@ services:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
 
+    oro_order.handler.order_shipping_tracking:
+        class: 'Oro\Bundle\OrderBundle\Handler\OrderShippingTrackingHandler'
+        arguments:
+            - "@doctrine"
+
     oro_order.event_listener.form_view:
         class: 'Oro\Bundle\OrderBundle\EventListener\FormViewListener'
         arguments:
@@ -181,6 +187,7 @@ services:
         public: false
         arguments:
             - '@oro_order.formatter.source_document'
+            - '@oro_order.formatter.shipping_tracking'
         tags:
             - { name: twig.extension }
 
@@ -189,6 +196,11 @@ services:
         public: false
         arguments:
             - '@oro_entity.entity_class_name_provider'
+
+    oro_order.formatter.shipping_tracking:
+        class: 'Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter'
+        arguments:
+            - "@?oro_shipping.shipping_method.registry"
 
     oro_order.order.listener.total_calculate_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'

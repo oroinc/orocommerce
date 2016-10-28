@@ -152,11 +152,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
         $this->listener->onWebsiteSearchIndex($event);
 
         $expected[$product->getId()] = [
+            'product_id' => $product->getId(),
             'sku' => 'sku123',
             'sku_uppercase' => 'SKU123',
             'status' => Product::STATUS_ENABLED,
             'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
-            'title' => [
+            'title_LOCALIZATION_ID' => [
                 new PlaceholderValue(
                     $this->prepareLocalizedValue(null, 'Default name', null),
                     [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
@@ -170,7 +171,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                     [LocalizationIdPlaceholder::NAME => $secondLocale->getId()]
                 ),
             ],
-            'description' => [
+            'description_LOCALIZATION_ID' => [
                 new PlaceholderValue(
                     $this->prepareLocalizedValue(null, 'Default description', null),
                     [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
@@ -184,7 +185,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
                     [LocalizationIdPlaceholder::NAME => $secondLocale->getId()]
                 ),
             ],
-            'short_desc' => [
+            'short_description_LOCALIZATION_ID' => [
                 new PlaceholderValue(
                     $this->prepareLocalizedValue(null, 'Default short description', null),
                     [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]

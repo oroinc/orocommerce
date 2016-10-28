@@ -9,6 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
@@ -147,7 +148,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ->execute();
     }
 
-    public function testResetIndexForSpecificClass()
+    public function testReindexOfAllWebsites()
     {
         $this->loadFixtures([LoadItemData::class]);
         $this->indexer->resetIndex(TestProduct::class);
@@ -166,7 +167,9 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $testEntity = new TestDepartment();
         $testEntity->setId(123456);
 
-        $this->indexer->delete($testEntity, ['website_id' => $this->getDefaultWebsiteId()]);
+        $this->indexer->delete($testEntity, [
+            AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()
+        ]);
 
         $this->assertItemsCount(8);
         $this->assertEntityCount(2, IndexInteger::class);
@@ -182,7 +185,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ->expects($this->never())
             ->method('getEntityAlias');
 
-        $this->indexer->delete([], ['website_id' => $this->getDefaultWebsiteId()]);
+        $this->indexer->delete([], [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]);
 
         $this->assertItemsCount(8);
         $this->assertEntityCount(2, IndexInteger::class);
@@ -210,7 +213,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
                 $product1,
                 $product2,
             ],
-            ['website_id' => $this->getDefaultWebsiteId()]
+            [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]
         );
 
         $this->assertItemsCount(6);
@@ -243,7 +246,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
                 new \stdClass(),
                 new TestDepartment()
             ],
-            ['website_id' => $this->getDefaultWebsiteId()]
+            [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]
         );
 
         $this->assertItemsCount(6);

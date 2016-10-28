@@ -1,2 +1,0 @@
-bundles:
-    - { name: Oro\Bundle\WarehouseBundle\OroWarehouseBundle, priority: 100 }

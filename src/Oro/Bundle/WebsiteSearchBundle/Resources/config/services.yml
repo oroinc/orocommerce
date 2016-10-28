@@ -102,12 +102,17 @@ services:
             - '@oro_website_search.loader.mapping_configuration_cache_loader'
 
     oro_website_search.query_factory:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Query\Factory\WebsiteQueryFactory'
+        arguments:
+            - '@oro_website_search.engine'
+
+    oro_website_search.query_factory.composite:
         decorates: oro_search.query_factory
-        class: 'Oro\Bundle\WebsiteSearchBundle\Query\Factory\QueryFactory'
+        class: 'Oro\Bundle\WebsiteSearchBundle\Query\Factory\CompositeQueryFactory'
         public: false
         arguments:
-            - '@oro_website_search.query_factory.inner'
-            - '@oro_website_search.engine'
+            - '@oro_website_search.query_factory.composite.inner'
+            - '@oro_website_search.query_factory'
 
     oro_website_search.website_reindexation_on_create_delete_listener:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\WebsiteReindexationOnCreateDeleteListener'
@@ -176,11 +181,11 @@ services:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\IndexationRequestListener'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_search.provider.search_mapping'
+            - '@oro_website_search.provider.search_mapping'
             - '@event_dispatcher'
-            - '@oro_website.manager'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush, method: beforeEntityFlush }
             - { name: doctrine.event_listener, event: postFlush }
 
     oro_website_search.repository.abstract:
@@ -203,6 +208,13 @@ services:
             - '@event_dispatcher'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onLocalizationSettingsChange }
+
+    oro_website_search.event_listener.reindex_demo_data:
+        class: Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexDemoDataListener
+        arguments:
+            - "@event_dispatcher"
+        tags:
+            - { name: kernel.event_listener, event: console.terminate, method: afterExecute }
 
     oro_website_search.provider.placeholder_provider:
         class: 'Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider'

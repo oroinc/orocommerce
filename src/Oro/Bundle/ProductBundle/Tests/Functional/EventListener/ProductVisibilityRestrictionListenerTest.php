@@ -46,7 +46,7 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
         $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->dispatcher = $this->getContainer()->get('event_dispatcher');
 
-        $this->engine = $this->client->getContainer()->get('oro_website_search.engine');
+        $this->engine = $this->getContainer()->get('oro_website_search.engine');
 
         static::$testValue = 'test_' . uniqid();
 
@@ -64,14 +64,41 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
         $this->dispatcher->removeListener(ProductSearchQueryRestrictionEvent::NAME, $this->listener);
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     */
     public function testRestrictsVisibilityForJustProducts()
     {
         $query = new Query();
 
         $query->from([Product::class]);
+
+        $this->engine->search($query);
+
+        $where = $query->getCriteria()->getWhereExpression();
+
+        $foundSkuExpression    = false;
+        $foundCustomExpression = false;
+
+        if ($where instanceof CompositeExpression) {
+            list($foundSkuExpression, $foundCustomExpression) = $this->checkCompositeExpression($where);
+        }
+
+        if ($where instanceof Comparison) {
+            if (($where->getField() === 'name') && ($where->getValue()->getValue() === self::$testValue)) {
+                $foundCustomExpression = true;
+            }
+        }
+
+        $this->assertFalse($foundSkuExpression, 'Sku is null expression should not be applied.');
+        $this->assertTrue($foundCustomExpression, 'Custom expression from listener not found.');
+    }
+
+    public function testRestrictsVisibilityForJustProductsWithProductAlias()
+    {
+        $productAlias = $this->getContainer()->get('oro_website_search.provider.search_mapping')
+            ->getEntityAlias(Product::class);
+
+        $query = new Query();
+
+        $query->from([$productAlias]);
 
         $this->engine->search($query);
 
@@ -152,7 +179,6 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
 
         /** @var Comparison $expr */
         foreach ($where->getExpressionList() as $expr) {
-
             if ($expr instanceof CompositeExpression) {
                 list($foundSkuComposite, $foundCustomComposite) = $this->checkCompositeExpression($expr);
 

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener;
 
@@ -39,7 +40,12 @@ class ReindexRequestListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWithoutIndexers()
     {
-        $event = $this->getReindexationRequestEvent();
+        $event = new ReindexationRequestEvent(
+            [self::TEST_CLASSNAME],
+            [self::TEST_WEBSITE_ID],
+            [],
+            true
+        );
 
         $this->regularIndexerMock
             ->expects($this->never())
@@ -54,12 +60,23 @@ class ReindexRequestListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        $event = $this->getReindexationRequestEvent();
+        $event = new ReindexationRequestEvent(
+            [self::TEST_CLASSNAME],
+            [self::TEST_WEBSITE_ID],
+            [1, 2, 3],
+            false
+        );
 
         $this->regularIndexerMock
             ->expects($this->once())
             ->method('reindex')
-            ->with([self::TEST_CLASSNAME]);
+            ->with(
+                [self::TEST_CLASSNAME],
+                [
+                    AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 2, 3],
+                    AbstractIndexer::CONTEXT_WEBSITE_IDS => [self::TEST_WEBSITE_ID]
+                ]
+            );
 
         $this->asyncIndexerMock
             ->expects($this->never())
@@ -73,34 +90,25 @@ class ReindexRequestListenerTest extends \PHPUnit_Framework_TestCase
         $event = new ReindexationRequestEvent(
             [self::TEST_CLASSNAME],
             [self::TEST_WEBSITE_ID],
-            [],
+            [1, 3, 7],
             true
         );
 
         $this->asyncIndexerMock
             ->expects($this->once())
             ->method('reindex')
-            ->with([self::TEST_CLASSNAME]);
+            ->with(
+                [self::TEST_CLASSNAME],
+                [
+                    AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [1, 3, 7],
+                    AbstractIndexer::CONTEXT_WEBSITE_IDS => [self::TEST_WEBSITE_ID]
+                ]
+            );
 
         $this->regularIndexerMock
             ->expects($this->never())
             ->method('reindex');
 
         $this->listener->process($event);
-    }
-
-    /**
-     * @return ReindexationRequestEvent
-     */
-    private function getReindexationRequestEvent()
-    {
-        $event = new ReindexationRequestEvent(
-            [self::TEST_CLASSNAME],
-            [self::TEST_WEBSITE_ID],
-            [],
-            false
-        );
-
-        return $event;
     }
 }
