@@ -47,7 +47,6 @@ class OroAccountBundleInstaller implements
     const ORO_DICTIONARY_COUNTRY_TABLE_NAME = 'oro_dictionary_country';
     const ORO_ADDRESS_TYPE_TABLE_NAME = 'oro_address_type';
     const ORO_EMAIL = 'oro_email';
-    const ORO_CALENDAR_EVENT = 'oro_calendar_event';
     const ORO_ACCOUNT_USER_ADDRESS_TABLE_NAME = 'oro_account_user_address';
     const ORO_ACC_USR_ADR_TO_ADR_TYPE_TABLE_NAME = 'oro_acc_usr_adr_to_adr_type';
 
@@ -238,11 +237,6 @@ class OroAccountBundleInstaller implements
         $this->activityExtension->addActivityAssociation(
             $schema,
             static::ORO_EMAIL,
-            static::ORO_ACCOUNT_USER_TABLE_NAME
-        );
-        $this->activityExtension->addActivityAssociation(
-            $schema,
-            static::ORO_CALENDAR_EVENT,
             static::ORO_ACCOUNT_USER_TABLE_NAME
         );
     }

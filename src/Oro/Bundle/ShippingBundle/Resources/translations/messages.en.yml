@@ -81,11 +81,6 @@ oro:
             enabled.label: Enabled
             options.label: Options
             method_config.label: Method Config
-        warehouse:
-            use_system_configuration: Use System Configuration
-            system_configuration.label: '(system configuration)'
-            section:
-                shipping_origin: Shipping Origin
         product:
             section:
                 shipping_options: Shipping Options
