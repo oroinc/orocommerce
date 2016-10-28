@@ -40,11 +40,17 @@ class PlaceholderProvider
     {
         $fields = $this->mappingProvider->getEntityMapParameter($entityClass, 'fields', []);
 
-        if (!isset($fields[$fieldName]['name'])) {
+        foreach ($fields as $value) {
+            if ($value['name'] === $fieldName) {
+                $name = $value['name'];
+            }
+        }
+
+        if (!isset($name)) {
             throw new \RuntimeException(sprintf('Cannot find %s field for %s class', $fieldName, $entityClass));
         }
 
-        return $this->placeholder->replace($fields[$fieldName]['name'], $placeholders);
+        return $this->placeholder->replace($name, $placeholders);
     }
 
     /**

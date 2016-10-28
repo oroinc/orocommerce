@@ -1027,7 +1027,7 @@ services:
         arguments:
             - '@oro_customer.account_message_factory'
             - '@oro_message_queue.client.message_producer'
-            - '@oro_customer.driver.orm_account_partial_update_driver'
+            - '@oro_website_search.driver.account_partial_update_driver'
         calls:
             - [setTopic, ['oro_customer.visibility.change_account']]
         tags:
@@ -1041,17 +1041,9 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@logger'
             - '@oro_customer.account_message_factory'
-            - '@oro_customer.driver.orm_account_partial_update_driver'
+            - '@oro_website_search.driver.account_partial_update_driver'
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_customer.visibility.change_account' }
-
-    oro_customer.driver.orm_account_partial_update_driver:
-        class: 'Oro\Bundle\CustomerBundle\Driver\OrmAccountPartialUpdateDriver'
-        arguments:
-            - '@oro_website_search.provider.placeholder_provider'
-            - '@oro_entity.doctrine_helper'
-            - '@oro_entity.orm.insert_from_select_query_executor'
-            - '@oro_customer.visibility.provider.product_visibility_provider'
 
     oro_customer.entity_ownership.listener:
         class: Oro\Bundle\CustomerBundle\EventListener\RecordOwnerDataListener
