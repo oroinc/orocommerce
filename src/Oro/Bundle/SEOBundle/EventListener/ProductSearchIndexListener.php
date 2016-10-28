@@ -2,18 +2,20 @@
 
 namespace Oro\Bundle\SEOBundle\EventListener;
 
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+
 class ProductSearchIndexListener
 {
+    use ContextTrait;
+
     /**
      * @var PropertyAccessor
      */
@@ -46,9 +48,7 @@ class ProductSearchIndexListener
 
         $context = $event->getContext();
 
-        $websiteId = array_key_exists(AbstractIndexer::CONTEXT_WEBSITE_ID_KEY, $context)
-            ? $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY]
-            : null;
+        $websiteId = $this->getContextCurrentWebsiteId($context);
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 

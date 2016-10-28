@@ -7,6 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
@@ -20,6 +21,8 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
  */
 class IndexDataProvider
 {
+    use ContextTrait;
+
     const ALL_TEXT_FIELD = 'all_text';
     const ALL_TEXT_L10N_FIELD = 'all_text_LOCALIZATION_ID';
 
@@ -60,7 +63,7 @@ class IndexDataProvider
      */
     public function collectContextForWebsite($websiteId, array $context)
     {
-        $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
+        $context = $this->setContextCurrentWebsite($context, $websiteId);
         $collectContextEvent = new Event\CollectContextEvent($context);
         $this->eventDispatcher->dispatch(Event\CollectContextEvent::NAME, $collectContextEvent);
 

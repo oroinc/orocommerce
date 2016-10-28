@@ -11,11 +11,14 @@ use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
 class WebsiteSearchCategoryIndexerListener
 {
+    use ContextTrait;
+
     /**
      * @var DoctrineHelper
      */
@@ -53,9 +56,7 @@ class WebsiteSearchCategoryIndexerListener
 
         $context = $event->getContext();
 
-        $websiteId = (array_key_exists(AbstractIndexer::CONTEXT_WEBSITE_ID_KEY, $context))
-            ? $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY]
-            : null;
+        $websiteId = $this->getContextCurrentWebsiteId($context);
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 

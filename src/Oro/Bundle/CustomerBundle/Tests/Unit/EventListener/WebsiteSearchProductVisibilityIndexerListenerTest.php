@@ -34,7 +34,12 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
     public function testOnWebsiteSearchIndex()
     {
         $websiteId = 1;
-        $event = new IndexEntityEvent([], [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $websiteId]);
+        $event = new IndexEntityEvent(
+            [],
+            [
+                AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $websiteId
+            ]
+        );
 
         $this->visibilityIndexer
             ->expects($this->once())
@@ -45,8 +50,8 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit_Framewo
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Website id is absent in context
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Required website id is not passed to context
      */
     public function testOnWebsiteSearchIndexWhenWebsiteIdIsNotInContext()
     {

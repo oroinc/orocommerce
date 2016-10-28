@@ -134,7 +134,7 @@ class ProductImage extends ExtendProductImage
             $productImageType->setProductImage($this);
             $this->types->set($type, $productImageType);
 
-            $this->preUpdate();
+            $this->setUpdatedAtToNow();
         }
     }
 
@@ -146,7 +146,7 @@ class ProductImage extends ExtendProductImage
         if ($this->types->containsKey($type)) {
             $this->types->remove($type);
 
-            $this->preUpdate();
+            $this->setUpdatedAtToNow();
         }
     }
 
@@ -167,12 +167,17 @@ class ProductImage extends ExtendProductImage
         $this->updatedAt = $updatedAt;
     }
 
+    public function setUpdatedAtToNow()
+    {
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
     /**
      * @ORM\PrePersist
      */
     public function prePersist()
     {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->setUpdatedAtToNow();
     }
 
     /**
@@ -180,7 +185,7 @@ class ProductImage extends ExtendProductImage
      */
     public function preUpdate()
     {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->setUpdatedAtToNow();
     }
 
     /**

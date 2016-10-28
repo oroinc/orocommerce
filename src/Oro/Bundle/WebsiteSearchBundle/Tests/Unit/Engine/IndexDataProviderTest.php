@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
@@ -13,6 +14,8 @@ use Oro\Bundle\WebsiteSearchBundle\Event\CollectContextEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\WebsiteIdPlaceholder;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
@@ -57,9 +60,12 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
     public function testCollectContextForWebsite()
     {
         $websiteId = 1;
-        $context = ['WEBSITE_ID' => $websiteId];
+        $context = [WebsiteIdPlaceholder::NAME => $websiteId];
 
-        $expectedContext = [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $websiteId, 'WEBSITE_ID' => $websiteId];
+        $expectedContext = [
+            WebsiteIdPlaceholder::NAME => $websiteId,
+            AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $websiteId
+        ];
 
         $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
             CollectContextEvent::NAME,
