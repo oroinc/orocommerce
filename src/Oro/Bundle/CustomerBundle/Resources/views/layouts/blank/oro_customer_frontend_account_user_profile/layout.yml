@@ -1,0 +1,10 @@
+layout:
+    imports:
+        - oro_account_menu
+    actions:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - 'oro.customer.menu.account_user.label'
+                - 'oro.customer.frontend.title.account_user.profile'
