@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
+use Symfony\Bundle\FrameworkBundle\Translation\Translator;
+use Symfony\Component\HttpFoundation\Request;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
@@ -9,8 +12,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 
 /**
  * @dbIsolation
@@ -44,6 +45,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
 
+        $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->loadFixtures(
             [
                 'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
