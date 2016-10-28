@@ -250,3 +250,12 @@ services:
             - '@oro_shipping.query_designer.select_query_converter'
             - '@doctrine'
             - '@oro_importexport.field.field_helper'
+
+    oro_shipping.condition.has_applicable_shipping_methods:
+        class: 'Oro\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods'
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
+            - '@oro_shipping.shipping_price.provider'
+        tags:
+            - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
+            - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }

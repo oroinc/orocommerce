@@ -1,9 +1,8 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Condition;
+namespace Oro\Bundle\ShippingBundle\Condition;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
@@ -29,25 +28,19 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
     /** ShippingPriceProvider */
     protected $shippingPriceProvider;
 
-    /** ShippingContextProviderFactory */
-    protected $shippingContextProviderFactory;
-
-    /** @var Checkout */
-    protected $entity;
+    /** @var mixed */
+    protected $shippingContext;
 
     /**
      * @param ShippingMethodRegistry $shippingMethodRegistry
      * @param ShippingPriceProvider $shippingPriceProvider
-     * @param ShippingContextProviderFactory $shippingContextProviderFactory
      */
     public function __construct(
         ShippingMethodRegistry $shippingMethodRegistry,
-        ShippingPriceProvider $shippingPriceProvider,
-        ShippingContextProviderFactory $shippingContextProviderFactory
+        ShippingPriceProvider $shippingPriceProvider
     ) {
         $this->shippingMethodRegistry = $shippingMethodRegistry;
         $this->shippingPriceProvider = $shippingPriceProvider;
-        $this->shippingContextProviderFactory = $shippingContextProviderFactory;
     }
 
     /**
@@ -55,14 +48,14 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
      */
     public function initialize(array $options)
     {
-        if (array_key_exists('entity', $options)) {
-            $this->entity = $options['entity'];
+        if (array_key_exists('shippingContext', $options)) {
+            $this->shippingContext = $options['shippingContext'];
         } elseif (array_key_exists(0, $options)) {
-            $this->entity = $options[0];
+            $this->shippingContext = $options[0];
         }
 
-        if (!$this->entity) {
-            throw new InvalidArgumentException('Missing "entity" option');
+        if (!$this->shippingContext) {
+            throw new InvalidArgumentException('Missing "shippingContext" option');
         }
 
         return $this;
@@ -81,12 +74,11 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
      */
     protected function isConditionAllowed($context)
     {
-        /** @var Checkout $entity */
-        $entity = $this->resolveValue($context, $this->entity, false);
+        /** @var ShippingContextInterface $shippingContext */
+        $shippingContext = $this->resolveValue($context, $this->shippingContext, false);
 
         $methodsData = [];
-        if (null !== $entity) {
-            $shippingContext = $this->shippingContextProviderFactory->create($entity);
+        if (null !== $shippingContext) {
             $methodsData = $this->shippingPriceProvider->getApplicableMethodsWithTypesData($shippingContext);
         }
 
@@ -98,7 +90,7 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
      */
     public function toArray()
     {
-        return $this->convertToArray([$this->entity]);
+        return $this->convertToArray([$this->shippingContext]);
     }
 
     /**
@@ -106,6 +98,6 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
      */
     public function compile($factoryAccessor)
     {
-        return $this->convertToPhpCode([$this->entity], $factoryAccessor);
+        return $this->convertToPhpCode([$this->shippingContext], $factoryAccessor);
     }
 }
