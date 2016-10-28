@@ -6,6 +6,7 @@ parameters:
     oro_product.entity.product_image.class: Oro\Bundle\ProductBundle\Entity\ProductImage
     oro_product.entity.product_image_type.class: Oro\Bundle\ProductBundle\Entity\ProductImageType
     oro_product.event_listener.scoped_product_db_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener
+    oro_product.event_listener.scoped_product_search_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener
 
 services:
     oro_product.product.manager.api:
@@ -316,13 +317,17 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.product_db_query.restriction, method: onDBQuery }
 
-    oro_product.event_listener.product_search_query_restriction:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductSearchQueryRestrictionEventListener'
+    oro_product.event_listener.abstract_product_search_query_restriction:
+        abstract: true
         arguments:
             - "@oro_config.manager"
             - "@oro_product.model.product_visibility_search_query_modifier"
             - "@oro_frontend.request.frontend_helper"
             - "oro_product.general_frontend_product_visibility"
+
+    oro_product.event_listener.product_search_query_restriction:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductSearchQueryRestrictionEventListener'
+        parent: oro_product.event_listener.abstract_product_search_query_restriction
         tags:
             - { name: kernel.event_listener, event: oro_product.product_search_query.restriction, method: onSearchQuery }
 

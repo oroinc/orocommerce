@@ -16,6 +16,8 @@ class ScopedProductDBQueryRestrictionEventListener extends ProductDBQueryRestric
     public function setScope($scope)
     {
         $this->scope = $scope;
+
+        return $this;
     }
 
     /**

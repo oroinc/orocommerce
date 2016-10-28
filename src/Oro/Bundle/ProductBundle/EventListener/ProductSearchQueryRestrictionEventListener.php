@@ -12,22 +12,22 @@ class ProductSearchQueryRestrictionEventListener
     /**
      * @var ConfigManager
      */
-    private $configManager;
+    protected $configManager;
 
     /**
      * @var ProductVisibilitySearchQueryModifier
      */
-    private $modifier;
+    protected $modifier;
 
     /**
      * @var string|null
      */
-    private $frontendSystemConfigurationPath;
+    protected $frontendSystemConfigurationPath;
 
     /**
      * @var FrontendHelper
      */
-    private $frontendHelper;
+    protected $frontendHelper;
 
     /**
      * @param ConfigManager                        $configManager
@@ -52,16 +52,29 @@ class ProductSearchQueryRestrictionEventListener
      */
     public function onSearchQuery(ProductSearchQueryRestrictionEvent $event)
     {
-        if ($this->isFrontendRequest()) {
-            $inventoryStatuses = $this->configManager->get($this->frontendSystemConfigurationPath);
-            $this->modifier->modifyByInventoryStatus($event->getQuery(), $inventoryStatuses);
+        if (!$this->isConditionsAcceptable()) {
+            return;
         }
+
+        $inventoryStatuses = $this->configManager->get($this->frontendSystemConfigurationPath);
+        $this->modifier->modifyByInventoryStatus($event->getQuery(), $inventoryStatuses);
     }
 
     /**
+     * @param string $frontendSystemConfigurationPath
+     * @return $this
+     */
+    public function setFrontendSystemConfigurationPath($frontendSystemConfigurationPath)
+    {
+        $this->frontendSystemConfigurationPath = $frontendSystemConfigurationPath;
+        
+        return $this;
+    }
+    
+    /**
      * @return bool
      */
-    private function isFrontendRequest()
+    protected function isConditionsAcceptable()
     {
         return $this->frontendHelper->isFrontendRequest();
     }

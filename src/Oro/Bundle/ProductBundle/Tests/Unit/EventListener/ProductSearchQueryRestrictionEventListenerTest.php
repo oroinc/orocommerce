@@ -14,80 +14,115 @@ class ProductSearchQueryRestrictionEventListenerTest extends \PHPUnit_Framework_
     /**
      * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $configManager;
+    protected $configManager;
 
     /**
      * @var string
      */
-    private $frontendConfigPath = '/front/end/cfg/path';
+    protected $frontendConfigPath = '/front/end/cfg/path';
+
+    /**
+     * @var ProductVisibilitySearchQueryModifier|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $modifier;
+
+    /**
+     * @var ProductSearchQueryRestrictionEventListener
+     */
+    protected $listener;
+
+    /**
+     * @var array
+     */
+    protected $statuses = ['in_stock'];
+
+    /**
+     * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $frontendHelper;
 
     public function setUp()
     {
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()->getMock();
+
+        $this->modifier = $this->getQueryModifier();
+
+        $this->frontendHelper = $this->getFrontendHelper();
+
+        $this->listener = $this->createListener();
     }
 
-    public function testOnSearchQueryWithFrontendRequest()
+    public function testOnSearchQueryInFrontend()
     {
-        $listener = new ProductSearchQueryRestrictionEventListener(
-            $this->configManager,
-            $this->getQueryModifier($this->once()),
-            $this->getFrontendHelper(true),
-            $this->frontendConfigPath
-        );
+        $this->frontendHelper
+            ->expects($this->atLeastOnce())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
+
+        $this->modifier->expects($this->once())
+            ->method('modifyByInventoryStatus');
 
         $this->configManager->expects($this->once())
             ->method('get')
             ->with($this->frontendConfigPath)
-            ->willReturn([]);
+            ->willReturn($this->statuses);
 
-        $listener->onSearchQuery($this->getEvent());
+        $this->listener->onSearchQuery($this->getEvent());
     }
 
-    public function testOnSearchQueryWithoutFrontendRequest()
+    public function testOnSearchQueryInBackend()
     {
-        $listener = new ProductSearchQueryRestrictionEventListener(
-            $this->configManager,
-            $this->getQueryModifier($this->never()),
-            $this->getFrontendHelper(false),
-            $this->frontendConfigPath
-        );
+        $this->frontendHelper
+            ->expects($this->atLeastOnce())
+            ->method('isFrontendRequest')
+            ->willReturn(false);
 
-        $listener->onSearchQuery($this->getEvent());
+        $this->modifier->expects($this->never())
+            ->method('modifyByInventoryStatus');
+
+        $this->configManager->expects($this->never())
+            ->method('get')
+            ->with($this->frontendConfigPath)
+            ->willReturn($this->statuses);
+
+        $this->listener->onSearchQuery($this->getEvent());
     }
 
     /**
-     * @param bool $isFrontendRequest
-     *
+     * @return ProductSearchQueryRestrictionEventListener
+     */
+    protected function createListener()
+    {
+        $listener = new ProductSearchQueryRestrictionEventListener(
+            $this->configManager,
+            $this->modifier,
+            $this->frontendHelper,
+            $this->frontendConfigPath
+        );
+
+        return $listener;
+    }
+
+    /**
      * @return FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function getFrontendHelper($isFrontendRequest = true)
+    protected function getFrontendHelper()
     {
         /** @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject $frontendHelper */
         $frontendHelper = $this->getMockBuilder(FrontendHelper::class)
             ->disableOriginalConstructor()->getMock();
 
-        $frontendHelper
-            ->expects($this->atLeastOnce())
-            ->method('isFrontendRequest')
-            ->willReturn($isFrontendRequest);
-
         return $frontendHelper;
     }
 
     /**
-     * @param \PHPUnit_Framework_MockObject_Matcher_Invocation $expectCall
-     *
      * @return ProductVisibilitySearchQueryModifier|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function getQueryModifier(\PHPUnit_Framework_MockObject_Matcher_Invocation $expectCall)
+    protected function getQueryModifier()
     {
         /** @var ProductVisibilitySearchQueryModifier|\PHPUnit_Framework_MockObject_MockObject $queryModifier */
         $queryModifier = $this->getMockBuilder(ProductVisibilitySearchQueryModifier::class)->getMock();
-
-        $queryModifier
-            ->expects($expectCall)
-            ->method('modifyByInventoryStatus');
 
         return $queryModifier;
     }
@@ -95,7 +130,7 @@ class ProductSearchQueryRestrictionEventListenerTest extends \PHPUnit_Framework_
     /**
      * @return ProductSearchQueryRestrictionEvent
      */
-    private function getEvent()
+    protected function getEvent()
     {
         return new ProductSearchQueryRestrictionEvent(new Query());
     }
