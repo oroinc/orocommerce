@@ -118,7 +118,7 @@
 {% block _page_title_container_widget %}
     {% set content = block_widget(block)|trim %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' page-title ' ~ (class_prefix ? ' {{ class_prefix }}-page-title')
+        '~class': ' page-title ' ~ (class_prefix ? ' {{ class_prefix }}-title')
     }) %}
     {% if content|length %}
         <h1{{ block('block_attributes') }}>{{ content|raw }}</h1>

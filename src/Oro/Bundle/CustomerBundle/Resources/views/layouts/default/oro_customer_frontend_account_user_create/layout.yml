@@ -21,7 +21,7 @@ layout:
         - '@setOption':
             id: content
             optionName: class_prefix
-            optionValue: 'user'
+            optionValue: 'section'
 
         - '@setOption':
             id: account_user_edit_form_actions_create

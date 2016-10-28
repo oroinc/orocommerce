@@ -20,4 +20,4 @@ layout:
         - '@setOption':
             id: content
             optionName: class_prefix
-            optionValue: 'account'
+            optionValue: 'section'

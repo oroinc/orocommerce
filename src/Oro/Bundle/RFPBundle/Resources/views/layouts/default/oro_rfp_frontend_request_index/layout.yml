@@ -25,7 +25,7 @@ layout:
         - '@setOption':
             id: content
             optionName: class_prefix
-            optionValue: 'requests'
+            optionValue: 'section'
 
         - '@setOption':
             id: datagrid_toolbar_button_container

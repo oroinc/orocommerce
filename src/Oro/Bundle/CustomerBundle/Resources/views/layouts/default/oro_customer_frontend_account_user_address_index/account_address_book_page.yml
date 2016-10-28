@@ -23,6 +23,11 @@ layout:
             optionName: text
             optionValue: 'oro.customer.frontend.account_user.address.label'
 
+        - '@setOption':
+            id: content
+            optionName: class_prefix
+            optionValue: 'section'
+
         - '@addTree':
             items:
                 account_address_book_page:

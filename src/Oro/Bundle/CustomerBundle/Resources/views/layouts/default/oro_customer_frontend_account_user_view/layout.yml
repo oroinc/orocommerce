@@ -24,7 +24,7 @@ layout:
         - '@setOption':
             id: content
             optionName: class_prefix
-            optionValue: 'user'
+            optionValue: 'section'
 
         - '@add':
             id: account_user_list_link
@@ -34,4 +34,3 @@ layout:
             options:
                 route_name: oro_customer_frontend_account_user_index
                 text: 'oro.customer.frontend.account_user_link.text'
-
