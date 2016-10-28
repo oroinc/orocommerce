@@ -6,6 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ScopeAccountCriteriaProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,11 +30,18 @@ class ScopeAccountCriteriaProviderTest extends \PHPUnit_Framework_TestCase
     {
         $accUser = new AccountUser();
         $account = new Account();
+
+        $token = $this->getMock(TokenInterface::class);
         $accUser->setAccount($account);
+
+        $token->expects($this->once())
+            ->method('getUser')
+            ->willReturn($accUser);
+
         $this->tokenStorage
             ->expects($this->once())
             ->method('getToken')
-            ->willReturn($accUser);
+            ->willReturn($token);
         $actual = $this->provider->getCriteriaForCurrentScope();
         $this->assertEquals(['account' => $account], $actual);
     }
