@@ -11,7 +11,6 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @dbIsolation
@@ -176,17 +175,6 @@ class AccountProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
             $visibilityResolved->getProduct(),
             $visibilityResolved->getScope()
         );
-    }
-
-    /**
-     * @return Website
-     */
-    protected function getDefaultWebsite()
-    {
-        return $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroWebsiteBundle:Website')
-            ->getRepository('OroWebsiteBundle:Website')->findOneBy(['name' => 'Default']);
     }
 
     /**

@@ -90,7 +90,6 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
         foreach ($expectedData as $data) {
             /** @var Product $product */
             $product = $this->getReference($data['product']);
-            /** @var Website $website */
 
             $resolvedVisibility = $this->getResolvedVisibility($resolvedEntities, $product, $scope);
             $this->assertEquals($this->getCategory($product)->getId(), $resolvedVisibility->getCategory()->getId());

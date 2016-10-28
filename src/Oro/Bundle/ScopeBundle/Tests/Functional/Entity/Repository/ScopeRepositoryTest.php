@@ -5,6 +5,7 @@ namespace Oro\Bundle\ScopeBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\ScopeBundle\Entity\Repository\ScopeRepository;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
+use Oro\Bundle\ScopeBundle\Tests\DataFixtures\LoadScopeData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -12,25 +13,12 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ScopeRepositoryTest extends WebTestCase
 {
-    /**
-     * @var Scope
-     */
-    protected $testScope;
-
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-
-        $this->getRepository()
-            ->createQueryBuilder('s')
-            ->delete()
-            ->getQuery()
-            ->execute();
-
-        $this->testScope = new Scope();
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $em->persist($this->testScope);
-        $em->flush();
+        $this->loadFixtures([
+            LoadScopeData::class
+        ]);
     }
 
     public function testFindByCriteria()
@@ -51,7 +39,10 @@ class ScopeRepositoryTest extends WebTestCase
     {
         $criteria = new ScopeCriteria([]);
         $ids = $this->getRepository()->findIdentifiersByCriteria($criteria);
-        $this->assertSame([$this->testScope->getId()], $ids);
+
+        /** @var Scope $scope */
+        $scope = $this->getReference(LoadScopeData::DEFAULT_SCOPE);
+        $this->assertSame([$scope->getId()], $ids);
     }
 
     /**

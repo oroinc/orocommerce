@@ -5,6 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Controller;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\ScopeBundle\Tests\DataFixtures\LoadScopeData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
@@ -24,6 +25,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 LoadProductVisibilityData::class,
+                LoadScopeData::class
             ]
         );
     }
