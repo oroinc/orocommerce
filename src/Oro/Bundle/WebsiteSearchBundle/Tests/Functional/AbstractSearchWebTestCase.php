@@ -67,7 +67,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             'alias' => 'oro_product_WEBSITE_ID',
             'fields' => [
                 [
-                    'name' => 'title_LOCALIZATION_ID',
+                    'name' => 'name_LOCALIZATION_ID',
                     'type' => 'text',
                 ],
             ],
@@ -77,7 +77,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             'alias' => 'oro_employee_WEBSITE_ID',
             'fields' => [
                 [
-                    'name' => 'title_LOCALIZATION_ID',
+                    'name' => 'name_LOCALIZATION_ID',
                     'type' => 'text',
                 ],
             ],

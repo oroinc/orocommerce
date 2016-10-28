@@ -50,8 +50,9 @@ class AjaxProductController extends Controller
          */
         foreach ($products as $product) {
             $selectedData                = $product->getSelectedData();
+            $nameKey                     = 'name_' . 'LOCALIZATION_ID';
             $names[$selectedData['sku']] = [
-                'name' => $selectedData['title'],
+                'name' => $selectedData[$nameKey],
             ];
         }
 

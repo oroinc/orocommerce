@@ -37,23 +37,23 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
     {
         $event = new IndexEntityEvent([1, 2], []);
 
-        $event->addField(1, 'title', 'Product title');
+        $event->addField(1, 'name', 'Product name');
         $event->addField(1, 'description', 'Product description');
         $event->addField(1, 'price', 100.00);
         $event->addField(1, 'categoryId', 3);
-        $event->addField(2, 'title', 'Another product title');
+        $event->addField(2, 'name', 'Another product name');
         $date = new \DateTime();
         $event->addField(2, 'date', $date);
 
         $expectedData = [
             1 => [
-                'title' => 'Product title',
+                'name' => 'Product name',
                 'description' => 'Product description',
                 'price' => 100.00,
                 'categoryId' => 3,
             ],
             2 => [
-                'title' => 'Another product title',
+                'name' => 'Another product name',
                 'date' => $date,
             ],
         ];

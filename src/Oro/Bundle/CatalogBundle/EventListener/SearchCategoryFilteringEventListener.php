@@ -2,9 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
@@ -21,19 +18,19 @@ class SearchCategoryFilteringEventListener
     /** @var RequestProductHandler $requestProductHandler */
     private $requestProductHandler;
 
-    /** @var ManagerRegistry */
-    private $doctrine;
+    /** @var CategoryRepository */
+    private $repository;
 
     /**
      * @param RequestProductHandler $requestProductHandler
-     * @param ManagerRegistry       $doctrine
+     * @param CategoryRepository $categoryRepository
      */
     public function __construct(
         RequestProductHandler $requestProductHandler,
-        ManagerRegistry $doctrine
+        CategoryRepository $categoryRepository
     ) {
         $this->requestProductHandler = $requestProductHandler;
-        $this->doctrine              = $doctrine;
+        $this->repository = $categoryRepository;
     }
 
     /**
@@ -76,48 +73,22 @@ class SearchCategoryFilteringEventListener
             return;
         }
 
-        if (!$includeSubcategories) {
-            $this->applyCategoryToQuery($datasource->getSearchQuery(), $categoryId);
-            return;
-        }
-
-        $categoryIds = $this->getSubcategories($categoryId);
-        $this->applyCategoryToQuery($datasource->getSearchQuery(), $categoryIds);
-    }
-
-    /**
-     * @param $categoryId
-     * @return array
-     */
-    private function getSubcategories($categoryId)
-    {
-        /** @var CategoryRepository $repo */
-        $repo = $this->doctrine->getRepository(Category::class);
-        /** @var Category $category */
-        $category = $repo->find($categoryId);
-
-        if (!$category) {
-            return [];
-        }
-
-        $result   = $repo->getChildrenIds($category);
-        $result[] = $categoryId;
-
-        return $result;
+        $this->applyCategoryToQuery($datasource->getSearchQuery(), $categoryId, $includeSubcategories);
     }
 
     /**
      * @param SearchQueryInterface $query
-     * @param array|int            $categoryId
+     * @param int $categoryId
+     * @param bool $includeSubcategories
      */
-    private function applyCategoryToQuery(SearchQueryInterface $query, $categoryId)
+    private function applyCategoryToQuery(SearchQueryInterface $query, $categoryId, $includeSubcategories = false)
     {
-        if (is_array($categoryId)) {
-            $expr = Criteria::expr()->in('integer.category_id', $categoryId);
-        } else {
-            $expr = Criteria::expr()->eq('integer.category_id', $categoryId);
-        }
+        $category = $this->repository->find($categoryId);
 
-        $query->addWhere($expr);
+        if ($includeSubcategories) {
+            $query->addWhere(Criteria::expr()->startsWith('text.category_path', $category->getMaterializedPath()));
+        } else {
+            $query->addWhere(Criteria::expr()->eq('text.category_path', $category->getMaterializedPath()));
+        }
     }
 }

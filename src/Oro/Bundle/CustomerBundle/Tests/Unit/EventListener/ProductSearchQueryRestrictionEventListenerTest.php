@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\CustomerBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\CustomerBundle\EventListener\ProductSearchQueryRestrictionEventListener;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;

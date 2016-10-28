@@ -157,7 +157,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             'sku_uppercase' => 'SKU123',
             'status' => Product::STATUS_ENABLED,
             'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
-            'title_LOCALIZATION_ID' => [
+            'name_LOCALIZATION_ID' => [
                 new PlaceholderValue(
                     $this->prepareLocalizedValue(null, 'Default name', null),
                     [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION]
