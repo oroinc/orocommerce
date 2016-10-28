@@ -2,6 +2,18 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
+use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -9,19 +21,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
-
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
-use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
-use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
-use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 
 class OrderType extends AbstractType
 {
@@ -100,7 +99,7 @@ class OrderType extends AbstractType
                 ]
             )
             ->add(
-                'shippingCost',
+                'overriddenShippingCost',
                 PriceType::NAME,
                 [
                     'currency_empty_value' => null,
