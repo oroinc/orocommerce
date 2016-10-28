@@ -5,7 +5,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: product_id
             type: integer
         -
-            name: title_LOCALIZATION_ID
+            name: name_LOCALIZATION_ID
             type: text
         -
             name: sku

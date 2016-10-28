@@ -282,7 +282,7 @@ datagrids:
             query:
                 select:
                     - text.sku as sku
-                    - text.title_LOCALIZATION_ID as name
+                    - text.name_LOCALIZATION_ID as name
                     - text.short_description_LOCALIZATION_ID as shortDescription
                 from:
                     - oro_product_WEBSITE_ID
@@ -304,7 +304,7 @@ datagrids:
                     data_name: sku
                 name:
                     type:      string
-                    data_name: title_LOCALIZATION_ID
+                    data_name: name_LOCALIZATION_ID
         properties:
             id: ~
             view_link:
@@ -319,5 +319,5 @@ datagrids:
                     data_name: sku
                     type: string
                 name:
-                    data_name: title_LOCALIZATION_ID
+                    data_name: name_LOCALIZATION_ID
                     type: string
