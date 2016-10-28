@@ -31,6 +31,7 @@ config:
 
         'slick': 'bundles/orofrontend/default/vendors/slick/slick.min.js'
         'orofrontend/js/app/components/list-slider-component': 'bundles/orofrontend/js/app/components/list-slider-component.js'
-        'orofrontend/default/js/components/rule-editor-component': 'orofrontend/default/js/components/rule-editor-component/rule-editor-component.js'
+        'orofrontend/default/js/app/components/rule-editor-component': 'orofrontend/default/js/app/components/rule-editor-component.js'
+        'orofrontend/default/js/app/views/rule-editor-view': 'orofrontend/default/js/app/views/rule-editor-view.js'
     appmodules:
         - orofrontend/js/app/modules/inline-editor-types-map-module
