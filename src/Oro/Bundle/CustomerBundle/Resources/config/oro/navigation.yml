@@ -43,7 +43,7 @@ navigation:
                 label: 'oro.navigation.menu.history.label'
                 extras:
                     icon: 'icon-time'
-                    activeIfFirstIsEmpty: true
+                    active_if_first_is_empty: true
                 uri: '#'
             frontend_mostviewed:
                 label: 'oro.navigation.menu.mostviewed.label'
