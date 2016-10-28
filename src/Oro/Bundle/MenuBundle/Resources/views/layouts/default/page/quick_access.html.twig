@@ -31,6 +31,7 @@
                     <span class="quick-access__text">Quotes</span>
                 </a>
             </li>
+            {% if feature_enabled('quick_order_form') %}
             <li class="quick-access__item">
                 <a class="quick-access__link" href="{{ path('oro_product_frontend_quick_add') }}">
                     <span class="badge badge_circled-corners badge_orange quick-access__badge">
@@ -39,6 +40,7 @@
                     <span class="quick-access__text">Quick Order Form</span>
                 </a>
             </li>
+            {% endif %}
         </ul>
     </div>
 {% endblock %}
