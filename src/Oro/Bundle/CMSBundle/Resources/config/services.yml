@@ -22,7 +22,9 @@ services:
             - { name: layout.data_provider, alias: oro_cms_login_page }
 
     oro_cms.provider.landing_page_title_provider:
-        public: false
         class: 'Oro\Bundle\CMSBundle\Provider\PageTitleProvider'
+        public: false
+        arguments:
+            - '@property_accessor'
         tags:
             - { name: oro_web_catalog.content_variant_title_provider }

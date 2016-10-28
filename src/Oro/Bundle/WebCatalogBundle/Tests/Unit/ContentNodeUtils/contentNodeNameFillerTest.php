@@ -6,11 +6,12 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller;
 use Oro\Bundle\WebCatalogBundle\Tests\Unit\Entity\Stub\ContentNode;
 use Oro\Component\WebCatalog\ChainContentVariantTitleProvider;
+use Oro\Component\WebCatalog\ContentVariantTitleProviderInterface;
 
 class ContentNodeNameFillerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ChainContentVariantTitleProvider
+     * @var \PHPUnit_Framework_MockObject_MockObject|ContentVariantTitleProviderInterface
      */
     protected $contentVariantTitleProvider;
 
@@ -27,12 +28,10 @@ class ContentNodeNameFillerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->contentVariantTitleProvider = $this
-            ->getMockBuilder('\Oro\Component\WebCatalog\ChainContentVariantTitleProvider')
+            ->getMockBuilder(ChainContentVariantTitleProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->contentNode = new ContentNode();
-
         $this->contentNodeNameFiller = new ContentNodeNameFiller($this->contentVariantTitleProvider);
     }
 

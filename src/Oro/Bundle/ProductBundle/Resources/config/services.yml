@@ -218,8 +218,10 @@ services:
             - {name: oro_product.default_product_unit_provider, priority: 0}
 
     oro_product.provider.product_title_provider:
-        public: false
         class: 'Oro\Bundle\ProductBundle\Provider\ProductTitleProvider'
+        public: false
+        arguments:
+            - '@property_accessor'
         tags:
             - { name: oro_web_catalog.content_variant_title_provider }
 

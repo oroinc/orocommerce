@@ -40,16 +40,12 @@ class ContentNodeListener
         $this->contentNodeNameFiller = $contentNodeNameFiller;
     }
 
-    public function prePersist(ContentNode $contentNode)
-    {
-        $this->contentNodeNameFiller->fillName($contentNode);
-    }
-
     /**
      * @param ContentNode $contentNode
      */
     public function postPersist(ContentNode $contentNode)
     {
+        $this->contentNodeNameFiller->fillName($contentNode);
         $contentNode = $this->modifier->calculateMaterializedPath($contentNode);
         $this->storage->scheduleForExtraInsert($contentNode);
     }
@@ -60,8 +56,6 @@ class ContentNodeListener
      */
     public function preUpdate(ContentNode $contentNode, PreUpdateEventArgs $args)
     {
-        $this->contentNodeNameFiller->fillName($contentNode);
-
         $changeSet = $args->getEntityChangeSet();
         
         if (!empty($changeSet[ContentNode::FIELD_PARENT_NODE])) {

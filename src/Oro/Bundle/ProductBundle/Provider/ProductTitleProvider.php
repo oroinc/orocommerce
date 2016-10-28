@@ -2,27 +2,42 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\WebCatalog\ContentVariantTitleProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ProductTitleProvider implements ContentVariantTitleProviderInterface
 {
     /**
-     * @inheritdoc
+     * @var PropertyAccessor
+     */
+    protected $propertyAccessor;
+
+    /**
+     * @param PropertyAccessor $propertyAccessor
+     */
+    public function __construct(PropertyAccessor $propertyAccessor)
+    {
+        $this->propertyAccessor = $propertyAccessor;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getTitle(ContentVariantInterface $contentVariant)
     {
-        if ($contentVariant->getType() != 'product_page_product') {
+        if ((string)$contentVariant->getType() !== 'product_page_product'
+            || null === $this->propertyAccessor->getValue($contentVariant, 'productPageProduct')
+        ) {
             return null;
         }
 
-        $product  = $contentVariant->getProductPageProduct();
+        $product  = $this->propertyAccessor->getValue($contentVariant, 'productPageProduct');
         $title = null;
-        if ($product instanceof Product) {
-            if ($product->getDefaultName() && $product->getDefaultName()->getText()) {
-                $title = $product->getDefaultName()->getText();
-            }
+        if ($product instanceof Product && $product->getDefaultName() instanceof LocalizedFallbackValue) {
+            $title = $product->getDefaultName()->getText();
         }
 
         return $title;

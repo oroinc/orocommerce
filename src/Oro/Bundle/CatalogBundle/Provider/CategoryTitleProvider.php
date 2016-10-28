@@ -3,26 +3,41 @@
 namespace Oro\Bundle\CatalogBundle\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\WebCatalog\ContentVariantTitleProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class CategoryTitleProvider implements ContentVariantTitleProviderInterface
 {
     /**
-     * @inheritdoc
+     * @var PropertyAccessor
+     */
+    protected $propertyAccessor;
+
+    /**
+     * @param PropertyAccessor $propertyAccessor
+     */
+    public function __construct(PropertyAccessor $propertyAccessor)
+    {
+        $this->propertyAccessor = $propertyAccessor;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getTitle(ContentVariantInterface $contentVariant)
     {
-        if ($contentVariant->getType() != 'catalog_page_category') {
+        if ((string)$contentVariant->getType() !== 'catalog_page_category'
+            || null === $this->propertyAccessor->getValue($contentVariant, 'catalogPageCategory')
+        ) {
             return null;
         }
 
-        $category  = $contentVariant->getCatalogPageCategory();
+        $category  = $this->propertyAccessor->getValue($contentVariant, 'catalogPageCategory');
         $title = null;
-        if ($category instanceof Category) {
-            if ($category->getDefaultTitle() && $category->getDefaultTitle()->getText()) {
-                $title = $category->getDefaultTitle()->getText();
-            }
+        if ($category instanceof Category && $category->getDefaultTitle() instanceof LocalizedFallbackValue) {
+            $title = $category->getDefaultTitle()->getText();
         }
 
         return $title;

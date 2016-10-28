@@ -5,6 +5,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Provider\PageTitleProvider;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,26 +26,26 @@ class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->contentVariant = $this
-            ->getMockBuilder('\Oro\Bundle\WebCatalogBundle\Entity\ContentVariant')
-            ->setMethods(['getLandingPageCMSPage', 'getType'])
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->pageTitleProvider = new PageTitleProvider();
+        $this->pageTitleProvider = new PageTitleProvider(PropertyAccess::createPropertyAccessor());
         $this->page = new Page();
-        $this->page->setTitle('some title');
     }
 
     public function testGetTitle()
     {
+        $this->page->setTitle('some title');
+        $this->contentVariant = $this
+            ->getMockBuilder(ContentVariantInterface::class)
+            ->setMethods(['getLandingPageCMSPage', 'getType', 'getId', 'getName'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->contentVariant
             ->expects($this->once())
             ->method('getType')
             ->will($this->returnValue('landing_page_cms_page'));
 
         $this->contentVariant
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('getLandingPageCMSPage')
             ->will($this->returnValue($this->page));
 

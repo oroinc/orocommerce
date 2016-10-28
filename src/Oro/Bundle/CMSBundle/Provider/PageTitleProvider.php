@@ -5,24 +5,38 @@ namespace Oro\Bundle\CMSBundle\Provider;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Component\WebCatalog\ContentVariantTitleProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class PageTitleProvider implements ContentVariantTitleProviderInterface
 {
     /**
-     * @inheritdoc
+     * @var PropertyAccessor
+     */
+    protected $propertyAccessor;
+
+    /**
+     * @param PropertyAccessor $propertyAccessor
+     */
+    public function __construct(PropertyAccessor $propertyAccessor)
+    {
+        $this->propertyAccessor = $propertyAccessor;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getTitle(ContentVariantInterface $contentVariant)
     {
-        if ($contentVariant->getType() != 'landing_page_cms_page') {
+        if ((string)$contentVariant->getType() !== 'landing_page_cms_page'
+            || null === $this->propertyAccessor->getValue($contentVariant, 'landingPageCMSPage')
+        ) {
             return null;
         }
 
-        $page  = $contentVariant->getLandingPageCMSPage();
+        $page  = $this->propertyAccessor->getValue($contentVariant, 'landingPageCMSPage');
         $title = null;
-        if ($page instanceof Page) {
-            if ($page->getTitle()) {
-                $title = $page->getTitle();
-            }
+        if ($page instanceof Page && $page->getTitle()) {
+            $title = $page->getTitle();
         }
 
         return $title;

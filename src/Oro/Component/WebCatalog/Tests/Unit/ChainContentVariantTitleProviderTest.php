@@ -2,7 +2,6 @@
 
 namespace Oro\Component\WebCatalog\Tests\Unit\Provider;
 
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Component\WebCatalog\ChainContentVariantTitleProvider;
@@ -34,34 +33,36 @@ class ChainContentVariantTitleProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->chainProvider = new ChainContentVariantTitleProvider();
-
         $this->contentVariant = new ContentVariant();
         $this->contentVariants = new ArrayCollection();
         $this->contentVariants->add(new ContentVariant());
-
-        $this->provider = $this
-            ->getMockBuilder('Oro\Component\WebCatalog\ContentVariantTitleProviderInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->chainProvider->addProvider($this->provider);
     }
 
     public function testGetTitle()
     {
+        $this->provider = $this
+            ->getMockBuilder(ContentVariantTitleProviderInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->provider
             ->expects($this->once())
             ->method('getTitle')
             ->will($this->returnValue('some title'));
+        $this->chainProvider->addProvider($this->provider);
         $this->assertEquals('some title', $this->chainProvider->getTitle($this->contentVariant));
     }
 
     public function testGetFirstTitle()
     {
+        $this->provider = $this
+            ->getMockBuilder(ContentVariantTitleProviderInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->provider
             ->expects($this->once())
             ->method('getTitle')
             ->will($this->returnValue('some title'));
+        $this->chainProvider->addProvider($this->provider);
         $this->assertEquals('some title', $this->chainProvider->getFirstTitle($this->contentVariants));
     }
 }

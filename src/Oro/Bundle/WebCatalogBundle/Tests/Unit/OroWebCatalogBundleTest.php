@@ -10,6 +10,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
 use Oro\Bundle\WebCatalogBundle\OroWebCatalogBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class OroWebCatalogBundleTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +18,7 @@ class OroWebCatalogBundleTest extends \PHPUnit_Framework_TestCase
     {
         $container = new ContainerBuilder();
 
-        $kernel = $this->getMock('Symfony\Component\HttpKernel\KernelInterface');
+        $kernel = $this->getMock(KernelInterface::class);
 
         $bundle = new OroWebCatalogBundle($kernel);
         $bundle->build($container);

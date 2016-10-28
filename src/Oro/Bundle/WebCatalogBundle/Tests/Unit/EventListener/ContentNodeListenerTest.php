@@ -53,20 +53,13 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testPrePersist()
+    public function testPostPersist()
     {
         $contentNode = new ContentNode();
 
         $this->contentNodeNameFiller->expects($this->once())
                                     ->method('fillName')
                                     ->with($contentNode);
-
-        $this->contentNodeListener->prePersist($contentNode);
-    }
-
-    public function testPostPersist()
-    {
-        $contentNode = new ContentNode();
 
         $this->modifier->expects($this->once())
             ->method('calculateMaterializedPath')
@@ -110,10 +103,6 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
         $this->storage->expects($this->once())
             ->method('scheduleForExtraInsert')
             ->with($childNode);
-
-        $this->contentNodeNameFiller->expects($this->once())
-                       ->method('fillName')
-                       ->with($contentNode);
 
         $this->contentNodeListener->preUpdate($contentNode, $args);
     }

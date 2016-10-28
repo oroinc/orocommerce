@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\WebCatalogBundle\ContentNodeUtils;
 
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\WebCatalog\ChainContentVariantTitleProvider;
 
 class ContentNodeNameFiller
 {
-
     /**
      * @var ChainContentVariantTitleProvider
      */
@@ -27,14 +27,13 @@ class ContentNodeNameFiller
             return;
         }
 
-        $title = null;
-        if ($contentNode->getDefaultTitle() && $contentNode->getDefaultTitle()->getText()) {
+        if ($contentNode->getDefaultTitle() instanceof LocalizedFallbackValue) {
             $title = $contentNode->getDefaultTitle()->getText();
         } else {
             $title = $this->contentVariantTitleProvider->getFirstTitle($contentNode->getContentVariants());
         }
 
-        if (! empty($title)) {
+        if (!empty($title)) {
             $contentNode->setName($title);
         }
     }

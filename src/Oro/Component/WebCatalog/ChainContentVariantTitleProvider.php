@@ -7,7 +7,9 @@ use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 class ChainContentVariantTitleProvider implements ContentVariantTitleProviderInterface
 {
-    /** @var ContentVariantTitleProviderInterface[] */
+    /**
+     * @var ContentVariantTitleProviderInterface[]
+     */
     protected $providers = [];
 
     /**
@@ -31,7 +33,7 @@ class ChainContentVariantTitleProvider implements ContentVariantTitleProviderInt
     {
         foreach ($contentVariants as $contentVariant) {
             $name = $this->getTitle($contentVariant);
-            if ($name) {
+            if (null !== $name && '' !== $name) {
                 return $name;
             }
         }
@@ -40,13 +42,13 @@ class ChainContentVariantTitleProvider implements ContentVariantTitleProviderInt
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getTitle(ContentVariantInterface $contentVariant)
     {
         foreach ($this->providers as $provider) {
             $name = $provider->getTitle($contentVariant);
-            if ($name) {
+            if (null !== $name && '' !== $name) {
                 return $name;
             }
         }
