@@ -7,6 +7,7 @@ use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ScopeAccountGroupCriteriaProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,10 +34,18 @@ class ScopeAccountGroupCriteriaProviderTest extends \PHPUnit_Framework_TestCase
         $account = new Account();
         $accUser->setAccount($account);
         $account->setGroup($accGroup);
+
+        $token = $this->getMock(TokenInterface::class);
+        $accUser->setAccount($account);
+
+        $token->expects($this->once())
+            ->method('getUser')
+            ->willReturn($accUser);
+
         $this->tokenStorage
             ->expects($this->once())
             ->method('getToken')
-            ->willReturn($accUser);
+            ->willReturn($token);
         $actual = $this->provider->getCriteriaForCurrentScope();
         $this->assertEquals(['accountGroup' => $accGroup], $actual);
     }
