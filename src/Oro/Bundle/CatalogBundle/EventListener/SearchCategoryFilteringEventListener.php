@@ -73,11 +73,6 @@ class SearchCategoryFilteringEventListener
             return;
         }
 
-        if (!$includeSubcategories) {
-            $this->applyCategoryToQuery($datasource->getSearchQuery(), $categoryId);
-            return;
-        }
-
         $this->applyCategoryToQuery($datasource->getSearchQuery(), $categoryId, $includeSubcategories);
     }
 
@@ -91,9 +86,9 @@ class SearchCategoryFilteringEventListener
         $category = $this->repository->find($categoryId);
 
         if ($includeSubcategories) {
-            $query->addWhere(Criteria::expr()->startsWith('text.cat_path', $category->getMaterializedPath()));
+            $query->addWhere(Criteria::expr()->startsWith('text.category_path', $category->getMaterializedPath()));
         } else {
-            $query->addWhere(Criteria::expr()->eq('text.cat_path', $category->getMaterializedPath()));
+            $query->addWhere(Criteria::expr()->eq('text.category_path', $category->getMaterializedPath()));
         }
     }
 }
