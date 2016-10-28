@@ -27,7 +27,6 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
      */
     protected $model;
 
-
     /**
      * @var Product
      */
@@ -49,9 +48,9 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
     private $weight;
 
     /**
-     * @var integer
+     * @var ProductHolderInterface
      */
-    private $entityIdentifier;
+    private $productHolder;
 
     /**
      * @var Dimensions
@@ -63,12 +62,14 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
      */
     private $quantity;
 
-
     protected function setUp()
     {
         $this->model = new ShippingContext();
 
-        $this->entityIdentifier = 2;
+        $this->productHolder = $this->getMockForAbstractClass(ProductHolderInterface::class);
+        $this->productHolder->expects($this->any())
+            ->method('getEntityIdentifier')
+            ->willReturn('test');
         $this->product = new Product();
         $this->product->setSku('test sku');
         $this->productUnit = new ProductUnit();
@@ -109,9 +110,6 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
         $mockItem->expects($this->any())
             ->method('getProductUnit')
             ->willReturn($this->productUnit);
-        $mockItem->expects($this->any())
-            ->method('getEntityIdentifier')
-            ->willReturn($this->entityIdentifier);
         $mockItem->expects($this->once())
             ->method('getDimensions')
             ->willReturn($this->dimensions);
@@ -130,7 +128,7 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
         $shippingLineItem = (new ShippingLineItem())
             ->setProduct($this->product)
             ->setProductUnit($this->productUnit)
-            ->setEntityIdentifier($this->entityIdentifier)
+            ->setProductHolder($mockItem)
             ->setDimensions($this->dimensions)
             ->setQuantity($this->quantity)
             ->setPrice($this->price)
@@ -145,16 +143,11 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
         $mockItem->expects($this->once())
             ->method('getProductUnit')
             ->willReturn($this->productUnit);
-        $mockItem->expects($this->once())
-            ->method('getEntityIdentifier')
-            ->willReturn($this->entityIdentifier);
-
 
         $this->model->setLineItems([$mockItem]);
 
         $shippingLineItem = (new ShippingLineItem())
-            ->setProductUnit($this->productUnit)
-            ->setEntityIdentifier($this->entityIdentifier);
+            ->setProductUnit($this->productUnit);
 
         $this->assertEquals([$shippingLineItem], $this->model->getLineItems());
     }
@@ -165,16 +158,12 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
         $mockItem->expects($this->once())
             ->method('getProduct')
             ->willReturn($this->product);
-        $mockItem->expects($this->once())
-            ->method('getEntityIdentifier')
-            ->willReturn($this->entityIdentifier);
-
 
         $this->model->setLineItems([$mockItem]);
 
         $shippingLineItem = (new ShippingLineItem())
             ->setProduct($this->product)
-            ->setEntityIdentifier($this->entityIdentifier);
+            ->setProductHolder($mockItem);
 
         $this->assertEquals([$shippingLineItem], $this->model->getLineItems());
     }
@@ -195,7 +184,6 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
             ->method('getDimensions')
             ->willReturn($this->dimensions);
 
-
         $this->model->setLineItems([$mockItem]);
 
         $shippingLineItem = (new ShippingLineItem())
@@ -214,7 +202,6 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
             ->method('getQuantity')
             ->willReturn($this->quantity);
 
-
         $this->model->setLineItems([$mockItem]);
 
         $shippingLineItem = (new ShippingLineItem())
@@ -229,7 +216,6 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
         $mockItem->expects($this->once())
             ->method('getPrice')
             ->willReturn($this->price);
-
 
         $this->model->setLineItems([$mockItem]);
 

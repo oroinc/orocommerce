@@ -122,7 +122,6 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
 
             /** @var ShippingLineItem $lineItem */
             $lineItems[] = $this->getEntity(ShippingLineItem::class, [
-                'entityIdentifier' => $i,
                 'product' => $product,
                 'quantity' => 1,
                 'productUnit' => $this->getEntity(
