@@ -36,4 +36,4 @@ layout:
             id: main_menu_shopping_lists_wrapper
             parentId: quick_access_container
         - '@remove':
-            id: main_menu_container
+            id: header_row

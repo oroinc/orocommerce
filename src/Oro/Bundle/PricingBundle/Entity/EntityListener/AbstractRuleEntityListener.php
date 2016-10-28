@@ -3,8 +3,8 @@
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Expression\FieldsProviderInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 abstract class AbstractRuleEntityListener
@@ -15,7 +15,7 @@ abstract class AbstractRuleEntityListener
     protected $priceRuleLexemeTriggerHandler;
 
     /**
-     * @var PriceRuleFieldsProvider
+     * @var FieldsProviderInterface
      */
     protected $fieldProvider;
 
@@ -26,12 +26,12 @@ abstract class AbstractRuleEntityListener
 
     /**
      * @param PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
-     * @param PriceRuleFieldsProvider $fieldsProvider
+     * @param FieldsProviderInterface $fieldsProvider
      * @param RegistryInterface $registry
      */
     public function __construct(
         PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler,
-        PriceRuleFieldsProvider $fieldsProvider,
+        FieldsProviderInterface $fieldsProvider,
         RegistryInterface $registry
     ) {
         $this->priceRuleLexemeTriggerHandler = $priceRuleLexemeTriggerHandler;
