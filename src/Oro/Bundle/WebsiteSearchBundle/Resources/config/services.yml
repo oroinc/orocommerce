@@ -112,7 +112,7 @@ services:
         public: false
         arguments:
             - '@oro_website_search.query_factory.composite.inner'
-            - '@oro_website_search.engine'
+            - '@oro_website_search.query_factory'
 
     oro_website_search.website_reindexation_on_create_delete_listener:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\WebsiteReindexationOnCreateDeleteListener'

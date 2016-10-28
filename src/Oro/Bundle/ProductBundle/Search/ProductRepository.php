@@ -10,35 +10,19 @@ use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 class ProductRepository extends WebsiteSearchRepository
 {
     /**
-     * @var string[]
-     */
-    private static $defaultSelectFields = [
-        'integer.product_id',
-        'text.title_LOCALIZATION_ID',
-        'text.sku',
-    ];
-
-    /**
-     * @param $id
-     * @return \Oro\Bundle\SearchBundle\Query\Result\Item|void
+     * @param int $id
+     * @return \Oro\Bundle\SearchBundle\Query\Result\Item|null
      */
     public function findOne($id)
     {
-        $searchQuery = $this->createQuery();
-
-        $alias = $this->getMappingProvider()->getEntityAlias($this->getEntityName());
-
-        $searchQuery->getQuery()->from([$alias]);
-        $searchQuery->getQuery()->select(self::$defaultSelectFields);
-        $searchQuery->getQuery()->getCriteria()->andWhere(
+        $searchQuery = $this->createQuery()->addWhere(
             Criteria::expr()->eq('integer.product_id', $id)
         );
 
         $items = $searchQuery->getResult();
 
         if ($items->getRecordsCount() < 1) {
-            /** @noinspection PhpInconsistentReturnPointsInspection */
-            return;
+            return null;
         }
 
         return $items->getElements()[0];
@@ -53,13 +37,13 @@ class ProductRepository extends WebsiteSearchRepository
         $searchQuery = $this->createQuery();
 
         // Convert to uppercase for insensitive search in all DB
-        $upperCaseSkus = array_map('strtoupper', $skus);
+        $upperCaseSkus = array_map("strtoupper", $skus);
 
         $searchQuery->setFrom('oro_product_WEBSITE_ID')
             ->addSelect('sku')
-            ->addSelect('title_LOCALIZATION_ID')
+            ->addSelect('title_LOCALIZATION_ID as title')
             ->getCriteria()
-            ->andWhere(Criteria::expr()->contains('sku_uppercase', implode(', ', $upperCaseSkus)));
+            ->andWhere(Criteria::expr()->in('sku_uppercase', $upperCaseSkus));
 
         return $searchQuery;
     }
