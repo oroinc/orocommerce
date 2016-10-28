@@ -5,23 +5,23 @@ namespace Oro\Bundle\CustomerBundle\Provider;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ScopeBundle\Manager\AbstractScopeCriteriaProvider;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
 {
     const ACCOUNT = 'account';
 
     /**
-     * @var SecurityFacade
+     * @var TokenStorageInterface
      */
-    protected $securityFacade;
+    protected $tokenStorage;
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(SecurityFacade $securityFacade)
+    public function __construct(TokenStorageInterface $tokenStorage)
     {
-        $this->securityFacade = $securityFacade;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -29,7 +29,7 @@ class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
      */
     public function getCriteriaForCurrentScope()
     {
-        $loggedUser = $this->securityFacade->getLoggedUser();
+        $loggedUser = $this->tokenStorage->getToken();
         if (null !== $loggedUser && $loggedUser instanceof AccountUser) {
             return [self::ACCOUNT => $loggedUser->getAccount()];
         }

@@ -3,9 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\VisibilityTrait;
@@ -13,6 +13,7 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CategoryResolv
 use Symfony\Component\Yaml\Yaml;
 
 /**
+ * @group CommunityEdition
  * @dbIsolation
  */
 class CategoryVisibilityChangeTest extends CategoryCacheTestCase

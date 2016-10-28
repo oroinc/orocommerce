@@ -6,6 +6,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Symfony\Component\Yaml\Yaml;
 
 /**
+ * @group CommunityEdition
  * @dbIsolation
  */
 class CategoryPositionChangeTest extends CategoryCacheTestCase

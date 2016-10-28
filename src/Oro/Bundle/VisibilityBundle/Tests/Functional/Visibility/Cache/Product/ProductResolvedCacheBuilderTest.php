@@ -7,6 +7,7 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\ProductRepo
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
 
 /**
+ * @group CommunityEdition
  * @dbIsolation
  */
 class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest

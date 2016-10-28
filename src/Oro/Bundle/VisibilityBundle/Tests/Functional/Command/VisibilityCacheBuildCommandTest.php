@@ -14,6 +14,7 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibi
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 
 /**
+ * @group CommunityEdition
  * @dbIsolation
  */
 class VisibilityCacheBuildCommandTest extends WebTestCase

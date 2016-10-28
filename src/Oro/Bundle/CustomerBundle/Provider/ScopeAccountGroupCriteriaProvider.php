@@ -7,6 +7,7 @@ use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ScopeBundle\Manager\AbstractScopeCriteriaProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
 {
@@ -15,7 +16,7 @@ class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
     /**
      * @var SecurityFacade
      */
-    protected $securityFacade;
+    protected $tokenStorage;
 
     /**
      * @var PropertyAccessor
@@ -23,11 +24,11 @@ class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
     protected $propertyAccessor;
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(SecurityFacade $securityFacade)
+    public function __construct(TokenStorageInterface $tokenStorage)
     {
-        $this->securityFacade = $securityFacade;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -43,7 +44,7 @@ class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
      */
     public function getCriteriaForCurrentScope()
     {
-        $loggedUser = $this->securityFacade->getLoggedUser();
+        $loggedUser = $this->tokenStorage->getToken();
         if (null !== $loggedUser
             && $loggedUser instanceof AccountUser
             && null !== $loggedUser->getAccount()

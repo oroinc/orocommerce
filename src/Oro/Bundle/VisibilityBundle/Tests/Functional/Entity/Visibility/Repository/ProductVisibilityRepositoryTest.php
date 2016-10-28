@@ -11,6 +11,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\ProductVisibilityRe
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 
 /**
+ * @group CommunityEdition
  * @dbIsolation
  */
 class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositoryTestCase
