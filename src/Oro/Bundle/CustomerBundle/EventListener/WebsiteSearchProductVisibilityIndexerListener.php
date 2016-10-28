@@ -3,11 +3,13 @@
 namespace Oro\Bundle\CustomerBundle\EventListener;
 
 use Oro\Bundle\CustomerBundle\Indexer\ProductVisibilityIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 
 class WebsiteSearchProductVisibilityIndexerListener
 {
+    use ContextTrait;
+
     /**
      * @var ProductVisibilityIndexer
      */
@@ -23,16 +25,13 @@ class WebsiteSearchProductVisibilityIndexerListener
 
     /**
      * @param IndexEntityEvent $event
-     * @throws \InvalidArgumentException
+     * @throws \LogicException
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         $context = $event->getContext();
-        if (!isset($context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY])) {
-            throw new \InvalidArgumentException('Website id is absent in context');
-        }
+        $websiteId = $this->requireContextCurrentWebsiteId($context);
 
-        $websiteId = $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY];
         $this->visibilityIndexer->addIndexInfo($event, $websiteId);
     }
 }

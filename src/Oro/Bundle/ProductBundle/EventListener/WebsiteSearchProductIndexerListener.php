@@ -7,12 +7,14 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
 class WebsiteSearchProductIndexerListener
 {
+    use ContextTrait;
+
     /**
      * @var DoctrineHelper
      */
@@ -45,9 +47,7 @@ class WebsiteSearchProductIndexerListener
 
         $context = $event->getContext();
 
-        $websiteId = (array_key_exists(AbstractIndexer::CONTEXT_WEBSITE_ID_KEY, $context))
-            ? $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY]
-            : null;
+        $websiteId = $this->getContextCurrentWebsiteId($context);
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 
@@ -62,18 +62,23 @@ class WebsiteSearchProductIndexerListener
 
             // Localized fields
             $placeholders = [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION];
-            $event->addPlaceholderField($product->getId(), 'title', (string)$product->getDefaultName(), $placeholders);
+            $event->addPlaceholderField(
+                $product->getId(),
+                'title_LOCALIZATION_ID',
+                (string)$product->getDefaultName(),
+                $placeholders
+            );
 
             $event->addPlaceholderField(
                 $product->getId(),
-                'description',
+                'description_LOCALIZATION_ID',
                 (string)$product->getDefaultDescription(),
                 $placeholders
             );
 
             $event->addPlaceholderField(
                 $product->getId(),
-                'short_desc',
+                'short_description_LOCALIZATION_ID',
                 (string)$product->getDefaultShortDescription(),
                 $placeholders
             );
@@ -83,21 +88,21 @@ class WebsiteSearchProductIndexerListener
                 $placeholders = [LocalizationIdPlaceholder::NAME => $localizationId];
                 $event->addPlaceholderField(
                     $product->getId(),
-                    'title',
+                    'title_LOCALIZATION_ID',
                     (string)$product->getName($localization),
                     $placeholders
                 );
 
                 $event->addPlaceholderField(
                     $product->getId(),
-                    'description',
+                    'description_LOCALIZATION_ID',
                     (string)$product->getDescription($localization),
                     $placeholders
                 );
 
                 $event->addPlaceholderField(
                     $product->getId(),
-                    'short_desc',
+                    'short_description_LOCALIZATION_ID',
                     (string)$product->getShortDescription($localization),
                     $placeholders
                 );

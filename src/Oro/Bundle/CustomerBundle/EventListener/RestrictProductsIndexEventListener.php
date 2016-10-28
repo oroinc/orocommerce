@@ -12,11 +12,13 @@ use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountProductVisibility
 use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 
 class RestrictProductsIndexEventListener
 {
+    use ContextTrait;
+
     /** @var ConfigManager  */
     private $configManager;
 
@@ -56,14 +58,9 @@ class RestrictProductsIndexEventListener
     public function onRestrictIndexEntityEvent(RestrictIndexEntityEvent $event)
     {
         $context = $event->getContext();
-
-        if (!isset($context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY])) {
-            throw new \LogicException('"%s" required', AbstractIndexer::CONTEXT_WEBSITE_ID_KEY);
-        }
+        $websiteId = $this->requireContextCurrentWebsiteId($context);
 
         $qb = $event->getQueryBuilder();
-        $websiteId = $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY];
-
         $qb->setParameter('website', $websiteId);
 
         $qb->andWhere(

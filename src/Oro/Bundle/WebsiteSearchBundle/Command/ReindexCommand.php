@@ -2,15 +2,17 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Command;
 
+use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
+
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
-
 class ReindexCommand extends ContainerAwareCommand
 {
+    use ContextTrait;
+
     const COMMAND_NAME = 'oro:website-search:reindex';
 
     /**
@@ -48,7 +50,7 @@ class ReindexCommand extends ContainerAwareCommand
         $context = [];
         if ($websiteId !== null) {
             $websiteId = (int)$websiteId;
-            $context[AbstractIndexer::CONTEXT_WEBSITE_ID_KEY] = $websiteId;
+            $context = $this->setContextWebsiteIds($context, [$websiteId]);
         }
 
         $output->writeln($this->getStartingMessage($class, $websiteId));

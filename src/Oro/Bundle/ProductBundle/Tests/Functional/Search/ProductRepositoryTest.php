@@ -85,13 +85,17 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertEquals(count($productsFromOrm), count($productsFromSearch));
 
         foreach ($productsFromOrm as $productFromOrm) {
-            $found = false;
+            $found = $foundTitle = false;
             foreach ($productsFromSearch as $productFromSearch) {
-                if ($productFromSearch->getSelectedData()['sku'] == $productFromOrm['sku']) {
+                if ($productFromSearch->getSelectedData()['sku'] === $productFromOrm['sku']) {
                     $found = true;
+                }
+                if ($productFromSearch->getSelectedData()['title'] === $productFromOrm['title']) {
+                    $foundTitle = true;
                 }
             }
             $this->assertTrue($found, 'Product with sku `' . $productFromOrm['sku'] . '` not found.');
+            $this->assertTrue($foundTitle, 'Product title `' . $productFromOrm['title'] . '` not present.');
         }
     }
 }

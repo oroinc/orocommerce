@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Search;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 
 class ProductRepository extends WebsiteSearchRepository
@@ -57,6 +58,7 @@ class ProductRepository extends WebsiteSearchRepository
 
         $searchQuery->setFrom('oro_product_WEBSITE_ID')
             ->addSelect('sku')
+            ->addSelect('title_LOCALIZATION_ID')
             ->getCriteria()
             ->andWhere(Criteria::expr()->contains('sku_uppercase', implode(', ', $upperCaseSkus)));
 
@@ -70,8 +72,30 @@ class ProductRepository extends WebsiteSearchRepository
     public function searchFilteredBySkus(array $skus)
     {
         $searchQuery = $this->getFilterSkuQuery($skus);
-        $searchQuery->addSelect('title_LOCALIZATION_ID');
 
         return $searchQuery->getResult()->getElements();
+    }
+
+    /**
+     * @param string $search
+     * @param int $firstResult
+     * @param int $maxResults
+     * @return SearchQueryInterface
+     */
+    public function getSearchQuery($search, $firstResult, $maxResults)
+    {
+        $searchQuery = $this->createQuery();
+
+        $searchQuery->setFrom('oro_product_WEBSITE_ID')
+            ->addSelect('sku')
+            ->addSelect('title_LOCALIZATION_ID')
+            ->getCriteria()
+            ->andWhere(
+                Criteria::expr()->contains('all_text_LOCALIZATION_ID', $search)
+            )->orderBy(['id' => Criteria::ASC])
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults);
+
+        return $searchQuery;
     }
 }

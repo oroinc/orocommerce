@@ -4,7 +4,6 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Driver;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Driver\AccountPartialUpdateDriverInterface;
-use Oro\Bundle\CustomerBundle\Driver\OrmAccountPartialUpdateDriver;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
@@ -29,7 +28,7 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
     private $configManager;
 
     /**
-     * @var OrmAccountPartialUpdateDriver
+     * @var AccountPartialUpdateDriverInterface
      */
     private $driver;
 
@@ -37,23 +36,25 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
     {
         parent::setUp();
 
-        $this->loadFixtures([LoadProductVisibilityData::class]);
+        if (!$this->isTestSkipped()) {
+            $this->loadFixtures([LoadProductVisibilityData::class]);
 
-        $anonymousGroupId = $this->getContainer()
-            ->get('oro_config.global')
-            ->get('oro_customer.anonymous_account_group');
+            $anonymousGroupId = $this->getContainer()
+                ->get('oro_config.global')
+                ->get('oro_customer.anonymous_account_group');
 
-        $this->configManager = $this->getContainer()->get('oro_config.global');
-        $this->configManager->set('oro_customer.anonymous_account_group', $anonymousGroupId);
+            $this->configManager = $this->getContainer()->get('oro_config.global');
+            $this->configManager->set('oro_customer.anonymous_account_group', $anonymousGroupId);
 
-        $this->driver = $this->getDriver();
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+            $this->driver = $this->getContainer()->get('oro_website_search.driver.account_partial_update_driver');
+            $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+        }
     }
 
     /**
-     * @return AccountPartialUpdateDriverInterface
+     * @return bool
      */
-    abstract protected function getDriver();
+    abstract protected function isTestSkipped();
 
     /**
      * @param Account $account

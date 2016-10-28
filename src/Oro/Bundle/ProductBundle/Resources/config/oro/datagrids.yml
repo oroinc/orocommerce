@@ -283,7 +283,7 @@ datagrids:
                 select:
                     - text.sku as sku
                     - text.title_LOCALIZATION_ID as name
-                    - text.short_desc_LOCALIZATION_ID as shortDescription
+                    - text.short_description_LOCALIZATION_ID as shortDescription
                 from:
                     - oro_product_WEBSITE_ID
         columns:
