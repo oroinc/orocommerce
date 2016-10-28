@@ -9,7 +9,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WarehouseBundle\Validator\QuantityToOrderValidator;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -23,7 +23,7 @@ class QuantityToOrderConditionListener
     /**
      * @var array
      */
-    public static $allowedWorkflows = ['b2b_flow_checkout'];
+    public static $allowedWorkflows = ['b2b_flow_checkout', 'b2b_flow_alternative_checkout'];
 
     /**
      * @var QuantityToOrderValidator
@@ -55,20 +55,13 @@ class QuantityToOrderConditionListener
     }
 
     /**
-     * @param ExtendableConditionEvent $event
+     * @param CheckoutValidateEvent $event
      * @throws InvalidTransitionException
      */
-    public function onConditionAllowedCheck(ExtendableConditionEvent $event)
+    public function onCheckoutValidate(CheckoutValidateEvent $event)
     {
         $workflowItem = $event->getContext();
-        if (!$workflowItem instanceof WorkflowItem
-            || !in_array($workflowItem->getWorkflowName(), self::$allowedWorkflows)
-            || !$workflowItem->getEntity() instanceof Checkout
-            || !$workflowItem->getEntity()->getSource() instanceof CheckoutSource
-            // make sure checkout only done from shopping list
-            || !$workflowItem->getEntity()->getSource()->getEntity() instanceof ShoppingList
-            || !$workflowItem->getEntity()->getSource()->getShoppingList() instanceof ShoppingList
-        ) {
+        if ($this->isNotCorrectConditionContext($workflowItem)) {
             return;
         }
 
@@ -76,17 +69,14 @@ class QuantityToOrderConditionListener
         $shoppingList = $workflowItem->getEntity()->getSource()->getShoppingList();
 
         if (false == $this->quantityValidator->isLineItemListValid($shoppingList->getLineItems())) {
-            throw InvalidTransitionException::workflowCanceledByTransition(
-                $workflowItem->getWorkflowName(),
-                $workflowItem->getCurrentStep() ? $workflowItem->getCurrentStep()->getName() : 'null'
-            );
+            $event->setIsCheckoutRestartRequired(true);
         }
     }
 
     /**
      * @param ExtendableConditionEvent $event
      */
-    public function onProductQuantityCheck(ExtendableConditionEvent $event)
+    public function onCreateOrderCheck(ExtendableConditionEvent $event)
     {
         $context = $event->getContext();
         if (!$context instanceof ActionData
@@ -101,11 +91,32 @@ class QuantityToOrderConditionListener
     }
 
     /**
-     * @param Product $product
-     * @return string
+     * @param ExtendableConditionEvent $event
      */
-    protected function getFlashMessageDomain(Product $product)
+    public function onCheckoutConditionCheck(ExtendableConditionEvent $event)
     {
-        return sprintf('product.%s', $product->getSku());
+        $context = $event->getContext();
+        if ($this->isNotCorrectConditionContext($context)) {
+            return;
+        }
+
+        if (false == $this->quantityValidator->isLineItemListValid($context->getEntity()->getLineItems())) {
+            $event->addError(self::QUANTITY_CHECK_ERROR, $context);
+        }
+    }
+
+    /**
+     * @param mixed $context
+     * @return bool
+     */
+    protected function isNotCorrectConditionContext($context)
+    {
+        return (!$context instanceof WorkflowItem
+            || !in_array($context->getWorkflowName(), self::$allowedWorkflows)
+            || !$context->getEntity() instanceof Checkout
+            || !$context->getEntity()->getSource() instanceof CheckoutSource
+            // make sure checkout only done from shopping list
+            || !$context->getEntity()->getSource()->getEntity() instanceof ShoppingList
+            || !$context->getEntity()->getSource()->getShoppingList() instanceof ShoppingList);
     }
 }

@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -160,6 +161,10 @@ class CheckoutController extends Controller
     protected function handleTransition(CheckoutInterface $checkout, Request $request)
     {
         $workflowItem = $this->getWorkflowItem($checkout);
+
+        if ($this->isCheckoutRestartRequired($workflowItem)) {
+            return $this->restartCheckout($workflowItem, $checkout);
+        }
         if ($request->isMethod(Request::METHOD_POST)) {
             $continueTransition = $this->get('oro_checkout.layout.data_provider.transition')
                 ->getContinueTransition($workflowItem);
@@ -171,7 +176,8 @@ class CheckoutController extends Controller
                     if ($transitionForm->isValid()) {
                         $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
                     } else {
-                        $workflowItem = $this->handleFormErrors($transitionForm->getErrors(), $workflowItem, $checkout);
+                        $this->get('oro_checkout.workflow_state.handler.checkout_error')
+                            ->addFlashWorkflowStateWarning($transitionForm->getErrors());
                     }
                 } else {
                     $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
@@ -238,27 +244,33 @@ class CheckoutController extends Controller
     }
 
     /**
-     * @param FormErrorIterator $errors
+     * @param mixed|null $context
+     * @return bool
+     */
+    protected function isCheckoutRestartRequired($context = null)
+    {
+        $event = new CheckoutValidateEvent($context);
+        $dispatcher = $this->get('event_dispatcher');
+        if (false == $dispatcher->hasListeners(CheckoutValidateEvent::NAME)) {
+            return false;
+        }
+
+        $dispatcher->dispatch(CheckoutValidateEvent::NAME, $event);
+
+        return $event->isCheckoutRestartRequired();
+    }
+
+    /**
      * @param WorkflowItem $workflowItem
      * @param CheckoutInterface $checkout
      * @return WorkflowItem
      */
-    protected function handleFormErrors(
-        FormErrorIterator $errors,
-        WorkflowItem $workflowItem,
-        CheckoutInterface $checkout
-    ) {
-        $errorHandler = $this->get('oro_checkout.workflow_state.handler.checkout_error');
-        $errorHandler->addFlashWorkflowStateWarning($errors);
+    protected function restartCheckout(WorkflowItem $workflowItem, CheckoutInterface $checkout)
+    {
+        $workflow = $this->getWorkflowManager()->getWorkflow($workflowItem->getWorkflowName());
+        $start = $workflow->getTransitionManager()->getStartTransitions()->first();
+        $this->getWorkflowManager()->transit($workflowItem, $start);
 
-        if ($errorHandler->isCheckoutRestartRequired($errors)) {
-            $workflow = $this->getWorkflowManager()->getWorkflow($workflowItem->getWorkflowName());
-            $start = $workflow->getTransitionManager()->getStartTransitions()->first();
-            $this->getWorkflowManager()->transit($workflowItem, $start);
-
-            return $this->getWorkflowItem($checkout);
-        }
-
-        return $workflowItem;
+        return $this->getWorkflowItem($checkout);
     }
 }
