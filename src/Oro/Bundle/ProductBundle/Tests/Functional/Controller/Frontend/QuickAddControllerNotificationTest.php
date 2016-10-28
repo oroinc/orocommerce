@@ -77,7 +77,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
                     'productQuantity' => 1,
                 ],
             ],
-            'cannot_be_added_to_rfq' => [
+            'not_added_products' => [
                 [
                     'productSku' => $this->productInStock->getSku(),
                     'productQuantity' => 1,
@@ -93,8 +93,10 @@ class QuickAddControllerNotificationTest extends WebTestCase
             'no_products_be_added_to_rfq' => $this->translator->trans(
                 'oro.frontend.rfp.data_storage.no_products_be_added_to_rfq'
             ),
-            'cannot_be_added_to_rfq' => $this->translator->trans(
-                'oro.frontend.rfp.data_storage.cannot_be_added_to_rfq'
+            'not_added_products' => $this->translator->transChoice(
+                'oro.product.frontend.quick_add.messages.not_added_products',
+                1,
+                ['%sku%' => $this->productOutOfStock->getSku()]
             )
         ];
     }
@@ -132,7 +134,7 @@ class QuickAddControllerNotificationTest extends WebTestCase
         $content = $this->client->getResponse()->getContent();
 
         $this->assertContains(
-            $this->expectedMessageGroup[$group],
+            json_encode($this->expectedMessageGroup[$group]),
             $content
         );
     }
@@ -146,8 +148,8 @@ class QuickAddControllerNotificationTest extends WebTestCase
             'no_products_be_added_to_rfq' => [
                 'group' => 'no_products_be_added_to_rfq'
             ],
-            'cannot_be_added_to_rfq' => [
-                'group' => 'cannot_be_added_to_rfq'
+            'not_added_products' => [
+                'group' => 'not_added_products'
             ],
         ];
     }
