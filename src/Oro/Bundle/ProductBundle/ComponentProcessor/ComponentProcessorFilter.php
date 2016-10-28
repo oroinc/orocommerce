@@ -2,29 +2,21 @@
 
 namespace Oro\Bundle\ProductBundle\ComponentProcessor;
 
-use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 
 class ComponentProcessorFilter implements ComponentProcessorFilterInterface
 {
-    /** @var  ProductManager */
-    protected $productManager;
-
     /** @var ProductRepository */
     protected $repository;
 
     /**
-     * @param ProductManager    $productManager
      * @param ProductRepository $repository
      */
-    public function __construct(
-        ProductManager $productManager,
-        ProductRepository $repository
-    ) {
-        $this->productManager = $productManager;
-        $this->repository     = $repository;
+    public function __construct(ProductRepository $repository)
+    {
+        $this->repository = $repository;
     }
 
     /**
@@ -42,8 +34,7 @@ class ComponentProcessorFilter implements ComponentProcessorFilterInterface
             return $data;
         }
 
-        $searchQuery      = $this->repository->getFilterSkuQuery(array_keys($products));
-        $this->productManager->restrictSearchQuery($searchQuery->getQuery());
+        $searchQuery = $this->repository->getFilterSkuQuery(array_keys($products));
         /** @var Item[] $filteredProducts */
         $filteredProducts = $searchQuery->getResult()->toArray();
 
