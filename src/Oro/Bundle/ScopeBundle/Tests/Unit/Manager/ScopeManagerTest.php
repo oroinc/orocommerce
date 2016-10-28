@@ -12,6 +12,7 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Stub\StubScope;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Stub\StubScopeCriteriaProvider;
+use Oro\Component\TestUtils\Mocks\ServiceLink;
 
 class ScopeManagerTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,7 +37,9 @@ class ScopeManagerTest extends \PHPUnit_Framework_TestCase
         $this->entityFieldProvider = $this->getMockBuilder(EntityFieldProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->manager = new ScopeManager($this->registry, $this->entityFieldProvider);
+
+        $serviceLink = new ServiceLink($this->entityFieldProvider);
+        $this->manager = new ScopeManager($this->registry, $serviceLink);
     }
 
     public function tearDown()
