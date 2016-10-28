@@ -1,0 +1,15 @@
+{% set methodLabel = get_shipping_method_label(methodConfig.methodIdentifier)|trans %}
+{% if methodLabel|length > 0 %}
+<li>{{ methodLabel }}
+    <ul>
+{% endif %}
+
+        {% for typeConfig in methodConfig.typeConfigs %}
+        <li>{{ get_shipping_method_type_label(methodConfig.methodIdentifier, typeConfig.type)|trans }}</li>
+        {% endfor %}
+
+{% if methodLabel|length > 0 %}
+    </ul>
+</li>
+{% endif %}
+

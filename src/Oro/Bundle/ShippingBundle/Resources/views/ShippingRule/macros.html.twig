@@ -1,22 +1,26 @@
 {% macro renderShippingMethodsConfigs(methodConfigs) %}
     {% spaceless %}
         <ol>
-        {% for methodConfig in methodConfigs %}
-            {% set methodLabel = get_shipping_method_label(methodConfig.method)|trans %}
-            {% if methodLabel|length > 0 %}
-                <li>{{  methodLabel }}
-                    <ul>
-                    {% for typeConfig in methodConfig.typeConfigs %}
-                        <li>{{ get_shipping_method_type_label(methodConfig.method, typeConfig.type)|trans }}</li>
-                    {% endfor %}
-                    </ul>
-                </li>
-            {% else %}
+            {% for methodConfig in methodConfigs %}
+
+                {% set typeConfigData = [] %}
                 {% for typeConfig in methodConfig.typeConfigs %}
-                    <li>{{ get_shipping_method_type_label(methodConfig.method, typeConfig.type)|trans }}</li>
+                    {% set typeConfigData = typeConfigData|merge([{
+                    'identifier': typeConfig.id,
+                    'type':       typeConfig.type,
+                    'options':    typeConfig.options,
+                    'enabled':    typeConfig.enabled,
+                    }]) %}
                 {% endfor %}
-            {% endif %}
-        {% endfor %}
+
+                {% set shippingMethodConfig = {
+                'methodIdentifier':  methodConfig.method,
+                'typeConfigs':   typeConfigData,
+                'options': methodConfig.options,
+                } %} 
+
+                {% include oro_shipping_method_config_render_data(methodConfig.method) with {'methodConfig': shippingMethodConfig} %}
+            {% endfor %}
         </ol>
     {% endspaceless %}
 {% endmacro %}
