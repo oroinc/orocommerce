@@ -1,25 +1,22 @@
 {% macro renderShippingMethodsConfigs(methodConfigs) %}
-    {% spaceless %}
+    {%- spaceless -%}
         <ol>
-            {% for methodConfig in methodConfigs %}
-
-                {% set typeConfigData = [] %}
-                {% for typeConfig in methodConfig.typeConfigs %}
+            {%- for methodConfig in methodConfigs -%}
+                {%- set typeConfigData = [] -%}
+                {%- for typeConfig in methodConfig.typeConfigs -%}
                     {% set typeConfigData = typeConfigData|merge([{
                         'identifier': typeConfig.type,
                         'options': typeConfig.options,
                         'enabled': typeConfig.enabled,
                     }]) %}
-                {% endfor %}
-
-                {% set shippingMethodConfig = {
+                {%- endfor -%}
+                {%- set shippingMethodConfig = {
                     'identifier': methodConfig.method,
                     'types': typeConfigData,
                     'options': methodConfig.options,
-                } %} 
-
-                {% include oro_shipping_method_config_template(methodConfig.method) with {'data': shippingMethodConfig} %}
-            {% endfor %}
+                } -%}
+                {%- include oro_shipping_method_config_template(methodConfig.method) with {'data': shippingMethodConfig} -%}
+            {%- endfor -%}
         </ol>
-    {% endspaceless %}
+    {%- endspaceless -%}
 {% endmacro %}
