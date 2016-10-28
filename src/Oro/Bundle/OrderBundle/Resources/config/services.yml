@@ -152,6 +152,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 
+    oro_order.event_listener.order.possible_shipping_methods:
+        class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener'
+        arguments:
+            - '@oro_order.factory.shipping_context_provider_factory'
+            - '@?oro_shipping.shipping_price.provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
+
     oro_order.event_listener.order.matching_price:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener'
         arguments:
@@ -286,4 +294,4 @@ services:
         class: 'Oro\Bundle\OrderBundle\Factory\ShippingContextProviderFactory'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@=?oro_shipping.factory.shipping_context_factory'
+            - '@?oro_shipping.factory.shipping_context_factory'
