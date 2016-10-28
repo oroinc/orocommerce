@@ -5,7 +5,6 @@ namespace Oro\Bundle\ProductBundle\Search;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 
 class ProductRepository extends WebsiteSearchRepository
@@ -15,7 +14,7 @@ class ProductRepository extends WebsiteSearchRepository
      */
     private static $defaultSelectFields = [
         'integer.product_id',
-        'text.title',
+        'text.title_LOCALIZATION_ID',
         'text.sku',
     ];
 
