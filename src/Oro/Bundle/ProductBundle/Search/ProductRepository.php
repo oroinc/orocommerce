@@ -5,11 +5,29 @@ namespace Oro\Bundle\ProductBundle\Search;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchRepository;
 
 class ProductRepository extends WebsiteSearchRepository
 {
+    /**
+     * @param int $id
+     * @return \Oro\Bundle\SearchBundle\Query\Result\Item|null
+     */
+    public function findOne($id)
+    {
+        $searchQuery = $this->createQuery()->addWhere(
+            Criteria::expr()->eq('integer.product_id', $id)
+        );
+
+        $items = $searchQuery->getResult();
+
+        if ($items->getRecordsCount() < 1) {
+            return null;
+        }
+
+        return $items->getElements()[0];
+    }
+
     /**
      * @param array $skus
      * @return SearchQueryInterface
@@ -23,9 +41,9 @@ class ProductRepository extends WebsiteSearchRepository
 
         $searchQuery->setFrom('oro_product_WEBSITE_ID')
             ->addSelect('sku')
-            ->addSelect('name_LOCALIZATION_ID')
+            ->addSelect('name_LOCALIZATION_ID as name')
             ->getCriteria()
-            ->andWhere(Criteria::expr()->contains('sku_uppercase', implode(', ', $upperCaseSkus)));
+            ->andWhere(Criteria::expr()->in('sku_uppercase', $upperCaseSkus));
 
         return $searchQuery;
     }

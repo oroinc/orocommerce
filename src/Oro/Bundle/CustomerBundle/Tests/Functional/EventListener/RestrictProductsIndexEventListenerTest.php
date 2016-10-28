@@ -62,7 +62,12 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
     {
         $indexer = $this->getContainer()->get('oro_website_search.indexer');
         $searchEngine = $this->getContainer()->get('oro_website_search.engine');
-        $indexer->reindex(Product::class, [AbstractIndexer::CONTEXT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]);
+        $indexer->reindex(
+            Product::class,
+            [
+                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
+            ]
+        );
 
         $query = new Query();
         $query->from('oro_product_WEBSITE_ID');
