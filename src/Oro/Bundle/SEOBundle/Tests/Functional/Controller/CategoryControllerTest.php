@@ -4,6 +4,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadCategoryMetaData;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @dbIsolation
@@ -35,7 +36,6 @@ class CategoryControllerTest extends WebTestCase
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => ['_token' => $crfToken],
         ];
-        $parameters['oro_catalog_category']['metaTitles']['values']['default'] = LoadCategoryMetaData::META_TITLES;
         $parameters['oro_catalog_category']['metaDescriptions']['values']['default'] =
             LoadCategoryMetaData::META_DESCRIPTIONS;
         $parameters['oro_catalog_category']['metaKeywords']['values']['default'] =
@@ -50,18 +50,19 @@ class CategoryControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(LoadCategoryMetaData::META_TITLES, $html);
         $this->assertContains(LoadCategoryMetaData::META_DESCRIPTIONS, $html);
         $this->assertContains(LoadCategoryMetaData::META_KEYWORDS, $html);
     }
 
-    public function checkSeoSectionExistence($crawler)
+    /**
+     * @param Crawler $crawler
+     */
+    public function checkSeoSectionExistence(Crawler $crawler)
     {
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('SEO', $crawler->filter('.nav')->html());
-        $this->assertContains('Meta title', $crawler->html());
         $this->assertContains('Meta description', $crawler->html());
         $this->assertContains('Meta keywords', $crawler->html());
     }

@@ -7,10 +7,13 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 trait LoadDemoMetaDataTrait
 {
+    /**
+     * @param ObjectManager $manager
+     * @param array $entities
+     */
     public function addMetaFieldsData(ObjectManager $manager, array $entities)
     {
         foreach ($entities as $entity) {
-            $entity->addMetaTitles($this->getSeoMetaFieldData($manager, 'defaultMetaTitle'));
             $entity->addMetaDescriptions($this->getSeoMetaFieldData($manager, 'defaultMetaDescription'));
             $entity->addMetaKeywords($this->getSeoMetaFieldData($manager, 'defaultMetaKeywords'));
 

@@ -1,0 +1,8 @@
+config:
+    paths:
+        'oroinventory/js/app/modules/validator-constraints-module': 'bundles/oroinventory/js/app/modules/validator-constraints-module.js'
+        'oroinventory/js/datagrid/builder/level-quantity-builder': 'bundles/oroinventory/js/datagrid/builder/level-quantity-builder.js'
+        'oroinventory/js/app/views/editor/decimals-number-editor-view': 'bundles/oroinventory/js/app/views/decimals-number-editor-view.js'
+        'oroinventory/js/validator/decimals-number': 'bundles/oroinventory/js/validator/decimals-number.js'
+    appmodules:
+        - oroinventory/js/app/modules/validator-constraints-module

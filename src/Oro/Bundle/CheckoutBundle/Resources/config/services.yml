@@ -270,15 +270,6 @@ services:
         tags:
             - { name: checkout.workflow_state.mapper }
 
-    oro_checkout.workflow_state.mapper.payment_method_enabled:
-        class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\PaymentMethodEnabledMapper'
-        arguments:
-            - '@oro_payment.payment_method.registry'
-            - '@oro_payment.provider.payment_context'
-        public: false
-        tags:
-            - { name: checkout.workflow_state.mapper }
-
     oro_checkout.workflow_state.mapper.shipping_method_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodDiffMapper'
         arguments:
