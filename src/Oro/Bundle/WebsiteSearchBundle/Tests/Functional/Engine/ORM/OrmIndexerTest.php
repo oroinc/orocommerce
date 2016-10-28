@@ -52,7 +52,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             'alias' => 'oro_product_WEBSITE_ID',
             'fields' => [
                 [
-                    'name' => 'title_LOCALIZATION_ID',
+                    'name' => 'name_LOCALIZATION_ID',
                     'type' => 'text',
                 ],
             ],
@@ -62,7 +62,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             'alias' => 'oro_employee_WEBSITE_ID',
             'fields' => [
                 [
-                    'name' => 'title_LOCALIZATION_ID',
+                    'name' => 'name_LOCALIZATION_ID',
                     'type' => 'text',
                 ],
             ],

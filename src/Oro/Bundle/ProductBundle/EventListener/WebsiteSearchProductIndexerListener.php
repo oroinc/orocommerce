@@ -63,7 +63,7 @@ class WebsiteSearchProductIndexerListener
             $placeholders = [LocalizationIdPlaceholder::NAME => Localization::DEFAULT_LOCALIZATION];
             $event->addPlaceholderField(
                 $product->getId(),
-                'title_LOCALIZATION_ID',
+                'name_LOCALIZATION_ID',
                 (string)$product->getDefaultName(),
                 $placeholders
             );
@@ -87,7 +87,7 @@ class WebsiteSearchProductIndexerListener
                 $placeholders = [LocalizationIdPlaceholder::NAME => $localizationId];
                 $event->addPlaceholderField(
                     $product->getId(),
-                    'title_LOCALIZATION_ID',
+                    'name_LOCALIZATION_ID',
                     (string)$product->getName($localization),
                     $placeholders
                 );
