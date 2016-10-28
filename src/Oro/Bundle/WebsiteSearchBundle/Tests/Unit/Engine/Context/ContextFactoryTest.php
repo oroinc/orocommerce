@@ -15,7 +15,8 @@ class ContextFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateForReindexation(ReindexationRequestEvent $event, array $contextExpected)
     {
-        $this->assertEquals($contextExpected, ContextFactory::createForReindexation($event));
+        $factory = new ContextFactory();
+        $this->assertEquals($contextExpected, $factory->createForReindexation($event));
     }
 
     /**
@@ -27,28 +28,28 @@ class ContextFactoryTest extends \PHPUnit_Framework_TestCase
             'for websites only'   => [
                 new ReindexationRequestEvent([], [1, 2]),
                 [
-                    AbstractIndexer::CONTEXT_WEBSITE_ID_KEY   => [1, 2],
+                    AbstractIndexer::CONTEXT_WEBSITE_IDS   => [1, 2],
                     AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
                 ],
             ],
             'for ids only'        => [
                 new ReindexationRequestEvent([], [], [3, 4]),
                 [
-                    AbstractIndexer::CONTEXT_WEBSITE_ID_KEY   => [],
+                    AbstractIndexer::CONTEXT_WEBSITE_IDS   => [],
                     AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [3, 4],
                 ],
             ],
             'for websites and ids' => [
                 new ReindexationRequestEvent([], [1, 2], [3, 4]),
                 [
-                    AbstractIndexer::CONTEXT_WEBSITE_ID_KEY   => [1, 2],
+                    AbstractIndexer::CONTEXT_WEBSITE_IDS   => [1, 2],
                     AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [3, 4],
                 ],
             ],
             'empty'               => [
                 new ReindexationRequestEvent(),
                 [
-                    AbstractIndexer::CONTEXT_WEBSITE_ID_KEY   => [],
+                    AbstractIndexer::CONTEXT_WEBSITE_IDS   => [],
                     AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
                 ],
             ],
