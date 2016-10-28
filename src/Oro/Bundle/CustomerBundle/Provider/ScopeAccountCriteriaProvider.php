@@ -29,7 +29,11 @@ class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
      */
     public function getCriteriaForCurrentScope()
     {
-        $loggedUser = $this->tokenStorage->getToken();
+        $token = $this->tokenStorage->getToken();
+        if (!$token) {
+            return [];
+        }
+        $loggedUser = $token->getUser();
         if (null !== $loggedUser && $loggedUser instanceof AccountUser) {
             return [self::ACCOUNT => $loggedUser->getAccount()];
         }
