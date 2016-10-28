@@ -20,11 +20,17 @@
 
         {% for child in block if child.vars.visible %}
             {% set currentUrl = path(child.vars.route_name, child.vars.route_parameters) %}
+            {% set itemCurrentClass = '' %}
+            {% set linkCurrentClass = '' %}
+            {% if currentUrl in requestUrl and not found %}
+                {% set itemCurrentClass = 'primary-menu__item--current' %}
+                {% set linkCurrentClass = 'link--current' %}
+            {% endif %}
 
-            <li class="primary-menu__item {% if currentUrl in requestUrl and not found %}primary-menu__item--current{% endif %}">
+            <li class="primary-menu__item {{ itemCurrentClass }}">
                 {{ block_widget(child, {
                     attr: layout_attr_defaults(child.vars.attr, {
-                        '~class': ' link'
+                        '~class': ' link ' ~ linkCurrentClass
                     })
                 }) }}
             </li>
