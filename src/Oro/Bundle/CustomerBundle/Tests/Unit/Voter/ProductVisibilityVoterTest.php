@@ -62,8 +62,6 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
         $attributes = [ProductVisibilityVoter::ATTRIBUTE_VIEW];
         $vote       = $this->voter->vote($this->currentToken, $object, $attributes);
         $this->assertEquals($vote, ProductVisibilityVoter::ACCESS_ABSTAIN);
-
-
     }
 
     /**
