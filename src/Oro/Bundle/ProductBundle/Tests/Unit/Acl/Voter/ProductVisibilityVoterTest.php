@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Voter;
 
-use Oro\Bundle\ProductBundle\Acl\Voter\ProductVisibilityVoter;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+use Oro\Bundle\ProductBundle\Acl\Voter\ProductVisibilityVoter;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
@@ -39,9 +39,6 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
      */
     protected $voter;
 
-    /**
-     *
-     */
     public function setUp()
     {
         $this->frontendHelper = new FrontendHelper('admin', $this->getContainerMock());
@@ -53,9 +50,6 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
         $this->voter->setClassName(Product::class);
     }
 
-    /**
-     *
-     */
     public function testVoteAbstain()
     {
         $object     = null;
@@ -64,9 +58,6 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($vote, ProductVisibilityVoter::ACCESS_ABSTAIN);
     }
 
-    /**
-     *
-     */
     public function testVoteGranted()
     {
         $attributes = [ProductVisibilityVoter::ATTRIBUTE_VIEW];

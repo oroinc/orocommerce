@@ -7,21 +7,22 @@ use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 
 class CompositeQueryFactory implements QueryFactoryInterface
 {
-    use WebsiteQueryFactoryTrait;
+    /** @var QueryFactoryInterface */
+    protected $backendQueryFactory;
 
     /** @var QueryFactoryInterface */
-    protected $parent;
+    protected $websiteQueryFactory;
 
     /**
-     * @param QueryFactoryInterface $parentQueryFactory
-     * @param EngineV2Interface $engine
+     * @param QueryFactoryInterface $backendQueryFactory
+     * @param QueryFactoryInterface $websiteQueryFactory
      */
     public function __construct(
-        QueryFactoryInterface $parentQueryFactory,
-        EngineV2Interface $engine
+        QueryFactoryInterface $backendQueryFactory,
+        QueryFactoryInterface $websiteQueryFactory
     ) {
-        $this->parent = $parentQueryFactory;
-        $this->engine = $engine;
+        $this->backendQueryFactory = $backendQueryFactory;
+        $this->websiteQueryFactory = $websiteQueryFactory;
     }
 
     /**
@@ -30,9 +31,9 @@ class CompositeQueryFactory implements QueryFactoryInterface
     public function create(array $config = [])
     {
         if (!isset($config['search_index']) || $config['search_index'] !== 'website') {
-            return $this->parent->create($config);
+            return $this->backendQueryFactory->create($config);
+        } else {
+            return $this->websiteQueryFactory->create($config);
         }
-
-        return $this->createWebsiteSearchQuery($config);
     }
 }

@@ -50,12 +50,8 @@ class AjaxProductController extends Controller
          */
         foreach ($products as $product) {
             $selectedData                = $product->getSelectedData();
-            $localeId                    = $this->get('oro_frontend_localization.manager.user_localization')
-                ->getCurrentLocalization()
-                ->getId();
-            $nameKey                     = 'title_' . $localeId;
             $names[$selectedData['sku']] = [
-                'name' => $selectedData[$nameKey],
+                'name' => $selectedData['title'],
             ];
         }
 

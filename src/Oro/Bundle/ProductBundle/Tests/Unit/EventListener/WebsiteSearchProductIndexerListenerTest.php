@@ -152,6 +152,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
         $this->listener->onWebsiteSearchIndex($event);
 
         $expected[$product->getId()] = [
+            'product_id' => $product->getId(),
             'sku' => 'sku123',
             'sku_uppercase' => 'SKU123',
             'status' => Product::STATUS_ENABLED,

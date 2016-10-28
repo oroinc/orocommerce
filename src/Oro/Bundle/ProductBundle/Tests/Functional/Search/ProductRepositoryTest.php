@@ -6,6 +6,7 @@ use Doctrine\ORM\Query;
 
 use Symfony\Component\HttpFoundation\Request;
 
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -24,12 +25,9 @@ class ProductRepositoryTest extends WebTestCase
         $this->getContainer()->get('request_stack')->push(Request::create(''));
 
         $this->loadFixtures([
-            LoadProductData::class,
+            LoadFrontendProductData::class,
             LoadProductVisibilityData::class,
         ]);
-
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
-        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 
     public function testFindOne()
@@ -42,26 +40,21 @@ class ProductRepositoryTest extends WebTestCase
         );
 
         $this->assertNotNull($product);
-        $this->assertEquals($product->getSelectedData()['product_id'], $exampleProduct->getId());
+        $this->assertEquals($product->getId(), $exampleProduct->getId());
         $this->initClient();
         $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->loadFixtures([
             LoadProductVisibilityData::class
         ]);
 
-        $NotFoundProduct = $this->client->getContainer()->get('oro_product.website_search.repository.product')->findOne(
+        $notFoundProduct = $this->client->getContainer()->get('oro_product.website_search.repository.product')->findOne(
             1024
         );
-        $this->assertNull($NotFoundProduct);
-
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
-        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
+        $this->assertNull($notFoundProduct);
     }
 
     public function testSearchFilteredBySkus()
     {
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
-        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
         /** @var ProductRepository $ormRepository */
         $ormRepository = $this->client->getContainer()
             ->get('doctrine')
@@ -90,12 +83,8 @@ class ProductRepositoryTest extends WebTestCase
                 if ($productFromSearch->getSelectedData()['sku'] === $productFromOrm['sku']) {
                     $found = true;
                 }
-                if ($productFromSearch->getSelectedData()['title'] === $productFromOrm['title']) {
-                    $foundTitle = true;
-                }
             }
             $this->assertTrue($found, 'Product with sku `' . $productFromOrm['sku'] . '` not found.');
-            $this->assertTrue($foundTitle, 'Product title `' . $productFromOrm['title'] . '` not present.');
         }
     }
 }
