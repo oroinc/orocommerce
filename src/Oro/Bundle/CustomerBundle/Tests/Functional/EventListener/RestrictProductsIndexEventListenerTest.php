@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\EventListener;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\CustomerBundle\EventListener\RestrictProductsIndexEventListener;
@@ -9,24 +12,32 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilit
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 
 /**
  * @dbIsolationPerTest
  */
-class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
+class RestrictProductsIndexEventListenerTest extends WebTestCase
 {
+    use DefaultWebsiteIdTestTrait;
+
     const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_customer.product_visibility';
     const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_customer.category_visibility';
 
     /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
     private $configManager;
 
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
+
     protected function setUp()
     {
-        parent::setUp();
+        $this->initClient();
+        $this->getContainer()->get('request_stack')->push(Request::create(''));
+        $this->dispatcher = $this->getContainer()->get('event_dispatcher');
 
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
@@ -170,5 +181,15 @@ class RestrictProductsIndexEventListenerTest extends AbstractSearchWebTestCase
     protected function getRestrictEntityEventName()
     {
         return sprintf('%s.%s', RestrictIndexEntityEvent::NAME, 'product');
+    }
+
+    /**
+     * @param string $eventName
+     */
+    protected function clearRestrictListeners($eventName)
+    {
+        foreach ($this->dispatcher->getListeners($eventName) as $listener) {
+            $this->dispatcher->removeListener($eventName, $listener);
+        }
     }
 }

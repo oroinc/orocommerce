@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
+
 use Doctrine\Common\Collections\Expr\Comparison;
 use Doctrine\Common\Collections\Expr\CompositeExpression;
 
@@ -10,12 +13,12 @@ use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
  */
-class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
+class ProductVisibilityRestrictionListenerTest extends WebTestCase
 {
     /**
      * @var EngineV2Interface
@@ -32,9 +35,16 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
      */
     private static $testValue;
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
     protected function setUp()
     {
-        parent::setUp();
+        $this->initClient();
+        $this->getContainer()->get('request_stack')->push(Request::create(''));
+        $this->dispatcher = $this->getContainer()->get('event_dispatcher');
 
         $this->engine = $this->client->getContainer()->get('oro_website_search.engine');
 
@@ -46,15 +56,12 @@ class ProductVisibilityRestrictionListenerTest extends AbstractSearchWebTestCase
             $event->getQuery()->getCriteria()->andWhere($expr->eq('name', self::$testValue));
         };
 
-
         $this->dispatcher->addListener(ProductSearchQueryRestrictionEvent::NAME, $this->listener);
     }
 
     protected function tearDown()
     {
         $this->dispatcher->removeListener(ProductSearchQueryRestrictionEvent::NAME, $this->listener);
-
-        parent::tearDown();
     }
 
     /**

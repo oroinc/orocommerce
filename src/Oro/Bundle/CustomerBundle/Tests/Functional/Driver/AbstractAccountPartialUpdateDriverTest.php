@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Driver;
 
+use Symfony\Component\HttpFoundation\Request;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Driver\AccountPartialUpdateDriverInterface;
 use Oro\Bundle\CustomerBundle\Driver\OrmAccountPartialUpdateDriver;
@@ -13,13 +15,16 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilit
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 
 /**
  * @dbIsolationPerTest
  */
-abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebTestCase
+abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
 {
+    use DefaultWebsiteIdTestTrait;
+
     const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_customer.product_visibility';
     const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_customer.category_visibility';
 
@@ -35,7 +40,8 @@ abstract class AbstractAccountPartialUpdateDriverTest extends AbstractSearchWebT
 
     protected function setUp()
     {
-        parent::setUp();
+        $this->initClient();
+        $this->getContainer()->get('request_stack')->push(Request::create(''));
 
         $this->loadFixtures([LoadProductVisibilityData::class]);
 
