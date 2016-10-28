@@ -59,9 +59,7 @@
         '~class': ' grid__row grid__row--offset-none'
     }) %}
     <div {{ block('block_attributes') }}>
-        <div class="grid__group-column">
-            {{ block_widget(block) }}
-        </div>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
@@ -70,8 +68,6 @@
         '~class': ' grid__row grid__row--offset-none'
     }) %}
     <div {{ block('block_attributes') }}>
-        <div class="grid__group-column">
-            {{ block_widget(block) }}
-        </div>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}

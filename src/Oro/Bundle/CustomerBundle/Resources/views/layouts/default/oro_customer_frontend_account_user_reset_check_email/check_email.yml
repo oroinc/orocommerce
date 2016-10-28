@@ -12,9 +12,9 @@ layout:
             id: main
         - '@move':
             id: notification
-            parentId: wrapper
+            parentId: wrapper_content
         - '@move':
             id: sticky_panel
-            parentId: wrapper
+            parentId: wrapper_content
     imports:
         - 'only_content'

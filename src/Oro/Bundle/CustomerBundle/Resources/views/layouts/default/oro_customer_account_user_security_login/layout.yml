@@ -4,10 +4,10 @@ layout:
             themes: 'layout.html.twig'
         - '@move':
             id: notification
-            parentId: wrapper
+            parentId: wrapper_content
         - '@move':
             id: sticky_panel
-            parentId: wrapper
+            parentId: wrapper_content
         - '@remove':
             id: main
         - '@setOption':
