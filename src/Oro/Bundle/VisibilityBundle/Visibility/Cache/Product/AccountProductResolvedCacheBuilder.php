@@ -3,6 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
@@ -24,6 +25,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
         $scope = $visibilitySettings->getScope();
 
         $selectedVisibility = $visibilitySettings->getVisibility();
+        /** @var VisibilityInterface $visibilitySettings */
         $visibilitySettings = $this->refreshEntity($visibilitySettings);
 
         $insert = false;
@@ -46,24 +48,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
                 ->getRepository('OroCatalogBundle:Category')
                 ->findOneByProduct($product);
             if ($category) {
-                $categoryScope = $this->scopeManager->findOrCreate('account_category_visibility', $scope);
-                $groupScope = null;
-                if ($scope->getAccount()->getGroup()) {
-                    $groupScope = $this->scopeManager->find(
-                        'account_group_category_visibility',
-                        ['accountGroup' => $scope->getAccount()->getGroup()]
-                    );
-                }
-                $visibility = $this->registry
-                    ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-                    ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-                    ->getFallbackToAccountVisibility($category, $categoryScope, $groupScope);
-                $update = [
-                    'sourceProductVisibility' => $visibilitySettings,
-                    'visibility' => $visibility,
-                    'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
-                    'category' => $category
-                ];
+                $update = $this->prepareUpdateByCategory($visibilitySettings, $scope, $category);
             } else {
                 // default fallback
                 if ($hasAccountProductVisibilityResolved) {
@@ -149,5 +134,40 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
     protected function getManager()
     {
         return $this->registry->getManagerForClass($this->cacheClass);
+    }
+
+    /**
+     * @param VisibilityInterface $visibilitySettings
+     * @param Scope $scope
+     * @param Category $category
+     * @return array
+     */
+    protected function prepareUpdateByCategory(
+        VisibilityInterface $visibilitySettings,
+        Scope $scope,
+        Category $category
+    ) {
+        $categoryScope = $this->scopeManager->findOrCreate('account_category_visibility', $scope);
+        $groupScope = null;
+        /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
+        $group = $scope->getAccount()->getGroup();
+        if ($group) {
+            /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
+            $groupScope = $this->scopeManager->find(
+                'account_group_category_visibility',
+                ['accountGroup' => $group]
+            );
+        }
+        $visibility = $this->registry
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getFallbackToAccountVisibility($category, $categoryScope, $groupScope);
+        $update = [
+            'sourceProductVisibility' => $visibilitySettings,
+            'visibility' => $visibility,
+            'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
+            'category' => $category
+        ];
+        return $update;
     }
 }
