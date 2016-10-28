@@ -58,18 +58,6 @@ services:
         tags:
             - { name: security.voter }
 
-    oro_product_visibility.acl.voter.account:
-        class: 'Oro\Bundle\CustomerBundle\Acl\Voter\ProductVisibilityVoter'
-        public: false
-        arguments:
-            - "@oro_entity.doctrine_helper"
-        calls:
-            - [setClassName, ['%oro_product.entity.product.class%']]
-            - [setFrontendHelper, ["@oro_frontend.request.frontend_helper"]]
-            - [setProductSearchRepository, ["@oro_product.website_search.repository.product"]]
-        tags:
-            - { name: security.voter }
-
     oro_customer.event_listener.datagrid.account:
         class: 'Oro\Bundle\CustomerBundle\EventListener\Datagrid\AccountDatagridListener'
         arguments:

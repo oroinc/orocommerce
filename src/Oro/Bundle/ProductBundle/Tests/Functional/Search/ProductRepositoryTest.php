@@ -6,7 +6,7 @@ use Doctrine\ORM\Query;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -19,23 +19,15 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
  */
 class ProductRepositoryTest extends WebTestCase
 {
-    /**
-     * @var LocalizationHelper
-     */
-    private $localizationHelper;
-
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->getContainer()->get('request_stack')->push(Request::create(''));
 
         $this->loadFixtures([
-            LoadProductData::class,
+            LoadFrontendProductData::class,
             LoadProductVisibilityData::class,
         ]);
-
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
-        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 
     public function testFindOne()
@@ -48,28 +40,21 @@ class ProductRepositoryTest extends WebTestCase
         );
 
         $this->assertNotNull($product);
-        $this->assertEquals($product->getSelectedData()['product_id'], $exampleProduct->getId());
+        $this->assertEquals($product->getId(), $exampleProduct->getId());
         $this->initClient();
         $this->getContainer()->get('request_stack')->push(Request::create(''));
-        $this->localizationHelper = $this->getContainer()->get('oro_locale.helper.localization');
-
         $this->loadFixtures([
             LoadProductVisibilityData::class
         ]);
 
-        $NotFoundProduct = $this->client->getContainer()->get('oro_product.website_search.repository.product')->findOne(
+        $notFoundProduct = $this->client->getContainer()->get('oro_product.website_search.repository.product')->findOne(
             1024
         );
-        $this->assertNull($NotFoundProduct);
-
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
-        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
+        $this->assertNull($notFoundProduct);
     }
 
     public function testSearchFilteredBySkus()
     {
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
-        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
         /** @var ProductRepository $ormRepository */
         $ormRepository = $this->client->getContainer()
             ->get('doctrine')
@@ -78,35 +63,28 @@ class ProductRepositoryTest extends WebTestCase
         $searchRepository = $this->client->getContainer()
             ->get('oro_product.website_search.repository.product');
 
-        /** @var Product[] $productsFromOrm */
         $productsFromOrm = $ormRepository->createQueryBuilder('p')
             ->setMaxResults(3)
             ->orderBy('p.id', 'desc')
             ->getQuery()
-            ->getResult(Query::HYDRATE_OBJECT);
+            ->getResult(Query::HYDRATE_ARRAY);
 
-        $titleField = sprintf('title_%d', $this->localizationHelper->getCurrentLocalization()->getId());
-        $skus       = [];
+        $skus = [];
         foreach ($productsFromOrm as $productFromOrm) {
-            $skus[] = $productFromOrm->getSku();
+            $skus[] = $productFromOrm['sku'];
         }
 
         $productsFromSearch = $searchRepository->searchFilteredBySkus($skus);
         $this->assertEquals(count($productsFromOrm), count($productsFromSearch));
 
         foreach ($productsFromOrm as $productFromOrm) {
-            $found           = $foundTitle = false;
-            $ormProductTitle = (string)$productFromOrm->getNames()[0];
+            $found = $foundTitle = false;
             foreach ($productsFromSearch as $productFromSearch) {
-                if ($productFromSearch->getSelectedData()['sku'] === $productFromOrm->getSku()) {
+                if ($productFromSearch->getSelectedData()['sku'] === $productFromOrm['sku']) {
                     $found = true;
                 }
-                if ($productFromSearch->getSelectedData()[$titleField] === $ormProductTitle) {
-                    $foundTitle = true;
-                }
             }
-            $this->assertTrue($found, 'Product with sku `' . $productFromOrm->getSku() . '` not found.');
-            $this->assertTrue($foundTitle, 'Product title `' . $ormProductTitle . '` not present.');
+            $this->assertTrue($found, 'Product with sku `' . $productFromOrm['sku'] . '` not found.');
         }
     }
 }

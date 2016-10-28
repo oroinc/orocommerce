@@ -11,23 +11,25 @@ use Oro\Bundle\WebsiteSearchBundle\Query\Factory\CompositeQueryFactory;
 class CompositeQueryFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /** @var QueryFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $queryFactory;
+    protected $backendQueryFactory;
 
-    /** @var EngineV2Interface|\PHPUnit_Framework_MockObject_MockBuilder */
-    protected $engine;
+    /** @var QueryFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $websiteQueryFactory;
 
-    /** @var SearchQueryInterface|\PHPUnit_Framework_MockObject_MockBuilder */
-    protected $query;
+    /**
+     * @var CompositeQueryFactory
+     */
+    protected $factory;
 
     public function setUp()
     {
-        $this->query        = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
-        $this->queryFactory = $this->getMockBuilder(QueryFactoryInterface::class)->setMethods(['create'])->getMock();
-        $this->queryFactory->method('create')->willReturn($this->query);
-        $this->engine = $this->getMock(EngineV2Interface::class);
+        $this->backendQueryFactory = $this->getMockBuilder(QueryFactoryInterface::class)->getMock();
+        $this->websiteQueryFactory = $this->getMockBuilder(QueryFactoryInterface::class)->getMock();
+
+        $this->factory = new CompositeQueryFactory($this->backendQueryFactory, $this->websiteQueryFactory);
     }
 
-    public function testCreateFrontend()
+    public function testCreateWebsite()
     {
         $configForWebsiteSearch = [
             'search_index' => 'website',
@@ -41,10 +43,16 @@ class CompositeQueryFactoryTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        $factory = new CompositeQueryFactory($this->queryFactory, $this->engine);
-        $frontend = $factory->create($configForWebsiteSearch);
+        $query = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
 
-        $this->assertInstanceOf(WebsiteSearchQuery::class, $frontend);
+        $this->backendQueryFactory->expects($this->never())
+            ->method('create');
+        $this->websiteQueryFactory->expects($this->once())
+            ->method('create')
+            ->with($configForWebsiteSearch)
+            ->willReturn($query);
+
+        $this->assertEquals($query, $this->factory->create($configForWebsiteSearch));
     }
 
     public function testCreateBackend()
@@ -52,13 +60,16 @@ class CompositeQueryFactoryTest extends \PHPUnit_Framework_TestCase
         $configForBackendSearch = [
             'search_index' => null
         ];
-        $this->queryFactory->expects($this->once())
+
+        $query = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
+
+        $this->backendQueryFactory->expects($this->once())
             ->method('create')
-            ->with($configForBackendSearch);
+            ->with($configForBackendSearch)
+            ->willReturn($query);
+        $this->websiteQueryFactory->expects($this->never())
+            ->method('create');
 
-        $backend = $factory->create($configForBackendSearch);
-
-        $this->assertInstanceOf(SearchQueryInterface::class, $backend);
-
+        $this->assertEquals($query, $this->factory->create($configForBackendSearch));
     }
 }

@@ -488,3 +488,15 @@ services:
             - '@oro_website_search.provider.search_mapping'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.before_search, method: process }
+
+    oro_product.acl.voter.visibility:
+        class: 'Oro\Bundle\ProductBundle\Acl\Voter\ProductVisibilityVoter'
+        public: false
+        arguments:
+            - "@oro_entity.doctrine_helper"
+        calls:
+            - [setClassName, ['%oro_product.entity.product.class%']]
+            - [setFrontendHelper, ["@oro_frontend.request.frontend_helper"]]
+            - [setProductSearchRepository, ["@oro_product.website_search.repository.product"]]
+        tags:
+            - { name: security.voter }
