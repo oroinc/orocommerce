@@ -171,7 +171,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         $websiteSearchQuery->method('getQuery')
             ->will($this->returnValue($query));
 
-        $expr = Criteria::expr()->eq('text.cat_path', $this->category->getMaterializedPath());
+        $expr = Criteria::expr()->eq('text.category_path', $this->category->getMaterializedPath());
 
         $websiteSearchQuery->expects($this->once())
             ->method('addWhere')
@@ -239,7 +239,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->disableOriginalConstructor()
             ->getMock();
 
-        $expr = Criteria::expr()->startsWith('text.cat_path', $this->category->getMaterializedPath());
+        $expr = Criteria::expr()->startsWith('text.category_path', $this->category->getMaterializedPath());
 
         $websiteSearchQuery->expects($this->once())
             ->method('addWhere')
