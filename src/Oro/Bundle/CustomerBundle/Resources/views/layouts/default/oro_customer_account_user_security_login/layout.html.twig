@@ -30,7 +30,7 @@
 
 {% block _login_form_remember_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' grid__row grid__row--offset-l'
+        '~class': ' form-row form-row--offset-l'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -56,7 +56,7 @@
 
 {% block _login_form_forgot_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' grid__row grid__row--offset-none'
+        '~class': ' form-row form-row--offset-none'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -65,7 +65,7 @@
 
 {% block _login_form_register_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' grid__row grid__row--offset-none'
+        '~class': ' form-row form-row--offset-none'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
