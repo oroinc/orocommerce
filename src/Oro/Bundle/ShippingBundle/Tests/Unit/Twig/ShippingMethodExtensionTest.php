@@ -53,7 +53,7 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
                     [$this->shippingMethodLabelFormatter, 'formatShippingMethodTypeLabel']
                 ),
                 new \Twig_SimpleFunction(
-                    'oro_shipping_method_config_render_data',
+                    'oro_shipping_method_config_template',
                     [$this->extension, 'getShippingMethodConfigRenderData']
                 )
             ],
@@ -76,10 +76,16 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('dispatch')
             ->with(ShippingMethodConfigDataEvent::NAME, $event);
 
-        $this->extension->getShippingMethodConfigRenderData($methodName);
+        self::assertEquals(
+            ShippingMethodExtension::DEFAULT_METHOD_CONFIG_TEMPLATE,
+            $this->extension->getShippingMethodConfigRenderData($methodName)
+        );
 
         //test cache
-        $this->extension->getShippingMethodConfigRenderData($methodName);
+        self::assertEquals(
+            ShippingMethodExtension::DEFAULT_METHOD_CONFIG_TEMPLATE,
+            $this->extension->getShippingMethodConfigRenderData($methodName)
+        );
     }
 
     public function testGetShippingMethodConfigRenderDataDefault()
@@ -90,7 +96,7 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn('');
 
         self::assertEquals(
-            'OroShippingBundle:ShippingRule:config.html.twig',
+            ShippingMethodExtension::DEFAULT_METHOD_CONFIG_TEMPLATE,
             $this->extension->getShippingMethodConfigRenderData('method_1')
         );
     }

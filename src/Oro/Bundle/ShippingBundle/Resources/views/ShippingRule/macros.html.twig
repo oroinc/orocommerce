@@ -6,20 +6,19 @@
                 {% set typeConfigData = [] %}
                 {% for typeConfig in methodConfig.typeConfigs %}
                     {% set typeConfigData = typeConfigData|merge([{
-                    'identifier': typeConfig.id,
-                    'type':       typeConfig.type,
-                    'options':    typeConfig.options,
-                    'enabled':    typeConfig.enabled,
+                        'identifier': typeConfig.type,
+                        'options': typeConfig.options,
+                        'enabled': typeConfig.enabled,
                     }]) %}
                 {% endfor %}
 
                 {% set shippingMethodConfig = {
-                'methodIdentifier':  methodConfig.method,
-                'typeConfigs':   typeConfigData,
-                'options': methodConfig.options,
+                    'identifier': methodConfig.method,
+                    'types': typeConfigData,
+                    'options': methodConfig.options,
                 } %} 
 
-                {% include oro_shipping_method_config_render_data(methodConfig.method) with {'methodConfig': shippingMethodConfig} %}
+                {% include oro_shipping_method_config_template(methodConfig.method) with {'data': shippingMethodConfig} %}
             {% endfor %}
         </ol>
     {% endspaceless %}

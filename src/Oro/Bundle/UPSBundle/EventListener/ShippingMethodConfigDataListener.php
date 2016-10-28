@@ -26,7 +26,7 @@ class ShippingMethodConfigDataListener
     public function onGetConfigData(ShippingMethodConfigDataEvent $event)
     {
         if ($this->provider->hasShippingMethod($event->getMethodIdentifier())) {
-            $event->setTemplate('OroUPSBundle::config.html.twig');
+            $event->setTemplate('OroUPSBundle::shippingMethodWithOptions.html.twig');
         }
     }
 }

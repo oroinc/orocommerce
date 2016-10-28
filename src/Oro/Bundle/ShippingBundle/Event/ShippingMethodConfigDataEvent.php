@@ -16,7 +16,7 @@ class ShippingMethodConfigDataEvent extends Event
     /**
      * @var string
      */
-    protected $template = '';
+    protected $template = null;
 
     /**
      * @param int|string $identifier
@@ -32,16 +32,6 @@ class ShippingMethodConfigDataEvent extends Event
     public function getMethodIdentifier()
     {
         return $this->methodIdentifier;
-    }
-
-    /**
-     * @param $methodIdentifier
-     * @return $this
-     */
-    public function setMethodIdentifier($methodIdentifier)
-    {
-        $this->methodIdentifier = $methodIdentifier;
-        return $this;
     }
 
     /**

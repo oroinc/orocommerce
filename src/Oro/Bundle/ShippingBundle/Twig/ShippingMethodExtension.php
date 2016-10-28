@@ -9,6 +9,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ShippingMethodExtension extends \Twig_Extension
 {
     const SHIPPING_METHOD_EXTENSION_NAME = 'oro_shipping_method';
+    const DEFAULT_METHOD_CONFIG_TEMPLATE = 'OroShippingBundle:ShippingRule:shippingMethodWithOptions.html.twig';
 
     /**
      * @var ShippingMethodLabelFormatter
@@ -55,7 +56,7 @@ class ShippingMethodExtension extends \Twig_Extension
         if (!array_key_exists($shippingMethodName, $this->configCache)) {
             $this->dispatcher->dispatch(ShippingMethodConfigDataEvent::NAME, $event);
             $this->configCache[$shippingMethodName] = $event->getTemplate() ?
-                : 'OroShippingBundle:ShippingRule:config.html.twig';
+                : static::DEFAULT_METHOD_CONFIG_TEMPLATE;
         }
 
         return $this->configCache[$shippingMethodName];
@@ -76,7 +77,7 @@ class ShippingMethodExtension extends \Twig_Extension
                 [$this->shippingMethodLabelFormatter, 'formatShippingMethodTypeLabel']
             ),
             new \Twig_SimpleFunction(
-                'oro_shipping_method_config_render_data',
+                'oro_shipping_method_config_template',
                 [$this, 'getShippingMethodConfigRenderData']
             )
         ];

@@ -1,0 +1,20 @@
+{% spaceless %}
+    {% set methodLabel = get_shipping_method_label(data.identifier)|trans %}
+    {% if methodLabel|length > 0 %}
+    <li>{{ methodLabel }}
+        <ul>
+    {% endif %}
+
+            {% for type in data.types %}
+            <li>{{ get_shipping_method_type_label(data.identifier, type.identifier)|trans}}
+                {% if type.options.surcharge is not empty %}
+                ({{ 'oro.ups.form.shipping_method_config_options.surcharge.label'|trans}}: {{ type.options.surcharge }})
+                {% endif %}
+            </li>
+            {% endfor %}
+
+    {% if methodLabel|length > 0 %}
+        </ul>
+    </li>
+    {% endif %}
+{% endspaceless %}
