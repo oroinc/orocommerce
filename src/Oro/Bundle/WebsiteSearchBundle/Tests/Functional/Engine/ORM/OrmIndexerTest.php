@@ -163,7 +163,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     public function testDeleteWhenNonExistentEntityRemoved()
     {
         $this->loadFixtures([LoadItemData::class]);
-        $this->setClassSupportedExpectation(1, TestDepartment::class, false);
+        $this->setClassSupportedExpectation(TestDepartment::class, false);
         $testEntity = new TestDepartment();
         $testEntity->setId(123456);
 

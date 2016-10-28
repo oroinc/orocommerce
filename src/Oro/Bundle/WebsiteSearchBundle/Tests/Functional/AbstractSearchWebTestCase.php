@@ -164,7 +164,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             foreach ($entities as $entity) {
                 $event->addPlaceholderField(
                     $entity->getId(),
-                    'title_LOCALIZATION_ID',
+                    'name_LOCALIZATION_ID',
                     sprintf('Reindexed product %s', $entity->getId()),
                     [LocalizationIdPlaceholder::NAME => $this->getDefaultLocalizationId()]
                 );
@@ -191,14 +191,13 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     }
 
     /**
-     * @param int $expectedCalls
      * @param string $class
      * @param bool $return
      */
-    protected function setClassSupportedExpectation($expectedCalls, $class, $return)
+    protected function setClassSupportedExpectation($class, $return)
     {
         $this->mappingProviderMock
-            ->expects($this->exactly($expectedCalls))
+            ->expects($this->any())
             ->method('isClassSupported')
             ->with($class)
             ->willReturn($return);
@@ -234,7 +233,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     public function testReindexForSpecificWebsite()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->setClassSupportedExpectation(1, TestProduct::class, true);
+        $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setEntityAliasExpectation();
         $this->setGetEntityConfigExpectation();
         $this->listener = $this->setListener();
@@ -257,7 +256,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     public function testReindexForContextEntityIds()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->setClassSupportedExpectation(1, TestProduct::class, true);
+        $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setEntityAliasExpectation();
         $this->setGetEntityConfigExpectation();
         $this->listener = $this->setListener();
@@ -289,7 +288,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
 
         $this->dispatcher->addListener(CollectDependentClassesEvent::NAME, $collectDependentClassesListener, -255);
 
-        $this->setClassSupportedExpectation(1, TestProduct::class, true);
+        $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setEntityAliasExpectation();
 
         $this->setGetEntityConfigExpectation();
@@ -322,7 +321,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
         $this->setEntityAliasExpectation();
-        $this->setClassSupportedExpectation(1, TestProduct::class, true);
+        $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setGetEntityConfigExpectation();
         $this->indexer->setBatchSize(2);
         $this->listener = $this->setListener();
@@ -344,7 +343,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     public function testReindexWithRestriction()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->setClassSupportedExpectation(1, TestProduct::class, true);
+        $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setEntityAliasExpectation();
         $this->setGetEntityConfigExpectation();
 
@@ -380,7 +379,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
 
-        $this->setClassSupportedExpectation(1, TestProduct::class, true);
+        $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setGetEntityConfigExpectation();
 
         $restrictedProduct1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
@@ -416,7 +415,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     public function testResetIndexForSpecificClass()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->setClassSupportedExpectation(1, TestProduct::class, true);
+        $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setEntityAliasExpectation();
         $this->setGetEntityConfigExpectation();
 
@@ -484,7 +483,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
      */
     public function testWrongMappingException()
     {
-        $this->setClassSupportedExpectation(1, 'stdClass', false);
+        $this->setClassSupportedExpectation('stdClass', false);
         $this->indexer->reindex(\stdClass::class, []);
     }
 
@@ -501,7 +500,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
 
         $this->listener = $this->setListener();
-        $this->setClassSupportedExpectation(1, TestProduct::class, false);
+        $this->setClassSupportedExpectation(TestProduct::class, false);
         $this->indexer->save([$product1, $product2]);
     }
 
@@ -525,7 +524,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     public function testSaveForSingleEntityAndSingleWebsite()
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->setClassSupportedExpectation(2, TestProduct::class, true);
+        $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setEntityAliasExpectation();
         $this->setGetEntityConfigExpectation();
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
@@ -545,7 +544,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     {
         $this->loadFixtures([LoadOtherWebsite::class]);
         $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->setClassSupportedExpectation(2, TestProduct::class, true);
+        $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setEntityAliasExpectation();
         $this->setGetEntityConfigExpectation();
 
@@ -564,7 +563,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
         $this->listener = $this->setListener();
-        $this->setClassSupportedExpectation(3, TestProduct::class, true);
+        $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setGetEntityConfigExpectation();
         $this->setEntityAliasExpectation();
 
@@ -586,7 +585,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
 
         $this->listener = $this->setListener();
-        $this->setClassSupportedExpectation(3, TestProduct::class, true);
+        $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setEntityAliasExpectation();
         $this->setGetEntityConfigExpectation();
 
