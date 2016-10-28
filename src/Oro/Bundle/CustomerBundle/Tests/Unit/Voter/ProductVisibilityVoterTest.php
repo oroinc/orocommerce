@@ -77,7 +77,7 @@ class ProductVisibilityVoterTest extends \PHPUnit_Framework_TestCase
     /**
      * @return Container|\PHPUnit_Framework_MockObject_MockObject
      */
-    public function getContainerMock()
+    private function getContainerMock()
     {
         $fakeRequestStack = new RequestStack();
         $fakeRequest      = new Request();
