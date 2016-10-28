@@ -2,6 +2,9 @@ Oro\Bundle\ProductBundle\Entity\Product:
     alias: oro_product_WEBSITE_ID
     fields:
         -
+            name: product_id
+            type: integer
+        -
             name: title_LOCALIZATION_ID
             type: text
         -
