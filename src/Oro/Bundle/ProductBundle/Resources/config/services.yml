@@ -143,7 +143,6 @@ services:
         class: 'Oro\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter'
         public: false
         arguments:
-            - "@oro_product.product.manager"
             - "@oro_product.website_search.repository.product"
 
     oro_product.website_search.repository.product:
