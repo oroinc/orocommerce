@@ -178,9 +178,9 @@ class ScopeManager
      */
     public function getCriteria($scopeType, $context = null)
     {
-        $criteria = $this->getNullContext();
+        $criteria = [];
         if (self::BASE_SCOPE == $scopeType && is_array($context)) {
-            $criteria = array_replace($criteria, $context);
+            $criteria = $context;
         } else {
             /** @var ScopeCriteriaProviderInterface[] $providers */
             $providers = $this->getProviders($scopeType);
@@ -190,6 +190,11 @@ class ScopeManager
                 } else {
                     $criteria = array_merge($criteria, $provider->getCriteriaByContext($context));
                 }
+            }
+        }
+        foreach ($this->getNullContext() as $emptyKey => $emptyValue) {
+            if (!isset($criteria[$emptyKey])) {
+                $criteria[$emptyKey] = $emptyValue;
             }
         }
 
