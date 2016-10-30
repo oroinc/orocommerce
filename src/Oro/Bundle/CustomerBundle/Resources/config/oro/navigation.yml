@@ -159,7 +159,7 @@ navigation:
                     position: 900
 
             frontend_account_users:
-                label: 'oro.customer.accountuser.entity_plural_label'
+                label: 'oro.customer.menu.account_user.label'
                 route: 'oro_customer_frontend_account_user_index'
                 extras:
                     position: 100
@@ -185,10 +185,8 @@ navigation:
             frontend_menu:
                 type: application_menu
                 children:
-                    frontend_configuration_tab:
-                        children:
-                            frontend_account_users: ~
-                            frontend_account_user_roles: ~
+                    frontend_account_users: ~
+                    frontend_account_user_roles: ~
 
             frontend_dots_menu:
                 type: dots_menu
@@ -229,8 +227,8 @@ navigation:
         oro_customer_account_user_create:  oro.ui.create_entity
 
         oro_customer_frontend_account_user_index:   ~
-        oro_customer_frontend_account_user_view:    '%%email%%'
-        oro_customer_frontend_account_user_update:  %%email%% - oro.ui.edit
+        oro_customer_frontend_account_user_view:    '%%user%%'
+        oro_customer_frontend_account_user_update:  %%user%% - oro.ui.edit
         oro_customer_frontend_account_user_create:  oro.ui.create_entity
 
         oro_customer_account_user_role_index:     ~
@@ -238,7 +236,7 @@ navigation:
         oro_customer_account_user_role_update:    '%%label%% - oro.ui.edit'
         oro_customer_account_user_role_create:    oro.ui.create_entity
 
-        oro_customer_frontend_account_user_profile: '%%email%%'
+        oro_customer_frontend_account_user_profile: 'oro.customer.frontend.account_user.profile.label'
         oro_customer_frontend_account_user_profile_update: oro.customer.accountuser.profile.edit
 
         oro_customer_account_user_security_login: oro.customer.accountuser.profile.login
@@ -247,9 +245,15 @@ navigation:
         oro_customer_frontend_account_user_reset_check_email: oro.customer.accountuser.profile.check_email.title
         oro_customer_frontend_account_user_password_reset: oro.customer.accountuser.profile.reset_password.title
 
-        oro_customer_frontend_account_user_role_index:  ~
-        oro_customer_frontend_account_user_role_view:   '%%label%% - oro.ui.view'
-        oro_customer_frontend_account_user_role_update: '%%label%% - oro.ui.edit'
-        oro_customer_frontend_account_user_role_create: oro.ui.create_entity
+        oro_customer_frontend_account_user_role_index:  'oro.customer.frontend.account_user.role.entity_plural_label'
+        oro_customer_frontend_account_user_role_view:   'oro.customer.frontend.account_user.role.entity_plural_label - oro.ui.view'
+        oro_customer_frontend_account_user_role_update: 'oro.customer.frontend.account_user.role.entity_plural_label - oro.ui.edit'
+        oro_customer_frontend_account_user_role_create: 'oro.customer.frontend.account_user.role.entity_plural_label - oro.ui.create'
 
         oro_product_visibility_edit: '%%sku%% - %%name%% - Edit'
+
+        oro_customer_frontend_account_address_create: 'oro.customer.frontend.address.title.subject_customer - oro.customer.frontend.address.title.create'
+        oro_customer_frontend_account_address_update: 'oro.customer.frontend.address.title.subject_customer - oro.customer.frontend.address.title.edit'
+        oro_customer_frontend_account_user_address_create: 'oro.customer.frontend.address.title.subject - oro.customer.frontend.address.title.create'
+        oro_customer_frontend_account_user_address_update: 'oro.customer.frontend.address.title.subject - oro.customer.frontend.address.title.edit'
+        oro_customer_frontend_account_user_address_index: 'oro.customer.frontend.account_user.address.label'

@@ -2,10 +2,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroCustomerBundle:layouts:default/oro_customer_frontend_account_user_register/layout.html.twig'
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue: 'oro.customer.accountuser.profile.register'
         - '@addTree':
             items:
                 registration_page:

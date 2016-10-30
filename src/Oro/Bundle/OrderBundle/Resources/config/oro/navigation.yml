@@ -51,7 +51,8 @@ navigation:
         oro_order_update: 'oro.order.navigation.view - oro.ui.edit'
         oro_order_create: 'oro.ui.create_entity'
 
-        oro_order_frontend_index:  'oro.order.entity_plural_label'
+        oro_order_frontend_index:  'oro.order.order_history.label'
         oro_order_frontend_view:   'oro.order.navigation.view'
+        oro_order_frontend_success: 'oro.order.success.thank_you'
     #    oro_order_frontend_update: 'oro.order.navigation.view - oro.ui.edit'
     #    oro_order_frontend_create: 'oro.ui.create_entity'

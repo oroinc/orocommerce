@@ -2,10 +2,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue: 'oro.customer.menu.account_user_login.label'
         - '@addTree':
             items:
                 login_page_wrapper:

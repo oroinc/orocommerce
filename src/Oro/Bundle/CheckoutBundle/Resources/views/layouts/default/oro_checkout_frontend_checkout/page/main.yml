@@ -1,14 +1,10 @@
 layout:
     actions:
-        - '@appendOption':
+        - '@setOption':
             id: title
-            optionName: value
+            optionName: params
             optionValue:
-                - 'oro.checkout.entity_label'
-                -
-                    label: 'oro.checkout.title.step.label'
-                    parameters:
-                        '%step_label%': '=data["workflowStep"].getLabel()'
+                 '%step_label%': '=data["workflowStep"].getLabel()'
     imports:
         -
             id: oro_checkout_content

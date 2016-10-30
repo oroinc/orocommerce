@@ -75,7 +75,7 @@ navigation:
         oro_rfp_request_status_view:     '%%title%%'
         oro_rfp_request_status_update:   '%%title%% - oro.ui.edit'
 
-        oro_rfp_frontend_request_create: oro.ui.create_entity
-        oro_rfp_frontend_request_update: 'RFQ #%%title%% - oro.ui.edit'
-        oro_rfp_frontend_request_index:  oro.frontend.rfp.request.entity_plural_label
-        oro_rfp_frontend_request_view:   'RFQ #%%title%%'
+        oro_rfp_frontend_request_create: 'oro.frontend.rfp.request.create.label'
+        oro_rfp_frontend_request_update: 'RFQ #%%id%% - oro.ui.edit'
+        oro_rfp_frontend_request_index:  ~
+        oro_rfp_frontend_request_view:   'RFQ #%%id%%: %%firstName%% %%lastName%%'

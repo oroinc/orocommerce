@@ -3,11 +3,6 @@ layout:
         - '@setBlockTheme':
             themes: 'OroCustomerBundle:layouts:default/oro_customer_frontend_account_user_reset_check_email/check_email.html.twig'
 
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue: 'oro.customer.accountuser.profile.check_email.title'
-
         - '@addTree':
             items:
                 check_email_page:

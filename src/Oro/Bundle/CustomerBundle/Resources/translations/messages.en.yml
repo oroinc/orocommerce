@@ -450,6 +450,7 @@ oro.customer:
                 create: 'Create'
                 edit: 'Edit'
                 subject: 'Address Customer User'
+                subject_customer: 'Address Customer'
             page_title.edit: 'Edit Address'
             page_title.create: 'Create Address'
             form:
