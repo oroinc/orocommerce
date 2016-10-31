@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @dbIsolation
@@ -39,7 +41,6 @@ class PageControllerTest extends WebTestCase
             'input_action' => 'save_and_stay',
             'oro_catalog_category' => ['_token' => $crfToken],
         ];
-        $parameters['oro_cms_page']['metaTitles']['values']['default'] = LoadPageMetaData::META_TITLES;
         $parameters['oro_cms_page']['metaDescriptions']['values']['default'] = LoadPageMetaData::META_DESCRIPTIONS;
         $parameters['oro_cms_page']['metaKeywords']['values']['default'] = LoadPageMetaData::META_KEYWORDS;
 
@@ -52,11 +53,13 @@ class PageControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(LoadPageMetaData::META_TITLES, $html);
         $this->assertContains(LoadPageMetaData::META_DESCRIPTIONS, $html);
         $this->assertContains(LoadPageMetaData::META_KEYWORDS, $html);
     }
 
+    /**
+     * @return Page
+     */
     protected function getPage()
     {
         $repository = $this->getContainer()->get('doctrine')->getRepository(
@@ -66,13 +69,15 @@ class PageControllerTest extends WebTestCase
         return $repository->findOneBy(['title' => 'page.1']);
     }
 
-    public function checkSeoSectionExistence($crawler)
+    /**
+     * @param Crawler $crawler
+     */
+    public function checkSeoSectionExistence(Crawler $crawler)
     {
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('SEO', $crawler->filter('.nav')->html());
-        $this->assertContains('Meta title', $crawler->html());
         $this->assertContains('Meta description', $crawler->html());
         $this->assertContains('Meta keywords', $crawler->html());
     }

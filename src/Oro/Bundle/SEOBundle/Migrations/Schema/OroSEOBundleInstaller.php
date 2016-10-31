@@ -45,20 +45,17 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
         $this->addMetaInformation($schema, self::PRODUCT_TABLE_NAME);
         $this->addMetaInformation($schema, self::CATEGORY_TABLE_NAME);
         $this->addMetaInformation($schema, self::LANDING_PAGE_TABLE_NAME);
-
-        $this->addMetaInformationToWebCatalogNode($schema);
+        $this->addMetaInformation($schema, self::WEB_CATALOG_NODE_TABLE_NAME);
     }
 
     /**
-     * Method that adds 3 meta fields (metaTitles, metaDescription, metaKeywords) relations to the
-     * received table (corresponding to a an entitiy).
+     * Adds metaDescription and metaKeywords relations to entitiy.
      *
      * @param Schema $schema
      * @param string $ownerTable
      */
     private function addMetaInformation(Schema $schema, $ownerTable)
     {
-        $this->addMetaInformationField($schema, $ownerTable, 'metaTitles');
         $this->addMetaInformationField($schema, $ownerTable, 'metaDescriptions');
         $this->addMetaInformationField($schema, $ownerTable, 'metaKeywords');
     }
@@ -103,14 +100,5 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                 'importexport' => ['excluded' => true],
             ]
         );
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    private function addMetaInformationToWebCatalogNode(Schema $schema)
-    {
-        $this->addMetaInformationField($schema, self::WEB_CATALOG_NODE_TABLE_NAME, 'metaDescriptions');
-        $this->addMetaInformationField($schema, self::WEB_CATALOG_NODE_TABLE_NAME, 'metaKeywords');
     }
 }

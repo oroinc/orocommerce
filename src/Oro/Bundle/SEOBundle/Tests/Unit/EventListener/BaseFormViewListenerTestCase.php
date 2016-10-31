@@ -2,14 +2,18 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\SEOBundle\EventListener\BaseFormViewListener;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\SEOBundle\EventListener\FormViewListener;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class BaseFormViewListenerTestCase extends FormViewListenerTestCase
 {
+    /**
+     * @var BaseFormViewListener $listener
+     */
     protected $listener;
 
     /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
@@ -36,6 +40,10 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
     }
 
+    /**
+     * @param object $entityObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment
+     */
     protected function getEnvironmentForView($entityObject)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
@@ -54,6 +62,9 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
         return $env;
     }
 
+    /**
+     * @return \Twig_Environment
+     */
     protected function getEnvironmentForEdit()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
@@ -69,7 +80,11 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
         return $env;
     }
 
-    protected function getEventForView($env)
+    /**
+     * @param \Twig_Environment $env
+     * @return BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getEventForView(\Twig_Environment $env)
     {
         $event = $this->getBeforeListRenderEvent();
 
@@ -80,7 +95,11 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
         return $event;
     }
 
-    protected function getEventForEdit($env)
+    /**
+     * @param \Twig_Environment $env
+     * @return BeforeListRenderEvent
+     */
+    protected function getEventForEdit(\Twig_Environment $env)
     {
         $event = $this->getEventForView($env);
 

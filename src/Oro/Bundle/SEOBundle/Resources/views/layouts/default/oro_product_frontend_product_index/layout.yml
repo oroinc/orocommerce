@@ -1,13 +1,6 @@
 layout:
     actions:
         - '@add':
-            id: meta_title
-            parentId: head
-            blockType: meta
-            options:
-                name: 'title'
-                content: '=data["category"].getCurrentCategory()!=null ? data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getMetaTitles()) : null'
-        - '@add':
             id: meta_description
             parentId: head
             blockType: meta

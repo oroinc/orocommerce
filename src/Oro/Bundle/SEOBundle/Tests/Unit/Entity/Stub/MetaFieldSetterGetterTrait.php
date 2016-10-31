@@ -2,26 +2,30 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+
 trait MetaFieldSetterGetterTrait
 {
-    protected $metaTitles;
+    /**
+     * @var LocalizedFallbackValue[]
+     */
     protected $metaKeywords;
+
+    /**
+     * @var LocalizedFallbackValue[]
+     */
     protected $metaDescriptions;
 
     public function __construct()
     {
-        $this->metaTitles = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->metaDescriptions = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->metaKeywords = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->metaDescriptions = new ArrayCollection();
+        $this->metaKeywords = new ArrayCollection();
     }
 
-    public function addMetaTitles($value)
-    {
-        if (!$this->metaTitles->contains($value)) {
-            $this->metaTitles->add($value);
-        }
-    }
-
+    /**
+     * @param string $value
+     */
     public function addMetaKeywords($value)
     {
         if (!$this->metaKeywords->contains($value)) {
@@ -29,6 +33,9 @@ trait MetaFieldSetterGetterTrait
         }
     }
 
+    /**
+     * @param string $value
+     */
     public function addMetaDescriptions($value)
     {
         if (!$this->metaDescriptions->contains($value)) {
@@ -36,16 +43,17 @@ trait MetaFieldSetterGetterTrait
         }
     }
 
-    public function getMetaTitles()
-    {
-        return $this->metaTitles;
-    }
-
+    /**
+     * @return LocalizedFallbackValue[]
+     */
     public function getMetaKeywords()
     {
         return $this->metaKeywords;
     }
 
+    /**
+     * @return LocalizedFallbackValue[]
+     */
     public function getMetaDescriptions()
     {
         return $this->metaDescriptions;
