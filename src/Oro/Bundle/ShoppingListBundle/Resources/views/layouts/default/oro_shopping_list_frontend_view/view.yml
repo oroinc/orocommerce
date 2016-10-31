@@ -6,7 +6,7 @@ layout:
             id: title
             optionName: params
             optionValue:
-                '%label%': '=context["title"]'
+                '%label%': '=data["title"]'
         - '@addTree':
             items:
                 shopping_list_view_container:
