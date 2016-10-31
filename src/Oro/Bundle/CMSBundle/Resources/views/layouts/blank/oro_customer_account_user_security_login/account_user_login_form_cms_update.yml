@@ -1,9 +1,9 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroCMSBundle:layouts:default/oro_customer_account_user_security_login/update.html.twig'
+            themes: 'account_user_login_form_cms_update.html.twig'
         - '@add':
-            id: login_page_styles:
+            id: login_page_styles
             parentId: head
             blockType: style
             options:
@@ -34,6 +34,9 @@ layout:
                 visible: '=data["oro_cms_login_page"].getDefaultLoginPage().getBottomContent()!=null'
                 text: '=data["oro_cms_login_page"].getDefaultLoginPage().getBottomContent()'
                 escape: false
+        - '@changeBlockType':
+            id: login_page
+            blockType: login_page
         - '@setOption':
             id: login_page
             optionName: loginPage

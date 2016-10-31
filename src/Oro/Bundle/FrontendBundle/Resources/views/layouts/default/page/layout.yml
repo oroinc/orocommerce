@@ -8,8 +8,6 @@ layout:
             optionValue: oro_frontend.home_page.title
         - '@addTree':
             items:
-                wrapper_content:
-                    blockType: container
                 header:
                     blockType: container
                 sticky_panel:
@@ -32,16 +30,15 @@ layout:
                         text: ~
             tree:
                 wrapper:
-                    wrapper_content:
-                        header: ~
-                        sticky_panel:
-                            sticky_panel_content: ~
-                        notification: ~
-                        main:
-                            content:
-                                page_title_container:
-                                    page_title: ~
-                            sidebar_left: ~
+                    header: ~
+                    sticky_panel:
+                        sticky_panel_content: ~
+                    notification: ~
+                    main:
+                        content:
+                            page_title_container:
+                                page_title: ~
+                        sidebar_left: ~
         - '@add':
             id: require_js_config
             parentId: require_js

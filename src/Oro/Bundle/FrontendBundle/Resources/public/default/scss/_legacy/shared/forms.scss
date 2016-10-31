@@ -13,13 +13,8 @@ label.required:after {
 
 .form__col {
   margin: 0 0 15px;
-  padding: 0 5px;
 
   @include clearfix();
-
-  &.no-padding {
-    padding: 0;
-  }
 }
 
 // Reset styles for select2 from platform styles
