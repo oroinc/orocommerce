@@ -152,12 +152,6 @@ navigation:
                 extras:
                     position: 10
 
-            frontend_configuration_tab:
-                label: 'oro.customer.menu.frontend_configuration_tab'
-                uri: '#'
-                extras:
-                    position: 900
-
             frontend_account_users:
                 label: 'oro.customer.menu.account_user.label'
                 route: 'oro_customer_frontend_account_user_index'
