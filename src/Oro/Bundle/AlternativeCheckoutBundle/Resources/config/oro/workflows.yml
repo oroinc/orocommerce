@@ -88,12 +88,14 @@ workflows:
                 order: 10
                 allowed_transitions:
                     - continue_to_shipping_address
+                    - __start__
             enter_shipping_address:
                 label: Shipping Information
                 order: 20
                 allowed_transitions:
                     - continue_to_shipping_method
                     - back_to_billing_address
+                    - __start__
             enter_shipping_method:
                 label: Shipping Method
                 order: 30
@@ -101,6 +103,7 @@ workflows:
                     - continue_to_payment
                     - back_to_billing_address
                     - back_to_shipping_address
+                    - __start__
             enter_payment:
                 label: Payment
                 order: 40
@@ -109,6 +112,7 @@ workflows:
                     - back_to_billing_address
                     - back_to_shipping_address
                     - back_to_shipping_method
+                    - __start__
             order_review:
                 label: Order Review
                 order: 50
@@ -119,6 +123,7 @@ workflows:
                     - back_to_shipping_address
                     - back_to_shipping_method
                     - back_to_payment
+                    - __start__
             request_approval:
                 label: Request Approval
                 order: 60
@@ -130,6 +135,7 @@ workflows:
                     - back_to_shipping_method
                     - back_to_payment
                     - back_to_order_review
+                    - __start__
             approve_request:
                 label: Order Approval
                 order: 70
@@ -144,6 +150,7 @@ workflows:
                     - back_to_payment
                     - back_to_order_review
                     - back_to_request_approval
+                    - __start__
         transitions:
             continue_to_shipping_address:
                 label: Continue
