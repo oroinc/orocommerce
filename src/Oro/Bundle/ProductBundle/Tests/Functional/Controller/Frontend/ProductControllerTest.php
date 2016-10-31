@@ -3,13 +3,13 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -45,9 +45,8 @@ class ProductControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            LoadProductData::class,
+            LoadFrontendProductData::class,
             LoadCombinedPriceLists::class,
-            LoadProductVisibilityData::class,
         ]);
 
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
@@ -61,10 +60,6 @@ class ProductControllerTest extends WebTestCase
         $this->configManager->flush();
 
         $this->translator = $this->getContainer()->get('translator');
-
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
-        // TODO: trigger immediate reindexation event instead
-        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 
     public function testIndexAction()

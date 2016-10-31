@@ -5,8 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
@@ -32,14 +31,10 @@ abstract class QuickAddControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                LoadProductData::class,
-                LoadProductUnitPrecisions::class,
-                LoadProductVisibilityData::class
+                LoadFrontendProductData::class,
+                LoadProductUnitPrecisions::class
             ]
         );
-
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
-        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 
     /**
