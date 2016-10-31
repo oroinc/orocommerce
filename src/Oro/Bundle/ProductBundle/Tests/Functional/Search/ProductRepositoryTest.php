@@ -83,12 +83,24 @@ class ProductRepositoryTest extends WebTestCase
                 if ($productFromSearch->getSelectedData()['sku'] === $productFromOrm['sku']) {
                     $found = true;
                 }
-                if ($productFromSearch->getSelectedData()['name'] === $productFromOrm['title']) {
-                    $foundName = true;
-                }
             }
             $this->assertTrue($found, 'Product with sku `' . $productFromOrm['sku'] . '` not found.');
-            $this->assertTrue($foundName, 'Product name `' . $productFromOrm['title'] . '` not present.');
+        }
+    }
+
+    public function testGetSearchQuery()
+    {
+        /** @var Product $exampleProduct */
+        $exampleProduct = $this->getReference(LoadProductData::PRODUCT_1);
+        $products = $this->client->getContainer()->get('oro_product.website_search.repository.product')->getSearchQuery(
+            $exampleProduct->getSku(),
+            0,
+            1
+        )->getResult();
+
+        foreach ($products->getElements() as $productItem) {
+            $this->assertArrayHasKey('sku', $productItem->getSelectedData());
+            $this->assertArrayHasKey('name', $productItem->getSelectedData());
         }
     }
 }

@@ -276,7 +276,7 @@ services:
         public: false
         arguments:
             - '%oro_product.entity.product.class%'
-            - { search: {sku: "sku", defaultName.string: "name"}, orm: ["sku", "defaultName.string"]}
+            - { search: {sku: "sku", name: "defaultName.string"}, orm: {sku: "sku", defaultName.string: "defaultName.string"}}
             - "@request_stack"
             - "@oro_product.product.manager"
         calls:

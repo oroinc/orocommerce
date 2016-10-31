@@ -71,7 +71,7 @@ class ProductRepository extends WebsiteSearchRepository
 
         $searchQuery->setFrom('oro_product_WEBSITE_ID')
             ->addSelect('sku')
-            ->addSelect('name_LOCALIZATION_ID')
+            ->addSelect('name_LOCALIZATION_ID as name')
             ->getCriteria()
             ->andWhere(
                 Criteria::expr()->contains('all_text_LOCALIZATION_ID', $search)

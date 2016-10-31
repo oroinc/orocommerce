@@ -85,10 +85,10 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
 
         foreach ($this->getProperties() as $destinationKey => $property) {
             if ($this->isItem($item)) {
-                $result[$destinationKey] = $this->getSelectedData($item, $property);
+                $result[$property] = $this->getSelectedData($item, $destinationKey);
                 continue;
             }
-            $result[$property] = $this->getPropertyValue($property, $item);
+            $result[$property] = $this->getPropertyValue($destinationKey, $item);
         }
 
         return $result;
