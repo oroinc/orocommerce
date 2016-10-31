@@ -88,7 +88,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
                 $result[$property] = $this->getSelectedData($item, $destinationKey);
                 continue;
             }
-            $result[$property] = $this->getPropertyValue($destinationKey, $item);
+            $result[$property] = $this->getPropertyValue($property, $item);
         }
 
         return $result;
