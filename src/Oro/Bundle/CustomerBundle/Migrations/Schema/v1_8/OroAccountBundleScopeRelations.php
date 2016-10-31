@@ -88,5 +88,12 @@ class OroAccountBundleScopeRelations implements Migration, ExtendExtensionAwareI
         $schema->dropTable('oro_product_visibility');
         $schema->dropTable('oro_acc_product_visibility');
         $schema->dropTable('oro_acc_grp_prod_visibility');
+
+        $schema->dropTable('oro_ctgr_vsb_resolv');
+        $schema->dropTable('oro_acc_ctgr_vsb_resolv');
+        $schema->dropTable('oro_acc_grp_ctgr_vsb_resolv');
+        $schema->dropTable('oro_prod_vsb_resolv');
+        $schema->dropTable('oro_acc_prod_vsb_resolv');
+        $schema->dropTable('oro_acc_grp_prod_vsb_resolv');
     }
 }
