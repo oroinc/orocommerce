@@ -70,7 +70,7 @@
     width: $product-specification-container-width - 5px;
   }
 
-  @media (max-width: $screen-sm) {
+  @media (max-width: $screen-md) {
     width: 100%;
   }
 
@@ -570,7 +570,7 @@
 .product__description-content {
   width: calc(100% - #{$product-specification-container-width});
 
-  @media (max-width: $screen-sm) {
+  @media (max-width: $screen-md) {
     width: 100%;
     margin-top: 20px !important;
   }

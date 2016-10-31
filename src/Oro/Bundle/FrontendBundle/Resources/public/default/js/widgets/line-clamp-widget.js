@@ -26,7 +26,7 @@ define(function(require) {
         },
 
         _initEvents: function() {
-            mediator.on('layout:reposition', this._afterRender, this);
+            mediator.once('layout:reposition', this._applyLineClamp, this);
         },
 
         _destroy: function() {
@@ -36,7 +36,7 @@ define(function(require) {
 
         _checkNativeSupportLineClamp: function() {
             // Now native support only webkit browsers
-            this.nativeSupport =  '-webkit-line-clamp' in document.body.style ? true : false;
+            this.nativeSupport =  '-webkit-line-clamp' in document.body.style;
         },
 
         _getCountLines: function () {
@@ -44,10 +44,6 @@ define(function(require) {
             var height = Math.max(this.$el.height(), this.$el.get(0).scrollHeight);
 
             return Math.round(height / lineHeight);
-        },
-
-        _afterRender: function() {
-            this._applyLineClamp();
         },
 
         _applyLineClamp: function() {
