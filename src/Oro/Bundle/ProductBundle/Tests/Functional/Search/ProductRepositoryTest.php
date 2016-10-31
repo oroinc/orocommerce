@@ -100,6 +100,7 @@ class ProductRepositoryTest extends WebTestCase
 
         foreach ($products->getElements() as $productItem) {
             $this->assertArrayHasKey('sku', $productItem->getSelectedData());
+            $this->assertEquals(LoadProductData::PRODUCT_1, $productItem->getSelectedData()['sku']);
             $this->assertArrayHasKey('name', $productItem->getSelectedData());
         }
     }
