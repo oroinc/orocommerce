@@ -1,0 +1,25 @@
+{% block _footer_menu_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ""
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _footer_menu_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " primary-menu primary-menu--vertical"
+    }) %}
+
+    {% spaceless %}
+        {% for child in item.children %}
+            {% if child.extras.isAllowed %}
+                <h3>{{ child.label }}</h3>
+                {% set item = child %}
+                {{ block('menu_widget') }}
+            {% endif %}
+        {% endfor %}
+    {% endspaceless %}
+{% endblock %}
