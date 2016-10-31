@@ -53,6 +53,8 @@ class ShippingContext implements ShippingContextInterface
      */
     public function setLineItems(array $items)
     {
+        $this->lineItems = [];
+
         foreach ($items as $item) {
             $this->lineItems[] = $this->createLineItem($item);
         }
@@ -68,14 +70,13 @@ class ShippingContext implements ShippingContextInterface
     {
         $shippingLineItem = new ShippingLineItem();
 
-        if ($item instanceof ProductUnitHolderInterface) {
-            $shippingLineItem->setEntityIdentifier($item->getEntityIdentifier());
-            $shippingLineItem->setProductUnit($item->getProductUnit());
+        if ($item instanceof ProductHolderInterface) {
+            $shippingLineItem->setProductHolder($item);
+            $shippingLineItem->setProduct($item->getProduct());
         }
 
-        if ($item instanceof ProductHolderInterface) {
-            $shippingLineItem->setEntityIdentifier($item->getEntityIdentifier());
-            $shippingLineItem->setProduct($item->getProduct());
+        if ($item instanceof ProductUnitHolderInterface) {
+            $shippingLineItem->setProductUnit($item->getProductUnit());
         }
 
         if ($item instanceof ProductShippingOptionsInterface) {
@@ -162,7 +163,6 @@ class ShippingContext implements ShippingContextInterface
         return $this->shippingOrigin;
     }
 
-
     /**
      * @param string $paymentMethod
      * @return string
@@ -218,5 +218,93 @@ class ShippingContext implements ShippingContextInterface
     public function getSubtotal()
     {
         return $this->subtotal;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function generateHash()
+    {
+        $lineItems = array_map(function (ShippingLineItemInterface $item) {
+            return $this->lineItemToString($item);
+        }, $this->lineItems);
+
+        // if order of line item was changed, hash should not be changed
+        usort($lineItems, function ($a, $b) {
+            return strcmp(md5($a), md5($b));
+        });
+
+        return hash('sha512', implode('', array_merge($lineItems, [
+            $this->currency,
+            $this->paymentMethod,
+            $this->addressToString($this->billingAddress),
+            $this->addressToString($this->shippingAddress),
+            $this->addressToString($this->shippingOrigin),
+            $this->subtotal ? $this->subtotal->getValue() : '',
+            $this->subtotal ? $this->subtotal->getCurrency() : '',
+        ])));
+    }
+
+    /**
+     * @param AddressInterface|null $address
+     * @return string
+     */
+    protected function addressToString(AddressInterface $address = null)
+    {
+        return $address ? implode('', [
+            $address->getStreet(),
+            $address->getStreet2(),
+            $address->getCity(),
+            $address->getRegionName(),
+            $address->getRegionCode(),
+            $address->getPostalCode(),
+            $address->getCountryName(),
+            $address->getCountryIso2(),
+            $address->getCountryIso3(),
+            $address->getOrganization(),
+        ]) : '';
+    }
+
+    /**
+     * @param ShippingLineItemInterface $item
+     * @return string
+     */
+    protected function lineItemToString(ShippingLineItemInterface $item)
+    {
+        $strings = [
+            $item->getEntityIdentifier(),
+            $item->getQuantity(),
+            $item->getProductUnitCode()
+        ];
+
+        if ($item->getProduct()) {
+            $strings[] = $item->getProduct()->getId();
+            $strings[] = $item->getProduct()->getSku();
+        }
+
+        if ($item->getPrice()) {
+            $strings[] = $item->getPrice()->getValue();
+            $strings[] = $item->getPrice()->getCurrency();
+        }
+
+        if ($item->getWeight()) {
+            $strings[] = $item->getWeight()->getValue();
+            if ($item->getWeight()->getUnit()) {
+                $strings[] = $item->getWeight()->getUnit()->getCode();
+            }
+        }
+
+        if ($item->getDimensions()) {
+            if ($item->getDimensions()->getValue()) {
+                $strings[] = $item->getDimensions()->getValue()->getHeight();
+                $strings[] = $item->getDimensions()->getValue()->getLength();
+                $strings[] = $item->getDimensions()->getValue()->getWidth();
+            }
+            if ($item->getDimensions()->getUnit()) {
+                $strings[] = $item->getDimensions()->getUnit()->getCode();
+            }
+        }
+
+        return implode('', $strings);
     }
 }
