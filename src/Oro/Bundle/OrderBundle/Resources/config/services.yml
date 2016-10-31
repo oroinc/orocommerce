@@ -188,6 +188,7 @@ services:
         arguments:
             - '@oro_order.formatter.source_document'
             - '@oro_order.formatter.shipping_tracking'
+            - '@oro_order.formatter.shipping_method'
         tags:
             - { name: twig.extension }
 
@@ -201,6 +202,11 @@ services:
         class: 'Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter'
         arguments:
             - "@?oro_shipping.shipping_method.registry"
+
+    oro_order.formatter.shipping_method:
+        class: 'Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter'
+        arguments:
+            - "@?oro_shipping.formatter.shipping_method_label"
 
     oro_order.order.listener.total_calculate_listener:
         class: 'Oro\Bundle\OrderBundle\EventListener\TotalCalculateListener'

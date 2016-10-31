@@ -19,6 +19,11 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
     protected $shippingTrackingFormatter;
 
     /**
+     * @var ShippingMethodFormatter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $shippingMethodFormatter;
+
+    /**
      * @var OrderExtension
      */
     protected $extension;
@@ -33,7 +38,15 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->extension = new OrderExtension($this->sourceDocumentFormatter, $this->shippingTrackingFormatter);
+        $this->shippingMethodFormatter = $this
+            ->getMockBuilder('Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->extension = new OrderExtension(
+            $this->sourceDocumentFormatter,
+            $this->shippingTrackingFormatter,
+            $this->shippingMethodFormatter
+        );
     }
 
     public function testGetName()
@@ -64,6 +77,16 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
             new \Twig_SimpleFunction(
                 'oro_order_format_shipping_tracking_link',
                 [$this->shippingTrackingFormatter, 'formatShippingTrackingLink'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFunction(
+                'oro_order_shipping_method_label',
+                [$this->shippingMethodFormatter, 'formatShippingMethodLabel'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFunction(
+                'oro_order_shipping_type_label',
+                [$this->shippingMethodFormatter, 'formatShippingTypeLabel'],
                 ['is_safe' => ['html']]
             )
         ];
