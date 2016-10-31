@@ -27,18 +27,12 @@ class PageTitleProvider implements ContentVariantTitleProviderInterface
      */
     public function getTitle(ContentVariantInterface $contentVariant)
     {
-        if ((string)$contentVariant->getType() !== 'landing_page_cms_page'
-            || null === $this->propertyAccessor->getValue($contentVariant, 'landingPageCMSPage')
-        ) {
-            return null;
-        }
-
         $page  = $this->propertyAccessor->getValue($contentVariant, 'landingPageCMSPage');
-        $title = null;
         if ($page instanceof Page && $page->getTitle()) {
             $title = $page->getTitle();
+            return $title;
         }
 
-        return $title;
+        return null;
     }
 }

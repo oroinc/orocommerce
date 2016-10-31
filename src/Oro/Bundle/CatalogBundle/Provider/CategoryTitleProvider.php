@@ -28,18 +28,12 @@ class CategoryTitleProvider implements ContentVariantTitleProviderInterface
      */
     public function getTitle(ContentVariantInterface $contentVariant)
     {
-        if ((string)$contentVariant->getType() !== 'catalog_page_category'
-            || null === $this->propertyAccessor->getValue($contentVariant, 'catalogPageCategory')
-        ) {
-            return null;
-        }
-
         $category  = $this->propertyAccessor->getValue($contentVariant, 'catalogPageCategory');
-        $title = null;
         if ($category instanceof Category && $category->getDefaultTitle() instanceof LocalizedFallbackValue) {
             $title = $category->getDefaultTitle()->getText();
+            return $title;
         }
 
-        return $title;
+        return null;
     }
 }

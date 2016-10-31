@@ -33,7 +33,7 @@ class ContentNodeNameFiller
             $title = $this->contentVariantTitleProvider->getFirstTitle($contentNode->getContentVariants());
         }
 
-        if (!empty($title)) {
+        if (null !== $title && '' !== $title) {
             $contentNode->setName($title);
         }
     }

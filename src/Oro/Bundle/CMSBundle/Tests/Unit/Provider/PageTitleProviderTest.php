@@ -10,45 +10,31 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ContentVariantInterface
-     */
-    protected $contentVariant;
-
-    /**
      * @var PageTitleProvider
      */
     protected $pageTitleProvider;
 
-    /**
-     * @var Page
-     */
-    protected $page;
-
     protected function setUp()
     {
         $this->pageTitleProvider = new PageTitleProvider(PropertyAccess::createPropertyAccessor());
-        $this->page = new Page();
     }
 
     public function testGetTitle()
     {
-        $this->page->setTitle('some title');
-        $this->contentVariant = $this
+        $page = new Page();
+        $page->setTitle('some title');
+
+        $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
             ->setMethods(['getLandingPageCMSPage', 'getType', 'getId', 'getName'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->contentVariant
-            ->expects($this->once())
-            ->method('getType')
-            ->will($this->returnValue('landing_page_cms_page'));
-
-        $this->contentVariant
-            ->expects($this->exactly(2))
+        $contentVariant
+            ->expects($this->any())
             ->method('getLandingPageCMSPage')
-            ->will($this->returnValue($this->page));
+            ->will($this->returnValue($page));
 
-        $this->assertEquals('some title', $this->pageTitleProvider->getTitle($this->contentVariant));
+        $this->assertEquals('some title', $this->pageTitleProvider->getTitle($contentVariant));
     }
 }

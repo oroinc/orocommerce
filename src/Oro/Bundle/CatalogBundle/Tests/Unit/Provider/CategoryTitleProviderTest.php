@@ -11,45 +11,31 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 class CategoryTitleProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ContentVariantInterface
-     */
-    protected $contentVariant;
-
-    /**
      * @var CategoryTitleProvider
      */
     protected $categoryTitleProvider;
 
-    /**
-     * @var Category
-     */
-    protected $category;
-
     protected function setUp()
     {
         $this->categoryTitleProvider = new CategoryTitleProvider(PropertyAccess::createPropertyAccessor());
-        $this->category = new Category();
     }
 
     public function testGetTitle()
     {
-        $this->category->addTitle((new LocalizedFallbackValue())->setText('some title'));
-        $this->contentVariant = $this
+        $category = new Category();
+        $category->addTitle((new LocalizedFallbackValue())->setText('some title'));
+
+        $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
             ->setMethods(['getCatalogPageCategory', 'getType', 'getId', 'getName'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->contentVariant
-            ->expects($this->once())
-            ->method('getType')
-            ->will($this->returnValue('catalog_page_category'));
-
-        $this->contentVariant
-            ->expects($this->exactly(2))
+        $contentVariant
+            ->expects($this->any())
             ->method('getCatalogPageCategory')
-            ->will($this->returnValue($this->category));
+            ->will($this->returnValue($category));
 
-        $this->assertEquals('some title', $this->categoryTitleProvider->getTitle($this->contentVariant));
+        $this->assertEquals('some title', $this->categoryTitleProvider->getTitle($contentVariant));
     }
 }

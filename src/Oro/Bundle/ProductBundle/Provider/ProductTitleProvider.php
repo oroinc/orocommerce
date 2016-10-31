@@ -28,18 +28,12 @@ class ProductTitleProvider implements ContentVariantTitleProviderInterface
      */
     public function getTitle(ContentVariantInterface $contentVariant)
     {
-        if ((string)$contentVariant->getType() !== 'product_page_product'
-            || null === $this->propertyAccessor->getValue($contentVariant, 'productPageProduct')
-        ) {
-            return null;
-        }
-
         $product  = $this->propertyAccessor->getValue($contentVariant, 'productPageProduct');
-        $title = null;
         if ($product instanceof Product && $product->getDefaultName() instanceof LocalizedFallbackValue) {
             $title = $product->getDefaultName()->getText();
+            return $title;
         }
 
-        return $title;
+        return null;
     }
 }

@@ -11,45 +11,31 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 class ProductTitleProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ContentVariantInterface
-     */
-    protected $contentVariant;
-
-    /**
      * @var ProductTitleProvider
      */
     protected $productTitleProvider;
 
-    /**
-     * @var Product
-     */
-    protected $product;
-
     protected function setUp()
     {
         $this->productTitleProvider = new ProductTitleProvider(PropertyAccess::createPropertyAccessor());
-        $this->product = new Product();
     }
 
     public function testGetTitle()
     {
-        $this->product->addName((new LocalizedFallbackValue())->setText('some title'));
-        $this->contentVariant = $this
+        $product = new Product();
+        $product->addName((new LocalizedFallbackValue())->setText('some title'));
+
+        $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
             ->setMethods(['getProductPageProduct', 'getType', 'getId', 'getName'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->contentVariant
-            ->expects($this->once())
-            ->method('getType')
-            ->will($this->returnValue('product_page_product'));
-
-        $this->contentVariant
-            ->expects($this->exactly(2))
+        $contentVariant
+            ->expects($this->any())
             ->method('getProductPageProduct')
-            ->will($this->returnValue($this->product));
+            ->will($this->returnValue($product));
 
-        $this->assertEquals('some title', $this->productTitleProvider->getTitle($this->contentVariant));
+        $this->assertEquals('some title', $this->productTitleProvider->getTitle($contentVariant));
     }
 }
