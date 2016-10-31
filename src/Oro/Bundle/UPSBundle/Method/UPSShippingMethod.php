@@ -4,21 +4,33 @@ namespace Oro\Bundle\UPSBundle\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 
-class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingMethodInterface
+class UPSShippingMethod implements
+    ShippingMethodInterface,
+    PricesAwareShippingMethodInterface,
+    ShippingTrackingAwareInterface
 {
     const IDENTIFIER = 'ups';
     const OPTION_SURCHARGE = 'surcharge';
     const REQUEST_OPTION = 'Shop';
+
+    const TRACKING_URL = 'https://www.ups.com/WebTracking/processInputRequest?TypeOfInquiryNumber=T&InquiryNumber1=';
+    const TRACKING_REGEX = '/\b
+                            (1Z ?[0-9A-Z]{3} ?[0-9A-Z]{3} 
+                            ?[0-9A-Z]{2} ?[0-9A-Z]{4} ?[0-9A-Z]{3} ?[0-9A-Z]|
+                            [\dT]\d\d\d ?\d\d\d\d ?\d\d\d)
+                            \b/ix';
 
     /** @var UPSTransportProvider */
     protected $transportProvider;
@@ -29,19 +41,25 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
     /** @var PriceRequestFactory */
     protected $priceRequestFactory;
 
+    /** @var LocalizationHelper */
+    protected $localizationHelper;
+
     /**
      * @param UPSTransportProvider $transportProvider
      * @param Channel $channel
      * @param PriceRequestFactory $priceRequestFactory
+     * @param LocalizationHelper $localizationHelper
      */
     public function __construct(
         UPSTransportProvider $transportProvider,
         Channel $channel,
-        PriceRequestFactory $priceRequestFactory
+        PriceRequestFactory $priceRequestFactory,
+        LocalizationHelper $localizationHelper
     ) {
         $this->transportProvider = $transportProvider;
         $this->channel = $channel;
         $this->priceRequestFactory = $priceRequestFactory;
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
@@ -65,7 +83,9 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
      */
     public function getLabel()
     {
-        return $this->channel->getName();
+        /** @var UPSTransport $transport */
+        $transport = $this->channel->getTransport();
+        return $this->localizationHelper->getLocalizedValue($transport->getLabels());
     }
 
     /**
@@ -164,5 +184,18 @@ class UPSShippingMethod implements ShippingMethodInterface, PricesAwareShippingM
         }
 
         return $prices;
+    }
+
+    /**
+     * @param string $number
+     * @return string|null
+     */
+    public function getTrackingLink($number)
+    {
+        if (!preg_match(self::TRACKING_REGEX, $number, $match)) {
+            return null;
+        }
+
+        return self::TRACKING_URL . $match[0];
     }
 }

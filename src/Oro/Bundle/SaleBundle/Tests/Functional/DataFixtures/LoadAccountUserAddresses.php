@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
-use Oro\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses as BaseLLoadAccountUserAddresses;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses as BaseLLoadAccountUserAddresses;
 
 class LoadAccountUserAddresses extends BaseLLoadAccountUserAddresses
 {

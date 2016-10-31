@@ -1,0 +1,99 @@
+parameters:
+    oro_inventory.entity.inventory_level.class: Oro\Bundle\InventoryBundle\Entity\InventoryLevel
+
+services:
+    oro_inventory.inventory_level.manager.api:
+        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - '%oro_inventory.entity.inventory_level.class%'
+            - "@doctrine.orm.entity_manager"
+
+    oro_inventory.api.processor.product_id.normalize_input:
+        class: 'Oro\Bundle\ProductBundle\Api\Processor\NormalizeProductId'
+        tags:
+            - { name: oro.api.processor, action: update, group: normalize_input, priority: -105, class: '%oro_inventory.entity.inventory_level.class%' }
+
+    oro_inventory.api.processor.entity_id.load_data:
+        class: 'Oro\Bundle\ProductBundle\Api\Processor\LoadEntityId'
+        tags:
+            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_inventory.entity.inventory_level.class%' }
+
+    oro_inventory.api.processor.update_inventory_level.build_query:
+        class: 'Oro\Bundle\InventoryBundle\Api\Processor\BuildSingleInventoryLevelQuery'
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.criteria_connector'
+        tags:
+            - { name: oro.api.processor, action: update, group: build_query, priority: -95, class: '%oro_inventory.entity.inventory_level.class%' }
+
+    oro_inventory.api.processor.create_inventory_level.normalize_input:
+        class: 'Oro\Bundle\InventoryBundle\Api\Processor\NormalizeInventoryLevelRequestData'
+        arguments:
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: create, group: normalize_input, priority: -45, class: '%oro_inventory.entity.inventory_level.class%' }
+
+    oro_inventory.event_listener.product_manage_inventory_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductManageInventoryFormViewListener'
+        arguments:
+            - "@request_stack"
+            - "@oro_entity.doctrine_helper"
+            - "@translator"
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
+
+    oro_inventory.event_listener.category_manage_inventory_form_view:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryManageInventoryFormViewListener'
+        arguments:
+            - "@request_stack"
+            - "@oro_entity.doctrine_helper"
+            - "@translator"
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
+
+    oro_inventory.event_listener.category_quantity_to_order_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\CategoryQuantityToOrderFormViewListener'
+        arguments:
+            - "@request_stack"
+            - "@oro_entity.doctrine_helper"
+            - "@translator"
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
+
+    oro_inventory.event_listener.product_quantity_to_order_form_view_listener:
+        class: 'Oro\Bundle\InventoryBundle\EventListener\ProductQuantityToOrderFormViewListener'
+        arguments:
+            - "@request_stack"
+            - "@oro_entity.doctrine_helper"
+            - "@translator"
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
+
+    oro_inventory.event_listener.quantity_to_order_condition_listener:
+        class: Oro\Bundle\InventoryBundle\EventListener\QuantityToOrderConditionListener
+        arguments:
+            - '@oro_inventory.validator.quantity_to_order_validator'
+            - '@session'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: checkout.checkout_validate, method: onCheckoutValidate }
+            - { name: kernel.event_listener, event: extendable_operation.create_order, method: onCreateOrderCheck }
+            - { name: kernel.event_listener, event: extendable_condition.checkout, method: onCheckoutConditionCheck }
+
+    oro_inventory.validator.quantity_to_order_validator:
+        class: Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidator
+        arguments:
+            - '@oro_entity.fallback.resolver.entity_fallback_resolver'
+
+    oro_inventory.event_listener.line_item_validation_listener:
+        class: Oro\Bundle\InventoryBundle\EventListener\LineItemValidationListener
+        arguments:
+            - '@oro_inventory.validator.quantity_to_order_validator'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate }

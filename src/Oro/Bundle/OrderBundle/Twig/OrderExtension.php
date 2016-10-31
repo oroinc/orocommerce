@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Twig;
 
+use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
 
 class OrderExtension extends \Twig_Extension
@@ -14,11 +15,20 @@ class OrderExtension extends \Twig_Extension
     protected $sourceDocumentFormatter;
 
     /**
-     * @param SourceDocumentFormatter $sourceDocumentFormatter
+     * @var ShippingTrackingFormatter
      */
-    public function __construct(SourceDocumentFormatter $sourceDocumentFormatter)
-    {
+    protected $shippingTrackingFormatter;
+
+    /**
+     * @param SourceDocumentFormatter $sourceDocumentFormatter
+     * @param ShippingTrackingFormatter $shippingTrackingFormatter
+     */
+    public function __construct(
+        SourceDocumentFormatter $sourceDocumentFormatter,
+        ShippingTrackingFormatter $shippingTrackingFormatter
+    ) {
         $this->sourceDocumentFormatter = $sourceDocumentFormatter;
+        $this->shippingTrackingFormatter = $shippingTrackingFormatter;
     }
 
     /**
@@ -30,6 +40,25 @@ class OrderExtension extends \Twig_Extension
             new \Twig_SimpleFilter(
                 'oro_order_format_source_document',
                 [$this->sourceDocumentFormatter, 'format'],
+                ['is_safe' => ['html']]
+            )
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFunctions()
+    {
+        return [
+            new \Twig_SimpleFunction(
+                'oro_order_format_shipping_tracking_method',
+                [$this->shippingTrackingFormatter, 'formatShippingTrackingMethod'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFunction(
+                'oro_order_format_shipping_tracking_link',
+                [$this->shippingTrackingFormatter, 'formatShippingTrackingLink'],
                 ['is_safe' => ['html']]
             )
         ];

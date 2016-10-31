@@ -138,7 +138,18 @@ abstract class AbstractOrderLineItemType extends AbstractType
             $this->getName(),
             [
                 'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
-                'price' => ['data' => ['price' => [], 'priceType' => []], 'order' => 20],
+                'price' => [
+                    'data' => [
+                        'price' => [
+                            'page_component' => 'oroui/js/app/components/view-component',
+                            'page_component_options' => [
+                                'view' => 'oropricing/js/app/views/line-item-product-prices-view',
+                            ],
+                        ],
+                        'priceType' => []
+                    ],
+                    'order' => 20
+                ],
                 'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
                 'comment' => [
                     'data' => ['comment' => ['page_component' => 'oroorder/js/app/components/notes-component']],

@@ -1,8 +1,0 @@
-oro:
-    warehouse:
-        validators:
-            unique_warehouse.message: 'Warehouse is already selected.'
-
-        product:
-            validators:
-                quantity_min_over_max: 'The maximum quantity to order must be higher or equal to the minimum quantity to order'

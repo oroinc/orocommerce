@@ -1,0 +1,22 @@
+{% macro renderShippingMethodsConfigs(methodConfigs) %}
+    {% spaceless %}
+        <ol>
+        {% for methodConfig in methodConfigs %}
+            {% set methodLabel = get_shipping_method_label(methodConfig.method)|trans %}
+            {% if methodLabel|length > 0 %}
+                <li>{{  methodLabel }}
+                    <ul>
+                    {% for typeConfig in methodConfig.typeConfigs %}
+                        <li>{{ get_shipping_method_type_label(methodConfig.method, typeConfig.type)|trans }}</li>
+                    {% endfor %}
+                    </ul>
+                </li>
+            {% else %}
+                {% for typeConfig in methodConfig.typeConfigs %}
+                    <li>{{ get_shipping_method_type_label(methodConfig.method, typeConfig.type)|trans }}</li>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+        </ol>
+    {% endspaceless %}
+{% endmacro %}
