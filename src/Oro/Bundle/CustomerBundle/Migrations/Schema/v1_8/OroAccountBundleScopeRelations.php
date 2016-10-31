@@ -82,11 +82,11 @@ class OroAccountBundleScopeRelations implements Migration, ExtendExtensionAwareI
      */
     private function dropVisibilityTables(Schema $schema)
     {
-        $schema->dropTable('orob2b_category_visibility');
-        $schema->dropTable('orob2b_acc_category_visibility');
-        $schema->dropTable('orob2b_acc_grp_ctgr_visibility');
-        $schema->dropTable('orob2b_product_visibility');
-        $schema->dropTable('orob2b_acc_product_visibility');
-        $schema->dropTable('orob2b_acc_grp_prod_visibility');
+        $schema->dropTable('oro_category_visibility');
+        $schema->dropTable('oro_acc_category_visibility');
+        $schema->dropTable('oro_acc_grp_ctgr_visibility');
+        $schema->dropTable('oro_product_visibility');
+        $schema->dropTable('oro_acc_product_visibility');
+        $schema->dropTable('oro_acc_grp_prod_visibility');
     }
 }
