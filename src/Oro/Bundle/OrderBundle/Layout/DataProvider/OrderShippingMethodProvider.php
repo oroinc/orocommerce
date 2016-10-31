@@ -30,10 +30,7 @@ class OrderShippingMethodProvider
                 $order->getShippingMethod(),
                 $order->getShippingMethodType()
             );
-        } else {
-            $shipping[] = $order->getShippingMethod();
-            $shipping[] = $order->getShippingMethodType();
-            return implode(' ', $shipping);
         }
+        return implode(', ', array_filter([$order->getShippingMethod(), $order->getShippingMethodType()]));
     }
 }
