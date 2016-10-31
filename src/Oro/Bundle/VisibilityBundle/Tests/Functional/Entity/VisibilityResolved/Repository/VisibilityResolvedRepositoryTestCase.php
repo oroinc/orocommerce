@@ -11,22 +11,24 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\ResolvedEntityRepositoryTestTrait;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
 {
     use ResolvedEntityRepositoryTestTrait;
 
-    /** @var  Registry */
+    /**
+     * @var  Registry
+     */
     protected $registry;
+
     /**
      * @var EntityManager
      */
@@ -47,7 +49,7 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+                LoadProductVisibilityData::class
             ]
         );
     }

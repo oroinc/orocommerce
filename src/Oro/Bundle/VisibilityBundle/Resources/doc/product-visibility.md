@@ -1,13 +1,12 @@
 Product visibility
 ------------------
 
-Product visibility is a functionality that allows to show or hide some products for specific website, category,
-account or account group.
+Product visibility is a functionality that allows to show or hide some products in specific scope.
 
 
 ### General Information
 
-There are 3 levels of visibility for each product for each website.
+There are 3 levels of visibility for each product in scope types: product_visibility, account_product_visibility, account_group_product_visibility;
 Product visibility edit page allows setting of the following values:
 
 ####Product Visibility (Visibility to All):
@@ -31,7 +30,7 @@ Product visibility edit page allows setting of the following values:
 
 There is entities in database for each listed levels:
 `ProductVisibility`, `AccountProductVisibility`, `AccountGroupProductVisibility` each of which implements 
-`VisibilityInterface` and `WebsiteAwareInterface` interfaces.
+`VisibilityInterface` and `ScopeAwareInterface` interfaces.
 
 ####Addition information:
 * If default value is selected then the entity is not written to the database.
@@ -67,7 +66,7 @@ Here are tables that describe calculation algorithms for all cache values.
 #####Visibility to All
 | `ProductToAllVisibilityResolved` | **Category**                                | **Config** | **Hidden**                                  | **Visible**                                 |
 |----------------------------------|---------------------------------------------|------------|---------------------------------------------|---------------------------------------------|
-| **website (FK) (PK)**            | Get website from current product visibility |      X     | Get website from current product visibility | Get website from current product visibility |
+| **scope (FK) (PK)**              | Get scope from current product visibility   |      X     | Get scope from current product visibility   | Get scope from current product visibility   |
 | **product (FK)**                 | Get product from current product visibility |      X     | Get product from current product visibility | Get product from current product visibility |
 | **visibility**                   | Take from category visibility cache         |      X     |                   ::HIDDEN                  |                  ::VISIBLE                  |
 | **sourceProductVisibility (FK)** |                   null                      |      X     | Current product visibility                  | Current product visibility                  |
@@ -77,7 +76,7 @@ Here are tables that describe calculation algorithms for all cache values.
 #####Visibility to Account Group
 | `ProductToAccountGroupVisibilityResolved`    | **Current Product (Visibility to All)** | **Category**                                               | **Hidden**                                                | **Visible**                                               |
 |----------------------------------------------|-----------------------------------------|------------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|
-| **website (FK) (PK)**                        |                    X                    | Get website from current account group product visibility  | Get website from current account group product visibility  | Get website from currentaccount group product visibility  |
+| **scope (FK) (PK)**                          |                    X                    | Get scope from current account group product visibility    | Get scope from current account group product visibility   | Get scope from currentaccount group product visibility    |
 | **accountGroup (FK) (PK)**                   |                    X                    | Get group from current account group product visibility    | Get group from current account group product visibility   | Get group from current account group product visibility   |
 | **product (FK) (PK)**                        |                    X                    | Get product from current account group product visibility  | Get product from current account group product visibility | Get product from current account group product visibility |
 | **visibility**                               |                    X                    | Take from category visibility cache for this account group |                          ::HIDDEN                         |                         ::VISIBLE                         |
@@ -88,7 +87,7 @@ Here are tables that describe calculation algorithms for all cache values.
 #####Visibility to Account
 | `ProductToAccountVisibilityResolved`    | **Account Group** | **Current Product**                                  | **Category**                                         | **Hidden**                                                | **Visible**                                               |
 |-----------------------------------------|-------------------|------------------------------------------------------|------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|
-| **website (FK) (PK)**                   |         X         | Get website from cur. acc. product visibility        | Get website from cur. acc. product visibility        | Get website from cur. acc. product visibility             | Get website from cur. acc. group product visibility       |
+| **scope (FK) (PK)**                     |         X         | Get scope from cur. acc. product visibility          | Get scope from cur. acc. product visibility          | Get scope from cur. acc. product visibility               | Get scope from cur. acc. group product visibility         |
 | **account (FK) (PK)**                   |         X         | Get account from cur. acc. product visibility        | Get account from cur. acc. product visibility        | Get account from cur. acc. product visibility             | Get account from cur. acc. product visibility             |
 | **product (FK) (PK)**                   |         X         | Get product from cur. acc. product visibility        | Get product fromcur. acc. product visibility         | Get product from cur. acc. product visibility             | Get product from cur. acc. product visibility             |
 | **visibility**                          |         X         |            ::VISIBILITY_FALLBACK_TO_ALL              | Take from category visibility cache for this account |                          ::HIDDEN                         |                         ::VISIBLE                         |

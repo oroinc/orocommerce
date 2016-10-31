@@ -17,7 +17,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     public function buildCacheDataProvider()
     {
         return [
-            'without_website' => [
+            [
                 'expectedStaticCount' => 4,
                 'expectedCategoryCount' => 1,
             ],

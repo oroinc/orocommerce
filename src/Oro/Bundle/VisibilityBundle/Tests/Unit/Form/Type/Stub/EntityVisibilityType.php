@@ -16,7 +16,7 @@ class EntityVisibilityType extends TextType
     {
         $resolver->setDefaults([
             'ownership_disabled' => 'true',
-            'website' => null,
+            'scope' => null,
         ]);
     }
 }

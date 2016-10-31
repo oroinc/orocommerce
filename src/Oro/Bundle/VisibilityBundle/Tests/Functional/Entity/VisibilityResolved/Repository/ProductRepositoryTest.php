@@ -58,16 +58,16 @@ class ProductRepositoryTest extends WebTestCase
         $this->loadFixtures([LoadProductVisibilityData::class]);
     }
 
-    public function testClearTableByWebsite()
+    public function testClearTableByScope()
     {
         $scope = $this->getScope();
-        $defaultWebsiteProductVisibilitiesCount = count($this->repository->findBy(['scope' => $scope]));
+        $visibilitiesCount = count($this->repository->findBy(['scope' => $scope]));
 
         $deleted = $this->repository->clearTable($scope);
         $actual = $this->repository->findBy(['scope' => $scope]);
 
         $this->assertEmpty($actual);
-        $this->assertSame($defaultWebsiteProductVisibilitiesCount, $deleted);
+        $this->assertSame($visibilitiesCount, $deleted);
     }
 
     public function testFindByPrimaryKey()

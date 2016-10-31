@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache;
+namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -108,7 +108,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
         );
         $this->assertNull($forthProductDefaultWebsite->getCategory());
 
-        // invalid entity for first product at default website
+        // invalid entity for first product in default scope
         $resolvedVisibility = new ProductVisibilityResolved($scope, $firstProduct);
         $resolvedVisibility->setVisibility(BaseProductVisibilityResolved::VISIBILITY_VISIBLE)
             ->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
