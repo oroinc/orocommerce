@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
@@ -23,11 +21,14 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
     /** @var RequestProductHandler|\PHPUnit_Framework_MockObject_MockObject */
     protected $requestProductHandler;
 
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
-    protected $doctrine;
+    /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject */
+    protected $repository;
 
     /** @var DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject $config */
     protected $config;
+
+    /** @var Category */
+    protected $category;
 
     protected function setUp()
     {
@@ -36,8 +37,15 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->doctrine = $this->getMockBuilder(ManagerRegistry::class)
+        $this->repository = $this->getMockBuilder(CategoryRepository::class)
             ->disableOriginalConstructor()->getMock();
+
+        $this->category = new Category();
+        $this->category->setMaterializedPath('1_23');
+
+        $this->repository->expects($this->any())
+            ->method('find')
+            ->willReturn($this->category);
 
         $this->config = $this->getMockBuilder(DatagridConfiguration::class)
             ->disableOriginalConstructor()->getMock();
@@ -70,7 +78,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
 
         $listener = new SearchCategoryFilteringEventListener(
             $this->requestProductHandler,
-            $this->doctrine
+            $this->repository
         );
 
         $listener->onPreBuild($event);
@@ -97,7 +105,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
 
         $listener = new SearchCategoryFilteringEventListener(
             $this->requestProductHandler,
-            $this->doctrine
+            $this->repository
         );
 
         $this->config->expects($this->at(0))
@@ -140,7 +148,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
 
         $listener = new SearchCategoryFilteringEventListener(
             $this->requestProductHandler,
-            $this->doctrine
+            $this->repository
         );
 
         /** @var BuildAfter|\PHPUnit_Framework_MockObject_MockObject $event */
@@ -163,7 +171,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
         $websiteSearchQuery->method('getQuery')
             ->will($this->returnValue($query));
 
-        $expr = Criteria::expr()->eq('integer.category_id', $categoryId);
+        $expr = Criteria::expr()->eq('text.category_path', $this->category->getMaterializedPath());
 
         $websiteSearchQuery->expects($this->once())
             ->method('addWhere')
@@ -203,23 +211,12 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->with(SearchCategoryFilteringEventListener::INCLUDE_CAT_CONFIG_PATH)
             ->willReturn($subcategoryIds);
 
-        $mockedRepo = $this->getMockBuilder(CategoryRepository::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $category = new Category();
-
-        $mockedRepo->method('find')
-            ->with($categoryId)->willReturn($category);
-
-        $mockedRepo->method('getChildrenIds')
-            ->with($category)->willReturn($subcategoryIds);
-
-        $this->doctrine->method('getRepository')
-            ->willReturn($mockedRepo);
+        $this->repository->method('getChildrenIds')
+            ->with($this->category)->willReturn($subcategoryIds);
 
         $listener = new SearchCategoryFilteringEventListener(
             $this->requestProductHandler,
-            $this->doctrine
+            $this->repository
         );
 
         /** @var BuildAfter|\PHPUnit_Framework_MockObject_MockObject $event */
@@ -242,10 +239,7 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->disableOriginalConstructor()
             ->getMock();
 
-        $categories   = $subcategoryIds;
-        $categories[] = $categoryId;
-
-        $expr = Criteria::expr()->in('integer.category_id', $categories);
+        $expr = Criteria::expr()->startsWith('text.category_path', $this->category->getMaterializedPath());
 
         $websiteSearchQuery->expects($this->once())
             ->method('addWhere')

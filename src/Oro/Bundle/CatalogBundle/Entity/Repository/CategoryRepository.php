@@ -52,7 +52,7 @@ class CategoryRepository extends NestedTreeRepository
         $includeNode = false
     ) {
         return $this->getChildrenQueryBuilder($node, $direct, $sortByField, $direction, $includeNode)
-            ->select('partial node.{id, parentCategory, left, level, right, root}');
+            ->select('partial node.{id, parentCategory, materializedPath, left, level, right, root}');
     }
 
     /**
