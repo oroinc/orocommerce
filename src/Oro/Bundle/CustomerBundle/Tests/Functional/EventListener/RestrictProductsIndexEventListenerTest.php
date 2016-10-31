@@ -36,6 +36,12 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
+
+        // TODO: Remove in BB-4512
+        if ($this->getContainer()->getParameter('oro_search.engine') === 'elastic_search') {
+            $this->markTestSkipped('Disabled for Elastic Search until search method is ready in BB-4512');
+        }
+
         $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->dispatcher = $this->getContainer()->get('event_dispatcher');
 
