@@ -1,0 +1,22 @@
+.quick-access {
+  float: right;
+
+  margin: 20px;
+
+  &__list {
+    @include list-normalize();
+
+    text-align: right;
+
+    @include clearfix();
+  }
+
+  &__item {
+    position: relative;
+
+    display: inline-block;
+    margin-left: 10px;
+
+    font-size: 13px;
+  }
+}
