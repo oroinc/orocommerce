@@ -33,8 +33,6 @@ class OroAccountBundleScopeRelations implements Migration, ExtendExtensionAwareI
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addRelationsToScope($schema);
-
-        $this->dropVisibilityTables($schema);
     }
 
     /**
@@ -75,25 +73,5 @@ class OroAccountBundleScopeRelations implements Migration, ExtendExtensionAwareI
             ],
             RelationType::MANY_TO_ONE
         );
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    private function dropVisibilityTables(Schema $schema)
-    {
-        $schema->dropTable('oro_category_visibility');
-        $schema->dropTable('oro_acc_category_visibility');
-        $schema->dropTable('oro_acc_grp_ctgr_visibility');
-        $schema->dropTable('oro_product_visibility');
-        $schema->dropTable('oro_acc_product_visibility');
-        $schema->dropTable('oro_acc_grp_prod_visibility');
-
-        $schema->dropTable('oro_ctgr_vsb_resolv');
-        $schema->dropTable('oro_acc_ctgr_vsb_resolv');
-        $schema->dropTable('oro_acc_grp_ctgr_vsb_resolv');
-        $schema->dropTable('oro_prod_vsb_resolv');
-        $schema->dropTable('oro_acc_prod_vsb_resolv');
-        $schema->dropTable('oro_acc_grp_prod_vsb_resolv');
     }
 }

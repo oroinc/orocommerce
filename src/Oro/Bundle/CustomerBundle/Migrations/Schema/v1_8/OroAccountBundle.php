@@ -3,16 +3,15 @@
 namespace Oro\Bundle\CustomerBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
 use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
+use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 use Oro\Bundle\InstallerBundle\Migration\UpdateTableFieldQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 
 class OroAccountBundle implements Migration, RenameExtensionAwareInterface
 {
@@ -28,6 +27,8 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $this->dropVisibilityTables($schema, $queries);
+
         $this->renameActivityTables($schema, $queries);
         $this->updateAttachments($schema, $queries);
         $this->updateNotes($schema, $queries);
@@ -375,5 +376,28 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
     public function setRenameExtension(RenameExtension $renameExtension)
     {
         $this->renameExtension = $renameExtension;
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function dropVisibilityTables(Schema $schema, QueryBag $queries)
+    {
+        $schema->dropTable('oro_category_visibility');
+        $schema->dropTable('oro_acc_category_visibility');
+        $schema->dropTable('oro_acc_grp_ctgr_visibility');
+        $schema->dropTable('oro_product_visibility');
+        $schema->dropTable('oro_acc_product_visibility');
+        $schema->dropTable('oro_acc_grp_prod_visibility');
+
+        $schema->dropTable('oro_ctgr_vsb_resolv');
+        $schema->dropTable('oro_acc_ctgr_vsb_resolv');
+        $schema->dropTable('oro_acc_grp_ctgr_vsb_resolv');
+        $schema->dropTable('oro_prod_vsb_resolv');
+        $schema->dropTable('oro_acc_prod_vsb_resolv');
+        $schema->dropTable('oro_acc_grp_prod_vsb_resolv');
+
+        $queries->addQuery(new RemoveVisibilityFromEntityConfigQuery());
     }
 }
