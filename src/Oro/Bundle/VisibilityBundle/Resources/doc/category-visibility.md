@@ -30,8 +30,6 @@ As well as for the product visibility there are entities in database for each li
 `CategoryVisibility`, `AccountGroupCategoryVisibility`, `AccountCategoryVisibility` each of which implements 
 `VisibilityInterface` interface.
 
-Category visibilities settings do not depend on websites - they are the same for all websites.
-
 ####Addition information:
 
 * If default value is selected then the entity is not written to the database.
@@ -67,6 +65,7 @@ Here is a list of possible cases that require to update the cache:
 | `CategoryVisibilityResolved`     | **Parent Category**                          | **Config** | **Hidden**                                    | **Visible**                                  |
 |----------------------------------|----------------------------------------------|------------|-----------------------------------------------|----------------------------------------------|
 | **category (FK) (PK)**           | Get category from current category visibility|      X     | Get category from current category visibility | Get category from current category visibility|
+| **scope (FK) (PK)**              |                                              |      X     |                                               |                                              |
 | **sourceCategoryVisibility (FK)**|                   null                       |      X     | Current category visibility                   | Current category visibility                  |
 | **visibility**                   | Get parent category visibility from cache    |      X     |             ::VISIBILITY_HIDDEN               |             ::VISIBILITY_VISIBLE             |
 | **source**                       |           ::SOURCE_PARENT_CATEGORY           |      X     |               ::SOURCE_STATIC                 |               ::SOURCE_STATIC                |
@@ -76,6 +75,7 @@ Here is a list of possible cases that require to update the cache:
 |------------------------------------------|-----------------------|------------------------------------------------------------------|------------------------------------------------------------|------------------------------------------------------------|
 | **accountGroup (FK) (PK)**               |          X            | Get group from current account group category visibility         | Get group from current account group category visibility   | Get group from current account group category visibility   |
 | **category (FK) (PK)**                   |          X            | Get category from current account group category visibility      | Get category from current account group category visibility| Get category from current account group category visibility|
+| **scope (FK) (PK)**                      |          X            |                                                                  |                                                            |                                                            |
 | **sourceProductVisibility (FK)**         |          X            | Current account group category visibility                        | Current account group product visibility                   | Current account group category visibility                  |
 | **visibility**                           |          X            | Get parent category visibility from cache for this account group |                     ::VISIBILITY_HIDDEN                    |                   ::VISIBILITY_VISIBLE                     |
 | **source**                               |          X            |           ::SOURCE_PARENT_CATEGORY                               |                       ::SOURCE_STATIC                      |                     ::SOURCE_STATIC                        |
@@ -85,6 +85,7 @@ Here is a list of possible cases that require to update the cache:
 |-----------------------------------------|-------------------|-------------------------------------------------------------|------------------------------------------------------------|------------------------------------------------------|------------------------------------------------------|
 | **account (FK) (PK)**                   |         X         | Get account from current account group category visibility  | Get account from current account category visibility       | Get account from current account category visibility | Get account from current account category visibility |
 | **category (FK) (PK)**                  |         X         | Get category from current account group category visibility | Get category from current account category visibility      | Get category from current account category visibility| Get category from current account category visibility|
+| **scope (FK) (PK)**                     |         X         |                                                             |                                                            |                                                      |                                                      |
 | **sourceProductVisibility (FK)**        |         X         | Current account category visibility                         | Current account category visibility                        | Current account product visibility                   | Current account product visibility                   |
 | **visibility**                          |         X         | Get category visibility to all from cache                   | Get parent category visibility from cache for this account |                   ::VISIBILITY_HIDDEN                |                   ::VISIBILITY_VISIBLE               |
 | **source**                              |         X         |                 ::SOURCE_STATIC                             |               ::SOURCE_PARENT_CATEGORY                     |                     ::SOURCE_STATIC                  |                       ::SOURCE_STATIC                |
@@ -114,8 +115,9 @@ In this case `AccountGroupCategoryVisibility` for child category should be:
 | **Field**                                | **Value**                                                        |
 |------------------------------------------|------------------------------------------------------------------|
 | **Id (PK)**                              |             AccountGroupCategoryVisibilityId                     |
-| **category (FK) (PK)**                   |                       ChildCategoryId                            |
-| **account (FK)  (PK)**                   |                       AccountGroup1Id                            |
+| **category (FK)**                        |                       ChildCategoryId                            |
+| **scope (FK)**                           |                       Visibility Scope                           |
+| **account (FK)**                         |                       AccountGroup1Id                            |
 | **visibility**                           |                      ::PARENT_CATEGORY                           |
 
 And `AccountGroupCategoryVisibilityResolved` for child category should be:
@@ -124,6 +126,7 @@ And `AccountGroupCategoryVisibilityResolved` for child category should be:
 |------------------------------------------|------------------------------------------------------------------|
 | **accountGroup (FK) (PK)**               |                       AccountGroup1Id                            |
 | **category (FK) (PK)**                   |                       ChildCategoryId                            |
+| **scope (FK) (PK)**                      |                       Scope                                      |
 | **sourceProductVisibility (FK)**         |               AccountGroupCategoryVisibilityId                   |
 | **visibility**                           |               ::VISIBILITY_FALLBACK_TO_CONFIG                    |
 | **source**                               |                  ::SOURCE_PARENT_CATEGORY                        |

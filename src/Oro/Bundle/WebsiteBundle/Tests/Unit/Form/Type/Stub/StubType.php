@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Type\Stub;
+namespace Oro\Bundle\WebsiteBundle\Tests\Unit\Form\Type\Stub;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class EntityVisibilityType extends TextType
+class StubType extends TextType
 {
-    const NAME = 'oro_visibility_entity_visibility_type';
+    const NAME = 'stub_type';
 
     /**
      * @param OptionsResolver $resolver
@@ -16,7 +16,7 @@ class EntityVisibilityType extends TextType
     {
         $resolver->setDefaults([
             'ownership_disabled' => 'true',
-            'scope' => null,
+            'website' => null,
         ]);
     }
 }

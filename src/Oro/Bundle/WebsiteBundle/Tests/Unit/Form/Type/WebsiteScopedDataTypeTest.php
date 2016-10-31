@@ -2,19 +2,17 @@
 
 namespace Oro\Bundle\WebsiteBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\SearchBundle\Tests\Unit\Fixture\Entity\Product;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
+use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Bundle\WebsiteBundle\Tests\Unit\Form\Type\Stub\StubType;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\SearchBundle\Tests\Unit\Fixture\Entity\Product;
-use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
-use Oro\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
-use Oro\Bundle\VisibilityBundle\Tests\Unit\Form\Type\Stub\EntityVisibilityType;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
 {
@@ -32,12 +30,10 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityVisibilityType = new EntityVisibilityType();
-
         return [
             new PreloadedExtension(
                 [
-                    EntityVisibilityType::NAME => $entityVisibilityType,
+                    StubType::NAME => new StubType(),
                 ],
                 []
             )
@@ -122,7 +118,7 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
                 'defaultData'   => [],
                 'options' => [
                     'preloaded_websites' => [],
-                    'type' => new EntityVisibilityType()
+                    'type' => new StubType()
                 ],
                 'submittedData' => [
                     self::WEBSITE_ID => [],
