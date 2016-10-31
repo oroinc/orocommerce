@@ -170,14 +170,14 @@ datagrids:
                         - { join: relatedEntity.parent, alias: parent }
         columns:
             name:
-                label: oro.account.name.label
+                label: oro.customer.account.name.label
             groupName:
-                label: oro.account.group.label
+                label: oro.customer.account.group.label
             parentName:
-                label: oro.account.parent.label
+                label: oro.customer.account.parent.label
         properties:
             view_link:
-                route:  oro_account_view
+                route:  oro_customer_account_view
         sorters:
             columns:
                 groupName:
@@ -192,14 +192,14 @@ datagrids:
                     options:
                         field_type: entity
                         field_options:
-                            class:    %oro_account.entity.account_group.class%
+                            class:    %oro_customer.entity.account_group.class%
                             property: name
                 parentName:
                     type:      string
                     data_name: parent.name
         actions:
             view:
-                acl_resource: oro_account_view
+                acl_resource: oro_customer_account_view
 
     price-list-account-groups-grid:
         extends:                base-price-list-relations-grid
@@ -213,10 +213,10 @@ datagrids:
                         - { join: priceListToAccountGroup.accountGroup, alias: relatedEntity }
         columns:
             name:
-                label: oro.account.accountgroup.name.label
+                label: oro.customer.accountgroup.name.label
         properties:
             view_link:
-                route:  oro_account_group_view
+                route:  oro_customer_account_group_view
         actions:
             view:
                 acl_resource: oro_account_group_view
@@ -277,7 +277,7 @@ datagrids:
                     - accountGroup.name as groupName
                     - parent.name as parentName
                 from:
-                    - { table: %oro_account.entity.account.class%, alias: relatedEntity }
+                    - { table: %oro_customer.entity.account.class%, alias: relatedEntity }
                 join:
                     left:
                         - { join: %oro_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.accounts' }
@@ -285,11 +285,11 @@ datagrids:
                         - { join: relatedEntity.parent, alias: parent }
         columns:
             name:
-                label:          oro.account.name.label
+                label:          oro.customer.account.name.label
             groupName:
-                label:          oro.account.group.label
+                label:          oro.customer.account.group.label
             parentName:
-                label:          oro.account.parent.label
+                label:          oro.customer.account.parent.label
         filters:
             columns:
                 groupName:
@@ -298,7 +298,7 @@ datagrids:
                     options:
                         field_type: entity
                         field_options:
-                            class:    %oro_account.entity.account_group.class%
+                            class:    %oro_customer.entity.account_group.class%
                             property: name
                 parentName:
                     type:       string
@@ -320,13 +320,13 @@ datagrids:
         source:
             query:
                 from:
-                    - { table: %oro_account.entity.account_group.class%, alias: relatedEntity }
+                    - { table: %oro_customer.entity.account_group.class%, alias: relatedEntity }
                 join:
                     left:
                         - { join: %oro_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.accountGroups' }
         columns:
             name:
-                label:          oro.account.accountgroup.name.label
+                label:          oro.customer.accountgroup.name.label
         options:
             rowSelection:
                 selectors:

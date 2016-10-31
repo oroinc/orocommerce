@@ -12,8 +12,8 @@ use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
-use Oro\Bundle\AccountBundle\Entity\AccountUser;
-use Oro\Bundle\AccountBundle\Form\Type\AccountUserMultiSelectType;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Form\Type\AccountUserMultiSelectType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -108,7 +108,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
                 ],
             ]
         );
-
     }
 
     /**
@@ -285,7 +284,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function getAccountUser($id)
     {
-        return $this->getEntity('Oro\Bundle\AccountBundle\Entity\AccountUser', $id);
+        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', $id);
     }
 
     /**

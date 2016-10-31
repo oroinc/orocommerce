@@ -129,11 +129,6 @@ class QuickAddControllerNotificationTest extends WebTestCase
             $this->expectedMessageGroup[$group],
             $content
         );
-
-        $this->assertContains(
-            $this->productOutOfStock->getSku(),
-            $content
-        );
     }
 
     /**

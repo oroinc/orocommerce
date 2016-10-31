@@ -17,6 +17,11 @@ class ShippingLineItem implements ShippingLineItemInterface
     private $product;
 
     /**
+     * @var ProductHolderInterface
+     */
+    private $productHolder;
+
+    /**
      * @var integer
      */
     private $quantity;
@@ -25,11 +30,6 @@ class ShippingLineItem implements ShippingLineItemInterface
      * @var ProductUnit
      */
     private $productUnit;
-
-    /**
-     * @var mixed
-     */
-    private $entityIdentifier;
 
     /**
      * @var Price
@@ -109,22 +109,7 @@ class ShippingLineItem implements ShippingLineItemInterface
      */
     public function getEntityIdentifier()
     {
-        if ($this->entityIdentifier === null) {
-            throw new \InvalidArgumentException('entityIdentifier is not defined.');
-        }
-
-        return $this->entityIdentifier;
-    }
-
-    /**
-     * @param mixed $entityIdentifier
-     * @return $this
-     */
-    public function setEntityIdentifier($entityIdentifier)
-    {
-        $this->entityIdentifier = $entityIdentifier;
-
-        return $this;
+        return $this->productHolder ? $this->productHolder->getEntityIdentifier() : null;
     }
 
     /**
@@ -134,6 +119,16 @@ class ShippingLineItem implements ShippingLineItemInterface
      */
     public function getProductHolder()
     {
+        return $this->productHolder;
+    }
+
+    /**
+     * @param ProductHolderInterface $holder
+     * @return $this
+     */
+    public function setProductHolder(ProductHolderInterface $holder = null)
+    {
+        $this->productHolder = $holder;
         return $this;
     }
 
@@ -223,7 +218,7 @@ class ShippingLineItem implements ShippingLineItemInterface
      * @param Dimensions $dimensions
      * @return $this
      */
-    public function setDimensions(Dimensions $dimensions)
+    public function setDimensions(Dimensions $dimensions = null)
     {
         $this->dimensions = $dimensions;
 

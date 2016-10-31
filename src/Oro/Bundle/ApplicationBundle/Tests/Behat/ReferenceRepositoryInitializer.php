@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ApplicationBundle\Tests\Behat;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository;
 use Oro\Bundle\AddressBundle\Entity\Repository\AddressTypeRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -14,7 +14,7 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Repository\RegionRepository;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\AccountBundle\Entity\AccountUserRole;
+use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListCurrency;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -40,7 +40,7 @@ class ReferenceRepositoryInitializer extends BaseInitializer
         $this->referenceRepository->set('berlin', $berlin);
 
         /** @var AccountUserRoleRepository $repository */
-        $repository = $this->em->getRepository('OroAccountBundle:AccountUserRole');
+        $repository = $this->em->getRepository('OroCustomerBundle:AccountUserRole');
         /** @var AccountUserRole buyer */
         $buyer = $repository->findOneBy(['role' => 'ROLE_FRONTEND_BUYER']);
         $this->referenceRepository->set('buyer', $buyer);

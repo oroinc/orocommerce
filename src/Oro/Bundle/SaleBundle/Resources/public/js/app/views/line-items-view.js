@@ -18,9 +18,7 @@ define(function(require) {
          */
         options: {
             tierPrices: null,
-            matchedPrices: {},
             tierPricesRoute: '',
-            matchedPricesRoute: '',
             currency: null,
             account: null
         },
@@ -33,9 +31,7 @@ define(function(require) {
 
             this.subview('productsPricesComponent', new ProductsPricesComponent({
                 tierPrices: this.options.tierPrices,
-                matchedPrices: this.options.matchedPrices,
                 tierPricesRoute: this.options.tierPricesRoute,
-                matchedPricesRoute: this.options.matchedPricesRoute,
                 currency: this.options.currency,
                 account: this.options.account
             }));
