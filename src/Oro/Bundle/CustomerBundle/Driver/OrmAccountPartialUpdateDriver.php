@@ -29,14 +29,14 @@ class OrmAccountPartialUpdateDriver extends AbstractAccountPartialUpdateDriver
     /**
      * @param PlaceholderProvider $placeholderProvider
      * @param DoctrineHelper $doctrineHelper
-     * @param InsertFromSelectQueryExecutor $insertExecutor
      * @param ProductVisibilityProvider $productVisibilityProvider
+     * @param InsertFromSelectQueryExecutor $insertExecutor
      */
     public function __construct(
         PlaceholderProvider $placeholderProvider,
+        ProductVisibilityProvider $productVisibilityProvider,
         DoctrineHelper $doctrineHelper,
-        InsertFromSelectQueryExecutor $insertExecutor,
-        ProductVisibilityProvider $productVisibilityProvider
+        InsertFromSelectQueryExecutor $insertExecutor
     ) {
         parent::__construct($placeholderProvider, $productVisibilityProvider, $doctrineHelper);
 

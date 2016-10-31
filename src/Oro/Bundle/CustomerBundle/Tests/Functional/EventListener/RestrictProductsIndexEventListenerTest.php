@@ -51,6 +51,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         );
 
         $this->clearRestrictListeners($this->getRestrictEntityEventName());
+        $this->clearRestrictListeners('oro_product.product_search_query.restriction');
 
         $this->dispatcher->addListener(
             $this->getRestrictEntityEventName(),
