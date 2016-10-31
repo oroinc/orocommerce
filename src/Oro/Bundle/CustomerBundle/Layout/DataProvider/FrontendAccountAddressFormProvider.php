@@ -7,7 +7,7 @@ use Oro\Component\Layout\DataProvider\AbstractFormProvider;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressType;
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountTypedAddressType;
 
 class FrontendAccountAddressFormProvider extends AbstractFormProvider
 {
@@ -26,7 +26,7 @@ class FrontendAccountAddressFormProvider extends AbstractFormProvider
     {
         if ($accountAddress->getId()) {
             return $this->getFormAccessor(
-                AccountTypedAddressType::NAME,
+                FrontendAccountTypedAddressType::NAME,
                 self::ACCOUNT_ADDRESS_UPDATE_ROUTE_NAME,
                 $accountAddress,
                 ['id' => $accountAddress->getId(), 'entityId' => $account->getId()]
@@ -34,7 +34,7 @@ class FrontendAccountAddressFormProvider extends AbstractFormProvider
         }
 
         return $this->getFormAccessor(
-            AccountTypedAddressType::NAME,
+            FrontendAccountTypedAddressType::NAME,
             self::ACCOUNT_ADDRESS_CREATE_ROUTE_NAME,
             $accountAddress,
             ['entityId' => $account->getId()]

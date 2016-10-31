@@ -21,6 +21,13 @@ services:
         tags:
             - { name: form.type, alias: oro_customer_account_select }
 
+    oro_customer_account.form.type.frontend.account_select:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountSelectType'
+        arguments:
+             - '@oro_security.acl_helper'
+        tags:
+            - { name: form.type, alias: oro_customer_frontend_account_select }
+
     oro_customer.form.type.account_group_select:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountGroupSelectType'
         tags:
@@ -35,6 +42,11 @@ services:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType'
         tags:
             - { name: form.type, alias: oro_account_account_user_select }
+
+    oro_customer.form.type.frontend.account_user_select:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserSelectType'
+        tags:
+            - { name: form.type, alias: oro_account_frontend_account_user_select }
 
     oro_customer.form.type.account_user_multiselect_type:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserMultiSelectType'
@@ -154,6 +166,14 @@ services:
         tags:
              - { name: form.type, alias: oro_account_typed_address}
 
+    oro_customer.form.type.frontend.typed_address:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountTypedAddressType'
+        calls:
+             - [setDataClass, ['%oro_customer.entity.account_address.class%']]
+             - [setAddressTypeDataClass, ['%oro_address.address.type.entity.class%']]
+        tags:
+             - { name: form.type, alias: oro_account_frontend_typed_address}
+
     oro_customer.form.type.account_user_typed_address:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserTypedAddressType'
         calls:
@@ -161,6 +181,14 @@ services:
              - [setAddressTypeDataClass, ['%oro_address.address.type.entity.class%']]
         tags:
              - { name: form.type, alias: oro_account_account_user_typed_address}
+
+    oro_customer.form.type.frontend.account_user_typed_address:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserTypedAddressType'
+        calls:
+             - [setDataClass, ['%oro_customer.entity.account_user_address.class%']]
+             - [setAddressTypeDataClass, ['%oro_address.address.type.entity.class%']]
+        tags:
+             - { name: form.type, alias: oro_account_frontend_account_user_typed_address}
 
     oro_customer.form.type.typed_address_with_default:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressWithDefaultType'
