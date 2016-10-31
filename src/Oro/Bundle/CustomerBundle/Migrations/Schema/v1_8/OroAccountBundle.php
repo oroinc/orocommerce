@@ -103,6 +103,9 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         $attachments = $schema->getTable('oro_attachment');
 
         $attachments->removeForeignKey('FK_FA0FE081140E2435');
+        if ($attachments->hasIndex('IDX_FA0FE081140E2435')) {
+            $attachments->dropIndex('IDX_FA0FE081140E2435');
+        }
         $extension->renameColumn(
             $schema,
             $queries,
@@ -240,6 +243,9 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
             $notes->removeForeignKey('FK_BA066CE1140E2435');
         } elseif ($notes->hasForeignKey('fk_oro_note_account_8d93c122_id')) {
             $notes->removeForeignKey('fk_oro_note_account_8d93c122_id');
+        }
+        if ($notes->hasIndex('IDX_BA066CE1140E2435')) {
+            $notes->dropIndex('IDX_BA066CE1140E2435');
         }
         $extension->renameColumn(
             $schema,
