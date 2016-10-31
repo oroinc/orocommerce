@@ -99,6 +99,12 @@ datagrids:
             paymentTermLabel:
                 label:         oro.order.payment_term.label
                 renderable:    false
+            shippingMethod:
+                label:         oro.order.shipping_method.label
+                type:          twig
+                frontend_type: html
+                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
+                renderable:    false
             poNumber:
                 label:         oro.order.po_number.label
                 renderable:    false
@@ -247,6 +253,11 @@ datagrids:
                 frontend_type: html
             paymentTermLabel:
                 label:         oro.order.payment_term.label
+            shippingMethod:
+                label:         oro.order.shipping_method.label
+                type:          twig
+                frontend_type: html
+                template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
             poNumber:
                 label:         oro.order.po_number.label
             shipUntil:
@@ -545,6 +556,7 @@ datagrids:
                     - order_item.productSku
                     - order_item.freeFormProduct
                     - order_item.quantity
+                    - order_item.productUnitCode
                     - order_item.shipBy
                     - order_item.comment
                 from:
@@ -574,6 +586,8 @@ datagrids:
                 template:      OroOrderBundle:Order:Datagrid/product.html.twig
             quantity:
                 label: oro.order.orderlineitem.quantity.label
+            productUnitCode:
+                label: oro.order.orderlineitem.product_unit_code.label
             price:
                 label:         oro.order.orderlineitem.price.label
                 type:          twig
@@ -609,3 +623,37 @@ datagrids:
             toolbarOptions:
                 placement:
                     bottom: true
+
+    order-shipping-trackings-grid:
+        extended_entity_name: %oro_order.entity.order_shipping_tracking.class%
+        options:
+            entityHint: order_shipping_tracking
+            entity_pagination: false
+            toolbarOptions:
+                hide: true
+                pagination:
+                    onePage: true
+        source:
+            type: orm
+            query:
+                select:
+                    - shipping_tracking.method
+                    - shipping_tracking.number
+                from:
+                    - { table: %oro_order.entity.order_shipping_tracking.class%, alias: shipping_tracking }
+                where:
+                    and:
+                        - shipping_tracking.order = :order_id
+            bind_parameters:
+                - order_id
+        columns:
+            method:
+                label: oro.order.shipping_tracking.method.label
+                type: twig
+                template: OroOrderBundle:Order:Datagrid/shippingTrackingMethod.html.twig
+                frontend_type: html
+            number:
+                label: oro.order.shipping_tracking.number.label
+                type: twig
+                template: OroOrderBundle:Order:Datagrid/shippingTrackingLink.html.twig
+                frontend_type: html

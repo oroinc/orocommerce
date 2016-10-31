@@ -8,6 +8,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguration;
+use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration as LocaleConfiguration;
 
 class Configuration implements ConfigurationInterface
 {
@@ -42,7 +43,7 @@ class Configuration implements ConfigurationInterface
                 // General
                 self::MERCHANT_COUNTRY_KEY => [
                     'type' => 'text',
-                    'value' => '',
+                    'value' => LocaleConfiguration::DEFAULT_COUNTRY,
                 ],
 
                 // Payment Term

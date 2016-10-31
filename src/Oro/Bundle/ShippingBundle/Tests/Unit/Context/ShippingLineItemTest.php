@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context;
 
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
@@ -39,18 +40,9 @@ class ShippingLineItemTest extends \PHPUnit_Framework_TestCase
                 ['price', new Price()],
                 ['weight', new Weight()],
                 ['dimensions', new Dimensions()],
-                ['entityIdentifier', 1, false],
+                ['productHolder', new ShippingLineItem()],
             ]
         );
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage entityIdentifier is not defined.
-     */
-    public function testEntityIdentifierException()
-    {
-        $this->model->getEntityIdentifier();
     }
 
     /**
@@ -69,5 +61,15 @@ class ShippingLineItemTest extends \PHPUnit_Framework_TestCase
     public function testGetProductUnitCodeException()
     {
         $this->model->getProductUnitCode();
+    }
+
+    public function testEntityIdentifier()
+    {
+        $mock = $this->getMockForAbstractClass(ProductHolderInterface::class);
+        $mock->expects($this->once())
+            ->method('getEntityIdentifier')
+            ->willReturn('test');
+        $this->model->setProductHolder($mock);
+        $this->assertEquals('test', $this->model->getEntityIdentifier());
     }
 }

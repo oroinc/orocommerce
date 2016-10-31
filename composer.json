@@ -25,10 +25,13 @@
     ],
     "require": {
         "oro/platform": "1.x-dev",
+        "oro/calendar-bundle": "1.x-dev",
         "box/spout": "2.3.*",
         "nicholas-eden/math": "0.6.*",
         "myclabs/deep-copy": "1.5.*",
-        "leafo/scssphp": "0.6.3"
+        "leafo/scssphp": "0.6.3",
+        "bower-asset/jquery-creditcardvalidator": "1.0",
+        "bower-asset/jquery-validate": "1.11.1"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -39,8 +42,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Oro\\Component": "src/",
-            "Oro\\Bundle": "src/"
+            "Oro": "src/"
         }
     }
 }
