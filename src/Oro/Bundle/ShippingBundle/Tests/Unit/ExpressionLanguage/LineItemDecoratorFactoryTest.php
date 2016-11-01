@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListenerExpressionLanguage;
 
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
-use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
+use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecorator;

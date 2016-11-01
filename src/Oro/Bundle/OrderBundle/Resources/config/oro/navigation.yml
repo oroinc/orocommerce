@@ -28,7 +28,7 @@ navigation:
                 route:           'oro_order_create'
                 extras:
                     description:    'oro.order.menu.shortcut_new_order.description'
-                    isCustomAction: true
+                    is_custom_action: true
 
         tree:
             application_menu:

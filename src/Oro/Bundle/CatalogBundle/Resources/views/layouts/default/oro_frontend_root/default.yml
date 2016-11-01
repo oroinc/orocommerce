@@ -2,6 +2,8 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'default.html.twig'
+        - '@remove':
+            id: page_container
         - '@addTree':
             items:
                 hero_promo_container:

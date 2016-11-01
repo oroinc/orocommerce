@@ -27,7 +27,7 @@ navigation:
                 route:           'oro_product_create'
                 extras:
                     description:    'oro.product.menu.shortcut_new_product.description'
-                    isCustomAction: true
+                    is_custom_action: true
 
             frontend_product_list:
                 label:           'oro.product.frontend.titles.catalog'

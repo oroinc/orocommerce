@@ -197,9 +197,9 @@ oro:
                 title.label: 'Request For Quote #%id%'
                 cancellation_reason.label: 'Cancelation Reason'
                 sections:
-                    general: 'RFQ Information'
+                    general: 'Information'
                     notes.label: 'Notes'
-                    back.label: '< Back to RFQ List'
+                    back.label: '< Back to List'
                     request_products:
                         label: 'Line Items'
                         columns:
@@ -210,7 +210,7 @@ oro:
                 product_sku.label: 'Item #:'
                 comment.label: 'Notes'
             action:
-                request.edit: 'Edit RFQ'
+                request.edit: 'Edit'
             data_storage:
                 cannot_be_added_to_rfq: 'Some products are not available and cannot be added to RFQ:'
                 no_products_be_added_to_rfq: 'No products could be added to RFQ.'
