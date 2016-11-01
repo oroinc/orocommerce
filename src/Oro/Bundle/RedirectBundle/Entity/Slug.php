@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\RedirectBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
  * @ORM\Table(name="oro_redirect_slug")
@@ -54,6 +56,22 @@ class Slug
      * @ORM\Column(name="route_parameters", type="array")
      */
     protected $routeParameters = [];
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
+     * @ORM\JoinTable(
+     *      name="oro_slug_scope",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="slug_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="scope_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     *
+     * @var Scope[]|Collection
+     */
+    protected $scopes;
 
     /**
      * @return integer

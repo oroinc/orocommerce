@@ -8,13 +8,15 @@ services:
             - "@router"
             - "@doctrine"
             - "@oro_frontend.request.frontend_helper"
+            - "@oro_scope.scope_manager"
             - '%installed%'
             - '%kernel.environment%'
         calls:
             - [addSkippedUrlPattern, ['/_profiler', 'dev']]
             - [addSkippedUrlPattern, ['/_wdt', 'dev']]
         tags:
-            - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 64}
+            - {name: kernel.event_listener, event: kernel.request, method: onKernelRequestPrepare, priority: 64}
+            - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 7}
 
     oro_redirect.slug.manager:
         class: 'Oro\Bundle\RedirectBundle\Manager\SlugManager'
