@@ -42,7 +42,6 @@ use Oro\Bundle\CMSBundle\Model\ExtendPage;
  *          }
  *      }
  * )
- * @ORM\HasLifecycleCallbacks()
  */
 class Page extends ExtendPage implements DatesAwareInterface
 {
@@ -75,7 +74,7 @@ class Page extends ExtendPage implements DatesAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -203,23 +202,6 @@ class Page extends ExtendPage implements DatesAwareInterface
         }
 
         return $this;
-    }
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**

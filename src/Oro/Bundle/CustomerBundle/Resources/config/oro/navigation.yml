@@ -9,11 +9,11 @@ navigation:
                 template: 'OroNavigationBundle:Menu:pinbar.html.twig'
             frontend_history:
                 template: 'OroNavigationBundle:Menu:history.html.twig'
-                rootClass: 'extra-list'
-                currentAsLink: false
+                root_class: 'extra-list'
+                current_as_link: false
             frontend_mostviewed:
                 template: 'OroNavigationBundle:Menu:mostviewed.html.twig'
-                rootClass: 'extra-list'
+                root_class: 'extra-list'
 
         items:
 
@@ -43,7 +43,7 @@ navigation:
                 label: 'oro.navigation.menu.history.label'
                 extras:
                     icon: 'icon-time'
-                    activeIfFirstIsEmpty: true
+                    active_if_first_is_empty: true
                 uri: '#'
             frontend_mostviewed:
                 label: 'oro.navigation.menu.mostviewed.label'

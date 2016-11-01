@@ -72,7 +72,7 @@
 
     {% set options = {
         'targetInput': '#' ~ form.title.vars.id,
-        'recipientInput': "input[name='oro_cms_page[slugs][values][default]']",
+        'recipientInput': '#' ~ form.slugs.vars.id,
         'modeName': 'oro_cms_page[slug][mode]'
     } %}
     <div
