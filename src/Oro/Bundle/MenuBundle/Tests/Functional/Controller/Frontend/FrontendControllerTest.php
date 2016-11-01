@@ -32,7 +32,7 @@ class FrontendControllerTest extends FrontendWebTestCase
             $this->markTestSkipped('There is no "main-menu" in system.');
         }
 
-        $crawler = $this->client->request('GET', '/about'); // any page, CMS used as a fastest one
+        $crawler = $this->client->request('GET', '/account/quote/');
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
