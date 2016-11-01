@@ -23,12 +23,6 @@ class PageControllerTest extends WebTestCase
     const UPDATED_DEFAULT_PAGE_TITLE        = 'Updated Page Title';
     const UPDATED_DEFAULT_PAGE_SLUG_TEXT    = 'updated-page-title';
     const UPDATED_DEFAULT_PAGE_SLUG_URL     = '/updated-page-title';
-    const DEFAULT_SUBPAGE_TITLE             = 'Subpage Title';
-    const DEFAULT_SUBPAGE_SLUG_TEXT         = 'subpage-title';
-    const DEFAULT_SUBPAGE_SLUG_URL          = '/page-title/subpage-title';
-    const UPDATED_DEFAULT_SUBPAGE_TITLE     = 'Updated Subpage Title';
-    const UPDATED_DEFAULT_SUBPAGE_SLUG_TEXT = 'updated-subpage-title';
-    const UPDATED_DEFAULT_SUBPAGE_SLUG_URL  = '/page-title/updated-subpage-title';
 
     const SLUG_MODE_NEW      = 'new';
     const SLUG_MODE_OLD      = 'old';

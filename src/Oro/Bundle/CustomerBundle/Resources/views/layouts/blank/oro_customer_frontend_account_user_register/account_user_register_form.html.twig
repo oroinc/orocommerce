@@ -1,0 +1,6 @@
+{% block _registration_page_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' register-form'
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}

@@ -221,3 +221,7 @@ WebsiteBundle:
 
 - Modified `OroB2B\Bundle\WebsiteBundle\Entity\Website` rename method of locales
 
+
+CommerceCalendarBridgeBundle:
+--------------
+- CommerceCalendarBridgeBundle was added to integrate OroCalendarBundle into Commerce
