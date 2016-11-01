@@ -20,10 +20,14 @@ class OrderShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->shippingMethodLabelFormatter = $this
-            ->getMockBuilder('Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        if (class_exists('Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter')) {
+            $this->shippingMethodLabelFormatter = $this
+                ->getMockBuilder('Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter')
+                ->disableOriginalConstructor()
+                ->getMock();
+        } else {
+            $this->shippingMethodLabelFormatter = null;
+        }
         $this->orderShippingMethodProvider = new OrderShippingMethodProvider($this->shippingMethodLabelFormatter);
     }
 
@@ -35,11 +39,12 @@ class OrderShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
         $order->setShippingMethod($method)->setShippingMethodType($type);
 
-        $this->shippingMethodLabelFormatter->expects($this->once())
-            ->method('formatShippingMethodWithType')
-            ->with($method, $type)
-            ->willReturn($expected);
-
+        if ($this->shippingMethodLabelFormatter) {
+            $this->shippingMethodLabelFormatter->expects($this->once())
+                ->method('formatShippingMethodWithType')
+                ->with($method, $type)
+                ->willReturn($expected);
+        }
         $label = $this->orderShippingMethodProvider->getData($order);
         $this->assertEquals($expected, $label);
     }
