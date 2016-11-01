@@ -464,20 +464,17 @@
     }
 
     &_gallery-view {
-      max-height: ($product-item__title_gallery-view-font-s * $product-item__title_gallery-view-line-h) * 2; // two rows
-
       font-size: $product-item__title_gallery-view-font-s;
       line-height: $product-item__title_gallery-view-line-h;
 
       margin: 0 0 5px;
 
-      overflow: hidden;
+
 
       .view-product {
-        display: -webkit-box;
+        max-height: ($product-item__title_gallery-view-font-s * $product-item__title_gallery-view-line-h) * 2; // two rows
 
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
+        overflow: hidden;
       }
 
       small {
