@@ -2,27 +2,19 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\AddressBundle\Entity\Address;
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
-use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
-use Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Model\Dimensions;
+use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
-use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\FlatRatePricesAwareShippingMethod;
+use Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\PriceAwareShippingMethodStub;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodTypeStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
@@ -30,14 +22,9 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var ShippingRuleRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingRulesProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $repository;
-
-    /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $doctrineHelper;
+    protected $shippingRulesProvider;
 
     /**
      * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
@@ -45,9 +32,9 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
-     * @var LineItemDecoratorFactory|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingPriceCache|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $factory;
+    protected $priceCache;
 
     /**
      * @var ShippingPriceProvider
@@ -56,71 +43,51 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->repository = $this->getMockBuilder(ShippingRuleRepository::class)
+        $this->shippingRulesProvider = $this->getMockBuilder(ShippingRulesProvider::class)
             ->disableOriginalConstructor()->getMock();
 
-        $entityManager = $this->getMockBuilder('\Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entityManager->expects($this->any())
-            ->method('getRepository')
-            ->with('OroShippingBundle:ShippingRule')
-            ->willReturn($this->repository);
-
-        $doctrineHelper->expects($this->any())
-            ->method('getEntityManagerForClass')
-            ->with('OroShippingBundle:ShippingRule')
-            ->willReturn($entityManager);
+        $methods = [
+            'flat_rate' => $this->getEntity(ShippingMethodStub::class, [
+                'identifier' => 'flat_rate',
+                'sortOrder' => 1,
+                'types' => [
+                    'primary' => $this->getEntity(ShippingMethodTypeStub::class, [
+                        'identifier' => 'primary',
+                        'sortOrder' => 1,
+                    ])
+                ]
+            ]),
+            'integration_method' => $this->getEntity(PriceAwareShippingMethodStub::class, [
+                'identifier' => 'integration_method',
+                'sortOrder' => 2,
+                'isGrouped' => true,
+                'types' => [
+                    'ground' => $this->getEntity(ShippingMethodTypeStub::class, [
+                        'identifier' => 'ground',
+                        'sortOrder' => 1,
+                    ]),
+                    'air' => $this->getEntity(ShippingMethodTypeStub::class, [
+                        'identifier' => 'air',
+                        'sortOrder' => 2,
+                    ])
+                ]
+            ])
+        ];
 
         $this->registry = $this->getMock(ShippingMethodRegistry::class);
         $this->registry->expects($this->any())
             ->method('getShippingMethod')
-            ->with(FlatRatePricesAwareShippingMethod::IDENTIFIER)
-            ->willReturn(new FlatRatePricesAwareShippingMethod());
+            ->will($this->returnCallback(function ($methodId) use ($methods) {
+                return array_key_exists($methodId, $methods) ? $methods[$methodId] : null;
+            }));
 
-        $this->factory = $this->getMockBuilder(LineItemDecoratorFactory::class)
+        $this->priceCache = $this->getMockBuilder(ShippingPriceCache::class)
             ->disableOriginalConstructor()->getMock();
 
-        $this->shippingPriceProvider = new ShippingPriceProvider($doctrineHelper, $this->registry, $this->factory);
-    }
-
-    /**
-     * @dataProvider getApplicableShippingRulesProvider
-     *
-     * @param array $shippingRules
-     * @param $expectedPrice
-     */
-    public function testGetApplicableMethodsWithTypesData(array $shippingRules, $expectedPrice)
-    {
-        $context = $this->createContext('USD', 'US');
-        $shippingAddress = $context->getShippingAddress();
-
-        $this->repository->expects($this->once())
-            ->method('getEnabledOrderedRulesByCurrencyAndCountry')
-            ->with($context->getCurrency(), $shippingAddress->getCountryIso2())
-            ->willReturn($shippingRules);
-
-        $applicableMethodsWithTypesData = $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context);
-
-        $this->assertCount(1, $applicableMethodsWithTypesData);
-        $this->assertEquals('flat_rate', $applicableMethodsWithTypesData['flat_rate']['identifier']);
-        $this->assertEquals(
-            'oro.shipping.method.flat_rate.label',
-            $applicableMethodsWithTypesData['flat_rate']['label']
-        );
-        $this->assertCount(1, $applicableMethodsWithTypesData['flat_rate']['types']);
-        $this->assertEquals('primary', $applicableMethodsWithTypesData['flat_rate']['types']['primary']['identifier']);
-        $this->assertInstanceOf(
-            Price::class,
-            $applicableMethodsWithTypesData['flat_rate']['types']['primary']['price']
-        );
-        $this->assertEquals(
-            Price::create($expectedPrice, 'USD'),
-            $applicableMethodsWithTypesData['flat_rate']['types']['primary']['price']
+        $this->shippingPriceProvider = new ShippingPriceProvider(
+            $this->shippingRulesProvider,
+            $this->registry,
+            $this->priceCache
         );
     }
 
@@ -128,251 +95,477 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getApplicableShippingRulesProvider
      *
      * @param array $shippingRules
-     * @param $expectedPrice
+     * @param array $expectedData
      */
-    public function testGetPrice(array $shippingRules, $expectedPrice)
-    {
-        $context = $this->createContext('USD', 'US');
-        $shippingAddress = $context->getShippingAddress();
-
-        $this->repository->expects($this->once())
-            ->method('getEnabledOrderedRulesByCurrencyAndCountry')
-            ->with($context->getCurrency(), $shippingAddress->getCountryIso2())
-            ->willReturn($shippingRules);
-
-        $methodIdentifier = 'flat_rate';
-        $typeIdentifier = 'primary';
-
-        $price = $this->shippingPriceProvider->getPrice(
-            $context,
-            $methodIdentifier,
-            $typeIdentifier
-        );
-
-        $this->assertInstanceOf(Price::class, $price);
-        $this->assertEquals(Price::create($expectedPrice, 'USD'), $price);
-    }
-
-    public function testGetPriceWithCondition()
-    {
-        $context = $this->createContext('USD', 'US');
-        $shippingAddress = $context->getShippingAddress();
-
-        $this->factory->expects(static::exactly(1))
-            ->method('createOrderLineItemDecorator')
-            ->with($context->getLineItems(), $context->getLineItems()[0])
-            ->willReturn($context->getLineItems()[0]);
-
-        $this->repository->expects($this->once())
-            ->method('getEnabledOrderedRulesByCurrencyAndCountry')
-            ->with($context->getCurrency(), $shippingAddress->getCountryIso2())
-            ->willReturn([
-                $this->createShippingRule([
-                    'name' => 'ShippingRule.1',
-                    'currency' => 'USD',
-                    'conditions' => 'lineItems.all(lineItem.product.id in [1])',
-                ], 12)
-            ]);
-
-        $methodIdentifier = 'flat_rate';
-        $typeIdentifier = 'primary';
-
-        $price = $this->shippingPriceProvider->getPrice(
-            $context,
-            $methodIdentifier,
-            $typeIdentifier
-        );
-
-        $this->assertInstanceOf(Price::class, $price);
-        $this->assertEquals(Price::create(12, 'USD'), $price);
-    }
-
-    /**
-     * @dataProvider destinationApplicableProvider
-     *
-     * @param ArrayCollection $destinations
-     * @param ShippingContext $context
-     * @param bool $expectedValue
-     */
-    public function testDestinationApplicable(ArrayCollection $destinations, ShippingContext $context, $expectedValue)
-    {
-        $destinationApplicableReflection = self::getMethod('destinationApplicable');
-        $result = $destinationApplicableReflection->invokeArgs($this->shippingPriceProvider, [$destinations, $context]);
-
-        $this->assertEquals($expectedValue, $result);
-    }
-
-    /**
-     * @param string $name
-     * @return \ReflectionMethod
-     */
-    protected static function getMethod($name)
-    {
-        $class = new \ReflectionClass(ShippingPriceProvider::class);
-        $method = $class->getMethod($name);
-        $method->setAccessible(true);
-
-        return $method;
-    }
-
-    /**
-     * @param array $data
-     * @param int $price
-     * @return ShippingRule
-     */
-    protected function createShippingRule(array $data, $price)
-    {
-        $data['destinations'] = $this->createDestinations($data);
-        $data['methodConfigs'] = [
-            $this->getEntity(
-                ShippingRuleMethodConfig::class,
-                [
-                    'method' => 'flat_rate',
-                    'typeConfigs' => [
-                        (new ShippingRuleMethodTypeConfig())
-                            ->setEnabled(true)
-                            ->setType(FlatRateShippingMethodType::IDENTIFIER)
-                            ->setOptions([
-                                'price' => $price,
-                                'handling_fee' => null,
-                                'type' => FlatRateShippingMethodType::PER_ITEM_TYPE,
-                            ])
-                    ]
-                ]
-            )
-        ];
-
-        return $this->getEntity(ShippingRule::class, $data);
-    }
-
-    /**
-     * @param array $data
-     * @return Collection|ShippingRuleDestination[]|array
-     */
-    protected function createDestinations(array $data)
-    {
-        if (array_key_exists('destinations', $data)) {
-            return new ArrayCollection(array_map(function ($destinationData) {
-                $region = null;
-                if (array_key_exists('region', $destinationData)) {
-                    $region = $this->getEntity(Region::class, ['code' => $destinationData['region']]);
-                }
-                $postalCode = null;
-                if (array_key_exists('postalCode', $destinationData)) {
-                    $postalCode = $destinationData['postalCode'];
-                }
-                return $this->getEntity(ShippingRuleDestination::class, [
-                    'country' => $this->getEntity(Country::class, ['iso2Code' => $destinationData['country']]),
-                    'region' => $region,
-                    'postalCode' => $postalCode,
-                ]);
-            }, $data['destinations']));
-        }
-
-        return new ArrayCollection();
-    }
-
-    /**
-     * @param string $currency
-     * @param string $country
-     * @param string|null $region
-     * @param string|null $postalCode
-     * @return ShippingContext
-     */
-    protected function createContext($currency, $country, $region = null, $postalCode = null)
+    public function testGetApplicableMethodsWithTypesData(array $shippingRules, array $expectedData)
     {
         $context = $this->getEntity(ShippingContext::class, [
-            'currency' => $currency,
-            'shippingAddress' => $this->getEntity(
-                Address::class,
-                [
-                    'country' => $this->getEntity(Country::class, ['iso2Code' => $country]),
-                    'region' => $region ? $this->getEntity(Region::class, ['code' => $region]) : null,
-                    'postalCode' => $postalCode,
-                ]
-            ),
-            'lineItems' => [
-                $this->getEntity(
-                    ShippingLineItem::class,
-                    [
-                        'quantity' => 1,
-                        'dimensions' => $this->getEntity(Dimensions::class),
-                        'product' => $this->getEntity(Product::class, [
-                            'id' => 1
-                        ]),
-                    ]
-                )
-            ]
+            'currency' => 'USD',
+            'lineItems' => [$this->getEntity(ShippingLineItem::class)]
         ]);
+        $this->shippingRulesProvider->expects($this->once())
+            ->method('getApplicableShippingRules')
+            ->with($context)
+            ->willReturn($shippingRules);
 
-        return $context;
+        $this->assertEquals($expectedData, $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context));
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function getApplicableShippingRulesProvider()
     {
         return [
-            'data' => [
+            'one rule' => [
                 'shippingRule' => [
-                    $this->createShippingRule([
-                        'name' => 'ShippingRule.1',
-                        'currency' => 'USD',
-                    ], 12)
+                    $this->getEntity(ShippingRule::class, [
+                        'methodConfigs' => [
+                            $this->getEntity(ShippingRuleMethodConfig::class, [
+                                'method' => 'flat_rate',
+                                'typeConfigs' => [
+                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'primary',
+                                        'options' => [
+                                            'price' => Price::create(12, 'USD'),
+                                        ],
+                                    ])
+                                ],
+                            ])
+                        ]
+                    ]),
+                    $this->getEntity(ShippingRule::class, [
+                        'methodConfigs' => [
+                            $this->getEntity(ShippingRuleMethodConfig::class, [
+                                'method' => 'integration_method',
+                                'typeConfigs' => [
+                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'ground',
+                                        'options' => [
+                                            'aware_price' => null,
+                                        ],
+                                    ])
+                                ],
+                            ])
+                        ]
+                    ]),
+                    $this->getEntity(ShippingRule::class, [
+                        'methodConfigs' => [
+                            $this->getEntity(ShippingRuleMethodConfig::class, [
+                                'method' => 'unknown_method',
+                            ])
+                        ]
+                    ])
                 ],
-                'expectedPrice' => 12
+                'expectedData' => [
+                    'flat_rate' => [
+                        'identifier' => 'flat_rate',
+                        'label' => 'flat_rate.label',
+                        'sortOrder' => 1,
+                        'isGrouped' => false,
+                        'types' => [
+                            'primary' => [
+                                'identifier' => 'primary',
+                                'label' => 'primary.label',
+                                'sortOrder' => 1,
+                                'price' => Price::create(12, 'USD'),
+                                'options' => ['price' => Price::create(12, 'USD')],
+                                'methodOptions' => [],
+                            ]
+                        ]
+                    ]
+                ]
             ],
-            'several rules' => [
+            'several rules with same methods ans diff types' => [
                 'shippingRule' => [
-                    $this->createShippingRule([
-                        'name' => 'ShippingRule.1',
-                        'currency' => 'USD',
-                    ], 12),
-                    $this->createShippingRule([
-                        'name' => 'ShippingRule.3',
-                        'currency' => 'USD',
-                    ], 10)
+                    $this->getEntity(ShippingRule::class, [
+                        'methodConfigs' => [
+                            $this->getEntity(ShippingRuleMethodConfig::class, [
+                                'method' => 'flat_rate',
+                                'typeConfigs' => [
+                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'primary',
+                                        'options' => [
+                                            'price' => Price::create(1, 'USD'),
+                                        ],
+                                    ])
+                                ],
+                            ])
+                        ]
+                    ]),
+                    $this->getEntity(ShippingRule::class, [
+                        'methodConfigs' => [
+                            $this->getEntity(ShippingRuleMethodConfig::class, [
+                                'method' => 'integration_method',
+                                'typeConfigs' => [
+                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'ground',
+                                        'options' => [
+                                            'aware_price' => Price::create(2, 'USD'),
+                                        ],
+                                    ])
+                                ],
+                            ]),
+                            $this->getEntity(ShippingRuleMethodConfig::class, [
+                                'method' => 'flat_rate',
+                                'typeConfigs' => [
+                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'primary',
+                                        'options' => [
+                                            'price' => Price::create(3, 'USD'),
+                                        ],
+                                    ])
+                                ],
+                            ])
+                        ]
+                    ]),
+                    $this->getEntity(ShippingRule::class, [
+                        'methodConfigs' => [
+                            $this->getEntity(ShippingRuleMethodConfig::class, [
+                                'method' => 'integration_method',
+                                'typeConfigs' => [
+                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'ground',
+                                        'options' => [
+                                            'aware_price' => Price::create(4, 'USD'),
+                                        ],
+                                    ])
+                                ],
+                            ]),
+                            $this->getEntity(ShippingRuleMethodConfig::class, [
+                                'method' => 'integration_method',
+                                'typeConfigs' => [
+                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'air',
+                                        'options' => [
+                                            'aware_price' => Price::create(5, 'USD'),
+                                        ],
+                                    ])
+                                ],
+                            ])
+                        ]
+                    ])
                 ],
-                'expectedPrice' => 12,
+                'expectedData' => [
+                    'flat_rate' => [
+                        'identifier' => 'flat_rate',
+                        'label' => 'flat_rate.label',
+                        'sortOrder' => 1,
+                        'isGrouped' => false,
+                        'types' => [
+                            'primary' => [
+                                'identifier' => 'primary',
+                                'label' => 'primary.label',
+                                'sortOrder' => 1,
+                                'price' => Price::create(1, 'USD'),
+                                'options' => ['price' => Price::create(1, 'USD')],
+                                'methodOptions' => [],
+                            ]
+                        ]
+                    ],
+                    'integration_method' => [
+                        'identifier' => 'integration_method',
+                        'label' => 'integration_method.label',
+                        'sortOrder' => 2,
+                        'isGrouped' => true,
+                        'types' => [
+                            'ground' => [
+                                'identifier' => 'ground',
+                                'label' => 'ground.label',
+                                'sortOrder' => 1,
+                                'price' => Price::create(2, 'USD'),
+                                'options' => ['aware_price' => Price::create(2, 'USD')],
+                                'methodOptions' => [],
+                            ],
+                            'air' => [
+                                'identifier' => 'air',
+                                'label' => 'air.label',
+                                'sortOrder' => 2,
+                                'price' => Price::create(5, 'USD'),
+                                'options' => ['aware_price' => Price::create(5, 'USD')],
+                                'methodOptions' => [],
+                            ]
+                        ]
+                    ]
+                ]
             ],
         ];
     }
 
+    public function testGetApplicableMethodsWithTypesDataCache()
+    {
+        $context = $this->getEntity(ShippingContext::class, [
+            'currency' => 'USD',
+            'lineItems' => [$this->getEntity(ShippingLineItem::class)]
+        ]);
+        $this->shippingRulesProvider->expects(static::exactly(2))
+            ->method('getApplicableShippingRules')
+            ->with($context)
+            ->willReturn([
+                $this->getEntity(ShippingRule::class, [
+                    'methodConfigs' => [
+                        $this->getEntity(ShippingRuleMethodConfig::class, [
+                            'method' => 'flat_rate',
+                            'typeConfigs' => [
+                                $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                    'enabled' => true,
+                                    'type' => 'primary',
+                                    'options' => [
+                                        'price' => Price::create(1, 'USD'),
+                                    ],
+                                ])
+                            ],
+                        ])
+                    ]
+                ])
+            ]);
+        $price = Price::create(1, 'USD');
+
+        $expectedData = [
+            'flat_rate' => [
+                'identifier' => 'flat_rate',
+                'label' => 'flat_rate.label',
+                'sortOrder' => 1,
+                'isGrouped' => false,
+                'types' => [
+                    'primary' => [
+                        'identifier' => 'primary',
+                        'label' => 'primary.label',
+                        'sortOrder' => 1,
+                        'price' => $price,
+                        'options' => ['price' => Price::create(1, 'USD')],
+                        'methodOptions' => [],
+                    ]
+                ]
+            ]
+        ];
+
+        $this->priceCache->expects(static::at(0))
+            ->method('hasPrice')
+            ->with($context, 'flat_rate', 'primary')
+            ->willReturn(false);
+
+        $this->priceCache->expects(static::at(1))
+            ->method('savePrice')
+            ->with($context, 'flat_rate', 'primary', Price::create(1, 'USD'))
+            ->willReturn(true);
+
+        $this->priceCache->expects(static::at(2))
+            ->method('hasPrice')
+            ->with($context, 'flat_rate', 'primary')
+            ->willReturn(true);
+
+        $this->priceCache->expects(static::at(3))
+            ->method('getPrice')
+            ->with($context, 'flat_rate', 'primary')
+            ->willReturn(Price::create(2, 'USD'));
+
+        $this->assertEquals($expectedData, $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context));
+        $price->setValue(2);
+        $this->assertEquals($expectedData, $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context));
+    }
+
     /**
+     * @dataProvider getPriceDataProvider
+     *
+     * @param string $methodId
+     * @param string $typeId
+     * @param array $shippingRules
+     * @param Price|null $expectedPrice
+     */
+    public function testGetPrice($methodId, $typeId, array $shippingRules, Price $expectedPrice = null)
+    {
+        $context = $this->getEntity(ShippingContext::class, [
+            'currency' => 'USD',
+            'lineItems' => [$this->getEntity(ShippingLineItem::class)]
+        ]);
+        $this->shippingRulesProvider->expects($this->once())
+            ->method('getApplicableShippingRules')
+            ->with($context)
+            ->willReturn($shippingRules);
+
+        $this->assertEquals($expectedPrice, $this->shippingPriceProvider->getPrice($context, $methodId, $typeId));
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
-    public function destinationApplicableProvider()
+    public function getPriceDataProvider()
     {
         return [
-            'applicable country' => [
-                'destinations' => $this->createDestinations([
-                    'destinations' => [
-                        ['country' => 'US']
-                    ]
-                ]),
-                'context' => $this->createContext('USD', 'US'),
-                'expectedValue' => true,
+            'no rule' => [
+                'methodId' => 'integration_method',
+                'typeId' => 'ground',
+                'shippingRules' => [
+                    $this->getEntity(ShippingRule::class, [
+                        'methodConfigs' => [
+                            $this->getEntity(ShippingRuleMethodConfig::class, [
+                                'method' => 'flat_rate',
+                                'typeConfigs' => [
+                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'primary',
+                                        'options' => [
+                                            'price' => Price::create(12, 'USD'),
+                                        ],
+                                    ])
+                                ],
+                            ])
+                        ]
+                    ]),
+                ],
+                'expectedData' => null,
             ],
-            'not applicable country' => [
-                'destinations' => $this->createDestinations([
-                    'destinations' => [
-                        ['country' => 'FR']
-                    ]
-                ]),
-                'context' => $this->createContext('USD', 'US'),
-                'expectedValue' => false,
+            'one rule' => [
+                'methodId' => 'flat_rate',
+                'typeId' => 'primary',
+                'shippingRules' => [
+                    $this->getEntity(ShippingRule::class, [
+                        'methodConfigs' => [
+                            $this->getEntity(ShippingRuleMethodConfig::class, [
+                                'method' => 'flat_rate',
+                                'typeConfigs' => [
+                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'primary',
+                                        'options' => [
+                                            'price' => Price::create(12, 'USD'),
+                                        ],
+                                    ])
+                                ],
+                            ])
+                        ]
+                    ]),
+                ],
+                'expectedData' => Price::create(12, 'USD'),
             ],
-            'several applicable country' => [
-                'destinations' => $this->createDestinations([
-                    'destinations' => [
-                        ['country' => 'FR'],
-                        ['country' => 'US'],
-                    ]
-                ]),
-                'context' => $this->createContext('USD', 'US'),
-                'expectedValue' => true,
+            'several rules with same methods ans types' => [
+                'methodId' => 'integration_method',
+                'typeId' => 'ground',
+                'shippingRules' => [
+                    $this->getEntity(ShippingRule::class, [
+                        'methodConfigs' => [
+                            $this->getEntity(ShippingRuleMethodConfig::class, [
+                                'method' => 'integration_method',
+                                'typeConfigs' => [
+                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'ground',
+                                        'options' => [
+                                            'price' => Price::create(1, 'USD'),
+                                        ],
+                                    ])
+                                ],
+                            ]),
+                        ]
+                    ]),
+                    $this->getEntity(ShippingRule::class, [
+                        'methodConfigs' => [
+                            $this->getEntity(ShippingRuleMethodConfig::class, [
+                                'method' => 'integration_method',
+                                'typeConfigs' => [
+                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'ground',
+                                        'options' => [
+                                            'price' => Price::create(2, 'USD'),
+                                        ],
+                                    ])
+                                ],
+                            ]),
+                            $this->getEntity(ShippingRuleMethodConfig::class, [
+                                'method' => 'integration_method',
+                                'typeConfigs' => [
+                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'air',
+                                        'options' => [
+                                            'price' => Price::create(3, 'USD'),
+                                        ],
+                                    ])
+                                ],
+                            ])
+                        ]
+                    ])
+                ],
+                'expectedData' => Price::create(1, 'USD'),
             ],
         ];
+    }
+
+    public function testGetPriceCache()
+    {
+        $methodId = 'flat_rate';
+        $typeId = 'primary';
+        $context = $this->getEntity(ShippingContext::class, [
+            'currency' => 'USD',
+            'lineItems' => [$this->getEntity(ShippingLineItem::class)]
+        ]);
+        $this->shippingRulesProvider->expects(static::exactly(2))
+            ->method('getApplicableShippingRules')
+            ->with($context)
+            ->willReturn([
+                $this->getEntity(ShippingRule::class, [
+                    'methodConfigs' => [
+                        $this->getEntity(ShippingRuleMethodConfig::class, [
+                            'method' => $methodId,
+                            'typeConfigs' => [
+                                $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                    'enabled' => true,
+                                    'type' => $typeId,
+                                    'options' => [
+                                        'price' => Price::create(1, 'USD'),
+                                    ],
+                                ])
+                            ],
+                        ])
+                    ]
+                ])
+            ]);
+
+        $expectedPrice = Price::create(1, 'USD');
+
+        $this->priceCache->expects(static::at(0))
+            ->method('hasPrice')
+            ->with($context, 'flat_rate', 'primary')
+            ->willReturn(false);
+
+        $this->priceCache->expects(static::at(1))
+            ->method('savePrice')
+            ->with($context, 'flat_rate', 'primary', Price::create(1, 'USD'))
+            ->willReturn(true);
+
+        $this->priceCache->expects(static::at(2))
+            ->method('hasPrice')
+            ->with($context, 'flat_rate', 'primary')
+            ->willReturn(true);
+
+        $this->priceCache->expects(static::at(3))
+            ->method('getPrice')
+            ->with($context, 'flat_rate', 'primary')
+            ->willReturn(Price::create(2, 'USD'));
+
+        $this->assertEquals($expectedPrice, $this->shippingPriceProvider->getPrice($context, $methodId, $typeId));
+        $expectedPrice->setValue(2);
+        $this->assertEquals($expectedPrice, $this->shippingPriceProvider->getPrice($context, $methodId, $typeId));
+    }
+
+    public function testGetPriceNoMethodAndType()
+    {
+        $context = $this->getEntity(ShippingContext::class, [
+            'currency' => 'USD',
+            'lineItems' => [$this->getEntity(ShippingLineItem::class)]
+        ]);
+        $this->assertNull($this->shippingPriceProvider->getPrice($context, 'unknown_method', 'primary'));
+        $this->assertNull($this->shippingPriceProvider->getPrice($context, 'flat_rate', 'unknown_method'));
     }
 }
