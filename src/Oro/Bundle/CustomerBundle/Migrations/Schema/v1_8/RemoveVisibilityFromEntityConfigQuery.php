@@ -20,17 +20,12 @@ class RemoveVisibilityFromEntityConfigQuery extends ParametrizedMigrationQuery
      */
     public function execute(LoggerInterface $logger)
     {
-        $query  = 'DELETE FROM oro_entity_config ' .
-            'WHERE class_name LIKE "%ProductVisibility%"';
-
+        $query  = "DELETE FROM oro_entity_config WHERE class_name LIKE '%ProductVisibility%'";
         $this->logQuery($logger, $query);
-
         $this->connection->executeQuery($query);
-        $query  = 'DELETE FROM oro_entity_config ' .
-            'WHERE class_name LIKE "%CategoryVisibility%"';
 
+        $query  = "DELETE FROM oro_entity_config WHERE class_name LIKE '%CategoryVisibility%'";
         $this->logQuery($logger, $query);
-
         $this->connection->executeQuery($query);
     }
 }
