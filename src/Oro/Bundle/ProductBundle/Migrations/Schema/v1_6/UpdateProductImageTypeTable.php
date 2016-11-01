@@ -15,7 +15,7 @@ class UpdateProductImageTypeTable implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_product_image_type');
-        $table->removeForeignKey('fk_3ebd8f1df6154ffa');
+        $table->removeForeignKey('FK_3EBD8F1DF6154FFA');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product_image'),
             ['product_image_id'],
