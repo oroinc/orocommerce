@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ScopeBundle\Model;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
@@ -68,15 +69,29 @@ class ScopeCriteria implements \IteratorAggregate
 
     /**
      * @param QueryBuilder $qb
-     * @param Join[] $joins
      * @param string $alias
      * @param array $ignoreFields
      */
-    protected function reapplyJoins(QueryBuilder $qb, array $joins, $alias, array $ignoreFields)
+    public function applyToJoinWithPriority(QueryBuilder $qb, $alias, $ignoreFields = [])
+    {
+        /** @var Join[] $joins */
+        $joins = $qb->getDQLPart('join');
+        $qb->resetDQLPart('join');
+        $this->reapplyJoins($qb, $joins, $alias, $ignoreFields, true);
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param Join[] $joins
+     * @param string $alias
+     * @param array $ignoreFields
+     * @param bool $withPriority
+     */
+    protected function reapplyJoins(QueryBuilder $qb, array $joins, $alias, array $ignoreFields, $withPriority = false)
     {
         foreach ($joins as $join) {
             if (is_array($join)) {
-                $this->reapplyJoins($qb, $join, $alias, $ignoreFields);
+                $this->reapplyJoins($qb, $join, $alias, $ignoreFields, $withPriority);
                 continue;
             }
 
@@ -89,22 +104,67 @@ class ScopeCriteria implements \IteratorAggregate
                     if (in_array($field, $ignoreFields) || in_array($field, $usedFields)) {
                         continue;
                     }
-                    $aliasedField = $alias.'.'.$field;
-                    if ($value === null) {
-                        $parts[] = $qb->expr()->isNull($aliasedField);
-                    } elseif ($value === self::IS_NOT_NULL) {
-                        $parts[] = $qb->expr()->isNotNull($aliasedField);
-                    } else {
-                        $paramName = $alias.'_param_'.$field;
-                        $parts[] = $qb->expr()->eq($aliasedField, ':'.$paramName);
-                        $qb->setParameter($paramName, $value);
-                    }
+                    $parts[] = $this->resolveBasicCondition($qb, $alias, $field, $value, $withPriority);
                 }
             }
 
-            $condition = implode(" AND ", $parts);
+            $parts = array_filter($parts);
+            $condition = $this->getConditionFromParts($parts, $withPriority);
             $this->applyJoinWithModifiedCondition($qb, $condition, $join);
         }
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param $alias
+     * @param $field
+     * @param $value
+     * @param $withPriority
+     * @return array
+     */
+    protected function resolveBasicCondition(QueryBuilder $qb, $alias, $field, $value, $withPriority)
+    {
+        $aliasedField = $alias . '.' . $field;
+        if ($value === null) {
+            $part = $qb->expr()->isNull($aliasedField);
+        } elseif ($value === self::IS_NOT_NULL) {
+            $part = $qb->expr()->isNotNull($aliasedField);
+        } else {
+            $paramName = $alias . '_param_' . $field;
+            if ($withPriority) {
+                $part = $qb->expr()->orX(
+                    $qb->expr()->eq($aliasedField, ':'.$paramName),
+                    $qb->expr()->isNull($aliasedField)
+                );
+            } else {
+                $part = $qb->expr()->eq($aliasedField, ':'.$paramName);
+            }
+            $qb->setParameter($paramName, $value);
+            if ($withPriority) {
+                $qb->addOrderBy($aliasedField, Criteria::DESC);
+            }
+        }
+
+        return $part;
+    }
+
+    /**
+     * @param array $parts
+     * @param bool $withPriority
+     * @return string
+     */
+    protected function getConditionFromParts(array $parts, $withPriority = false)
+    {
+        if ($withPriority) {
+            $parts = array_map(
+                function ($part) {
+                    return '(' . $part . ')';
+                },
+                $parts
+            );
+        }
+
+        return implode(" AND ", $parts);
     }
 
     /**
