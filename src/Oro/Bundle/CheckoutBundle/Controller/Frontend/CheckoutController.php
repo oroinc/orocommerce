@@ -162,10 +162,10 @@ class CheckoutController extends Controller
     {
         $workflowItem = $this->getWorkflowItem($checkout);
 
-        if ($this->isCheckoutRestartRequired($workflowItem)) {
-            return $this->restartCheckout($workflowItem, $checkout);
-        }
         if ($request->isMethod(Request::METHOD_POST)) {
+            if ($this->isCheckoutRestartRequired($workflowItem)) {
+                return $this->restartCheckout($workflowItem, $checkout);
+            }
             $continueTransition = $this->get('oro_checkout.layout.data_provider.transition')
                 ->getContinueTransition($workflowItem);
             if ($continueTransition) {
@@ -244,12 +244,12 @@ class CheckoutController extends Controller
     }
 
     /**
-     * @param mixed|null $context
+     * @param WorkflowItem $workflowItem
      * @return bool
      */
-    protected function isCheckoutRestartRequired($context = null)
+    protected function isCheckoutRestartRequired(WorkflowItem $workflowItem)
     {
-        $event = new CheckoutValidateEvent($context);
+        $event = new CheckoutValidateEvent($workflowItem);
         $dispatcher = $this->get('event_dispatcher');
         if (false == $dispatcher->hasListeners(CheckoutValidateEvent::NAME)) {
             return false;

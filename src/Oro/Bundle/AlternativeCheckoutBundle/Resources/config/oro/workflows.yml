@@ -513,10 +513,13 @@ workflows:
                                 state: $.result.currentCheckoutState
                                 token: $state_token
                 preconditions:
-                    '@order_line_item_has_count':
-                        message: oro.checkout.workflow.condition.order_line_item_has_count.message
-                        parameters:
-                            entity: $checkout
+                    '@and':
+                        - '@extendable':
+                            events: [extendable_condition.checkout]
+                        - '@order_line_item_has_count':
+                            message: oro.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
                 conditions:
                     '@and':
                         - '@not_empty': $checkout.billingAddress

@@ -409,7 +409,8 @@ workflows:
                                 token: $state_token
                 preconditions:
                     '@and':
-                        - '@extendable': [extendable_condition.checkout]
+                        - '@extendable':
+                            events: [extendable_condition.checkout]
                         - '@not_equal': [$payment_in_progress, true]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
