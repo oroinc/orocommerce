@@ -1,0 +1,30 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue: 'oro.catalog.frontend.root.title'
+        - '@addTree':
+            items:
+                page_container:
+                    blockType: container
+                page_header:
+                    blockType: container
+                page_content:
+                    blockType: container
+                page_footer:
+                    blockType: container
+                logo:
+                    blockType: container
+                copyright:
+                    blockType: container
+            tree:
+                wrapper:
+                    page_container:
+                        page_header:
+                            logo: ~
+                        page_content: ~
+                        page_footer:
+                            copyright: ~

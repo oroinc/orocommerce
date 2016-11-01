@@ -1,0 +1,36 @@
+layout:
+    imports:
+        -
+            id: oro_customer_only_content_form
+            namespace: registration
+            root: wrapper
+    actions:
+        - '@setBlockTheme':
+            themes: 'account_user_register_form.html.twig'
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue: oro.customer.accountuser.profile.register
+        - '@setOption':
+            id: registration_label
+            optionName: text
+            optionValue: oro.customer.accountuser.profile.register
+        - '@setOption':
+            id: registration_description
+            optionName: text
+            optionValue: oro.customer.accountuser.profile.register.description
+        - '@setOption':
+            id: registration_form
+            optionName: form
+            optionValue: '=data["oro_account_frontend_account_user_register"].getRegisterForm()'
+        - '@setOption':
+            id: registration_form_submit
+            optionName: text
+            optionValue: oro.customer.accountuser.profile.create_an_account
+        - '@add':
+            id: registration_link_back
+            parentId: registration_links
+            blockType: link
+            options:
+                route_name: oro_customer_account_user_security_login
+                text: oro.customer.frontend.action.back_to_login.label
