@@ -1,0 +1,38 @@
+$single-form-page-bg: get-color('additional', 'base') !default;
+$single-form-page-offset-outer: 0 auto;
+
+// Default size
+$single-form-page-offset-inner: 55px 65px !default;
+$single-form-page-offset-inner-relative: 55px 5% !default;
+$single-form-page-width: 400px !default;
+$single-form-page-width-tablet-small: 100% !default;
+
+// Medium size
+$single-form-page-width-m: 430px !default;
+$single-form-page-offset-inner-m: 55px 65px !default;
+$single-form-page-offset-inner-m-tablet-small: 35px 20px !default;
+
+%single-form-page {
+    max-width: $single-form-page-width;
+    margin: $single-form-page-offset-outer;
+    padding: $single-form-page-offset-inner;
+
+    background: $single-form-page-bg;
+    box-sizing: border-box;
+}
+
+%single-form-page--size-m {
+    max-width: $single-form-page-width-m;
+    padding: $single-form-page-offset-inner-m;
+}
+
+@include breakpoint('tablet-small') {
+    %single-form-page {
+        max-width: $single-form-page-width-tablet-small;
+        padding: $single-form-page-offset-inner-relative;
+    }
+
+    %single-form-page--size-m {
+        padding: $single-form-page-offset-inner-m-tablet-small;
+    }
+}

@@ -271,7 +271,7 @@ services:
             - '@oro_entity.entity_field_provider'
             - '@oro_shipping.query_designer.select_query_converter'
             - '@doctrine'
-            - '@oro_importexport.field.field_helper'
+            - '@oro_entity.helper.field_helper'
 
     oro_shipping.condition.has_applicable_shipping_methods:
         class: 'Oro\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods'
