@@ -1,15 +1,15 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroMenuBundle:layouts:blank/page/quick_access_simple.html.twig'
+            themes: 'OroMenuBundle:layouts:blank/page/quick_access.html.twig'
         - '@addTree':
             items:
-                quick_access_menu_simple:
+                quick_access_menu:
                     blockType: menu
                     options:
                         item: '=data["menu"].getMenu("quick-access")'
             tree:
                 body:
-                    quick_access_menu_simple: ~
+                    quick_access_menu: ~
 
     conditions: 'context["is_logged_in"]'

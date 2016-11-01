@@ -1,0 +1,14 @@
+{% block _quick_access_menu_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': " quick-access"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <ul class="quick-access__list">
+            {% for children in item.children %}
+                <li class="quick-access__item">
+                    <a href="{{ children.uri }}">{{ children.label }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
