@@ -56,9 +56,21 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testBuildForm()
+    public function testBuildFormRootEntity()
     {
-        $form = $this->factory->create($this->type);
+        $form = $this->factory->create($this->type, new ContentNode());
+
+        $this->assertTrue($form->has('parentNode'));
+        $this->assertTrue($form->has('name'));
+        $this->assertTrue($form->has('titles'));
+        $this->assertFalse($form->has('slugs'));
+    }
+
+    public function testBuildFormSubNode()
+    {
+        $node = new ContentNode();
+        $node->setParentNode(new ContentNode());
+        $form = $this->factory->create($this->type, $node);
 
         $this->assertTrue($form->has('parentNode'));
         $this->assertTrue($form->has('name'));
@@ -102,7 +114,8 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     {
         return [
             'new entity'      => [
-                new ContentNode(),
+                (new ContentNode())
+                    ->setParentNode(new ContentNode()),
                 [
                     'name'   => 'name',
                     'titles' => [['string' => 'new_content_node_title']],
@@ -116,6 +129,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
             'existing entity' => [
                 (new ContentNode())
                     ->setName('name')
+                    ->setParentNode(new ContentNode())
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addSlug((new LocalizedFallbackValue())->setString('content_node_slug')),
                 [

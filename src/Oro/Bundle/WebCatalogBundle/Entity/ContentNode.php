@@ -25,6 +25,9 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
  *      defaultValues={
  *          "dataaudit"={
  *              "auditable"=true
+ *          },
+ *          "activity"={
+ *              "show_on_page"="\Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::UPDATE_PAGE"
  *          }
  *     }
  * )

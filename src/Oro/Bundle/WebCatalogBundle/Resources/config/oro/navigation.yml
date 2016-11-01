@@ -38,3 +38,6 @@ navigation:
         oro_web_catalog_view: '%%entityLabel%%'
         oro_web_catalog_update: '%%entityLabel%%'
         oro_web_catalog_create: oro.ui.create_entity
+        oro_content_node_update_root: '%%webCatalogName%%'
+        oro_content_node_create: '%%webCatalogName%%'
+        oro_content_node_update: '%%webCatalogName%%'

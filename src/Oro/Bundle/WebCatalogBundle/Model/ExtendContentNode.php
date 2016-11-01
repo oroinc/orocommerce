@@ -10,6 +10,8 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
  * @method LocalizedFallbackValue getDefaultTitle()
  * @method LocalizedFallbackValue getSlug(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultSlug()
+ * @method setDefaultTitle($title)
+ * @method setDefaultSlug($slug)
  */
 class ExtendContentNode
 {
