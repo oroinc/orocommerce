@@ -295,7 +295,6 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
                 $this->getEntity(
                     ShippingLineItem::class,
                     [
-                        'entityIdentifier' => 1,
                         'quantity' => 1,
                         'dimensions' => $this->getEntity(Dimensions::class),
                         'product' => $this->getEntity(Product::class, [

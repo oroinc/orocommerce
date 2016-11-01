@@ -88,10 +88,6 @@ class PageSlugListener
             $page->removeSlug($slug);
             $em->remove($slug);
         }
-
-        foreach ($page->getChildPages() as $childPage) {
-            $this->removePageSlugs($em, $childPage);
-        }
     }
 
     /**

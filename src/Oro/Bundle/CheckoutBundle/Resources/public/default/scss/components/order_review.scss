@@ -2,7 +2,7 @@
   margin: 2px 0 0;
   border-radius: 5px;
 
-  background: $base-topbar-background-color;
+  background: get-color('additional', 'light');
 
   &__tab {
     .checkout-order-summary__tab__content {
@@ -37,8 +37,8 @@
           td {
             padding: 10px 12px;
             vertical-align: top;
-            border-top: 1px solid $theme-slight-light-gray-color;
-            border-bottom: 1px solid $theme-slight-light-gray-color;
+            border-top: 1px solid get-color('additional', 'middle');
+            border-bottom: 1px solid get-color('additional', 'middle');
 
             &:first-child {
               padding-left: 0;
@@ -111,7 +111,7 @@
       top: 19px;
 
       .cf-play {
-        color: $base-font-color-lighter;
+        color: get-color('additional', 'dark');
 
         transition: transform .2s linear;
       }
@@ -161,15 +161,17 @@
   }
 }
 
-.form-input_datepicker_icon {
+.datepicker-icon {
   position: absolute;
-  top: 4px;
+  top: 50%;
   left: 10px;
+  margin-top: -12px;
 
   font-size: 22px;
-  color: $theme-datepicker-head-color;
+  line-height: 1;
+  color: get-color('additional', 'middle');
 
   &.date-applied {
-    color: $theme-orange-color;
+    color: get-color('primary', 'base');
   }
 }
