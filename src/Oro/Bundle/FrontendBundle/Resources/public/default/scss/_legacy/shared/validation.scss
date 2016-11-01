@@ -4,6 +4,7 @@
 }
 
 .validation-failed,
+.validation-error,
 .validation-passed {
   display: block;
 
@@ -17,7 +18,7 @@
   border-radius: 3px;
 }
 
-.validation-failed {
+.validation-failed, .validation-error {
   background: $theme-error-bg-color;
   color: $theme-error-font-color;
 

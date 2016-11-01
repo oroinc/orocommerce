@@ -336,10 +336,13 @@
                         {% for error in lineItemErrors[errorPath] %}
                             <script>
                                 require(['oroui/js/messenger'], function(messenger) {
-                                    messenger.notificationFlashMessage('error', '{{ error.message }}', {container: $('#product-error-{{ lineItem.productSku }}')})
+                                    messenger.notificationFlashMessage('error', '{{ error.message }}', {
+                                        style: 'validation',
+                                        container: $('#product-error-{{ lineItem.productSku }}')
+                                    })
                                 });
                             </script>
-                            <tr>
+                            <tr class="borderless t_paddingless">
                                 <td id="product-error-{{ lineItem.productSku }}" colspan="6"></td>
                             </tr>
                         {% endfor %}
