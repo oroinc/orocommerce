@@ -46,14 +46,25 @@
                 'oroaddress/js/region/view': {switchState: 'disable'}
             }
         });
-        require({
-            appmodules: (requirejs.s.contexts._.config.appmodules || []).concat([
+        (function() {
+            var appModules = requirejs.s.contexts._.config.appmodules || [];
+            var removeModules = ['oroemail/js/app/modules/views-module'];
+            for (var i = 0; i < removeModules.length; i++) {
+                var index = appModules.indexOf(removeModules[i]);
+                if (index !== -1) {
+                    appModules.splice(index, 1);
+                }
+            }
+            appModules.concat([
                 'orofrontend/default/js/app/modules/input-widgets',
                 'orofrontend/default/js/app/modules/action-manager',
                 'orofrontend/default/js/app/modules/delete-action',
                 'orofrontend/default/js/app/modules/select-filter'
-            ])
-        });
+            ]);
+            require({
+                appmodules: appModules
+            });
+        })();
     </script>
 {% endblock %}
 
