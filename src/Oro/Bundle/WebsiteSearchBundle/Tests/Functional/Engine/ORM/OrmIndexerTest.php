@@ -148,7 +148,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ->execute();
     }
 
-    public function testReindexOfAllWebsites()
+    public function testResetIndexOfAllWebsites()
     {
         $this->loadFixtures([LoadItemData::class]);
         $this->indexer->resetIndex(TestProduct::class);
