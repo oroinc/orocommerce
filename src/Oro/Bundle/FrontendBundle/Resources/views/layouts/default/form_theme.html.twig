@@ -59,7 +59,7 @@
         <div class="notification error">
             <ul>
                 {%- for error in errors -%}
-                    <li><i class="cf-attention"></i><span class="notification__text">{{ error.message }}</span></li>
+                    <li><i class="cf-attention"></i><span class="notification__text">{{ error.message|trans }}</span></li>
                 {%- endfor -%}
             </ul>
         </div>

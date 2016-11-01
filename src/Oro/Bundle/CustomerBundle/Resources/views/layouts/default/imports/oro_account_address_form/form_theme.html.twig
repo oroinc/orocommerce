@@ -1,4 +1,4 @@
-{% extends 'form_div_layout.html.twig' %}
+{% extends 'OroFrontendBundle:layouts/default:form_theme.html.twig' %}
 
 {% block oro_account_typed_address_widget %}
     {% spaceless %}
@@ -167,16 +167,3 @@
 
     {{ parent() }}
 {% endblock %}
-
-{# TODO: remove due BB-3540 #}
-{%- block form_errors -%}
-    {%- if errors|length > 0 -%}
-        <div class="notification error">
-            <ul>
-                {%- for error in errors -%}
-                    <li><i class="cf-attention"></i><span class="notification__text">{{ error.message }}</span></li>
-                {%- endfor -%}
-            </ul>
-        </div>
-    {%- endif -%}
-{%- endblock form_errors -%}
