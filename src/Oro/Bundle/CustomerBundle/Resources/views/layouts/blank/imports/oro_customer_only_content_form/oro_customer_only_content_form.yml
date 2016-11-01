@@ -1,0 +1,56 @@
+layout:
+    actions:
+        - '@remove':
+            id: header
+        - '@remove':
+            id: sticky_panel
+        - '@remove':
+            id: main
+        - '@remove':
+            id: footer
+
+        - '@setBlockTheme':
+            themes: 'oro_customer_only_content_form.html.twig'
+        - '@addTree':
+            items:
+                __page_wrapper:
+                    blockType: vertical_container
+                __page:
+                    blockType: container
+                __label:
+                    blockType: text
+                    options:
+                        text: ''
+                __description:
+                    blockType: text
+                    options:
+                        visible: '=text!=null'
+                        text: ''
+                __form:
+                    blockType: form
+                __form_submit_wrapper:
+                    blockType: container
+                __form_submit:
+                    blockType: button
+                    options:
+                        type: input
+                        action: submit
+                        style: auto
+                        text: ''
+                __links:
+                    blockType: container
+            tree:
+                __root:
+                    __page_wrapper:
+                        __page:
+                            __label: ~
+                            __description: ~
+                            __form: ~
+                            __form_submit_wrapper:
+                                __form_submit: ~
+                            __links: ~
+        - '@move':
+            id: __form_submit_wrapper
+            parentId: __form
+            siblingId: __form_end
+            prepend: true
