@@ -82,7 +82,7 @@ define(function(require) {
 
         setAlign: function(items) {
             var maxHeight = _.max(items, function(item) {
-                return item.height
+                return item.height;
             }).height;
 
             _.each(items, function(item) {

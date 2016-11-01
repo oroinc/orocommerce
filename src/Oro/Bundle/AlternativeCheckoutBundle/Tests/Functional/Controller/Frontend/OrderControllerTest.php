@@ -51,7 +51,7 @@ class OrderControllerTest extends FrontendWebTestCase
 
     public function testCheckoutGrid()
     {
-        $this->client->request('GET', '/about'); // any page to authorize a user, CMS is used as the fastest one
+        $this->client->request('GET', '/'); // any page to authorize a user
 
         $checkouts = $this->getDatagridData(self::GRID_NAME);
         $this->assertCount(5, $checkouts);

@@ -376,6 +376,5 @@ class OroRFPBundleInstaller implements
     protected function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
     {
         $activityExtension->addActivityAssociation($schema, 'oro_email', 'oro_rfp_request');
-        $activityExtension->addActivityAssociation($schema, 'oro_calendar_event', 'oro_rfp_request');
     }
 }
