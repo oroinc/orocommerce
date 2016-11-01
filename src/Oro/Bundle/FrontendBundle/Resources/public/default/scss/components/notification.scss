@@ -1,0 +1,43 @@
+.notification {
+    padding: $notification-inner-offset;
+
+    font-size: $notification-font-size;
+    
+    border-radius: $notification-border-radius;
+
+    &.success,
+    &.info,
+    &.notice {
+        background: get-color('ui', 'success');
+        color: get-color('ui', 'success-dark');
+    }
+
+    &.warning,
+    &.alert {
+        background: get-color('ui', 'warring');
+        color: get-color('ui', 'warring-dark');
+    }
+
+    &.error {
+        background: get-color('ui', 'error');
+        color: get-color('ui', 'error-dark');
+    }
+
+    ul {
+        @include list-normalize();
+    }
+
+    li:not(:first-child) {
+        margin-top: $notification-list-offset;
+    }
+    
+    /* cf- prefix should be removed when BB-4721 will be resolved */ 
+    [class^="cf-"],
+    [class^="fa-"] {
+        margin-right: $notification-icon-offset;
+    }
+
+    &__text {
+        vertical-align: $notification-vertical-align;
+    }
+}
