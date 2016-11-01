@@ -7,7 +7,6 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Duplicator\ProductPriceDuplicator;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
