@@ -16,7 +16,8 @@
                 view: 'oroui/js/app/views/layout-subtree-view',
                 rootId : block.vars.id,
                 reloadEvents: ['product:quantity-unit:update']
-            }|json_encode }}">
+            }|json_encode }}"
+            data-layout="separate">
         {{ block_widget(block) }}
     </div>
 {% endblock %}
