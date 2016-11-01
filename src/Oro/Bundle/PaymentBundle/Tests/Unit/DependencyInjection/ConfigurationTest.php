@@ -49,7 +49,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'settings' => [
                         'resolved' => true,
                         'merchant_country' => [
-                            'value' => '',
+                            'value' => 'US',
                             'scope' => 'app'
                         ],
                         'payment_term_enabled' => [

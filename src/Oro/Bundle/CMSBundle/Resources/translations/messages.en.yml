@@ -8,15 +8,8 @@ oro.cms:
         organization.label:     'Organization'
         current_slug.label:     'Current slug'
         related_slugs.label:    'Related slugs'
-        left.label:             'Tree left index'
-        level.label:            'Tree level'
-        right.label:            'Tree right index'
-        root.label:             'Tree root'
-        child_pages.label:      'Child pages'
-        parent_page.label:      'Parent page'
         slugs.label:            'Slugs'
-    child_page:
-        entity_label:           'Child page'
+        form.choose:            'Choose a Landing Page...'
     slug:
         update_to:             'Update to'
         redirect:              'Redirect visitors from %old_slug%'
@@ -34,9 +27,6 @@ oro.cms:
     sections:
         general: 'General'
         content: 'Content'
-
-    template:
-        select_existing_or_create_new: 'Please select a page on the left or create new one.'
 
     loginpage:
         entity_plural_label: 'Customer Login Pages'

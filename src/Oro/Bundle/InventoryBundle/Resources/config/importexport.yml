@@ -20,7 +20,7 @@ services:
         arguments:
             - '@event_dispatcher'
             - '@oro_importexport.strategy.import.helper'
-            - '@oro_importexport.field.field_helper'
+            - '@oro_entity.helper.field_helper'
             - '@oro_importexport.field.database_helper'
         calls:
              - [setInventoryLevelStrategyHelper, ["@oro_inventory.importexport.strategy_helper.inventory_statuses"]]

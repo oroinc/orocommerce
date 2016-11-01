@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Duplicator;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class ScheduleDuplicator
