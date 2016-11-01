@@ -91,6 +91,14 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
             'account_user_741cdecd',
             RelationType::MANY_TO_MANY
         ));
+
+        $queries->addQuery(new UpdateExtendRelationQuery(
+            'Oro\Bundle\ActivityListBundle\Entity\ActivityList',
+            'Oro\Bundle\CustomerBundle\Entity\Account',
+            'account_a8bedd11',
+            'account_32ea2fb3',
+            RelationType::MANY_TO_MANY
+        ));
     }
 
     /**
