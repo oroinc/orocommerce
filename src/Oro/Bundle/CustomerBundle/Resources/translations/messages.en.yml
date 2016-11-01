@@ -451,6 +451,8 @@ oro.customer:
                 edit: 'Edit'
                 subject: 'Address Customer User'
                 subject_customer: 'Address Customer'
+                company: 'Company Address'
+                personal: 'Personal Address'
             page_title.edit: 'Edit Address'
             page_title.create: 'Create Address'
             form:
@@ -483,7 +485,7 @@ oro.customer:
                 SYSTEM: 'System'
                 NONE: 'None'
         account_user:
-            role.entity_plural_label: Customer User Roles
+            role.entity_plural_label: Roles
             entity_plural_label: Customer Users
             profile.label: Customer Information
             address.label: Address Book
@@ -499,10 +501,11 @@ oro.customer:
         title:
             account_user_role.create: 'Create Customer User Role'
             account_user_role.edit: 'Edit Customer User Role'
+            account_user.index: 'Users'
             account_user.view: 'Customer User - %identifier%'
             account_user.edit: 'Edit Customer User'
-            account_user.create: 'Create Customer User'
-            account_user.profile: 'Customer information'
+            account_user.create: 'Create User'
+            account_user.profile: 'Profile'
 
             page:
                 account_user_role.create: Create Role

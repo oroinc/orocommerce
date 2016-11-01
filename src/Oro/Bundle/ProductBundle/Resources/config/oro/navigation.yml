@@ -30,7 +30,7 @@ navigation:
                     isCustomAction: true
 
             frontend_product_list:
-                label:           'oro.product.entity_plural_label'
+                label:           'oro.product.frontend.titles.catalog'
                 route:           'oro_product_frontend_product_index'
                 extras:
                     position:    100

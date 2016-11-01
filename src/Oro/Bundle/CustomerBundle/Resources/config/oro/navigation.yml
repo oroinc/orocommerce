@@ -220,10 +220,10 @@ navigation:
         oro_customer_account_user_update:  %%email%% - oro.ui.edit
         oro_customer_account_user_create:  oro.ui.create_entity
 
-        oro_customer_frontend_account_user_index:   ~
+        oro_customer_frontend_account_user_index:   'oro.customer.frontend.title.account_user.index'
         oro_customer_frontend_account_user_view:    '%%user%%'
         oro_customer_frontend_account_user_update:  %%user%% - oro.ui.edit
-        oro_customer_frontend_account_user_create:  oro.ui.create_entity
+        oro_customer_frontend_account_user_create:  'oro.customer.frontend.title.account_user.create'
 
         oro_customer_account_user_role_index:     ~
         oro_customer_account_user_role_view:      '%%label%% - oro.ui.view'
@@ -246,8 +246,8 @@ navigation:
 
         oro_product_visibility_edit: '%%sku%% - %%name%% - Edit'
 
-        oro_customer_frontend_account_address_create: 'oro.customer.frontend.address.title.subject_customer - oro.customer.frontend.address.title.create'
-        oro_customer_frontend_account_address_update: 'oro.customer.frontend.address.title.subject_customer - oro.customer.frontend.address.title.edit'
-        oro_customer_frontend_account_user_address_create: 'oro.customer.frontend.address.title.subject - oro.customer.frontend.address.title.create'
-        oro_customer_frontend_account_user_address_update: 'oro.customer.frontend.address.title.subject - oro.customer.frontend.address.title.edit'
+        oro_customer_frontend_account_address_create: 'oro.customer.frontend.address.title.company - oro.customer.frontend.address.title.create'
+        oro_customer_frontend_account_address_update: 'oro.customer.frontend.address.title.company - oro.customer.frontend.address.title.edit'
+        oro_customer_frontend_account_user_address_create: 'oro.customer.frontend.address.title.personal - oro.customer.frontend.address.title.create'
+        oro_customer_frontend_account_user_address_update: 'oro.customer.frontend.address.title.personal - oro.customer.frontend.address.title.edit'
         oro_customer_frontend_account_user_address_index: 'oro.customer.frontend.account_user.address.label'

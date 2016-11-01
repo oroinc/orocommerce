@@ -170,6 +170,7 @@ oro:
             view:
                 request_a_quote: 'Request a Quote'
         rfp:
+            list: 'RFQs'
             request:
                 create.label: 'Create Request For Quote'
                 entity_label: 'Request For Quote'
