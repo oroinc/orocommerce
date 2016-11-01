@@ -36,8 +36,8 @@ services:
             - '@translator'
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.page-view, method: onContentNodeView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.page-edit, method: onContentNodeEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.web-catalog-tree-view, method: onContentNodeView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.web-catalog-tree-edit, method: onContentNodeEdit }
 
     #Forms
     oro_seo.form.extension.page_type:
