@@ -1,49 +1,25 @@
 <?php
 
-namespace Oro\Bundle\RedirectBundle\Migrations\Schema;
+namespace Oro\Bundle\RedirectBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
-
-use Oro\Bundle\MigrationBundle\Migration\Installation;
+use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroRedirectBundleInstaller implements Installation
+class OroRedirectBundle implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getMigrationVersion()
-    {
-        return 'v1_2';
-    }
-
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOroRedirectSlugTable($schema);
         $this->createOroSlugScopeTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroSlugScopeForeignKeys($schema);
-    }
 
-    /**
-     * Create oro_redirect_slug table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroRedirectSlugTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_redirect_slug');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('url', 'string', ['length' => 1024]);
-        $table->addColumn('route_name', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('route_parameters', 'array', ['comment' => '(DC2Type:array)']);
-        $table->setPrimaryKey(['id']);
-        $table->addIndex(['url'], 'oro_redirect_slug_url', []);
+        $this->addUrlIndex($schema);
     }
 
     /**
@@ -79,5 +55,14 @@ class OroRedirectBundleInstaller implements Installation
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addUrlIndex(Schema $schema)
+    {
+        $table = $schema->getTable('oro_redirect_slug');
+        $table->addIndex(['url'], 'oro_redirect_slug_url', []);
     }
 }

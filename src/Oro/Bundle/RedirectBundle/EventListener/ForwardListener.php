@@ -116,6 +116,17 @@ class ForwardListener
     }
 
     /**
+     * Skipped url pattern should start with slash.
+     *
+     * @param string $skippedUrlPattern
+     * @param string $env
+     */
+    public function addSkippedUrlPattern($skippedUrlPattern, $env = 'prod')
+    {
+        $this->skippedUrlPatterns[$env][] = $skippedUrlPattern;
+    }
+    
+    /**
      * @param GetResponseEvent $event
      * @return bool
      */
@@ -139,17 +150,6 @@ class ForwardListener
         }
 
         return true;
-    }
-
-    /**
-     * Skipped url pattern should start with slash.
-     *
-     * @param string $skippedUrlPattern
-     * @param string $env
-     */
-    public function addSkippedUrlPattern($skippedUrlPattern, $env = 'prod')
-    {
-        $this->skippedUrlPatterns[$env][] = $skippedUrlPattern;
     }
 
     /**

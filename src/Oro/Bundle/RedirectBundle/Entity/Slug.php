@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
- * @ORM\Table(name="oro_redirect_slug")
+ * @ORM\Table(name="oro_redirect_slug", indexes={@ORM\Index(name="oro_redirect_slug_url", columns={"url"})})
  * @ORM\Entity
  * @Config(
  *      defaultValues={
