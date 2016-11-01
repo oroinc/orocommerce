@@ -9,7 +9,7 @@ layout:
                     options:
                         item: '=data["menu"].getMenu("quick-access")'
             tree:
-                body:
+                page_header:
                     quick_access_menu: ~
 
     conditions: 'context["is_logged_in"]'
