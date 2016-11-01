@@ -100,6 +100,16 @@ trait ProductVisibilityTrait
         $productFallback = $this->addCategoryConfigFallback('product_visibility_resolved.visibility');
         $accountFallback = $this->addCategoryConfigFallback('account_product_visibility_resolved.visibility');
 
+        return $this->getAccountProductVisibilityResolvedVisibilityTerm($productFallback, $accountFallback);
+    }
+
+    /**
+     * @param string $productFallback
+     * @param string $accountFallback
+     * @return string
+     */
+    private function getAccountProductVisibilityResolvedVisibilityTerm($productFallback, $accountFallback)
+    {
         $term = <<<TERM
 CASE WHEN account_product_visibility_resolved.visibility = %s
     THEN (COALESCE(%s, %s) * 100)

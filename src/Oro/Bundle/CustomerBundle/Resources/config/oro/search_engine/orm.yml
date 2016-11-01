@@ -3,6 +3,6 @@ services:
         class: 'Oro\Bundle\CustomerBundle\Driver\OrmAccountPartialUpdateDriver'
         arguments:
             - '@oro_website_search.provider.placeholder_provider'
+            - '@oro_customer.visibility.provider.product_visibility_provider'
             - '@oro_entity.doctrine_helper'
             - '@oro_entity.orm.insert_from_select_query_executor'
-            - '@oro_customer.visibility.provider.product_visibility_provider'
