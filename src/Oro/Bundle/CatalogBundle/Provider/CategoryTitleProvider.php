@@ -10,6 +10,9 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class CategoryTitleProvider implements ContentVariantTitleProviderInterface
 {
+    const SUPPORTED_TYPE ='catalog_page_category';
+    const SUPPORTED_TYPE_FIELD = 'catalogPageCategory';
+
     /**
      * @var PropertyAccessor
      */
@@ -28,11 +31,11 @@ class CategoryTitleProvider implements ContentVariantTitleProviderInterface
      */
     public function getTitle(ContentVariantInterface $contentVariant)
     {
-        if ($contentVariant->getType() != 'catalog_page_category') {
+        if ($contentVariant->getType() !== self::SUPPORTED_TYPE) {
             return null;
         }
 
-        $category  = $this->propertyAccessor->getValue($contentVariant, 'catalogPageCategory');
+        $category  = $this->propertyAccessor->getValue($contentVariant, self::SUPPORTED_TYPE_FIELD);
         if ($category instanceof Category && $category->getDefaultTitle() instanceof LocalizedFallbackValue) {
             return $category->getDefaultTitle()->getText();
         }

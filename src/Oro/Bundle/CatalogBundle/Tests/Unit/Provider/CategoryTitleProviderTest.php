@@ -32,6 +32,11 @@ class CategoryTitleProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $contentVariant
+            ->expects($this->once())
+            ->method('getType')
+            ->will($this->returnValue(CategoryTitleProvider::SUPPORTED_TYPE));
+
+        $contentVariant
             ->expects($this->any())
             ->method('getCatalogPageCategory')
             ->will($this->returnValue($category));

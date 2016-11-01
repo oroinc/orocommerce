@@ -10,6 +10,9 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ProductTitleProvider implements ContentVariantTitleProviderInterface
 {
+    const SUPPORTED_TYPE ='product_page_product';
+    const SUPPORTED_TYPE_FIELD = 'productPageProduct';
+
     /**
      * @var PropertyAccessor
      */
@@ -28,11 +31,11 @@ class ProductTitleProvider implements ContentVariantTitleProviderInterface
      */
     public function getTitle(ContentVariantInterface $contentVariant)
     {
-        if ($contentVariant->getType() != 'product_page_product') {
+        if ($contentVariant->getType() !== self::SUPPORTED_TYPE) {
             return null;
         }
 
-        $product  = $this->propertyAccessor->getValue($contentVariant, 'productPageProduct');
+        $product  = $this->propertyAccessor->getValue($contentVariant, self::SUPPORTED_TYPE_FIELD);
         if ($product instanceof Product && $product->getDefaultName() instanceof LocalizedFallbackValue) {
             return $product->getDefaultName()->getText();
         }

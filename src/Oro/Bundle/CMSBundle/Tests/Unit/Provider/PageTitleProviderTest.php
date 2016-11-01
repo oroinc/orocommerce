@@ -31,6 +31,11 @@ class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $contentVariant
+            ->expects($this->once())
+            ->method('getType')
+            ->will($this->returnValue(PageTitleProvider::SUPPORTED_TYPE));
+
+        $contentVariant
             ->expects($this->any())
             ->method('getLandingPageCMSPage')
             ->will($this->returnValue($page));

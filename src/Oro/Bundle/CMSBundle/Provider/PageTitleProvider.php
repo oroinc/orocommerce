@@ -9,6 +9,9 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class PageTitleProvider implements ContentVariantTitleProviderInterface
 {
+    const SUPPORTED_TYPE ='landing_page_cms_page';
+    const SUPPORTED_TYPE_FIELD = 'landingPageCMSPage';
+
     /**
      * @var PropertyAccessor
      */
@@ -27,11 +30,11 @@ class PageTitleProvider implements ContentVariantTitleProviderInterface
      */
     public function getTitle(ContentVariantInterface $contentVariant)
     {
-        if ($contentVariant->getType() != 'landing_page_cms_page') {
+        if ($contentVariant->getType() !== self::SUPPORTED_TYPE) {
             return null;
         }
 
-        $page  = $this->propertyAccessor->getValue($contentVariant, 'landingPageCMSPage');
+        $page  = $this->propertyAccessor->getValue($contentVariant, self::SUPPORTED_TYPE_FIELD);
         if ($page instanceof Page && $page->getTitle()) {
             return $page->getTitle();
         }
