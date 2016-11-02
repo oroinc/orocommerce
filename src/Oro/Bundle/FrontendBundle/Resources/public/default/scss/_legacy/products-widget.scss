@@ -5,7 +5,7 @@
 
     &.products__content_gallery-view {
       padding: 38px 0 0;
-      border-top: 1px solid $theme-lighter-gray-color;
+      border-top: 1px solid get-color('additional', 'light');
     }
   }
 
@@ -106,7 +106,7 @@
       overflow: hidden;
       margin: 0 0 10px;
       max-height: 249px;
-      border: 1px solid $theme-lighter-gray-color;
+      border: 1px solid get-color('additional', 'light');
 
       a {
         position: absolute;
@@ -152,7 +152,7 @@
       display: block;
       width: 23%;
       overflow: hidden;
-      border: 1px solid $theme-lighter-gray-color;
+      border: 1px solid get-color('additional', 'light');
 
       /*@media (min-width: 768px) and (max-width: 991px) {
         width: 31.2%;
@@ -217,7 +217,7 @@
         width: 84px;
         height: 84px;
         overflow: hidden;
-        border: 1px solid $theme-lighter-gray-color;
+        border: 1px solid get-color('additional', 'light');
         border-radius: 5px;
       }
 
@@ -460,24 +460,21 @@
     $product-item__title_gallery-view-line-h: 1.35;
 
     a {
-      color: $base-font-color;
+      color: get-color('additional', 'dark');
     }
 
     &_gallery-view {
-      max-height: ($product-item__title_gallery-view-font-s * $product-item__title_gallery-view-line-h) * 2; // two rows
-
       font-size: $product-item__title_gallery-view-font-s;
       line-height: $product-item__title_gallery-view-line-h;
 
       margin: 0 0 5px;
 
-      overflow: hidden;
+
 
       .view-product {
-        display: -webkit-box;
+        max-height: ($product-item__title_gallery-view-font-s * $product-item__title_gallery-view-line-h) * 2; // two rows
 
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
+        overflow: hidden;
       }
 
       small {
@@ -551,11 +548,11 @@
       line-height: 1.2;
 
       a {
-        color: $base-font-color;
+        color: get-color('additional', 'dark');
         text-decoration: underline;
 
         &:focus, &:hover, &:active {
-          color: $base-font-color;
+          color: get-color('additional', 'dark');
           text-decoration: none;
         }
       }
@@ -586,7 +583,7 @@
       transition: opacity .2s linear;
 
       &:hover {
-        background: $base-dark-color;
+        background: get-color('additional', 'darker');
       }
     }
 
@@ -695,22 +692,7 @@
       font-size: 0;
 
       input[type="text"] {
-        @include input();
-
-        vertical-align: middle;
-        width: 50px;
-        margin: 15px 10px 0 0;
-
-        font-size: $base-font-size;
-
         text-align: center;
-
-        &:focus {
-          outline: 0;
-          border-color: $base-link-color;
-          box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
-                            0 0 8px rgba(102,175,233,.6);
-        }
       }
 
       .btn_has-dropdown {
@@ -762,24 +744,6 @@
       max-width: 205px;
 
       font-size: 0;
-
-      input[type="text"] {
-        @include input();
-
-        vertical-align: middle;
-        width: 50px;
-        margin: 15px 10px 0 0;
-
-        font-size: $base-font-size;
-        text-align: center;
-
-        &:focus {
-          border-color: $base-link-color;
-          outline: 0;
-          box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
-                            0 0 7px rgba(102,175,233,.6);
-        }
-      }
 
       .btn {
         width: calc(100% - 60px);
@@ -839,7 +803,7 @@
     display: table;
     width: 100%;
     padding: 30px 0;
-    border-bottom: 1px solid $theme-lighter-gray-color;
+    border-bottom: 1px solid get-color('additional', 'light');
 
     &:last-child {
       border-bottom: 0;
@@ -856,7 +820,7 @@
     width: 100%;
     padding: 0 0 15px;
     margin: 0 0 15px;
-    border-bottom: 1px solid $theme-lighter-gray-color;
+    border-bottom: 1px solid get-color('additional', 'light');
 
     &:last-child {
       border-bottom: 0;
@@ -932,10 +896,10 @@
       font-size: 13px;
 
       a {
-        color: $base-font-color-light;
+        color: get-color('additional', 'dark');
 
         &:focus, &:active, &:hover {
-          color: $base-font-color-light;
+          color: get-color('additional', 'dark');
           text-decoration: none;
         }
       }
@@ -946,7 +910,7 @@
   &__trigger {
     display: inline-block !important;
 
-    color: $base-link-color;
+    color: get-color('ui', 'normal');
 
     cursor: pointer;
 
@@ -958,7 +922,7 @@
     }
 
     &.orange {
-      color: $theme-orange-color;
+      color: get-color('primary', 'base');
     }
   }
 
@@ -990,7 +954,7 @@
 
   &_b-bordered {
     padding-bottom: 15px;
-    border-bottom: 1px solid $theme-lighter-gray-color;
+    border-bottom: 1px solid get-color('additional', 'light');
   }
 
   &_list-view {
@@ -1013,7 +977,7 @@
 // *** The code below han not implemented yet!!!
 .cart-list__item_create-new-btn-container {
   text-align: center;
-  border-top: .1rem solid $base-border-color;
+  border-top: .1rem solid get-color(additional, 'light');
   padding: 1.5rem 0 0;
   margin: 2rem 0 0;
 }

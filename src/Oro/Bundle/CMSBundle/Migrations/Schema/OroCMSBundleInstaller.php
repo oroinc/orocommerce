@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CMSBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
@@ -15,7 +14,9 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
     const MAX_LOGO_IMAGE_SIZE_IN_MB = 10;
     const MAX_BACKGROUND_IMAGE_SIZE_IN_MB = 10;
 
-    /** @var AttachmentExtension */
+    /**
+     * @var AttachmentExtension
+     */
     protected $attachmentExtension;
 
     /**
@@ -23,7 +24,7 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -62,13 +63,8 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('current_slug_id', 'integer', ['notnull' => false]);
-        $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('title', 'string', ['length' => 255]);
-        $table->addColumn('content', 'text', []);
-        $table->addColumn('tree_left', 'integer', []);
-        $table->addColumn('tree_level', 'integer', []);
-        $table->addColumn('tree_right', 'integer', []);
-        $table->addColumn('tree_root', 'integer', ['notnull' => false]);
+        $table->addColumn('content', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addUniqueIndex(['current_slug_id']);
@@ -108,12 +104,6 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
             ['current_slug_id'],
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_cms_page'),
-            ['parent_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 

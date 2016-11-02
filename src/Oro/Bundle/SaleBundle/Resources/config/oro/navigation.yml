@@ -40,3 +40,4 @@ navigation:
 
         oro_sale_quote_frontend_index: ~
         oro_sale_quote_frontend_view:  'oro.sale.navigation.view'
+        oro_sale_quote_frontend_choice:  'oro.sale.navigation.view'
