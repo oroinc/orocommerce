@@ -115,7 +115,7 @@ class OroOrderBundleInstaller implements
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn(
-            'shipping_cost_amount',
+            'estimated_shipping_cost_amount',
             'money',
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );

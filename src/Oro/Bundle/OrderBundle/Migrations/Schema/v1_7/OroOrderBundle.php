@@ -3,11 +3,18 @@
 namespace Oro\Bundle\OrderBundle\Migrations\Schema\v1_7;
 
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroOrderBundle implements Migration
+class OroOrderBundle implements Migration, RenameExtensionAwareInterface
 {
+    /**
+     * @var RenameExtension
+     */
+    private $renameExtension;
+
     /**
      * {@inheritdoc}
      *
@@ -15,6 +22,7 @@ class OroOrderBundle implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $this->renameShippingCostColumn($schema, $queries);
         $this->addOverriddenShippingCostColumn($schema);
     }
 
@@ -32,5 +40,31 @@ class OroOrderBundle implements Migration
             'scale' => 4,
             'comment' => '(DC2Type:money)'
         ]);
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     *
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function renameShippingCostColumn(Schema $schema, QueryBag $queries)
+    {
+        $table = $schema->getTable('oro_order');
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'shipping_cost_amount',
+            'estimated_shipping_cost_amount'
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRenameExtension(RenameExtension $renameExtension)
+    {
+        $this->renameExtension = $renameExtension;
     }
 }
