@@ -1,4 +1,4 @@
-{% extends 'OroFrontendBundle:layouts/default:form_theme.html.twig' %}
+{% extends 'form_div_layout.html.twig' %}
 
 {%- block checkbox_widget -%}
     {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('checkbox')) %}
@@ -74,3 +74,18 @@
 
     {{ parent() }}
 {% endblock widget_attributes %}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <div class="notification error">
+            <ul class="notification__list">
+                {%- for error in errors -%}
+                    <li class="notification__item">
+                        <i class="cf-attention"></i>
+                        <span class="notification__text">{{ error.message|trans }}</span>
+                    </li>
+                {%- endfor -%}
+            </ul>
+        </div>
+    {%- endif -%}
+{%- endblock form_errors -%}

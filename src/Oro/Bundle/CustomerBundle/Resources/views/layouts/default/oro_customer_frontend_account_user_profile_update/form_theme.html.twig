@@ -1,4 +1,4 @@
-{% extends 'OroFrontendBundle:layouts/default:form_theme.html.twig' %}
+{% extends 'form_div_layout.html.twig' %}
 
 {%- block form_label -%}
     {% set attr = layout_attr_defaults(attr, {
@@ -33,3 +33,18 @@
 
     {{ parent() }}
 {% endblock widget_attributes %}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <div class="notification error">
+            <ul class="notification__list">
+                {%- for error in errors -%}
+                    <li class="notification__item">
+                        <i class="cf-attention"></i>
+                        <span class="notification__text">{{ error.message|trans }}</span>
+                    </li>
+                {%- endfor -%}
+            </ul>
+        </div>
+    {%- endif -%}
+{%- endblock form_errors -%}

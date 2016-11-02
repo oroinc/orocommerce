@@ -23,12 +23,14 @@
         color: get-color('ui', 'error-dark');
     }
 
-    ul {
+    &__list {
         @include list-normalize();
     }
 
-    li:not(:first-child) {
-        margin-top: $notification-list-offset;
+    &__item {
+        &:not(:first-child) {
+            margin-top: $notification-list-offset;
+        }
     }
     
     /* cf- prefix should be removed when BB-4721 will be resolved */ 
