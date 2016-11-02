@@ -71,15 +71,10 @@ class OrderExtension extends \Twig_Extension
                 ['is_safe' => ['html']]
             ),
             new \Twig_SimpleFunction(
-                'oro_order_shipping_method_label',
-                [$this->shippingMethodFormatter, 'formatShippingMethodLabel'],
-                ['is_safe' => ['html']]
+                'oro_order_shipping_method_with_type_label',
+                [$this->shippingMethodFormatter, 'formatShippingMethodWithTypeLabel']
             ),
-            new \Twig_SimpleFunction(
-                'oro_order_shipping_type_label',
-                [$this->shippingMethodFormatter, 'formatShippingTypeLabel'],
-                ['is_safe' => ['html']]
-            )
+
         ];
     }
 
