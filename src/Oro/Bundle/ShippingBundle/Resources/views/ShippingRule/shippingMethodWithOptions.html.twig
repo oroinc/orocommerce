@@ -1,11 +1,11 @@
 {% spaceless %}
-    {% set methodLabel = get_shipping_method_label(data.identifier)|trans %}
+    {% set methodLabel = get_shipping_method_label(methodData.identifier)|trans %}
     {% if methodLabel|length > 0 %}
     <li>{{ methodLabel }}
         <ul>
     {% endif %}
-        {% for type in data.types %}
-        <li>{{ get_shipping_method_type_label(data.identifier, type.identifier)|trans }}</li>
+        {% for type in methodData.types %}
+        <li>{{ get_shipping_method_type_label(methodData.identifier, type.identifier)|trans }}</li>
         {% endfor %}
     {% if methodLabel|length > 0 %}
         </ul>

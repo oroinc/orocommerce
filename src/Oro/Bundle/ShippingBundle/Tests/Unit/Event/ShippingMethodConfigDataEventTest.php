@@ -13,7 +13,7 @@ class ShippingMethodConfigDataEventTest extends \PHPUnit_Framework_TestCase
     {
         $properties = [
             ['methodIdentifier', 'method_1', false],
-            ['template', 'Some:template.html.twig', false],
+            ['template', 'Some:template.html.twig'],
         ];
 
         $event = new ShippingMethodConfigDataEvent('method_1');

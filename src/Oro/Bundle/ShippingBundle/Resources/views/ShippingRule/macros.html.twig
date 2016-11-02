@@ -1,4 +1,4 @@
-{% macro renderShippingMethodsConfigs(methodConfigs) %}
+{% macro renderShippingMethodsConfigs(methodConfigs, currency) %}
     {%- spaceless -%}
         <ol>
             {%- for methodConfig in methodConfigs -%}
@@ -10,12 +10,15 @@
                         'enabled': typeConfig.enabled,
                     }]) %}
                 {%- endfor -%}
-                {%- set shippingMethodConfig = {
+                {%- set shippingMethodData = {
                     'identifier': methodConfig.method,
                     'types': typeConfigData,
                     'options': methodConfig.options,
                 } -%}
-                {%- include oro_shipping_method_config_template(methodConfig.method) with {'data': shippingMethodConfig} -%}
+                {%- include oro_shipping_method_config_template(methodConfig.method) with {
+                    'currency': currency,
+                    'methodData': shippingMethodData
+                } -%}
             {%- endfor -%}
         </ol>
     {%- endspaceless -%}

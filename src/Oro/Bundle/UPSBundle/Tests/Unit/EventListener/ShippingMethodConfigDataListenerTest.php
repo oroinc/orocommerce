@@ -28,7 +28,6 @@ class ShippingMethodConfigDataListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnGetConfigData()
     {
-        $templateName = 'OroUPSBundle::shippingMethodWithOptions.html.twig';
         $methodIdentifier = 'method_1';
         $event = new ShippingMethodConfigDataEvent($methodIdentifier);
 
@@ -40,12 +39,11 @@ class ShippingMethodConfigDataListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onGetConfigData($event);
 
-        self::assertEquals($templateName, $event->getTemplate());
+        self::assertEquals(ShippingMethodConfigDataListener::TEMPLATE, $event->getTemplate());
     }
 
     public function testOnGetConfigDataNoMethod()
     {
-        $templateName = 'OroUPSBundle::shippingMethodWithOptions.html.twig';
         $methodIdentifier = 'method_1';
         $event = new ShippingMethodConfigDataEvent($methodIdentifier);
 
@@ -57,6 +55,6 @@ class ShippingMethodConfigDataListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onGetConfigData($event);
 
-        self::assertEquals('', $event->getTemplate());
+        self::assertNull($event->getTemplate());
     }
 }

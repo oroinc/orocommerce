@@ -4,6 +4,7 @@ namespace Oro\src\Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
+use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -66,15 +67,18 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(ShippingMethodExtension::SHIPPING_METHOD_EXTENSION_NAME, $this->extension->getName());
     }
 
-    public function testGetShippingMethodConfigRenderData()
+    public function testGetShippingMethodConfigRenderDataDefault()
     {
         $methodName = 'method_1';
-        $event = new ShippingMethodConfigDataEvent($methodName);
 
         $this->dispatcher
             ->expects(static::once())
             ->method('dispatch')
-            ->with(ShippingMethodConfigDataEvent::NAME, $event);
+            ->with(ShippingMethodConfigDataEvent::NAME)
+            ->will(static::returnCallback(function ($name, ShippingMethodConfigDataEvent $event) use ($methodName) {
+                static::assertEquals($methodName, $event->getMethodIdentifier());
+                $event->setTemplate(ShippingMethodExtension::DEFAULT_METHOD_CONFIG_TEMPLATE);
+            }));
 
         self::assertEquals(
             ShippingMethodExtension::DEFAULT_METHOD_CONFIG_TEMPLATE,
@@ -88,16 +92,41 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetShippingMethodConfigRenderDataDefault()
+    public function testGetShippingMethodConfigRenderData()
     {
+        $methodName = 'method_1';
+        $template = 'Bundle:template.html.twig';
+
         $this->dispatcher
             ->expects(static::once())
             ->method('dispatch')
-            ->willReturn('');
+            ->with(ShippingMethodConfigDataEvent::NAME)
+            ->will(static::returnCallback(
+                function ($name, ShippingMethodConfigDataEvent $event) use ($methodName, $template) {
+                    static::assertEquals($methodName, $event->getMethodIdentifier());
+                    $event->setTemplate($template);
+                }
+            ));
+
+        self::assertEquals($template, $this->extension->getShippingMethodConfigRenderData($methodName));
+    }
+
+    public function testGetShippingMethodConfigRenderDataFlatRate()
+    {
+        $methodName = FlatRateShippingMethod::IDENTIFIER;
+        $this->dispatcher
+            ->expects(static::once())
+            ->method('dispatch')
+            ->with(ShippingMethodConfigDataEvent::NAME)
+            ->will(static::returnCallback(
+                function ($name, ShippingMethodConfigDataEvent $event) use ($methodName) {
+                    static::assertEquals($methodName, $event->getMethodIdentifier());
+                }
+            ));
 
         self::assertEquals(
-            ShippingMethodExtension::DEFAULT_METHOD_CONFIG_TEMPLATE,
-            $this->extension->getShippingMethodConfigRenderData('method_1')
+            ShippingMethodExtension::FLAT_RATE_METHOD_CONFIG_TEMPLATE,
+            $this->extension->getShippingMethodConfigRenderData($methodName)
         );
     }
 }

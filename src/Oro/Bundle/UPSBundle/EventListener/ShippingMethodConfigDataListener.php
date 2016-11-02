@@ -7,6 +7,8 @@ use Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider;
 
 class ShippingMethodConfigDataListener
 {
+    const TEMPLATE = 'OroUPSBundle::UPSMethodWithOptions.html.twig';
+
     /**
      * @var UPSShippingMethodProvider
      */
@@ -26,7 +28,7 @@ class ShippingMethodConfigDataListener
     public function onGetConfigData(ShippingMethodConfigDataEvent $event)
     {
         if ($this->provider->hasShippingMethod($event->getMethodIdentifier())) {
-            $event->setTemplate('OroUPSBundle::shippingMethodWithOptions.html.twig');
+            $event->setTemplate(static::TEMPLATE);
         }
     }
 }

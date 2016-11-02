@@ -1,0 +1,18 @@
+{% spaceless %}
+    {% set methodLabel = get_shipping_method_label(methodData.identifier)|trans %}
+    {% if methodLabel|length > 0 %}
+    <li>{{ methodLabel }}
+        <ul>
+    {% endif %}
+        {% for type in methodData.types %}
+        <li>{{ get_shipping_method_type_label(methodData.identifier, type.identifier)|trans }} ({{ 'oro.shipping.method.flat_rate.price.label'|trans }}: {{ type.options['price']|oro_format_currency({'currency': currency}) }}
+            {%- if type.options.handling_fee is not empty -%}
+                , {{ 'oro.shipping.method.flat_rate.handling_fee.label'|trans}}: {{ type.options.handling_fee|oro_format_currency({'currency': currency}) }}
+            {%- endif -%}
+            )</li>
+        {% endfor %}
+    {% if methodLabel|length > 0 %}
+        </ul>
+    </li>
+    {% endif %}
+{% endspaceless %}

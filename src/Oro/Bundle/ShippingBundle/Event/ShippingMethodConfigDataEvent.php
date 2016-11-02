@@ -16,7 +16,7 @@ class ShippingMethodConfigDataEvent extends Event
     /**
      * @var string
      */
-    protected $template = null;
+    protected $template;
 
     /**
      * @param int|string $identifier
