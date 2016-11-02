@@ -6,12 +6,10 @@ use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 
 class ShippingMethodFormatter
 {
-
     /**
      * @var null|ShippingMethodLabelFormatter
      */
     protected $shippingMethodLabelFormatter;
-
     /**
      * @param ShippingMethodLabelFormatter|null $shippingMethodLabelFormatter
      */
@@ -19,7 +17,6 @@ class ShippingMethodFormatter
     {
         $this->shippingMethodLabelFormatter = $shippingMethodLabelFormatter;
     }
-
 
     /**
      * @param string $shippingMethodName
@@ -36,5 +33,4 @@ class ShippingMethodFormatter
         }
         return implode(', ', array_filter([$shippingMethodName, $shippingTypeName]));
     }
-
 }

@@ -59,8 +59,7 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
         $expected = [
             new \Twig_SimpleFilter(
                 'oro_order_format_source_document',
-                [$this->sourceDocumentFormatter, 'format'],
-                ['is_safe' => ['html']]
+                [$this->sourceDocumentFormatter, 'format']
             ),
         ];
         static::assertEquals($expected, $this->extension->getFilters());
@@ -71,13 +70,11 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
         $expected = [
             new \Twig_SimpleFunction(
                 'oro_order_format_shipping_tracking_method',
-                [$this->shippingTrackingFormatter, 'formatShippingTrackingMethod'],
-                ['is_safe' => ['html']]
+                [$this->shippingTrackingFormatter, 'formatShippingTrackingMethod']
             ),
             new \Twig_SimpleFunction(
                 'oro_order_format_shipping_tracking_link',
-                [$this->shippingTrackingFormatter, 'formatShippingTrackingLink'],
-                ['is_safe' => ['html']]
+                [$this->shippingTrackingFormatter, 'formatShippingTrackingLink']
             ),
             new \Twig_SimpleFunction(
                 'oro_order_shipping_method_width_type_label',

@@ -3,21 +3,21 @@
 namespace Oro\Bundle\OrderBundle\Layout\DataProvider;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
+use Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter;
 
 class OrderShippingMethodProvider
 {
     /**
      * @var ShippingMethodLabelFormatter
      */
-    protected $shippingMethodLabelFormatter;
+    protected $shippingMethodFormatter;
 
     /**
-     * @param ShippingMethodLabelFormatter $shippingMethodLabelFormatter|null
+     * @param ShippingMethodFormatter $shippingMethodFormatter|null
      */
-    public function __construct(ShippingMethodLabelFormatter $shippingMethodLabelFormatter = null)
+    public function __construct(ShippingMethodFormatter $shippingMethodFormatter = null)
     {
-        $this->shippingMethodLabelFormatter = $shippingMethodLabelFormatter;
+        $this->shippingMethodFormatter = $shippingMethodFormatter;
     }
 
     /**
@@ -25,12 +25,9 @@ class OrderShippingMethodProvider
      */
     public function getData(Order $order)
     {
-        if ($this->shippingMethodLabelFormatter) {
-            return $this->shippingMethodLabelFormatter->formatShippingMethodWithType(
-                $order->getShippingMethod(),
-                $order->getShippingMethodType()
-            );
-        }
-        return implode(', ', array_filter([$order->getShippingMethod(), $order->getShippingMethodType()]));
+        return $this->shippingMethodFormatter->formatShippingMethodWithType(
+            $order->getShippingMethod(),
+            $order->getShippingMethodType()
+        );
     }
 }
