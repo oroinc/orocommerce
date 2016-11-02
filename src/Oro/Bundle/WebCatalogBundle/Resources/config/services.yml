@@ -102,3 +102,10 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType
         tags:
             - { name: form.type, alias: oro_web_catalog_content_node }
+
+    oro_web_catalog.content_node.manager.api:
+        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - '%oro_web_catalog.entity.content_node.class%'
+            - "@doctrine.orm.entity_manager"

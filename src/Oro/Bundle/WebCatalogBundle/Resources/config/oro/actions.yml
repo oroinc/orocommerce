@@ -13,3 +13,20 @@ operations:
                 route: 'oro_content_node_update_root'
                 route_parameters:
                     id: $.entity.id
+    oro_web_catalog_delete_content_node:
+        extends: DELETE
+        acl_resource: oro_web_catalog_update
+        replace:
+            - for_all_datagrids
+            - for_all_entities
+            - preconditions
+        preconditions:
+            '@not_blank': $.data
+        routes:
+            - 'oro_content_node_update'
+            - 'oro_content_node_update_root'
+        actions:
+            - '@redirect':
+                route: 'oro_content_node_update_root'
+                route_parameters:
+                    id: $.data.webCatalog.id
