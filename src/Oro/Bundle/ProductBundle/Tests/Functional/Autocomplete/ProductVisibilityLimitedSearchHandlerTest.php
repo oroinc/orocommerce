@@ -4,11 +4,10 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Autocomplete;
 
 use Symfony\Component\EventDispatcher\Event;
 
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Event\ProductDBQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 
 /**
  * @dbIsolation
@@ -23,13 +22,9 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], [], true);
-        $this->loadFixtures(
-            [
-                LoadProductVisibilityData::class
-            ]
-        );
-        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+        $this->loadFixtures([
+            LoadFrontendProductData::class
+        ]);
 
         $this->client->getContainer()->set('test_service', $this);
     }
@@ -40,7 +35,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
             'oro_frontend_autocomplete_search',
             [
                 'per_page' => 10,
-                'query'    => 'ZZ',
+                'query'    => 'pro',
                 'name'     => 'oro_product_visibility_limited'
             ]
         );
@@ -60,7 +55,11 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
         $data = json_decode($result->getContent(), true);
-        $this->assertNotEmpty($data);
+        $this->assertNotEmpty($data['results']);
+        foreach ($data['results'] as $result) {
+            $this->assertArrayHasKey('sku', $result);
+            $this->assertArrayHasKey('defaultName.string', $result);
+        }
         $this->assertNotNull($this->firedEvent, 'Restriction event has not been fired');
         $this->assertInstanceOf(
             ProductSearchQueryRestrictionEvent::class,
@@ -79,7 +78,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
             'oro_form_autocomplete_search',
             [
                 'per_page' => 10,
-                'query'    => 'ZZ',
+                'query'    => 'pro',
                 'name'     => 'oro_product_visibility_limited'
             ]
         );
@@ -100,7 +99,11 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
         $data = json_decode($result->getContent(), true);
-        $this->assertNotEmpty($data);
+        $this->assertNotEmpty($data['results']);
+        foreach ($data['results'] as $result) {
+            $this->assertArrayHasKey('sku', $result);
+            $this->assertArrayHasKey('defaultName.string', $result);
+        }
         $this->assertNotNull($this->firedEvent, 'Restriction event has not been fired');
         $this->assertInstanceOf(
             ProductDBQueryRestrictionEvent::class,

@@ -5,9 +5,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
@@ -30,13 +29,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(
-            [
-                LoadProductVisibilityData::class
-            ]
-        );
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
-        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
+        $this->loadFixtures([LoadFrontendProductData::class]);
     }
 
     /**

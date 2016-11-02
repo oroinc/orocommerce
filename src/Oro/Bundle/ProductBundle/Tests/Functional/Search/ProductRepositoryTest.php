@@ -7,7 +7,6 @@ use Doctrine\ORM\Query;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository;
@@ -26,7 +25,6 @@ class ProductRepositoryTest extends WebTestCase
 
         $this->loadFixtures([
             LoadFrontendProductData::class,
-            LoadProductVisibilityData::class,
         ]);
     }
 
@@ -43,9 +41,6 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertEquals($product->getId(), $exampleProduct->getId());
         $this->initClient();
         $this->getContainer()->get('request_stack')->push(Request::create(''));
-        $this->loadFixtures([
-            LoadProductVisibilityData::class
-        ]);
 
         $notFoundProduct = $this->client->getContainer()->get('oro_product.website_search.repository.product')->findOne(
             1024

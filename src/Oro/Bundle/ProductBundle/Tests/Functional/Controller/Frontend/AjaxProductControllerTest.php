@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
@@ -22,8 +20,7 @@ class AjaxProductControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            LoadFrontendProductData::class,
-            LoadProductVisibilityData::class
+            LoadFrontendProductData::class
         ]);
     }
 
