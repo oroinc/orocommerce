@@ -161,6 +161,7 @@
 
     display: none;
 
+    border: none;
     border-top: 1px solid transparent;
   }
 
@@ -168,7 +169,7 @@
     @include list-normalize();
 
     display: flex;
-    padding: 15px 40px 3px 0;
+    padding: 15px 40px 15px 0;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,.2);
 
     background: get-color('additional', 'ultra');
