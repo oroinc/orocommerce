@@ -1,6 +1,8 @@
 layout:
     imports:
-        - oro_account_menu
+        -
+            id: oro_customer_menu
+            root: body
     actions:
         - '@appendOption':
             id: title

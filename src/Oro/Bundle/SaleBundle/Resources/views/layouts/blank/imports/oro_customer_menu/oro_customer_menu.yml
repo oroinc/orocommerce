@@ -1,0 +1,10 @@
+layout:
+    actions:
+        - '@add':
+            id: __account_user_quote
+            parentId: __list
+            blockType: link
+            options:
+                visible: '=data["acl"].isGranted("oro_sale_quote_frontend_index")'
+                route_name: oro_sale_quote_frontend_index
+                text: oro.frontend.sale.quote.entity_plural_label
