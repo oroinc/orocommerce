@@ -10,20 +10,16 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 class LoadPageData extends AbstractFixture
 {
     const PAGE_1 = 'page.1';
-    const PAGE_1_2 = 'page.1_2';
-    const PAGE_1_3 = 'page.1_3';
+    const PAGE_2 = 'page.2';
+    const PAGE_3 = 'page.3';
 
     /**
      * @var array
      */
     protected static $page = [
         self::PAGE_1 => [],
-        self::PAGE_1_2 => [
-            'parent' => 'page.1'
-        ],
-        self::PAGE_1_3 => [
-            'parent' => 'page.1'
-        ],
+        self::PAGE_2 => [],
+        self::PAGE_3 => [],
     ];
 
     /**
@@ -35,9 +31,6 @@ class LoadPageData extends AbstractFixture
             $entity = new Page();
             $entity->setTitle($menuItemReference)
                 ->setContent($menuItemReference);
-            if (isset($data['parent'])) {
-                $entity->setParentPage($this->getReference($data['parent']));
-            }
             $this->setReference($menuItemReference, $entity);
             $manager->persist($entity);
         }

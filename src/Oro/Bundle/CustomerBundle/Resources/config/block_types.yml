@@ -16,13 +16,6 @@ services:
         tags:
              - { name: layout.block_type, alias: account_user_role_users_datagrid }
 
-    oro_customer.layout.block_type.login_page:
-        parent: oro_layout.block_type.abstract_configurable_container
-        calls:
-            - [setName, ['login_page']]
-        tags:
-             - { name: layout.block_type, alias: login_page }
-
     oro_customer.layout.block_type.address_book:
         parent: oro_layout.block_type.abstract_configurable
         calls:
