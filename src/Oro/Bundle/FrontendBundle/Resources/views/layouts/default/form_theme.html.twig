@@ -68,10 +68,10 @@
 
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
-        <div class="notification notification_xsm notification_error notification-radiused">
+        <div class="notification">
             <ul>
             {%- for error in errors -%}
-                <li><i class="cf-attention cf--base-line"></i><span class="mml5-md">{{ error.message|trans }}</span></li>
+                <li><span class="validation-error">{{ error.message|trans }}</span></li>
             {%- endfor -%}
             </ul>
         </div>
