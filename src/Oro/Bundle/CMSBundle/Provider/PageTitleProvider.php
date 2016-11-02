@@ -10,7 +10,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 class PageTitleProvider implements ContentVariantTitleProviderInterface
 {
     const SUPPORTED_TYPE ='landing_page_cms_page';
-    const SUPPORTED_TYPE_FIELD = 'landingPageCMSPage';
+    const FIELD_NAME = 'landingPageCMSPage';
 
     /**
      * @var PropertyAccessor
@@ -34,7 +34,7 @@ class PageTitleProvider implements ContentVariantTitleProviderInterface
             return null;
         }
 
-        $page  = $this->propertyAccessor->getValue($contentVariant, self::SUPPORTED_TYPE_FIELD);
+        $page  = $this->propertyAccessor->getValue($contentVariant, self::FIELD_NAME);
         if ($page instanceof Page && $page->getTitle()) {
             return $page->getTitle();
         }

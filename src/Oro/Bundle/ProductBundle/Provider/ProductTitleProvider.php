@@ -11,7 +11,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 class ProductTitleProvider implements ContentVariantTitleProviderInterface
 {
     const SUPPORTED_TYPE ='product_page_product';
-    const SUPPORTED_TYPE_FIELD = 'productPageProduct';
+    const FIELD_NAME = 'productPageProduct';
 
     /**
      * @var PropertyAccessor
@@ -35,7 +35,7 @@ class ProductTitleProvider implements ContentVariantTitleProviderInterface
             return null;
         }
 
-        $product  = $this->propertyAccessor->getValue($contentVariant, self::SUPPORTED_TYPE_FIELD);
+        $product  = $this->propertyAccessor->getValue($contentVariant, self::FIELD_NAME);
         if ($product instanceof Product && $product->getDefaultName() instanceof LocalizedFallbackValue) {
             return $product->getDefaultName()->getText();
         }
