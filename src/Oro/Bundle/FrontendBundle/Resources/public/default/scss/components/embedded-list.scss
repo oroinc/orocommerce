@@ -21,7 +21,7 @@
 
             content: '';
 
-            background: $theme-lighter-gray-color;
+            background: get-color('additional', 'light');
         }
     }
 
@@ -38,7 +38,7 @@
         vertical-align: top;
         text-transform: uppercase;
 
-        background: $base-white-color;
+        background: get-color('additional', 'ultra');
     }
 
     &__container--tiles {
@@ -86,7 +86,7 @@
 
             content: '';
 
-            background: $base-white-color;
+            background: get-color('additional', 'ultra');
         }
 
         &.slick-initialized {
@@ -110,10 +110,10 @@
 
             font-size: 300px;
 
-            color: $base-white-color;
+            color: get-color('additional', 'ultra');
             border: 0;
             border-radius: 16px;
-            background: $base-font-color-lightest;
+            background: get-color('additional', 'dark')-lightest;
 
             &::before {
                 display: block;
@@ -184,7 +184,7 @@
 
             font-size: 0;
 
-            border: 1px solid $base-white-color;
+            border: 1px solid get-color('additional', 'ultra');
             border-radius: 5px;
             background: transparent;
         }
@@ -194,7 +194,7 @@
         }
 
         & .slick-dots .slick-active button {
-            background: $base-white-color;
+            background: get-color('additional', 'ultra');
         }
     }
 }

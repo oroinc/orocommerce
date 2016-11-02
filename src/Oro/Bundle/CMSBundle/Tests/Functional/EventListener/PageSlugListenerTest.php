@@ -104,26 +104,9 @@ class PageSlugListenerTest extends WebTestCase
             ->setCurrentSlugUrl('/remove');
         $this->entityManager->persist($page);
 
-        $childPage1 = new Page();
-        $childPage1->setTitle('Test child Page 1')
-            ->setContent('<p>test child page</p>')
-            ->setCurrentSlugUrl('/child1');
-        $this->entityManager->persist($childPage1);
-
-        $childPage2 = new Page();
-        $childPage2->setTitle('Test child Page 2')
-            ->setContent('<p>test child page</p>')
-            ->setCurrentSlugUrl('/child2');
-        $this->entityManager->persist($childPage2);
-
-        $page->addChildPage($childPage1);
-        $page->addChildPage($childPage2);
-
         $this->entityManager->flush($page);
 
         $pageSlugId       = $page->getCurrentSlug()->getId();
-        $childPage1SlugId = $childPage1->getCurrentSlug()->getId();
-        $childPage2SlugId = $childPage2->getCurrentSlug()->getId();
 
         $this->entityManager->remove($page);
         $this->entityManager->flush();
@@ -132,7 +115,5 @@ class PageSlugListenerTest extends WebTestCase
         $this->entityManager->clear();
 
         $this->assertNull($this->entityManager->find('OroRedirectBundle:Slug', $pageSlugId));
-        $this->assertNull($this->entityManager->find('OroRedirectBundle:Slug', $childPage1SlugId));
-        $this->assertNull($this->entityManager->find('OroRedirectBundle:Slug', $childPage2SlugId));
     }
 }
