@@ -38,8 +38,8 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit_Framework_TestCase
         $context1 = new ShippingContext();
         $context2 = new ShippingContext();
 
-        $this->assertEquals(crc32(''), $this->generator->generateHash($context1));
-        $this->assertEquals(crc32(''), $this->generator->generateHash($context2));
+        $this->assertEquals(crc32(''), $this->generator->generateKey($context1));
+        $this->assertEquals(crc32(''), $this->generator->generateKey($context2));
 
         $context1->setCurrency('USD');
         $this->assertHashNotEquals($context1, $context2);
@@ -358,7 +358,7 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertHashEquals(ShippingContextInterface $context1, ShippingContextInterface $context2)
     {
-        $this->assertEquals($this->generator->generateHash($context1), $this->generator->generateHash($context2));
+        $this->assertEquals($this->generator->generateKey($context1), $this->generator->generateKey($context2));
     }
 
     /**
@@ -367,6 +367,6 @@ class ShippingContextCacheKeyGeneratorTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertHashNotEquals(ShippingContextInterface $context1, ShippingContextInterface $context2)
     {
-        $this->assertNotEquals($this->generator->generateHash($context1), $this->generator->generateHash($context2));
+        $this->assertNotEquals($this->generator->generateKey($context1), $this->generator->generateKey($context2));
     }
 }

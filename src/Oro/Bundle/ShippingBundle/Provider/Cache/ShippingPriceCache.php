@@ -97,7 +97,7 @@ class ShippingPriceCache
      */
     protected function generateKey(ShippingContextInterface $context, $methodId, $typeId)
     {
-        return $this->cacheKeyGenerator->generateHash($context).$methodId.$typeId;
+        return $this->cacheKeyGenerator->generateKey($context).$methodId.$typeId;
     }
 
     /**

@@ -10,7 +10,7 @@ class ShippingContextCacheKeyGenerator
      * @param ShippingContextInterface $context
      * @return string
      */
-    public function generateHash(ShippingContextInterface $context)
+    public function generateKey(ShippingContextInterface $context)
     {
         $lineItems = array_map(function (ShippingLineItemInterface $item) {
             return $this->lineItemToString($item);
