@@ -1,5 +1,7 @@
 .toggle-block {
-  .toggle-block__content {
+  &__content {
+    position: relative;
+
     display: none;
   }
 

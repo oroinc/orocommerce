@@ -6,19 +6,24 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroShippingBundleInstaller implements Installation
+class OroShippingBundleInstaller implements Installation, NoteExtensionAwareInterface
 {
+    /** @var NoteExtension */
+    protected $noteExtension;
+
     /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -29,7 +34,6 @@ class OroShippingBundleInstaller implements Installation
         /** Tables generation **/
         $this->createOroShippingFreightClassTable($schema);
         $this->createOroShippingLengthUnitTable($schema);
-        $this->createOroShippingOrigWarehouseTable($schema);
         $this->createOroShippingProductOptsTable($schema);
         $this->createOroShippingWeightUnitTable($schema);
         $this->createOroShippingRuleTable($schema);
@@ -38,11 +42,18 @@ class OroShippingBundleInstaller implements Installation
         $this->createOroShippingRuleDestinationTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroShippingOrigWarehouseForeignKeys($schema);
         $this->addOroShippingProductOptsForeignKeys($schema);
         $this->addOroShippingRuleMthdConfigForeignKeys($schema);
         $this->addOroShippingRuleMthdTpCnfgForeignKeys($schema);
         $this->addOroShippingRuleDestinationForeignKeys($schema);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setNoteExtension(NoteExtension $noteExtension)
+    {
+        $this->noteExtension = $noteExtension;
     }
 
     /**
@@ -68,36 +79,6 @@ class OroShippingBundleInstaller implements Installation
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('conversion_rates', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['code']);
-    }
-
-    /**
-     * Create oro_shipping_orig_warehouse table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroShippingOrigWarehouseTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_shipping_orig_warehouse');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
-        $table->addColumn('warehouse_id', 'integer', []);
-        $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
-        $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('street', 'string', ['notnull' => false, 'length' => 500]);
-        $table->addColumn('street2', 'string', ['notnull' => false, 'length' => 500]);
-        $table->addColumn('city', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('postal_code', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('organization', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('name_prefix', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('first_name', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('middle_name', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('last_name', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('name_suffix', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('created', 'datetime', []);
-        $table->addColumn('updated', 'datetime', []);
-        $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['warehouse_id']);
     }
 
     /**
@@ -155,6 +136,8 @@ class OroShippingBundleInstaller implements Installation
         $table->addColumn('stop_processing', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['enabled', 'currency'], 'oro_shipping_rule_en_cur_idx', []);
+
+        $this->noteExtension->addNoteAssociation($schema, 'oro_shipping_rule');
     }
 
     /**
@@ -203,34 +186,6 @@ class OroShippingBundleInstaller implements Installation
         $table->addColumn('postal_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
-    }
-
-    /**
-     * Add oro_shipping_orig_warehouse foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroShippingOrigWarehouseForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_shipping_orig_warehouse');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_dictionary_region'),
-            ['region_code'],
-            ['combined_code'],
-            ['onDelete' => null, 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_warehouse'),
-            ['warehouse_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_dictionary_country'),
-            ['country_code'],
-            ['iso2_code'],
-            ['onDelete' => null, 'onUpdate' => null]
-        );
     }
 
     /**

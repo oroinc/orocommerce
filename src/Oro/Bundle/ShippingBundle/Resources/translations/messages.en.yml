@@ -81,11 +81,6 @@ oro:
             enabled.label: Enabled
             options.label: Options
             method_config.label: Method Config
-        warehouse:
-            use_system_configuration: Use System Configuration
-            system_configuration.label: '(system configuration)'
-            section:
-                shipping_origin: Shipping Origin
         product:
             section:
                 shipping_options: Shipping Options
@@ -106,13 +101,6 @@ oro:
                     label: Type
                     per_item.label: Per Item
                     per_order.label: Per Order
-            ups:
-                label: UPS
-                type.label: UPS
-                price.label: Price
-                handling_fee.label: Handling Fee
-                processing_type:
-                    label: Type
         methods:
             label: "Shipping Method"
             select_method: 'Select a Shipping Method'

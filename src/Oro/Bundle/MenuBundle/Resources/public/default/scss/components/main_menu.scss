@@ -1,7 +1,7 @@
 .main-menu {
   position: relative;
 
-  border-bottom: 1px solid $theme-lighter-gray-color;
+  border-bottom: 1px solid get-color('additional', 'light');
 
   .container-fluid {
     position: relative;
@@ -54,7 +54,7 @@
     &--ancestor {
       &:hover {
         .main-menu__link {
-          background: $theme-lightest-gray-color;
+          background: get-color('additional', 'base');
         }
       }
     }
@@ -67,17 +67,21 @@
       padding-left: 22px;
       padding-right: 24px;
 
-      background: $theme-lightest-gray-color;
+      background: get-color('additional', 'base');
       font-size: $base-font-size;
 
       + .main-menu__item--nested {
-        border-left: 1px solid $base-white-color;
+        border-left: 1px solid get-color('additional', 'ultra');
       }
 
       .order-widget--dropdown-mode {
         top: 48px;
+        right: 0;
 
         display: none;
+        margin-right:10px;
+
+        font-size: $base-font-size - 1;
 
         .order-widget__item{
           &:first-child {
@@ -107,7 +111,7 @@
     padding: 15px 40px 3px 0;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,.2);
 
-    background: $base-white-color;
+    background: get-color('additional', 'ultra');
 
     @include clearfix();
 
@@ -141,7 +145,7 @@
         height: calc(100% - 38px);
         width: 1px;
 
-        background: $base-border-color;
+        background: get-color(additional, 'light');
       }
     }
 
@@ -149,10 +153,10 @@
       margin: 10px 0 0;
 
       a {
-        color: $base-font-color;
+        color: get-color('additional', 'dark');
 
         &:hover {
-          color: $base-font-color;
+          color: get-color('additional', 'dark');
         }
       }
 
@@ -165,17 +169,17 @@
         }
 
         a {
-          color: $base-font-color-lighter;
+          color: get-color('additional', 'dark');
 
           &:hover {
-            color: $base-font-color-lighter;
+            color: get-color('additional', 'dark');
           }
         }
       }
     }
 
     &__title {
-      color: $theme-orange-color;
+      color: get-color('primary', 'base');
       text-transform: uppercase;
     }
 

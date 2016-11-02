@@ -7,15 +7,17 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleDestination;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ShippingPriceProvider
 {
@@ -25,14 +27,22 @@ class ShippingPriceProvider
     /** @var ShippingMethodRegistry */
     protected $registry;
 
+    /** @var LineItemDecoratorFactory */
+    protected $lineItemDecoratorFactory;
+
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param ShippingMethodRegistry $registry
+     * @param LineItemDecoratorFactory $lineItemDecoratorFactory
      */
-    public function __construct(DoctrineHelper $doctrineHelper, ShippingMethodRegistry $registry)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        ShippingMethodRegistry $registry,
+        LineItemDecoratorFactory $lineItemDecoratorFactory
+    ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->registry = $registry;
+        $this->lineItemDecoratorFactory = $lineItemDecoratorFactory;
     }
 
     /**
@@ -144,25 +154,31 @@ class ShippingPriceProvider
      */
     protected function expressionApplicable($condition, ShippingContextInterface $context)
     {
-        $result = true;
-        if ($condition) {
-            $language = new ExpressionLanguage();
-            try {
-                $result = $language->evaluate($condition, [
-                    'lineItems' => $context->getLineItems(),
-                    'billingAddress' => $context->getBillingAddress(),
-                    'shippingAddress' => $context->getShippingAddress(),
-                    'shippingOrigin' => $context->getShippingOrigin(),
-                    'paymentMethod' => $context->getPaymentMethod(),
-                    'currency' => $context->getCurrency(),
-                    'subtotal' => $context->getSubtotal(),
-                ]);
-            } catch (\Exception $e) {
-                $result = false;
-            }
+        if (!$condition) {
+            return true;
         }
-
-        return $result;
+        $language = new ExpressionLanguage();
+        $language->register('count', function ($field) {
+            return sprintf('count(%s)', $field);
+        }, function ($arguments, $field) {
+            return count($field);
+        });
+        $lineItems = $context->getLineItems();
+        try {
+            return $language->evaluate($condition, [
+                'lineItems' => array_map(function (ShippingLineItemInterface $lineItem) use ($lineItems) {
+                    return $this->lineItemDecoratorFactory->createOrderLineItemDecorator($lineItems, $lineItem);
+                }, $lineItems),
+                'billingAddress' => $context->getBillingAddress(),
+                'shippingAddress' => $context->getShippingAddress(),
+                'shippingOrigin' => $context->getShippingOrigin(),
+                'paymentMethod' => $context->getPaymentMethod(),
+                'currency' => $context->getCurrency(),
+                'subtotal' => $context->getSubtotal(),
+            ]);
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**

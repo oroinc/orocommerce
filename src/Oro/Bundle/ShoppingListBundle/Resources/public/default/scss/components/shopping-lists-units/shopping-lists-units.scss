@@ -27,7 +27,7 @@ $shopping-lists-actions-width: 55px;
 
         width: $shopping-lists-actions-width;
 
-        color: $base-link-color;
+        color: get-color('ui', 'normal');
 
         transition: opacity .3s linear;
     }

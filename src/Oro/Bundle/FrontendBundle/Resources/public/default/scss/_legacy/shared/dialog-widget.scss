@@ -1,5 +1,5 @@
 .ui-widget-overlay {
-  background: $base-dark-color;
+  background: get-color('additional', 'darker');
 
   opacity: .5;
 }
@@ -14,7 +14,7 @@
   &.ui-widget-content {
     border: 0;
 
-    color: $base-font-color;
+    color: get-color('additional', 'dark');
   }
 
   .ui-dialog-titlebar {
@@ -22,7 +22,7 @@
     border: 0;
 
     background: transparent;
-    color: $base-font-color;
+    color: get-color('additional', 'dark');
     font-weight: 400;
 
     &.ui-draggable-handle {
@@ -34,7 +34,7 @@
     border: 0;
 
     background: none;
-    color: $base-dark-color;
+    color: get-color('additional', 'darker');
 
     opacity: .2;
 
@@ -88,18 +88,12 @@
 
   .ui-widget-content {
     border: 0;
-    color: $base-font-color;
+    color: get-color('additional', 'dark');
     padding: 0 40px;
 
     form {
       .__form__row {
         margin-bottom: 15px;
-      }
-      .__form__label {
-        display: block;
-        margin: 0 0 5px;
-
-        font-weight: 400;
       }
     }
   }

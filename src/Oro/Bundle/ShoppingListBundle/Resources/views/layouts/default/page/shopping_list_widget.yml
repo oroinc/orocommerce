@@ -6,9 +6,15 @@ layout:
             items:
                 header_row_shopping_trigger:
                     blockType: container
+                header_row_shopping_toggle:
+                     blockType: container
                 main_menu_shopping_lists_wrapper:
                     blockType: container
                 main_menu_shopping_lists_dropdown:
+                    blockType: shopping_lists_awere_container
+                    options:
+                        shoppingLists: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+                main_menu_shopping_dropdown:
                     blockType: shopping_lists_awere_container
                     options:
                         shoppingLists: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists()'
@@ -23,6 +29,7 @@ layout:
                     blockType: shopping_lists_awere_container
                     options:
                         shoppingLists: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+                        shoppingListProducts: '=data["oro_shopping_list_products"].getLastProductsGroupedByShoppingList(shoppingLists, 3)'
                 main_menu_shopping_lists_dropdown_item:
                     blockType: shopping_list_dropdown_item
                 main_menu_shopping_lists_dropdown_item_sync:
@@ -40,4 +47,10 @@ layout:
                                     main_menu_shopping_lists_dropdown_container:
                                         main_menu_shopping_lists_dropdown_item: ~
                                     main_menu_shopping_lists_dropdown_create: ~
+                    header_row_shopping_toggle:
+                        main_menu_shopping_dropdown:
+                            main_menu_shopping_lists_dropdown_container_sync:
+                                main_menu_shopping_lists_dropdown_item_sync: ~
+                            main_menu_shopping_lists_dropdown_create_sync: ~
+
     conditions: 'context["is_logged_in"]'

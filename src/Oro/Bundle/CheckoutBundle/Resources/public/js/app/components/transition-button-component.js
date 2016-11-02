@@ -29,7 +29,6 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.defaults, options);
             this.inProgress = false;
-
             this.$el = options._sourceElement;
             this.initializeTriggers();
             if (this.options.hasForm) {
@@ -37,6 +36,13 @@ define(function(require) {
                 this.$form.on('submit', $.proxy(this.onSubmit, this));
             } else {
                 this.$el.on('click', $.proxy(this.transit, this));
+            }
+            this.onReady();
+        },
+        
+        onReady: function() {
+            if (this.options.enabled) {
+                this.$el.prop('disabled', false);
             }
         },
 
