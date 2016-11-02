@@ -5,17 +5,19 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
+use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Event\CollectDependentClassesEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolver;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadEmployeesToIndex;
@@ -24,8 +26,6 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadOtherWebsit
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultLocalizationIdTestTrait;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -140,22 +140,22 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     protected function getRestrictEntityEventName()
     {
         return sprintf('%s.%s', RestrictIndexEntityEvent::NAME, 'testproduct');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
-        //Remove listener to not to interract with other tests
+        //Remove listener to not interact with other tests
         $this->dispatcher->removeListener(IndexEntityEvent::NAME, $this->listener);
     }
 
-    /**
-     * @return callable
-     */
     protected function setListener()
     {
         $listener = function (IndexEntityEvent $event) {
@@ -177,7 +177,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             -255
         );
 
-        return $listener;
+        $this->listener = $listener;
     }
 
     /**
@@ -203,10 +203,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             ->willReturn($return);
     }
 
-    /**
-     * @param string $class
-     * @param string $return
-     */
     protected function setEntityAliasExpectation()
     {
         $this->mappingProviderMock
@@ -217,9 +213,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             });
     }
 
-    /**
-     * @param $class
-     */
     protected function setGetEntityConfigExpectation()
     {
         $this->mappingProviderMock
@@ -236,7 +229,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setEntityAliasExpectation();
         $this->setGetEntityConfigExpectation();
-        $this->listener = $this->setListener();
+        $this->setListener();
 
         $this->indexer->reindex(
             TestProduct::class,
@@ -259,7 +252,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setEntityAliasExpectation();
         $this->setGetEntityConfigExpectation();
-        $this->listener = $this->setListener();
+        $this->setListener();
         $productId = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2)->getId();
 
         $this->indexer->reindex(
@@ -293,7 +286,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
 
         $this->setGetEntityConfigExpectation();
 
-        $this->listener = $this->setListener();
+        $this->setListener();
 
         $this->indexer->reindex(
             TestProduct::class,
@@ -324,7 +317,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setGetEntityConfigExpectation();
         $this->indexer->setBatchSize(2);
-        $this->listener = $this->setListener();
+        $this->setListener();
         $this->indexer->reindex(
             TestProduct::class,
             [
@@ -360,7 +353,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             -255
         );
 
-        $this->listener = $this->setListener();
+        $this->setListener();
         $this->indexer->reindex(
             TestProduct::class,
             [
@@ -398,7 +391,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             -255
         );
 
-        $this->listener = $this->setListener();
+        $this->setListener();
         $this->indexer->reindex(
             TestProduct::class,
             [
@@ -432,7 +425,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             -255
         );
 
-        $this->listener = $this->setListener();
+        $this->setListener();
         $this->indexer->reindex(
             TestProduct::class,
             [
@@ -459,7 +452,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->setEntityAliasExpectation();
         $this->setGetEntityConfigExpectation();
 
-        $this->listener = $this->setListener();
+        $this->setListener();
         $this->indexer->reindex();
 
         $otherWebsite = $this->getReference(LoadOtherWebsite::REFERENCE_OTHER_WEBSITE);
@@ -499,7 +492,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
 
-        $this->listener = $this->setListener();
+        $this->setListener();
         $this->setClassSupportedExpectation(TestProduct::class, false);
         $this->indexer->save([$product1, $product2]);
     }
@@ -528,7 +521,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->setEntityAliasExpectation();
         $this->setGetEntityConfigExpectation();
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
-        $this->listener = $this->setListener();
+        $this->setListener();
 
         $this->indexer->save(
             $product1,
@@ -549,7 +542,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->setGetEntityConfigExpectation();
 
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
-        $this->listener = $this->setListener();
+        $this->setListener();
 
         $this->indexer->save($product1);
 
@@ -562,7 +555,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
 
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
-        $this->listener = $this->setListener();
+        $this->setListener();
         $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setGetEntityConfigExpectation();
         $this->setEntityAliasExpectation();
@@ -584,7 +577,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
 
-        $this->listener = $this->setListener();
+        $this->setListener();
         $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setEntityAliasExpectation();
         $this->setGetEntityConfigExpectation();
