@@ -9,14 +9,9 @@ layout:
                 title:
                     blockType: title
                     options:
-                        separator: ' - '
-                        reverse: true
-                        value:
-                            - 'oro.checkout.entity_label'
-                            -
-                                label: 'oro.checkout.title.step.label'
-                                parameters:
-                                    '%step_label%': '=data["workflowStep"].getLabel()'
+                        value: '=data["title_provider"].getTitle(context["route_name"], params)'
+                        params:
+                            '%step_label%': '=data["workflowStep"].getLabel()'
                 body:
                     blockType: body
                 raw_notification:
