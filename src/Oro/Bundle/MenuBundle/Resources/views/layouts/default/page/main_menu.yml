@@ -10,16 +10,11 @@ layout:
                     blockType: container
                 header_row_shopping:
                     blockType: container
-                main_menu_container:
-                    blockType: container
-                main_menu:
-                    blockType: menu
-                    options:
-                        item: '=data["menu"].getMenu("main-menu")'
-                        depth: 1
+
             tree:
                 header:
                     header_row:
-                        header_row_links:
-                            main_menu_container:
-                                main_menu: ~
+                        header_row_links: ~
+        - '@move':
+            id: main_menu_container
+            parentId: header_row_links

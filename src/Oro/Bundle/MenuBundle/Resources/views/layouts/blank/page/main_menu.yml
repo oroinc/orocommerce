@@ -1,0 +1,19 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroMenuBundle:layouts:blank/page/main_menu.html.twig'
+        - '@addTree':
+            items:
+                main_menu_container:
+                    blockType: container
+                    siblingId: logo
+                    prepend: false
+                main_menu:
+                    blockType: menu
+                    options:
+                        item: '=data["menu"].getMenu("main-menu")'
+                        depth: 1
+            tree:
+                page_header:
+                    main_menu_container:
+                        main_menu: ~
