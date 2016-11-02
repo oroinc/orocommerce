@@ -122,7 +122,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             foreach ($entities as $entity) {
                 $event->addField(
                     $entity->getId(),
-                    'title_LOCALIZATION_ID',
+                    'name_LOCALIZATION_ID',
                     sprintf('Reindexed product %s', $entity->getId())
                 );
             }
