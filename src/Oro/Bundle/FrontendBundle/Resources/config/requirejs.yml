@@ -27,6 +27,10 @@ config:
         'orofrontend/default/js/app/views/footer-align-view': 'orofrontend/default/js/app/views/footer-align-view.js'
         'orofrontend/default/js/app/views/sticky-panel-view': 'orofrontend/default/js/app/views/sticky-panel-view.js'
         'orofrontend/default/js/app/views/dom-relocation-view': 'orofrontend/default/js/app/views/dom-relocation-view.js'
+        'orofrontend/default/js/app/modules/input-widgets': 'bundles/orofrontend/default/js/app/modules/input-widgets.js'
+        'orofrontend/default/js/app/modules/action-manager': 'bundles/orofrontend/default/js/app/modules/action-manager.js'
+        'orofrontend/default/js/app/modules/delete-action': 'bundles/orofrontend/default/js/app/modules/delete-action.js'
+        'orofrontend/default/js/app/modules/select-filter': 'bundles/orofrontend/default/js/app/modules/select-filter.js'
 
         'orofrontend/js/app/elements-helper': 'bundles/orofrontend/js/app/elements-helper.js'
 
