@@ -3,16 +3,15 @@
 namespace Oro\Bundle\OrderBundle\EventListener\Order;
 
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
-use Oro\Bundle\OrderBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class OrderPossibleShippingMethodsEventListener
 {
     const POSSIBLE_SHIPPING_METHODS_KEY = 'possibleShippingMethods';
 
     /**
-     * @var ShippingContextProviderFactory
+     * @var OrderShippingContextFactory
      */
     protected $factory;
 
@@ -22,11 +21,11 @@ class OrderPossibleShippingMethodsEventListener
     protected $priceProvider;
 
     /**
-     * @param ShippingContextProviderFactory $factory
+     * @param OrderShippingContextFactory $factory
      * @param ShippingPriceProvider|null $priceProvider
      */
     public function __construct(
-        ShippingContextProviderFactory $factory,
+        OrderShippingContextFactory $factory,
         ShippingPriceProvider $priceProvider = null
     ) {
         $this->factory = $factory;
