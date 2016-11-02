@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\RFPBundle\Layout\DataProvider;
 
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Component\Layout\DataProvider\AbstractFormProvider;
+use Symfony\Component\Form\FormInterface;
 
+use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 
@@ -15,24 +15,23 @@ class RFPFormProvider extends AbstractFormProvider
 
     /**
      * @param Request $request
+     * @param array   $options
      *
-     * @return FormAccessor
+     * @return FormInterface
      */
-    public function getRequestForm(Request $request)
+    public function getRequestForm(Request $request, array $options = [])
     {
         if ($request->getId()) {
-            return $this->getFormAccessor(
-                RequestType::NAME,
+            $options['action'] = $this->generateUrl(
                 self::RFP_REQUEST_UPDATE_ROUTE_NAME,
-                $request,
                 ['id' => $request->getId()]
+            );
+        } else {
+            $options['action'] = $this->generateUrl(
+                self::RFP_REQUEST_CREATE_ROUTE_NAME
             );
         }
 
-        return $this->getFormAccessor(
-            RequestType::NAME,
-            self::RFP_REQUEST_CREATE_ROUTE_NAME,
-            $request
-        );
+        return $this->getForm(RequestType::NAME, $request, $options);
     }
 }

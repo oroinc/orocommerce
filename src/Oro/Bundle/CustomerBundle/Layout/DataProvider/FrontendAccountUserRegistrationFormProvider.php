@@ -5,13 +5,14 @@ namespace Oro\Bundle\CustomerBundle\Layout\DataProvider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
+use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
-use Oro\Component\Layout\DataProvider\AbstractFormProvider;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRegistrationType;
@@ -34,20 +35,22 @@ class FrontendAccountUserRegistrationFormProvider extends AbstractFormProvider
     private $userManager;
 
     /**
-     * @param FormFactoryInterface $formFactory
-     * @param ManagerRegistry $managerRegistry
-     * @param ConfigManager $configManager
-     * @param WebsiteManager $websiteManager
-     * @param UserManager $userManager
+     * @param FormFactoryInterface    $formFactory
+     * @param ManagerRegistry         $managerRegistry
+     * @param ConfigManager           $configManager
+     * @param WebsiteManager          $websiteManager
+     * @param UserManager             $userManager
+     * @param UrlGeneratorInterface   $router
      */
     public function __construct(
         FormFactoryInterface $formFactory,
         ManagerRegistry $managerRegistry,
         ConfigManager $configManager,
         WebsiteManager $websiteManager,
-        UserManager $userManager
+        UserManager $userManager,
+        UrlGeneratorInterface $router
     ) {
-        parent::__construct($formFactory);
+        parent::__construct($formFactory, $router);
 
         $this->managerRegistry = $managerRegistry;
         $this->configManager = $configManager;
@@ -56,15 +59,17 @@ class FrontendAccountUserRegistrationFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @return FormAccessor
+     * @param array $options
+     *
+     * @return FormInterface
      */
-    public function getRegisterForm()
+    public function getRegisterForm(array $options = [])
     {
-        return $this->getFormAccessor(
-            FrontendAccountUserRegistrationType::NAME,
-            self::ACCOUNT_USER_REGISTER_ROUTE_NAME,
-            $this->createAccountUser()
+        $options['action'] = $this->generateUrl(
+            self::ACCOUNT_USER_REGISTER_ROUTE_NAME
         );
+
+        return $this->getForm(FrontendAccountUserRegistrationType::NAME, $this->createAccountUser(), $options);
     }
 
     /**

@@ -2,18 +2,20 @@
 
 namespace Oro\Bundle\PayPalBundle\Layout\DataProvider;
 
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
+use Symfony\Component\Form\FormInterface;
 
-use Oro\Component\Layout\DataProvider\AbstractFormProvider;
+use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
+use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
 
 class CreditCardFormProvider extends AbstractFormProvider
 {
     /**
-     * @return FormAccessor
+     * @param array $options
+     *
+     * @return FormInterface
      */
-    public function getCreditCardForm()
+    public function getCreditCardForm(array $options = [])
     {
-        return $this->getFormAccessor(CreditCardType::NAME);
+        return $this->getForm(CreditCardType::NAME, null, $options);
     }
 }

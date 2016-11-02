@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Component\Layout\DataProvider\AbstractFormProvider;
+use Symfony\Component\Form\FormInterface;
 
+use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
@@ -15,24 +15,23 @@ class ShoppingListFormProvider extends AbstractFormProvider
 
     /**
      * @param ShoppingList $shoppingList
+     * @param array        $options
      *
-     * @return FormAccessor
+     * @return FormInterface
      */
-    public function getShoppingListForm(ShoppingList $shoppingList)
+    public function getShoppingListForm(ShoppingList $shoppingList, array $options = [])
     {
         if ($shoppingList->getId()) {
-            return $this->getFormAccessor(
-                ShoppingListType::NAME,
+            $options['action'] = $this->generateUrl(
                 self::SHOPPING_LIST_VIEW_ROUTE_NAME,
-                $shoppingList,
                 ['id' => $shoppingList->getId()]
+            );
+        } else {
+            $options['action'] = $this->generateUrl(
+                self::SHOPPING_LIST_CREATE_ROUTE_NAME
             );
         }
 
-        return $this->getFormAccessor(
-            ShoppingListType::NAME,
-            self::SHOPPING_LIST_CREATE_ROUTE_NAME,
-            $shoppingList
-        );
+        return $this->getForm(ShoppingListType::NAME, $shoppingList, $options);
     }
 }

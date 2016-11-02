@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\CustomerBundle\Layout\DataProvider;
 
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Component\Layout\DataProvider\AbstractFormProvider;
+use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordRequestType;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserProfileType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserType;
+use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 
 class FrontendAccountUserFormProvider extends AbstractFormProvider
 {
@@ -21,66 +21,70 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
 
     /**
      * @param AccountUser $accountUser
+     * @param array       $options
      *
-     * @return FormAccessor
+     * @return FormInterface
      */
-    public function getAccountUserForm(AccountUser $accountUser)
+    public function getAccountUserForm(AccountUser $accountUser, array $options = [])
     {
         if ($accountUser->getId()) {
-            return $this->getFormAccessor(
-                FrontendAccountUserType::NAME,
+            $options['action'] = $this->generateUrl(
                 self::ACCOUNT_USER_UPDATE_ROUTE_NAME,
-                $accountUser,
                 ['id' => $accountUser->getId()]
+            );
+        } else {
+            $options['action'] = $this->generateUrl(
+                self::ACCOUNT_USER_CREATE_ROUTE_NAME
             );
         }
 
-        return $this->getFormAccessor(
-            FrontendAccountUserType::NAME,
-            self::ACCOUNT_USER_CREATE_ROUTE_NAME,
-            $accountUser
-        );
+        return $this->getForm(FrontendAccountUserType::NAME, $accountUser, $options);
     }
 
     /**
-     * @return FormAccessor
+     * @param array $options
+     *
+     * @return FormInterface
      */
-    public function getForgotPasswordForm()
+    public function getForgotPasswordForm($options = [])
     {
-        return $this->getFormAccessor(
-            AccountUserPasswordRequestType::NAME,
+        $options['action'] = $this->generateUrl(
             self::ACCOUNT_USER_RESET_REQUEST_ROUTE_NAME
         );
+
+        return $this->getForm(AccountUserPasswordRequestType::NAME, null, $options);
     }
 
     /**
      * @param AccountUser $accountUser
+     * @param array       $options
      *
-     * @return FormAccessor
+     * @return FormInterface
      */
-    public function getResetPasswordForm(AccountUser $accountUser = null)
+    public function getResetPasswordForm(AccountUser $accountUser = null, array $options = [])
     {
-        return $this->getFormAccessor(
-            AccountUserPasswordResetType::NAME,
-            self::ACCOUNT_USER_PASSWORD_RESET_ROUTE_NAME,
-            $accountUser
+        $options['action'] = $this->generateUrl(
+            self::ACCOUNT_USER_PASSWORD_RESET_ROUTE_NAME
         );
+
+        return $this->getForm(AccountUserPasswordResetType::NAME, $accountUser, $options);
     }
 
     /**
      * @param AccountUser $accountUser
+     * @param array       $options
      *
-     * @return FormAccessor
+     * @return FormInterface
      */
-    public function getProfileForm(AccountUser $accountUser)
+    public function getProfileForm(AccountUser $accountUser, array $options = [])
     {
         if ($accountUser->getId()) {
-            return $this->getFormAccessor(
-                FrontendAccountUserProfileType::NAME,
+            $options['action'] = $this->generateUrl(
                 self::ACCOUNT_USER_PROFILE_UPDATE_ROUTE_NAME,
-                $accountUser,
                 ['id' => $accountUser->getId()]
             );
+
+            return $this->getForm(FrontendAccountUserProfileType::NAME, $accountUser, $options);
         }
 
         throw new \RuntimeException(

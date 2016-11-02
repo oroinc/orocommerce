@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\CustomerBundle\Layout\DataProvider;
 
-use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
-use Oro\Component\Layout\DataProvider\AbstractFormProvider;
+use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserTypedAddressType;
+use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 
 class FrontendAccountUserAddressFormProvider extends AbstractFormProvider
 {
@@ -18,26 +18,28 @@ class FrontendAccountUserAddressFormProvider extends AbstractFormProvider
      * Get form accessor with account user address form
      *
      * @param AccountUserAddress $accountUserAddress
-     * @param AccountUser $accountUser
+     * @param AccountUser        $accountUser
+     * @param array              $options
      *
-     * @return FormAccessor
+     * @return FormInterface
      */
-    public function getAddressForm(AccountUserAddress $accountUserAddress, AccountUser $accountUser)
-    {
+    public function getAddressForm(
+        AccountUserAddress $accountUserAddress,
+        AccountUser $accountUser,
+        array $options = []
+    ) {
         if ($accountUserAddress->getId()) {
-            return $this->getFormAccessor(
-                AccountUserTypedAddressType::NAME,
+            $options['action'] = $this->generateUrl(
                 self::ACCOUNT_USER_ADDRESS_UPDATE_ROUTE_NAME,
-                $accountUserAddress,
                 ['id' => $accountUserAddress->getId(), 'entityId' => $accountUser->getId()]
+            );
+        } else {
+            $options['action'] = $this->generateUrl(
+                self::ACCOUNT_USER_ADDRESS_CREATE_ROUTE_NAME,
+                ['entityId' => $accountUser->getId()]
             );
         }
 
-        return $this->getFormAccessor(
-            AccountUserTypedAddressType::NAME,
-            self::ACCOUNT_USER_ADDRESS_CREATE_ROUTE_NAME,
-            $accountUserAddress,
-            ['entityId' => $accountUser->getId()]
-        );
+        return $this->getForm(AccountUserTypedAddressType::NAME, $accountUserAddress, $options);
     }
 }
