@@ -1,5 +1,7 @@
 oro:
     order:
+        shipping_method.label: Shipping Method
+
         notes_widget:
             edit: Edit Notes
             add: Add Notes

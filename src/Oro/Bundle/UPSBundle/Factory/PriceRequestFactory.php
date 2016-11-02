@@ -172,6 +172,9 @@ class PriceRequestFactory
                 ->getRepository('OroShippingBundle:ProductShippingOptions')
                 ->findOneBy(['product' => $lineItem->getProduct()]);
 
+            if (!$productShippingOptions) {
+                return [];
+            }
             $productDimensions = $productShippingOptions->getDimensions();
 
             $dimensionUnit = $productDimensions->getUnit() ? $productDimensions->getUnit()->getCode() : null;

@@ -1,0 +1,46 @@
+{% macro renderPossibleShippingMethods(currentShippingMethod, currentShippingMethodType, methods) %}
+    {% set currentShippingMethod = currentShippingMethod|default(null) %}
+    {% set currentShippingMethodType = currentShippingMethodType|default(null) %}
+    <div data-page-component-module="oroorder/js/app/components/possible-shipping-methods-component"
+         data-page-component-options="{{ {'data': methods}|json_encode }}">
+        <div class="btn-group">
+            <span id="possible_shipping_methods_btn" class="btn">{{ 'oro.order.btn.calculate_shipping'|trans }}</span>
+        </div>
+        <div class="possible_shipping_methods_form" data-content="possible_shipping_methods_form">
+            <div>
+                {% if methods|length > 0 %}
+                    {% set i = 0 %}
+                    {% for name, method in methods if methods is defined and method is iterable %}
+
+                        {% if method.types is defined and method.types|length > 0 %}
+                            <div class="method_title">
+                                {% if method.isGrouped %}
+                                    <span>{{ method.label|trans }}</span>
+                                {% endif %}
+                            </div>
+                            {% for type in method.types if method.types is defined and type is iterable %}
+                                {% if type.price %}
+                                    {% set selected = currentShippingMethodType == type.identifier %}
+                                    <div>
+                                        <label class="{% if selected %}checked{% endif %}">
+                                            <input
+                                                    type="radio" name="possibleShippingMethodType" value="{{ type.identifier }}" {% if selected%}checked="checked"{% endif %}
+                                                    data-shipping-method="{{ method.identifier }}" data-shipping-price="{{ type.price.value }}" data-choice="{{ type.identifier }}" />
+                                            <span>{{ type.label|trans }}: <strong>{{ type.price.value|oro_format_currency({'currency': type.price.currency}) }}</strong></span>
+                                        </label>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        {% set i = i + 1 %}
+                        {% if methods|length > i %}
+                            <hr>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <span class="notification notification_xmd notification_alert notification-radiused mb1-md" >{{ 'oro.shipping.methods.no_method'|trans }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endmacro %}

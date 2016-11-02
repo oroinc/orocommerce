@@ -1,5 +1,6 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroOrderBundle:Order:macros.html.twig' as SM %}
 
 {% oro_title_set({params : {
     '%identifier%': entity.identifier|default('N/A'|trans),
@@ -175,6 +176,30 @@
     {% endif %}
 
     {% set shippingInformation %}
+        {% if entity.shippingMethod %}
+            {%- if entity.shippingMethodType -%}
+                {% set methodLabel = get_shipping_method_label(entity.shippingMethod) ? get_shipping_method_label(entity.shippingMethod)|trans ~ ', ' : '' %}
+                {{ UI.renderAttribute('oro.order.shipping_method.label'|trans,
+                '<input type="text" readonly value="' ~
+                methodLabel ~
+                get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans ~
+                ': ' ~ entity.estimatedShippingCost|oro_format_price ~ '"></input>'
+                ) }}
+            {%- endif -%}
+        {% else %}
+            {{ UI.renderAttribute('oro.order.form.shipping_options.label'|trans,
+                SM.renderPossibleShippingMethods(
+                    entity.shippingMethod,
+                    entity.shippingMethodType,
+                    orderData.possibleShippingMethods
+            )) }}
+        {% endif %}
+        <div class="hidden">
+            {{ form_row(form.shippingMethod) }}
+            {{ form_row(form.shippingMethodType) }}
+            {{ form_row(form.estimatedShippingCost) }}
+        </div>
+
         {%  set options = {
             view: 'oroorder/js/app/views/shipping-cost-view'
         } %}

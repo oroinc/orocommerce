@@ -141,6 +141,7 @@ oro:
             add_seller_notes: 'Add Notes'
             remove_seller_notes: 'Remove Seller Notes'
             create_order: 'Create Order'
+            calculate_shipping: 'Calculate Shipping'
 
         menu:
             sales_tab.label: Sales
@@ -186,6 +187,8 @@ oro:
                 group_label:
                     account: Customer Address Book
                     account_user: Customer User Address Book
+            shipping_options.label: Shipping Options
+            override_shipping_cost.label: Override Shipping Cost
 
         subtotals:
             shipping_cost: Shipping

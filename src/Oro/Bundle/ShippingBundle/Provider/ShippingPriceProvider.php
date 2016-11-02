@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingRuleRepository;
@@ -47,9 +48,10 @@ class ShippingPriceProvider
 
     /**
      * @param ShippingContextInterface $context
+     * @param bool $isAjax
      * @return array
      */
-    public function getApplicableMethodsWithTypesData(ShippingContextInterface $context)
+    public function getApplicableMethodsWithTypesData(ShippingContextInterface $context, $isAjax = false)
     {
         $result = [];
 
@@ -61,19 +63,24 @@ class ShippingPriceProvider
                 if (!$method) {
                     continue;
                 }
+                if ($isAjax && $method->getLabel() instanceof LocalizedFallbackValue) {
+                    $label = $method->getLabel()->getString();
+                } else {
+                    $label = $method->getLabel();
+                }
 
                 if (!array_key_exists($methodConfig->getMethod(), $result)) {
                     $result[$methodConfig->getMethod()] = [
                         'identifier' => $method->getIdentifier(),
                         'isGrouped' => $method->isGrouped(),
-                        'label' => $method->getLabel(),
+                        'label' => $label,
                         'sortOrder' => $method->getSortOrder(),
                         'types' => []
                     ];
                 }
 
                 // we don't use array_merge here, because some types can have numerical identifiers
-                foreach ($this->getMethodTypesConfigs($context, $methodConfig) as $typeIdentifier => $type) {
+                foreach ($this->getMethodTypesConfigs($context, $methodConfig, $isAjax) as $typeIdentifier => $type) {
                     if (!array_key_exists($typeIdentifier, $result[$methodConfig->getMethod()]['types'])) {
                         $result[$methodConfig->getMethod()]['types'][$typeIdentifier] = $type;
                     }
@@ -228,6 +235,9 @@ class ShippingPriceProvider
      */
     protected function getSortedShippingRules(ShippingContextInterface $context)
     {
+        if ($context->getCurrency() === null || $context->getShippingAddress() === null) {
+            return [];
+        }
         /** @var ShippingRuleRepository $repository */
         $repository = $this->doctrineHelper
             ->getEntityManagerForClass('OroShippingBundle:ShippingRule')
@@ -242,10 +252,14 @@ class ShippingPriceProvider
     /**
      * @param ShippingContextInterface $context
      * @param ShippingRuleMethodConfig $methodConfig
+     * @param bool $isAjax
      * @return array
      */
-    protected function getMethodTypesConfigs(ShippingContextInterface $context, ShippingRuleMethodConfig $methodConfig)
-    {
+    protected function getMethodTypesConfigs(
+        ShippingContextInterface $context,
+        ShippingRuleMethodConfig $methodConfig,
+        $isAjax = false
+    ) {
         $method = $this->registry->getShippingMethod($methodConfig->getMethod());
 
         $types = [];
@@ -254,6 +268,7 @@ class ShippingPriceProvider
 
         if ($method instanceof PricesAwareShippingMethodInterface) {
             $optionsByTypes = $this->getOptionsByTypes($methodConfig, $typeConfigs->toArray());
+            /** @var Price[] $prices */
             $prices = $method->calculatePrices($context, $methodConfig->getOptions(), $optionsByTypes);
             foreach ($prices as $typeIdentifier => $price) {
                 if ($price) {
@@ -261,7 +276,8 @@ class ShippingPriceProvider
                         $method->getType($typeIdentifier),
                         $methodOptions,
                         array_key_exists($typeIdentifier, $optionsByTypes) ? $optionsByTypes[$typeIdentifier] : [],
-                        $price
+                        $price,
+                        $isAjax
                     );
                 }
             }
@@ -272,7 +288,8 @@ class ShippingPriceProvider
                     $options = $typeConfig->getOptions();
                     $price = $type->calculatePrice($context, $methodConfig->getOptions(), $options);
                     if ($price) {
-                        $types[$type->getIdentifier()] = $this->createTypeData($type, $methodOptions, $options, $price);
+                        $types[$type->getIdentifier()] = $this
+                            ->createTypeData($type, $methodOptions, $options, $price, $isAjax);
                     }
                 }
             }
@@ -285,14 +302,24 @@ class ShippingPriceProvider
      * @param array $methodOptions
      * @param array $typeOptions
      * @param Price|null $price
+     * @param bool $isAjax
      * @return array
      */
     protected function createTypeData(
         ShippingMethodTypeInterface $type,
         array $methodOptions,
         array $typeOptions,
-        Price $price = null
+        Price $price = null,
+        $isAjax = false
     ) {
+        if ($isAjax) {
+            $val = $price->getValue();
+            $curr = $price->getCurrency();
+            $price = [
+                'value' => $val,
+                'currency' => $curr
+            ];
+        }
         return [
             'identifier' => $type->getIdentifier(),
             'label' => $type->getLabel(),
