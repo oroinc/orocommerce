@@ -9,16 +9,16 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\OrderBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory;
 
-class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
+class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var ShippingContextProviderFactory|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var OrderShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $factory;
 
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
@@ -37,21 +37,11 @@ class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->factory = new ShippingContextProviderFactory(
+        $this->factory = new OrderShippingContextFactory(
             $this->doctrineHelper,
             $this->shippingContextFactory
         );
     }
-
-    protected function tearDown()
-    {
-        unset(
-            $this->factory,
-            $this->doctrineHelper,
-            $this->shippingContextFactory
-        );
-    }
-
 
     public function testCreate()
     {

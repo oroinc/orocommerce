@@ -10,9 +10,11 @@ use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Factory\ShippingContextFactory;
 
-class ShippingContextProviderFactory
+class OrderShippingContextFactory
 {
-    /** @var DoctrineHelper */
+    /**
+     * @var DoctrineHelper
+     */
     protected $doctrineHelper;
 
     /**
@@ -36,32 +38,38 @@ class ShippingContextProviderFactory
      */
     public function create(Order $order)
     {
-        if ($this->shippingContextFactory) {
-            $shippingContext = $this->shippingContextFactory->create();
-
-            $shippingContext->setShippingAddress($order->getShippingAddress());
-            $shippingContext->setBillingAddress($order->getBillingAddress());
-            $shippingContext->setCurrency($order->getCurrency());
-            $shippingContext->setLineItems($order->getLineItems()->toArray());
-
-            /** @var PaymentTransactionRepository $repository */
-            $repository = $this->doctrineHelper->getEntityRepository(PaymentTransaction::class);
-            /** @var PaymentTransaction $paymentTransaction */
-            $paymentTransaction = $repository->findOneBy([
-                'entityClass' => Order::class,
-                'entityIdentifier' => $order->getId()
-            ]);
-            $shippingContext->setPaymentMethod($paymentTransaction->getPaymentMethod());
-
-            $subtotal = Price::create(
-                $order->getSubtotal(),
-                $order->getCurrency()
-            );
-
-            $shippingContext->setSubtotal($subtotal);
-
-            return $shippingContext;
+        if (!$this->shippingContextFactory) {
+            return null;
         }
-        return null;
+        $shippingContext = $this->shippingContextFactory->create();
+
+        if ($order->getShippingAddress()) {
+            $shippingContext->setShippingAddress($order->getShippingAddress());
+        }
+        if ($order->getBillingAddress()) {
+            $shippingContext->setBillingAddress($order->getBillingAddress());
+        }
+        if ($order->getCurrency()) {
+            $shippingContext->setCurrency($order->getCurrency());
+        }
+        if ($order->getLineItems()) {
+            $shippingContext->setLineItems($order->getLineItems()->toArray());
+        }
+
+        /** @var PaymentTransactionRepository $repository */
+        $repository = $this->doctrineHelper->getEntityRepository(PaymentTransaction::class);
+        /** @var PaymentTransaction $paymentTransaction */
+        $paymentTransaction = $repository->findOneBy([
+            'entityClass' => Order::class,
+            'entityIdentifier' => $order->getId()
+        ]);
+        if ($paymentTransaction instanceof PaymentTransaction) {
+            $shippingContext->setPaymentMethod($paymentTransaction->getPaymentMethod());
+        }
+        if ($order->getSubtotal() && $order->getCurrency()) {
+            $shippingContext->setSubtotal(Price::create($order->getSubtotal(), $order->getCurrency()));
+        }
+
+        return $shippingContext;
     }
 }
