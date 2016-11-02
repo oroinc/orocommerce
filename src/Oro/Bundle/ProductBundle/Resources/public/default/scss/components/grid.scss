@@ -51,14 +51,14 @@
         @media (max-width: $screen-md) {
           padding: 0 15px 20px;
 
-          background: $base-white-color;
+          background: get-color('additional', 'ultra');
         }
       }
 
       .oro-grid__tab__header {
         @media (max-width: $screen-md) {
           border: 0;
-          border-top: 1px solid $theme-lighter-gray-color;
+          border-top: 1px solid get-color('additional', 'light');
         }
       }
 
@@ -66,7 +66,7 @@
         &.active {
           .oro-grid__tab__header {
             @media (max-width: $screen-md) {
-              border-bottom: 1px solid $theme-lighter-gray-color;
+              border-bottom: 1px solid get-color('additional', 'light');
             }
           }
         }
@@ -125,11 +125,11 @@
           width: 100% !important;
           max-width: 100%;
           padding-left: 0;
-          border: .1px solid $theme-lighter-gray-color;
+          border: .1px solid get-color('additional', 'light');
           border-bottom: 0;
           border-radius: 0 !important;
 
-          background: $base-sidebar-background-color-light !important;
+          background: get-color('additional', 'base') !important;
           text-align: left;
           text-transform: none;
 
@@ -138,7 +138,7 @@
 
       .oro-grid__tab__content {
         padding: 35px 20px 0;
-        background: $base-white-color;
+        background: get-color('additional', 'ultra');
 
         @media (max-width: $screen-md) {
           padding: 10px 15px 0;
@@ -157,7 +157,7 @@
         height: 52px;
         border-bottom: 0;
 
-        background: #fff;
+        background: get-color('additional', 'ultra');
 
         cursor: default;
 
@@ -195,7 +195,7 @@
       .oro-grid__tab__header {
         left: 0;
 
-        border-left: 1px solid $theme-lighter-gray-color;
+        border-left: 1px solid get-color('additional', 'light');
         border-top-left-radius: 5px;
       }
     }
@@ -220,13 +220,13 @@
         border-top-right-radius: 5px;
 
         @media (max-width: $screen-md) {
-          border-bottom: 1px solid $theme-lighter-gray-color;
+          border-bottom: 1px solid get-color('additional', 'light');
         }
       }
 
       .oro-grid__tab__content {
         @media (max-width: $screen-md) {
-          border-bottom: 1px solid $theme-lighter-gray-color;
+          border-bottom: 1px solid get-color('additional', 'light');
         }
       }
     }
@@ -237,17 +237,17 @@
 
       width: 25%;
 
-      border: 1px solid $theme-lighter-gray-color;
+      border: 1px solid get-color('additional', 'light');
       border-left: 0;
 
-      background: $theme-lightest-gray-color;
+      background: get-color('additional', 'base');
       line-height: 50px;
       text-align: center;
 
       cursor: pointer;
 
       &.oro-grid__tab__header_dropdown-trigger {
-        background: $theme-lighter-gray-color;
+        background: get-color('additional', 'light');
 
         @media (max-width: $screen-md) {
           position: relative;
@@ -263,11 +263,11 @@
 
         width: 100%;
         padding-left: 24px;
-        border: 1px solid $theme-lighter-gray-color;
+        border: 1px solid get-color('additional', 'light');
         border-bottom: 0;
         border-radius: 0 !important;
 
-        background: $theme-lightest-gray-color !important;
+        background: get-color('additional', 'base') !important;
         text-align: left;
         text-transform: none;
       }
@@ -313,7 +313,7 @@
       box-shadow: 1px 1px 7px 0 rgba(0,0,0,.3);
       border-radius: 5px;
 
-      background: $base-white-color;
+      background: get-color('additional', 'ultra');
       text-align: left;
 
       @media (max-width: $screen-sm) {
@@ -338,10 +338,10 @@
             display: block;
             padding: 0 17px;
 
-            color: $base-font-color;
+            color: get-color('additional', 'dark');
 
             &:hover, &:focus, &:active {
-              color: $base-font-color;
+              color: get-color('additional', 'dark');
             }
 
             > i {
@@ -357,7 +357,7 @@
     &__content {
       display: none;
       padding: 35px 4px 0;
-      border: 1px solid $theme-lighter-gray-color;
+      border: 1px solid get-color('additional', 'light');
       border-bottom-left-radius: .5rem;
       border-bottom-right-radius: .5rem;
 
@@ -367,15 +367,15 @@
 
       @media (max-width: $screen-md) {
         padding: 10px 28px 0;
-        border-bottom: 1px solid $theme-lightest-gray-color;
+        border-bottom: 1px solid get-color('additional', 'base');
         border-radius: 0;
 
-        background: $theme-lightest-gray-color;
+        background: get-color('additional', 'base');
       }
 
       &__title {
         padding: 5px 0 15px;
-        border-bottom: 1px solid $theme-lighter-gray-color;
+        border-bottom: 1px solid get-color('additional', 'light');
 
         font-size: 18px;
         line-height: 1;

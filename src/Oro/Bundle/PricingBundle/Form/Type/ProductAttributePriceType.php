@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
-use Symfony\Component\Form\Exception;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;

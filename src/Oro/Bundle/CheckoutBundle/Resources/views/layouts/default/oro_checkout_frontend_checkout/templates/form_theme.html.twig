@@ -1,20 +1,23 @@
 {% extends 'OroFrontendBundle:layouts/default:form_theme.html.twig' %}
 
 {% block oro_frontend_country_widget %}
-    <div class="checkout__form__select">
+    <div>
         {{ form_widget(form, {'class_prefix': 'checkout'}) }}
     </div>
 {% endblock %}
 
 {% block oro_frontend_region_widget %}
     {% set regionView = 'orocheckout/js/region/view' %}
-    <div class="checkout__form__select">
+
+    <div>
         {{ block('oro_region_widget') }}
     </div>
 {% endblock %}
 
 {%- block form_label -%}
-    {% set label_attr = label_attr|merge({class: label_attr.class|default('') ~ "checkout__form__label checkout__form__label--additional"}) %}
+    {% set label_attr = layout_attr_defaults(label_attr, {
+        '~class': ' label label--full'
+    }) %}
 
     {{ parent() }}
 {%- endblock form_label -%}
