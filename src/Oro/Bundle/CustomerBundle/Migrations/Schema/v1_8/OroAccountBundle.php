@@ -322,12 +322,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
             ['id'],
             ['onDelete' => 'SET NULL']
         );
-        $this->renameExtension->addIndex(
-            $schema,
-            $queries,
-            'oro_note',
-            ['account_8d1f63b9_id']
-        );
 
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\NoteBundle\Entity\Note',
