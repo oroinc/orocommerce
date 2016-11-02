@@ -789,7 +789,7 @@ workflows:
                             accountUser: $checkout.accountUser
                             billingAddress: $checkout.billingAddress
                             shippingAddress: $.result.shippingAddress
-                            shippingCost: $checkout.shippingCost
+                            estimatedShippingCost: $checkout.shippingCost
                             poNumber: $checkout.poNumber
                             customerNotes: $checkout.customerNotes
                             shipUntil: $checkout.shipUntil

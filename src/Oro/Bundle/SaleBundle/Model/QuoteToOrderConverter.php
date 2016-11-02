@@ -4,7 +4,6 @@ namespace Oro\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -215,14 +214,14 @@ class QuoteToOrderConverter
      */
     protected function fillShippingCost(Price $shippingEstimate, Order $order)
     {
-        $shippingCostAmount = $shippingEstimate->getValue();
+        $estimatedShippingCostAmount = $shippingEstimate->getValue();
         $shippingEstimateCurrency = $shippingEstimate->getCurrency();
         $orderCurrency = $order->getCurrency();
         if ($orderCurrency !== $shippingEstimateCurrency) {
-            $shippingCostAmount *= $this->getExchangeRate($shippingEstimateCurrency, $orderCurrency);
+            $estimatedShippingCostAmount *= $this->getExchangeRate($shippingEstimateCurrency, $orderCurrency);
         }
 
-        $order->setShippingCost(Price::create($shippingCostAmount, $orderCurrency));
+        $order->setEstimatedShippingCost(Price::create($estimatedShippingCostAmount, $orderCurrency));
     }
 
     /**

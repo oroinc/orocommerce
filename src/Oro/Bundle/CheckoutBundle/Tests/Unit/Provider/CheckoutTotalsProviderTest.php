@@ -74,7 +74,7 @@ class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
         $order = $this->getEntity(
             Order::class,
             [
-                'shippingCost' => $price,
+                'estimatedShippingCost' => $price,
                 'shippingAddress' => $address,
                 'billingAddress' => $address,
                 'account' => $account,
