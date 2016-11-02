@@ -4,14 +4,14 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Layout\DataProvider\OrderShippingMethodProvider;
-use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
+use Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter;
 
 class OrderShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ShippingMethodLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodFormatter|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $shippingMethodLabelFormatter;
+    protected $shippingMethodFormatter;
 
     /**
      * @var OrderShippingMethodProvider
@@ -20,15 +20,12 @@ class OrderShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        if (class_exists('Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter')) {
-            $this->shippingMethodLabelFormatter = $this
-                ->getMockBuilder('Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter')
-                ->disableOriginalConstructor()
-                ->getMock();
-        } else {
-            $this->shippingMethodLabelFormatter = null;
-        }
-        $this->orderShippingMethodProvider = new OrderShippingMethodProvider($this->shippingMethodLabelFormatter);
+        $this->shippingMethodFormatter = $this
+            ->getMockBuilder('Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->orderShippingMethodProvider = new OrderShippingMethodProvider($this->shippingMethodFormatter);
     }
 
     public function testGetData()
@@ -39,12 +36,12 @@ class OrderShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
         $order->setShippingMethod($method)->setShippingMethodType($type);
 
-        if ($this->shippingMethodLabelFormatter) {
-            $this->shippingMethodLabelFormatter->expects($this->once())
-                ->method('formatShippingMethodWithType')
-                ->with($method, $type)
-                ->willReturn($expected);
-        }
+
+        $this->shippingMethodFormatter->expects($this->once())
+            ->method('formatShippingMethodWithTypeLabel')
+            ->with($method, $type)
+            ->willReturn($expected);
+
         $label = $this->orderShippingMethodProvider->getData($order);
         $this->assertEquals($expected, $label);
     }
