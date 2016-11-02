@@ -281,7 +281,7 @@ class Order extends ExtendOrder implements
     /**
      * @var float
      *
-     * @ORM\Column(name="shipping_cost_amount", type="money", nullable=true)
+     * @ORM\Column(name="estimated_shipping_cost_amount", type="money", nullable=true)
      */
     protected $estimatedShippingCostAmount;
 
