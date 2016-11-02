@@ -95,10 +95,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
      */
     protected function assertItemsCount($expectedCount)
     {
-        $repository = $this->getRepository(Item::class);
-        $actualCount = $this->makeCountQuery($repository);
-
-        $this->assertEquals($expectedCount, $actualCount);
+        $this->assertEntityCount($expectedCount, Item::class);
     }
 
     /**
