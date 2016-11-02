@@ -1,0 +1,15 @@
+operations:
+    oro_web_catalog_edit_content_tree:
+        label: oro.webcatalog.button.webcatalog.edit_content_tree.label
+        routes: [oro_web_catalog_view]
+        acl_resource: oro_web_catalog_update
+        datagrids:
+            - web-catalog-grid
+        order: 10
+        button_options:
+            icon: icon-sitemap
+        actions:
+            - '@redirect':
+                route: 'oro_content_node_update_root'
+                route_parameters:
+                    id: $.entity.id

@@ -1,0 +1,49 @@
+{% block __oro_customer_only_content_form__page_widget %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_customer_only_content_form__label_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-title'
+    }) %}
+    <h2{{ block('block_attributes') }}>{{ block_widget(block) }}</h2>
+{% endblock %}
+
+{% block __oro_customer_only_content_form__description_widget %}
+    <div class="form-row">
+        <p{{ block('block_attributes') }}>{{ block_widget(block) }}</p>
+    </div>
+{% endblock %}
+
+{% block __oro_customer_only_content_form__form_submit_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' form-row'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_customer_only_content_form__form_submit_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' button'
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block __oro_customer_only_content_form__links_widget %}
+    {% set childs = [] %}
+    {% for child in block if child.vars.visible %}
+        {% set childs = childs|merge([child]) %}
+    {% endfor %}
+    {% for child in childs %}
+        <div class="form-row {{ loop.last ? 'form-row--offset-none' }}">
+            {% set attr = layout_attr_defaults(child.vars.attr, {
+                '~class': ' link'
+            }) %}
+            {{ block_widget(child, {attr: attr}) }}
+        </div>
+    {% endfor %}
+{% endblock %}

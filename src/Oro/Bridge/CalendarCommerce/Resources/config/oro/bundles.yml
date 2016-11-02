@@ -1,0 +1,5 @@
+bundles:
+    # needs to be loaded after Commerce AccountBundle's priority: 25
+    # needs to be loaded after Commerce OrderBundle's priority: 50
+    # needs to be loaded after Commerce SaleBundle's priority: 60
+    - { name: Oro\Bridge\CalendarCommerce\OroCalendarCommerceBridgeBundle, priority: 61 }

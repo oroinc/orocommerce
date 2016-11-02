@@ -7,6 +7,8 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -31,10 +33,20 @@ class ContentNodeType extends AbstractType
                 LocalizedFallbackValueCollectionType::NAME,
                 [
                     'label'    => 'oro.webcatalog.contentnode.titles.label',
-                    'required' => false,
                 ]
-            )
-            ->add(
+            );
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        $data = $event->getData();
+        if ($data instanceof ContentNode && $data->getParentNode() instanceof ContentNode) {
+            $event->getForm()->add(
                 'slugs',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
@@ -43,6 +55,7 @@ class ContentNodeType extends AbstractType
                     'options'  => ['constraints' => [new NotBlank()]],
                 ]
             );
+        }
     }
 
     /**

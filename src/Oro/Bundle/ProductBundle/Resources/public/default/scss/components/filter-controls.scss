@@ -5,8 +5,8 @@
   align-items: center;
   margin: 0;
   padding: 10px 0 !important;
-  border-bottom: 1px solid $theme-lighter-gray-color;
-  border-top: 1px solid $theme-lighter-gray-color;
+  border-bottom: 1px solid get-color('additional', 'light');
+  border-top: 1px solid get-color('additional', 'light');
 
   font-size: 0;
 
@@ -59,19 +59,19 @@
 }
 
 .catalog-view-option {
-  color: $theme-light-gray-color;
+  color: get-color('additional', 'middle');
 }
 
 .current {
   .catalog-view-option {
-    color: $theme-orange-color;
+    color: get-color('primary', 'base');
   }
 }
 
 .catalog-filter {
   position: relative;
   padding: 15px 10px 4px 90px;
-  background: $base-sidebar-background-color-light;
+  background: get-color('additional', 'base');
 
   form {
     display: flex;
