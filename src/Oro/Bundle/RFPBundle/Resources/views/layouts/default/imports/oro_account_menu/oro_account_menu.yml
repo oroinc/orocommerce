@@ -8,3 +8,5 @@ layout:
                 visible: '=data["acl"].isGranted("oro_rfp_frontend_request_view") && data["feature"].isResourceEnabled("oro_rfp_frontend_request_index", "routes")'
                 route_name: oro_rfp_frontend_request_index
                 text: oro.frontend.rfp.request.entity_plural_label
+            siblingId: account_sidebar_sign_out
+            prepend: true

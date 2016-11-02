@@ -4,32 +4,13 @@ layout:
             themes: 'OroCustomerBundle:layouts:default/page/top_nav_logged.html.twig'
         - '@addTree':
             items:
-                top_nav_left_logged_user:
-                    blockType: container
-                top_nav_left_signed_in_as_label:
-                    blockType: text
-                    options:
-                        text: 'oro.customer.frontend.menu.account_user_signed_in_as.label'
-                top_nav_left_signed_in_as:
-                    blockType: text
-                    options:
-                        text: '=data["current_user"].getCurrentUser().getFullName()'
                 top_nav_left_sign_out:
                     blockType: link
                     options:
                         route_name: oro_customer_account_user_security_logout
                         text: 'oro.customer.frontend.menu.account_user_sign_out.label'
-                top_nav_left_my_account:
-                    blockType: link
-                    options:
-                        route_name: oro_customer_frontend_account_user_profile
-                        text: 'oro.customer.frontend.menu.account_user_profile.label'
             tree:
                 top_nav_controls:
-                    top_nav_left_logged_user:
-                        top_nav_left_signed_in_as_label: ~
-                        top_nav_left_signed_in_as: ~
-                    top_nav_left_my_account: ~
                     top_nav_left_sign_out: ~
 
     conditions: 'context["is_logged_in"]'

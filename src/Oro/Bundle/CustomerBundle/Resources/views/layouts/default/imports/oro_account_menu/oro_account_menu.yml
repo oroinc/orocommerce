@@ -48,10 +48,5 @@ layout:
             parentId: account_sidebar
             blockType: link
             options:
-                visible: '=data["acl"].isGranted("oro_account_frontend_account_user_view")'
                 route_name: oro_customer_account_user_security_logout
                 text: oro.customer.frontend.menu.account_user_sign_out.label
-        - '@move':
-            id: account_sidebar_sign_out
-            siblingId: account_sidebar_quote
-            prepend: false

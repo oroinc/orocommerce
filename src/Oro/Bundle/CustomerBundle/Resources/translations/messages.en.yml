@@ -531,7 +531,6 @@ oro.customer:
                 action.label: Action
                 permission.label: Permission
         menu:
-            account_user_signed_in_as.label: 'Signed in as:'
             account_user_sign_out.label: 'Sign Out'
             account_user_profile.label: 'Account'
 

@@ -1,23 +1,7 @@
-{% block _top_nav_left_logged_user_widget %}
-    <li>
-        <span>
-            {% for child in block %}
-                {{ block_widget(child) }}{% if not loop.last %} {% endif %}
-            {% endfor %}
-        </span>
-    </li>
-{% endblock %}
-
 {% block _top_nav_left_sign_out_widget %}
     <li>
         <a href="{{ path(route_name) }}">
             <i class="icon-signout"></i> {{ text|trans }}
         </a>
-    </li>
-{% endblock %}
-
-{% block _top_nav_left_my_account_widget %}
-    <li>
-        {{ block_widget(block) }}
     </li>
 {% endblock %}
