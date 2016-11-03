@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Layout\DataProvider;
 
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
@@ -17,10 +19,17 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
     /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $mockFormFactory;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
+     */
+    protected $router;
+
     protected function setUp()
     {
         $this->mockFormFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')->getMock();
-        $this->provider = new FrontendAccountUserAddressFormProvider($this->mockFormFactory);
+        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+
+        $this->provider = new FrontendAccountUserAddressFormProvider($this->mockFormFactory, $this->router);
     }
 
     public function testGetAddressFormWhileUpdate()
@@ -63,13 +72,11 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
             ->with(AccountUserTypedAddressType::NAME, $mockAccountUserAddress)
             ->willReturn($mockForm);
 
-        $formAccessor = $this->provider->getAddressForm($mockAccountUserAddress, $mockAccountUser);
+        $form = $this->provider->getAddressForm($mockAccountUserAddress, $mockAccountUser);
 
-        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $formAccessor);
+        $this->assertInstanceOf(FormInterface::class, $form);
 
-        $formAccessorSecondCall =  $this->provider->getAddressForm($mockAccountUserAddress, $mockAccountUser);
-        $this->assertSame($formAccessor, $formAccessorSecondCall);
-
-        $this->assertSame($formAccessor->getForm(), $formAccessorSecondCall->getForm());
+        $formSecondCall =  $this->provider->getAddressForm($mockAccountUserAddress, $mockAccountUser);
+        $this->assertSame($form, $formSecondCall);
     }
 }

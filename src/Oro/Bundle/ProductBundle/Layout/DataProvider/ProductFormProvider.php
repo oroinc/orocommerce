@@ -73,6 +73,7 @@ class ProductFormProvider extends AbstractFormProvider
 
         if ($product) {
             $lineItem->setProduct($product);
+            $options[AbstractFormProvider::USED_FOR_CACHE_ONLY_OPTION] = ['id' => $product->getId()];
         }
 
         return $this->getForm(FrontendLineItemType::NAME, $lineItem, $options);

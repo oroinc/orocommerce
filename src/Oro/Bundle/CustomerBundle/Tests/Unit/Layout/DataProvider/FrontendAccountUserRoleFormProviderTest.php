@@ -6,6 +6,7 @@ use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
@@ -22,6 +23,11 @@ class FrontendAccountUserRoleFormProviderTest extends \PHPUnit_Framework_TestCas
     /** @var FrontendAccountUserRoleFormProvider */
     protected $provider;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
+     */
+    protected $router;
+
     protected function setUp()
     {
         $this->handler = $this
@@ -31,7 +37,9 @@ class FrontendAccountUserRoleFormProviderTest extends \PHPUnit_Framework_TestCas
 
         /** @var FormFactory|\PHPUnit_Framework_MockObject_MockObject $formFactory */
         $formFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')->getMock();
-        $this->provider = new FrontendAccountUserRoleFormProvider($formFactory, $this->handler);
+        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+
+        $this->provider = new FrontendAccountUserRoleFormProvider($formFactory, $this->handler, $this->router);
     }
 
     protected function tearDown()
@@ -50,15 +58,14 @@ class FrontendAccountUserRoleFormProviderTest extends \PHPUnit_Framework_TestCas
     {
         $form = $this->assertAccountUserRoleFormHandlerCalled($role);
 
+        $this->router->expects($this->exactly(2))
+            ->method('generate')
+            ->with($route, $routeParameters);
+
         $actual = $this->provider->getRoleForm($role);
 
-        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $actual);
-        $this->assertSame($form, $actual->getForm());
-
-        $action = $actual->getAction();
-
-        $this->assertEquals($route, $action->getRouteName());
-        $this->assertEquals($routeParameters, $action->getRouteParameters());
+        $this->assertInstanceOf(FormInterface::class, $actual);
+        $this->assertSame($form, $actual);
 
         /** test local cache */
         $this->assertSame($actual, $this->provider->getRoleForm($role));
@@ -108,11 +115,11 @@ class FrontendAccountUserRoleFormProviderTest extends \PHPUnit_Framework_TestCas
             ->method('createView')
             ->willReturn($view);
 
-        $this->handler->expects($this->once())
+        $this->handler->expects($this->any())
             ->method('createForm')
             ->with($role)
             ->willReturn($form);
-        $this->handler->expects($this->once())
+        $this->handler->expects($this->any())
             ->method('process')
             ->with($role);
 

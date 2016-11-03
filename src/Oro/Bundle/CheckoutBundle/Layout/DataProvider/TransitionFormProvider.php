@@ -40,6 +40,8 @@ class TransitionFormProvider extends AbstractFormProvider
             return null;
         }
 
+        $options[AbstractFormProvider::USED_FOR_CACHE_ONLY_OPTION] = [$transition->getName(), $workflowItem->getId()];
+
         return $this->getForm(
             $transition->getFormType(),
             $workflowItem->getData(),
