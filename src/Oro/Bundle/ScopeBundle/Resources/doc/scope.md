@@ -50,8 +50,7 @@ Scope Model
 -----------
 Scope model is a data structure for storing scope items. Every scope item has fields for every scope criteria registered by the scope criteria provider services. When the scope criteria is not involved in the scope (based on the scope type), the value of the field is NULL.
 
-|scope id|scope criteria 1|scope criteria 2| ... | scope criteria N |
-| |(authorised user)|(website_id)|(Country)|(Locale)|
+|scope id|scope criteria 1 (authorised user)|scope criteria 2 (website_id)| ... (Country)| scope criteria N (Locale) |
 |---|---|---|---|
 |1|true|null|US|EN|
 |1|false|null|Germany|DE|
