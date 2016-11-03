@@ -13,7 +13,7 @@ define(function(require) {
 
     TitleEditorView = TextEditorView.extend(/** @exports TitleEditorView.prototype */{
         template: require('tpl!../../../../templates/editor/title-editor.html'),
-        className: 'form-input form-input_edit-mode cart__order-title_rename-mode'
+        className: 'cart__order-title_rename-mode'
     });
 
     return TitleEditorView;

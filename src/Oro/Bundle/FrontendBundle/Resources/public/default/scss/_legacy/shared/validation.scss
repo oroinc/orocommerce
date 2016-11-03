@@ -1,5 +1,5 @@
 .input-widget-select.error {
-  border: 1px solid $theme-input-error;
+  border: 1px solid get-color('ui', 'error-dark');
   box-shadow: 0 1px 7px 0 rgba(223,96,96,.6);
 }
 
@@ -19,8 +19,8 @@
 }
 
 .validation-failed, .validation-error {
-  background: $theme-error-bg-color;
-  color: $theme-error-font-color;
+  background: get-color('ui', 'error');
+  color: get-color('ui', 'error-dark');
 
   &:before {
     content: "\e900";
@@ -37,6 +37,6 @@
 }
 
 .validation-passed {
-  background-color: $theme-notice-bg-color;
-  color: $theme-notice-font-color;
+  background-color: get-color('ui', 'success');
+  color: get-color('ui', 'success-dark');
 }
