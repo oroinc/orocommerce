@@ -7,10 +7,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'account_user_login_form.html.twig'
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue: oro.customer.menu.account_user_login.label
         - '@setOption':
             id: login_label
             optionName: text
