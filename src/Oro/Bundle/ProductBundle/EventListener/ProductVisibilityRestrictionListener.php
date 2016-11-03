@@ -22,14 +22,14 @@ class ProductVisibilityRestrictionListener
     private $mappingProvider;
 
     /**
-     * @param ProductManager $productManager
+     * @param ProductManager                $productManager
      * @param AbstractSearchMappingProvider $mappingProvider
      */
     public function __construct(
         ProductManager $productManager,
         AbstractSearchMappingProvider $mappingProvider
     ) {
-        $this->productManager = $productManager;
+        $this->productManager  = $productManager;
         $this->mappingProvider = $mappingProvider;
     }
 
@@ -48,7 +48,9 @@ class ProductVisibilityRestrictionListener
      */
     private function applyQueryRestrictions(Query $query)
     {
-        if ($this->isProductInFrom($query)) {
+        if ($this->isStrictlyProductInFrom($query) ||
+            !$this->isProductInFrom($query)
+        ) {
             $this->productManager->restrictSearchQuery($query);
 
             return;
@@ -71,6 +73,20 @@ class ProductVisibilityRestrictionListener
                 $restrictions
             )
         );
+    }
+
+    /**
+     * @param Query $query
+     * @return bool
+     */
+    private function isStrictlyProductInFrom(Query $query)
+    {
+        $productEntityAlias =
+            $this->mappingProvider->getEntityAlias(Product::class);
+
+        $from = $query->getFrom();
+
+        return $from === [Product::class] || $from === [$productEntityAlias];
     }
 
     /**
