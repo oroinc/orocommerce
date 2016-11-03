@@ -160,7 +160,7 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
         }
 
         $this->assertFalse($foundSkuExpression, 'Sku is null expression should not be applied.');
-        $this->assertTrue($foundCustomExpression, 'Custom expression from listener not found.');
+        $this->assertFalse($foundCustomExpression, 'Custom expression from listener should not be applied.');
     }
 
     public function testRestrictsVisibilityForManyEntitiesWithPreviouslyPopulatedWhere()

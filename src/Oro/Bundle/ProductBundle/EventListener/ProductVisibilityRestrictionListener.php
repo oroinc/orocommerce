@@ -48,9 +48,11 @@ class ProductVisibilityRestrictionListener
      */
     private function applyQueryRestrictions(Query $query)
     {
-        if ($this->isStrictlyProductInFrom($query) ||
-            !$this->isProductInFrom($query)
-        ) {
+        if (!$this->isProductInFrom($query)) {
+            return;
+        }
+
+        if ($this->isStrictlyProductInFrom($query)) {
             $this->productManager->restrictSearchQuery($query);
 
             return;
