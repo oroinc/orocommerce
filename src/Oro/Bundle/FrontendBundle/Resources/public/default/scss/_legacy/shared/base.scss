@@ -32,10 +32,6 @@
 
   @include clearfix();
 
-  @media (max-width: $screen-sm) {
-    margin-bottom: 0;
-  }
-
   &.sticky-nav {
     @media (max-width: $screen-md) {
       padding-top: 5rem;
