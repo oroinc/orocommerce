@@ -59,11 +59,9 @@ class FrontendAccountUserRegistrationFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param array $options
-     *
      * @return FormInterface
      */
-    public function getRegisterForm(array $options = [])
+    public function getRegisterForm()
     {
         $options['action'] = $this->generateUrl(
             self::ACCOUNT_USER_REGISTER_ROUTE_NAME

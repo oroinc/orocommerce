@@ -21,11 +21,10 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
 
     /**
      * @param AccountUser $accountUser
-     * @param array       $options
      *
      * @return FormInterface
      */
-    public function getAccountUserForm(AccountUser $accountUser, array $options = [])
+    public function getAccountUserForm(AccountUser $accountUser)
     {
         if ($accountUser->getId()) {
             $options['action'] = $this->generateUrl(
@@ -57,11 +56,10 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
 
     /**
      * @param AccountUser $accountUser
-     * @param array       $options
      *
      * @return FormInterface
      */
-    public function getResetPasswordForm(AccountUser $accountUser = null, array $options = [])
+    public function getResetPasswordForm(AccountUser $accountUser = null)
     {
         $options['action'] = $this->generateUrl(
             self::ACCOUNT_USER_PASSWORD_RESET_ROUTE_NAME
@@ -72,11 +70,10 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
 
     /**
      * @param AccountUser $accountUser
-     * @param array       $options
      *
      * @return FormInterface
      */
-    public function getProfileForm(AccountUser $accountUser, array $options = [])
+    public function getProfileForm(AccountUser $accountUser)
     {
         if ($accountUser->getId()) {
             $options['action'] = $this->generateUrl(

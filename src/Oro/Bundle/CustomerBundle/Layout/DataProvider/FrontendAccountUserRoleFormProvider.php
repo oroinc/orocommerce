@@ -38,11 +38,10 @@ class FrontendAccountUserRoleFormProvider extends AbstractFormProvider
      * Get form accessor with account user role form
      *
      * @param AccountUserRole $accountUserRole
-     * @param array           $options
      *
      * @return FormInterface
      */
-    public function getRoleForm(AccountUserRole $accountUserRole, $options = [])
+    public function getRoleForm(AccountUserRole $accountUserRole)
     {
         if ($accountUserRole->getId()) {
             $options['action'] = $this->generateUrl(

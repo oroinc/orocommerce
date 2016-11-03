@@ -15,11 +15,10 @@ class ShoppingListFormProvider extends AbstractFormProvider
 
     /**
      * @param ShoppingList $shoppingList
-     * @param array        $options
      *
      * @return FormInterface
      */
-    public function getShoppingListForm(ShoppingList $shoppingList, array $options = [])
+    public function getShoppingListForm(ShoppingList $shoppingList)
     {
         if ($shoppingList->getId()) {
             $options['action'] = $this->generateUrl(

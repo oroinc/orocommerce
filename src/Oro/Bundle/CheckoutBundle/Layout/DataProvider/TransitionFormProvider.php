@@ -25,14 +25,13 @@ class TransitionFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param WorkflowItem $workflowItem
+     * @param WorkflowItem   $workflowItem
      * @param TransitionData $transitionData
-     * @param array   $options
      *
      * @return FormInterface|null
      * @throws WorkflowException
      */
-    public function getTransitionForm(WorkflowItem $workflowItem, TransitionData $transitionData, array $options = [])
+    public function getTransitionForm(WorkflowItem $workflowItem, TransitionData $transitionData)
     {
         $transition = $transitionData->getTransition();
 

@@ -10,12 +10,10 @@ use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
 class CreditCardFormProvider extends AbstractFormProvider
 {
     /**
-     * @param array $options
-     *
      * @return FormInterface
      */
-    public function getCreditCardForm(array $options = [])
+    public function getCreditCardForm()
     {
-        return $this->getForm(CreditCardType::NAME, null, $options);
+        return $this->getForm(CreditCardType::NAME, null, []);
     }
 }

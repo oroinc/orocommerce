@@ -19,11 +19,10 @@ class FrontendAccountAddressFormProvider extends AbstractFormProvider
      *
      * @param AccountAddress $accountAddress
      * @param Account        $account
-     * @param array          $options
      *
      * @return FormInterface
      */
-    public function getAddressForm(AccountAddress $accountAddress, Account $account, array $options = [])
+    public function getAddressForm(AccountAddress $accountAddress, Account $account)
     {
         if ($accountAddress->getId()) {
             $options['action'] = $this->generateUrl(

@@ -19,15 +19,15 @@ class FrontendAccountUserAddressFormProvider extends AbstractFormProvider
      *
      * @param AccountUserAddress $accountUserAddress
      * @param AccountUser        $accountUser
-     * @param array              $options
      *
      * @return FormInterface
      */
     public function getAddressForm(
         AccountUserAddress $accountUserAddress,
-        AccountUser $accountUser,
-        array $options = []
+        AccountUser $accountUser
     ) {
+        $options = [];
+
         if ($accountUserAddress->getId()) {
             $options['action'] = $this->generateUrl(
                 self::ACCOUNT_USER_ADDRESS_UPDATE_ROUTE_NAME,

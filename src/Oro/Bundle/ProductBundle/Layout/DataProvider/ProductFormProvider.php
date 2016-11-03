@@ -34,11 +34,9 @@ class ProductFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param array $options
-     *
      * @return FormInterface
      */
-    public function getQuickAddCopyPasteForm(array $options = [])
+    public function getQuickAddCopyPasteForm()
     {
         $options['action'] = $this->generateUrl(
             self::PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME
@@ -48,11 +46,9 @@ class ProductFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @param array $options
-     *
      * @return FormInterface
      */
-    public function getQuickAddImportForm(array $options = [])
+    public function getQuickAddImportForm()
     {
         $options['action'] = $this->generateUrl(
             self::PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME
@@ -63,17 +59,18 @@ class ProductFormProvider extends AbstractFormProvider
 
     /**
      * @param Product|null $product
-     * @param array $options
+     * @param string       $instanceName
      *
      * @return FormInterface
      */
-    public function getLineItemForm(Product $product = null, array $options = [])
+    public function getLineItemForm(Product $product = null, $instanceName = '')
     {
+        $options[AbstractFormProvider::USED_FOR_CACHE_ONLY_OPTION]['instanceName'] = $instanceName;
         $lineItem = new ProductLineItem(null);
 
         if ($product) {
             $lineItem->setProduct($product);
-            $options[AbstractFormProvider::USED_FOR_CACHE_ONLY_OPTION] = ['id' => $product->getId()];
+            $options[AbstractFormProvider::USED_FOR_CACHE_ONLY_OPTION]['id'] = $product->getId();
         }
 
         return $this->getForm(FrontendLineItemType::NAME, $lineItem, $options);

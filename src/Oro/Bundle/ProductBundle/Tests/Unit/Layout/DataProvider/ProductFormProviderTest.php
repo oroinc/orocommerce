@@ -106,6 +106,28 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(FormInterface::class, $data);
     }
 
+    public function testGetLineItemFormWithInstanceName()
+    {
+        $expectedForm = $this->getMock(FormInterface::class);
+
+        $this->formFactory->expects($this->exactly(2))
+            ->method('create')
+            ->with(FrontendLineItemType::NAME)
+            ->willReturn($expectedForm);
+
+        // Get form without existing data in locale cache
+        $data1 = $this->provider->getLineItemForm(null, 'form1');
+
+        // Get form with existing data in locale cache
+        $data1Cache = $this->provider->getLineItemForm(null, 'form1');
+        $this->assertSame($data1, $data1Cache);
+
+        // Get new form instance
+        $data2 = $this->provider->getLineItemForm(null, 'form2');
+        $this->assertSame($data1, $data2);
+        $this->assertEquals($data1, $data2);
+    }
+
     public function testGetLineItemFormWithProduct()
     {
         $expectedForm = $this->getMock(FormInterface::class);

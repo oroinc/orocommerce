@@ -7,7 +7,6 @@ use Symfony\Component\Form\FormInterface;
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
-use Symfony\Component\Form\FormView;
 
 class RFPFormProvider extends AbstractFormProvider
 {
@@ -16,11 +15,10 @@ class RFPFormProvider extends AbstractFormProvider
 
     /**
      * @param Request $request
-     * @param array   $options
      *
      * @return FormInterface
      */
-    public function getRequestForm(Request $request, array $options = [])
+    public function getRequestForm(Request $request)
     {
         if ($request->getId()) {
             $options['action'] = $this->generateUrl(
