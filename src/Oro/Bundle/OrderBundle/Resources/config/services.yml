@@ -155,7 +155,7 @@ services:
     oro_order.event_listener.order.possible_shipping_methods:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener'
         arguments:
-            - '@oro_order.factory.shipping_context_provider_factory'
+            - '@oro_order.factory.shipping_context'
             - '@?oro_shipping.shipping_price.provider'
         tags:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
