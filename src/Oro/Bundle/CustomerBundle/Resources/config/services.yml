@@ -588,6 +588,7 @@ services:
         public: false
         arguments:
             - "@security.token_storage"
+            - "@oro_customer.provider.account_user_relations_provider"
 
     oro_customer.account_group_scope_criteria_provider.link:
         public: false

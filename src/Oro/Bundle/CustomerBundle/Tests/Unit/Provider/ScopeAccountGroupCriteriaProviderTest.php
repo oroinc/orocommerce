@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -21,10 +24,18 @@ class ScopeAccountGroupCriteriaProviderTest extends \PHPUnit_Framework_TestCase
      */
     private $tokenStorage;
 
+    /**
+     * @var AccountUserRelationsProvider
+     */
+    protected $accountUserProvider;
+
     protected function setUp()
     {
         $this->tokenStorage = $this->getMockBuilder(TokenStorageInterface::class)->getMock();
-        $this->provider = new ScopeAccountGroupCriteriaProvider($this->tokenStorage);
+        $configManager = $this->getMockBuilder(ConfigManager::class)->disableOriginalConstructor()->getMock();
+        $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)->disableOriginalConstructor()->getMock();
+        $this->accountUserProvider = new AccountUserRelationsProvider($configManager, $doctrineHelper);
+        $this->provider = new ScopeAccountGroupCriteriaProvider($this->tokenStorage, $this->accountUserProvider);
     }
 
     public function testGetCriteriaForCurrentScope()

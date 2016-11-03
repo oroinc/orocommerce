@@ -24,11 +24,20 @@ class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
     protected $propertyAccessor;
 
     /**
-     * @param TokenStorageInterface $tokenStorage
+     * @var AccountUserRelationsProvider
      */
-    public function __construct(TokenStorageInterface $tokenStorage)
-    {
+    protected $accountUserProvider;
+
+    /**
+     * @param TokenStorageInterface $tokenStorage
+     * @param AccountUserRelationsProvider $accountUserRelationsProvider
+     */
+    public function __construct(
+        TokenStorageInterface $tokenStorage,
+        AccountUserRelationsProvider $accountUserRelationsProvider
+    ) {
         $this->tokenStorage = $tokenStorage;
+        $this->accountUserProvider = $accountUserRelationsProvider;
     }
 
     /**
@@ -49,11 +58,8 @@ class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
             return [];
         }
         $loggedUser = $token->getUser();
-        if (null !== $loggedUser
-            && $loggedUser instanceof AccountUser
-            && null !== $loggedUser->getAccount()
-        ) {
-            return [$this->getCriteriaField() => $loggedUser->getAccount()->getGroup()];
+        if (null === $loggedUser || $loggedUser instanceof AccountUser) {
+            return [$this->getCriteriaField() => $this->accountUserProvider->getAccountGroup($loggedUser)];
         }
 
         return [];
