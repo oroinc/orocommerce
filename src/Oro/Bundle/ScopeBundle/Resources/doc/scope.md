@@ -1,8 +1,24 @@
 Scopes
 ------
-Scopes is a functionality that allows to restrict data.
-The goal is to easily find an object for current request, and don't pay a lot attention on  what fields it should be filtered.
-Break relations between target entity and entities that are using to search by.
+
+.. contents::
+
+Scopes in Oro applications empowers you with additional abstraction layer that helps you get the missing information about the execution context in a standard and controllable way without costly resource-comnsuming queries to the database that involve deeply nested relationship creation. With a scope approach you can program your bundle feature to automatically launch an alternative behavior and modify displayed data just based on the information about the scope that matches current execution context.
+
+For working example of using scopes in Oro application, plase check out the `VisibilityBundle`_ and `WebsiteBundle`_.
+
+How Scopes work
+---------------
+
+**-----V  <WORK IN RPGRESS>  V-----**
+Scope Bundle exposes a Scope Manager and Scope Repository interfaces to other bundles.
+
+Database (stores existing Scopes)
+Scope Manager (polls all bundles that use Scopes and builds a scope model in a scope repository, processes find and findOrCreate requests from bundles by looking up the provided criteria in the scope repository)
+
+Scope-aware Bundle(searches for scopes (using search criteria), requests scope creation, alters bahviour or displayed data based on the obtained scope values)
+
+
 Any Bundle can affect on any scope. To extend scope should be created instance of AbstractScopeCriteriaProvider and registered with tag oro_scope.provider.
 One CriteriaScopeProvider can be used in many scope types.
 
@@ -15,8 +31,24 @@ ScopeManager call each ScopeCriteriaProvider that was registered on given scope 
 ScopeProvider's calls according to priority, this will allow to fetch the most detailed Scope.
 Scope entity can be extended by any Bundle to provide new scope type. 
 
-Scope Manager:
---------
+Scope Manager
+-------------
+Scope Manager is a service that provides an interface for querying and creating the scopes in Oro application. Scope manager handles the following functions:
+* builds a scope model in the scope repository using information about the scope providers registered by the application bundles (see `Scope Providers`_),
+* exposes scope-related operations (see `Scope operations`_) to the scope-aware bundles,
+* provides a getScope() feature for the scope-aware bundles. 
+
+Scope Repository
+----------------
+Scope Repository is a service that reads/writes the scope-realted data from/to the database. 
+
+Scope Providers
+---------------
+Scope Provider is a service that... 
+
+
+Scope Manager
+-------------
 ScopeManager is a service that helps to find correct Scope or create a new one.
 Also ScopeCriteria can be created by this manager.
 
@@ -54,7 +86,7 @@ class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
     }
 }
 ```
-service.yml:
+<your bundle>/Resources/config/service.yml:
 ```
 oro_customer.account_scope_criteria_provider:
     class: 'Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider'
@@ -92,9 +124,10 @@ Criteria can help to make correct join on scope and apply conditions according c
 Example with related scopes
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-For example there are 2 providers registered on scope type "test_scope_type"
+For example there are 2 providers registered on scope type "web_content"
 
 * ScopeAccountCriteriaProvider
+
 * ScopeWebsiteCriteriaProvider
 
 Scope has tree fields:
