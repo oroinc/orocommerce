@@ -13,14 +13,14 @@
     {% endif %}
 {% endblock %}
 
-{% block _header_widget %}
+{% block _page_header_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' header'
+    '~class': ' header'
     }) %}
 
-    <header{{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </header>
+    </div>
 {% endblock %}
 
 {% block _require_js_config_widget %}
@@ -71,9 +71,9 @@
     </div>
 {% endblock %}
 
-{% block _main_widget %}
+{% block _page_main_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' main'
+    '~class': ' main'
     }) %}
 
     <main{{ block('block_attributes') }}>
@@ -81,10 +81,10 @@
     </main>
 {% endblock %}
 
-{% block _content_widget %}
+{% block _page_content_widget %}
     {% set visibleSidebarChildren = [] %}
-    {% if blocks.sidebar_left is defined %}
-        {% for child in blocks.sidebar_left.children %}
+    {% if blocks.page_sidebar is defined %}
+        {% for child in blocks.page_sidebar.children %}
             {% if child.vars.visible %}
                 {% set visibleSidebarChildren  = visibleSidebarChildren|merge([child]) %}
             {% endif %}
@@ -95,15 +95,9 @@
         '~class': ' content' ~ (visibleSidebarChildren|length > 0 ? ' content--has-sidebar')
     }) %}
 
-    <div{{ block('block_attributes') }}>
-        <div class="content__container">
-            <div class="container-fluid">
-                <div class="content__inner">
-                    {{ block_widget(block) }}
-                </div>
-            </div>
-        </div>
-    </div>
+    <section {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </section>
 {% endblock %}
 
 {% block _page_title_container_widget %}
@@ -120,12 +114,13 @@
     {{ block_widget(block) }}
 {% endblock %}
 
-{% block _sidebar_left_widget %}
+{% block _page_sidebar_widget %}
     {% if block.count > 0 %}
         {% set attr = layout_attr_defaults(attr, {
-            class: attr.class|default('') ~ " sidebar sidebar_left"
+        '~class': ' sidebar sidebar--left'
         }) %}
-        <aside{{ block('block_attributes') }}>
+
+        <aside {{ block('block_attributes') }}>
             {{ block_widget(block) }}
         </aside>
     {% endif %}

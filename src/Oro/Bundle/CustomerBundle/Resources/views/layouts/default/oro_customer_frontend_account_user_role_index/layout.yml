@@ -3,7 +3,7 @@ layout:
         - oro_account_menu
         -
             id: oro_account_user_role_grid
-            root: content
+            root: page_content
             namespace: account_user_roles
 
     actions:
@@ -20,6 +20,6 @@ layout:
             optionValue: 'oro.customer.frontend.account_user.role.entity_plural_label'
 
         - '@setOption':
-            id: content
+            id: page_content
             optionName: class_prefix
             optionValue: 'account-user-roles'

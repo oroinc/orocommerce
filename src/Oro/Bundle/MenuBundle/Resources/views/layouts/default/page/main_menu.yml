@@ -18,7 +18,7 @@ layout:
                         item: '=data["menu"].getMenu("main-menu")'
                         depth: 1
             tree:
-                header:
+                page_header:
                     header_row:
                         header_row_links:
                             main_menu_container:

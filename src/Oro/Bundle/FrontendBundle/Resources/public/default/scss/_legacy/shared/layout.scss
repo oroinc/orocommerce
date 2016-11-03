@@ -105,8 +105,7 @@
   &--has-sidebar { //Layout with left sidebar;
     order: 2;
     flex: 1;
-    max-width: calc(#{$site-width} - 25.5rem);
-    overflow-y: auto;
+    max-width: calc(#{$site-width} - 255px);
 
     .content__inner {
       padding-left: 15px;

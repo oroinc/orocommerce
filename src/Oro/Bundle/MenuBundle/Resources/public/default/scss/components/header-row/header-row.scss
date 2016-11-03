@@ -81,8 +81,6 @@
 
 @include breakpoint('tablet') {
     .header-row {
-        margin: 0 -15px;
-
         &__container {
             position: static;
 
