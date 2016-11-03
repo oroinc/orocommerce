@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\ContentNodeUtils;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller;
 use Oro\Bundle\WebCatalogBundle\Tests\Unit\Entity\Stub\ContentNode;
@@ -44,7 +45,20 @@ class ContentNodeNameFillerTest extends \PHPUnit_Framework_TestCase
 
     public function testFillNameWithDefaultTitleUse()
     {
-        $this->contentNode->addTitle((new LocalizedFallbackValue())->setText('some title'));
+        $this->contentNode->setDefaultTitle((new LocalizedFallbackValue())->setString('some title'));
+        $this->contentNodeNameFiller->fillName($this->contentNode);
+        $this->assertEquals('some title', $this->contentNode->getName());
+    }
+
+    public function testFillNameWithNonDefaultTitleUse()
+    {
+        $localization = new Localization();
+        $localization->setName('de');
+
+        $localizedValue = new LocalizedFallbackValue();
+        $localizedValue->setString('some title');
+        $localizedValue->setLocalization($localization);
+        $this->contentNode->addTitle($localizedValue);
         $this->contentNodeNameFiller->fillName($this->contentNode);
         $this->assertEquals('some title', $this->contentNode->getName());
     }

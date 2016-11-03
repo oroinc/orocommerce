@@ -60,6 +60,7 @@ services:
             - '@oro_b2bentity.extra_insert_entity_storage'
             - '@oro_web_catalog.content_node_utils.content_node_name_filler'
         tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: preUpdate }
 

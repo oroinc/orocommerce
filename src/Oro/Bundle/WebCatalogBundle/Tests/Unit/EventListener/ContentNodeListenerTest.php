@@ -53,13 +53,20 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testPostPersist()
+    public function testPrePersist()
     {
         $contentNode = new ContentNode();
 
         $this->contentNodeNameFiller->expects($this->once())
             ->method('fillName')
             ->with($contentNode);
+
+        $this->contentNodeListener->prePersist($contentNode);
+    }
+
+    public function testPostPersist()
+    {
+        $contentNode = new ContentNode();
 
         $this->modifier->expects($this->once())
             ->method('calculateMaterializedPath')

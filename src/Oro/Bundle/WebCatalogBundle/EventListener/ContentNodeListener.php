@@ -43,9 +43,16 @@ class ContentNodeListener
     /**
      * @param ContentNode $contentNode
      */
-    public function postPersist(ContentNode $contentNode)
+    public function prePersist(ContentNode $contentNode)
     {
         $this->contentNodeNameFiller->fillName($contentNode);
+    }
+
+    /**
+     * @param ContentNode $contentNode
+     */
+    public function postPersist(ContentNode $contentNode)
+    {
         $contentNode = $this->modifier->calculateMaterializedPath($contentNode);
         $this->storage->scheduleForExtraInsert($contentNode);
     }

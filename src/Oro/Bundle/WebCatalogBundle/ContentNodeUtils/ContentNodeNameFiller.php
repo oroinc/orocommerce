@@ -30,9 +30,20 @@ class ContentNodeNameFiller
             return;
         }
 
+        $title = null;
         if ($contentNode->getDefaultTitle() instanceof LocalizedFallbackValue) {
-            $title = $contentNode->getDefaultTitle()->getText();
-        } else {
+            $title = $contentNode->getDefaultTitle()->getString();
+        }
+        if (!$title) {
+            foreach ($contentNode->getTitles() as $localizedTitle) {
+                if ($localizedTitle->getString()) {
+                    $title = $localizedTitle->getString();
+                    break;
+                }
+            }
+        }
+
+        if (!$title) {
             $title = $this->contentVariantTitleProvider->getFirstTitle($contentNode->getContentVariants());
         }
 
