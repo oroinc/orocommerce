@@ -39,4 +39,4 @@ navigation:
         oro_shopping_list_index: ~
         oro_shopping_list_view:  '%%label%%'
         # TODO: join this somehow with index
-        oro_shopping_list_frontend_view:  '%%label%% - oro.shoppinglist.entity_plural_label'
+        oro_shopping_list_frontend_view:  '%%label%%'
