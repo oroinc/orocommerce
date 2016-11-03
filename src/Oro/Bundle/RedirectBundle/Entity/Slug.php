@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\RedirectBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -54,6 +56,27 @@ class Slug
      * @ORM\Column(name="route_parameters", type="array")
      */
     protected $routeParameters = [];
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\RedirectBundle\Entity\Redirect")
+     * @ORM\JoinTable(
+     *      name="oro_slug_redirect",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="slug_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="redirect_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     *
+     * @var Redirect[]|Collection
+     */
+    protected $redirects;
+
+    public function __construct()
+    {
+        $this->redirects = new ArrayCollection();
+    }
 
     /**
      * @return integer
@@ -140,5 +163,41 @@ class Slug
     public function __toString()
     {
         return (string)$this->getUrl();
+    }
+
+    /**
+     * @return Redirect[]|Collection
+     */
+    public function getRedirects()
+    {
+        return $this->redirects;
+    }
+
+    /**
+     * @param Redirect $redirect
+     *
+     * @return $this
+     */
+    public function addRedirect(Redirect $redirect)
+    {
+        if (!$this->redirects->contains($redirect)) {
+            $this->redirects->add($redirect);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Redirect $redirect
+     *
+     * @return $this
+     */
+    public function removeRedirect(Redirect $redirect)
+    {
+        if ($this->redirects->contains($redirect)) {
+            $this->redirects->removeElement($redirect);
+        }
+
+        return $this;
     }
 }

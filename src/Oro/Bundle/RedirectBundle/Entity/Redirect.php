@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\RedirectBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Table(name="oro_redirect")
+ * @ORM\Table(name="oro_redirect", indexes={@ORM\Index(name="idx_oro_redirect_from_hash", columns={"from_hash"})})
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -23,6 +26,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  */
 class Redirect
 {
+    const MOVED_PERMANENTLY = 301;
+    const MOVED_TEMPORARY = 302;
+
     /**
      * @var integer
      *
@@ -35,23 +41,46 @@ class Redirect
     /**
      * @var string
      *
-     * @ORM\Column(name="from", type="string", length=1024)
+     * @ORM\Column(name="redirect_from", type="string", length=1024)
      */
     protected $from;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="from_hash", type="string", length=32)
+     */
+    protected $fromHash;
     
     /**
      * @var string
      *
-     * @ORM\Column(name="to", type="string", length=1024)
+     * @ORM\Column(name="redirect_to", type="string", length=1024)
      */
     protected $to;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="type", type="integer")
+     * @ORM\Column(name="redirect_type", type="integer")
      */
     protected $type;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinTable(name="oro_redirect_website",
+     *      joinColumns={@ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")}
+     * )
+     *
+     * @var Website[]|Collection
+     */
+    protected $websites;
+
+    public function __construct()
+    {
+        $this->websites = new ArrayCollection();
+    }
 
     /**
      * @return integer
@@ -116,5 +145,61 @@ class Redirect
         $this->type = $type;
         
         return $this;
+    }
+    
+    /**
+     * @return Website[]|Collection
+     */
+    public function getWebsites()
+    {
+        return $this->websites;
+    }
+
+    /**
+     * @param Website $website
+     *
+     * @return $this
+     */
+    public function addWebsite(Website $website)
+    {
+        if (!$this->websites->contains($website)) {
+            $this->websites->add($website);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Website $website
+     *
+     * @return $this
+     */
+    public function removeWebsite(Website $website)
+    {
+        if ($this->websites->contains($website)) {
+            $this->websites->removeElement($website);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Pre persist event handler
+     *
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->fromHash = md5($this->from);
+    }
+
+    /**
+     * Pre update event handler
+     *
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->fromHash = md5($this->from);
     }
 }
