@@ -8,6 +8,7 @@ use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
 class OrderPossibleShippingMethodsEventListener
 {
+    const CALCULATE_SHIPPING_KEY = 'calculateShipping';
     const POSSIBLE_SHIPPING_METHODS_KEY = 'possibleShippingMethods';
 
     /**
@@ -37,12 +38,17 @@ class OrderPossibleShippingMethodsEventListener
      */
     public function onOrderEvent(OrderEvent $event)
     {
-        if ($this->priceProvider) {
-            $order = $event->getOrder();
+        if (array_key_exists(self::CALCULATE_SHIPPING_KEY, $event->getSubmittedData()) &&
+            $event->getSubmittedData()[self::CALCULATE_SHIPPING_KEY] === 'true'
+        ) {
+            if (!$this->priceProvider) {
+                $data = [];
+            } else {
+                $order = $event->getOrder();
 
-            $context = $this->factory->create($order);
-            $data = $this->priceProvider->getApplicableMethodsWithTypesData($context, true);
-
+                $context = $this->factory->create($order);
+                $data = $this->priceProvider->getApplicableMethodsWithTypesData($context, true);
+            }
             $event->getData()->offsetSet(self::POSSIBLE_SHIPPING_METHODS_KEY, $data);
         }
     }

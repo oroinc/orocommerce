@@ -7,16 +7,18 @@ define(function(require) {
         _ = require('underscore'),
         mediator = require('oroui/js/mediator'),
         __ = require('orotranslation/js/translator'),
-        BaseComponent = require('oroui/js/app/components/base/component');
+        BaseComponent = require('oroui/js/app/components/base/component'),
+        LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     
     PossibleShippingMethodsComponent = BaseComponent.extend({
         selectors: {
             toggleBtn: '#possible_shipping_methods_btn',
             possibleShippingMethodForm: '[data-content="possible_shipping_methods_form"]',
             possibleShippingMethodType: '[name$="possibleShippingMethodType"]',
+            calculateShipping: '[name$="[calculateShipping]"]',
             shippingMethod: '[name$="[shippingMethod]"]',
             shippingMethodType: '[name$="[shippingMethodType]"]',
-            shippingCost: '[name$="[estimatedShippingCost][value]"]'
+            shippingCost: '[name$="[estimatedShippingCost]"]'
         },
 
         /**
@@ -25,59 +27,56 @@ define(function(require) {
          */
         initialize: function(options) {
             this.$el = options._sourceElement;
-            this.$data = options.data;
+            this.loadingMaskView = new LoadingMaskView({container: this.$el});
             var self = this;
-            this.$el.find(this.selectors.possibleShippingMethodForm).hide();
-            this.$el.find(this.selectors.toggleBtn).on('click', function(){
-                $(this).hide();
-                self.$el.find(self.selectors.possibleShippingMethodForm).show();
+            this.getPossibleShippingMethodForm().hide();
+            this.getToggleButton().on('click', function(){
+                self.getCalculateShippingElement().val(true);
+                mediator.trigger('entry-point:order:trigger');
             });
-            this.$el.find(this.selectors.possibleShippingMethodForm).on(
+            this.getPossibleShippingMethodForm().on(
                 'change',
                 this.selectors.possibleShippingMethodType,
                 _.bind(this.onShippingMethodTypeChange, this
                 )
             );
-            this.initShippingMethod();
+            mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
             mediator.on('entry-point:order:load', this.onOrderChange, this);
+            mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
         },
 
-        onOrderChange: function(e) {
-            if (_.isEqual(e.possibleShippingMethods, this.$data) !== true ) {
-                this.$el.find(this.selectors.toggleBtn).show();
-                this.$el.find(this.selectors.possibleShippingMethodForm).hide();
-                this.$data = e.possibleShippingMethods;
-                this.refreshPossibleShippingMethods(e.possibleShippingMethods);
+        showLoadingMask: function() {
+            if (this.getCalculateShippingElement().val() === 'true') {
+                this.loadingMaskView.show();
             }
         },
 
-        initShippingMethod: function() {
-            var selectedTypeValue = this.getShippingMethodTypeElement().val();
-            var selectedMethodValue = this.getShippingMethodElement().val();
-            if (this.getPossibleShippingMethodType().length && selectedTypeValue && selectedMethodValue) {
-                var selectedEl = this
-                  .getPossibleShippingMethodType()
-                  .filter('[value="' + selectedTypeValue + '"]')
-                  .filter('[data-shipping-method="' + selectedMethodValue + '"]');
-                selectedEl.prop('checked', 'checked');
-                selectedEl.trigger('change');
-            } else {
-                var selectedType = this.getPossibleShippingMethodType().filter(':checked');
-                if (selectedType.val()) {
-                    var method = $(selectedType).data('shipping-method');
-                    var cost = $(selectedType).data('shipping-price');
-                    this.setElementsValue(selectedType.val(), method, cost);
-                } else {
-                    this.setElementsValue(null, null, null);
-                }
+        hideLoadingMask: function() {
+            if (this.loadingMaskView.isShown()) {
+                this.loadingMaskView.hide();
+            }
+        },
 
+        onOrderChange: function(e) {
+            if (e.possibleShippingMethods != undefined ) {
+                this.getCalculateShippingElement().val(false);
+                this.getToggleButton().parent('div').hide();
+                this.$data = e.possibleShippingMethods;
+                this.refreshPossibleShippingMethods(e.possibleShippingMethods);
+                this.getPossibleShippingMethodForm().show();
+            } else {
+                this.getPossibleShippingMethodForm().hide();
+                this.getToggleButton().parent('div').show();
             }
         },
 
         refreshPossibleShippingMethods: function(methods) {
+            var selectedMethod = this.getShippingMethodElement().val();
+            var selectedType = this.getShippingMethodTypeElement().val();
+            var selectedFound = false;
             var len = $.map(methods, function(n, i) { return i; }).length;
+            var str = '';
             if (len > 0 ) {
-                var str = '';
                 var i = 0;
                 $.each( methods, function( name, method ) {
                     if ($(method.types).length > 0 ) {
@@ -88,13 +87,13 @@ define(function(require) {
                     str = str + '</div>';
                     $.each( method.types, function( key, type ) {
                         if (type.price.value != null) {
-                            str = str + '<div>';
-                            if (type.identifier == this.getPossibleShippingMethodType) {
-                                str = str + '<label class="checked">';
-                            } else {
-                                str = str + '<label>';
+                            str = str + '<div><label>';
+                            var checked = '';
+                            if (method.identifier === selectedMethod && type.identifier === selectedType) {
+                                checked = 'checked="checked"';
+                                selectedFound = true;
                             }
-                            str = str + '<input type="radio" name="possibleShippingMethodType" value="' + type.identifier + 
+                            str = str + '<input type="radio" ' + checked + ' name="possibleShippingMethodType" value="' + type.identifier + 
                             '" data-shipping-method="' + method.identifier + '" data-shipping-price="' + type.price.value + '" data-choice="' + type.identifier + '" />';
                             str = str + '<span>' + __(type.label) + ': <strong>' + type.price.currency + ' ' + type.price.value + '</strong></span>';
                             str = str + '</label></div>';
@@ -106,7 +105,20 @@ define(function(require) {
                         str = str + '<hr>';
                     }
                 });
-                this.$el.find(this.selectors.possibleShippingMethodForm).html(str);
+                if (selectedFound === false) {
+                    $(document).find('.selected-shipping-method').find('input').css('text-decoration', 'line-through');
+                    this.setElementsValue(null, null, null);
+                }
+                this.getPossibleShippingMethodForm().html(str);
+            } else {
+                if (selectedFound === false) {
+                    $(document).find('.selected-shipping-method').find('input').css('text-decoration', 'line-through');
+                    this.setElementsValue(null, null, null);
+                }
+                str = '<span class="notification notification_xmd notification_alert notification-radiused mb1-md">' +
+                    __('oro.order.possible_shipping_methods.no_method') +
+                    '</span>';
+                this.getPossibleShippingMethodForm().html(str);
             }
         },
 
@@ -120,16 +132,24 @@ define(function(require) {
             this.getShippingMethodTypeElement().val(type);
             this.getShippingMethodElement().val(method);
             this.getShippingCostElement().val(cost);
+        },
 
+        /**
+         *
+         * @param {string|null} type
+         * @param {string|null} method
+         * @param {float} cost
+         */
+        refreshSelectedShippingMethod: function (type, method, cost) {
             if (type !== null && method != null) {
                 var methodLabel = (this.$data[method].isGrouped == true) ? __(this.$data[method].label) + ', ' : '';
                 var typeLabel = __(this.$data[method].types[type].label);
                 var currency = this.$data[method].types[type].price.currency;
-                var $div = $("<div>", {"class": "control-group ship-options"});
+                var $div = $("<div>", {"class": "control-group selected-shipping-method"});
                 $div.append('<label class="control-label">' + __('oro.order.shipping_method.label') + '</label>');
-                $div.append('<div class="controls"><input type="text" readonly value="' + methodLabel + 
+                $div.append('<div class="controls"><input type="text" readonly value="' + methodLabel +
                     typeLabel + ': ' + currency + ' ' + cost + '"></div>');
-                $(document).find('.ship-options').remove();
+                $(document).find('.selected-shipping-method').remove();
                 this.$el.closest('.responsive-cell').prepend($div);
             }
         },
@@ -142,6 +162,29 @@ define(function(require) {
             var method = method_type.data('shipping-method');
             var cost = method_type.data('shipping-price');
             this.setElementsValue(method_type.val(), method, cost);
+            this.refreshSelectedShippingMethod(method_type.val(), method, cost);
+        },
+
+        /**
+         * @returns {jQuery|HTMLElement}
+         */
+        getToggleButton: function() {
+            if (!this.hasOwnProperty('$toggleButton')) {
+                this.$toggleButton = this.$el.find(this.selectors.toggleBtn);
+            }
+
+            return this.$toggleButton;
+        },
+
+        /**
+         * @returns {jQuery|HTMLElement}
+         */
+        getPossibleShippingMethodForm: function() {
+            if (!this.hasOwnProperty('$possibleShippingMethodForm')) {
+                this.$possibleShippingMethodForm = this.$el.find(this.selectors.possibleShippingMethodForm);
+            }
+
+            return this.$possibleShippingMethodForm;
         },
 
         /**
@@ -160,7 +203,7 @@ define(function(require) {
          */
         getShippingMethodTypeElement: function() {
             if (!this.hasOwnProperty('$shippingMethodTypeElement')) {
-                this.$shippingMethodTypeElement = $(document).find(this.selectors.shippingMethodType);
+                this.$shippingMethodTypeElement = this.$el.find(this.selectors.shippingMethodType);
             }
 
             return this.$shippingMethodTypeElement;
@@ -171,7 +214,7 @@ define(function(require) {
          */
         getShippingMethodElement: function() {
             if (!this.hasOwnProperty('$shippingMethodElement')) {
-                this.$shippingMethodElement = $(document).find(this.selectors.shippingMethod);
+                this.$shippingMethodElement = this.$el.find(this.selectors.shippingMethod);
             }
 
             return this.$shippingMethodElement;
@@ -182,10 +225,21 @@ define(function(require) {
          */
         getShippingCostElement: function() {
             if (!this.hasOwnProperty('$shippingCostElement')) {
-                this.$shippingCostElement = $(document).find(this.selectors.shippingCost);
+                this.$shippingCostElement = this.$el.find(this.selectors.shippingCost);
             }
 
             return this.$shippingCostElement;
+        },
+
+        /**
+         * @returns {jQuery|HTMLElement}
+         */
+        getCalculateShippingElement: function() {
+            if (!this.hasOwnProperty('$calculateShippingElement')) {
+                this.$calculateShippingElement = this.$el.find(this.selectors.calculateShipping);
+            }
+
+            return this.$calculateShippingElement;
         },
 
         /**
@@ -195,8 +249,12 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
-            this.$el.find(this.selectors.toggleBtn).off('click');
+            this.getToggleButton().off('click');
             this.getPossibleShippingMethodType().off('change');
+
+            mediator.off('entry-point:order:load:before', this.showLoadingMask, this);
+            mediator.off('entry-point:order:load', this.onOrderChange, this);
+            mediator.off('entry-point:order:load:after', this.hideLoadingMask, this);
 
             PossibleShippingMethodsComponent.__super__.dispose.call(this);
         }

@@ -180,25 +180,15 @@
             {%- if entity.shippingMethodType -%}
                 {% set methodLabel = get_shipping_method_label(entity.shippingMethod) ? get_shipping_method_label(entity.shippingMethod)|trans ~ ', ' : '' %}
                 {{ UI.renderAttribute('oro.order.shipping_method.label'|trans,
-                '<input type="text" readonly value="' ~
+                '<input type="text" class="selected-shipping-method" readonly value="' ~
                 methodLabel ~
                 get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans ~
                 ': ' ~ entity.estimatedShippingCost|oro_format_price ~ '"></input>'
                 ) }}
             {%- endif -%}
         {% else %}
-            {{ UI.renderAttribute('oro.order.form.shipping_options.label'|trans,
-                SM.renderPossibleShippingMethods(
-                    entity.shippingMethod,
-                    entity.shippingMethodType,
-                    orderData.possibleShippingMethods
-            )) }}
+            {{ UI.renderAttribute('oro.order.form.shipping_options.label'|trans, SM.renderPossibleShippingMethods(form)) }}
         {% endif %}
-        <div class="hidden">
-            {{ form_row(form.shippingMethod) }}
-            {{ form_row(form.shippingMethodType) }}
-            {{ form_row(form.estimatedShippingCost) }}
-        </div>
 
         {%  set options = {
             view: 'oroorder/js/app/views/shipping-cost-view'
