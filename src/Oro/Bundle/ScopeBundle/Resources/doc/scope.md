@@ -1,70 +1,65 @@
 Scopes
 ------
 
-Scopes in Oro applications empowers you with additional abstraction layer that helps you get the missing information about the execution context in a standard and controllable way without costly resource-comnsuming queries to the database that involve deeply nested relationship creation. With a scope approach you can program your bundle feature to automatically launch an alternative behavior and modify displayed data just based on the information about the scope that matches current execution context.
+Scope in Oro applications arms you with additional abstraction layer and helps you get the missing information about the execution context in a standard and controllable way. It substitutes costly and resource-consuming queries to the database that involve deep and nested relationships. With a scope approach your bundle can launch an alternative behavior and modify displayed data based on the information from the scope that indirectly matches current execution context.
 
-For working example of using scopes in Oro application, plase check out the `VisibilityBundle`_ and `WebsiteBundle`_.
+For working example of using scopes in Oro application, please check out the `VisibilityBundle`_ and `WebsiteBundle`_.
 
 * [How Scopes work](#how-scopes-work)
     * [Scope Manager](#scope-manager)
     * [Scope Repository](#scope-repository)
-    * [Scope Providers](#scope-providers)
-* [Configuring scopes in a bundle](#configuring-scopes-in-a-bundle)
-
-How Scopes work
----------------
-
-**-----V  <WORK IN RPGRESS>  V-----**
-Scope Bundle exposes a Scope Manager and Scope Repository interfaces to other bundles.
-
-Database (stores existing Scopes)
-Scope Manager (polls all bundles that use Scopes and builds a scope model in a scope repository, processes find and findOrCreate requests from bundles by looking up the provided criteria in the scope repository)
-
-Scope-aware Bundle(searches for scopes (using search criteria), requests scope creation, alters bahviour or displayed data based on the obtained scope values)
+    * [Scope Criteria Providers](#scope-criteria-providers)
+* [configuring Scope Criteria Providers](#configuring-scope-criteria-providers)
 
 
-Any Bundle can affect on any scope. To extend scope should be created instance of AbstractScopeCriteriaProvider and registered with tag oro_scope.provider.
-One CriteriaScopeProvider can be used in many scope types.
 
 * [Criteria](#criteria)
 * [Example with related scopes](#example-with-related-scopes)
 * [Example with criteria](#example-with-criteria)
 
-ScopeManager call each ScopeCriteriaProvider that was registered on given scope type to get part of Criteria.
-ScopeProvider's calls according to priority, this will allow to fetch the most detailed Scope.
-Scope entity can be extended by any Bundle to provide new scope type. 
+
+How Scopes work
+---------------
+Sometimes in a bundle activities, you need to alter behavior or data based on the set of criteria that the bundle is not able to evaluate. Scope Manager gets you the missing details by polling dedicated Scope Criteria Providers. In the scope-consuming bundle, you can request information using one of the `Scope operations`_. As a first parameter, you usually pass the scope type (e.g. web_content in the following examples). Scope type helps Scope Manager find the scope-provider bundles who can deliver the information your bundle is missing. As a second parameter, you usually pass the context - information available to your bundle that is used as a scope filtering criteria. **Note:** Scope Manager evaluates the priority of the Scope Criteria Providers who are registered to deliver information for the requested scope type and scope criteria, and polls the provider with the highest priority. 
 
 Scope Manager
 ~~~~~~~~~~~~~
-Scope Manager is a service that provides an interface for querying and creating the scopes in Oro application. Scope manager handles the following functions:
-* Builds a scope model in the scope repository using information about the scope providers registered by the application bundles (see `Scope Providers`_).
-* Exposes scope-related operations (find, findOrCreate, findDefaultScope, findRelatedScopes) to the scope-aware bundles. See `Scope operations`_ for more info.
-* Provides a getScope() feature for the scope-aware bundles.
-* Creates ScopeCriteria.
+Scope Manager is a service that provides an interface for getting and creating scope items in Oro application. It is in charge of the following functions:
+* Build a scope model in the scope repository using information about the scope types registered by scope providers of the application bundles (see [Scope Criteria Providers](#scope-criteria-providers)). Note: Basically, bundles that register new scope type extend the core Scope entity implementation.
+* Expose scope-related operations (find, findOrCreate, findDefaultScope, findRelatedScopes) to the scope-aware bundles and deliver requested scope(s) as a result. See `Scope operations`_ for more information.
+* Provide a getScope() feature for the scope-aware bundles. **(need more infrmation here)**
+* Call Scope Criteria Provider's getCriteriaForCurrentScope() method to get a portion of the scope information.
 
 Scope Repository
 ~~~~~~~~~~~~~~~~
-Scope Repository is a service that reads/writes the scope-realted data from/to the database. 
+Scope Repository stores the scope instances created in Scope Manager using *findOrCreate* method. 
 
-Scope Providers
-~~~~~~~~~~~~~~~~
-Scope Provider is a service that adds a scope field to the scope model.
+Scope Criteria Providers
+~~~~~~~~~~~~~~~~~~~~~~~~
+Scope Criteria Provider is a service that adds a scope field to the scope model.
+In any bundle, you can create a [Scope Criteria Provider](#configuring-scope-criteria-providers) service and register it as scope provider for the specific scope type. This service shall deliver the scope criteria value to the Scope Manager, who, in turn, use the scope criteria to filter the scope instances or find the one matching to the provided context.
 
 Scope Type
 ~~~~~~~~~~
-Scope Type is a ... (links to the scope ids; scope submodel)
-Bundles with a scope provide of a given scope type get access to the scopes where (the scope field is NOT null). 
+Scope Type is a tag that groups scope criteria that are used by particular scope consumers. One scope type may be reused by multiple scope consumers. It may happen, that a particular scope criteria provider, like the one for Account Group, is not involved in the scope construction because it serves the scope-consumers with the different scope type (e.g. web_content). In this case, Scope Manager looks for the scope(s) that do(es) not prompt to evaluate this criteria. 
 
 Scope Model
 ~~~~~~~~~~~
-(scope id) * (scope fields) with scope criteria as a value ????? 
+Scope model is a data structure for storing scope items. Every scope item has fields for every scope criteria registered by the scope criteria provider services. When the scope criteria is not involved in the scope (based on the scope type), the value of the field is NULL.
 
-Configuring scopes in a bundle
-------------------------------
-To begin using scopes in your bundle:
+|scope id|scope criteria 1|scope criteria 2| ... | scope criteria N |
+| |(authorised user)|(website_id)|(Country)|(Locale)|
+|---|---|---|---|
+|1|true|null|US|EN|
+|1|false|null|Germany|DE|
+
+Configuring Scope Criteria Providers
+------------------------------------
+To extend a scope with criteria that is provided by your bundle:
 1. Create a **Scope<your bundle>CriteriaProvider** class and implement getCriteriaForCurrentScope() and getCriteriaField() methods. Return an array of key/value structures in getCriteriaForCurrentScope() **what should the value tell us or be used for???**. Return a criteria id in getCriteriaField(). 
 
 (????In case if we need to get Scope by context it will get data from key\field account.????)
+(????When the scope is created, who creates it? when is it used, who uses it?)
 
 This is default behavior of AbstractScopeCriteriaProvider
 ```
@@ -97,13 +92,15 @@ class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
     }
 }
 ```
-In <your bundle>/Resources/config/service.yml, add the <bundle>_scope_criteria_provider :
+In <your bundle>/Resources/config/service.yml, registered the newly created <bundle>_scope_criteria_provider with *oro_scope.provider* tag, like in the following example:
+
 ```
 oro_customer.account_scope_criteria_provider:
     class: 'Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider'
     tags:
         - { name: oro_scope.provider, scopeType: web_content, priority: 30 }
 ```
+**Note:** One CriteriaScopeProvider can be used in many scope types.
 ####Context
 Context can be `array or object`, ScopeCriteriaProvider can get data by defined `key\field name`, to create criteria.
 In case when `Context is null`, should be used current data, for example: `current User, Website etc`
@@ -140,6 +137,8 @@ For example there are 2 providers registered on scope type "web_content"
 * ScopeAccountCriteriaProvider
 
 * ScopeWebsiteCriteriaProvider
+
+**Note:** ScopeAccountGroupCriteriaProvider is NOT involved in the scope type, so the scope will be filtered to have no AccountGroup criteria defined. 
 
 Scope has tree fields:
 ```
@@ -271,3 +270,7 @@ WHERE slug.url = :url
 ORDER BY scope.account_id DESC, scope.accountGroup_id DESC, scope.website_id DESC
 LIMIT 1;'
 ```
+ **Note:** ScopeProviders calls according to priority, this will allow to fetch the most detailed Scope.*
+Scope-aware Bundle(searches for scopes (using search criteria), requests scope creation, alters behaviour or displayed data based on the obtained scope values)
+
+
