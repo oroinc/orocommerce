@@ -12,8 +12,8 @@ class CreditCardFormProvider extends AbstractFormProvider
     /**
      * @return FormInterface
      */
-    public function getCreditCardForm()
+    public function getCreditCardFormView()
     {
-        return $this->getForm(CreditCardType::NAME, null, []);
+        return $this->getFormView(CreditCardType::NAME, null, []);
     }
 }

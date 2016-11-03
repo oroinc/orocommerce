@@ -4,6 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Layout\DataProvider;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
@@ -34,15 +35,21 @@ class CreditCardFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new CreditCardFormProvider($this->formFactory, $this->router);
     }
 
-    public function testGetCreditCardForm()
+    public function testGetCreditCardFormView()
     {
+        $formView = $this->getMock(FormView::class);
+
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
         $this->formFactory->expects($this->once())
             ->method('create')
             ->with(CreditCardType::NAME, null, [])
             ->willReturn($form);
 
-        $creditCardForm = $this->provider->getCreditCardForm();
-        $this->assertInstanceOf(FormInterface::class, $creditCardForm);
+        $creditCardForm = $this->provider->getCreditCardFormView();
+        $this->assertInstanceOf(FormView::class, $creditCardForm);
     }
 }

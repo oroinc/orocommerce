@@ -8,7 +8,7 @@ layout:
                     blockType: form
                     options:
                         preferred_fields: [quantity]
-                        form: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])'
+                        form: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"], instance_name)'
                 __line_item_form_buttons:
                     blockType: container
             tree:

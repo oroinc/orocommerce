@@ -18,7 +18,7 @@ class ShoppingListFormProvider extends AbstractFormProvider
      *
      * @return FormInterface
      */
-    public function getShoppingListForm(ShoppingList $shoppingList)
+    public function getShoppingListFormView(ShoppingList $shoppingList)
     {
         if ($shoppingList->getId()) {
             $options['action'] = $this->generateUrl(
@@ -31,6 +31,6 @@ class ShoppingListFormProvider extends AbstractFormProvider
             );
         }
 
-        return $this->getForm(ShoppingListType::NAME, $shoppingList, $options);
+        return $this->getFormView(ShoppingListType::NAME, $shoppingList, $options);
     }
 }

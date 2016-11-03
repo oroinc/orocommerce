@@ -24,7 +24,7 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
      *
      * @return FormInterface
      */
-    public function getAccountUserForm(AccountUser $accountUser)
+    public function getAccountUserFormView(AccountUser $accountUser)
     {
         if ($accountUser->getId()) {
             $options['action'] = $this->generateUrl(
@@ -37,7 +37,7 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
             );
         }
 
-        return $this->getForm(FrontendAccountUserType::NAME, $accountUser, $options);
+        return $this->getFormView(FrontendAccountUserType::NAME, $accountUser, $options);
     }
 
     /**
@@ -45,13 +45,13 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
      *
      * @return FormInterface
      */
-    public function getForgotPasswordForm($options = [])
+    public function getForgotPasswordFormView($options = [])
     {
         $options['action'] = $this->generateUrl(
             self::ACCOUNT_USER_RESET_REQUEST_ROUTE_NAME
         );
 
-        return $this->getForm(AccountUserPasswordRequestType::NAME, null, $options);
+        return $this->getFormView(AccountUserPasswordRequestType::NAME, null, $options);
     }
 
     /**
@@ -59,13 +59,13 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
      *
      * @return FormInterface
      */
-    public function getResetPasswordForm(AccountUser $accountUser = null)
+    public function getResetPasswordFormView(AccountUser $accountUser = null)
     {
         $options['action'] = $this->generateUrl(
             self::ACCOUNT_USER_PASSWORD_RESET_ROUTE_NAME
         );
 
-        return $this->getForm(AccountUserPasswordResetType::NAME, $accountUser, $options);
+        return $this->getFormView(AccountUserPasswordResetType::NAME, $accountUser, $options);
     }
 
     /**
@@ -73,7 +73,7 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
      *
      * @return FormInterface
      */
-    public function getProfileForm(AccountUser $accountUser)
+    public function getProfileFormView(AccountUser $accountUser)
     {
         if ($accountUser->getId()) {
             $options['action'] = $this->generateUrl(
@@ -81,14 +81,13 @@ class FrontendAccountUserFormProvider extends AbstractFormProvider
                 ['id' => $accountUser->getId()]
             );
 
-            return $this->getForm(FrontendAccountUserProfileType::NAME, $accountUser, $options);
+            return $this->getFormView(FrontendAccountUserProfileType::NAME, $accountUser, $options);
         }
 
         throw new \RuntimeException(
             sprintf(
                 'Entity with type "%s" must be loaded. Method getId() return NULL.',
-                AccountUser::class,
-                gettype($accountUser)
+                AccountUser::class
             )
         );
     }

@@ -41,7 +41,7 @@ class FrontendAccountUserRoleFormProvider extends AbstractFormProvider
      *
      * @return FormInterface
      */
-    public function getRoleForm(AccountUserRole $accountUserRole)
+    public function getRoleFormView(AccountUserRole $accountUserRole)
     {
         if ($accountUserRole->getId()) {
             $options['action'] = $this->generateUrl(
@@ -54,20 +54,15 @@ class FrontendAccountUserRoleFormProvider extends AbstractFormProvider
             );
         }
 
-        return $this->getForm('', $accountUserRole, $options);
+        return $this->getFormView('', $accountUserRole, $options);
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @param AccountUserRole $data
      */
-    protected function getForm($formName, $data = null, array $options = [])
+    protected function createForm($formName, $data = null, array $options = [])
     {
         $form = $this->handler->createForm($data);
-
-        /* This call needs for set privileges data to form */
-        //TODO: refactor handler and set privileges data on form creation
         $this->handler->process($data);
 
         return $form;

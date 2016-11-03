@@ -4,6 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Layout\DataProvider;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
@@ -32,12 +33,12 @@ class FrontendAccountAddressFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new FrontendAccountAddressFormProvider($this->mockFormFactory, $this->router);
     }
 
-    public function testGetAddressFormWhileUpdate()
+    public function testGetAddressFormViewWhileUpdate()
     {
         $this->actionTestWithId(1);
     }
 
-    public function testGetAddressFormWhileCreate()
+    public function testGetAddressFormViewWhileCreate()
     {
         $this->actionTestWithId();
     }
@@ -65,18 +66,23 @@ class FrontendAccountAddressFormProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getId')
             ->willReturn(1);
 
+        $mockFormView = $this->getMock(FormView::class);
+
         $mockForm = $this->getMockBuilder(FormInterface::class)->getMock();
+        $mockForm->expects($this->once())
+            ->method('createView')
+            ->willReturn($mockFormView);
 
         $this->mockFormFactory->expects($this->once())
             ->method('create')
             ->with(AccountTypedAddressType::NAME, $mockAccountUserAddress)
             ->willReturn($mockForm);
 
-        $form = $this->provider->getAddressForm($mockAccountUserAddress, $mockAccountUser);
+        $form = $this->provider->getAddressFormView($mockAccountUserAddress, $mockAccountUser);
 
-        $this->assertInstanceOf(FormInterface::class, $form);
+        $this->assertInstanceOf(FormView::class, $form);
 
-        $formSecondCall = $this->provider->getAddressForm($mockAccountUserAddress, $mockAccountUser);
+        $formSecondCall = $this->provider->getAddressFormView($mockAccountUserAddress, $mockAccountUser);
         $this->assertSame($form, $formSecondCall);
     }
 }

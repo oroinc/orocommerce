@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Layout\DataProvider;
 
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
@@ -32,12 +32,12 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
         $this->provider = new FrontendAccountUserAddressFormProvider($this->mockFormFactory, $this->router);
     }
 
-    public function testGetAddressFormWhileUpdate()
+    public function testGetAddressFormViewWhileUpdate()
     {
         $this->actionTestWithId(1);
     }
 
-    public function testGetAddressFormWhileCreate()
+    public function testGetAddressFormViewWhileCreate()
     {
         $this->actionTestWithId();
     }
@@ -65,18 +65,23 @@ class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_Test
             ->method('getId')
             ->willReturn(1);
 
+        $mockFormView = $this->getMock(FormView::class);
+
         $mockForm = $this->getMockBuilder('Symfony\Component\Form\FormInterface')->getMock();
+        $mockForm->expects($this->once())
+            ->method('createView')
+            ->willReturn($mockFormView);
 
         $this->mockFormFactory->expects($this->once())
             ->method('create')
             ->with(AccountUserTypedAddressType::NAME, $mockAccountUserAddress)
             ->willReturn($mockForm);
 
-        $form = $this->provider->getAddressForm($mockAccountUserAddress, $mockAccountUser);
+        $form = $this->provider->getAddressFormView($mockAccountUserAddress, $mockAccountUser);
 
-        $this->assertInstanceOf(FormInterface::class, $form);
+        $this->assertInstanceOf(FormView::class, $form);
 
-        $formSecondCall =  $this->provider->getAddressForm($mockAccountUserAddress, $mockAccountUser);
+        $formSecondCall =  $this->provider->getAddressFormView($mockAccountUserAddress, $mockAccountUser);
         $this->assertSame($form, $formSecondCall);
     }
 }

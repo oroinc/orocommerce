@@ -22,7 +22,7 @@ class FrontendAccountAddressFormProvider extends AbstractFormProvider
      *
      * @return FormInterface
      */
-    public function getAddressForm(AccountAddress $accountAddress, Account $account)
+    public function getAddressFormView(AccountAddress $accountAddress, Account $account)
     {
         if ($accountAddress->getId()) {
             $options['action'] = $this->generateUrl(
@@ -36,6 +36,6 @@ class FrontendAccountAddressFormProvider extends AbstractFormProvider
             );
         }
 
-        return $this->getForm(AccountTypedAddressType::NAME, $accountAddress, $options);
+        return $this->getFormView(AccountTypedAddressType::NAME, $accountAddress, $options);
     }
 }

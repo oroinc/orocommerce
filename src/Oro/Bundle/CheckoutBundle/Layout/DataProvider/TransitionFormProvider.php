@@ -14,12 +14,12 @@ class TransitionFormProvider extends AbstractFormProvider
     /**
      * @var TransitionProvider
      */
-    protected $transitionProvider;
+    private $transitionProvider;
 
     /**
-     * @var object
+     * @var TransitionProvider
      */
-    public function setTransitionProvider($transitionProvider)
+    public function setTransitionProvider(TransitionProvider $transitionProvider)
     {
         $this->transitionProvider = $transitionProvider;
     }
@@ -34,26 +34,17 @@ class TransitionFormProvider extends AbstractFormProvider
     public function getTransitionForm(WorkflowItem $workflowItem, TransitionData $transitionData)
     {
         $transition = $transitionData->getTransition();
-
         if (!$transition->hasForm()) {
             return null;
         }
 
-        $options[AbstractFormProvider::USED_FOR_CACHE_ONLY_OPTION] = [$transition->getName(), $workflowItem->getId()];
+        $cacheKeyOptions = ['id' => $workflowItem->getId(), 'name' => $transition->getName()];
 
         return $this->getForm(
             $transition->getFormType(),
             $workflowItem->getData(),
-            array_merge(
-                $options,
-                $transition->getFormOptions(),
-                [
-                    'workflow_item' => $workflowItem,
-                    'transition_name' => $transition->getName(),
-                    'disabled' => !$transitionData->isAllowed(),
-                    'allow_extra_fields' => true,
-                ]
-            )
+            $this->getFormOptions($workflowItem, $transitionData),
+            $cacheKeyOptions
         );
     }
 
@@ -64,15 +55,44 @@ class TransitionFormProvider extends AbstractFormProvider
      */
     public function getTransitionFormView(WorkflowItem $workflowItem)
     {
-        /** @var TransitionData $continueTransitionData */
         $transitionData = $this->transitionProvider->getContinueTransition($workflowItem);
-
         if (!$transitionData) {
             return null;
         }
 
-        $form = $this->getTransitionForm($workflowItem, $transitionData);
+        $transition = $transitionData->getTransition();
+        if (!$transitionData->getTransition()->hasForm()) {
+            return null;
+        }
 
-        return $form ? $form->createView() : null;
+        $cacheKeyOptions = ['id' => $workflowItem->getId(), 'name' => $transition->getName()];
+
+        return $this->getFormView(
+            $transition->getFormType(),
+            $workflowItem->getData(),
+            $this->getFormOptions($workflowItem, $transitionData),
+            $cacheKeyOptions
+        );
+    }
+
+    /**
+     * @param WorkflowItem   $workflowItem
+     * @param TransitionData $transitionData
+     *
+     * @return array
+     */
+    private function getFormOptions(WorkflowItem $workflowItem, TransitionData $transitionData)
+    {
+        $transition = $transitionData->getTransition();
+
+        return array_merge(
+            $transition->getFormOptions(),
+            [
+                'workflow_item' => $workflowItem,
+                'transition_name' => $transition->getName(),
+                'disabled' => !$transitionData->isAllowed(),
+                'allow_extra_fields' => true,
+            ]
+        );
     }
 }

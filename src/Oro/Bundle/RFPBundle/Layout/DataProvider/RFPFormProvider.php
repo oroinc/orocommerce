@@ -18,7 +18,7 @@ class RFPFormProvider extends AbstractFormProvider
      *
      * @return FormInterface
      */
-    public function getRequestForm(Request $request)
+    public function getRequestFormView(Request $request)
     {
         if ($request->getId()) {
             $options['action'] = $this->generateUrl(
@@ -31,6 +31,6 @@ class RFPFormProvider extends AbstractFormProvider
             );
         }
 
-        return $this->getForm(RequestType::NAME, $request, $options);
+        return $this->getFormView(RequestType::NAME, $request, $options);
     }
 }

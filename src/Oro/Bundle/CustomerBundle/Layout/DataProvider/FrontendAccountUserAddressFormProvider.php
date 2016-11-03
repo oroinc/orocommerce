@@ -22,10 +22,8 @@ class FrontendAccountUserAddressFormProvider extends AbstractFormProvider
      *
      * @return FormInterface
      */
-    public function getAddressForm(
-        AccountUserAddress $accountUserAddress,
-        AccountUser $accountUser
-    ) {
+    public function getAddressFormView(AccountUserAddress $accountUserAddress, AccountUser $accountUser)
+    {
         $options = [];
 
         if ($accountUserAddress->getId()) {
@@ -40,6 +38,6 @@ class FrontendAccountUserAddressFormProvider extends AbstractFormProvider
             );
         }
 
-        return $this->getForm(AccountUserTypedAddressType::NAME, $accountUserAddress, $options);
+        return $this->getFormView(AccountUserTypedAddressType::NAME, $accountUserAddress, $options);
     }
 }

@@ -13,7 +13,6 @@ use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
-
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRegistrationType;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -61,13 +60,13 @@ class FrontendAccountUserRegistrationFormProvider extends AbstractFormProvider
     /**
      * @return FormInterface
      */
-    public function getRegisterForm()
+    public function getRegisterFormView()
     {
         $options['action'] = $this->generateUrl(
             self::ACCOUNT_USER_REGISTER_ROUTE_NAME
         );
 
-        return $this->getForm(FrontendAccountUserRegistrationType::NAME, $this->createAccountUser(), $options);
+        return $this->getFormView(FrontendAccountUserRegistrationType::NAME, $this->createAccountUser(), $options);
     }
 
     /**

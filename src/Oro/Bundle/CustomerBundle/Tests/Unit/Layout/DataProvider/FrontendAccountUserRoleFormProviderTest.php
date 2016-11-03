@@ -54,7 +54,7 @@ class FrontendAccountUserRoleFormProviderTest extends \PHPUnit_Framework_TestCas
      * @param string $route
      * @param array $routeParameters
      */
-    public function testGetRoleForm(AccountUserRole $role, $route, array $routeParameters = [])
+    public function testGetRoleFormView(AccountUserRole $role, $route, array $routeParameters = [])
     {
         $form = $this->assertAccountUserRoleFormHandlerCalled($role);
 
@@ -62,13 +62,13 @@ class FrontendAccountUserRoleFormProviderTest extends \PHPUnit_Framework_TestCas
             ->method('generate')
             ->with($route, $routeParameters);
 
-        $actual = $this->provider->getRoleForm($role);
+        $actual = $this->provider->getRoleFormView($role);
 
-        $this->assertInstanceOf(FormInterface::class, $actual);
-        $this->assertSame($form, $actual);
+        $this->assertInstanceOf(FormView::class, $actual);
+        $this->assertSame($form->createView(), $actual);
 
         /** test local cache */
-        $this->assertSame($actual, $this->provider->getRoleForm($role));
+        $this->assertSame($actual, $this->provider->getRoleFormView($role));
     }
 
     /**

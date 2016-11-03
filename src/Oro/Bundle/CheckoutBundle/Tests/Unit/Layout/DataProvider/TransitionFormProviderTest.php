@@ -37,7 +37,8 @@ class TransitionFormProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->transitionProvider = $this->getMock(\stdClass::class, ['getContinueTransition']);
+        $this->transitionProvider =
+            $this->getMock('Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider', [], [], '', false);
         $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
         $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
