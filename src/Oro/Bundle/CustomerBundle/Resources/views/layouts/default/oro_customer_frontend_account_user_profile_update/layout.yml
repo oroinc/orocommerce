@@ -33,21 +33,15 @@ layout:
                 account_profile_edit_form_start:
                     blockType: form_start
                     options:
-                        # TODO REFACTOR AFTER MERGE BB-5243
-                        form: '=data["oro_account_frontend_account_user_form"].getProfileForm(data["entity"]).getView()'
-                        form_config: '=data["oro_account_frontend_account_user_form"].getProfileForm(data["entity"]).getForm().getConfig()'
+                        form: '=data["oro_account_frontend_account_user_form"].getProfileFormView(data["entity"])'
                 account_profile_edit_form_fields:
                     blockType: form_fields
                     options:
-                        # TODO REFACTOR AFTER MERGE BB-5243
-                        form: '=data["oro_account_frontend_account_user_form"].getProfileForm(data["entity"]).getView()'
-                        form_config: '=data["oro_account_frontend_account_user_form"].getProfileForm(data["entity"]).getForm().getConfig()'
+                        form: '=data["oro_account_frontend_account_user_form"].getProfileFormView(data["entity"])'
                 account_profile_edit_form_end:
                     blockType: form_end
                     options:
-                        # TODO REFACTOR AFTER MERGE BB-5243
-                        form: '=data["oro_account_frontend_account_user_form"].getProfileForm(data["entity"]).getView()'
-                        form_config: '=data["oro_account_frontend_account_user_form"].getProfileForm(data["entity"]).getForm().getConfig()'
+                        form: '=data["oro_account_frontend_account_user_form"].getProfileFormView(data["entity"])'
                 account_profile_edit_form_actions:
                     blockType: container
                 account_profile_edit_form_actions_cancel:

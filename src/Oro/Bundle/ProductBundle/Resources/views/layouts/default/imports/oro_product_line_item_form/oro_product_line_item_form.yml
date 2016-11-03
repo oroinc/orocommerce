@@ -7,9 +7,7 @@ layout:
                 __line_item_form:
                     blockType: form
                     options:
-                        # TODO REFACTOR AFTER MERGE BB-5243
-                        form: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"], instance_name).getView()'
-                        form_config: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"], instance_name).getForm().getConfig()'
+                        form: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], instance_name)'
                         preferred_fields: [quantity]
                 __line_item_form_buttons:
                     blockType: container

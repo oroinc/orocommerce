@@ -10,22 +10,16 @@ layout:
                 line_item_form_start:
                     blockType: form_start
                     options:
-                        # TODO REFACTOR AFTER MERGE BB-5243
-                        form: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"]).getView()'
-                        form_config: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"]).getConfig()'
+                        form: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"])'
                 line_item_form_fields:
                     blockType: form_fields
                     options:
-                        # TODO REFACTOR AFTER MERGE BB-5243
-                        form: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])).getView()'
-                        form_config: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"]).getConfig()'
+                        form: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"]))'
                         preferred_fields: [quantity]
                 line_item_form_end:
                     blockType: form_end
                     options:
-                        # TODO REFACTOR AFTER MERGE BB-5243
-                        form: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"])).getView()'
-                        form_config: '=data["oro_product_form"].getLineItemForm(data.offsetExists("product")?data["product"]).getConfig()'
+                        form: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"]))'
                 line_item_buttons:
                     blockType: container
             tree:
