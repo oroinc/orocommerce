@@ -1,11 +1,15 @@
 Scopes
 ------
 
-.. contents::
-
 Scopes in Oro applications empowers you with additional abstraction layer that helps you get the missing information about the execution context in a standard and controllable way without costly resource-comnsuming queries to the database that involve deeply nested relationship creation. With a scope approach you can program your bundle feature to automatically launch an alternative behavior and modify displayed data just based on the information about the scope that matches current execution context.
 
 For working example of using scopes in Oro application, plase check out the `VisibilityBundle`_ and `WebsiteBundle`_.
+
+* [How Scopes work](#how-scopes-work)
+    * [Scope Manager](#scope-manager)
+    * [Scope Repository](#scope-repository)
+    * [Scope Providers](#scope-providers)
+* [Configuring scopes in a bundle](#configuring-scopes-in-a-bundle)
 
 How Scopes work
 ---------------
@@ -22,7 +26,6 @@ Scope-aware Bundle(searches for scopes (using search criteria), requests scope c
 Any Bundle can affect on any scope. To extend scope should be created instance of AbstractScopeCriteriaProvider and registered with tag oro_scope.provider.
 One CriteriaScopeProvider can be used in many scope types.
 
-* [Scope Manager](#scope-manager)
 * [Criteria](#criteria)
 * [Example with related scopes](#example-with-related-scopes)
 * [Example with criteria](#example-with-criteria)
@@ -32,25 +35,24 @@ ScopeProvider's calls according to priority, this will allow to fetch the most d
 Scope entity can be extended by any Bundle to provide new scope type. 
 
 Scope Manager
--------------
+~~~~~~~~~~~~~
 Scope Manager is a service that provides an interface for querying and creating the scopes in Oro application. Scope manager handles the following functions:
-* builds a scope model in the scope repository using information about the scope providers registered by the application bundles (see `Scope Providers`_),
-* exposes scope-related operations (see `Scope operations`_) to the scope-aware bundles,
-* provides a getScope() feature for the scope-aware bundles. 
+* Builds a scope model in the scope repository using information about the scope providers registered by the application bundles (see `Scope Providers`_).
+* Exposes scope-related operations (find, findOrCreate, findDefaultScope, findRelatedScopes) to the scope-aware bundles. See `Scope operations`_ for more info.
+* Provides a getScope() feature for the scope-aware bundles.
+* Creates ScopeCriteria.
 
 Scope Repository
-----------------
+~~~~~~~~~~~~~~~~
 Scope Repository is a service that reads/writes the scope-realted data from/to the database. 
 
 Scope Providers
----------------
+~~~~~~~~~~~~~~~~
 Scope Provider is a service that... 
 
+Configuring scopes in a bundle
+------------------------------
 
-Scope Manager
--------------
-ScopeManager is a service that helps to find correct Scope or create a new one.
-Also ScopeCriteria can be created by this manager.
 
 ####Example of provider
 It says that for current Scope we will use current Account.
