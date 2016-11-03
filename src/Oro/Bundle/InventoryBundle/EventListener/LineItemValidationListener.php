@@ -70,7 +70,7 @@ class LineItemValidationListener
      * @param int $limit
      * @param string $errorSuffix
      */
-    public function addErrorToEvent(LineItemValidateEvent $event, Product $product, $limit, $errorSuffix)
+    protected function addErrorToEvent(LineItemValidateEvent $event, Product $product, $limit, $errorSuffix)
     {
         $event->addError(
             $product->getSku(),
