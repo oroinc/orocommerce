@@ -13,6 +13,8 @@ class Configuration implements ConfigurationInterface
     const MINIMUM_QUANTITY_TO_ORDER = 'minimum_quantity_to_order';
     const MAXIMUM_QUANTITY_TO_ORDER = 'maximum_quantity_to_order';
     const DEFAULT_MAXIMUM_QUANTITY_TO_ORDER = 100000;
+    const MAXIMUM_QUANTITY_TO_ORDER_FULL_NAME = OroInventoryExtension::ALIAS . '.' . self::MAXIMUM_QUANTITY_TO_ORDER;
+    const MINIMUM_QUANTITY_TO_ORDER_FULL_NAME = OroInventoryExtension::ALIAS . '.' . self::MINIMUM_QUANTITY_TO_ORDER;
 
     /**
      * {@inheritDoc}

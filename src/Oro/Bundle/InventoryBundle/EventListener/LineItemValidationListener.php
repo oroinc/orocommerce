@@ -4,17 +4,17 @@ namespace Oro\Bundle\InventoryBundle\EventListener;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
-use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidator;
 
 class LineItemValidationListener
 {
     /**
-     * @var QuantityToOrderValidator
+     * @var QuantityToOrderValidatorService
      */
-    protected $quantityValidator;
+    protected $validatorService;
 
     /**
      * @var TranslatorInterface
@@ -22,14 +22,12 @@ class LineItemValidationListener
     protected $translator;
 
     /**
-     * LineItemValidationListener constructor.
-     *
-     * @param QuantityToOrderValidator $quantityValidator
+     * @param QuantityToOrderValidatorService $quantityValidator
      * @param TranslatorInterface $translator
      */
-    public function __construct(QuantityToOrderValidator $quantityValidator, TranslatorInterface $translator)
+    public function __construct(QuantityToOrderValidatorService $quantityValidator, TranslatorInterface $translator)
     {
-        $this->quantityValidator = $quantityValidator;
+        $this->validatorService = $quantityValidator;
         $this->translator = $translator;
     }
 
@@ -42,6 +40,7 @@ class LineItemValidationListener
         if (!$lineItems instanceof \Traversable) {
             return;
         }
+
         foreach ($lineItems as $lineItem) {
             // stop checking if list item is not LineItem
             if (!$lineItem instanceof LineItem) {
@@ -50,15 +49,16 @@ class LineItemValidationListener
             if (!$lineItem->getProduct() instanceof Product) {
                 continue;
             }
+
             $product = $lineItem->getProduct();
-            $minLimit = $this->quantityValidator->getMinimumLimit($product);
-            $maxLimit = $this->quantityValidator->getMaximumLimit($product);
+            $minLimit = $this->validatorService->getMinimumLimit($product);
+            $maxLimit = $this->validatorService->getMaximumLimit($product);
 
             // trigger error messages for products
-            if ($this->quantityValidator->isHigherThanMaxLimit($maxLimit, $lineItem->getQuantity())) {
+            if ($this->validatorService->isHigherThanMaxLimit($maxLimit, $lineItem->getQuantity())) {
                 $this->addErrorToEvent($event, $product, $maxLimit, 'quantity_over_max_limit');
             }
-            if ($this->quantityValidator->isLowerThenMinLimit($minLimit, $lineItem->getQuantity())) {
+            if ($this->validatorService->isLowerThenMinLimit($minLimit, $lineItem->getQuantity())) {
                 $this->addErrorToEvent($event, $product, $minLimit, 'quantity_below_min_limit');
             }
         }

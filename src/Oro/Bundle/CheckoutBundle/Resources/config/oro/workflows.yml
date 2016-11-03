@@ -700,12 +700,12 @@ workflows:
                                 attribute: $.result.successUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.entityId
+                                    id: $.id
                             - '@assign_url':
                                 attribute: $.result.failureUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.entityId
+                                    id: $.id
                                     transition: 'payment_error'
                             - '@payment_validate':
                                 conditions:
@@ -882,19 +882,19 @@ workflows:
                                 attribute: $.result.successUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.entityId
+                                    id: $.id
                                     transition: 'finish_checkout'
                             - '@assign_url':
                                 attribute: $.result.failureUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.entityId
+                                    id: $.id
                                     transition: 'payment_error'
                             - '@assign_url':
                                 attribute: $.result.failedShippingAddressUrl
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.entityId
+                                    id: $.id
                                     transition: 'back_to_shipping_address_on_fail_address'
                             - '@payment_purchase':
                                 attribute: $.result.responseData

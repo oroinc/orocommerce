@@ -5,23 +5,23 @@ namespace Oro\Bundle\InventoryBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\AddQuantityToOrderFields;
+use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 
 class ProductQuantityToOrderLimitValidator extends ConstraintValidator
 {
     /**
-     * @var EntityFallbackResolver
+     * @var QuantityToOrderValidatorService
      */
-    protected $fallbackResolver;
+    private $validatorService;
 
     /**
-     * @param EntityFallbackResolver $fallbackResolver
+     * @param QuantityToOrderValidatorService $validatorService
      */
-    public function __construct(EntityFallbackResolver $fallbackResolver)
+    public function __construct(QuantityToOrderValidatorService $validatorService)
     {
-        $this->fallbackResolver = $fallbackResolver;
+        $this->validatorService = $validatorService;
     }
 
     /**
@@ -33,15 +33,7 @@ class ProductQuantityToOrderLimitValidator extends ConstraintValidator
             return;
         }
 
-        $minValue = $this->fallbackResolver->getFallbackValue(
-            $value,
-            AddQuantityToOrderFields::FIELD_MINIMUM_QUANTITY_TO_ORDER
-        );
-        $maxValue = $this->fallbackResolver->getFallbackValue(
-            $value,
-            AddQuantityToOrderFields::FIELD_MAXIMUM_QUANTITY_TO_ORDER
-        );
-        if (is_numeric($minValue) && is_numeric($maxValue) && $maxValue < $minValue) {
+        if ($this->validatorService->isMaxLimitLowerThenMinLimit($value)) {
             $this->context->buildViolation($constraint->message)
                 ->atPath(AddQuantityToOrderFields::FIELD_MINIMUM_QUANTITY_TO_ORDER)
                 ->addViolation();

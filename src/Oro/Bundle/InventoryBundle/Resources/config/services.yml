@@ -110,6 +110,6 @@ services:
     oro_inventory.validator.product_quantity_to_order_limit_validator:
         class: 'Oro\Bundle\InventoryBundle\Validator\Constraints\ProductQuantityToOrderLimitValidator'
         arguments:
-            - "@oro_entity.fallback.resolver.entity_fallback_resolver"
+            - "@oro_inventory.validator.quantity_to_order_validator"
         tags:
             - { name: validator.constraint_validator, alias: oro_inventory_product_quantity_to_order_limit_validator }

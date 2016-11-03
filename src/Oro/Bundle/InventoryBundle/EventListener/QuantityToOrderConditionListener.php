@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
+use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidator;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\InvalidTransitionException;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
@@ -26,14 +25,9 @@ class QuantityToOrderConditionListener
     public static $allowedWorkflows = ['b2b_flow_checkout', 'b2b_flow_alternative_checkout'];
 
     /**
-     * @var QuantityToOrderValidator
+     * @var QuantityToOrderValidatorService
      */
-    protected $quantityValidator;
-
-    /**
-     * @var SessionInterface
-     */
-    protected $session;
+    protected $validatorService;
 
     /**
      * @var TranslatorInterface
@@ -41,16 +35,14 @@ class QuantityToOrderConditionListener
     protected $translator;
 
     /**
-     * QuantityToOrderConditionListener constructor.
-     *
-     * @param QuantityToOrderValidator $validator
-     * @param Session|SessionInterface $session
+     * @param QuantityToOrderValidatorService $validatorService
      * @param TranslatorInterface $translator
      */
-    public function __construct(QuantityToOrderValidator $validator, Session $session, TranslatorInterface $translator)
-    {
-        $this->quantityValidator = $validator;
-        $this->session = $session;
+    public function __construct(
+        QuantityToOrderValidatorService $validatorService,
+        TranslatorInterface $translator
+    ) {
+        $this->validatorService = $validatorService;
         $this->translator = $translator;
     }
 
@@ -68,7 +60,7 @@ class QuantityToOrderConditionListener
         /** @var ShoppingList $shoppingList */
         $shoppingList = $workflowItem->getEntity()->getSource()->getShoppingList();
 
-        if (false == $this->quantityValidator->isLineItemListValid($shoppingList->getLineItems())) {
+        if (false == $this->validatorService->isLineItemListValid($shoppingList->getLineItems())) {
             $event->setIsCheckoutRestartRequired(true);
         }
     }
@@ -79,13 +71,11 @@ class QuantityToOrderConditionListener
     public function onCreateOrderCheck(ExtendableConditionEvent $event)
     {
         $context = $event->getContext();
-        if (!$context instanceof ActionData
-            || !$context->getEntity() instanceof ShoppingList
-        ) {
+        if (!$context instanceof ActionData || !$context->getEntity() instanceof ShoppingList) {
             return;
         }
 
-        if (false == $this->quantityValidator->isLineItemListValid($context->getEntity()->getLineItems())) {
+        if (false == $this->validatorService->isLineItemListValid($context->getEntity()->getLineItems())) {
             $event->addError(self::QUANTITY_CHECK_ERROR, $context);
         }
     }
@@ -100,7 +90,7 @@ class QuantityToOrderConditionListener
             return;
         }
 
-        if (false == $this->quantityValidator->isLineItemListValid($context->getEntity()->getLineItems())) {
+        if (false == $this->validatorService->isLineItemListValid($context->getEntity()->getLineItems())) {
             $event->addError(self::QUANTITY_CHECK_ERROR, $context);
         }
     }
@@ -117,6 +107,8 @@ class QuantityToOrderConditionListener
             || !$context->getEntity()->getSource() instanceof CheckoutSource
             // make sure checkout only done from shopping list
             || !$context->getEntity()->getSource()->getEntity() instanceof ShoppingList
-            || !$context->getEntity()->getSource()->getShoppingList() instanceof ShoppingList);
+            || !$context->getEntity()->getSource()->getShoppingList() instanceof ShoppingList
+            || $context->getEntity()->getSource()->getQuoteDemand() instanceof QuoteDemand
+        );
     }
 }

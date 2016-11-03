@@ -176,8 +176,7 @@ class CheckoutController extends Controller
                     if ($transitionForm->isValid()) {
                         $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
                     } else {
-                        $this->get('oro_checkout.workflow_state.handler.checkout_error')
-                            ->addFlashWorkflowStateWarning($transitionForm->getErrors());
+                        $this->handleFormErrors($transitionForm->getErrors());
                     }
                 } else {
                     $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
@@ -241,6 +240,14 @@ class CheckoutController extends Controller
         }
 
         return reset($items);
+    }
+
+    /**
+     * @param FormErrorIterator $errors
+     */
+    protected function handleFormErrors(FormErrorIterator $errors)
+    {
+        $this->get('oro_checkout.workflow_state.handler.checkout_error')->addFlashWorkflowStateWarning($errors);
     }
 
     /**

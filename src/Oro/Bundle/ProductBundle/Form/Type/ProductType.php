@@ -33,9 +33,7 @@ class ProductType extends AbstractType
     /**
      * @param DefaultProductUnitProviderInterface $provider
      */
-    public function __construct(
-        DefaultProductUnitProviderInterface $provider
-    ) {
+    public function __construct(DefaultProductUnitProviderInterface $provider) {
         $this->provider = $provider;
     }
 

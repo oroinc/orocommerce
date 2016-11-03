@@ -3,11 +3,11 @@
 namespace Oro\Bundle\InventoryBundle\Validator;
 
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
+use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\AddQuantityToOrderFields;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\AddQuantityToOrderFields;
 
-class QuantityToOrderValidator
+class QuantityToOrderValidatorService
 {
     /**
      * @var EntityFallbackResolver
@@ -68,6 +68,21 @@ class QuantityToOrderValidator
         }
 
         return $quantity < $minimumLimit;
+    }
+
+    /**
+     * @param Product $product
+     * @return bool
+     */
+    public function isMaxLimitLowerThenMinLimit(Product $product)
+    {
+        $minLimit = $this->getMinimumLimit($product);
+        $maxLimit = $this->getMaximumLimit($product);
+        if (!is_numeric($minLimit) || !is_numeric($maxLimit)) {
+            return false;
+        }
+
+        return $maxLimit < $minLimit;
     }
 
     /**

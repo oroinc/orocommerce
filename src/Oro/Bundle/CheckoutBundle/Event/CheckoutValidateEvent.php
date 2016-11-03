@@ -29,17 +29,16 @@ class CheckoutValidateEvent extends Event
     /**
      * @return boolean
      */
-    public function isCheckoutRestartRequired(): bool
+    public function isCheckoutRestartRequired()
     {
         return $this->isCheckoutRestartRequired;
     }
 
     /**
      * @param boolean $isCheckoutRestartRequired
-     *
      * @return $this
      */
-    public function setIsCheckoutRestartRequired(bool $isCheckoutRestartRequired)
+    public function setIsCheckoutRestartRequired($isCheckoutRestartRequired)
     {
         $this->isCheckoutRestartRequired = $isCheckoutRestartRequired;
 
@@ -56,7 +55,6 @@ class CheckoutValidateEvent extends Event
 
     /**
      * @param mixed $context
-     *
      * @return $this
      */
     public function setContext($context)

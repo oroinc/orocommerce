@@ -7,14 +7,14 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductRow;
-use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidator;
 
 class ProductRowQuantityValidator extends ConstraintValidator
 {
     /**
-     * @var QuantityToOrderValidator
+     * @var QuantityToOrderValidatorService
      */
     protected $quantityValidatorService;
 
@@ -29,12 +29,12 @@ class ProductRowQuantityValidator extends ConstraintValidator
     protected $translator;
 
     /**
-     * @param QuantityToOrderValidator $quantityValidatorService
+     * @param QuantityToOrderValidatorService $quantityValidatorService
      * @param DoctrineHelper $doctrineHelper
      * @param TranslatorInterface $translator
      */
     public function __construct(
-        QuantityToOrderValidator $quantityValidatorService,
+        QuantityToOrderValidatorService $quantityValidatorService,
         DoctrineHelper $doctrineHelper,
         TranslatorInterface $translator
     ) {

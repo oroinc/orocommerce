@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WarehouseBundle\Tests\Functional\Controller;
+namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\EntityBundle\Tests\Functional\Helper\FallbackTestTrait;
