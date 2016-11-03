@@ -7,3 +7,13 @@ oro_web_catalog_content_node:
     resource:     "@OroWebCatalogBundle/Controller/ContentNodeController.php"
     type:         annotation
     prefix:       /webcatalog/node
+
+oro_web_catalog_api:
+    resource: "@OroWebCatalogBundle/Controller/Api/Rest/ContentNodeController.php"
+    type:     rest
+    prefix:       api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest

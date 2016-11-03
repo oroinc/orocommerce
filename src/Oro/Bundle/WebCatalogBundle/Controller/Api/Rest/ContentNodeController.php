@@ -2,15 +2,21 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Controller\Api\Rest;
 
+use FOS\RestBundle\Controller\Annotations\NamePrefix;
+use FOS\RestBundle\Controller\Annotations\RouteResource;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @RouteResource("content_node")
+ * @NamePrefix("oro_api_")
+ */
 class ContentNodeController extends RestController
 {
     /**
-     * REST DELETE address
+     * REST DELETE content node
      *
      * @ApiDoc(
      *      description="Delete content node",
