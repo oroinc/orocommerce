@@ -14,12 +14,8 @@ For working example of using scopes in Oro application, please check out the `Vi
 * [Configuring Scope Criteria Providers](#configuring-scope-criteria-providers)
 * [Using Context](#using-context)
 * [Scope Operations](#scope-operations)
-
-
-* [Criteria](#criteria)
-* [Example with related scopes](#example-with-related-scopes)
+* [Example: Using related scopes](#example-using-related-scopes)
 * [Example with criteria](#example-with-criteria)
-
 
 How Scopes work
 ---------------
@@ -39,8 +35,7 @@ Scope Repository stores the scope instances created in Scope Manager using *find
 
 Scope Criteria Providers
 ------------------------
-Scope Criteria Provider is a service that adds a scope field to the scope model.
-In any bundle, you can create a [Scope Criteria Provider](#configuring-scope-criteria-providers) service and register it as scope provider for the specific scope type. This service shall deliver the scope criteria value to the Scope Manager, who, in turn, use the scope criteria to filter the scope instances or find the one matching to the provided context.
+Scope Criteria Provider is a service that adds a scope criteria fields to the scope model. Scope criteria helps to model a relationship between the scope and the scope-consuming context. In any bundle, you can create a [Scope Criteria Provider](#configuring-scope-criteria-providers) service and register it as scope provider for the specific scope type. This service shall deliver the scope criteria value to the Scope Manager, who, in turn, use the scope criteria to filter the scope instances or find the one matching to the provided context.
 
 Scope Type
 ----------
@@ -50,8 +45,8 @@ Scope Model
 -----------
 Scope model is a data structure for storing scope items. Every scope item has fields for every scope criteria registered by the scope criteria provider services. When the scope criteria is not involved in the scope (based on the scope type), the value of the field is NULL.
 
-|scope id|scope criteria 1 (authorised user)|scope criteria 2 (website_id)| ... (Country)| scope criteria N (Locale) |
-|---|---|---|---|
+|scope id|scope criteria 1 (authorised user)|scope criteria 2 (website_id)| ... (Country)| scope criteria N (Locale)|
+|---|---|---|---|---|
 |1|true|null|US|EN|
 |1|false|null|Germany|DE|
 
@@ -131,22 +126,18 @@ Get all scopes that match given context. When some scope criteria are not provid
 $scopeManager->findRelatedScopes($scopeType, $context = null);
 ```
 
-Criteria
---------
-Criteria can help to make correct join on scope and apply conditions according context.
+Example: Using related scopes
+-----------------------------
 
-Example with related scopes
--------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-For example there are 2 providers registered on scope type "web_content"
+For example, let's create following scope criteria providers and register them for the *web_content* scope type. 
 
 * ScopeAccountCriteriaProvider
 
 * ScopeWebsiteCriteriaProvider
 
-**Note:** ScopeAccountGroupCriteriaProvider is NOT involved in the scope type, so the scope will be filtered to have no AccountGroup criteria defined. 
+**Note:** The third ScopeAccountGroupCriteriaProvider is NOT involved in the scope type, so the scope will be filtered to have no AccountGroup criteria defined. 
 
-Scope has tree fields:
+The scope model has tree fields:
 ```
 class Scope 
 {
@@ -156,7 +147,7 @@ class Scope
     ...
 }
 ```
-with data:
+and the scopes created in Scope Repository are as follows:
 
 |id|account_id|accountGroup|website_id|
 |---|---|---|---|
@@ -167,29 +158,28 @@ with data:
 |5||1|1|
 |6||1||
 
-In order to fetch all scopes by account findRelatedScopes should be called. 
-At this moment we don't know what other fields\provider are participating in scope type. 
+In order to fetch all scopes that match account with id equal to 1, you can use findRelatedScopes and pass *web_content* and 'account'=>1 in the parameters.
 ```
 $context = ['account' => 1];
 $scopeManager->findRelatedScopes('web_content', $context) 
 ```
-In this case query will looks like: 
+We may or may not know what are other scope criteria are available with this scope type, but the Scope Manager fills in the blanks and adds *criteria IS NOT NULL* condition for any scope criteria we do not have in context. For our example, the Scope Manager's query looks like: 
 ```
 WHERE account_id = 1 AND website_id IS NOT NULL AND accountGroup_id IS NULL;
 ```
+where:
+* **account_id** - is given in the context parameter,
+* **website_id** - is not given, but is required based on the scope type, and
+* **accountGroup_id** - should be missing (NULL) in the scope, as it does not participate in the scope type.
 
-* **account_id** - given from Context
-* **website_id** - not given but required field for our scope type
-* **accountGroup_id** - doesn't participate in our scope type
-
-In this case result will be:
+The resulting scopes delivered by Scope Manager are:
 
 |id|account_id|accountGroup|website_id|
 |---|---|---|---|
 |1|1||1|
 |3|1||2|
 
-Example with criteria
+Example: Using criteria
 ---------------------
 Goal: find entity(Slug) related to most prioritized scope
 Example data: `Slug` has `ManyToMany` relation with `Scope`
