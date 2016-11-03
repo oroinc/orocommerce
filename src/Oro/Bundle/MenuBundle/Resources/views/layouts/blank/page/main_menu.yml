@@ -4,10 +4,14 @@ layout:
             themes: 'OroMenuBundle:layouts:blank/page/main_menu.html.twig'
         - '@addTree':
             items:
-                main_menu_container:
+                header_row:
                     blockType: container
                     siblingId: logo
                     prepend: false
+                header_row_main_menu:
+                    blockType: container
+                main_menu_container:
+                    blockType: container
                 main_menu:
                     blockType: menu
                     options:
@@ -15,5 +19,7 @@ layout:
                         depth: 1
             tree:
                 page_header:
-                    main_menu_container:
-                        main_menu: ~
+                    header_row:
+                        header_row_main_menu:
+                            main_menu_container:
+                                main_menu: ~

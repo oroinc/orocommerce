@@ -1,13 +1,7 @@
 .main-menu {
-  position: relative;
-
   max-height: 49px;
 
-  border-bottom: 1px solid get-color('additional', 'light');
-
-  @media (max-width: $screen-sm) {
-    display: none;
-  }
+  vertical-align: middle;
 
   .container-fluid {
     position: relative;
@@ -30,7 +24,6 @@
   &__item {
     display: block;
     min-height: 49px;
-    flex-grow: 1;
 
     &[data-dropdown-trigger] {
       &:hover {
@@ -128,14 +121,7 @@
   }
 
   &__link {
-    display: block;
-    min-height: 49px;
-    padding: 14px 0;
-
-    color: get-color('additional', 'dark');
-    line-height: 1.5;
     text-transform: uppercase;
-    text-align: center;
 
     @media (max-width: 1069px) {
       font-size: 13px;
@@ -152,22 +138,7 @@
     }
   }
 
-  &__sublist-container {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: z('base') + 10;
-
-    display: none;
-
-    border: none;
-    border-top: 1px solid transparent;
-  }
-
   &__sublist {
-    @include list-normalize();
-
     display: flex;
     padding: 15px 40px 15px 0;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,.2);
@@ -266,6 +237,25 @@
         width: 50%;
         margin: 5px 0 0;
       }
+    }
+  }
+}
+
+@include breakpoint('tablet') {
+  .main-menu {
+    display: block;
+
+    max-height: none;
+    padding: 10px 15px 0 15px;
+
+    &__item {
+      min-height: 0;
+    }
+
+    &__link {
+      padding: 5px 0;
+
+      text-align: left;
     }
   }
 }

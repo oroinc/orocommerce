@@ -22,23 +22,21 @@
         {% endif %}
     </a>
     {% if hasSublist %}
-        <!-- START TOP NAVIGATION SUBLIST -->
         <div class="main-menu__sublist-container">
             <ul class="main-menu__sublist">
                 {% do block|merge_context({'categories': category.childCategories }) %}
                 {{ block_widget(block) }}
             </ul>
         </div>
-        <!-- ENDTOP NAVIGATION SUBLIST -->
     {% endif %}
 {% endblock %}
 
 {% block _categories_main_menu_second_level_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " main-menu__sublist__item"
+        class: attr.class|default('') ~ " main-menu__sublist-item"
     }) %}
     <li {{ block('block_attributes') }}>
-        <div class="main-menu__sublist__title">By Category</div>
+        <div class="main-menu__sublist-title">By Category</div>
         {% for category in categories %}
             {% do block|merge_context({'category': category}) %}
             {{ block('container_widget') }}
@@ -48,12 +46,13 @@
 
 {% block _categories_main_menu_second_level_item_widget %}
     {% set hasSublist = category.childCategories is not empty %}
-    {% set class = attr.class|default('') ~ " main-menu__sublist--nested main-menu__sublist__item_has-2columns" %}
-    {% set class = hasSublist ? class ~ " main-menu__sublist--nested main-menu__sublist--has-sibling" : class %}
+    {% set class = attr.class|default('') ~ " main-menu__subcategory" %}
+    {% set class = hasSublist ? class ~ " main-menu__sublist--has-sibling" : class %}
     {% set attr = attr|merge({class: class}) %}
+
     <ul {{ block('block_attributes') }}>
-        <li class="main-menu__sublist-item">
-            <a href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}">
+        <li class="main-menu__subcategory-item">
+            <a class="link" href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}">
                 {{ category.titles|localized_value }}
             </a>
             {% if hasSublist %}
@@ -83,27 +82,4 @@
         href: path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true})
     }) %}
     <a {{ block('block_attributes') }}>{{ category.titles|localized_value }}</a>
-{% endblock %}
-
-{% block _categories_main_menu_second_level_sales_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " main-menu__sublist__item main-menu__sublist__item_has-sales-block"
-    }) %}
-    <li {{ block('block_attributes') }}>
-        <div class="main-menu__sublist__title">On Sale</div>
-        <div class="sales-block">
-            <a href="#">
-                <img class="img-responsive"
-                     src="{% image '@OroCatalogBundle/Resources/public/default/images/adv_1.jpg' %}{{ asset_url }}{% endimage %}"
-                     alt="">
-            </a>
-        </div>
-        <div class="sales-block">
-            <a href="#">
-                <img class="img-responsive"
-                     src="{% image '@OroCatalogBundle/Resources/public/default/images/adv_2.jpg' %}{{ asset_url }}{% endimage %}"
-                     alt="">
-            </a>
-        </div>
-    </li>
 {% endblock %}

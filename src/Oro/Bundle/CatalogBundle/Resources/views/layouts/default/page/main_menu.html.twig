@@ -1,0 +1,31 @@
+{% block _categories_main_menu_second_level_item_widget %}
+    {% set hasSublist = category.childCategories is not empty %}
+    {% set class = attr.class|default('') ~ " main-menu__sublist--nested main-menu__sublist__item_has-2columns" %}
+    {% set class = hasSublist ? class ~ " main-menu__sublist--nested main-menu__sublist--has-sibling" : class %}
+    {% set attr = attr|merge({class: class}) %}
+
+    <ul {{ block('block_attributes') }}>
+        <li class="main-menu__sublist-item">
+            <a href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}">
+                {{ category.titles|localized_value }}
+            </a>
+            {% if hasSublist %}
+                {% do block|merge_context({'categories': category.childCategories }) %}
+                {{ block('container_widget') }}
+            {% endif %}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block _categories_main_menu_second_level_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " main-menu__sublist__item"
+    }) %}
+    <li {{ block('block_attributes') }}>
+        <div class="main-menu__sublist__title">By Category</div>
+        {% for category in categories %}
+            {% do block|merge_context({'category': category}) %}
+            {{ block('container_widget') }}
+        {% endfor %}
+    </li>
+{% endblock %}

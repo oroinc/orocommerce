@@ -1,3 +1,27 @@
+{% block _header_row_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' header-row'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+    <input type="radio" id="header-row-overlay" class="header-row-helper" name="dropdowns" checked="checked" hidden="hidden">
+    <label class="header-row-overlay hidden-on-desktop" for="header-row-overlay"></label>
+{% endblock %}
+
+{% block _header_row_main_menu_widget %}
+    <input type="radio" id="main-menu-show-categories" class="header-row-helper" name="dropdowns" hidden="hidden">
+    <label class="custom-icon-menu header-row__trigger hidden-on-desktop" for="main-menu-show-categories">
+        <span class="custom-icon-menu__bar"></span>
+        <span class="custom-icon-menu__bar"></span>
+        <span class="custom-icon-menu__bar"></span>
+    </label>
+    <div class="header-row__toggle">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _main_menu_container_widget %}
     {% set attr =  layout_attr_defaults(attr, {
         '~class': ' main-menu'
