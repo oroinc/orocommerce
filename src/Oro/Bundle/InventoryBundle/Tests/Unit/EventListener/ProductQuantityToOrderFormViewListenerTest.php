@@ -26,7 +26,7 @@ class ProductQuantityToOrderFormViewListenerTest extends FormViewListenerTestCas
     /**
      * @var ProductQuantityToOrderFormViewListener
      */
-    protected $productQuantityToorderFormViewListener;
+    protected $productQuantityToOrderFormViewListener;
 
     /** @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject * */
     protected $event;
@@ -37,7 +37,7 @@ class ProductQuantityToOrderFormViewListenerTest extends FormViewListenerTestCas
         $this->requestStack = $this->getMock(RequestStack::class);
         $this->request = $this->getMockBuilder(Request::class)->disableOriginalConstructor()->getMock();
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
-        $this->productQuantityToorderFormViewListener = new ProductQuantityToOrderFormViewListener(
+        $this->productQuantityToOrderFormViewListener = new ProductQuantityToOrderFormViewListener(
             $this->requestStack,
             $this->doctrineHelper,
             $this->translator
@@ -48,14 +48,14 @@ class ProductQuantityToOrderFormViewListenerTest extends FormViewListenerTestCas
     public function testOnProductViewIgnoredIfNoProductId()
     {
         $this->doctrineHelper->expects($this->never())->method('getEntityReference');
-        $this->productQuantityToorderFormViewListener->onProductView($this->event);
+        $this->productQuantityToOrderFormViewListener->onProductView($this->event);
     }
 
     public function testOnProductViewIgnoredIfNoProductFound()
     {
         $this->request->expects($this->once())->method('get')->willReturn('1');
         $this->event->expects($this->never())->method('getEnvironment');
-        $this->productQuantityToorderFormViewListener->onProductView($this->event);
+        $this->productQuantityToOrderFormViewListener->onProductView($this->event);
     }
 
     public function testOnProductViewRendersAndAddsSubBlock()
@@ -71,6 +71,6 @@ class ProductQuantityToOrderFormViewListenerTest extends FormViewListenerTestCas
             ['dataBlocks' => [1 => ['title' => 'oro.product.sections.inventory.trans']]]
         );
 
-        $this->productQuantityToorderFormViewListener->onProductView($this->event);
+        $this->productQuantityToOrderFormViewListener->onProductView($this->event);
     }
 }

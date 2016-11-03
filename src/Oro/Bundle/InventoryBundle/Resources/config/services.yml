@@ -78,7 +78,6 @@ services:
         class: Oro\Bundle\InventoryBundle\EventListener\QuantityToOrderConditionListener
         arguments:
             - '@oro_inventory.validator.quantity_to_order_validator'
-            - '@session'
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: checkout.checkout_validate, method: onCheckoutValidate }
@@ -86,7 +85,7 @@ services:
             - { name: kernel.event_listener, event: extendable_condition.checkout, method: onCheckoutConditionCheck }
 
     oro_inventory.validator.quantity_to_order_validator:
-        class: Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidator
+        class: Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService
         arguments:
             - '@oro_entity.fallback.resolver.entity_fallback_resolver'
 
