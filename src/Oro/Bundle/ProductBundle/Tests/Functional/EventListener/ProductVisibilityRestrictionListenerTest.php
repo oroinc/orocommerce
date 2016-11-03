@@ -142,6 +142,27 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
         $this->assertTrue($foundCustomExpression, 'Custom expression from listener not found.');
     }
 
+    public function testRestrictsVisibilityForManyEntitiesWithoutProduct()
+    {
+        $query = new Query();
+
+        $query->from(['foo', 'foo2']);
+
+        $this->engine->search($query);
+
+        $where = $query->getCriteria()->getWhereExpression();
+
+        $foundSkuExpression    = false;
+        $foundCustomExpression = false;
+
+        if ($where instanceof CompositeExpression) {
+            list($foundSkuExpression, $foundCustomExpression) = $this->checkCompositeExpression($where);
+        }
+
+        $this->assertFalse($foundSkuExpression, 'Sku is null expression should not be applied.');
+        $this->assertTrue($foundCustomExpression, 'Custom expression from listener not found.');
+    }
+
     public function testRestrictsVisibilityForManyEntitiesWithPreviouslyPopulatedWhere()
     {
         $query = new Query();
@@ -162,6 +183,27 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
                     list($foundSkuExpression, $foundCustomExpression) = $this->checkCompositeExpression($mainExpr);
                 }
             }
+        }
+
+        $this->assertTrue($foundSkuExpression, 'Sku is null expression not found.');
+        $this->assertTrue($foundCustomExpression, 'Custom expression from listener not found.');
+    }
+
+    public function testRestrictsVisibilityForAllEntities()
+    {
+        $query = new Query();
+
+        $query->from(['*']);
+
+        $this->engine->search($query);
+
+        $where = $query->getCriteria()->getWhereExpression();
+
+        $foundSkuExpression    = false;
+        $foundCustomExpression = false;
+
+        if ($where instanceof CompositeExpression) {
+            list($foundSkuExpression, $foundCustomExpression) = $this->checkCompositeExpression($where);
         }
 
         $this->assertTrue($foundSkuExpression, 'Sku is null expression not found.');
