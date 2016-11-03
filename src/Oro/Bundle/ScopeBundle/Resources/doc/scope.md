@@ -48,15 +48,24 @@ Scope Repository is a service that reads/writes the scope-realted data from/to t
 
 Scope Providers
 ~~~~~~~~~~~~~~~~
-Scope Provider is a service that... 
+Scope Provider is a service that adds a scope field to the scope model.
+
+Scope Type
+~~~~~~~~~~
+Scope Type is a ... (links to the scope ids; scope submodel)
+Bundles with a scope provide of a given scope type get access to the scopes where (the scope field is NOT null). 
+
+Scope Model
+~~~~~~~~~~~
+(scope id) * (scope fields) with scope criteria as a value ????? 
 
 Configuring scopes in a bundle
 ------------------------------
+To begin using scopes in your bundle:
+1. Create a **Scope<your bundle>CriteriaProvider** class and implement getCriteriaForCurrentScope() and getCriteriaField() methods. Return an array of key/value structures in getCriteriaForCurrentScope() **what should the value tell us or be used for???**. Return a criteria id in getCriteriaField(). 
 
+(????In case if we need to get Scope by context it will get data from key\field account.????)
 
-####Example of provider
-It says that for current Scope we will use current Account.
-In case if we need to get Scope by context it will get data from key\field account. 
 This is default behavior of AbstractScopeCriteriaProvider
 ```
 class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
@@ -88,7 +97,7 @@ class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
     }
 }
 ```
-<your bundle>/Resources/config/service.yml:
+In <your bundle>/Resources/config/service.yml, add the <bundle>_scope_criteria_provider :
 ```
 oro_customer.account_scope_criteria_provider:
     class: 'Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider'
