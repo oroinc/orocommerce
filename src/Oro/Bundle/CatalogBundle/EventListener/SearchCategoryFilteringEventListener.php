@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\EventListener;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
@@ -83,6 +84,7 @@ class SearchCategoryFilteringEventListener
      */
     private function applyCategoryToQuery(SearchQueryInterface $query, $categoryId, $includeSubcategories = false)
     {
+        /** @var Category $category */
         $category = $this->repository->find($categoryId);
 
         if ($includeSubcategories) {
