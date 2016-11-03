@@ -7,10 +7,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'account_user_register_form.html.twig'
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue: oro.customer.accountuser.profile.register
         - '@setOption':
             id: registration_label
             optionName: text
