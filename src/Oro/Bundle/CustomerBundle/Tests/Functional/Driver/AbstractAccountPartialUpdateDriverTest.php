@@ -79,7 +79,7 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
     {
         $query = new Query();
         $query
-            ->from('oro_product_' . $this->getDefaultWebsiteId())
+            ->from('oro_product_WEBSITE_ID')
             ->getCriteria()
             ->andWhere(Criteria::expr()->eq($this->getVisibilityAccountFieldName($account), 1))
             ->orderBy(['sku' => Criteria::ASC]);

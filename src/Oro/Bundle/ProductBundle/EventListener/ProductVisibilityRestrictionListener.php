@@ -48,9 +48,7 @@ class ProductVisibilityRestrictionListener
      */
     private function applyQueryRestrictions(Query $query)
     {
-        $productEntityAlias = $this->mappingProvider->getEntityAlias(Product::class);
-
-        if ($query->getFrom() == [Product::class] || $query->getFrom() == [$productEntityAlias]) {
+        if ($this->isProductInFrom($query)) {
             $this->productManager->restrictSearchQuery($query);
 
             return;
@@ -73,5 +71,27 @@ class ProductVisibilityRestrictionListener
                 $restrictions
             )
         );
+    }
+
+    /**
+     * @param Query $query
+     * @return bool
+     */
+    private function isProductInFrom(Query $query)
+    {
+        $productEntityAlias =
+            $this->mappingProvider->getEntityAlias(Product::class);
+
+        $allowedEntries = [
+            $productEntityAlias,
+            Product::class,
+            '*'
+        ];
+
+        $from = $query->getFrom();
+
+        $result = array_intersect($from, $allowedEntries);
+
+        return !empty($result);
     }
 }
