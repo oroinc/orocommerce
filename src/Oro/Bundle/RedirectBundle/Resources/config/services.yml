@@ -2,9 +2,10 @@ parameters:
     oro_redirect.entity.slug.class: Oro\Bundle\RedirectBundle\Entity\Slug
 
 services:
-    oro_redirect.kernel.listener.process_redirects:
-        class: 'Oro\Bundle\RedirectBundle\EventListener\ForwardListener'
+    oro_redirect.routing.slug_url_mathcer:
+        class: Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher
         arguments:
+            - '@router'
             - "@router"
             - "@doctrine"
             - "@oro_frontend.request.frontend_helper"
@@ -14,9 +15,6 @@ services:
         calls:
             - [addSkippedUrlPattern, ['/_profiler', 'dev']]
             - [addSkippedUrlPattern, ['/_wdt', 'dev']]
-        tags:
-            - {name: kernel.event_listener, event: kernel.request, method: onKernelRequestPrepare, priority: 64}
-            - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 7}
 
     oro_redirect.slug.manager:
         class: 'Oro\Bundle\RedirectBundle\Manager\SlugManager'
@@ -32,3 +30,13 @@ services:
         arguments:
             - '%oro_catalog.entity.category.class%'
             - "@doctrine.orm.entity_manager"
+
+    security.firewall:
+        class: Oro\Bundle\RedirectBundle\Security\Firewall
+        arguments:
+            - "@security.firewall.map"
+            - "@event_dispatcher"
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequestAuthenticate, priority: 50 }
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequestAuthorize, priority: 8 }
+            - { name: kernel.event_listener, event: kernel.finish_request, method: onKernelFinishRequest }

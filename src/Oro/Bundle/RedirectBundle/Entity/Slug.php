@@ -10,7 +10,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
  * @ORM\Table(name="oro_redirect_slug", indexes={@ORM\Index(name="oro_redirect_slug_url", columns={"url"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository")
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -39,7 +39,7 @@ class Slug
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=1024)
+     * @ORM\Column(type="string", length=255)
      */
     protected $url;
 

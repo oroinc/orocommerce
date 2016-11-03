@@ -39,7 +39,7 @@ class OroRedirectBundleInstaller implements Installation
     {
         $table = $schema->createTable('oro_redirect_slug');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('url', 'string', ['length' => 1024]);
+        $table->addColumn('url', 'string', ['length' => 255]);
         $table->addColumn('route_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('route_parameters', 'array', ['comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
