@@ -43,15 +43,11 @@ class OrderShippingContextFactory
         }
         $shippingContext = $this->shippingContextFactory->create();
 
-        if ($order->getShippingAddress()) {
-            $shippingContext->setShippingAddress($order->getShippingAddress());
-        }
-        if ($order->getBillingAddress()) {
-            $shippingContext->setBillingAddress($order->getBillingAddress());
-        }
-        if ($order->getCurrency()) {
-            $shippingContext->setCurrency($order->getCurrency());
-        }
+        $shippingContext->setShippingAddress($order->getShippingAddress());
+        $shippingContext->setBillingAddress($order->getBillingAddress());
+        $shippingContext->setCurrency($order->getCurrency());
+        $shippingContext->setSubtotal(Price::create($order->getSubtotal(), $order->getCurrency()));
+
         if ($order->getLineItems()) {
             $shippingContext->setLineItems($order->getLineItems()->toArray());
         }
@@ -65,9 +61,6 @@ class OrderShippingContextFactory
         ]);
         if ($paymentTransaction instanceof PaymentTransaction) {
             $shippingContext->setPaymentMethod($paymentTransaction->getPaymentMethod());
-        }
-        if ($order->getSubtotal() && $order->getCurrency()) {
-            $shippingContext->setSubtotal(Price::create($order->getSubtotal(), $order->getCurrency()));
         }
 
         return $shippingContext;

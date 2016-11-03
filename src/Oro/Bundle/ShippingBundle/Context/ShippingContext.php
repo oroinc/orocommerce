@@ -106,10 +106,10 @@ class ShippingContext implements ShippingContextInterface
     }
 
     /**
-     * @param AddressInterface $address
+     * @param AddressInterface|null $address
      * @return $this
      */
-    public function setBillingAddress(AddressInterface $address)
+    public function setBillingAddress(AddressInterface $address = null)
     {
         $this->billingAddress = $address;
 
@@ -125,10 +125,10 @@ class ShippingContext implements ShippingContextInterface
     }
 
     /**
-     * @param AddressInterface $address
+     * @param AddressInterface|null $address
      * @return $this
      */
-    public function setShippingAddress(AddressInterface $address)
+    public function setShippingAddress(AddressInterface $address = null)
     {
         $this->shippingAddress = $address;
 
@@ -164,7 +164,7 @@ class ShippingContext implements ShippingContextInterface
 
 
     /**
-     * @param string $paymentMethod
+     * @param string|null $paymentMethod
      * @return string
      */
     public function setPaymentMethod($paymentMethod)
@@ -183,10 +183,10 @@ class ShippingContext implements ShippingContextInterface
     }
 
     /**
-     * @param string $currency
+     * @param string|null $currency
      * @return $this
      */
-    public function setCurrency($currency)
+    public function setCurrency($currency = null)
     {
         $this->currency = $currency;
 
