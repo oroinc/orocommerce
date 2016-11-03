@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\WebCatalogBundle\EventListener;
 
+use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller;
@@ -10,6 +12,8 @@ use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 
 class ContentNodeListener
 {
+    const FIELD_TITLES = 'titles';
+
     /**
      * @var ContentNodeMaterializedPathModifier
      */
@@ -45,7 +49,7 @@ class ContentNodeListener
      */
     public function prePersist(ContentNode $contentNode)
     {
-        $this->contentNodeNameFiller->fillName($contentNode);
+        $contentNode->setName($this->contentNodeNameFiller->fillName($contentNode));
     }
 
     /**

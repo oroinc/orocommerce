@@ -52,7 +52,7 @@ services:
         tags:
             - { name: twig.extension }
 
-    oro_web_catalog.event_listener.orm.category_listener:
+    oro_web_catalog.event_listener.orm.content_node_entity_listener:
         class: 'Oro\Bundle\WebCatalogBundle\EventListener\ContentNodeListener'
         public: false
         arguments:

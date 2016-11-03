@@ -23,6 +23,7 @@ class ContentNodeNameFiller
 
     /**
      * @param ContentNode $contentNode
+     * @return null|string
      */
     public function fillName(ContentNode $contentNode)
     {
