@@ -16,7 +16,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRepository")
  * @ORM\Table(name="oro_account_user")
  * @ORM\HasLifecycleCallbacks()
  * @ORM\AssociationOverrides({

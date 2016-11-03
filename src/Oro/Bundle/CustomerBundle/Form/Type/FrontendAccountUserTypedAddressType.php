@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\CustomerBundle\Form\Type;
 
+use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 class FrontendAccountUserTypedAddressType extends AccountTypedAddressType
 {
@@ -14,9 +17,22 @@ class FrontendAccountUserTypedAddressType extends AccountTypedAddressType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
-        $builder->add('frontendOwner', FrontendAccountUserSelectType::NAME, [
-            'label' => 'oro.customer.accountuser.entity_label',
-            'required' => false
-        ]);
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function onPreSetData(FormEvent $event)
+    {
+        $form = $event->getForm();
+        /** @var AccountUserAddress $data */
+        $data = $event->getData();
+        $formOptions = [
+            'data' => $data->getFrontendOwner()->getId(),
+            'label' => 'oro.customer.accountuser.entity_label'
+        ];
+        $form->add('frontendOwner', FrontendAccountUserSelectType::NAME, $formOptions);
     }
 }

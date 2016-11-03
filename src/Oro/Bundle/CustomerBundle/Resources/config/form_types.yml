@@ -25,6 +25,7 @@ services:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountSelectType'
         arguments:
              - '@oro_security.acl_helper'
+             - "@doctrine"
         tags:
             - { name: form.type, alias: oro_customer_frontend_account_select }
 
@@ -45,6 +46,9 @@ services:
 
     oro_customer.form.type.frontend.account_user_select:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserSelectType'
+        arguments:
+             - '@oro_security.acl_helper'
+             - "@doctrine"
         tags:
             - { name: form.type, alias: oro_account_frontend_account_user_select }
 
