@@ -13,15 +13,21 @@ layout:
                 quick_add_import_form_start:
                     blockType: form_start
                     options:
-                        form: '=data["oro_product_form"].getQuickAddImportForm()'
+                        # TODO REFACTOR AFTER MERGE BB-5243
+                        form: '=data["oro_product_form"].getQuickAddImportForm().getView()'
+                        form_config: '=data["oro_product_form"].getQuickAddImportForm().getForm().getConfig()'
                 quick_add_import_form_fields:
                     blockType: form_fields
                     options:
-                        form: '=data["oro_product_form"].getQuickAddImportForm()'
+                        # TODO REFACTOR AFTER MERGE BB-5243
+                        form: '=data["oro_product_form"].getQuickAddImportForm().getView()'
+                        form_config: '=data["oro_product_form"].getQuickAddImportForm().getForm().getConfig()'
                 quick_add_import_form_end:
                     blockType: form_end
                     options:
-                        form: '=data["oro_product_form"].getQuickAddImportForm()'
+                        # TODO REFACTOR AFTER MERGE BB-5243
+                        form: '=data["oro_product_form"].getQuickAddImportForm().getView()'
+                        form_config: '=data["oro_product_form"].getQuickAddImportForm().getForm().getConfig()'
             tree:
                 widget_content:
                     quick_add_import_help: ~

@@ -11,11 +11,15 @@ layout:
                 __form_errors:
                     blockType: form_errors
                     options:
+                        # TODO REFACTOR AFTER MERGE BB-5243
                         form: '=data["oro_account_frontend_account_address_form"].getAddressForm(data["entity"], data["account"]).getView()'
+                        form_config: '=data["oro_account_frontend_account_address_form"].getAddressForm(data["entity"], data["account"]).getForm().getConfig()'
                 __form:
                     blockType: form
                     options:
-                        form: '=data["oro_account_frontend_account_address_form"].getAddressForm(data["entity"], data["account"])'
+                        # TODO REFACTOR AFTER MERGE BB-5243
+                        form: '=data["oro_account_frontend_account_address_form"].getAddressForm(data["entity"], data["account"]).getView()'
+                        form_config: '=data["oro_account_frontend_account_address_form"].getAddressForm(data["entity"], data["account"]).getForm().getConfig()'
                 __form_actions:
                     blockType: container
                 __form_actions_update:

@@ -25,11 +25,20 @@ layout:
                 registration_form_start:
                     blockType: form_start
                     options:
-                        form: '=data["oro_account_frontend_account_user_register"].getRegisterForm()'
+                        # TODO REFACTOR AFTER MERGE BB-5243
+                        form: '=data["oro_account_frontend_account_user_register"].getRegisterForm().getView()'
+                        form_config: '=data["oro_account_frontend_account_user_register"].getRegisterForm().getForm().getConfig()'
+                registration_form_start:
+                    blockType: form_start
+                    options:
+                        # TODO REFACTOR AFTER MERGE BB-5243
+                        form: '=data["oro_account_frontend_account_user_register"].getRegisterForm().getView()'
+                        form_config: '=data["oro_account_frontend_account_user_register"].getRegisterForm().getForm().getConfig()'
                 registration_form_fields:
                     blockType: form_fields
                     options:
-                        form: '=data["oro_account_frontend_account_user_register"].getRegisterForm()'
+                        # TODO REFACTOR AFTER MERGE BB-5243
+                        form: '=data["oro_account_frontend_account_user_register"].getRegisterForm().getView()'
                 registration_form_submit:
                     blockType: button
                     options:
@@ -40,7 +49,8 @@ layout:
                 registration_form_end:
                     blockType: form_end
                     options:
-                        form: '=data["oro_account_frontend_account_user_register"].getRegisterForm()'
+                        # TODO REFACTOR AFTER MERGE BB-5243
+                        form: '=data["oro_account_frontend_account_user_register"].getRegisterForm().getView()'
                 registration_back_btn:
                     blockType: link
                     options:

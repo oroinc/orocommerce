@@ -11,15 +11,21 @@ layout:
                 quick_add_copy_paste_form_start:
                     blockType: form_start
                     options:
-                        form: '=data["oro_product_form"].getQuickAddCopyPasteForm()'
+                        # TODO REFACTOR AFTER MERGE BB-5243
+                        form: '=data["oro_product_form"].getQuickAddCopyPasteForm().getView()'
+                        form_config: '=data["oro_product_form"].getQuickAddCopyPasteForm().getForm().getConfig()'
                 quick_add_copy_paste_form_fields:
                     blockType: form_fields
                     options:
-                        form: '=data["oro_product_form"].getQuickAddCopyPasteForm()'
+                        # TODO REFACTOR AFTER MERGE BB-5243
+                        form: '=data["oro_product_form"].getQuickAddCopyPasteForm().getView()'
+                        form_config: '=data["oro_product_form"].getQuickAddCopyPasteForm().getForm().getConfig()'
                 quick_add_copy_paste_form_end:
                     blockType: form_end
                     options:
-                        form: '=data["oro_product_form"].getQuickAddCopyPasteForm()'
+                        # TODO REFACTOR AFTER MERGE BB-5243
+                        form: '=data["oro_product_form"].getQuickAddCopyPasteForm().getView()'
+                        form: '=data["oro_product_form"].getQuickAddCopyPasteForm().getForm().getConfig()'
                 quick_add_copy_paste_form_buttons:
                     blockType: container
                 quick_add_copy_paste_form_submit:
