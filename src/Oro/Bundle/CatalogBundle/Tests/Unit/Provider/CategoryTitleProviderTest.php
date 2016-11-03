@@ -27,9 +27,9 @@ class CategoryTitleProviderTest extends \PHPUnit_Framework_TestCase
 
         $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
-            ->setMethods(['getCatalogPageCategory', 'getType', 'getId', 'getName'])
+            ->setMethods(['getCatalogPageCategory', 'getType'])
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
 
         $contentVariant
             ->expects($this->once())
@@ -42,5 +42,19 @@ class CategoryTitleProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($category));
 
         $this->assertEquals('some title', $this->categoryTitleProvider->getTitle($contentVariant));
+    }
+
+    public function testGetTitleForNonSupportedType()
+    {
+        $contentVariant = $this
+            ->getMockBuilder(ContentVariantInterface::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $contentVariant
+            ->expects($this->once())
+            ->method('getType')
+            ->will($this->returnValue('__some_unsupported__'));
+
+        $this->assertNull($this->categoryTitleProvider->getTitle($contentVariant));
     }
 }

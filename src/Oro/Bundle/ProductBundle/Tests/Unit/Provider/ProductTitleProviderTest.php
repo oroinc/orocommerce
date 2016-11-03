@@ -27,9 +27,9 @@ class ProductTitleProviderTest extends \PHPUnit_Framework_TestCase
 
         $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
-            ->setMethods(['getProductPageProduct', 'getType', 'getId', 'getName'])
+            ->setMethods(['getProductPageProduct', 'getType'])
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
 
         $contentVariant
             ->expects($this->once())
@@ -42,5 +42,19 @@ class ProductTitleProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($product));
 
         $this->assertEquals('some title', $this->productTitleProvider->getTitle($contentVariant));
+    }
+
+    public function testGetTitleForNonSupportedType()
+    {
+        $contentVariant = $this
+            ->getMockBuilder(ContentVariantInterface::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $contentVariant
+            ->expects($this->once())
+            ->method('getType')
+            ->will($this->returnValue('__some_unsupported__'));
+
+        $this->assertNull($this->productTitleProvider->getTitle($contentVariant));
     }
 }

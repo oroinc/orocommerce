@@ -26,9 +26,9 @@ class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
 
         $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
-            ->setMethods(['getLandingPageCMSPage', 'getType', 'getId', 'getName'])
+            ->setMethods(['getLandingPageCMSPage', 'getType'])
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
 
         $contentVariant
             ->expects($this->once())
@@ -41,5 +41,19 @@ class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($page));
 
         $this->assertEquals('some title', $this->pageTitleProvider->getTitle($contentVariant));
+    }
+
+    public function testGetTitleForNonSupportedType()
+    {
+        $contentVariant = $this
+            ->getMockBuilder(ContentVariantInterface::class)
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+        $contentVariant
+            ->expects($this->once())
+            ->method('getType')
+            ->will($this->returnValue('__some_unsupported__'));
+
+        $this->assertNull($this->pageTitleProvider->getTitle($contentVariant));
     }
 }

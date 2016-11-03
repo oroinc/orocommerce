@@ -13,6 +13,9 @@ class ContentNodeNameFiller
      */
     protected $contentVariantTitleProvider;
 
+    /**
+     * @param ChainContentVariantTitleProvider $contentVariantTitleProvider
+     */
     public function __construct(ChainContentVariantTitleProvider $contentVariantTitleProvider)
     {
         $this->contentVariantTitleProvider = $contentVariantTitleProvider;

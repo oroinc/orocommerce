@@ -6,63 +6,51 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Component\WebCatalog\ChainContentVariantTitleProvider;
 use Oro\Component\WebCatalog\ContentVariantTitleProviderInterface;
-use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 class ChainContentVariantTitleProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ContentVariantTitleProviderInterface
-     */
-    protected $provider;
-
     /**
      * @var ChainContentVariantTitleProvider
      */
     protected $chainProvider;
 
-    /**
-     * @var ContentVariant
-     */
-    protected $contentVariant;
-
-    /**
-     * @var ArrayCollection|ContentVariantInterface[]
-     */
-    protected $contentVariants;
-
     protected function setUp()
     {
         $this->chainProvider = new ChainContentVariantTitleProvider();
-        $this->contentVariant = new ContentVariant();
-        $this->contentVariants = new ArrayCollection();
-        $this->contentVariants->add(new ContentVariant());
     }
 
     public function testGetTitle()
     {
-        $this->provider = $this
+        $contentVariant = new ContentVariant();
+
+        /** @var ContentVariantTitleProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
+        $provider = $this
             ->getMockBuilder(ContentVariantTitleProviderInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->provider
+        $provider
             ->expects($this->once())
             ->method('getTitle')
             ->will($this->returnValue('some title'));
-        $this->chainProvider->addProvider($this->provider);
-        $this->assertEquals('some title', $this->chainProvider->getTitle($this->contentVariant));
+        $this->chainProvider->addProvider($provider);
+        $this->assertEquals('some title', $this->chainProvider->getTitle($contentVariant));
     }
 
     public function testGetFirstTitle()
     {
-        $this->provider = $this
+        $contentVariant = new ContentVariant();
+        $contentVariants = new ArrayCollection([$contentVariant]);
+
+        /** @var ContentVariantTitleProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider */
+        $provider = $this
             ->getMockBuilder(ContentVariantTitleProviderInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->provider
+        $provider
             ->expects($this->once())
             ->method('getTitle')
             ->will($this->returnValue('some title'));
-        $this->chainProvider->addProvider($this->provider);
-        $this->assertEquals('some title', $this->chainProvider->getFirstTitle($this->contentVariants));
+        $this->chainProvider->addProvider($provider);
+        $this->assertEquals('some title', $this->chainProvider->getFirstTitle($contentVariants));
     }
 }

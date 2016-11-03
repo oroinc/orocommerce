@@ -58,8 +58,8 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
         $contentNode = new ContentNode();
 
         $this->contentNodeNameFiller->expects($this->once())
-                                    ->method('fillName')
-                                    ->with($contentNode);
+            ->method('fillName')
+            ->with($contentNode);
 
         $this->modifier->expects($this->once())
             ->method('calculateMaterializedPath')
