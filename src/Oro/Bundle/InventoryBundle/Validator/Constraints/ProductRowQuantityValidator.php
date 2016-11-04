@@ -60,6 +60,12 @@ class ProductRowQuantityValidator extends ConstraintValidator
         $minLimit = $this->quantityValidatorService->getMinimumLimit($product);
         $maxLimit = $this->quantityValidatorService->getMaximumLimit($product);
 
+        if (0 == $maxLimit) {
+            $this->addViolation($product, $maxLimit, 'quantity_limit_is_zero');
+
+            return;
+        }
+
         if ($this->quantityValidatorService->isHigherThanMaxLimit($maxLimit, $value->productQuantity)) {
             $this->addViolation($product, $maxLimit, 'quantity_over_max_limit');
         }

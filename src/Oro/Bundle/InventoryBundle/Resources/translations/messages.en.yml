@@ -51,7 +51,7 @@ oro:
             error:
                 quantity_over_max_limit: 'You cannot order more than %limit% units of %sku%: %product_name%'
                 quantity_below_min_limit: 'You cannot order less than %limit% units of %sku%: %product_name%'
-
+                quantity_limit_is_zero: 'The item %sku%: %product_name% is not available to order.'
 
         fields:
             product:

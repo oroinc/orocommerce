@@ -53,8 +53,12 @@ class LineItemValidationListener
             $product = $lineItem->getProduct();
             $minLimit = $this->validatorService->getMinimumLimit($product);
             $maxLimit = $this->validatorService->getMaximumLimit($product);
-
             // trigger error messages for products
+            if (0 == $maxLimit) {
+                $this->addErrorToEvent($event, $product, $maxLimit, 'quantity_limit_is_zero');
+                continue;
+            }
+
             if ($this->validatorService->isHigherThanMaxLimit($maxLimit, $lineItem->getQuantity())) {
                 $this->addErrorToEvent($event, $product, $maxLimit, 'quantity_over_max_limit');
             }
