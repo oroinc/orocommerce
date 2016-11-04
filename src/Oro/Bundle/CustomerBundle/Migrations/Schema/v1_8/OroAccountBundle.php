@@ -29,6 +29,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->renameActivityTables($schema, $queries);
+        $this->renameCustomerActivityTables($schema, $queries);
         $this->updateAttachments($schema, $queries);
         $this->updateNotes($schema, $queries);
 
@@ -70,6 +71,64 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
     }
 
     /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function renameCustomerActivityTables(Schema $schema, QueryBag $queries)
+    {
+        if ($schema->hasTable('oro_rel_c3990ba6b28b6f38e2d624')) {
+            $relTable = $schema->getTable('oro_rel_c3990ba6b28b6f38e2d624');
+            $relTable->removeForeignKey('FK_139D9F729B6B5FBA');
+            $relTable->removeForeignKey('FK_139D9F7296EB1108');
+            $relTable->dropIndex('IDX_139D9F729B6B5FBA');
+            $relTable->dropIndex('IDX_139D9F7296EB1108');
+            $this->renameExtension->renameTable(
+                $schema,
+                $queries,
+                'oro_rel_c3990ba6b28b6f38e2d624',
+                'oro_rel_c3990ba6b28b6f382b5af2'
+            );
+            $queries->addQuery(new UpdateExtendRelationQuery(
+                'Oro\Bundle\ActivityListBundle\Entity\ActivityList',
+                'Oro\Bundle\CustomerBundle\Entity\Account',
+                'account_a8bedd11',
+                'account_32ea2fb3',
+                RelationType::MANY_TO_MANY
+            ));
+            $this->renameExtension->addForeignKeyConstraint(
+                $schema,
+                $queries,
+                'oro_rel_c3990ba6b28b6f382b5af2',
+                'oro_account',
+                ['account_id'],
+                ['id'],
+                ['onDelete' => 'CASCADE']
+            );
+            $this->renameExtension->addForeignKeyConstraint(
+                $schema,
+                $queries,
+                'oro_rel_c3990ba6b28b6f382b5af2',
+                'oro_activity_list',
+                ['activitylist_id'],
+                ['id'],
+                ['onDelete' => 'CASCADE']
+            );
+            $this->renameExtension->addIndex(
+                $schema,
+                $queries,
+                'oro_rel_c3990ba6b28b6f382b5af2',
+                ['account_id']
+            );
+            $this->renameExtension->addIndex(
+                $schema,
+                $queries,
+                'oro_rel_c3990ba6b28b6f382b5af2',
+                ['activitylist_id']
+            );
+        }
+    }
+
+    /**
      * @param QueryBag $queries
      */
     private function renameOldActivityTables(QueryBag $queries)
@@ -103,6 +162,9 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         $attachments = $schema->getTable('oro_attachment');
 
         $attachments->removeForeignKey('FK_FA0FE081140E2435');
+        if ($attachments->hasIndex('IDX_FA0FE081140E2435')) {
+            $attachments->dropIndex('IDX_FA0FE081140E2435');
+        }
         $extension->renameColumn(
             $schema,
             $queries,
@@ -241,6 +303,9 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
         } elseif ($notes->hasForeignKey('fk_oro_note_account_8d93c122_id')) {
             $notes->removeForeignKey('fk_oro_note_account_8d93c122_id');
         }
+        if ($notes->hasIndex('IDX_BA066CE1140E2435')) {
+            $notes->dropIndex('IDX_BA066CE1140E2435');
+        }
         $extension->renameColumn(
             $schema,
             $queries,
@@ -257,6 +322,7 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
             ['id'],
             ['onDelete' => 'SET NULL']
         );
+
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\NoteBundle\Entity\Note',
             'Oro\Bundle\CustomerBundle\Entity\Account',
