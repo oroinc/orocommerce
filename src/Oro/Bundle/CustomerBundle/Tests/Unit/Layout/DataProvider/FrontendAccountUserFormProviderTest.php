@@ -71,6 +71,29 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($actual, $this->provider->getAccountUserFormView($accountUser));
     }
 
+    /**
+     * @dataProvider getAccountUserFormProvider
+     *
+     * @param AccountUser $accountUser
+     * @param string $route
+     * @param array $routeParameters
+     */
+    public function testGetAccountUserForm(AccountUser $accountUser, $route, array $routeParameters = [])
+    {
+        $this->router->expects($this->exactly(2))
+            ->method('generate')
+            ->with($route, $routeParameters);
+
+        $form = $this->assertAccountUserFormHandlerCalled();
+        $actual = $this->provider->getAccountUserForm($accountUser);
+
+        $this->assertInstanceOf(FormInterface::class, $actual);
+        $this->assertSame($form, $actual);
+
+        /** test local cache */
+        $this->assertSame($actual, $this->provider->getAccountUserForm($accountUser));
+    }
+
     public function testGetForgotPasswordFormView()
     {
         $formView = $this->getMock(FormView::class);
@@ -92,6 +115,24 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
         // Get form with existing data in locale cache
         $data = $this->provider->getForgotPasswordFormView();
         $this->assertInstanceOf(FormView::class, $data);
+    }
+
+    public function testGetForgotPasswordForm()
+    {
+        $expectedForm = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(AccountUserPasswordRequestType::NAME)
+            ->willReturn($expectedForm);
+
+        // Get form without existing data in locale cache
+        $data = $this->provider->getForgotPasswordForm();
+        $this->assertInstanceOf(FormInterface::class, $data);
+
+        // Get form with existing data in locale cache
+        $data = $this->provider->getForgotPasswordForm();
+        $this->assertInstanceOf(FormInterface::class, $data);
     }
 
     public function testGetResetPasswordFormView()
@@ -117,6 +158,24 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(FormView::class, $data);
     }
 
+    public function testGetResetPasswordForm()
+    {
+        $expectedForm = $this->getMock('Symfony\Component\Form\Test\FormInterface');
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(AccountUserPasswordResetType::NAME)
+            ->willReturn($expectedForm);
+
+        // Get form without existing data in locale cache
+        $data = $this->provider->getResetPasswordForm();
+        $this->assertInstanceOf(FormInterface::class, $data);
+
+        // Get form with existing data in locale cache
+        $data = $this->provider->getResetPasswordForm();
+        $this->assertInstanceOf(FormInterface::class, $data);
+    }
+
     /**
      * @dataProvider getProfileFormProvider
      *
@@ -138,6 +197,29 @@ class FrontendAccountUserFormProviderTest extends \PHPUnit_Framework_TestCase
 
         /** test local cache */
         $this->assertSame($actual, $this->provider->getProfileFormView($accountUser));
+    }
+
+    /**
+     * @dataProvider getProfileFormProvider
+     *
+     * @param AccountUser $accountUser
+     * @param string $route
+     * @param array $routeParameters
+     */
+    public function testGetProfileForm(AccountUser $accountUser, $route, array $routeParameters = [])
+    {
+        $this->router->expects($this->exactly(2))
+            ->method('generate')
+            ->with($route, $routeParameters);
+
+        $form = $this->assertAccountUserProfileFormHandlerCalled();
+        $actual = $this->provider->getProfileForm($accountUser);
+
+        $this->assertInstanceOf(FormInterface::class, $actual);
+        $this->assertSame($form, $actual);
+
+        /** test local cache */
+        $this->assertSame($actual, $this->provider->getProfileForm($accountUser));
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Layout\DataProvider;
 
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\RFPBundle\Entity\Request;
@@ -16,10 +17,36 @@ class RFPFormProvider extends AbstractFormProvider
     /**
      * @param Request $request
      *
-     * @return FormInterface
+     * @return FormView
      */
     public function getRequestFormView(Request $request)
     {
+        $options = $this->getFormOptions($request);
+
+        return $this->getFormView(RequestType::NAME, $request, $options);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return FormInterface
+     */
+    public function getRequestForm(Request $request)
+    {
+        $options = $this->getFormOptions($request);
+
+        return $this->getForm(RequestType::NAME, $request, $options);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function getFormOptions(Request $request)
+    {
+        $options = [];
+
         if ($request->getId()) {
             $options['action'] = $this->generateUrl(
                 self::RFP_REQUEST_UPDATE_ROUTE_NAME,
@@ -31,6 +58,6 @@ class RFPFormProvider extends AbstractFormProvider
             );
         }
 
-        return $this->getFormView(RequestType::NAME, $request, $options);
+        return $options;
     }
 }

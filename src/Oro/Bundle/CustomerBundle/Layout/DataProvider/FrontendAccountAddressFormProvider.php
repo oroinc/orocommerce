@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Layout\DataProvider;
 
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
@@ -15,15 +16,44 @@ class FrontendAccountAddressFormProvider extends AbstractFormProvider
     const ACCOUNT_ADDRESS_UPDATE_ROUTE_NAME = 'oro_customer_frontend_account_address_update';
 
     /**
-     * Get form accessor with account address form
+     * Get account address form view
+     *
+     * @param AccountAddress $accountAddress
+     * @param Account        $account
+     *
+     * @return FormView
+     */
+    public function getAddressFormView(AccountAddress $accountAddress, Account $account)
+    {
+        $options = $this->getFormOptions($accountAddress, $account);
+
+        return $this->getFormView(AccountTypedAddressType::NAME, $accountAddress, $options);
+    }
+
+    /**
+     * Get account address form
      *
      * @param AccountAddress $accountAddress
      * @param Account        $account
      *
      * @return FormInterface
      */
-    public function getAddressFormView(AccountAddress $accountAddress, Account $account)
+    public function getAddressForm(AccountAddress $accountAddress, Account $account)
     {
+        $options = $this->getFormOptions($accountAddress, $account);
+
+        return $this->getForm(AccountTypedAddressType::NAME, $accountAddress, $options);
+    }
+
+    /**
+     * @param AccountAddress $accountAddress
+     * @param Account        $account
+     *
+     * @return array
+     */
+    private function getFormOptions(AccountAddress $accountAddress, Account $account)
+    {
+        $options = [];
         if ($accountAddress->getId()) {
             $options['action'] = $this->generateUrl(
                 self::ACCOUNT_ADDRESS_UPDATE_ROUTE_NAME,
@@ -36,6 +66,6 @@ class FrontendAccountAddressFormProvider extends AbstractFormProvider
             );
         }
 
-        return $this->getFormView(AccountTypedAddressType::NAME, $accountAddress, $options);
+        return $options;
     }
 }

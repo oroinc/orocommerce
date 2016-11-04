@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -22,7 +23,7 @@ class ProductFormProvider extends AbstractFormProvider
      * @param null  $data
      * @param array $options
      *
-     * @return FormInterface
+     * @return FormView
      */
     public function getQuickAddFormView($data = null, array $options = [])
     {
@@ -45,7 +46,7 @@ class ProductFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @return FormInterface
+     * @return FormView
      */
     public function getQuickAddCopyPasteFormView()
     {
@@ -65,7 +66,7 @@ class ProductFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @return FormInterface
+     * @return FormView
      */
     public function getQuickAddImportFormView()
     {
@@ -88,7 +89,7 @@ class ProductFormProvider extends AbstractFormProvider
      * @param Product|null $product
      * @param string       $instanceName
      *
-     * @return FormInterface
+     * @return FormView
      */
     public function getLineItemFormView(Product $product = null, $instanceName = '')
     {

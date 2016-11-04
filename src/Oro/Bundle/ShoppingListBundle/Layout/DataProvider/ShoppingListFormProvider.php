@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormInterface;
-
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
+
+use Symfony\Component\Form\FormView;
 
 class ShoppingListFormProvider extends AbstractFormProvider
 {
@@ -16,7 +16,7 @@ class ShoppingListFormProvider extends AbstractFormProvider
     /**
      * @param ShoppingList $shoppingList
      *
-     * @return FormInterface
+     * @return FormView
      */
     public function getShoppingListFormView(ShoppingList $shoppingList)
     {

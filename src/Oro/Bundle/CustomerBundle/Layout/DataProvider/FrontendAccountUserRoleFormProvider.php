@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CustomerBundle\Layout\DataProvider;
 
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
@@ -22,7 +22,6 @@ class FrontendAccountUserRoleFormProvider extends AbstractFormProvider
      * @param FormFactoryInterface                 $formFactory
      * @param AccountUserRoleUpdateFrontendHandler $handler
      * @param UrlGeneratorInterface                $router
-     *
      */
     public function __construct(
         FormFactoryInterface $formFactory,
@@ -39,7 +38,7 @@ class FrontendAccountUserRoleFormProvider extends AbstractFormProvider
      *
      * @param AccountUserRole $accountUserRole
      *
-     * @return FormInterface
+     * @return FormView
      */
     public function getRoleFormView(AccountUserRole $accountUserRole)
     {

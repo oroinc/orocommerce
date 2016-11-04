@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Layout\DataProvider;
 
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
@@ -51,7 +52,7 @@ class TransitionFormProvider extends AbstractFormProvider
     /**
      * @param WorkflowItem $workflowItem
      *
-     * @return mixed
+     * @return FormView|null
      */
     public function getTransitionFormView(WorkflowItem $workflowItem)
     {

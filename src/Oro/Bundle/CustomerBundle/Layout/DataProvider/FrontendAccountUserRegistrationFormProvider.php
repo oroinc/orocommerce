@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -58,15 +59,27 @@ class FrontendAccountUserRegistrationFormProvider extends AbstractFormProvider
     }
 
     /**
-     * @return FormInterface
+     * @return FormView
      */
     public function getRegisterFormView()
     {
-        $options['action'] = $this->generateUrl(
-            self::ACCOUNT_USER_REGISTER_ROUTE_NAME
-        );
+        $accountUser = $this->createAccountUser();
 
-        return $this->getFormView(FrontendAccountUserRegistrationType::NAME, $this->createAccountUser(), $options);
+        $options['action'] = $this->generateUrl(self::ACCOUNT_USER_REGISTER_ROUTE_NAME);
+
+        return $this->getFormView(FrontendAccountUserRegistrationType::NAME, $accountUser, $options);
+    }
+
+    /**
+     * @return FormInterface
+     */
+    public function getRegisterForm()
+    {
+        $accountUser = $this->createAccountUser();
+
+        $options['action'] = $this->generateUrl(self::ACCOUNT_USER_REGISTER_ROUTE_NAME);
+
+        return $this->getForm(FrontendAccountUserRegistrationType::NAME, $accountUser, $options);
     }
 
     /**
