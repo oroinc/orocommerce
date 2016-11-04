@@ -30,46 +30,6 @@ class OrmEngineTest extends AbstractEngineTest
     }
 
     /**
-     * @return callable
-     */
-    protected function setListener()
-    {
-        $listener = function (IndexEntityEvent $event) {
-            $defaultLocalizationId = $this->getDefaultLocalizationId();
-
-            $items = $this->getContainer()->get('doctrine')
-                ->getRepository(TestEntity::class)
-                ->findBy(['id' => $event->getEntities()]);
-
-            /** @var TestEntity $item */
-            foreach ($items as $item) {
-                $event->addField($item->getId(), 'stringValue', $item->stringValue);
-                $event->addField($item->getId(), 'integerValue', $item->integerValue);
-                $event->addField($item->getId(), 'decimalValue', $item->decimalValue);
-                $event->addField($item->getId(), 'floatValue', $item->floatValue);
-                $event->addField($item->getId(), 'datetimeValue', $item->datetimeValue);
-                $event->addField($item->getId(), 'phone', $item->phone);
-                $event->addField($item->getId(), 'blobValue', (string)$item->blobValue);
-
-                $event->addPlaceholderField(
-                    $item->getId(),
-                    'title_LOCALIZATION_ID',
-                    "Some text with placeholder {$defaultLocalizationId} for {$item->stringValue}",
-                    [LocalizationIdPlaceholder::NAME => $defaultLocalizationId]
-                );
-            }
-        };
-
-        $this->getContainer()->get('event_dispatcher')->addListener(
-            IndexEntityEvent::NAME,
-            $listener,
-            -255
-        );
-
-        return $listener;
-    }
-
-    /**
      * @return AbstractEngine
      */
     protected function getSearchEngine()
