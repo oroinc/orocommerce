@@ -136,9 +136,9 @@ Example: Using related scopes
 -----------------------------
 For example, let's create the following scope criteria providers and register them for the *web_content* scope type. 
 
-* ScopeAccountCriteriaProvider
+* ScopeAccountCriteriaProvider (priority:300)
 
-* ScopeWebsiteCriteriaProvider
+* ScopeWebsiteCriteriaProvider (priority:100)
 
 **Note:** The third ScopeAccountGroupCriteriaProvider is NOT involved in the scope type, so the scope will be filtered to have no AccountGroup criteria defined. 
 
