@@ -26,7 +26,6 @@ Scope Manager
 Scope Manager is a service that provides an interface for collecting the scope items in Oro application. It is in charge of the following functions:
 * Expose scope-related operations (find, findOrCreate, findDefaultScope, findRelatedScopes) to the scope-aware bundles and deliver requested scope(s) as a result. See [Scope Operations](#scope-operations) for more information.
 * Create a collected scope in response to the findOrCreate operation (if the scope is not found).
-* Provide a getScope() feature for the scope-aware bundles. **(need more infrmation here)**
 * Call Scope Criteria Provider's getCriteriaForCurrentScope() method to get a portion of the scope information.
 
 Scope Repository
@@ -150,7 +149,7 @@ class Scope
     ...
 }
 ```
-and the scopes created in Scope Repository are as follows:
+and the existing scopes in Scope Repository are as follows:
 
 |id|account_id|accountGroup|website_id|
 |---|---|---|---|
@@ -166,7 +165,7 @@ In order to fetch all scopes that match account with id equal to 1, you can use 
 $context = ['account' => 1];
 $scopeManager->findRelatedScopes('web_content', $context) 
 ```
-We may or may not know what are other scope criteria are available with this scope type, but the Scope Manager fills in the blanks and adds *criteria IS NOT NULL* condition for any scope criteria we do not have in context. For our example, the Scope Manager's query looks like: 
+We may or may not know what are other scope criteria that are available for this scope type. The Scope Manager fills in the blanks and adds *criteria IS NOT NULL* condition for any scope criteria we do not have in context. For our example, the Scope Manager's query looks like: 
 ```
 WHERE account_id = 1 AND website_id IS NOT NULL AND accountGroup_id IS NULL;
 ```
@@ -175,7 +174,7 @@ where:
 * **website_id** - is not given, but is required based on the scope type, and
 * **accountGroup_id** - should be missing (NULL) in the scope, as it does not participate in the scope type.
 
-The resulting scopes delivered by Scope Manager are:
+The resulting scopes delivered to the scope consumer by Scope Manager are:
 
 |id|account_id|accountGroup|website_id|
 |---|---|---|---|
@@ -185,10 +184,9 @@ The resulting scopes delivered by Scope Manager are:
 Example: Using criteria
 -----------------------
 
-Goal: find entity(Slug) related to most prioritized scope
-Example data: `Slug` has `ManyToMany` relation with `Scope`
+When the slug URLs are linked to the scopes, in a many-to-many way, and we need to find a slug URL related to the scope with the highest priority, fitting best for the current context, this is what happens:
 
-Example of service.yml:
+The scope criteria providers are already registered in the *service.yml* file:
 ```
 oro_customer.account_scope_criteria_provider:
     class: 'Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider'
@@ -198,10 +196,10 @@ oro_customer.account_scope_criteria_provider:
 oro_customer.account_group_scope_criteria_provider:
     class: 'Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider'
     tags:
-        - { name: oro_scope.provider, scopeType: web_content, priority: 200 }
-        
+        - { name: oro_scope.provider, scopeType: web_content, priority: 200 } 
 ```
-Code example:
+
+In this code example we build a query and modify it with the ScopeCriteria methods:
 ```
 $qb->select('slug')
     ->from(Slug::class, 'slug')
@@ -213,16 +211,15 @@ $qb->select('slug')
 $scopeCriteria = $this->scopeManager->getCriteria('web_content');
 $scopeCriteria->applyToJoinWithPriority($qb, 'scopes'); 
 ```
-Because of we don't use context, all values are set for current scope.
-Let's say we are logged in under Account(1). The Account(1) has AccountGroup(1).
-In this case scope priority will be calculated as:
+As you do not pass a context to the Scope Manager in the getCriteria method, the current context is used by default(e.g. a logged on customer is a part of Account with id=1, and this account is a part of AccountGroup with id=1.
 
+The scopes applicable for the current context are:
 |id|account_id|accountGroup|
 |---|---|---|
 |4|1||
 |6||1|
 
-Query that will be executed:
+Here is the resulting modified query:
 ```
 SELECT slug.*
 FROM oro_redirect_slug slug
@@ -237,17 +234,16 @@ WHERE slug.url = :url
 ORDER BY scope.account_id DESC, scope.accountGroup_id DESC
 LIMIT 1;
 ```
+Now, let's add another scope criteria provider in a `WebsiteBundle` for the *web_content* scope type and see how the list of scopes and the modified query change. 
 
-If we will add `WebsiteBundle`, and register `new scope provider` to scope type `web_content`
+In the bundle's *service.yml* file we add:
 ```
 oro_website.website_scope_criteria_provider:
     class: 'Oro\Bundle\WebsiteBundle\Provider\ScopeCriteriaProvider'
     tags:
         - { name: oro_scope.provider, scopeType: web_content, priority: 100 }
 ```
-
-And request will be made at Website(1)
-In this case scope priority will be calculated as:
+In current context, the website id is 1, and the scopes of the web_content type are:
 
 |id|account_id|accountGroup|website_id|
 |---|---|---|---|
@@ -256,7 +252,7 @@ In this case scope priority will be calculated as:
 |5||1|1|
 |6||1||
 
-The following query is executed:
+The updated query automatically canges to the following one:
 ```
 SELECT slug.*
 FROM oro_redirect_slug slug
@@ -271,9 +267,3 @@ WHERE slug.url = :url
 ORDER BY scope.account_id DESC, scope.accountGroup_id DESC, scope.website_id DESC
 LIMIT 1;'
 ```
- **Note:** ScopeProviders calls according to priority, this will allow to fetch the most detailed Scope.*
-Scope-aware Bundle(searches for scopes (using search criteria), requests scope creation, alters behaviour or displayed data based on the obtained scope values)
-
-Build a scope model in the scope repository using information about the scope types registered by scope providers of the application bundles (see [Scope Criteria Providers](#scope-criteria-providers)). Note: Basically, bundles that register new scope type extend the core Scope entity implementation.
-
-
