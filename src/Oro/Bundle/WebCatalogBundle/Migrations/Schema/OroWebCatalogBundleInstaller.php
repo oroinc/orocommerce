@@ -46,16 +46,16 @@ class OroWebCatalogBundleInstaller implements
         $this->createOroWebCatalogTable($schema);
         $this->createOroContentVariantTable($schema);
         $this->createOroContentNodeTable($schema);
-        $this->createOroContentNodeSlugTable($schema);
+        $this->createOroContentNodeSlugPrototypeTable($schema);
         $this->createOroContentNodeTitleTable($schema);
-        $this->createOroContentNodeToSlugTable($schema);
+        $this->createOroContentNodeSlugTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroWebCatalogForeignKeys($schema);
         $this->addOroContentNodeForeignKeys($schema);
-        $this->addOroContentNodeSlugForeignKeys($schema);
+        $this->addOroContentNodeSlugPrototypeForeignKeys($schema);
         $this->addOroContentNodeTitleForeignKeys($schema);
-        $this->addOroContentNodeToSlugForeignKeys($schema);
+        $this->addOroContentNodeSlugForeignKeys($schema);
         $this->addOroContentVariantForeignKeys($schema);
     }
 
@@ -118,13 +118,13 @@ class OroWebCatalogBundleInstaller implements
     }
 
     /**
-     * Create oro_web_catalog_node_slug table
+     * Create oro_web_catalog_node_slug_prot table
      *
      * @param Schema $schema
      */
-    protected function createOroContentNodeSlugTable(Schema $schema)
+    protected function createOroContentNodeSlugPrototypeTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_web_catalog_node_slug');
+        $table = $schema->createTable('oro_web_catalog_node_slug_prot');
         $table->addColumn('node_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['node_id', 'localized_value_id']);
@@ -146,13 +146,13 @@ class OroWebCatalogBundleInstaller implements
     }
 
     /**
-     * Create oro_web_catalog_node_to_slug table
+     * Create oro_web_catalog_node_slug table
      *
      * @param Schema $schema
      */
-    protected function createOroContentNodeToSlugTable(Schema $schema)
+    protected function createOroContentNodeSlugTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_web_catalog_node_to_slug');
+        $table = $schema->createTable('oro_web_catalog_node_slug');
         $table->addColumn('node_id', 'integer', []);
         $table->addColumn('slug_id', 'integer', []);
         $table->setPrimaryKey(['node_id', 'slug_id']);
@@ -204,13 +204,13 @@ class OroWebCatalogBundleInstaller implements
     }
 
     /**
-     * Add oro_web_catalog_node_slug foreign keys.
+     * Add oro_web_catalog_node_slug_prot foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOroContentNodeSlugForeignKeys(Schema $schema)
+    protected function addOroContentNodeSlugPrototypeForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_web_catalog_node_slug');
+        $table = $schema->getTable('oro_web_catalog_node_slug_prot');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_web_catalog_content_node'),
             ['node_id'],
@@ -248,13 +248,13 @@ class OroWebCatalogBundleInstaller implements
     }
 
     /**
-     * Add oro_web_catalog_node_to_slug foreign keys.
+     * Add oro_web_catalog_node_slug foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOroContentNodeToSlugForeignKeys(Schema $schema)
+    protected function addOroContentNodeSlugForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_web_catalog_node_to_slug');
+        $table = $schema->getTable('oro_web_catalog_node_slug');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_redirect_slug'),
             ['slug_id'],

@@ -38,7 +38,7 @@ class OroWebCatalogBundle extends Bundle
                     [
                         ContentNode::class => [
                             'title' => 'titles',
-                            'slug' => 'slugs'
+                            'slugPrototype' => 'slugPrototypes'
                         ]
                     ]
                 )

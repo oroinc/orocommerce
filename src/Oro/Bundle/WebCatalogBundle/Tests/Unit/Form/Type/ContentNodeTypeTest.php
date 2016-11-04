@@ -63,7 +63,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('parentNode'));
         $this->assertTrue($form->has('name'));
         $this->assertTrue($form->has('titles'));
-        $this->assertFalse($form->has('slugs'));
+        $this->assertFalse($form->has('slugPrototypes'));
     }
 
     public function testBuildFormSubNode()
@@ -75,7 +75,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('parentNode'));
         $this->assertTrue($form->has('name'));
         $this->assertTrue($form->has('titles'));
-        $this->assertTrue($form->has('slugs'));
+        $this->assertTrue($form->has('slugPrototypes'));
     }
 
     public function testGetName()
@@ -119,30 +119,30 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                 [
                     'name'   => 'name',
                     'titles' => [['string' => 'new_content_node_title']],
-                    'slugs'  => [['string' => 'new_content_node_slug']],
+                    'slugPrototypes'  => [['string' => 'new_content_node_slug']],
                 ],
                 (new ContentNode())
                     ->setName('name')
                     ->addTitle((new LocalizedFallbackValue())->setString('new_content_node_title'))
-                    ->addSlug((new LocalizedFallbackValue())->setString('new_content_node_slug')),
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('new_content_node_slug')),
             ],
             'existing entity' => [
                 (new ContentNode())
                     ->setName('name')
                     ->setParentNode(new ContentNode())
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
-                    ->addSlug((new LocalizedFallbackValue())->setString('content_node_slug')),
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug')),
                 [
                     'name'   => 'name UP',
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
-                    'slugs'  => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                    'slugPrototypes'  => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
                 ],
                 (new ContentNode())
                     ->setName('name UP')
                     ->addTitle((new LocalizedFallbackValue())->setString('content_node_title'))
                     ->addTitle((new LocalizedFallbackValue())->setString('another_node_title'))
-                    ->addSlug((new LocalizedFallbackValue())->setString('content_node_slug'))
-                    ->addSlug((new LocalizedFallbackValue())->setString('another_node_slug')),
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug'))
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('another_node_slug')),
             ],
         ];
     }

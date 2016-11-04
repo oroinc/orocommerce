@@ -68,10 +68,10 @@ class ContentNodeType extends AbstractType
         $data = $event->getData();
         if ($data instanceof ContentNode && $data->getParentNode() instanceof ContentNode) {
             $event->getForm()->add(
-                'slugs',
+                'slugPrototypes',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label'    => 'oro.webcatalog.contentnode.slugs.label',
+                    'label'    => 'oro.webcatalog.contentnode.slug_prototypes.label',
                     'required' => true,
                     'options'  => ['constraints' => [new NotBlank()]],
                 ]

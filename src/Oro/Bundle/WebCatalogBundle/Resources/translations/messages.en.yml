@@ -20,12 +20,12 @@ oro:
             materialized_path.label: Materialized Path
             name.label: Name
             child_nodes.label: Child Nodes
-            content_variant_slugs.label: Content Variant Slugs
             content_variants.label: Content Variant
             organization.label: Organization
             owner.label: Owner
             parent_node.label: Parent Content Node
             slugs.label: Slugs
+            slug_prototypes.label: Slug prototypes
             titles.label: Titles
             web_catalog.label: Web catalog
 

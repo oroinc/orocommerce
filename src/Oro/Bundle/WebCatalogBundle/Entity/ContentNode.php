@@ -67,7 +67,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     /**
      * @var Collection|ContentNode[]
      *
-     * @ORM\OneToMany(targetEntity="ContentNode", mappedBy="parentNode", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="ContentNode", mappedBy="parentNode", cascade={"persist", "remove"})
      * @ORM\OrderBy({"left" = "ASC"})
      * @ConfigField(
      *      defaultValues={
@@ -122,7 +122,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      *      orphanRemoval=true
      * )
      * @ORM\JoinTable(
-     *      name="oro_web_catalog_node_slug",
+     *      name="oro_web_catalog_node_slug_prot",
      *      joinColumns={
      *          @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -138,7 +138,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      *      }
      * )
      */
-    protected $slugs;
+    protected $slugPrototypes;
 
     /**
      * @var Collection|Slug[]
@@ -148,7 +148,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
-     * @ORM\JoinTable(name="oro_web_catalog_node_to_slug",
+     * @ORM\JoinTable(name="oro_web_catalog_node_slug",
      *      joinColumns={
      *          @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -157,7 +157,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      *      }
      * )
      */
-    protected $contentVariantSlugs;
+    protected $slugs;
 
     /**
      * @var Collection|ContentVariant[]
@@ -194,8 +194,8 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
 
         $this->titles = new ArrayCollection();
         $this->childNodes = new ArrayCollection();
+        $this->slugPrototypes = new ArrayCollection();
         $this->slugs = new ArrayCollection();
-        $this->contentVariantSlugs = new ArrayCollection();
         $this->contentVariants = new ArrayCollection();
     }
 
@@ -330,9 +330,9 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     /**
      * @return Collection|LocalizedFallbackValue[]
      */
-    public function getSlugs()
+    public function getSlugPrototypes()
     {
-        return $this->slugs;
+        return $this->slugPrototypes;
     }
 
     /**
@@ -340,10 +340,10 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      *
      * @return $this
      */
-    public function addSlug(LocalizedFallbackValue $slug)
+    public function addSlugPrototype(LocalizedFallbackValue $slug)
     {
-        if (!$this->slugs->contains($slug)) {
-            $this->slugs->add($slug);
+        if (!$this->slugPrototypes->contains($slug)) {
+            $this->slugPrototypes->add($slug);
         }
 
         return $this;
@@ -354,10 +354,10 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
      *
      * @return $this
      */
-    public function removeSlug(LocalizedFallbackValue $slug)
+    public function removeSlugPrototype(LocalizedFallbackValue $slug)
     {
-        if ($this->slugs->contains($slug)) {
-            $this->slugs->removeElement($slug);
+        if ($this->slugPrototypes->contains($slug)) {
+            $this->slugPrototypes->removeElement($slug);
         }
 
         return $this;
@@ -366,36 +366,32 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     /**
      * @return Collection|Slug[]
      */
-    public function getContentVariantSlugs()
+    public function getSlugs()
     {
-        return $this->contentVariantSlugs;
+        return $this->slugs;
     }
 
     /**
-     * @param Slug $pageSlug
-     *
+     * @param Slug $slug
      * @return $this
      */
-    public function addContentVariantSlug(Slug $pageSlug)
+    public function addSlug(Slug $slug)
     {
-        if (!$this->contentVariantSlugs->contains($pageSlug)) {
-            $this->contentVariantSlugs->add($pageSlug);
+        if (!$this->slugs->contains($slug)) {
+            $this->slugs->add($slug);
         }
-
         return $this;
     }
 
     /**
-     * @param Slug $pageSlug
-     *
+     * @param Slug $slug
      * @return $this
      */
-    public function removeContentVariantSlug(Slug $pageSlug)
+    public function removeSlug(Slug $slug)
     {
-        if ($this->contentVariantSlugs->contains($pageSlug)) {
-            $this->contentVariantSlugs->removeElement($pageSlug);
+        if ($this->slugs->contains($slug)) {
+            $this->slugs->removeElement($slug);
         }
-
         return $this;
     }
 
