@@ -24,25 +24,25 @@
 
     &:focus {
       outline: 0;
-      border: 1px solid solid $base-link-color;
+      border: 1px solid solid get-color('ui', 'normal');
       box-shadow: inset 0 1px 1px rgba(0,0,0,.075),
                         0 0 8px rgba(102,175,233,.6);
     }
 
     &::-webkit-input-placeholder {
-      color: $base-font-color-lightest;
+      color: get-color('additional', 'light');
     }
 
     &::-moz-placeholder {
-      color: $base-font-color-lightest;
+      color: get-color('additional', 'light');
     }
 
     &:-moz-placeholder {
-      color: $base-font-color-lightest;
+      color: get-color('additional', 'light');
     }
 
     &:-ms-input-placeholder {
-      color: $base-font-color-lightest;
+      color: get-color('additional', 'light');
     }
 
     &::-ms-clear {
@@ -60,7 +60,7 @@
 
     &.open {
       .search-widget__options__btn {
-        background: $theme-lighter-gray-color;
+        background: get-color('additional', 'light');
       }
     }
 
@@ -70,7 +70,7 @@
       height: 100%;
       padding: 0;
       border: 0;
-      border-right: 1px solid $theme-lighter-gray-color;
+      border-right: 1px solid get-color('additional', 'light');
 
       background: transparent;
       text-align: center;
@@ -93,7 +93,7 @@
     border: 0;
 
     background: transparent;
-    color: $base-font-color-lightest;
+    color: get-color('additional', 'light');
     font-size: 24px;
   }
 
@@ -116,7 +116,7 @@
   }
 
   &.bordered {
-    border: 1px solid $theme-lighter-gray-color;
+    border: 1px solid get-color('additional', 'light');
   }
 
   &.radiused {

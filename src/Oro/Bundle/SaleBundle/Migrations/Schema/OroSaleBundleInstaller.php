@@ -513,7 +513,6 @@ class OroSaleBundleInstaller implements
      */
     protected function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
     {
-        $activityExtension->addActivityAssociation($schema, 'oro_calendar_event', 'oro_sale_quote');
         $activityExtension->addActivityAssociation($schema, 'oro_email', 'oro_sale_quote', true);
     }
 

@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Common\Collections\Criteria;
-
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListRepository extends EntityRepository
@@ -92,18 +92,23 @@ class ShoppingListRepository extends EntityRepository
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param AclHelper $aclHelper
      * @param array $sortCriteria
      *
      * @return array
      */
-    public function findByUser(AccountUser $accountUser, array $sortCriteria = [])
+    public function findByUser(AclHelper $aclHelper, array $sortCriteria = [])
     {
         $qb = $this->createQueryBuilder('list')
             ->select('list, items')
-            ->leftJoin('list.lineItems', 'items')
-            ->where('list.accountUser = :accountUser')
-            ->setParameter('accountUser', $accountUser);
+            ->leftJoin('list.lineItems', 'items');
+
+        $aclHelper->applyAclToQb(
+            ShoppingList::class,
+            $qb,
+            'VIEW',
+            ['accountUser' => 'list.accountUser', 'organization' => 'list.organization']
+        );
 
         foreach ($sortCriteria as $field => $sortOrder) {
             if ($sortOrder === Criteria::ASC) {

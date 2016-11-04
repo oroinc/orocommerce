@@ -2,15 +2,14 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Doctrine\Common\Collections\Criteria;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class AccountUserShoppingListsProvider
 {
@@ -47,21 +46,29 @@ class AccountUserShoppingListsProvider
     protected $totalManager;
 
     /**
+     * @var AclHelper
+     */
+    protected $aclHelper;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param SecurityFacade $securityFacade
      * @param RequestStack $requestStack
      * @param ShoppingListTotalManager $totalManager
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         SecurityFacade $securityFacade,
         RequestStack $requestStack,
-        ShoppingListTotalManager $totalManager
+        ShoppingListTotalManager $totalManager,
+        AclHelper $aclHelper
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->securityFacade = $securityFacade;
         $this->requestStack = $requestStack;
         $this->totalManager = $totalManager;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -85,7 +92,10 @@ class AccountUserShoppingListsProvider
                 $shoppingListRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->shoppingListClass);
 
                 /** @var ShoppingList[] $shoppingLists */
-                $shoppingLists = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
+                $shoppingLists = $shoppingListRepository->findByUser(
+                    $this->aclHelper,
+                    $this->getSortOrder()
+                );
                 $this->totalManager->setSubtotals($shoppingLists, false);
             }
 
