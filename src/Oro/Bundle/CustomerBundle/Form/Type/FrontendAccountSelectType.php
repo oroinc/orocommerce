@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\CustomerBundle\Form\Type;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Collections\Criteria;
 use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRepository;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 
 class FrontendAccountSelectType extends AbstractType
 {
@@ -20,11 +21,18 @@ class FrontendAccountSelectType extends AbstractType
     protected $aclHelper;
 
     /**
-     * @param AclHelper $aclHelper
+     * @var Registry
      */
-    public function __construct(AclHelper $aclHelper)
+    protected $registry;
+
+    /**
+     * @param AclHelper $aclHelper
+     * @param Registry $registry
+     */
+    public function __construct(AclHelper $aclHelper, Registry $registry)
     {
         $this->aclHelper = $aclHelper;
+        $this->registry = $registry;
     }
 
     /**
@@ -35,25 +43,19 @@ class FrontendAccountSelectType extends AbstractType
         $resolver->setDefaults(
             [
                 'class' => 'OroCustomerBundle:Account',
-
-
+                'query_builder' => $this->getAccounts()
             ]
         );
-        $resolver->setRequired(['addresses']);
-        $resolver->setNormalizer(
-            'query_builder',
-            function (Options $options) {
-                return function (AccountRepository $repository) use ($options) {
-                    $qb =  $repository->createQueryBuilder('a');
-                    $qb
-                        ->where($qb->expr()->eq('a.id', ':test'))
-                        ->setParameter('test', $options['addresses'])
-                        ->orderBy('a.name', 'DESC');
-                    $a2 = $this->aclHelper->apply($qb);
-                    return $qb;
-                };
-            }
-        );
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectRepository|AccountUserRepository
+     */
+    public function getAccounts()
+    {
+        return $this->registry
+            ->getManagerForClass('OroCustomerBundle:AccountUser')
+            ->getRepository('OroCustomerBundle:AccountUser');
     }
 
     /**

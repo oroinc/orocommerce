@@ -32,7 +32,6 @@ class FrontendAccountTypedAddressType extends AbstractType
                 new FixAccountAddressesDefaultSubscriber($options['all_addresses_property_path'])
             );
         }
-        $data = $builder->getData();
 
         $builder
             ->add(
@@ -50,9 +49,9 @@ class FrontendAccountTypedAddressType extends AbstractType
                 'frontendOwner',
                 FrontendAccountSelectType::NAME,
                 [
-                    'addresses' => $data->getFrontendOwner()->getId(),
-                    'label'     => 'oro.customer.account.entity_label',
-                    'required'  => false
+                    'label' => 'oro.customer.account.entity_label',
+                    'required' => false,
+                    'mapped' => false
                 ]
             )
             ->add(
