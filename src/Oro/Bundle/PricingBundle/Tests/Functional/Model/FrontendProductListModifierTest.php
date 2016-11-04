@@ -133,6 +133,8 @@ class FrontendProductListModifierTest extends WebTestCase
                     LoadProductData::PRODUCT_3,
                     LoadProductData::PRODUCT_4,
                     LoadProductData::PRODUCT_5,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
                 ],
                 'priceList' => '1f'
             ],
