@@ -1,0 +1,22 @@
+.custom-icon-menu {
+    display: block;
+
+    cursor: pointer;
+
+    &__bar {
+        display: block;
+        width: 25px;
+        height: 3px;
+        margin: 3px auto 0;
+
+        border-radius: 1px;
+
+        &:first-child {
+            margin-top: 0;
+        }
+
+        background-color: get-color('additional', 'dark');
+
+        @extend %base-transition;
+    }
+}

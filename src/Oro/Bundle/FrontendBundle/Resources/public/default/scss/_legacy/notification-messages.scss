@@ -58,13 +58,13 @@
   }
 
   &_alert {
-    background: get-color('ui', 'warring');
-    color: get-color('ui', 'warring-dark');
+    background: get-color('ui', 'warning');
+    color: get-color('ui', 'warning-dark');
   }
 
   &_warning {
-    background: get-color('ui', 'warring');
-    color: get-color('ui', 'warring-dark');
+    background: get-color('ui', 'warning');
+    color: get-color('ui', 'warning-dark');
   }
 
   &_error {
