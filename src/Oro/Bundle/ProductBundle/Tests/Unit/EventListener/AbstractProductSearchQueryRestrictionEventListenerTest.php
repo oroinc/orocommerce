@@ -9,7 +9,7 @@ use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\SearchBundle\Query\Query;
 
-abstract class AbstractProductSearchQueryRestrictionEventListenerTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractProductQueryRestrictionEventListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject

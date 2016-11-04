@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ProductBundle\EventListener\ProductSearchQueryRestrictionEventListener;
 
-class ProductSearchQueryRestrictionEventListenerTest extends AbstractProductSearchQueryRestrictionEventListenerTest
+class ProductSearchQueryRestrictionEventListenerTest extends AbstractProductQueryRestrictionEventListenerTest
 {
     public function testOnSearchQueryInFrontend()
     {
