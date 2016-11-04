@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class AccountUserRepository extends EntityRepository

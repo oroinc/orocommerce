@@ -2,18 +2,24 @@
 
 namespace Oro\Bundle\CustomerBundle\Form\Type;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Symfony\Component\Form\FormBuilderInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Oro\Bundle\CustomerBundle\Helper\CustomerUserHelper;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class FrontendAccountUserSelectType extends AbstractType
 {
     const NAME = 'oro_account_frontend_account_user_select';
+
+    /**
+     * @var CustomerUserHelper
+     */
+    protected $customerUserHelper;
 
     /**
      * @var AclHelper
@@ -21,18 +27,18 @@ class FrontendAccountUserSelectType extends AbstractType
     protected $aclHelper;
 
     /**
-     * @var Registry
+     * @var string
      */
-    protected $registry;
+    protected $ownerFieldName;
 
     /**
+     * @param CustomerUserHelper $customerUserHelper
      * @param AclHelper $aclHelper
-     * @param Registry $registry
      */
-    public function __construct(AclHelper $aclHelper, Registry $registry)
+    public function __construct(CustomerUserHelper $customerUserHelper, AclHelper $aclHelper)
     {
+        $this->customerUserHelper = $customerUserHelper;
         $this->aclHelper = $aclHelper;
-        $this->registry = $registry;
     }
 
     /**
@@ -40,7 +46,8 @@ class FrontendAccountUserSelectType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
     }
 
     /**
@@ -52,7 +59,7 @@ class FrontendAccountUserSelectType extends AbstractType
             [
                 'class' => 'OroCustomerBundle:AccountUser',
                 'required' => false,
-                'choices' => $this->getAccountUsers(),
+                'choices' => $this->customerUserHelper->getAccountUsers($this->aclHelper),
                 'mapped' => false,
                 'configs' => [
                     'placeholder' => 'oro.customer.accountuser.form.choose',
@@ -64,31 +71,29 @@ class FrontendAccountUserSelectType extends AbstractType
     /**
      * @param FormEvent $event
      */
-    public function onPreSubmit(FormEvent $event)
+    public function onPreSetData(FormEvent $event)
     {
-        $form = $event->getForm();
-        $data = $event->getData();
-        if (!$data) {
-            $data = $form->getParent()->getData();
-        }
-
-        $parent = $form->getParent();
-        if ($data && $parent->has('frontendOwner')) {
-//            $user = $this->registry->getManagerForClass('OroCustomerBundle:AccountUser')
-//                ->getRepository('OroCustomerBundle:AccountUser')->findOneBy(['id' => $data]);
-            $parent->get('frontendOwner')->setData($data);
-        }
+        $parent = $event->getForm()->getParent();
+        $entity = $parent->getData();
+        $ownerFieldName = $this->customerUserHelper->getOwnerFieldName($entity);
+        $user = $this->customerUserHelper->getAccessorValue($entity, $ownerFieldName);
+        $event->setData($user->getId());
     }
 
     /**
-     * @return array
+     * @param FormEvent $event
      */
-    public function getAccountUsers()
+    public function onPostSubmit(FormEvent $event)
     {
-        return $this->registry
-            ->getManagerForClass('OroCustomerBundle:AccountUser')
-            ->getRepository('OroCustomerBundle:AccountUser')
-            ->getAccountUsers($this->aclHelper);
+        $parent = $event->getForm()->getParent();
+        $data = $event->getData();
+        $entity = $parent->getData();
+        $ownerFieldName = $this->customerUserHelper->getOwnerFieldName($entity);
+        if ($data && $parent->has($ownerFieldName)) {
+            /** @var AccountUser $user */
+            $user = $this->customerUserHelper->getUserById($data);
+            $this->customerUserHelper->setAccountUser($user, $entity);
+        }
     }
 
     /**
