@@ -136,7 +136,7 @@ class RequestController extends Controller
 
         return $handler->handleUpdate(
             $rfpRequest,
-            $this->get('oro_rfp.layout.data_provider.request_form')->getRequestForm($rfpRequest)->getForm(),
+            $this->get('oro_rfp.layout.data_provider.request_form')->getRequestForm($rfpRequest),
             function (RFPRequest $rfpRequest) use ($securityFacade) {
                 if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
                     $route = $securityFacade->isGranted('ACCOUNT_EDIT', $rfpRequest)

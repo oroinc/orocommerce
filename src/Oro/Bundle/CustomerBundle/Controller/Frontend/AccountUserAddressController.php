@@ -103,8 +103,7 @@ class AccountUserAddressController extends Controller
         $this->prepareEntities($accountUser, $accountAddress, $request);
 
         $form = $this->get('oro_customer.provider.fronted_account_user_address_form')
-            ->getAddressForm($accountAddress, $accountUser)
-            ->getForm();
+            ->getAddressForm($accountAddress, $accountUser);
 
         $currentUser = $this->getUser();
 

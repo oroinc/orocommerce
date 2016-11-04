@@ -3,29 +3,30 @@
 namespace Oro\Bundle\CheckoutBundle\Layout\DataProvider;
 
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
+use Oro\Bundle\CheckoutBundle\Model\TransitionData;
+use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
-use Oro\Bundle\CheckoutBundle\Model\TransitionData;
-use Oro\Component\Layout\DataProvider\AbstractFormProvider;
 
 class TransitionFormProvider extends AbstractFormProvider
 {
     /**
      * @var TransitionProvider
      */
-    protected $transitionProvider;
+    private $transitionProvider;
 
     /**
-     * @var object
+     * @var TransitionProvider
      */
-    public function setTransitionProvider($transitionProvider)
+    public function setTransitionProvider(TransitionProvider $transitionProvider)
     {
         $this->transitionProvider = $transitionProvider;
     }
 
     /**
-     * @param WorkflowItem $workflowItem
+     * @param WorkflowItem   $workflowItem
      * @param TransitionData $transitionData
      *
      * @return FormInterface|null
@@ -34,47 +35,65 @@ class TransitionFormProvider extends AbstractFormProvider
     public function getTransitionForm(WorkflowItem $workflowItem, TransitionData $transitionData)
     {
         $transition = $transitionData->getTransition();
-
-        // in this context parameters used for generating local cache
-        $parameters = [$transition->getName(), $workflowItem->getId()];
-
         if (!$transition->hasForm()) {
             return null;
         }
 
-        return $this->getFormAccessor(
+        $cacheKeyOptions = ['id' => $workflowItem->getId(), 'name' => $transition->getName()];
+
+        return $this->getForm(
             $transition->getFormType(),
-            null,
             $workflowItem->getData(),
-            $parameters,
-            array_merge(
-                $transition->getFormOptions(),
-                [
-                    'workflow_item' => $workflowItem,
-                    'transition_name' => $transition->getName(),
-                    'disabled' => !$transitionData->isAllowed(),
-                    'allow_extra_fields' => true,
-                ]
-            )
-        )->getForm();
+            $this->getFormOptions($workflowItem, $transitionData),
+            $cacheKeyOptions
+        );
     }
 
     /**
      * @param WorkflowItem $workflowItem
      *
-     * @return mixed
+     * @return FormView|null
      */
     public function getTransitionFormView(WorkflowItem $workflowItem)
     {
-        /** @var TransitionData $continueTransitionData */
         $transitionData = $this->transitionProvider->getContinueTransition($workflowItem);
-
         if (!$transitionData) {
             return null;
         }
 
-        $form = $this->getTransitionForm($workflowItem, $transitionData);
+        $transition = $transitionData->getTransition();
+        if (!$transitionData->getTransition()->hasForm()) {
+            return null;
+        }
 
-        return $form ? $form->createView() : null;
+        $cacheKeyOptions = ['id' => $workflowItem->getId(), 'name' => $transition->getName()];
+
+        return $this->getFormView(
+            $transition->getFormType(),
+            $workflowItem->getData(),
+            $this->getFormOptions($workflowItem, $transitionData),
+            $cacheKeyOptions
+        );
+    }
+
+    /**
+     * @param WorkflowItem   $workflowItem
+     * @param TransitionData $transitionData
+     *
+     * @return array
+     */
+    private function getFormOptions(WorkflowItem $workflowItem, TransitionData $transitionData)
+    {
+        $transition = $transitionData->getTransition();
+
+        return array_merge(
+            $transition->getFormOptions(),
+            [
+                'workflow_item' => $workflowItem,
+                'transition_name' => $transition->getName(),
+                'disabled' => !$transitionData->isAllowed(),
+                'allow_extra_fields' => true,
+            ]
+        );
     }
 }

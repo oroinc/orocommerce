@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
@@ -25,16 +26,23 @@ class TransitionFormProviderTest extends \PHPUnit_Framework_TestCase
     protected $formFactory;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
+     */
+    protected $router;
+
+    /**
      * @var TransitionFormProvider
      */
     protected $provider;
 
     protected function setUp()
     {
-        $this->transitionProvider = $this->getMock(\stdClass::class, ['getContinueTransition']);
+        $this->transitionProvider =
+            $this->getMock('Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider', [], [], '', false);
         $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
+        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
 
-        $this->provider = new TransitionFormProvider($this->formFactory);
+        $this->provider = new TransitionFormProvider($this->formFactory, $this->router);
         $this->provider->setTransitionProvider($this->transitionProvider);
     }
 
