@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CMSBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
@@ -69,7 +68,6 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
         $this->addOroCmsPageSlugForeignKeys($schema);
 
         $this->addImageAssociations($schema);
-        
         $this->addContentVariantTypes($schema);
     }
 
@@ -84,7 +82,7 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('title', 'string', ['length' => 255]);
-        $table->addColumn('content', 'text', []);
+        $table->addColumn('content', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
@@ -198,7 +196,8 @@ class OroCMSBundleInstaller implements Installation, AttachmentExtensionAwareInt
                     'entity' => ['label' => 'oro.cms.page.entity_label'],
                     'extend' => [
                         'is_extend' => true,
-                        'owner' => ExtendScope::OWNER_CUSTOM
+                        'owner' => ExtendScope::OWNER_CUSTOM,
+                        'cascade' => ['persist']
                     ],
                     'dataaudit' => ['auditable' => true]
                 ]

@@ -2,13 +2,9 @@
 
 namespace Oro\Bundle\SEOBundle\Form\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-
-use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
 abstract class BaseMetaFormExtension extends AbstractTypeExtension
 {
@@ -24,15 +20,6 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add(
-                'metaTitles',
-                LocalizedFallbackValueCollectionType::NAME,
-                [
-                    'label' => $this->getMetaFieldLabelPrefix() . '.meta_titles.label',
-                    'required' => false,
-                    'type' => 'text',
-                ]
-            )
             ->add(
                 'metaDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,

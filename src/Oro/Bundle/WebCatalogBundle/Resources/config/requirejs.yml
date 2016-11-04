@@ -1,0 +1,3 @@
+config:
+    paths:
+        'orowebcatalog/js/app/components/web-catalog-tree-component': 'bundles/orowebcatalog/js/app/components/web-catalog-tree-component.js'

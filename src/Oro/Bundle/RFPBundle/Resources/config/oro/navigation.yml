@@ -12,7 +12,6 @@ navigation:
                 route:           'oro_rfp_frontend_request_index'
                 extras:
                     position:   300
-                    routes: ['/^oro_rfp_frontend/']
 
             request_list:
                 label:           'oro.rfp.request.entity_plural_label'
@@ -49,10 +48,21 @@ navigation:
                 extras:
                     description: 'oro.rfp.menu.shortcut_request_statuses_list.description'
 
+            frontend_request_create:
+                label:           'oro.frontend.product.view.request_a_quote'
+                route:           'oro_rfp_frontend_request_create'
+
+            frontend_request_view:
+                label:           'oro.frontend.rfp.list'
+                extras:
+                    routes: ['oro_rfp_frontend_request_view', 'oro_rfp_frontend_request_update']
+
         tree:
             frontend_menu:
                 children:
                     frontend_request: ~
+                    frontend_request_create: ~
+                    frontend_request_view: ~
             application_menu:
                 children:
                     sales_tab:
@@ -75,7 +85,7 @@ navigation:
         oro_rfp_request_status_view:     '%%title%%'
         oro_rfp_request_status_update:   '%%title%% - oro.ui.edit'
 
-        oro_rfp_frontend_request_create: oro.ui.create_entity
-        oro_rfp_frontend_request_update: 'RFQ #%%title%% - oro.ui.edit'
-        oro_rfp_frontend_request_index:  oro.frontend.rfp.request.entity_plural_label
-        oro_rfp_frontend_request_view:   'RFQ #%%title%%'
+        oro_rfp_frontend_request_create: ~
+        oro_rfp_frontend_request_update: 'RFQ #%%id%% - oro.ui.edit'
+        oro_rfp_frontend_request_index:  ~
+        oro_rfp_frontend_request_view:   'RFQ #%%id%%: %%firstName%% %%lastName%%'

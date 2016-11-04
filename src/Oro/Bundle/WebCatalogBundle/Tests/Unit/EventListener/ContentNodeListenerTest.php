@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\B2BEntityBundle\Storage\ExtraActionEntityStorageInterface;
+use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\EventListener\ContentNodeListener;
@@ -24,6 +25,11 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
     protected $storage;
 
     /**
+     * @var ContentNodeNameFiller|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $contentNodeNameFiller;
+
+    /**
      * @var ContentNodeListener
      */
     protected $contentNodeListener;
@@ -36,7 +42,26 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->storage = $this->getMock(ExtraActionEntityStorageInterface::class);
 
-        $this->contentNodeListener = new ContentNodeListener($this->modifier, $this->storage);
+        $this->contentNodeNameFiller = $this->getMockBuilder(ContentNodeNameFiller::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->contentNodeListener = new ContentNodeListener(
+            $this->modifier,
+            $this->storage,
+            $this->contentNodeNameFiller
+        );
+    }
+
+    public function testPrePersist()
+    {
+        $contentNode = new ContentNode();
+
+        $this->contentNodeNameFiller->expects($this->once())
+            ->method('fillName')
+            ->with($contentNode);
+
+        $this->contentNodeListener->prePersist($contentNode);
     }
 
     public function testPostPersist()

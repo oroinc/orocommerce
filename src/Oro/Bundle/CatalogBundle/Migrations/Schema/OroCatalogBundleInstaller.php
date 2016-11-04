@@ -359,7 +359,8 @@ class OroCatalogBundleInstaller implements
                     'entity' => ['label' => 'oro.catalog.category.entity_label'],
                     'extend' => [
                         'is_extend' => true,
-                        'owner' => ExtendScope::OWNER_CUSTOM
+                        'owner' => ExtendScope::OWNER_CUSTOM,
+                        'cascade' => ['persist']
                     ],
                     'dataaudit' => ['auditable' => true]
                 ]
