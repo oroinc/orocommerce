@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Layout\DataProvider;
 
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListFormProvider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ShoppingListFormProviderTest extends \PHPUnit_Framework_TestCase
 {
