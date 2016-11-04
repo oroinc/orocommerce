@@ -1,9 +1,9 @@
 Scopes
 ------
 
-Scope in Oro applications arms you with additional abstraction layer and helps you get the missing information about the execution context in a standard and controllable way. It substitutes costly and resource-consuming queries to the database that involve deep and nested relationships. With a scope approach your bundle can launch an alternative behavior and modify displayed data based on the information from the scope that indirectly matches current execution context.
+Scope in Oro applications arms you with additional abstraction layer and helps you get the missing information about the execution context in a standard and controllable way. With a scope approach your bundle can launch an alternative behavior and modify displayed data based on the information from the scope that indirectly matches current execution context.
 
-For working example of using scopes in Oro application, please check out the `VisibilityBundle`_ and `WebsiteBundle`_.
+For working example of using scopes in Oro application, please check out the *VisibilityBundle* and *AccountBundle* code.
 
 * [How Scopes work](#how-scopes-work)
     * [Scope Manager](#scope-manager)
@@ -128,8 +128,7 @@ $scopeManager->findRelatedScopes($scopeType, $context = null);
 
 Example: Using related scopes
 -----------------------------
-
-For example, let's create following scope criteria providers and register them for the *web_content* scope type. 
+For example, let's create the following scope criteria providers and register them for the *web_content* scope type. 
 
 * ScopeAccountCriteriaProvider
 
@@ -180,9 +179,11 @@ The resulting scopes delivered by Scope Manager are:
 |3|1||2|
 
 Example: Using criteria
----------------------
+-----------------------
+
 Goal: find entity(Slug) related to most prioritized scope
 Example data: `Slug` has `ManyToMany` relation with `Scope`
+
 Example of service.yml:
 ```
 oro_customer.account_scope_criteria_provider:
@@ -251,7 +252,7 @@ In this case scope priority will be calculated as:
 |5||1|1|
 |6||1||
 
-Query that will be executed:
+The following query is executed:
 ```
 SELECT slug.*
 FROM oro_redirect_slug slug
