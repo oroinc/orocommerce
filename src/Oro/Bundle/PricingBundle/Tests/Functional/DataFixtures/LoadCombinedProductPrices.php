@@ -171,6 +171,24 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'currency' => 'USD',
             'reference' => 'product_price.17'
         ],
+        [
+            'product' => 'product.6',
+            'priceList' => '1f',
+            'qty' => 10,
+            'unit' => 'product_unit.bottle',
+            'price' => 200.5,
+            'currency' => 'USD',
+            'reference' => 'product_price.18'
+        ],
+        [
+            'product' => 'product.7',
+            'priceList' => '1f',
+            'qty' => 1,
+            'unit' => 'product_unit.bottle',
+            'price' => 0,
+            'currency' => 'USD',
+            'reference' => 'product_price.19'
+        ],
     ];
 
     /**
