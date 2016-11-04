@@ -14,12 +14,12 @@ For working example of using scopes in Oro application, please check out the *Vi
 * [Configuring Scope Criteria Providers](#configuring-scope-criteria-providers)
 * [Using Context](#using-context)
 * [Scope Operations](#scope-operations)
-* [Example: Using related scopes](#example-using-related-scopes)
-* [Example: Using criteria](#example-with-criteria)
+* [Example: Using Related Scopes](#example-using-related-scopes)
+* [Example: Using Scope Criteria](#example-using-scope-criteria)
 
 How Scopes work
 ---------------
-Sometimes in a bundle activities, you need to alter behavior or data based on the set of criteria that the bundle is not able to evaluate. Scope Manager gets you the missing details by polling dedicated Scope Criteria Providers. In the scope-consuming bundle, you can request information using one of the [Scope Operations](#scope-operations). As a first parameter, you usually pass the scope type (e.g. web_content in the following examples). Scope type helps Scope Manager find the scope-provider bundles who can deliver the information your bundle is missing. As a second parameter, you usually pass the context - information available to your bundle that is used as a scope filtering criteria. **Note:** Scope Manager evaluates the priority of the Scope Criteria Providers who are registered to deliver information for the requested scope type and scope criteria, and sorts the results based on the criteria priority. 
+Sometimes in a bundle activities, you need to alter behavior or data based on the set of criteria that the bundle is not able to evaluate. Scope Manager gets you the missing details by polling dedicated Scope Criteria Providers. In the scope-consuming bundle, you can request information using one of the [Scope Operations](#scope-operations). As a first parameter, you usually pass the scope type (e.g. web_content in the following examples). Scope type helps Scope Manager find the scope-provider bundles who can deliver the information your bundle is missing. As the second parameter, you usually pass the context - information available to your bundle that is used as a scope filtering criteria. **Note:** Scope Manager evaluates the priority of the Scope Criteria Providers who are registered to deliver information for the requested scope type and scope criterion, and sorts the results based on the criterion priority. 
 
 Scope Manager
 -------------
@@ -34,31 +34,26 @@ Scope Repository stores the scope instances created in Scope Manager using *find
 
 Scope Criteria Providers
 ------------------------
-Scope Criteria Provider is a service that calculates the value for the scope criteria based on the provided context. Scope criteria helps to model a relationship between the scope and the scope-consuming context. In any bundle, you can create a [Scope Criteria Provider](#configuring-scope-criteria-providers) service and register it as scope provider for the specific scope type. This service shall deliver the scope criteria value to the Scope Manager, who, in turn, use the scope criteria to filter the scope instances or find the one matching to the provided context.
+Scope Criteria Provider is a service that calculates the value for the scope criterion based on the provided context. Scope criteria help model a relationship between the scope and the scope-consuming context. In any bundle, you can create a [Scope Criteria Provider](#configuring-scope-criteria-providers) service and register it as scope provider for the specific scope type. This service shall deliver the scope criterion value to the Scope Manager, who, in turn, use the scope criteria to filter the scope instances or find the one matching to the provided context.
 
 Scope Type
 ----------
-Scope Type is a tag that groups scope criteria that are used by particular scope consumers. One scope type may be reused by multiple scope consumers. It may happen, that a particular scope criteria provider, like the one for Account Group, is not involved in the scope construction because it serves the scope-consumers with the different scope type (e.g. web_content). In this case, Scope Manager looks for the scope(s) that do(es) not prompt to evaluate this criteria. 
+Scope Type is a tag that groups scope criteria that are used by particular scope consumers. One scope type may be reused by multiple scope consumers. It may happen, that a particular scope criteria provider, like the one for Account Group, is not involved in the scope construction because it serves the scope-consumers with the different scope type (e.g. web_content). In this case, Scope Manager looks for the scope(s) that do(es) not prompt to evaluate this criterion. 
 
 Scope Model
 -----------
-Scope model is a data structure for storing scope items. Every scope item has fields for every scope criteria registered by the scope criteria provider services. When the scope criteria is not involved in the scope (based on the scope type), the value of the field is NULL.
+Scope model is a data structure for storing scope items. Every scope item has fields for every scope criterion registered by the scope criteria provider services. When the scope criterion is not involved in the scope (based on the scope type), the value of the field is NULL.
 
-|scope id|scope criteria 1 (account id)|scope criteria 2 (website_id)| ... | scope criteria N (locale_id)|
-|---|---|---|---|---|
-|1|1||1|1|
-|1|2||2|1|
-
-Add Scope Criteria
-------------------
-To add a criteria to the scope, run the following sql query that adds a new column to the **ADD ME PLEASE** table. Replace *Criteria* with a unique criteria name:
+Add Scope Criterion
+-------------------
+To add criterion to the scope, run the following SQL query that adds a new column to the **ADD ME PLEASE** table. Replace *Criterion* with a unique criterion name:
 ```
 ```
 
 Configuring Scope Criteria Providers
 ------------------------------------
-To extend a scope with criteria that is provided by your bundle:
-1. Create a **Scope<your bundle>CriteriaProvider** class and implement getCriteriaForCurrentScope() and getCriteriaField() methods, as shown in the following examples. Return an array of key/value structures in getCriteriaForCurrentScope(). Return a criteria id in getCriteriaField(). 
+To extend a scope with a criterion that may be provided by your bundle:
+1. Create a **Scope<your bundle>CriteriaProvider** class and implement getCriteriaForCurrentScope() and getCriteriaField() methods, as shown in the following examples. Return an array of key/value structures in getCriteriaForCurrentScope(). Return a criterion id in getCriteriaField(). 
 
 ```
 class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
@@ -165,7 +160,7 @@ In order to fetch all scopes that match account with id equal to 1, you can use 
 $context = ['account' => 1];
 $scopeManager->findRelatedScopes('web_content', $context) 
 ```
-We may or may not know what are other scope criteria that are available for this scope type. The Scope Manager fills in the blanks and adds *criteria IS NOT NULL* condition for any scope criteria we do not have in context. For our example, the Scope Manager's query looks like: 
+We may or may not know what are other scope criteria that are available for this scope type. The Scope Manager fills in the blanks and adds *criterion IS NOT NULL* condition for any scope criterion we do not have in context. For our example, the Scope Manager's query looks like: 
 ```
 WHERE account_id = 1 AND website_id IS NOT NULL AND accountGroup_id IS NULL;
 ```
@@ -181,8 +176,8 @@ The resulting scopes delivered to the scope consumer by Scope Manager are:
 |1|1||1|
 |3|1||2|
 
-Example: Using criteria
------------------------
+Example: Using Scope Criteria
+-----------------------------
 
 When the slug URLs are linked to the scopes, in a many-to-many way, and we need to find a slug URL related to the scope with the highest priority, fitting best for the current context, this is what happens:
 
@@ -234,7 +229,7 @@ WHERE slug.url = :url
 ORDER BY scope.account_id DESC, scope.accountGroup_id DESC
 LIMIT 1;
 ```
-Now, let's add another scope criteria provider in a `WebsiteBundle` for the *web_content* scope type and see how the list of scopes and the modified query change. 
+Now, let's add another scope criterion provider in a `WebsiteBundle` for the *web_content* scope type and see how the list of scopes and the modified query change. 
 
 In the bundle's *service.yml* file we add:
 ```
