@@ -237,6 +237,10 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
      */
     protected function addManageInventoryFieldToProduct(Schema $schema)
     {
+        if ($schema->getTable('oro_product')->hasColumn('manageinventory_id')) {
+            return;
+        }
+
         $this->addFallbackRelation(
             $schema,
             'oro_product',
@@ -254,6 +258,10 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
      */
     protected function addManageInventoryFieldToCategory(Schema $schema)
     {
+        if ($schema->getTable('oro_catalog_category')->hasColumn('manageinventory_id')) {
+            return;
+        }
+
         $this->addFallbackRelation(
             $schema,
             'oro_catalog_category',
