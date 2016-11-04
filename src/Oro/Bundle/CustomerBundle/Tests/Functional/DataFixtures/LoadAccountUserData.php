@@ -157,8 +157,6 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
      */
     public function getDependencies()
     {
-        return [
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts'
-        ];
+        return [LoadAccounts::class];
     }
 }

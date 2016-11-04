@@ -35,6 +35,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     const REQUEST7 = 'rfp.request.7';
     const REQUEST8 = 'rfp.request.8';
     const REQUEST9 = 'rfp.request.9';
+    const REQUEST10 = 'rfp.request.10';
+    const REQUEST11 = 'rfp.request.11';
 
     /**
      * @var array
@@ -145,6 +147,28 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'po_number' => self::PO_NUMBER,
             'ship_until' => true,
             'deleted' => '-1 day'
+        ],
+        self::REQUEST10 => [
+            'first_name' => 'PAUser1FN',
+            'last_name' => 'PAUser1LN',
+            'email' => LoadUserData::PARENT_ACCOUNT_USER1,
+            'phone' => '2-(999)507-1234',
+            'company' => 'Google',
+            'role' => 'CEO',
+            'note' => self::REQUEST10,
+            'account' => LoadUserData::PARENT_ACCOUNT,
+            'accountUser' => LoadUserData::PARENT_ACCOUNT_USER1
+        ],
+        self::REQUEST11 => [
+            'first_name' => 'PAUser2FN',
+            'last_name' => 'PAUser2LN',
+            'email' => LoadUserData::PARENT_ACCOUNT_USER2,
+            'phone' => '2-(999)507-1456',
+            'company' => 'Google',
+            'role' => 'CEO',
+            'note' => self::REQUEST11,
+            'account' => LoadUserData::PARENT_ACCOUNT,
+            'accountUser' => LoadUserData::PARENT_ACCOUNT_USER2
         ],
     ];
 
