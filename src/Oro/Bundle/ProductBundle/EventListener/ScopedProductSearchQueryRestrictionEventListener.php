@@ -51,7 +51,7 @@ class ScopedProductSearchQueryRestrictionEventListener extends ProductSearchQuer
 
         $request = $this->requestStack->getCurrentRequest();
         if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
-            return parent::isConditionsAcceptable();
+            return false;
         }
 
         return parent::isConditionsAcceptable() && $params['scope'] === $this->scope;
