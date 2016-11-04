@@ -18,7 +18,8 @@ define(function(require) {
             calculateShipping: '[name$="[calculateShipping]"]',
             shippingMethod: '[name$="[shippingMethod]"]',
             shippingMethodType: '[name$="[shippingMethodType]"]',
-            shippingCost: '[name$="[estimatedShippingCost]"]'
+            estimatedShippingCost: '[name$="[estimatedShippingCost]"]',
+            overriddenShippingCost: '[name$="[overriddenShippingCost]"]'
         },
 
         /**
@@ -58,6 +59,7 @@ define(function(require) {
         },
 
         onOrderChange: function(e) {
+            this.$totals = e.totals;
             if (e.possibleShippingMethods != undefined ) {
                 this.getCalculateShippingElement().val(false);
                 this.getToggleButton().parent('div').hide();
@@ -123,19 +125,17 @@ define(function(require) {
         },
 
         /**
-         *
          * @param {string|null} type
          * @param {string|null} method
-         * @param {float} cost
+         * @param {number} cost
          */
         setElementsValue: function (type, method, cost) {
             this.getShippingMethodTypeElement().val(type);
             this.getShippingMethodElement().val(method);
-            this.getShippingCostElement().val(cost);
+            this.getEstimatedShippingCostElement().val(cost);
         },
 
         /**
-         *
          * @param {string|null} type
          * @param {string|null} method
          * @param {float} cost
@@ -155,14 +155,38 @@ define(function(require) {
         },
 
         /**
+         * @param {number} cost
+         */
+        refreshTotals: function(cost) {
+            if (cost !== null) {
+                var totals = _.clone(this.$totals);
+                var newTotalAmount = 0;
+                $.each( totals.subtotals, function( key, subtotal ) {
+                    if (subtotal.type === 'shipping_cost') {
+                        totals.subtotals[key].amount = cost;
+                        totals.subtotals[key].formattedAmount = subtotal.currency + ' ' + cost;
+                    }
+                    newTotalAmount = newTotalAmount + totals.subtotals[key].amount;
+                });
+                totals.total.amount = newTotalAmount;
+                totals.total.formattedAmount = totals.total.currency + ' ' +  newTotalAmount;
+                
+                mediator.trigger('shipping-cost:updated', {'totals': totals});
+            }
+        },
+
+        /**
          * @param {Event} event
          */
         onShippingMethodTypeChange: function(event) {
             var method_type = $(event.target);
             var method = method_type.data('shipping-method');
-            var cost = method_type.data('shipping-price');
-            this.setElementsValue(method_type.val(), method, cost);
-            this.refreshSelectedShippingMethod(method_type.val(), method, cost);
+            var estimated_cost = method_type.data('shipping-price');
+            var overridden_cost = this.getOverriddenShippingCostElement().val();
+            var cost = (isNaN(parseFloat(overridden_cost))) ? estimated_cost : parseFloat(overridden_cost);
+            this.setElementsValue(method_type.val(), method, estimated_cost);
+            this.refreshSelectedShippingMethod(method_type.val(), method, estimated_cost);
+            this.refreshTotals(cost);
         },
 
         /**
@@ -223,12 +247,23 @@ define(function(require) {
         /**
          * @returns {jQuery|HTMLElement}
          */
-        getShippingCostElement: function() {
-            if (!this.hasOwnProperty('$shippingCostElement')) {
-                this.$shippingCostElement = this.$el.find(this.selectors.shippingCost);
+        getEstimatedShippingCostElement: function() {
+            if (!this.hasOwnProperty('$estimatedShippingCostElement')) {
+                this.$estimatedShippingCostElement = this.$el.find(this.selectors.estimatedShippingCost);
             }
 
-            return this.$shippingCostElement;
+            return this.$estimatedShippingCostElement;
+        },
+
+        /**
+         * @returns {jQuery|HTMLElement}
+         */
+        getOverriddenShippingCostElement: function() {
+            if (!this.hasOwnProperty('$overriddenShippingCostElement')) {
+                this.$overriddenShippingCostElement = $(document).find(this.selectors.overriddenShippingCost);
+            }
+
+            return this.$overriddenShippingCostElement;
         },
 
         /**

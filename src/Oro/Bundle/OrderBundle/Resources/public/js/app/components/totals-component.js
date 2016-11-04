@@ -25,6 +25,7 @@ define(function(require) {
             mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
 
             mediator.on('line-items-totals:update', this.updateTotals, this);
+            mediator.on('shipping-cost:updated', this.setTotals, this);
 
             this.$totals = this.options._sourceElement.find(this.options.selectors.totals);
             this.template = _.template($(this.options.selectors.template).text());

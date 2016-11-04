@@ -15,6 +15,7 @@ use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -115,6 +116,7 @@ class OrderType extends AbstractType
                 [
                     'mapped' => false,
                     'required' => false,
+                    'constraints' => [new Decimal()],
                 ]
             )
             ->add(

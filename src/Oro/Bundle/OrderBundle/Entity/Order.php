@@ -741,7 +741,8 @@ class Order extends ExtendOrder implements
      */
     public function getShippingCost()
     {
-        return $this->overriddenShippingCostAmount ? $this->overriddenShippingCost : $this->estimatedShippingCost;
+        return $this->overriddenShippingCostAmount !== null ?
+            $this->overriddenShippingCost : $this->estimatedShippingCost;
     }
 
     /**
