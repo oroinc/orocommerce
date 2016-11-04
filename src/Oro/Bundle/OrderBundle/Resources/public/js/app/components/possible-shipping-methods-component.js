@@ -64,7 +64,7 @@ define(function(require) {
                 this.getCalculateShippingElement().val(false);
                 this.getToggleButton().parent('div').hide();
                 this.$data = e.possibleShippingMethods;
-                this.refreshPossibleShippingMethods(e.possibleShippingMethods);
+                this.updatePossibleShippingMethods(e.possibleShippingMethods);
                 this.getPossibleShippingMethodForm().show();
             } else {
                 this.getPossibleShippingMethodForm().hide();
@@ -72,7 +72,8 @@ define(function(require) {
             }
         },
 
-        refreshPossibleShippingMethods: function(methods) {
+        updatePossibleShippingMethods: function(methods) {
+            var self = this;
             var selectedMethod = this.getShippingMethodElement().val();
             var selectedType = this.getShippingMethodTypeElement().val();
             var selectedFound = false;
@@ -94,6 +95,7 @@ define(function(require) {
                             if (method.identifier === selectedMethod && type.identifier === selectedType) {
                                 checked = 'checked="checked"';
                                 selectedFound = true;
+                                self.updateElementsValue(selectedType, selectedMethod, type.price.value);
                             }
                             str = str + '<input type="radio" ' + checked + ' name="possibleShippingMethodType" value="' + type.identifier + 
                             '" data-shipping-method="' + method.identifier + '" data-shipping-price="' + type.price.value + '" data-choice="' + type.identifier + '" />';
@@ -113,10 +115,8 @@ define(function(require) {
                 }
                 this.getPossibleShippingMethodForm().html(str);
             } else {
-                if (selectedFound === false) {
-                    $(document).find('.selected-shipping-method').find('input').css('text-decoration', 'line-through');
-                    this.setElementsValue(null, null, null);
-                }
+                $(document).find('.selected-shipping-method').find('input').css('text-decoration', 'line-through');
+                this.setElementsValue(null, null, null);
                 str = '<span class="notification notification_xmd notification_alert notification-radiused mb1-md">' +
                     __('oro.order.possible_shipping_methods.no_method') +
                     '</span>';
@@ -138,9 +138,9 @@ define(function(require) {
         /**
          * @param {string|null} type
          * @param {string|null} method
-         * @param {float} cost
+         * @param {number|null} cost
          */
-        refreshSelectedShippingMethod: function (type, method, cost) {
+        updateSelectedShippingMethod: function (type, method, cost) {
             if (type !== null && method != null) {
                 var methodLabel = (this.$data[method].isGrouped == true) ? __(this.$data[method].label) + ', ' : '';
                 var typeLabel = __(this.$data[method].types[type].label);
@@ -157,7 +157,7 @@ define(function(require) {
         /**
          * @param {number} cost
          */
-        refreshTotals: function(cost) {
+        updateTotals: function(cost) {
             if (cost !== null) {
                 var totals = _.clone(this.$totals);
                 var newTotalAmount = 0;
@@ -176,17 +176,26 @@ define(function(require) {
         },
 
         /**
+         * @param {string|null} type
+         * @param {string|null} method
+         * @param {number|null} estimated_cost
+         */
+        updateElementsValue: function (type, method, estimated_cost) {
+            var overridden_cost = this.getOverriddenShippingCostElement().val();
+            var cost = (isNaN(parseFloat(overridden_cost))) ? estimated_cost : parseFloat(overridden_cost);
+            this.setElementsValue(type, method, estimated_cost);
+            this.updateSelectedShippingMethod(type, method, estimated_cost);
+            this.updateTotals(cost);
+        },
+
+        /**
          * @param {Event} event
          */
         onShippingMethodTypeChange: function(event) {
             var method_type = $(event.target);
             var method = method_type.data('shipping-method');
             var estimated_cost = method_type.data('shipping-price');
-            var overridden_cost = this.getOverriddenShippingCostElement().val();
-            var cost = (isNaN(parseFloat(overridden_cost))) ? estimated_cost : parseFloat(overridden_cost);
-            this.setElementsValue(method_type.val(), method, estimated_cost);
-            this.refreshSelectedShippingMethod(method_type.val(), method, estimated_cost);
-            this.refreshTotals(cost);
+            this.updateElementsValue(method_type.val(), method, estimated_cost);
         },
 
         /**
