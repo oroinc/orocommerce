@@ -5,10 +5,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'product_index.html.twig'
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue: oro.product.entity_plural_label
         - '@addTree':
             items:
                 product_index_page:
