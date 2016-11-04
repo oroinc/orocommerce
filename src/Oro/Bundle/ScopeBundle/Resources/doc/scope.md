@@ -52,7 +52,7 @@ Scope model is a data structure for storing scope items. Every scope item has fi
 
 Add Scope Criteria
 ------------------
-To add a criteria to the scope, run the following sql query that adds a new column to the ... table. Replace *Criteria* with a unique criteria name:
+To add a criteria to the scope, run the following sql query that adds a new column to the **ADD ME PLEASE** table. Replace *Criteria* with a unique criteria name:
 ```
 ```
 
@@ -103,9 +103,7 @@ oro_customer.account_scope_criteria_provider:
 
 Using Context
 -------------
-
-**TODO**
-Context can be `array or object`, ScopeCriteriaProvider can get data by defined `key\field name`, to create criteria.
+When you need to find a scope based on the information that differs from the current context, you can pass the custom context (array of objects) as a second parameter of *find* and *findOrCreate* method.
 
 Scope Operations
 ----------------
