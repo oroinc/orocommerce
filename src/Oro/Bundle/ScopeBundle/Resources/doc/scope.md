@@ -23,9 +23,9 @@ Sometimes in a bundle activities, you need to alter behavior or data based on th
 
 Scope Manager
 -------------
-Scope Manager is a service that provides an interface for getting and creating scope items in Oro application. It is in charge of the following functions:
-* Build a scope model in the scope repository using information about the scope types registered by scope providers of the application bundles (see [Scope Criteria Providers](#scope-criteria-providers)). Note: Basically, bundles that register new scope type extend the core Scope entity implementation.
+Scope Manager is a service that provides an interface for collecting the scope items in Oro application. It is in charge of the following functions:
 * Expose scope-related operations (find, findOrCreate, findDefaultScope, findRelatedScopes) to the scope-aware bundles and deliver requested scope(s) as a result. See [Scope Operations](#scope-operations) for more information.
+* Create a collected scope in response to the findOrCreate operation (if the scope is not found).
 * Provide a getScope() feature for the scope-aware bundles. **(need more infrmation here)**
 * Call Scope Criteria Provider's getCriteriaForCurrentScope() method to get a portion of the scope information.
 
@@ -35,7 +35,7 @@ Scope Repository stores the scope instances created in Scope Manager using *find
 
 Scope Criteria Providers
 ------------------------
-Scope Criteria Provider is a service that adds a scope criteria fields to the scope model. Scope criteria helps to model a relationship between the scope and the scope-consuming context. In any bundle, you can create a [Scope Criteria Provider](#configuring-scope-criteria-providers) service and register it as scope provider for the specific scope type. This service shall deliver the scope criteria value to the Scope Manager, who, in turn, use the scope criteria to filter the scope instances or find the one matching to the provided context.
+Scope Criteria Provider is a service that calculates the value for the scope criteria based on the provided context. Scope criteria helps to model a relationship between the scope and the scope-consuming context. In any bundle, you can create a [Scope Criteria Provider](#configuring-scope-criteria-providers) service and register it as scope provider for the specific scope type. This service shall deliver the scope criteria value to the Scope Manager, who, in turn, use the scope criteria to filter the scope instances or find the one matching to the provided context.
 
 Scope Type
 ----------
@@ -45,10 +45,16 @@ Scope Model
 -----------
 Scope model is a data structure for storing scope items. Every scope item has fields for every scope criteria registered by the scope criteria provider services. When the scope criteria is not involved in the scope (based on the scope type), the value of the field is NULL.
 
-|scope id|scope criteria 1 (authorised user)|scope criteria 2 (website_id)| ... (Country)| scope criteria N (Locale)|
+|scope id|scope criteria 1 (account id)|scope criteria 2 (website_id)| ... | scope criteria N (locale_id)|
 |---|---|---|---|---|
-|1|true|null|US|EN|
-|1|false|null|Germany|DE|
+|1|1||1|1|
+|1|2||2|1|
+
+Add Scope Criteria
+------------------
+To add a criteria to the scope, run the following sql query that adds a new column to the ... table. Replace *Criteria* with a unique criteria name:
+```
+```
 
 Configuring Scope Criteria Providers
 ------------------------------------
@@ -269,5 +275,7 @@ LIMIT 1;'
 ```
  **Note:** ScopeProviders calls according to priority, this will allow to fetch the most detailed Scope.*
 Scope-aware Bundle(searches for scopes (using search criteria), requests scope creation, alters behaviour or displayed data based on the obtained scope values)
+
+Build a scope model in the scope repository using information about the scope types registered by scope providers of the application bundles (see [Scope Criteria Providers](#scope-criteria-providers)). Note: Basically, bundles that register new scope type extend the core Scope entity implementation.
 
 
