@@ -2,14 +2,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroMenuBundle:layouts:default/page/main_menu.html.twig'
-        - '@addTree':
-            items:
-                header_row_shopping:
-                    blockType: container
-
-            tree:
-                header:
-                    header_row
         - '@move':
             id: header_row
             parentId: header
