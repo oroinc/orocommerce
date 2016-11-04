@@ -1,0 +1,75 @@
+.notification-flash {
+    padding: $notification-flash-inner-offset;
+    
+    display: flex;
+    align-items: center;
+
+    border-radius: $notification-flash-border-radius;
+
+    &.success,
+    &.info,
+    &.notice {
+        background: get-color('ui', 'success');
+        color: get-color('ui', 'success-dark');
+    }
+
+    &.warning,
+    &.process,
+    &.alert {
+        background: get-color('ui', 'warring');
+        color: get-color('ui', 'warring-dark');
+    }
+
+    &.error {
+        background: get-color('ui', 'error');
+        color: get-color('ui', 'error-dark');
+    }
+
+    &__badge {
+        position: relative;
+
+        width: $notification-flash-badge-size;
+        height: $notification-flash-badge-size;
+        flex: 0 0 auto;
+        align-self: flex-start;
+        
+        background: darken(get-color('additional', 'middle'), 35.2%);
+        color: get-color('additional', 'ultra');
+        border-radius: $notification-flash-badge-radius;
+
+        /* cf- prefix should be removed when BB-4721 will be resolved */ 
+        [class^="cf-"],
+        [class^="fa-"] {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    }
+    &__close {
+        margin: $notification-flash-close-offset;
+        padding: $notification-flash-close-inner-offset;
+        flex: 0 0 auto;
+        align-self: flex-start;
+        
+        background: $notification-flash-close-background;
+        border: $notification-flash-close-border;
+        color: get-color('ui', 'warring-dark');
+
+        order: 1;
+        cursor: pointer;
+
+        /* cf- prefix should be removed when BB-4721 will be resolved */ 
+        [class^="cf-"],
+        [class^="fa-"] {
+           display: block;
+
+           font-size: $notification-flash-close-icon-size;
+        }
+    }
+    &__text {
+        padding: $notification-flash-text-offset;
+        
+        flex: 1 1 auto;
+    }
+}

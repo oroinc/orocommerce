@@ -1,0 +1,7 @@
+.notification-flash-container {
+    margin: $notification-flash-container-offset;
+
+    &:empty {
+        display: none;
+    }
+}

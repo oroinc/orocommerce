@@ -134,10 +134,9 @@
 {% block _notification_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'id': 'flash-messages',
-        '~class': ' notification-flash',
+        '~class': ' notification-flash-container container-fluid',
         'data-sticky': {
-            'placeholderId': 'sticky-element-notification',
-            'toggleClass': 'notification-flash--medium'
+            'placeholderId': 'sticky-element-notification'
         }
     }) %}
     <div{{ block('block_attributes') }}></div>
@@ -146,10 +145,14 @@
         <% if (type === "error" || type === "warning") {
             iconClass = 'cf-attention';
         }%>
-        <div class="container-fluid alert notification notification_<%= type %> notification_lg">
-            <span class="badge badge_sm_xs badge_<%= type %>"><i class="<%= iconClass %>"></i></span>
-            <span class="fs16 ml1-sm"><%= message %></span>
-            <i class="cf-clear" data-dismiss="alert"></i>
+        <div class="notification-alert alert">
+            <div class="notification-flash <%= type %>">
+                <div class="notification-flash__badge">
+                    <i class="<%= iconClass %>"></i>
+                </div>
+                <button class="notification-flash__close"><i class="cf-clear" data-dismiss="alert"></i></button>
+                <div class="notification-flash__text"><%= message %></div>
+            </div>
         </div>
     </script>
     <script type="text/javascript">
