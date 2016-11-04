@@ -8,7 +8,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener;
 
-class ScopedProductSearchQueryRestrictionEventListenerTest extends ProductSearchQueryRestrictionEventListenerTest
+class ScopedProductSearchQueryRestrictionEventListenerTest extends
+    AbstractProductSearchQueryRestrictionEventListenerTest
 {
     const SCOPE = 'test_scope';
 
@@ -23,7 +24,7 @@ class ScopedProductSearchQueryRestrictionEventListenerTest extends ProductSearch
     protected $requestStack;
 
     /**
-     * @return ScopedProductSearchQueryRestrictionEventListener
+     * {@inheritdoc}
      */
     protected function createListener()
     {
@@ -54,7 +55,9 @@ class ScopedProductSearchQueryRestrictionEventListenerTest extends ProductSearch
             ->method('getCurrentRequest')
             ->willReturn($request);
 
-        parent::testOnSearchQueryInFrontend();
+        $this->configureDependenciesForFrontend();
+
+        $this->listener->onSearchQuery($this->getEvent());
     }
 
     public function testOnQueryWrongScope()
