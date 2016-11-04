@@ -3,6 +3,11 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Layout\DataProvider;
 
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\Test\FormInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+use Oro\Component\Testing\Unit\EntityTrait;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
@@ -11,65 +16,157 @@ use Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserAddressForm
 
 class FrontendAccountUserAddressFormProviderTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /** @var FrontendAccountUserAddressFormProvider */
     protected $provider;
 
     /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $mockFormFactory;
 
+    /** @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $router;
+
     protected function setUp()
     {
         $this->mockFormFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')->getMock();
-        $this->provider = new FrontendAccountUserAddressFormProvider($this->mockFormFactory);
+        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+
+        $this->provider = new FrontendAccountUserAddressFormProvider($this->mockFormFactory, $this->router);
+    }
+
+    public function testGetAddressFormViewWhileUpdate()
+    {
+        $action = 'form_action';
+
+        $accountUser = $this->getEntity(AccountUser::class, ['id' => 1]);
+        $accountUserAddress = $this->getEntity(AccountUserAddress::class, ['id' => 2]);
+
+        $formView = $this->getMock(FormView::class);
+
+        $form = $this->getMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->mockFormFactory
+            ->expects($this->once())
+            ->method('create')
+            ->with(AccountUserTypedAddressType::NAME, $accountUserAddress, ['action' => $action])
+            ->willReturn($form);
+
+        $this->router
+            ->expects($this->exactly(2))
+            ->method('generate')
+            ->with(
+                FrontendAccountUserAddressFormProvider::ACCOUNT_USER_ADDRESS_UPDATE_ROUTE_NAME,
+                ['id' => 2, 'entityId' => 1]
+            )
+            ->willReturn($action);
+
+        $result = $this->provider->getAddressFormView($accountUserAddress, $accountUser);
+
+        $this->assertInstanceOf(FormView::class, $result);
+
+        $resultSecondCall =  $this->provider->getAddressFormView($accountUserAddress, $accountUser);
+        $this->assertSame($result, $resultSecondCall);
     }
 
     public function testGetAddressFormWhileUpdate()
     {
-        $this->actionTestWithId(1);
+        $action = 'form_action';
+
+        $accountUser = $this->getEntity(AccountUser::class, ['id' => 1]);
+        $accountUserAddress = $this->getEntity(AccountUserAddress::class, ['id' => 2]);
+
+        $form = $this->getMock(FormInterface::class);
+
+        $this->mockFormFactory
+            ->expects($this->once())
+            ->method('create')
+            ->with(AccountUserTypedAddressType::NAME, $accountUserAddress, ['action' => $action])
+            ->willReturn($form);
+
+        $this->router
+            ->expects($this->exactly(2))
+            ->method('generate')
+            ->with(
+                FrontendAccountUserAddressFormProvider::ACCOUNT_USER_ADDRESS_UPDATE_ROUTE_NAME,
+                ['id' => 2, 'entityId' => 1]
+            )
+            ->willReturn($action);
+
+        $result = $this->provider->getAddressForm($accountUserAddress, $accountUser);
+
+        $this->assertInstanceOf(FormInterface::class, $result);
+
+        $resultSecondCall =  $this->provider->getAddressForm($accountUserAddress, $accountUser);
+        $this->assertSame($result, $resultSecondCall);
+    }
+
+    public function testGetAddressFormViewWhileCreate()
+    {
+        $action = 'form_action';
+
+        $accountUser = $this->getEntity(AccountUser::class, ['id' => 1]);
+        $accountUserAddress = $this->getEntity(AccountUserAddress::class);
+
+        $formView = $this->getMock(FormView::class);
+
+        $form = $this->getMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->mockFormFactory
+            ->expects($this->once())
+            ->method('create')
+            ->with(AccountUserTypedAddressType::NAME, $accountUserAddress, ['action' => $action])
+            ->willReturn($form);
+
+        $this->router
+            ->expects($this->exactly(2))
+            ->method('generate')
+            ->with(
+                FrontendAccountUserAddressFormProvider::ACCOUNT_USER_ADDRESS_CREATE_ROUTE_NAME,
+                ['entityId' => 1]
+            )
+            ->willReturn($action);
+
+        $result = $this->provider->getAddressFormView($accountUserAddress, $accountUser);
+
+        $this->assertInstanceOf(FormView::class, $result);
+
+        $resultSecondCall =  $this->provider->getAddressFormView($accountUserAddress, $accountUser);
+        $this->assertSame($result, $resultSecondCall);
     }
 
     public function testGetAddressFormWhileCreate()
     {
-        $this->actionTestWithId();
-    }
+        $action = 'form_action';
 
-    /**
-     * @param int|null $id
-     */
-    private function actionTestWithId($id = null)
-    {
-        /** @var AccountUserAddress|\PHPUnit_Framework_MockObject_MockObject $mockAccountUserAddress */
-        $mockAccountUserAddress = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $accountUser = $this->getEntity(AccountUser::class, ['id' => 1]);
+        $accountUserAddress = $this->getEntity(AccountUserAddress::class);
 
-        $mockAccountUserAddress->expects($this->any())
-            ->method('getId')
-            ->willReturn($id);
+        $form = $this->getMock(FormInterface::class);
 
-        /** @var AccountUser|\PHPUnit_Framework_MockObject_MockObject $mockAccountUser */
-        $mockAccountUser = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $mockAccountUser->expects($this->any())
-            ->method('getId')
-            ->willReturn(1);
-
-        $mockForm = $this->getMockBuilder('Symfony\Component\Form\FormInterface')->getMock();
-
-        $this->mockFormFactory->expects($this->once())
+        $this->mockFormFactory
+            ->expects($this->once())
             ->method('create')
-            ->with(AccountUserTypedAddressType::NAME, $mockAccountUserAddress)
-            ->willReturn($mockForm);
+            ->with(AccountUserTypedAddressType::NAME, $accountUserAddress, ['action' => $action])
+            ->willReturn($form);
 
-        $formAccessor = $this->provider->getAddressForm($mockAccountUserAddress, $mockAccountUser);
+        $this->router
+            ->expects($this->exactly(2))
+            ->method('generate')
+            ->with(FrontendAccountUserAddressFormProvider::ACCOUNT_USER_ADDRESS_CREATE_ROUTE_NAME, ['entityId' => 1])
+            ->willReturn($action);
 
-        $this->assertInstanceOf('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor', $formAccessor);
+        $result = $this->provider->getAddressForm($accountUserAddress, $accountUser);
 
-        $formAccessorSecondCall =  $this->provider->getAddressForm($mockAccountUserAddress, $mockAccountUser);
-        $this->assertSame($formAccessor, $formAccessorSecondCall);
+        $this->assertInstanceOf(FormInterface::class, $result);
 
-        $this->assertSame($formAccessor->getForm(), $formAccessorSecondCall->getForm());
+        $resultSecondCall =  $this->provider->getAddressForm($accountUserAddress, $accountUser);
+        $this->assertSame($result, $resultSecondCall);
     }
 }

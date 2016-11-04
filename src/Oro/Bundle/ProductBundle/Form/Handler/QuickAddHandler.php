@@ -90,7 +90,7 @@ class QuickAddHandler
             $options['validation_required'] = $processor->isValidationRequired();
         }
 
-        $form = $this->productFormProvider->getQuickAddForm([], $options)->getForm();
+        $form = $this->productFormProvider->getQuickAddForm([], $options);
         $form->submit($request);
 
         if (!$processor || !$processor->isAllowed()) {
@@ -141,14 +141,14 @@ class QuickAddHandler
      */
     public function processImport(Request $request)
     {
-        $form = $this->productFormProvider->getQuickAddImportForm()->getForm()->handleRequest($request);
+        $form = $this->productFormProvider->getQuickAddImportForm()->handleRequest($request);
         $collection = null;
 
         if ($form->isValid()) {
             $file = $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->getData();
             try {
                 $collection = $this->quickAddRowCollectionBuilder->buildFromFile($file);
-                $this->productFormProvider->getQuickAddForm($collection->getFormData())->getForm();
+                $this->productFormProvider->getQuickAddForm($collection->getFormData());
             } catch (UnsupportedTypeException $e) {
                 $form->get(QuickAddImportFromFileType::FILE_FIELD_NAME)->addError(new FormError(
                     $this->translator->trans(
@@ -169,13 +169,13 @@ class QuickAddHandler
      */
     public function processCopyPaste(Request $request)
     {
-        $form = $this->productFormProvider->getQuickAddCopyPasteForm()->getForm()->handleRequest($request);
+        $form = $this->productFormProvider->getQuickAddCopyPasteForm()->handleRequest($request);
         $collection = null;
 
         if ($form->isValid()) {
             $copyPasteText = $form->get(QuickAddCopyPasteType::COPY_PASTE_FIELD_NAME)->getData();
             $collection = $this->quickAddRowCollectionBuilder->buildFromCopyPasteText($copyPasteText);
-            $this->productFormProvider->getQuickAddForm($collection->getFormData())->getForm();
+            $this->productFormProvider->getQuickAddForm($collection->getFormData());
         }
 
         return $collection;

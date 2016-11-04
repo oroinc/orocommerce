@@ -2,34 +2,20 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
-
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
-use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class PageType extends AbstractType
 {
     const NAME = 'oro_cms_page';
-
-    /**
-     * @var string
-     */
-    protected $dataClass;
-
-    /**
-     * @param string $dataClass
-     */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -39,16 +25,8 @@ class PageType extends AbstractType
     {
         $builder
             ->add(
-                'parentPage',
-                EntityIdentifierType::NAME,
-                [
-                    'class' => $this->dataClass,
-                    'multiple' => false
-                ]
-            )
-            ->add(
                 'title',
-                'text',
+                TextType::class,
                 [
                     'label' => 'oro.cms.page.title.label',
                     'required' => true,
@@ -73,8 +51,6 @@ class PageType extends AbstractType
             $page = $event->getData();
             $form = $event->getForm();
 
-            $parentSlug = $page && $page->getParentPage() ? $page->getParentPage()->getCurrentSlug()->getUrl() : '';
-
             if ($page && $page->getId()) {
                 $form->add(
                     'slug',
@@ -84,8 +60,7 @@ class PageType extends AbstractType
                         'required' => false,
                         'mapped' => false,
                         'type' => 'update',
-                        'current_slug' => $page->getCurrentSlug()->getUrl(),
-                        'parent_slug' => $parentSlug
+                        'current_slug' => $page->getCurrentSlug()->getUrl()
                     ]
                 );
             } else {
@@ -96,8 +71,7 @@ class PageType extends AbstractType
                         'label' => 'oro.redirect.slug.entity_label',
                         'required' => false,
                         'mapped' => false,
-                        'type' => 'create',
-                        'parent_slug' => $parentSlug
+                        'type' => 'create'
                     ]
                 );
             }
@@ -123,14 +97,12 @@ class PageType extends AbstractType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritDoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => $this->dataClass,
-            'intention' => 'page',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            'data_class' => Page::class
         ]);
     }
 

@@ -350,6 +350,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider'
         arguments:
             - "@form.factory"
+            - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_product_form }
 

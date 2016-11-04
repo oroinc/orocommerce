@@ -176,7 +176,7 @@ class RequestACLTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader($email, $password));
         $this->client->useHashNavigation(true);
-        $this->client->request('GET', '/about'); // any page to apply new user, CMS is used as the fastest one
+        $this->client->request('GET', '/'); // any page to apply new user
     }
 
     /**

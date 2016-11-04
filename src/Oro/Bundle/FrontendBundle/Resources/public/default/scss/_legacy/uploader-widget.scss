@@ -24,8 +24,8 @@
     order: 1;
     border-radius: 4px;
 
-    color: $base-white-color;
-    background: $theme-dark-gray-color;
+    color: get-color('additional', 'ultra');
+    background: get-color('additional', 'darker');
     font-size: $base-font-size;
     line-height: 2.85;
     font-weight: 400;

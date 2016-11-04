@@ -51,8 +51,7 @@ class AccountUserRegisterController extends Controller
     protected function handleForm(Request $request)
     {
         $form = $this->get('oro_customer.provider.frontend_account_user_registration_form')
-            ->getRegisterForm()
-            ->getForm();
+            ->getRegisterForm();
         $userManager = $this->get('oro_account_user.manager');
         $handler = new FrontendAccountUserHandler($form, $request, $userManager);
 

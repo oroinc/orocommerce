@@ -7,12 +7,6 @@ layout:
         - '@setFormTheme':
             themes: 'OroCustomerBundle:layouts:default/oro_customer_frontend_account_user_profile_update/form_theme.html.twig'
 
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue:
-                - 'oro.customer.accountuser.profile.edit'
-
         - '@setOption':
             id: page_title
             optionName: text
