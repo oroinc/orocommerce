@@ -4,18 +4,21 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM\Driver;
 
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 
 /**
  * @dbIsolationPerTest
  */
-class DriverDecoratorTest extends AbstractSearchWebTestCase
+class DriverDecoratorTest extends WebTestCase
 {
+    use DefaultWebsiteIdTestTrait;
+
     protected function setUp()
     {
-        parent::setUp();
+        $this->initClient();
 
         if ($this->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
             $this->markTestSkipped('Should be tested only with ORM search engine');

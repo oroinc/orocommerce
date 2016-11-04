@@ -8,18 +8,22 @@ use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SearchBundle\Tests\Functional\Controller\DataFixtures\LoadSearchItemData;
 use Oro\Bundle\TestFrameworkBundle\Entity\Item as TestEntity;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmEngine;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultLocalizationIdTestTrait;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @dbIsolationPerTest
  */
-class OrmEngineTest extends AbstractSearchWebTestCase
+class OrmEngineTest extends WebTestCase
 {
+    use DefaultLocalizationIdTestTrait;
+
     /** @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $mappingProviderMock;
 
@@ -78,7 +82,8 @@ class OrmEngineTest extends AbstractSearchWebTestCase
 
     protected function setUp()
     {
-        parent::setUp();
+        $this->initClient();
+        $this->getContainer()->get('request_stack')->push(Request::create(''));
 
         if ($this->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
             $this->markTestSkipped('Should be tested only with ORM search engine');

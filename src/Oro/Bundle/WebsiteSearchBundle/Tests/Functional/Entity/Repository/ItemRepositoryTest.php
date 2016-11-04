@@ -2,25 +2,34 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\ORM\EntityRepository;
+
+use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
+use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\ItemRepository;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
-use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 
 /**
  * @dbIsolationPerTest
  */
-class ItemRepositoryTest extends AbstractSearchWebTestCase
+class ItemRepositoryTest extends WebTestCase
 {
     protected function setUp()
     {
-        parent::setUp();
+        $this->initClient();
         $this->loadFixtures([LoadItemData::class]);
+    }
+
+    protected function tearDown()
+    {
+        $this->clearIndexTextTable();
     }
 
     public function testRemoveIndexByAlias()
@@ -120,5 +129,52 @@ class ItemRepositoryTest extends AbstractSearchWebTestCase
         $this->assertEntityCount(4, IndexText::class);
         $this->assertEntityCount(0, IndexDatetime::class);
         $this->assertEntityCount(0, IndexDecimal::class);
+    }
+
+    /**
+     * @param string $entityClass
+     * @return EntityRepository
+     */
+    protected function getRepository($entityClass)
+    {
+        return $this->getContainer()->get('doctrine')->getRepository($entityClass, 'search');
+    }
+
+    /**
+     * Workaround to clear MyISAM table as it's not rolled back by transaction.
+     */
+    protected function clearIndexTextTable()
+    {
+        /** @var OroEntityManager $manager */
+        $manager = $this->getContainer()->get('doctrine')->getManager('search');
+        $repository = $manager->getRepository(IndexText::class);
+        $repository->createQueryBuilder('t')
+            ->delete()
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @return ItemRepository
+     */
+    private function getItemRepository()
+    {
+        return $this->getRepository(Item::class);
+    }
+
+    /**
+     * @param int $count
+     * @param string $entityClass
+     */
+    protected function assertEntityCount($count, $entityClass)
+    {
+        $repository = $this->getRepository($entityClass);
+
+        $actualCount = $repository->createQueryBuilder('t')
+            ->select('count(t)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $this->assertEquals($count, $actualCount);
     }
 }
