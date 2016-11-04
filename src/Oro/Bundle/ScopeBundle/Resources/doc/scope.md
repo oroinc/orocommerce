@@ -15,7 +15,7 @@ For working example of using scopes in Oro application, please check out the *Vi
 * [Using Context](#using-context)
 * [Scope Operations](#scope-operations)
 * [Example: Using related scopes](#example-using-related-scopes)
-* [Example with criteria](#example-with-criteria)
+* [Example: Using criteria](#example-with-criteria)
 
 How Scopes work
 ---------------
