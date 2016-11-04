@@ -1,8 +1,4 @@
 .main-menu {
-  position: relative;
-
-  border-bottom: 1px solid get-color('additional', 'light');
-
   .container-fluid {
     position: relative;
   }
@@ -25,22 +21,6 @@
     display: block;
     flex-grow: 1;
 
-    &[data-dropdown-trigger] {
-      &:hover {
-        .main-menu__sublist-container {
-          display: block;
-        }
-
-        .order-widget--dropdown-mode {
-          display: block;
-        }
-
-        .messages-widget__dropdown-mode {
-          display: block;
-        }
-      }
-    }
-
     .messages-widget {
       &__trigger {
         margin-top: 9px;
@@ -48,14 +28,6 @@
 
       &__title {
         margin-left: 5px;
-      }
-    }
-
-    &--ancestor {
-      &:hover {
-        .main-menu__link {
-          background: get-color('additional', 'base');
-        }
       }
     }
 
@@ -90,28 +62,58 @@
         }
       }
     }
+
+    @include breakpoint('desktop') {
+      &--ancestor {
+        &:hover {
+          .main-menu__link {
+            background: get-color('additional', 'base');
+          }
+        }
+      }
+
+      &[data-dropdown-trigger] {
+        &:hover {
+          .main-menu__sublist-container {
+            display: block !important;
+          }
+
+          .order-widget--dropdown-mode {
+            display: block;
+          }
+
+          .messages-widget__dropdown-mode {
+            display: block;
+          }
+        }
+      }
+    }
   }
 
   &__sublist-container {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: z('base') + 10;
-
     display: none;
 
-    border-top: 1px solid transparent;
+    @include breakpoint('desktop') {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: z('base') + 10;
+
+      border-top: 1px solid transparent;
+    }
   }
 
   &__sublist {
     @include list-normalize();
 
-    display: flex;
-    padding: 15px 40px 3px 0;
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,.2);
+    @include breakpoint('desktop') {
+      display: flex;
+      padding: 15px 40px 3px 0;
+      box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .2);
 
-    background: get-color('additional', 'ultra');
+      background: get-color('additional', 'ultra');
+    }
 
     @include clearfix();
 
@@ -233,10 +235,13 @@
     }
 
     &__sublist {
-      padding: 15px 30px 30px 0;
-
       &__item {
-        padding: 0 0 0 25px;
+        margin-top: 5px;
+        padding: 0 0 0 15px;
+      }
+
+      &--nested {
+        margin-top: 5px;
       }
     }
   }

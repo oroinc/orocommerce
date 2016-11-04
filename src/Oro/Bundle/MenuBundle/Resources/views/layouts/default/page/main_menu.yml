@@ -16,10 +16,7 @@ layout:
                     blockType: container
                 main_menu_list:
                     blockType: container
-                main_menu_label:
-                    blockType: text
-                    options:
-                        text: '=data["category"].getRootCategory()'
+                    prepend: false
                 main_menu:
                     blockType: menu
                     options:
@@ -31,6 +28,5 @@ layout:
                         header_row_links:
                             main_menu_axtra_container: ~
                             main_menu_container:
-                                main_menu_label: ~
                                 main_menu_list:
                                     main_menu: ~

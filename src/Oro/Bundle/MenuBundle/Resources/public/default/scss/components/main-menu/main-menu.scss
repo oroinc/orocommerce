@@ -1,5 +1,10 @@
+.main-menu-outer {
+    position: relative;
+}
+
 .main-menu {
     display: flex;
+    flex-grow: 1;
 
     margin: 0;
     padding: 0;
@@ -35,6 +40,10 @@
 }
 
 @include breakpoint('desktop') {
+    .main-menu-outer {
+        display: flex;
+    }
+
     .main-menu {
         display: flex !important;
     }
@@ -49,6 +58,15 @@
 
         font-weight: bold;
 
+        &__sublist_subnested {
+            display: none;
+        }
+
+        &__categories {
+            display: none;
+            padding-top: 0;
+        }
+
         &__item {
             position: relative;
 
@@ -62,6 +80,22 @@
             padding: 8px 0 7px;
 
             text-align: left;
+
+            &--active {
+                position: relative;
+                padding-left: 15px;
+
+                .cf-down-open-mini {
+                    position: absolute;
+                    left: 0;
+                    top: 50%;
+
+                    margin: 0;
+                    margin-top: -7px;
+
+                    transform: rotate(90deg);
+                }
+            }
         }
     }
 }

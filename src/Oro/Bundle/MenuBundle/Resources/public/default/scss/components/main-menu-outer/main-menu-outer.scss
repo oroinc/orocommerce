@@ -20,6 +20,18 @@
             padding: 10px 15px;
         }
 
+        .main-menu-outer__container {
+            margin-top: 10px;
+
+            border-top: 1px solid get-color('additional', 'light');
+        }
+
+        &.expanded {
+            .main-menu__categories {
+                display: block;
+            }
+        }
+
         &__badge {
             margin-right: 5px;
         }
