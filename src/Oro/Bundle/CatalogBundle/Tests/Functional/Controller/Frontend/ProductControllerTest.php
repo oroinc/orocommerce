@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;

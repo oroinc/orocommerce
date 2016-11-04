@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Security;
 
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -25,7 +25,7 @@ class ProductVisibilityTest extends WebTestCase
         $this->initClient();
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            LoadFrontendProductData::class,
+            LoadFrontendProductVisibilityData::class,
             LoadCombinedPriceLists::class,
         ]);
     }

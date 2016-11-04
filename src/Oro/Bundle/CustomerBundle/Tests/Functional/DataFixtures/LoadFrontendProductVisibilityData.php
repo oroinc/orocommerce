@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures;
+namespace Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures;
 
 use Symfony\Bridge\Doctrine\Tests\Fixtures\ContainerAwareFixture;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -8,7 +8,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class LoadFrontendProductVisibilityData extends ContainerAwareFixture implements DependentFixtureInterface
