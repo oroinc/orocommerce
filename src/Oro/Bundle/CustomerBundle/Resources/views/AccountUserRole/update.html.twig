@@ -33,7 +33,6 @@
 
     {{ UI.cancelButton(path('oro_customer_account_user_role_index')) }}
     {% set html = UI.saveAndCloseButton({
-        'type': 'button',
         'class': 'btn-success role-submit',
         'route': 'oro_customer_account_user_role_view',
         'params': {'id': '$id'}

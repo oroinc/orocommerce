@@ -22,11 +22,6 @@ define(function(require) {
             // listening to generic inline editor's events and repackaging them
             // into specific shopping list events
             mediator.on('inlineEditor:' + this.eventChannelId + ':update', this.repackageEvent, this);
-
-            // sending off information about the currently loaded shopping list ID
-            // to other components in aid
-            mediator.trigger('shopping-list-event:' + this.eventChannelId + ':shopping-list-id',
-                options.metadata.broadcast_parameters.id);
         },
 
         /**
@@ -34,7 +29,7 @@ define(function(require) {
          * @param data
          */
         repackageEvent: function(data) {
-            mediator.trigger('shopping-list-event:' + this.eventChannelId + ':update', data);
+            mediator.trigger('shopping-list:updated', data);
         },
 
         dispose: function() {
