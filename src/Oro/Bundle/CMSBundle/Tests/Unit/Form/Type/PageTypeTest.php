@@ -108,10 +108,10 @@ class PageTypeTest extends FormIntegrationTestCase
         $builder->expects($this->at(0))
             ->method('add')
             ->with(
-                'title',
-                TextType::class,
+                'titles',
+                LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'oro.cms.page.title.label',
+                    'label'    => 'oro.cms.page.titles.label',
                     'required' => true,
                     'constraints' => [new NotBlank()],
                 ]
@@ -180,7 +180,7 @@ class PageTypeTest extends FormIntegrationTestCase
     {
         if ($defaultData) {
             $existingPage = new Page();
-            $existingPage->setTitle($defaultData['title']);
+            $existingPage->addTitle((new LocalizedFallbackValue())->setString($defaultData['titles']));
             $existingPage->setContent($defaultData['content']);
             $existingPage->addSlug((new LocalizedFallbackValue())->setString('slug'));
 
@@ -208,36 +208,39 @@ class PageTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
+        $new_page = new Page();
+        $new_page->addTitle((new LocalizedFallbackValue())->setString('First test page'));
+        $new_page->setContent('Page content');
+        $new_page->addSlug((new LocalizedFallbackValue())->setString('slug'));
+        $updated_page = new Page();
+        $updated_page->addTitle((new LocalizedFallbackValue())->setString('Updated first test page'));
+        $updated_page->setContent('Updated page content');
+        $updated_page->addSlug((new LocalizedFallbackValue())->setString('slug-updated'));
+
         return [
             'new page' => [
                 'options' => [],
                 'defaultData' => null,
                 'submittedData' => [
-                    'title' => 'First test page',
+                    'titles' => [['string' => 'First test page']],
                     'content' => 'Page content',
                     'slugs'  => [['string' => 'slug']],
                 ],
-                'expectedData' => (new Page())
-                    ->setTitle('First test page')
-                    ->setContent('Page content')
-                    ->addSlug((new LocalizedFallbackValue())->setString('slug')),
+                'expectedData' => $new_page,
             ],
             'update page' => [
                 'options' => [],
                 'defaultData' => [
-                    'title' => 'First test page',
+                    'titles' => [['string' => 'First test page']],
                     'content' => 'Page content',
                     'slugs'  => [['string' => 'slug']],
                 ],
                 'submittedData' => [
-                    'title' => 'Updated first test page',
+                    'titles' => [['string' => 'Updated first test page']],
                     'content' => 'Updated page content',
                     'slugs'  => [['string' => 'slug-updated']],
                 ],
-                'expectedData' => (new Page())
-                    ->setTitle('Updated first test page')
-                    ->setContent('Updated page content')
-                    ->addSlug((new LocalizedFallbackValue())->setString('slug-updated')),
+                'expectedData' => $updated_page,
             ],
         ];
     }

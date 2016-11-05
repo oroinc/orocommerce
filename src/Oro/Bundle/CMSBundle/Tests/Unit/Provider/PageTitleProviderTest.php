@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\Page;
 use Oro\Bundle\CMSBundle\Provider\PageTitleProvider;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -22,7 +23,7 @@ class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetTitle()
     {
         $page = new Page();
-        $page->setTitle('some title');
+        $page->addTitle((new LocalizedFallbackValue())->setText('some title'));
 
         $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)

@@ -58,9 +58,22 @@ class Page extends ExtendPage implements DatesAwareInterface
     protected $id;
 
     /**
-     * @var string
+     * @var Collection|LocalizedFallbackValue[]
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToMany(
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="oro_cms_page_title",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="page_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -69,7 +82,7 @@ class Page extends ExtendPage implements DatesAwareInterface
      *      }
      * )
      */
-    protected $title;
+    protected $titles;
 
     /**
      * @var string
@@ -120,6 +133,7 @@ class Page extends ExtendPage implements DatesAwareInterface
         parent::__construct();
 
         $this->slugs = new ArrayCollection();
+        $this->titles = new ArrayCollection();
     }
 
     /**
@@ -131,20 +145,37 @@ class Page extends ExtendPage implements DatesAwareInterface
     }
 
     /**
-     * @return string
+     * @return Collection|LocalizedFallbackValue[]
      */
-    public function getTitle()
+    public function getTitles()
     {
-        return $this->title;
+        return $this->titles;
     }
 
     /**
-     * @param string $title
+     * @param LocalizedFallbackValue $title
+     *
      * @return $this
      */
-    public function setTitle($title)
+    public function addTitle(LocalizedFallbackValue $title)
     {
-        $this->title = $title;
+        if (!$this->titles->contains($title)) {
+            $this->titles->add($title);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $title
+     *
+     * @return $this
+     */
+    public function removeTitle(LocalizedFallbackValue $title)
+    {
+        if ($this->titles->contains($title)) {
+            $this->titles->removeElement($title);
+        }
 
         return $this;
     }
@@ -209,6 +240,6 @@ class Page extends ExtendPage implements DatesAwareInterface
      */
     public function __toString()
     {
-        return (string)$this->getTitle();
+        return (string) $this->getDefaultTitle();
     }
 }

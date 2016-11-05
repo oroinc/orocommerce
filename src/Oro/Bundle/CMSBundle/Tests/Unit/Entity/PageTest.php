@@ -5,7 +5,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Entity;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\Page;
 
 class PageTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,7 +15,6 @@ class PageTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertPropertyAccessors(new Page(), [
             ['id', 1],
-            ['title', 'test_title'],
             ['content', 'test_content'],
             ['organization', new Organization()],
             ['createdAt', new \DateTime()],
@@ -32,7 +31,7 @@ class PageTest extends \PHPUnit_Framework_TestCase
         $value = 'test';
 
         $page = new Page();
-        $page->setTitle($value);
+        $page->addTitle((new LocalizedFallbackValue())->setString($value));
 
         $this->assertEquals($value, (string)$page);
     }

@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 
 class LoadPageData extends AbstractFixture
 {
@@ -29,8 +30,8 @@ class LoadPageData extends AbstractFixture
     {
         foreach (self::$page as $menuItemReference => $data) {
             $entity = new Page();
-            $entity->setTitle($menuItemReference)
-                ->setContent($menuItemReference);
+            $entity->addTitle((new LocalizedFallbackValue())->setString($menuItemReference));
+            $entity->setContent($menuItemReference);
             $this->setReference($menuItemReference, $entity);
             $manager->persist($entity);
         }

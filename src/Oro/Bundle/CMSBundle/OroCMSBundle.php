@@ -19,7 +19,8 @@ class OroCMSBundle extends Bundle
         $container
             ->addCompilerPass(new DefaultFallbackExtensionPass([
                 Page::class => [
-                    'slug' => 'slugs'
+                    'slug' => 'slugs',
+                    'title' => 'titles'
                 ],
             ]));
     }

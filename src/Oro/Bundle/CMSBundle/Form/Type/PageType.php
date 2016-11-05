@@ -5,7 +5,6 @@ namespace Oro\Bundle\CMSBundle\Form\Type;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -23,10 +22,10 @@ class PageType extends AbstractType
     {
         $builder
             ->add(
-                'title',
-                TextType::class,
+                'titles',
+                LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'oro.cms.page.title.label',
+                    'label'    => 'oro.cms.page.titles.label',
                     'required' => true,
                     'constraints' => [new NotBlank()],
                 ]

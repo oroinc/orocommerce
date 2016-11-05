@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Provider;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\WebCatalog\ContentVariantTitleProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -35,8 +36,8 @@ class PageTitleProvider implements ContentVariantTitleProviderInterface
         }
 
         $page  = $this->propertyAccessor->getValue($contentVariant, self::FIELD_NAME);
-        if ($page instanceof Page && $page->getTitle()) {
-            return $page->getTitle();
+        if ($page instanceof Page && $page->getDefaultTitle() instanceof LocalizedFallbackValue) {
+            return $page->getDefaultTitle()->getText();
         }
 
         return null;
