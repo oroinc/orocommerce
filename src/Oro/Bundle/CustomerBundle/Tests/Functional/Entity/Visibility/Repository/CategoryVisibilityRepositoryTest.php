@@ -12,7 +12,7 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
  */
 class CategoryVisibilityRepositoryTest extends WebTestCase
 {
-    const ROOT_CATEGORY = 'Master Catalog';
+    const ROOT_CATEGORY = 'Products categories';
 
     /**
      * @var CategoryVisibilityRepository

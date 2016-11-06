@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroMenuBundle:layouts:default/page/main_menu.html.twig'
+            themes: 'main_menu.html.twig'
         - '@addTree':
             items:
                 header_row:
@@ -14,6 +14,12 @@ layout:
                     blockType: container
                 main_menu_container:
                     blockType: container
+                main_menu_list:
+                    blockType: container
+                main_menu_label:
+                    blockType: text
+                    options:
+                        text: '=data["category"].getRootCategory()'
                 main_menu:
                     blockType: menu
                     options:
@@ -25,4 +31,6 @@ layout:
                         header_row_links:
                             main_menu_axtra_container: ~
                             main_menu_container:
-                                main_menu: ~
+                                main_menu_label: ~
+                                main_menu_list:
+                                    main_menu: ~

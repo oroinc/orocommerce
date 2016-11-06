@@ -49,6 +49,14 @@ class CategoryProvider
     }
 
     /**
+     * @return Category
+     */
+    public function getRootCategory()
+    {
+        return $this->loadCategory();
+    }
+
+    /**
      * @param AccountUser|null $user
      *
      * @return Category[]

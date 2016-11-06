@@ -48,7 +48,8 @@ class ProductControllerTest extends WebTestCase
     const DEFAULT_SHORT_DESCRIPTION = 'default short description';
 
     const CATEGORY_ID = 1;
-    const CATEGORY_NAME = 'Master Catalog';
+    const CATEGORY_MENU_NAME = 'Master Catalog';
+    const CATEGORY_NAME = 'Products Categories';
 
     const FIRST_IMAGE_FILENAME = 'image1.gif';
     const SECOND_IMAGE_FILENAME = 'image2.gif';
@@ -84,7 +85,7 @@ class ProductControllerTest extends WebTestCase
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
-        $this->assertEquals(1, $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_NAME."')]")->count());
+        $this->assertEquals(1, $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_MENU_NAME."')]")->count());
         $form = $crawler->selectButton('Continue')->form();
         $formValues = $form->getPhpValues();
         $formValues['input_action'] = 'oro_product_create';
@@ -99,7 +100,7 @@ class ProductControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals(0, $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_NAME."')]")->count());
+        $this->assertEquals(0, $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_MENU_NAME."')]")->count());
         $this->assertContains("Category:".self::CATEGORY_NAME, $crawler->html());
 
         $form = $crawler->selectButton('Save and Close')->form();
@@ -167,7 +168,7 @@ class ProductControllerTest extends WebTestCase
         $localizedName = $this->getLocalizedName($product, $localization);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
-        $this->assertEquals(1, $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_NAME."')]")->count());
+        $this->assertEquals(1, $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_MENU_NAME."')]")->count());
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 

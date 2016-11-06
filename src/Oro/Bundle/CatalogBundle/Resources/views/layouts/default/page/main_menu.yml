@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroCatalogBundle:layouts:default/page/main_menu.html.twig'
+            themes: 'main_menu.html.twig'
         - '@addTree':
             items:
                 categories_main_menu:
@@ -24,7 +24,7 @@ layout:
 #                categories_main_menu_second_level_sales:
 #                    blockType: block
             tree:
-                main_menu_container:
+                main_menu_list:
                     categories_main_menu:
                         categories_main_menu_first_level_item:
                             categories_main_menu_second_level:
