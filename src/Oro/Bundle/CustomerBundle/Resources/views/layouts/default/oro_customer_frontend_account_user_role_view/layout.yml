@@ -1,0 +1,66 @@
+layout:
+    imports:
+        - oro_account_menu
+        -
+            id: oro_account_user_role_permission_grid
+            root: account_user_role_items
+            namespace: account_user_role_items_view_privileges
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroCustomerBundle:layouts:default/oro_customer_frontend_account_user_role_view/layout.html.twig'
+        - '@addTree':
+            items:
+                account_user_role_view_container:
+                    blockType: container
+                account_user_role_title:
+                    blockType: text
+                    options:
+                        visible: '=data["entity"]!=null'
+                        text: '=data["entity"].getLabel()'
+                account_user_role_back_link:
+                    blockType: link
+                    options:
+                        route_name: oro_customer_frontend_account_user_role_index
+                        text: oro.customer.frontend.action.back.label
+                account_user_role_top_actions:
+                    blockType: action_line_buttons
+                    options:
+                        visible: '=data["entity"]!=null'
+                        actions: '=data["actions"].getAll(data["entity"])'
+                        entityId: '=data["action_buttons"].getEntityId(data["entity"])'
+                        entityClass: '=data["action_buttons"].getEntityClass(data["entity"])'
+                        dialogRoute: '=data["action_buttons"].getDialogRoute()'
+                        executionRoute: '=data["action_buttons"].getExecutionRoute()'
+                account_user_role_items:
+                    blockType: container
+                account_user_role_items_view_users:
+                    blockType: datagrid
+                    options:
+                        grid_name: frontend-account-account-users-grid-view
+                        grid_parameters:
+                            role: '=data["entity"].getId()'
+            tree:
+                content:
+                    account_user_role_view_container:
+                        account_user_role_title: ~
+                        account_user_role_back_link: ~
+                        account_user_role_items:
+                            account_user_role_top_actions: ~
+                            account_user_role_items_view_users: ~
+
+        - '@setOption':
+            id: account_user_role_items_view_privileges_datagrid
+            optionName: visible
+            optionValue: '=data["entity"]!=null'
+
+        - '@appendOption':
+            id: account_user_role_items_view_privileges_datagrid
+            optionName: grid_render_parameters
+            optionValue:
+                themeOptions:
+                    readonly: true
+
+        - '@move':
+            id: account_user_role_items_view_privileges_datagrid
+            siblingId: account_user_role_top_actions

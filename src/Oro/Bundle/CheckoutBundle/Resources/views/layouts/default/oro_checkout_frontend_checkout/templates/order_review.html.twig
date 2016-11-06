@@ -22,9 +22,9 @@
                         <span class="custom-checkbox__icon"></span>
                         <span class="custom-checkbox__text">{{ "oro.checkout.order_review.shipping_date"|trans }}</span>
                     </label>
-                    <div class="toggle-block__content form-input form-input_datepicker mmt9-md mmt9-sm">
-                        <span class="form-input_datepicker_icon gray fs22"><i class="cf-calendar"></i></span>
-                        {{ form_widget(form.ship_until, {'attr': {'class': 'input input_sm input_block input_datepicker', 'placeholder': 'oro.checkout.order_review.shipping_date_placeholder'|trans }}) }}
+                    <div class="toggle-block__content mmt9-md mmt9-sm">
+                        <span class="datepicker-icon gray fs22"><i class="cf-calendar"></i></span>
+                        {{ form_widget(form.ship_until, {'attr': {'class': 'input input--size-s input--has-datepicker', 'placeholder': 'oro.checkout.order_review.shipping_date_placeholder'|trans }}) }}
                     </div>
                 </div>
             </fieldset>
@@ -38,7 +38,7 @@
                         <span class="custom-checkbox__text">{{ "oro.checkout.order_review.po_number"|trans }}</span>
                     </label>
                     <div class="toggle-block__content checkout__form__optional-ref-number">
-                        {{ form_widget(form.po_number, {'attr': {'class': 'checkout__form__input', 'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans}}) }}
+                        {{ form_widget(form.po_number, {'attr': {'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans}}) }}
                     </div>
                 </div>
             </fieldset>
@@ -52,7 +52,7 @@
                         <span class="custom-checkbox__text">{{ "oro.checkout.order_review.note"|trans }}</span>
                     </label>
                     <div class="toggle-block__content checkout__form__order-not">
-                        {{ form_widget(form.customer_notes, {'attr': {'class': 'input input_md input_block checkout__form__input', 'placeholder': 'oro.checkout.order_review.note_placeholder'|trans}}) }}
+                        {{ form_widget(form.customer_notes, {'attr': {'placeholder': 'oro.checkout.order_review.note_placeholder'|trans}}) }}
                     </div>
                 </div>
             </fieldset>
@@ -69,7 +69,7 @@
                     </div>
                 </fieldset>
             {% endif %}
-            {%  if  form.state_token is defined %}
+            {% if form.state_token is defined %}
                 {{ form_row(form.state_token) }}
             {% endif %}
         </div>

@@ -3,7 +3,6 @@ parameters:
     oro_shipping.model.weight.class: Oro\Bundle\ShippingBundle\Model\Weight
     oro_shipping.model.dimensions.class: Oro\Bundle\ShippingBundle\Model\Dimensions
     oro_shipping.model.dimensions_value.class: Oro\Bundle\ShippingBundle\Model\DimensionsValue
-    oro_shipping.entity.shipping_origin_warehouse.class: Oro\Bundle\ShippingBundle\Entity\ShippingOriginWarehouse
     oro_shipping.entity.length_unit.class: Oro\Bundle\ShippingBundle\Entity\LengthUnit
     oro_shipping.entity.freight_class.class: Oro\Bundle\ShippingBundle\Entity\FreightClass
     oro_shipping.entity.weight_unit.class: Oro\Bundle\ShippingBundle\Entity\WeightUnit
@@ -12,11 +11,11 @@ parameters:
 
 services:
     oro_shipping.shipping_rule.manager.api:
-            class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-            parent: oro_soap.manager.entity_manager.abstract
-            arguments:
-                - '%oro_shipping.entity.shipping_rule.class%'
-                - "@doctrine.orm.entity_manager"
+        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - '%oro_shipping.entity.shipping_rule.class%'
+            - "@doctrine.orm.entity_manager"
 
     oro_shipping.factory.shipping_origin_model_factory:
         class: 'Oro\Bundle\ShippingBundle\Factory\ShippingOriginModelFactory'
@@ -37,23 +36,13 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
 
-    oro_shipping.shipping_origin.provider:
-        class: Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider
-        arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_config.global'
-            - '@oro_shipping.factory.shipping_origin_model_factory'
-
     oro_shipping.event_listener.form_view:
         class: Oro\Bundle\ShippingBundle\EventListener\FormViewListener
         arguments:
             - '@translator'
             - '@oro_entity.doctrine_helper'
-            - '@oro_shipping.shipping_origin.provider'
             - '@request_stack'
         tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-view, method: onWarehouseView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.warehouse-edit, method: onWarehouseEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
@@ -163,6 +152,13 @@ services:
             - '@oro_config.manager'
             - 'oro_shipping.freight_classes'
 
+    oro_shipping.provider.measure_units.conversion:
+        class: 'Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion'
+        arguments:
+            - '@oro_config.manager'
+            - 'oro_shipping.length_units'
+            - 'oro_shipping.weight_units'
+
     oro_shipping.extension.freight_classes:
         class: 'Oro\Bundle\ShippingBundle\Extension\FreightClassesExtension'
         tags:
@@ -215,6 +211,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_shipping.shipping_method.registry'
+            - '@oro_shipping.expression_language.line_item_decorator_factory'
 
     oro_shipping.form.handler.shipping_rule:
         class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingRuleHandler'
@@ -230,3 +227,26 @@ services:
               - '@oro_shipping.shipping_method.registry'
           tags:
               - { name: layout.data_provider, alias: shipping_methods }
+
+    oro_shipping.shipping_origin.provider:
+        class: Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider
+        arguments:
+            - '@oro_config.global'
+            - '@oro_shipping.factory.shipping_origin_model_factory'
+
+    oro_shipping.query_designer.select_query_converter:
+        class: 'Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter'
+        arguments:
+            - '@oro_query_designer.query_designer.manager'
+            - '@oro_entity.virtual_field_provider.chain'
+            - '@doctrine'
+        calls:
+            - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]
+
+    oro_shipping.expression_language.line_item_decorator_factory:
+        class: 'Oro\Bundle\ShippingBundle\ExpressionLanguage\LineItemDecoratorFactory'
+        arguments:
+            - '@oro_entity.entity_field_provider'
+            - '@oro_shipping.query_designer.select_query_converter'
+            - '@doctrine'
+            - '@oro_entity.helper.field_helper'

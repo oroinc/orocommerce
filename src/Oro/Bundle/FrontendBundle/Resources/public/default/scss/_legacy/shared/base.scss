@@ -15,12 +15,14 @@
 //Bootstrap override
 .container-fluid,
 .main {
-  max-width: 1400px;
+  max-width: $site-width;
   margin: 0 auto;
 }
 
 .main {
   margin: 0 auto 70px;
+
+  display: flex;
 
   &_home {
     max-width: 100%;
@@ -39,18 +41,24 @@
   }
 }
 
+@include breakpoint('tablet-small') {
+  .main {
+    flex-direction: column;
+  }
+}
+
 //Links
 a {
-  color: $base-link-color;
+  color: get-color('ui', 'normal');
 
   &.red {
     &:hover, &:focus, &:active {
-      color: $theme-red-color;
+      color: get-color('primary', 'dark');
     }
   }
 
   &:hover {
-    color: $base-link-color;
+    color: get-color('ui', 'normal');
     text-decoration: underline;
   }
 }

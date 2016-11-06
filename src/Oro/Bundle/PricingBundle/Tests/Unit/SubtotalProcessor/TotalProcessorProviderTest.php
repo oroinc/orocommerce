@@ -289,33 +289,6 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals($expected, $this->provider->getSubtotals(new SubtotalEntityStub()));
     }
 
-    public function testSubtotalsCache()
-    {
-        $this->translator->expects($this->never())
-            ->method('trans')
-            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
-            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
-
-        $entity = $this->prepareSubtotals(new EntityStub());
-
-        $subtotals = $this->provider->enableRecalculation()->getSubtotals($entity);
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
-        $subtotal = $subtotals->get(0);
-        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
-
-        // try to get again but getProviders and getSubtotal expect run once
-        $subtotals = $this->provider->getSubtotals($entity);
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
-        $subtotal = $subtotals->get(0);
-
-        $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal);
-        $this->assertEquals(LineItemSubtotalProvider::TYPE, $subtotal->getType());
-        $this->assertEquals(ucfirst(TotalProcessorProvider::TYPE), $subtotal->getLabel());
-        $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
-        $this->assertInternalType('float', $subtotal->getAmount());
-        $this->assertEquals(142.0, $subtotal->getAmount());
-    }
-
     public function testClearSubtotalsCache()
     {
         $this->translator->expects($this->never())
@@ -329,7 +302,6 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $subtotals);
         $subtotal1 = $subtotals->get(0);
         $this->assertInstanceOf('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal', $subtotal1);
-        $this->provider->clearCache();
 
         // try to get again and getProviders and getSubtotal expect run twice
         $subtotals = $this->provider->getSubtotals($entity);
@@ -477,7 +449,7 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
             ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
             ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
 
-        $entity = $this->prepareSubtotals(new EntityStub());
+        $entity = $this->prepareSubtotals(new EntityStub(), 2);
 
         $totals = $this->provider->enableRecalculation()->getTotalWithSubtotalsAsArray($entity);
         $this->assertInternalType('array', $totals);

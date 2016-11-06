@@ -7,16 +7,11 @@ layout:
         - '@setFormTheme':
             themes: 'OroSaleBundle:layouts:default/oro_sale_quote_frontend_choice/form_theme.html.twig'
 
-        - '@appendOption':
+        - '@setOption':
             id: title
-            optionName: value
+            optionName: params
             optionValue:
-                - 'oro.account.menu.account_user.label'
-                - 'oro.frontend.sale.quote.entity_plural_label'
-                -
-                    label: 'oro.frontend.sale.quote.title.label'
-                    parameters:
-                        '%id%': '=data["quote"].getQid()'
+                '%id%': '=data["quote"].getQid()'
 
         - '@setOption':
             id: page_title

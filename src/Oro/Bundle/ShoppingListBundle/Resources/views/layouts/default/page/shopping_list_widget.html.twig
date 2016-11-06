@@ -1,19 +1,34 @@
 {% block _main_menu_shopping_lists_wrapper_widget %}
-    {% set attr = {
+    {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroshoppinglist/js/app/components/shoppinglist-widget-view-component',
-        'data-page-component-options': {
+        '~data-page-component-options': {
             view: 'oroui/js/app/views/layout-subtree-view',
-            rootId : block.vars.id,
+            blockId: id,
             reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete'],
-            eventChannelId: 'shopping-list-title'
         },
-        'data-dropdown-trigger': true
-    }|merge(attr|merge({
-        class: attr.class|default('') ~ " main-menu__item main-menu__item--nested shopping-lists-frontend-widget"
-    })) %}
+        'data-dropdown-trigger': true,
+        '~class': " main-menu__item main-menu__item--nested shopping-lists-frontend-widget"
+    }) %}
 
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _header_row_shopping_toggle_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroshoppinglist/js/app/components/shoppinglist-widget-view-component',
+        '~data-page-component-options': {
+            view: 'oroui/js/app/views/layout-subtree-view',
+            blockId: id,
+            reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete'],
+        },
+        '~class': " header-row__toggle hidden-on-desktop"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <div class="header-row__dropdown-mobile">
+            {{ block_widget(block) }}
+        </div>
     </div>
 {% endblock %}
 
@@ -31,9 +46,9 @@
 {% endblock %}
 
 {% block _main_menu_shopping_lists_dropdown_content_widget %}
-    {% set attr = attr|merge({
+    {% set attr = layout_attr_defaults(attr, {
         id: 'order-widget-dropdown',
-        class: attr.class|default('') ~ " order-widget order-widget--dropdown-mode"
+        '~class': " order-widget order-widget--dropdown-mode shopping-list-dropdown"
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -42,14 +57,15 @@
 {% endblock %}
 
 {% block _main_menu_shopping_lists_dropdown_container_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " widget__container"
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " widget__container"
     }) %}
 
     <div {{ block('block_attributes') }}>
         {% for shoppingList in shoppingLists -%}
             {% do block|merge_context({
-                shoppingList: shoppingList
+                shoppingList: shoppingList,
+                shoppingListProducts: shoppingListProducts,
             }) %}
             {{ block('container_widget') }}
         {%- endfor %}
@@ -57,14 +73,15 @@
 {% endblock %}
 
 {% block _main_menu_shopping_lists_dropdown_container_sync_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " widget__container"
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " widget__container"
     }) %}
 
     <div {{ block('block_attributes') }}>
         {% for shoppingList in shoppingLists -%}
             {% do block|merge_context({
-                shoppingList: shoppingList
+                shoppingList: shoppingList,
+                shoppingListProducts: shoppingListProducts
             }) %}
             {{ block('container_widget') }}
         {%- endfor %}
@@ -72,27 +89,40 @@
 {% endblock %}
 
 {% block shopping_list_dropdown_item_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ " order-widget__item"
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " shopping-list-dropdown__item"
     }) %}
-
     <div {{ block('block_attributes') }}>
-        <div class="order-widget__order-name text-uppercase">
-            <span class="shopping-list-label order-widget__order-name-span-{{ shoppingList.id }}">{{ shoppingList.label }}</span>
+        <div class="shopping-list-dropdown__radio">
+            <label class="custom-radio {{ shoppingList.isCurrent ? 'checked' }}" data-toggle="tooltip" title="Set as default">
+                <input type="radio" name="{{ id }}-radio" data-role="set-default" {{ shoppingList.isCurrent ? 'checked' }}
+                       value="{{ shoppingList.id }}" data-label="{{ shoppingList.label }}"
+                       class="custom-radio__control">
+                <span class="custom-radio__text"></span>
+            </label>
         </div>
-        <table class="order-widget__table">
-            <tbody>
-            <tr>
-                <td>{{ 'oro.frontend.shoppinglist.view.items.label'|transchoice(shoppingList.lineItems|length) }}</td>
-                <td class="text-right">
-                    {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
-        <a href="{{ path('oro_shopping_list_frontend_view', {id: shoppingList.id}) }}">
-            <span>{{ 'oro.frontend.shoppinglist.view.view_details.label'|trans }} </span><i class="cf-right-open-mini"></i>
+        <a class="shopping-list-dropdown__link" href="{{ path('oro_shopping_list_frontend_view', {id: shoppingList.id}) }}">
+            <span class="shopping-list-dropdown__title">
+                <span class="shopping-list-dropdown__name">
+                    <span class="shopping-list-dropdown__name-inner shopping-list-dropdown__name-inner--{{ shoppingList.id }}" title="{{ shoppingList.label }}">{{ shoppingList.label }}</span>
+                </span>
+                <span class="shopping-list-dropdown__details">
+                    {{ 'oro.frontend.shoppinglist.view.items.label'|transchoice(shoppingList.lineItems|length) }}
+                    {% if shoppingList.lineItems|length > 0 %}
+                        | {{ shoppingList.subtotal.amount|oro_format_currency({'currency': shoppingList.subtotal.currency}) }}
+                    {% endif %}
+                </span>
+            </span>
+            <span class="shopping-list-dropdown__desc">
+                {% for product in shoppingListProducts[shoppingList.id]|default([]) %}
+                    {% if loop.index == 3 %}
+                        <span class="shopping-list-dropdown__ellipsis">...</span>
+                    {% else %}
+                        {{ product.name }}
+                    {% endif %}
+                {% endfor %}
+            </span>
+            <span class="shopping-list-dropdown__info">{{ 'oro.frontend.shoppinglist.view.view_details.label'|trans }} <i class="cf-right-open-mini"></i></span>
         </a>
     </div>
 {% endblock %}

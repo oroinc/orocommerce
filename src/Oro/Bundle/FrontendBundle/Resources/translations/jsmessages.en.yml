@@ -5,3 +5,5 @@ oro_frontend:
             action.cancel: Cancel
     unexpected_error: "Unexpected error occurred. Please contact system administrator."
     item_deleted: "Item has been deleted."
+    widget_form_component:
+        save_flash_success: Saved successfully

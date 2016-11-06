@@ -1,0 +1,18 @@
+{% block oro_inventory_level_grid_row %}
+    {{ block('form_row') }}
+{% endblock %}
+
+{% block oro_inventory_level_grid_widget %}
+    {% set attr = attr|merge({
+        'data-level-quantity-options': {
+            'quantityColumnName': 'levelIdQuantity',
+            'unitColumnName': 'unitCode',
+            'unitPrecisions': unitPrecisions,
+            'quantityConstraints': quantityConstraints
+        }|json_encode
+    }) %}
+    {{ form_widget(form, {'id': 'inventory-level-quantities', 'attr' : attr}) }}
+
+    {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+    {{ dataGrid.renderGrid('inventory-level-grid', {'productId': product.id}) }}
+{% endblock %}

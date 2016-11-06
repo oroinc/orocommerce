@@ -1,39 +1,26 @@
 {% extends 'form_div_layout.html.twig' %}
 
 {%- block form_label -%}
-    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
-    {% set modifier = modifier|default("__form__label") %}
-    {% set label_attr = label_attr|merge({
-        class: [
-            label_attr.class|default(''),
-            class_prefix ~ modifier
-        ]|join(' ')
+    {% set label_attr = layout_attr_defaults(label_attr, {
+        '~class': ' label label--full'
     }) %}
 
     {{ parent() }}
 {%- endblock form_label -%}
 
 {% block form_widget_simple %}
-    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
-    {% set attr = attr|merge({
-        class: [
-            attr.class|default(''),
-            class_prefix ~ "__form__input",
-            "input input_block input_md"
-        ]|join(' ')
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' input input--full'
     }) %}
+
     {{ parent() }}
 {% endblock %}
 
 {% block textarea_widget %}
-    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
-    {% set attr = attr|merge({
-        class: [
-            attr.class|default(''),
-            class_prefix ~ "__form__input",
-            "input input_block input_md",
-        ]|join(' ')
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' textarea textarea--full'
     }) %}
+
     {{ parent() }}
 {% endblock %}
 
@@ -45,6 +32,7 @@
             "form-field-" ~ form.vars.name,
         ]|join(' ')
     }) %}
+
     <fieldset class="{{ class_prefix }}__form__row">
         <div class="{{ class_prefix }}__form__col form__col form__col_x12">
             {{- form_label(form, null, {'class_prefix': class_prefix}) -}}
@@ -79,15 +67,10 @@
 {%- endblock form_errors -%}
 
 {%- block choice_widget %}
-    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
-    {% set attr = attr|merge({
-        class: [
-            attr.class|default(''),
-            'input input_md input_block',
-            class_prefix ~ '__form__input'
-        ]|join(' ')
-    })
-    %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' select select--size-m select--full'
+    }) %}
+
     {{ parent() }}
 {% endblock %}
 
@@ -117,11 +100,9 @@
     {%- if label is empty -%}
         {% set label = id|humanize %}
     {%- endif -%}
-    <label class="radio_custom radio_custom_blue {% if form.vars.checked %}checked{% endif %}" data-radio tabindex="0">
+    <label class="custom-radio {% if form.vars.checked %}checked{% endif %}" data-radio tabindex="0">
         {{- parent() -}}
-        <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
-        <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
-        <span class="{{ class_prefix }}_custom__text fs13">{{ label|block_text(translation_domain) }}</span>
+        <span class="{{ class_prefix }}__text">{{ label|block_text(translation_domain) }}</span>
     </label>
     {{- form_errors(form, {'class_prefix': class_prefix}) -}}
 {%- endblock radio_widget -%}

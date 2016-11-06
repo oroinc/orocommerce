@@ -1,0 +1,88 @@
+{% extends 'form_div_layout.html.twig' %}
+
+{%- block checkbox_widget -%}
+    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('checkbox')) %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' custom-checkbox__input'
+    }) %}
+    {%- if label is empty -%}
+        {% set label = id|humanize %}
+    {%- endif -%}
+
+    <label for="{{ id }}"
+           data-checkbox
+           class="custom-checkbox {% if form.vars.checked %}checked{% endif %}"
+    >
+        {{- parent() -}}
+        <span class="custom-checkbox__icon"></span>
+        <span class="custom-checkbox__text">{{ label|block_text(translation_domain) }}</span>
+    </label>
+    {{- form_errors(form, {'class_prefix': class_prefix}) -}}
+{%- endblock checkbox_widget -%}
+
+{% block checkbox_row %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ parentClass
+    }) %}
+
+    {{- form_widget(form, {'attr': attr}) -}}
+    {{- form_errors(form) -}}
+{% endblock %}
+
+{%- block _oro_account_frontend_account_user_account_row -%}
+    <input type="hidden" name="{{ form.vars.full_name  }}" value="{{ value}}">
+{% endblock %}
+
+{%- block choice_widget_expanded -%}
+    <div {{ block('widget_container_attributes') }} class="input-widget-select">
+        {%- for child in form %}
+            {{- form_widget(child) -}}
+        {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded -%}
+
+{%- block form_label -%}
+    {% set label_attr = layout_attr_defaults(label_attr, {
+        '~class': ' label label--full'
+    }) %}
+
+    {{ parent() }}
+{%- endblock form_label -%}
+
+{% block form_widget_simple %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' input input--full input--size-m'
+    }) %}
+
+    {{ parent() }}
+{% endblock %}
+
+{%- block form_row -%}
+    <div class="field {{ parentClass|default('') }}">
+        {{- form_label(form) -}}
+        {{- form_widget(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock form_row -%}
+
+{% block widget_attributes %}
+    {% if errors|length > 0 %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' error'
+        }) %}
+    {% endif %}
+
+    {{ parent() }}
+{% endblock widget_attributes %}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <div class="notification notification_xsm notification_error notification-radiused mmt5-md">
+            <ul>
+                {%- for error in errors -%}
+                    <li><i class="cf-attention"></i><span class="mml5-md">{{ error.message }}</span></li>
+                {%- endfor -%}
+            </ul>
+        </div>
+    {%- endif -%}
+{%- endblock form_errors -%}

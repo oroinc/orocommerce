@@ -1,0 +1,47 @@
+{% extends 'form_div_layout.html.twig' %}
+
+{%- block form_label -%}
+    {% set label_attr = layout_attr_defaults(label_attr, {
+        '~class': ' label'
+    }) %}
+
+    {{ parent() }}
+{%- endblock form_label -%}
+
+{% block form_widget_simple %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' input input--full input--size-m'
+    }) %}
+
+    {{ parent() }}
+{% endblock %}
+
+{%- block form_row -%}
+    <div class="field {{ parentClass|default('') }}">
+        {{- form_label(form) -}}
+        {{- form_widget(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock form_row -%}
+
+{% block widget_attributes %}
+    {% if errors|length > 0 %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' error'
+        }) %}
+    {% endif %}
+
+    {{ parent() }}
+{% endblock widget_attributes %}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <div class="notification notification_xsm notification_error notification-radiused mmt5-md">
+            <ul>
+                {%- for error in errors -%}
+                    <li><i class="cf-attention"></i><span class="mml5-md">{{ error.message }}</span></li>
+                {%- endfor -%}
+            </ul>
+        </div>
+    {%- endif -%}
+{%- endblock form_errors -%}

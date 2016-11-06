@@ -10,13 +10,6 @@ layout:
         - '@setBlockTheme':
             themes: 'OroOrderBundle:layouts:default/oro_order_frontend_index/layout.html.twig'
 
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue:
-                - 'oro.account.menu.account_user.label'
-                - 'oro.order.order_history.label'
-
         - '@setOption':
             id: content
             optionName: class_prefix

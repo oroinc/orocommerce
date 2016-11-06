@@ -5,7 +5,7 @@
         <div class="{{ class_prefix }}__form__row">
             <div class="{{ class_prefix }}__form__col form__col_x6" data-shipping-method-forms>
                 {% if methods|length > 0 %}
-                    <span class="{{ class_prefix }}__form__label">{{ 'oro.shipping.methods.select_method'|trans }}<sup class="red">*</sup></span>
+                    <span class="label label--full">{{ 'oro.shipping.methods.select_method'|trans }}<sup class="red">*</sup></span>
                     {% for name, method in methods if methods is defined and method is iterable %}
 
                         {% if method.types is defined and method.types|length > 0 %}
@@ -18,11 +18,11 @@
                                 {% if type.price %}
                                     {% set selected = currentShippingMethodType == type.identifier %}
                                     <div class="{{ class_prefix }}__form__radio" data-item-container>
-                                        <label class="radio_custom radio_custom_blue {% if selected %}checked{% endif %}" data-radio tabindex="0">
-                                            <input type="radio" name="shippingMethodType" data-shipping-method="{{ method.identifier }}" data-shipping-price="{{ type.price.value }}" data-choice="{{ type.identifier }}" value="{{ type.identifier }}" {% if selected%}checked="checked"{% endif %} />
-                                            <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
-                                            <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
-                                            <span class="checkbox_custom__text fs13">{{ type.label|trans }}: <strong>{{ type.price|oro_format_price }}</strong></span>
+                                        <label class="custom-radio custom-radio--large {% if selected %}checked{% endif %}" data-radio tabindex="0">
+                                            <input class="custom-radio__control"
+                                                   type="radio" name="shippingMethodType" value="{{ type.identifier }}" {% if selected%}checked="checked"{% endif %}
+                                                   data-shipping-method="{{ method.identifier }}" data-shipping-price="{{ type.price.value }}" data-choice="{{ type.identifier }}" />
+                                            <span class="custom-radio__text">{{ type.label|trans }}: <strong>{{ type.price|oro_format_price }}</strong></span>
                                         </label>
                                     </div>
                                 {% endif %}

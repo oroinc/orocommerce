@@ -84,14 +84,14 @@ class ProductPriceFormatterTest extends \PHPUnit_Framework_TestCase
                             [
                                 'price' => 14.45,
                                 'currency' => 'USD',
-                                'qty' => 1,
+                                'quantity' => 1,
                             ]
                         ],
                         'set' => [
                             [
                                 'price' => 12.45,
                                 'currency' => 'EUR',
-                                'qty' => 10,
+                                'quantity' => 10,
                             ]
                         ],
                     ],
@@ -100,7 +100,7 @@ class ProductPriceFormatterTest extends \PHPUnit_Framework_TestCase
                             [
                                 'price' => 10.22,
                                 'currency' => 'USD',
-                                'qty' => 1,
+                                'quantity' => 1,
                             ]
                         ],
                     ]
@@ -164,14 +164,14 @@ class ProductPriceFormatterTest extends \PHPUnit_Framework_TestCase
                         [
                             'price' => 14.45,
                             'currency' => 'USD',
-                            'qty' => 1,
+                            'quantity' => 1,
                         ]
                     ],
                     'set' => [
                         [
                             'price' => 12.45,
                             'currency' => 'EUR',
-                            'qty' => 10,
+                            'quantity' => 10,
                         ]
                     ],
                 ],

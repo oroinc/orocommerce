@@ -10,13 +10,6 @@ layout:
         - '@setBlockTheme':
             themes: 'OroRFPBundle:layouts:default/oro_rfp_frontend_request_index/layout.html.twig'
 
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue:
-                - 'oro.account.menu.account_user.label'
-                - 'oro.frontend.rfp.request.entity_plural_label'
-
         - '@setOption':
             id: page_title
             optionName: text

@@ -4,15 +4,13 @@
         <div class="{{ class_prefix }}__form__row">
             <div class="{{ class_prefix }}__form__col form__col_x6" data-payment-method-forms>
                 {% if views|length > 0 %}
-                    <span class="{{ class_prefix }}__form__label">{{ 'oro.payment.methods.select_method'|trans }}<sup class="red">*</sup></span>
+                    <span class="label label--full">{{ 'oro.payment.methods.select_method'|trans }}<sup class="red">*</sup></span>
                     {% for name, view in views if views is defined and view is iterable %}
                         {% set selected = currentPaymentMethod == name %}
                         <div class="{{ class_prefix }}__form__radio" data-item-container>
-                            <label class="radio_custom radio_custom_blue {% if selected %}checked{% endif %}" data-radio tabindex="0">
-                                <input type="radio" name="paymentMethod" data-choice="{{ name }}" value="{{ name }}" {% if selected%}checked="checked"{% endif %} />
-                                <i class="cf-radio_button_checked radio_checked fs18 mmr5-md"></i>
-                                <i class="cf-radio_button_unchecked radio_not-checked fs18 mmr5-md"></i>
-                                <span class="fs13">{{ view.label }}</span>
+                            <label class="custom-radio custom-radio--large {% if selected %}checked{% endif %}" data-radio tabindex="0">
+                                <input class="custom-radio__control" type="radio" name="paymentMethod" data-choice="{{ name }}" value="{{ name }}" {% if selected%}checked="checked"{% endif %} />
+                                <span class="custom-radio__text">{{ view.label }}</span>
                             </label>
                             <div class="{{ class_prefix }}__form__payment-container" data-form-container {% if not selected %} style="display: none;" {% endif %}>
                                 {{ block(view.block) }}

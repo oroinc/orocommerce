@@ -1,0 +1,149 @@
+.account-menu {
+    margin-top: 35px;
+    padding: 25px 30px;
+
+    background: get-color('additional', 'base');
+    border-radius: 3px;
+
+    &__section:not(:first-child) {
+        margin-top: 18px;
+    }
+
+    &__title {
+        position: relative;
+
+        margin-bottom: 9px;
+
+        font-size: 15px;
+        font-weight: 400;
+        text-transform: uppercase;
+    }
+
+    &__list {
+        @include list-normalize();
+    }
+
+    &__item {
+        position: relative;
+
+        margin: 5px 0 0;
+        padding: 0 0 0 18px;
+
+        &--current {
+            &:before {
+                top: 5px;
+                left: 0;
+
+                width: 7px;
+                height: 7px;
+
+                border-radius: 50%;
+                background: get-color('primary', 'base');
+
+                @include after();
+            }
+
+            .account-menu__link {
+                font-weight: 700;
+            }
+        }
+    }
+
+    &__link {
+        display: block;
+
+        color: get-color('additional', 'dark')
+    }
+
+    &__badge {
+        i {
+            vertical-align: middle;
+        }
+    }
+}
+
+@include breakpoint('desktop') {
+    .account-menu {
+        .icon-minus,
+        .icon-plus {
+            opacity: 0;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .account-menu {
+        .icon-minus,
+        .icon-plus {
+            position: absolute;
+            right: 0;
+            top: 4px;
+
+            font-size: 12px;
+        }
+
+        .icon-minus {
+            opacity: 0;
+        }
+
+        .expanded {
+            .icon-plus {
+                opacity: 0;
+
+            }
+
+            .icon-minus {
+                opacity: 1;
+            }
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .account-menu {
+        padding: 0;
+        margin: 35px -15px 0;
+
+        border-top: 1px solid get-color('additional', 'light');
+        border-bottom: 1px solid get-color('additional', 'light');
+
+        &__title {
+            padding: 14px 13px;
+            margin: 0;
+
+            font-size: $base-font-size;
+        }
+
+        &__list {
+            padding-left: 13px;
+            padding-right: 13px;
+        }
+
+        &__item {
+            padding: 13px 0;
+            margin: 0;
+
+            border-top: 1px solid get-color('additional', 'light');
+
+            &--current {
+                &:before {
+                    content: none;
+                }
+
+                .account-menu__link {
+                    color: inherit;
+                }
+            }
+        }
+
+        &__link {
+            color: get-color('additional', 'dark');
+        }
+
+        .icon-minus,
+        .icon-plus {
+            right: 13px;
+            top: 15px;
+        }
+    }
+}

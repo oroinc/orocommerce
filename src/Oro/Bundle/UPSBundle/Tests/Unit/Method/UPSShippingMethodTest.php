@@ -2,22 +2,28 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Method;
 
-use Oro\Component\Testing\Unit\EntityTrait;
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
+use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodType;
 use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Model\PriceResponse;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
+use Oro\Component\Testing\Unit\EntityTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
@@ -47,6 +53,11 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
      */
     protected $upsShippingMethod;
 
+    /**
+     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $localizationHelper;
+
     protected function setUp()
     {
         $this->transportProvider = $this->getMockBuilder(UPSTransportProvider::class)
@@ -72,8 +83,18 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
             ['id' => 1, 'name' => 'ups_channel_1', 'transport' => $this->transport]
         );
 
+        $this->localizationHelper = $this
+            ->getMockBuilder(LocalizationHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->upsShippingMethod =
-            new UPSShippingMethod($this->transportProvider, $this->channel, $this->priceRequestFactory);
+            new UPSShippingMethod(
+                $this->transportProvider,
+                $this->channel,
+                $this->priceRequestFactory,
+                $this->localizationHelper
+            );
     }
 
     public function testIsGrouped()
@@ -88,6 +109,13 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testGetLabel()
     {
+        $this->transport
+            ->expects(self::any())
+            ->method('getLabels')->willReturn(new ArrayCollection());
+
+        $this->localizationHelper
+            ->expects(self::once())
+            ->method('getLocalizedValue')->willReturn('ups_channel_1');
         static::assertEquals('ups_channel_1', $this->upsShippingMethod->getLabel());
     }
 
@@ -182,6 +210,38 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
                 'typeSurcharge' => 0,
                 'expectedPrice' => 50
             ]
+        ];
+    }
+
+    /**
+     * @param string $number
+     * @param string|null $resultURL
+     *
+     * @dataProvider trackingDataProvider
+     */
+    public function testGetTrackingLink($number, $resultURL)
+    {
+        static::assertEquals($resultURL, $this->upsShippingMethod->getTrackingLink($number));
+    }
+
+    /**
+     * @return array
+     */
+    public function trackingDataProvider()
+    {
+        return [
+            'emptyTrackingNumber' => [
+                'number' => '',
+                'resultURL' => null,
+            ],
+            'wrongTrackingNumber2' => [
+                'number' => '123123123123',
+                'resultURL' => null,
+            ],
+            'rightTrackingNumber' => [
+                'number' => '1Z111E111111111111',
+                'resultURL' => UPSShippingMethod::TRACKING_URL.'1Z111E111111111111',
+            ],
         ];
     }
 }

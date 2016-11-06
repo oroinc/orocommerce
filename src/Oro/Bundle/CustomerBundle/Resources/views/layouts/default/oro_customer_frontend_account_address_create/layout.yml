@@ -1,0 +1,13 @@
+layout:
+    imports:
+        -
+            id: oro_account_address_form
+            namespace: account_address_edit
+            root: content
+        - oro_account_menu
+    actions:
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue:
+                label: oro.customer.frontend.address.page_title.create
