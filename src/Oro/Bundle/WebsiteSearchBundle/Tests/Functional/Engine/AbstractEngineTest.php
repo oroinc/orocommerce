@@ -17,15 +17,9 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultLocalizationIdTestTrait;
 
-/**
- * @dbIsolationPerTest
- */
 abstract class AbstractEngineTest extends WebTestCase
 {
     use DefaultLocalizationIdTestTrait;
-
-    /** @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject */
-    protected $mappingProvider;
 
     /**
      * @var callable
@@ -82,10 +76,7 @@ abstract class AbstractEngineTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient();
         $this->getContainer()->get('request_stack')->push(Request::create(''));
-
-        $this->mappingProvider = $this->getMappingProvider();
 
         $this->loadFixtures([LoadSearchItemData::class]);
 
@@ -99,7 +90,7 @@ abstract class AbstractEngineTest extends WebTestCase
         $this->engine = $this->getSearchEngine();
     }
 
-    protected function terDown()
+    protected function tearDown()
     {
         $this->getContainer()->get('event_dispatcher')->removeListener(IndexEntityEvent::NAME, $this->listener);
     }
@@ -157,6 +148,7 @@ abstract class AbstractEngineTest extends WebTestCase
         $query->getCriteria()->orderBy(['stringValue' => Query::ORDER_ASC]);
         $items = $this->getSearchItems($query);
 
+        $this->assertCount(LoadSearchItemData::COUNT, $items);
         $this->assertStringStartsWith('item1@mail.com', $items[0]->getRecordTitle());
         $this->assertStringStartsWith('item2@mail.com', $items[1]->getRecordTitle());
         $this->assertStringStartsWith('item3@mail.com', $items[2]->getRecordTitle());
@@ -177,7 +169,7 @@ abstract class AbstractEngineTest extends WebTestCase
 
         $items = $this->getSearchItems($query);
 
-        $this->assertCount(9, $items);
+        $this->assertCount(LoadSearchItemData::COUNT, $items);
         $this->assertStringStartsWith('item1@mail.com', $items[0]->getRecordTitle());
         $this->assertStringStartsWith('item2@mail.com', $items[1]->getRecordTitle());
         $this->assertStringStartsWith('item3@mail.com', $items[2]->getRecordTitle());
@@ -219,7 +211,7 @@ abstract class AbstractEngineTest extends WebTestCase
             ->willReturn(true);
 
         $mappingProvider
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getEntityAlias')
             ->with(TestEntity::class)
             ->willReturn($this->mappingConfig[TestEntity::class]['alias']);
