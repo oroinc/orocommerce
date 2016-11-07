@@ -80,6 +80,14 @@ class UPSTransport extends AbstractRestTransport
     }
 
     /**
+     * @return PriceResponse
+     */
+    private function createPriceResponse()
+    {
+        return new PriceResponse();
+    }
+
+    /**
      * @param PriceRequest $priceRequest
      * @param Transport $transportEntity
      * @throws RestException
@@ -89,27 +97,34 @@ class UPSTransport extends AbstractRestTransport
      */
     public function getPrices(PriceRequest $priceRequest, Transport $transportEntity)
     {
-        if ($transportEntity) {
+        if (!$transportEntity) {
+            return null;
+        }
+
+        $priceResponse = null;
+
+        try {
             $this->client = $this->createRestClient($transportEntity);
             $data = $this->client->post(static::API_RATES_PREFIX, $priceRequest->toJson())->json();
-            $priceResponse = new PriceResponse();
+
             if (!is_array($data)) {
                 return null;
             }
 
-            try {
-                $priceResponse->parse($data);
-            } catch (\LogicException $e) {
-                $this->logger->error(
-                    sprintf('Price request failed for transport #%s. %s', $transportEntity->getId(), $e->getMessage())
-                );
-
-                return null;
-            }
-
-            return $priceResponse;
+            $priceResponse = $this->createPriceResponse()->parse($data);
+        } catch (\LogicException $e) {
+            $this->logger->error(
+                sprintf('Price request failed for transport #%s. %s', $transportEntity->getId(), $e->getMessage())
+            );
+        } catch (RestException $restException) {
+            $this->logger->error(
+                sprintf('Price REST request failed for transport #%s. %s',
+                    $transportEntity->getId(),
+                    $restException->getMessage()
+                )
+            );
         }
 
-        return null;
+        return $priceResponse;
     }
 }

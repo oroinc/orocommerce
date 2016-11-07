@@ -17,6 +17,7 @@ class PriceResponse
      * @param array $data
      * @throws \LogicException on UPS fault
      * @throws \InvalidArgumentException
+     * @return self
      */
     public function parse($data)
     {
@@ -37,6 +38,8 @@ class PriceResponse
         } else {
             $this->addRatedShipments($data['RateResponse']['RatedShipment']);
         }
+
+        return $this;
     }
 
     /**
