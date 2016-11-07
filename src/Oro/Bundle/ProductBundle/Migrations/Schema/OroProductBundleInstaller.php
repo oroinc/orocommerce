@@ -73,7 +73,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_5';
+        return 'v1_6';
     }
 
     /**
@@ -439,7 +439,7 @@ class OroProductBundleInstaller implements
             $schema->getTable(self::PRODUCT_IMAGE_TABLE_NAME),
             ['product_image_id'],
             ['id'],
-            ['onDelete' => null, 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }
