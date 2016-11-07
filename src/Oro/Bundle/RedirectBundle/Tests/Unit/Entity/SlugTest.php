@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCase;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-class SlugTest extends EntityTestCase
+class SlugTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+    
     public function testProperties()
     {
         $properties = [
@@ -29,6 +31,7 @@ class SlugTest extends EntityTestCase
         $slug = new Slug();
         $slug->setUrl($fullUrl);
         $this->assertEquals($slugUrl, $slug->getSlugUrl());
+        $this->assertAttributeEquals(md5($slug->getUrl()), 'urlHash', $slug);
     }
 
     /**

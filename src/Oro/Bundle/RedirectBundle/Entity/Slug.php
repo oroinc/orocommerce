@@ -4,15 +4,12 @@ namespace Oro\Bundle\RedirectBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
  * @ORM\Table(name="oro_redirect_slug", indexes={@ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"})})
  * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
- * @Config(
+^ * @Config(
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-share-sign"
@@ -118,6 +115,7 @@ class Slug
     public function setUrl($url)
     {
         $this->url = $url;
+        $this->urlHash = md5($this->url);
 
         return $this;
     }
@@ -166,14 +164,5 @@ class Slug
     public function __toString()
     {
         return (string)$this->getUrl();
-    }
-
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
-    public function setUrlHash()
-    {
-        $this->urlHash = md5($this->url);
     }
 }
