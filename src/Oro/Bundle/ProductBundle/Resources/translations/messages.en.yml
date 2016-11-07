@@ -209,6 +209,8 @@ oro:
                     not_added_products: '{1} Product %sku% can’t be added.|]1,Inf]Products %sku% can’t be added.'
                     component_not_accessible: Can't process request, component not accessible
                     invalid_request: Invalid request submitted
+            titles:
+                catalog: Catalog
 
         export:
             inventory_status_only: "Inventory statuses only"

@@ -1,0 +1,2 @@
+bundles:
+    - OroInventoryBundle:Form:fields.html.twig
