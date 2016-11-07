@@ -6,8 +6,8 @@
     {% endif %}
         {% for type in methodData.types %}
         <li>{{ get_shipping_method_type_label(methodData.identifier, type.identifier)|trans }} ({{ 'oro.shipping.method.flat_rate.price.label'|trans }}: {{ type.options['price']|oro_format_currency({'currency': currency}) }}
-            {%- if type.options.handling_fee is not empty -%}
-                , {{ 'oro.shipping.method.flat_rate.handling_fee.label'|trans}}: {{ type.options.handling_fee|oro_format_currency({'currency': currency}) }}
+            {%- if type.options['handling_fee'] is defined and type.options['handling_fee'] is not empty -%}
+                , {{ 'oro.shipping.method.flat_rate.handling_fee.label'|trans}}: {{ type.options['handling_fee']|oro_format_currency({'currency': currency}) }}
             {%- endif -%}
             )</li>
         {% endfor %}
