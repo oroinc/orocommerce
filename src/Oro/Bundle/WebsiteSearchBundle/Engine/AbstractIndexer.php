@@ -88,7 +88,7 @@ abstract class AbstractIndexer implements IndexerInterface
      */
     public function reindex($classOrClasses = null, array $context = [])
     {
-        if (!is_string($classOrClasses) && count($classOrClasses) !== 1 && $this->getContextEntityIds($context)) {
+        if (is_array($classOrClasses) && count($classOrClasses) !== 1 && $this->getContextEntityIds($context)) {
             throw new \LogicException('Entity ids passed into context. Please provide single class of entity');
         }
 
@@ -160,12 +160,6 @@ abstract class AbstractIndexer implements IndexerInterface
         }
 
         foreach ($entitiesByClass as $entityClass => $entityIds) {
-            $this->ensureEntityClassIsSupported($entityClass);
-        }
-
-        $this->delete($entities, $context);
-
-        foreach ($entitiesByClass as $entityClass => $entityIds) {
             $context = $this->setContextEntityIds($context, $entityIds);
             $this->reindex($entityClass, $context);
         }
@@ -207,8 +201,17 @@ abstract class AbstractIndexer implements IndexerInterface
         $identifierName = $this->doctrineHelper->getSingleEntityIdentifierFieldName($entityClass);
         $queryBuilder->select("entity.$identifierName as id");
         $contextEntityIds = $this->getContextEntityIds($context);
+
         if ($contextEntityIds) {
+            //Remove certain entities from index before reindexation
+            $entities = [];
+            foreach ($contextEntityIds as $id) {
+                $entities[$id] = $entityManager->getReference($entityClass, $id);
+            }
+            $this->delete($entities, $context);
+
             $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", $contextEntityIds));
+            $temporaryAlias = $currentAlias; //Save context entities with real alias
         }
 
         $iterator = new BufferedQueryResultIterator($queryBuilder);
@@ -233,7 +236,9 @@ abstract class AbstractIndexer implements IndexerInterface
             $entityManager->clear($entityClass);
         }
 
-        $this->renameIndex($temporaryAlias, $currentAlias);
+        if (!$contextEntityIds) {
+            $this->renameIndex($temporaryAlias, $currentAlias);
+        }
 
         return $indexedItemsNum;
     }
