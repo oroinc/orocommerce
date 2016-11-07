@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultLocalizationIdTestTrait;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Query\Result\Item;
+use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
@@ -21,6 +23,7 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
 {
     use DefaultWebsiteIdTestTrait;
     use DefaultLocalizationIdTestTrait;
+    use SearchExtensionTrait;
 
     /** @var EventDispatcherInterface */
     private $dispatcher;
@@ -50,35 +53,34 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
 
     public function testRestrictIndexProductsEventListener()
     {
-        // TODO: Remove in BB-4512
-        if ($this->getContainer()->getParameter('oro_search.engine') === 'elastic_search') {
-            $this->markTestSkipped('Disabled for Elastic Search until search method is ready in BB-4512');
-        }
+        $context = [
+            AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
+        ];
+
+        $expectedCount = 6;
 
         $indexer = $this->getContainer()->get('oro_website_search.indexer');
-        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
-        $indexer->reindex(
-            Product::class,
-            [
-                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
-            ]
-        );
+        $indexer->resetIndex(Product::class, $context);
+        $indexer->reindex(Product::class);
+        $alias = 'oro_product_' . $this->getDefaultWebsiteId();
+        $this->ensureItemsLoaded($alias, $expectedCount, 'oro_website_search.engine');
 
         $query = new Query();
         $query->from('oro_product_WEBSITE_ID');
-        $query->select('recordTitle');
-        $query->getCriteria()->orderBy(['title_' . $this->getDefaultLocalizationId() => Query::ORDER_ASC]);
+        $query->select('name_LOCALIZATION_ID');
+        $query->getCriteria()->orderBy(['name_' . $this->getDefaultLocalizationId() => Query::ORDER_ASC]);
 
+        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
         $result = $searchEngine->search($query);
         $values = $result->getElements();
 
-        $this->assertEquals(6, $result->getRecordsCount());
-        $this->assertStringStartsWith('product.1', $values[0]->getRecordTitle());
-        $this->assertStringStartsWith('product.2', $values[1]->getRecordTitle());
-        $this->assertStringStartsWith('product.3', $values[2]->getRecordTitle());
-        $this->assertStringStartsWith('product.6', $values[3]->getRecordTitle());
-        $this->assertStringStartsWith('product.7', $values[4]->getRecordTitle());
-        $this->assertStringStartsWith('product.8', $values[5]->getRecordTitle());
+        $this->assertEquals($expectedCount, $result->getRecordsCount());
+        $this->assertSearchItems('product.1', $values[0]);
+        $this->assertSearchItems('product.2', $values[1]);
+        $this->assertSearchItems('product.3', $values[2]);
+        $this->assertSearchItems('product.6', $values[3]);
+        $this->assertSearchItems('product.7', $values[4]);
+        $this->assertSearchItems('product.8', $values[5]);
     }
 
     /**
@@ -89,5 +91,23 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
         foreach ($this->dispatcher->getListeners($eventName) as $listener) {
             $this->dispatcher->removeListener($eventName, $listener);
         }
+    }
+
+    /**
+     * @param mixed $expectedValue
+     * @param Item $value
+     */
+    protected function assertSearchItems($expectedValue, Item $value)
+    {
+        $selectedData = $value->getSelectedData();
+        $field = 'name_' . $this->getDefaultLocalizationId();
+
+        if (!array_key_exists($field, $selectedData)) {
+            throw new \RuntimeException(
+                sprintf('Field "%s" could not be found in selected data array', $field)
+            );
+        }
+
+        $this->assertStringStartsWith($expectedValue, $selectedData[$field]);
     }
 }
