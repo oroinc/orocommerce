@@ -147,6 +147,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
     public function testResetIndexOfAllWebsites()
     {
+        $this->clearIndexTextTable();
         $this->loadFixtures([LoadItemData::class]);
         $this->indexer->resetIndex(TestProduct::class);
 
@@ -295,5 +296,36 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->assertEntityCount(0, IndexText::class);
         $this->assertEntityCount(0, IndexDatetime::class);
         $this->assertEntityCount(0, IndexDecimal::class);
+    }
+
+    public function testReindexForDeletedEntity()
+    {
+        $this->loadFixtures([LoadProductsToIndex::class]);
+        $this->mappingProviderMock
+            ->expects($this->exactly(4))
+            ->method('isClassSupported')
+            ->with(TestProduct::class)
+            ->willReturn(true);
+
+        $this->setEntityAliasExpectation();
+        $this->setGetEntityConfigExpectation();
+        $this->listener = $this->setListener();
+        $this->indexer->reindex(TestProduct::class);
+        $removedProduct = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
+        $removedProductId = $removedProduct->getId();
+        $em = $this->doctrineHelper->getEntityManager(TestProduct::class);
+        $em->remove($removedProduct);
+        $em->flush();
+        $this->indexer->reindex(
+            TestProduct::class,
+            [
+                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()],
+                AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [
+                    $removedProductId,
+                    $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2)->getId()
+                ]
+            ]
+        );
+        $this->assertItemsCount(1);
     }
 }
