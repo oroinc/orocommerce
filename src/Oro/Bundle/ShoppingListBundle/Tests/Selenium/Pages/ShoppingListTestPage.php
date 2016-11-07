@@ -30,7 +30,7 @@ class ShoppingListTestPage extends AbstractPage
      * @var string
      */
     private $sidebarLabelElement =
-        "//*[@data-bound-component='oroshoppinglist/js/app/views/shoppinglist-sidebar-view']//h3[1]";
+        "//*[@class='shopping-list-navigation']//h3[1]";
 
     /**
      * @var string
