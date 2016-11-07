@@ -1,0 +1,11 @@
+oro_entity:
+    entity_aliases:
+        Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility:
+            alias:        category_visibility
+            plural_alias: category_visibilities
+        Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility:
+            alias:        account_category_visibility
+            plural_alias: account_category_visibilities
+        Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility:
+            alias:        account_group_category_visibility
+            plural_alias: account_group_category_visibilities

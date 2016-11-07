@@ -84,3 +84,9 @@ services:
             - '@oro_website.resolver.website_url_resolver'
         tags:
             - { name: twig.extension }
+
+    oro_website.entity_listener.website:
+        class: 'Oro\Bundle\WebsiteBundle\Entity\EntityListener\WebsiteEntityListener'
+        public: false
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_website.entity.website.class%', event: prePersist }

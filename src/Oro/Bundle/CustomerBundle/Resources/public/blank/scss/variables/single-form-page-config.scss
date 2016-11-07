@@ -3,14 +3,15 @@ $single-form-page-offset-outer: 0 auto;
 
 // Default size
 $single-form-page-offset-inner: 55px 65px !default;
-$single-form-page-offset-inner-relative: 55px 5% !default;
 $single-form-page-width: 400px !default;
-$single-form-page-width-tablet-small: 100% !default;
+$single-form-page-width-mobile-l: 100% !default;
 
 // Medium size
+$single-form-page-offset-inner-mobile-l: 55px 25px !default;
+
 $single-form-page-width-m: 430px !default;
 $single-form-page-offset-inner-m: 55px 65px !default;
-$single-form-page-offset-inner-m-tablet-small: 35px 20px !default;
+$single-form-page-offset-inner-m-mobile-l: 35px 20px !default;
 
 %single-form-page {
     max-width: $single-form-page-width;
@@ -26,13 +27,13 @@ $single-form-page-offset-inner-m-tablet-small: 35px 20px !default;
     padding: $single-form-page-offset-inner-m;
 }
 
-@include breakpoint('tablet-small') {
+@include breakpoint('mobile-landscape') {
     %single-form-page {
-        max-width: $single-form-page-width-tablet-small;
-        padding: $single-form-page-offset-inner-relative;
+        max-width: $single-form-page-width-mobile-l;
+        padding: $single-form-page-offset-inner-mobile-l;
     }
 
     %single-form-page--size-m {
-        padding: $single-form-page-offset-inner-m-tablet-small;
+        padding: $single-form-page-offset-inner-m-mobile-l;
     }
 }

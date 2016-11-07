@@ -49,15 +49,8 @@
     {% endset %}
 
     {% set shippingInformation %}
-        {%- if entity.shippingMethodType -%}
-            {% set shippingMethodLabel = get_shipping_method_label(entity.shippingMethod) %}
-            {%- if shippingMethodLabel -%}
-                {{ UI.renderHtmlProperty('oro.order.shipping_method.label'|trans,
-                get_shipping_method_label(entity.shippingMethod)|trans ~
-                get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans) }}
-            {%- endif -%}
-            {{ UI.renderHtmlProperty('oro.order.shipping_method.label'|trans,
-            get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans) }}
+        {%- if entity.shippingMethod and entity.shippingMethodType -%}
+            {{ UI.renderHtmlProperty('oro.order.shipping_method.label'|trans, oro_order_shipping_method_with_type_label(entity.shippingMethod, entity.shippingMethodType)) }}
         {%- endif -%}
         {% if entity.shippingCost is not null %}
             {{ UI.renderHtmlProperty('oro.order.shipping_cost.label'|trans,
