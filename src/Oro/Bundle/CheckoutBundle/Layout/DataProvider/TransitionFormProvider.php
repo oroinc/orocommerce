@@ -39,7 +39,13 @@ class TransitionFormProvider extends AbstractFormProvider
             return null;
         }
 
-        $cacheKeyOptions = ['id' => $workflowItem->getId(), 'name' => $transition->getName()];
+        $cacheKeyOptions = [
+            'id' => $workflowItem->getId(),
+            'name' => $transition->getName(),
+            'workflow_item' => null,
+            'form_init' => null,
+            'attribute_fields' => null,
+        ];
 
         return $this->getForm(
             $transition->getFormType(),
@@ -66,7 +72,13 @@ class TransitionFormProvider extends AbstractFormProvider
             return null;
         }
 
-        $cacheKeyOptions = ['id' => $workflowItem->getId(), 'name' => $transition->getName()];
+        $cacheKeyOptions = [
+            'id' => $workflowItem->getId(),
+            'name' => $transition->getName(),
+            'workflow_item' => null,
+            'form_init' => null,
+            'attribute_fields' => null,
+        ];
 
         return $this->getFormView(
             $transition->getFormType(),
