@@ -1,6 +1,6 @@
 .header-row-overlay {
     position: fixed;
-    z-index: 8;
+    z-index: z('base') + 7;
     top: 0;
     right: 0;
     bottom: 0;

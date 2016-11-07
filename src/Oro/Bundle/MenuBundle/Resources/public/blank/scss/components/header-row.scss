@@ -1,0 +1,62 @@
+.header-row {
+    margin-top: $offset-y;
+
+    border: 1px solid get-color('additional', 'light');
+    border-width: 1px 0;
+
+    &__trigger {
+        display: block;
+
+        margin: 0;
+        padding: 7px 20px;
+
+        background-color: get-color('additional', 'base');
+
+        &.active,
+        &:hover {
+            & + .header-row__toggle,
+            .header-row__toggle {
+                display: block;
+            }
+        }
+    }
+
+    &__togle {
+        background-color: get-color('additionl', 'ultra');
+    }
+}
+
+@include breakpoint('desktop') {
+    %hidden-on-desktop {
+        &.hidden-on-desktop {
+            display: none !important;
+        }
+    }
+
+    .header-row {
+        &__trigger {
+            @extend %hidden-on-desktop;
+
+            padding: 0;
+        }
+
+        &__toggle {
+            @extend %hidden-on-desktop;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .header-row {
+        &__trigger {
+            position: relative;
+            z-index: z('base') + 8;
+
+            text-align: center;
+        }
+
+        &__toggle {
+            display: none;
+        }
+    }
+}
