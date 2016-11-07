@@ -56,7 +56,7 @@
 
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
-        <div class="notification error">
+        <div class="notification--error">
             <ul class="notification__list">
                 {%- for error in errors -%}
                     <li class="notification__item">

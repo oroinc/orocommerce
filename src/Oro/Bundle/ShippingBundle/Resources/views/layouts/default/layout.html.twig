@@ -30,7 +30,9 @@
                         {% endif %}
                     {% endfor %}
                 {% else %}
-                    <span class="{{ class_prefix }}__form__label notification notification_xmd notification_alert notification-radiused mb1-md" >{{ 'oro.shipping.methods.no_method'|trans }}</span>
+                    <div class="notification--xmd notification--alert">
+                        <span class="notification__text">{{ 'oro.shipping.methods.no_method'|trans }}</span>
+                    </div>
                 {% endif %}
             </div>
         </div>

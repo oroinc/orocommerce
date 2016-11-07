@@ -1,26 +1,36 @@
 .notification-flash {
+    margin: 0;
     padding: $notification-flash-inner-offset;
     
     display: flex;
     align-items: center;
 
+    border: $notification-flash-border;
+
     border-radius: $notification-flash-border-radius;
 
-    &.success,
-    &.info,
-    &.notice {
+    &:not(:first-child) {
+        margin: $notification-flash-offset;
+    }
+
+    &--success,
+    &--info,
+    &--notice {
+        @extend .notification-flash;
         background: get-color('ui', 'success');
         color: get-color('ui', 'success-dark');
     }
 
-    &.warning,
-    &.process,
-    &.alert {
+    &--warning,
+    &--process,
+    &--alert {
+        @extend .notification-flash;
         background: get-color('ui', 'warring');
         color: get-color('ui', 'warring-dark');
     }
 
-    &.error {
+    &--error {
+        @extend .notification-flash;
         background: get-color('ui', 'error');
         color: get-color('ui', 'error-dark');
     }

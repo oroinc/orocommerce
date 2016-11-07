@@ -145,14 +145,12 @@
         <% if (type === "error" || type === "warning") {
             iconClass = 'cf-attention';
         }%>
-        <div class="notification-alert alert">
-            <div class="notification-flash <%= type %>">
-                <div class="notification-flash__badge">
-                    <i class="<%= iconClass %>"></i>
-                </div>
-                <button class="notification-flash__close"><i class="cf-clear" data-dismiss="alert"></i></button>
-                <div class="notification-flash__text"><%= message %></div>
+        <div class="notification-flash--<%= type %> alert">
+            <div class="notification-flash__badge">
+                <i class="<%= iconClass %>"></i>
             </div>
+            <button class="notification-flash__close" data-dismiss="alert"><i class="cf-clear"></i></button>
+            <div class="notification-flash__text"><%= message %></div>
         </div>
     </script>
     <script type="text/javascript">

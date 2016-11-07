@@ -10,7 +10,6 @@ styles:
         - 'bundles/orofrontend/default/scss/variables/notifications-config.scss'
         - 'bundles/orofrontend/default/scss/variables/notification-config.scss'
         - 'bundles/orofrontend/default/scss/variables/notification-flash-container-config.scss'
-        - 'bundles/orofrontend/default/scss/variables/notification-alert-config.scss'
         - 'bundles/orofrontend/default/scss/variables/notification-flash-config.scss'
         - 'bundles/orofrontend/default/vendors/bootstrap/css/bootstrap.scss'
         - 'bundles/orofrontend/default/scss/styles.scss'

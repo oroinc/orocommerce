@@ -5,22 +5,36 @@
     
     border-radius: $notification-border-radius;
 
-    &.success,
-    &.info,
-    &.notice {
+    &--success,
+    &--info,
+    &--notice {
+        @extend .notification;
         background: get-color('ui', 'success');
         color: get-color('ui', 'success-dark');
     }
 
-    &.warning,
-    &.alert {
+    &--warning,
+    &--alert {
+        @extend .notification;
         background: get-color('ui', 'warring');
         color: get-color('ui', 'warring-dark');
     }
 
-    &.error {
+    &--error {
+        @extend .notification;
         background: get-color('ui', 'error');
         color: get-color('ui', 'error-dark');
+    }
+
+    &--xmd {
+        @extend .notification;
+        padding: $notification-xmd-inner-offset;
+
+        /* cf- prefix should be removed when BB-4721 will be resolved */ 
+        [class^="cf-"],
+        [class^="fa-"] {
+            font-size: $notification-xmd-icon-size;
+        }
     }
 
     &__list {
