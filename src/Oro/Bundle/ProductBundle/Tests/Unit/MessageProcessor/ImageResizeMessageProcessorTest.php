@@ -122,9 +122,9 @@ class ImageResizeMessageProcessorTest extends \PHPUnit_Framework_TestCase
         $this->filterLoader->load()->shouldBeCalled();
         $this->imageRepository->find(self::PRODUCT_IMAGE_ID)->willReturn($productImage->reveal());
 
-        $this->imageResizer->resizeImage($image, 'original', self::FORCE_OPTION)->willReturn(true);
-        $this->imageResizer->resizeImage($image, 'large', self::FORCE_OPTION)->willReturn(true);
-        $this->imageResizer->resizeImage($image, 'small', self::FORCE_OPTION)->willReturn(false);
+        $this->imageResizer->resizeImage($image, 'original', self::FORCE_OPTION)->shouldBeCalled();
+        $this->imageResizer->resizeImage($image, 'large', self::FORCE_OPTION)->shouldBeCalled();
+        $this->imageResizer->resizeImage($image, 'small', self::FORCE_OPTION)->shouldBeCalled();
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process(
             $this->prepareValidMessage(),
