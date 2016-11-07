@@ -184,6 +184,22 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
                     $this->getEntity(ShippingRule::class, [
                         'methodConfigs' => [
                             $this->getEntity(ShippingRuleMethodConfig::class, [
+                                'method' => 'integration_method',
+                                'typeConfigs' => [
+                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'ground',
+                                        'options' => [
+                                            'aware_price' => Price::create(2, 'USD'),
+                                        ],
+                                    ]),
+                                ],
+                            ]),
+                        ]
+                    ]),
+                    $this->getEntity(ShippingRule::class, [
+                        'methodConfigs' => [
+                            $this->getEntity(ShippingRuleMethodConfig::class, [
                                 'method' => 'flat_rate',
                                 'typeConfigs' => [
                                     $this->getEntity(ShippingRuleMethodTypeConfig::class, [
@@ -206,9 +222,16 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
                                         'enabled' => true,
                                         'type' => 'ground',
                                         'options' => [
-                                            'aware_price' => Price::create(2, 'USD'),
+                                            'aware_price' => Price::create(3, 'USD'),
                                         ],
-                                    ])
+                                    ]),
+                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
+                                        'enabled' => true,
+                                        'type' => 'air',
+                                        'options' => [
+                                            'aware_price' => Price::create(4, 'USD'),
+                                        ],
+                                    ]),
                                 ],
                             ]),
                             $this->getEntity(ShippingRuleMethodConfig::class, [
@@ -218,41 +241,13 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
                                         'enabled' => true,
                                         'type' => 'primary',
                                         'options' => [
-                                            'price' => Price::create(3, 'USD'),
+                                            'price' => Price::create(5, 'USD'),
                                         ],
                                     ])
                                 ],
                             ])
                         ]
                     ]),
-                    $this->getEntity(ShippingRule::class, [
-                        'methodConfigs' => [
-                            $this->getEntity(ShippingRuleMethodConfig::class, [
-                                'method' => 'integration_method',
-                                'typeConfigs' => [
-                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'ground',
-                                        'options' => [
-                                            'aware_price' => Price::create(4, 'USD'),
-                                        ],
-                                    ])
-                                ],
-                            ]),
-                            $this->getEntity(ShippingRuleMethodConfig::class, [
-                                'method' => 'integration_method',
-                                'typeConfigs' => [
-                                    $this->getEntity(ShippingRuleMethodTypeConfig::class, [
-                                        'enabled' => true,
-                                        'type' => 'air',
-                                        'options' => [
-                                            'aware_price' => Price::create(5, 'USD'),
-                                        ],
-                                    ])
-                                ],
-                            ])
-                        ]
-                    ])
                 ],
                 'expectedData' => [
                     'flat_rate' => [
@@ -289,8 +284,8 @@ class ShippingPriceProviderTest extends \PHPUnit_Framework_TestCase
                                 'identifier' => 'air',
                                 'label' => 'air.label',
                                 'sortOrder' => 2,
-                                'price' => Price::create(5, 'USD'),
-                                'options' => ['aware_price' => Price::create(5, 'USD')],
+                                'price' => Price::create(4, 'USD'),
+                                'options' => ['aware_price' => Price::create(4, 'USD')],
                                 'methodOptions' => [],
                             ]
                         ]

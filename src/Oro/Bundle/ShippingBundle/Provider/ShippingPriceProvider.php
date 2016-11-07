@@ -77,6 +77,9 @@ class ShippingPriceProvider
             }
         }
 
+        uasort($result, function ($methodData1, $methodData2) {
+            return $methodData1['sortOrder'] - $methodData2['sortOrder'];
+        });
         return $result;
     }
 
@@ -145,7 +148,10 @@ class ShippingPriceProvider
         $requestedTypesOptions = array_diff_key($typesOptions, $prices);
 
         if ($method instanceof PricesAwareShippingMethodInterface && count($requestedTypesOptions) > 0) {
-            $prices = array_merge($prices, $method->calculatePrices($context, $methodOptions, $requestedTypesOptions));
+            $prices = array_replace(
+                $prices,
+                $method->calculatePrices($context, $methodOptions, $requestedTypesOptions)
+            );
         } else {
             foreach ($requestedTypesOptions as $typeId => $typeOptions) {
                 $type = $method->getType($typeId);
