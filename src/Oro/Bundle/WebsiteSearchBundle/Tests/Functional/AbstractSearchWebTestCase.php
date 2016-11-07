@@ -152,7 +152,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
      */
     protected function tearDown()
     {
-        //Remove listener to not interact with other tests
+        // Remove listener to not interact with other tests
         $this->dispatcher->removeListener(IndexEntityEvent::NAME, $this->listener);
     }
 
