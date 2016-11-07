@@ -9,16 +9,11 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroOrderBundle:layouts:default/oro_order_frontend_view/layout.html.twig'
-        - '@appendOption':
+        - '@setOption':
             id: title
-            optionName: value
+            optionName: params
             optionValue:
-                - 'oro.customer.menu.account_user.label'
-                - 'oro.frontend.order.entity_plural_label'
-                -
-                    label: 'oro.order.navigation.view'
-                    parameters:
-                        '%identifier%': '=data["order"].getIdentifier()'
+                '%identifier%': '=data["order"].getIdentifier()'
         - '@setOption':
             id: page_title
             optionName: text
@@ -97,6 +92,12 @@ layout:
                         address: '=data["order"].getShippingAddress()'
                         label: 'oro.order.shipping_address.label'
                         additional_block_prefixes: ['order_body_column_element']
+                order_shipping_tracking:
+                    blockType: shipping_trackings
+                    options:
+                        trackings: '=data["order"].getShippingTrackings()'
+                        label: 'oro.order.shipping_trackings.label'
+                        additional_block_prefixes: ['order_body_column_element']
                 order_po_number:
                     blockType: text
                     options:
@@ -161,6 +162,7 @@ layout:
                                         order_date: ~
                                         order_billing_address: ~
                                         order_shipping_address: ~
+                                        order_shipping_tracking: ~
                                     order_body_column_right:
                                         order_po_number: ~
                                         order_shipping_method: ~

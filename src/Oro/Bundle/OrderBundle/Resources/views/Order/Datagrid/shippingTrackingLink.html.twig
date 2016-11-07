@@ -1,0 +1,12 @@
+{% set method  =  record.getValue('method') %}
+{% set number  =  record.getValue('number') %}
+{%- if number and method -%}
+    {% set link = oro_order_format_shipping_tracking_link(method, number) %}
+    {%- if number != link -%}
+        <a target="_blank" href="{{ link }}">{{ number }}</a>
+    {%- else -%}
+        {{ number }}
+    {%- endif -%}
+{%- else -%}
+    {{ 'oro.ui.empty'|trans }}
+{%- endif -%}

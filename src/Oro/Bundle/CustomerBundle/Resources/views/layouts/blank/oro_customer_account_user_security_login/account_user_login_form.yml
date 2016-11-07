@@ -1,0 +1,100 @@
+layout:
+    imports:
+        -
+            id: oro_customer_only_content_form
+            namespace: login
+            root: wrapper
+    actions:
+        - '@setBlockTheme':
+            themes: 'account_user_login_form.html.twig'
+        - '@setOption':
+            id: login_label
+            optionName: text
+            optionValue: oro.customer.accountuser.profile.login
+        - '@setOption':
+            id: login_form_submit
+            optionName: text
+            optionValue: oro.customer.accountuser.profile.login
+        - '@add':
+            id: login_link_forgot
+            parentId: login_links
+            blockType: link
+            options:
+                route_name: oro_customer_frontend_account_user_reset_request
+                text: oro.customer.accountuser.profile.forgot_password
+        - '@add':
+            id: login_link_register
+            parentId: login_links
+            blockType: link
+            options:
+                visible: '=data["registrationAllowed"]==true'
+                route_name: oro_customer_frontend_account_user_register
+                text: oro.customer.accountuser.profile.create_an_account
+
+        - '@changeBlockType':
+            id: login_form
+            blockType: container
+        - '@addTree':
+            items:
+                login_form_start:
+                    blockType: block
+                login_form_fields:
+                    blockType: container
+                login_form_end:
+                    blockType: block
+                login_form_notifications:
+                    blockType: text
+                    options:
+                        visible: '=data["oro_account_sign_in"].getError()!=null'
+                        text: '=data["oro_account_sign_in"].getError()'
+                login_form_username:
+                    blockType: input
+                    options:
+                        id: userNameSignIn
+                        name: _username
+                        value: '=data["oro_account_sign_in"].getLastName()'
+                        placeholder: oro.customer.accountuser.email.label
+                        label: oro.customer.accountuser.email.label
+                login_form_password:
+                    blockType: input
+                    options:
+                        type: password
+                        id: passwordSignIn
+                        name: _password
+                        placeholder: oro.customer.accountuser.profile.enter_password
+                        label: oro.customer.accountuser.password.label
+                login_form_remember:
+                    blockType: input
+                    options:
+                        type: checkbox
+                        id: rememberMe
+                        name: _remember_me
+                        value: on
+                        label: oro.customer.accountuser.profile.remember_me
+                login_form_target:
+                    blockType: input
+                    options:
+                        type: hidden
+                        name: _target_path
+                login_form_csrf:
+                    blockType: input
+                    options:
+                        type: hidden
+                        name: _csrf_token
+                        value: '=data["oro_account_sign_in"].getCSRFToken()'
+            tree:
+                login_form:
+                    login_form_start: ~
+                    login_form_notifications: ~
+                    login_form_fields:
+                        login_form_username: ~
+                        login_form_password: ~
+                        login_form_remember: ~
+                        login_form_target: ~
+                        login_form_csrf: ~
+                    login_form_end: ~
+
+#                login_form_remember_item:
+#                    blockType: container
+#
+#
