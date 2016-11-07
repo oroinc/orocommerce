@@ -22,9 +22,14 @@ class ScopeManager
     protected $registry;
 
     /**
-     * @var
+     * @var EntityFieldProvider
      */
     protected $entityFieldProvider;
+
+    /**
+     * @var ServiceLink
+     */
+    protected $entityFieldProviderLink;
 
     /**
      * @var PropertyAccessor
@@ -33,12 +38,12 @@ class ScopeManager
 
     /**
      * @param ManagerRegistry $registry
-     * @param EntityFieldProvider $entityFieldProvider
+     * @param ServiceLink $entityFieldProviderLink
      */
-    public function __construct(ManagerRegistry $registry, EntityFieldProvider $entityFieldProvider)
+    public function __construct(ManagerRegistry $registry, ServiceLink $entityFieldProviderLink)
     {
         $this->registry = $registry;
-        $this->entityFieldProvider = $entityFieldProvider;
+        $this->entityFieldProviderLink = $entityFieldProviderLink;
     }
 
     /**
@@ -192,6 +197,11 @@ class ScopeManager
                 }
             }
         }
+        foreach ($this->getNullContext() as $emptyKey => $emptyValue) {
+            if (!isset($criteria[$emptyKey])) {
+                $criteria[$emptyKey] = $emptyValue;
+            }
+        }
 
         foreach ($this->getNullContext() as $emptyKey => $emptyValue) {
             if (!isset($criteria[$emptyKey])) {
@@ -209,7 +219,7 @@ class ScopeManager
     {
         if ($this->nullContext === null) {
             $this->nullContext = [];
-            $fields = $this->entityFieldProvider->getRelations(Scope::class);
+            $fields = $this->getEntityFieldProvider()->getRelations(Scope::class);
             foreach ($fields as $field) {
                 $this->nullContext[$field['name']] = null;
             }
@@ -277,5 +287,17 @@ class ScopeManager
         }
 
         return new ScopeCriteria($criteria);
+    }
+
+    /**
+     * @return EntityFieldProvider
+     */
+    protected function getEntityFieldProvider()
+    {
+        if (!$this->entityFieldProvider) {
+            $this->entityFieldProvider = $this->entityFieldProviderLink->getService();
+        }
+
+        return $this->entityFieldProvider;
     }
 }

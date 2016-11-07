@@ -45,7 +45,8 @@ class AddContentVariantTypes implements Migration, ExtendExtensionAwareInterface
                     'entity' => ['label' => 'oro.cms.page.entity_label'],
                     'extend' => [
                         'is_extend' => true,
-                        'owner' => ExtendScope::OWNER_CUSTOM
+                        'owner' => ExtendScope::OWNER_CUSTOM,
+                        'cascade' => ['persist']
                     ],
                     'dataaudit' => ['auditable' => true]
                 ]

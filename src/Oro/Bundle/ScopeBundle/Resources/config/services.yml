@@ -5,4 +5,4 @@ services:
         class: Oro\Bundle\ScopeBundle\Manager\ScopeManager
         arguments:
          - '@doctrine'
-         - '@oro_entity.entity_field_provider'
+         - '@oro_entity.entity_field_provider.link'

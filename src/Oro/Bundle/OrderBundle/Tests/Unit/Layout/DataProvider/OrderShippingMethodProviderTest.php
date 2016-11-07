@@ -4,14 +4,14 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Layout\DataProvider;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Layout\DataProvider\OrderShippingMethodProvider;
-use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
+use Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter;
 
 class OrderShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ShippingMethodLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodFormatter|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $shippingMethodLabelFormatter;
+    protected $shippingMethodFormatter;
 
     /**
      * @var OrderShippingMethodProvider
@@ -20,11 +20,12 @@ class OrderShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->shippingMethodLabelFormatter = $this
-            ->getMockBuilder('Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter')
+        $this->shippingMethodFormatter = $this
+            ->getMockBuilder('Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->orderShippingMethodProvider = new OrderShippingMethodProvider($this->shippingMethodLabelFormatter);
+
+        $this->orderShippingMethodProvider = new OrderShippingMethodProvider($this->shippingMethodFormatter);
     }
 
     public function testGetData()
@@ -35,8 +36,9 @@ class OrderShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
         $order->setShippingMethod($method)->setShippingMethodType($type);
 
-        $this->shippingMethodLabelFormatter->expects($this->once())
-            ->method('formatShippingMethodWithType')
+
+        $this->shippingMethodFormatter->expects($this->once())
+            ->method('formatShippingMethodWithTypeLabel')
             ->with($method, $type)
             ->willReturn($expected);
 

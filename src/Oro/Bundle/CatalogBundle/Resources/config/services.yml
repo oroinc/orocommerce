@@ -19,6 +19,14 @@ services:
             - '@oro_catalog.repository.category'
             - '@event_dispatcher'
 
+    oro_catalog.provider.category_title_provider:
+        class: 'Oro\Bundle\CatalogBundle\Provider\CategoryTitleProvider'
+        public: false
+        arguments:
+            - '@property_accessor'
+        tags:
+            - { name: oro_web_catalog.content_variant_title_provider }
+
     oro_catalog.repository.category:
         class: 'Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository'
         parent: oro_entity.abstract_repository

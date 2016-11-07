@@ -1,129 +1,136 @@
 <?php
 
-/*
- * (c) Fabien Potencier <fabien@symfony.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 namespace Oro\Bundle\RedirectBundle\Security;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\Security\Http\Firewall\AccessListener;
-use Symfony\Component\Security\Http\Firewall\ExceptionListener;
-use Symfony\Component\Security\Http\Firewall\ListenerInterface;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Security\Http\Firewall as FrameworkFirewall;
 use Symfony\Component\Security\Http\FirewallMapInterface;
 
 /**
- * Firewall uses a FirewallMap to register security listeners for the given
- * request.
- *
- * It allows for different security strategies within the same application
- * (a Basic authentication for the /api, and a web based authentication for
- * everything else for instance).
- *
- * @author Fabien Potencier <fabien@symfony.com>
+ * Decorate default framework firewall, perform token initialization before routing to make user available there.
+ * Perform after routing firewall checks for URL that are managed by slugs and redirect to login if required.
  */
 class Firewall
 {
     /**
-     * @var FirewallMapInterface
+     * @var FrameworkFirewall
      */
-    private $map;
+    private $baseFirewall;
 
     /**
-     * @var EventDispatcherInterface
+     * @var bool
      */
-    private $dispatcher;
+    private $slugApplied = false;
 
     /**
-     * @var \SplObjectStorage
+     * @var RequestContext
      */
-    private $exceptionListeners;
+    private $context;
 
     /**
-     * @var ListenerInterface
+     * @param FirewallMapInterface $map
+     * @param EventDispatcherInterface $dispatcher
+     * @param RequestContext|null $context
      */
-    private $accessListener;
-
-    /**
-     * Constructor.
-     *
-     * @param FirewallMapInterface     $map        A FirewallMapInterface instance
-     * @param EventDispatcherInterface $dispatcher An EventDispatcherInterface instance
-     */
-    public function __construct(FirewallMapInterface $map, EventDispatcherInterface $dispatcher)
-    {
-        $this->map = $map;
-        $this->dispatcher = $dispatcher;
-        $this->exceptionListeners = new \SplObjectStorage();
+    public function __construct(
+        FirewallMapInterface $map,
+        EventDispatcherInterface $dispatcher,
+        RequestContext $context = null
+    ) {
+        $this->baseFirewall = new FrameworkFirewall($map, $dispatcher);
+        $this->context = $context;
     }
 
     /**
-     * Handles security.
+     * Initialize request context by current request, call default firewall behaviour.
      *
      * @param GetResponseEvent $event An GetResponseEvent instance
      */
-    public function onKernelRequestAuthenticate(GetResponseEvent $event)
+    public function onKernelRequestBeforeRouting(GetResponseEvent $event)
     {
-        if (!$event->isMasterRequest()) {
-            return;
+        if ($this->context) {
+            $this->context->fromRequest($event->getRequest());
         }
 
-        // register listeners for this firewall
-        /** @var ListenerInterface[] $listeners */
-        /** @var ExceptionListener $exceptionListener */
-        list($listeners, $exceptionListener) = $this->map->getListeners($event->getRequest());
-        if (null !== $exceptionListener) {
-            $this->exceptionListeners[$event->getRequest()] = $exceptionListener;
-            $exceptionListener->register($this->dispatcher);
+        if ($event->isMasterRequest()) {
+            $this->slugApplied = false;
         }
+        $this->baseFirewall->onKernelRequest($event);
+    }
 
-        // Move AccessListener to be executed later after RouterListener
-        $this->accessListener = null;
-        if ($listeners && $listeners[count($listeners) - 1] instanceof AccessListener) {
-            $this->accessListener = array_pop($listeners);
-        }
+    /**
+     * For Slugs perform additional authentication checks for detected route.
+     *
+     * @param GetResponseEvent $event An GetResponseEvent instance
+     */
+    public function onKernelRequestAfterRouting(GetResponseEvent $event)
+    {
+        $request = $event->getRequest();
+        if ($event->isMasterRequest() && !$event->hasResponse() && $request->attributes->has('_resolved_slug_url')) {
+            $finishRequestEvent = new FinishRequestEvent(
+                $event->getKernel(),
+                $event->getRequest(),
+                $event->getRequestType()
+            );
+            $this->baseFirewall->onKernelFinishRequest($finishRequestEvent);
 
-        // initiate the listener chain
-        foreach ($listeners as $listener) {
-            $listener->handle($event);
-
-            if ($event->hasResponse()) {
-                break;
+            $newRequest = $this->createSlugRequest($request);
+            $newEvent = new GetResponseEvent(
+                $event->getKernel(),
+                $newRequest,
+                $event->getRequestType()
+            );
+            $this->baseFirewall->onKernelRequest($newEvent);
+            if ($newEvent->hasResponse()) {
+                $event->setResponse($newEvent->getResponse());
             }
+
+            $this->slugApplied = true;
         }
     }
 
     /**
-     * Handles security.
+     * Unregister exception listeners.
      *
-     * @param GetResponseEvent $event An GetResponseEvent instance
-     */
-    public function onKernelRequestAuthorize(GetResponseEvent $event)
-    {
-        if ($event->hasResponse() || !$event->isMasterRequest()) {
-            return;
-        }
-
-        if ($this->accessListener) {
-            $this->accessListener->handle($event);
-        }
-    }
-
-    /**
      * @param FinishRequestEvent $event
      */
     public function onKernelFinishRequest(FinishRequestEvent $event)
     {
-        $request = $event->getRequest();
-
-        if (isset($this->exceptionListeners[$request])) {
-            $this->exceptionListeners[$request]->unregister($this->dispatcher);
-            unset($this->exceptionListeners[$request]);
+        if ($this->slugApplied) {
+            $finishRequestEvent = new FinishRequestEvent(
+                $event->getKernel(),
+                $this->createSlugRequest($event->getRequest()),
+                $event->getRequestType()
+            );
+            $this->baseFirewall->onKernelFinishRequest($finishRequestEvent);
+        } else {
+            $this->baseFirewall->onKernelFinishRequest($event);
         }
+    }
+
+    /**
+     * @param Request $request
+     * @return Request
+     */
+    protected function createSlugRequest(Request $request)
+    {
+        $newRequest = Request::create(
+            $request->attributes->get('_resolved_slug_url'),
+            $request->getMethod(),
+            $request->query->all(),
+            $request->cookies->all(),
+            $request->files->all(),
+            $request->server->all(),
+            $request->getContent()
+        );
+        $newRequest->setSession($request->getSession());
+        $newRequest->setLocale($request->getLocale());
+        $newRequest->setDefaultLocale($request->getDefaultLocale());
+
+        return $newRequest;
     }
 }

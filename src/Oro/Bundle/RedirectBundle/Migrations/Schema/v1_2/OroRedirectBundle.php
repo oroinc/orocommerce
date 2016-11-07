@@ -19,7 +19,8 @@ class OroRedirectBundle implements Migration
         /** Foreign keys generation **/
         $this->addOroSlugScopeForeignKeys($schema);
 
-        $this->addUrlIndex($schema);
+        $this->addUrlHashField($schema);
+        $this->addUrlHashIndex($schema);
     }
 
     /**
@@ -60,9 +61,18 @@ class OroRedirectBundle implements Migration
     /**
      * @param Schema $schema
      */
-    protected function addUrlIndex(Schema $schema)
+    protected function addUrlHashField(Schema $schema)
     {
         $table = $schema->getTable('oro_redirect_slug');
-        $table->addIndex(['url'], 'oro_redirect_slug_url', []);
+        $table->addColumn('url_hash', 'string', ['length' => 32]);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addUrlHashIndex(Schema $schema)
+    {
+        $table = $schema->getTable('oro_redirect_slug');
+        $table->addIndex(['url_hash'], 'oro_redirect_slug_url_hash', []);
     }
 }

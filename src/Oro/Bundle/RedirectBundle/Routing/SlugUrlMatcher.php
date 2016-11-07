@@ -12,6 +12,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 
+/**
+ * Decorates default URL matcher. Detect route name and route parameter by found slug entity if any.
+ * Otherwise perform URL matching with decorated system matcher.
+ */
 class SlugUrlMatcher implements RequestMatcherInterface
 {
     /**
@@ -164,7 +168,10 @@ class SlugUrlMatcher implements RequestMatcherInterface
 
         $routeName = $slug->getRouteName();
         $routeParameters = $slug->getRouteParameters();
-        $routeData = $this->getRouteData($routeName, $routeParameters);
+
+        $resolvedUrl = $this->getResolvedUrl($routeName, $routeParameters);
+        $request->attributes->set('_resolved_slug_url', $resolvedUrl);
+        $routeData = $this->router->match($resolvedUrl);
 
         if (array_key_exists('_controller', $routeData)) {
             $attributes['_route'] = $routeName;
@@ -209,16 +216,10 @@ class SlugUrlMatcher implements RequestMatcherInterface
     /**
      * @param string $routeName
      * @param array $routeParameters
-     * @return array
+     * @return string
      */
-    protected function getRouteData($routeName, array $routeParameters = [])
+    protected function getResolvedUrl($routeName, array $routeParameters = [])
     {
-        $generator = $this->router->getGenerator();
-        $matcher = $this->router->getMatcher();
-        $routeData = $matcher->match(
-            '/' . $generator->generate($routeName, $routeParameters, UrlGeneratorInterface::RELATIVE_PATH)
-        );
-
-        return $routeData;
+        return '/' . $this->router->generate($routeName, $routeParameters, UrlGeneratorInterface::RELATIVE_PATH);
     }
 }

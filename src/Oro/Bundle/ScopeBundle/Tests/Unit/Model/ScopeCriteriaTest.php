@@ -49,8 +49,6 @@ class ScopeCriteriaTest extends \PHPUnit_Framework_TestCase
 
     public function testApplyToJoin()
     {
-        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $qb */
-        $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
         $criteria = new ScopeCriteria(
             [
                 'joinField' => 5,
@@ -60,6 +58,90 @@ class ScopeCriteriaTest extends \PHPUnit_Framework_TestCase
                 'ignoredField' => 2,
             ]
         );
+
+        $qb = $this->getBaseQbMock();
+
+        $qb->expects($this->once())
+            ->method('innerJoin')
+            ->with(
+                Scope::class,
+                'scope',
+                Join::WITH,
+                'scope.joinField = 1 AND scope.nullField IS NULL '
+                .'AND scope.notNullField IS NOT NULL AND scope.fieldWithValue = :scope_param_fieldWithValue',
+                'id'
+            );
+
+        $qb->expects($this->once())
+            ->method('leftJoin')
+            ->with(
+                \stdClass::class,
+                'otherJoin',
+                Join::WITH,
+                'otherJoin.joinField = 1',
+                'otherJoin.created_at'
+            );
+
+        $qb->expects($this->once())
+            ->method('setParameter')
+            ->with('scope_param_fieldWithValue', 1);
+
+        $criteria->applyToJoin($qb, 'scope', ['ignoredField']);
+    }
+
+    public function testApplyToJoinWithPriority()
+    {
+        $criteria = new ScopeCriteria(
+            [
+                'joinField' => 5,
+                'nullField' => null,
+                'notNullField' => ScopeCriteria::IS_NOT_NULL,
+                'fieldWithValue' => 1,
+                'ignoredField' => 2,
+            ]
+        );
+        $qb = $this->getBaseQbMock();
+
+
+        $qb->expects($this->once())
+            ->method('innerJoin')
+            ->with(
+                Scope::class,
+                'scope',
+                Join::WITH,
+                '(scope.joinField = 1) AND (scope.nullField IS NULL)'
+                . ' AND (scope.notNullField IS NOT NULL)'
+                . ' AND (scope.fieldWithValue = :scope_param_fieldWithValue OR scope.fieldWithValue IS NULL)',
+                'id'
+            );
+
+        $qb->expects($this->once())
+            ->method('leftJoin')
+            ->with(
+                \stdClass::class,
+                'otherJoin',
+                Join::WITH,
+                '(otherJoin.joinField = 1)',
+                'otherJoin.created_at'
+            );
+        $qb->expects($this->once())
+            ->method('addOrderBy')
+            ->with('scope.fieldWithValue', 'DESC');
+
+        $qb->expects($this->once())
+            ->method('setParameter')
+            ->with('scope_param_fieldWithValue', 1);
+
+        $criteria->applyToJoinWithPriority($qb, 'scope', ['ignoredField']);
+    }
+
+    /**
+     * @return QueryBuilder|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getBaseQbMock()
+    {
+        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $qb */
+        $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
         $qb->method('expr')->willReturn(new Expr());
 
         $qb->expects($this->once())
@@ -91,32 +173,6 @@ class ScopeCriteriaTest extends \PHPUnit_Framework_TestCase
                     ],
                 ]
             );
-
-        $qb->expects($this->once())
-            ->method('innerJoin')
-            ->with(
-                Scope::class,
-                'scope',
-                Join::WITH,
-                'scope.joinField = 1 AND scope.nullField IS NULL '
-                .'AND scope.notNullField IS NOT NULL AND scope.fieldWithValue = :scope_param_fieldWithValue',
-                'id'
-            );
-
-        $qb->expects($this->once())
-            ->method('leftJoin')
-            ->with(
-                \stdClass::class,
-                'otherJoin',
-                Join::WITH,
-                'otherJoin.joinField = 1',
-                'otherJoin.created_at'
-            );
-
-        $qb->expects($this->once())
-            ->method('setParameter')
-            ->with('scope_param_fieldWithValue', 1);
-
-        $criteria->applyToJoin($qb, 'scope', ['ignoredField']);
+        return $qb;
     }
 }

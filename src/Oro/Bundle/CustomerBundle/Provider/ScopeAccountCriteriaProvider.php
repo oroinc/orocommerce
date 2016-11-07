@@ -5,51 +5,55 @@ namespace Oro\Bundle\CustomerBundle\Provider;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ScopeBundle\Manager\AbstractScopeCriteriaProvider;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
 {
-    const ACCOUNT = 'account';
+        const ACCOUNT = 'account';
 
-    /**
-     * @var SecurityFacade
-     */
-    protected $securityFacade;
+        /**
+         * @var TokenStorageInterface
+         */
+        protected $tokenStorage;
 
-    /**
-     * @param SecurityFacade $securityFacade
-     */
-    public function __construct(SecurityFacade $securityFacade)
-    {
-        $this->securityFacade = $securityFacade;
-    }
-
-    /**
-     * @return array
-     */
-    public function getCriteriaForCurrentScope()
-    {
-        $loggedUser = $this->securityFacade->getLoggedUser();
-        if (null !== $loggedUser && $loggedUser instanceof AccountUser) {
-            return [self::ACCOUNT => $loggedUser->getAccount()];
+        /**
+         * @param TokenStorageInterface $tokenStorage
+         */
+        public function __construct(TokenStorageInterface $tokenStorage)
+        {
+                $this->tokenStorage = $tokenStorage;
         }
 
-        return [];
-    }
+        /**
+         * @return array
+         */
+        public function getCriteriaForCurrentScope()
+        {
+                $token = $this->tokenStorage->getToken();
+                if (!$token) {
+                        return [];
+                }
+                $loggedUser = $token->getUser();
+                if (null !== $loggedUser && $loggedUser instanceof AccountUser) {
+                        return [self::ACCOUNT => $loggedUser->getAccount()];
+                }
 
-    /**
-     * @return string
-     */
-    public function getCriteriaField()
-    {
-        return static::ACCOUNT;
-    }
+                return [];
+        }
 
-    /**
-     * @return string
-     */
-    protected function getCriteriaValueType()
-    {
-        return Account::class;
-    }
+        /**
+         * @return string
+         */
+        public function getCriteriaField()
+        {
+                return static::ACCOUNT;
+        }
+
+        /**
+         * @return string
+         */
+        protected function getCriteriaValueType()
+        {
+                return Account::class;
+        }
 }

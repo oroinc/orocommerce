@@ -28,10 +28,14 @@ services:
         class: 'Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderRegistry'
         public: false
 
-    oro_web_catalog.page_pprovider.provider:
+    oro_web_catalog.page_provider.provider:
         class: 'Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProvider'
         arguments:
             - '@oro_web_catalog.content_variant_provider.registry'
+        public: false
+
+    oro_web_catalog.content_variant_title_provider:
+        class: 'Oro\Component\WebCatalog\ChainContentVariantTitleProvider'
         public: false
 
     oro_web_catalog.content_node_tree_handler:
@@ -48,13 +52,15 @@ services:
         tags:
             - { name: twig.extension }
 
-    oro_web_catalog.event_listener.orm.category_listener:
+    oro_web_catalog.event_listener.orm.content_node_entity_listener:
         class: 'Oro\Bundle\WebCatalogBundle\EventListener\ContentNodeListener'
         public: false
         arguments:
             - '@oro_web_catalog.model.content_node_materialized_path_modifier'
             - '@oro_b2bentity.extra_insert_entity_storage'
+            - '@oro_web_catalog.content_node_utils.content_node_name_filler'
         tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: preUpdate }
 
@@ -102,3 +108,9 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType
         tags:
             - { name: form.type, alias: oro_web_catalog_content_node }
+
+    oro_web_catalog.content_node_utils.content_node_name_filler:
+        class: 'Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller'
+        public: false
+        arguments:
+            - '@oro_web_catalog.content_variant_title_provider'

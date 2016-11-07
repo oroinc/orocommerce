@@ -4,13 +4,12 @@ namespace Oro\Bundle\RedirectBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
- * @ORM\Table(name="oro_redirect_slug", indexes={@ORM\Index(name="oro_redirect_slug_url", columns={"url"})})
- * @ORM\Entity(repositoryClass="Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository")
+ * @ORM\Table(name="oro_redirect_slug", indexes={@ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"})})
+ * @ORM\Entity
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -39,9 +38,16 @@ class Slug
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=1024)
      */
     protected $url;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="url_hash", type="string", length=32)
+     */
+    protected $urlHash;
 
     /**
      * @var string
@@ -110,6 +116,7 @@ class Slug
     public function setUrl($url)
     {
         $this->url = $url;
+        $this->urlHash = md5($this->url);
 
         return $this;
     }

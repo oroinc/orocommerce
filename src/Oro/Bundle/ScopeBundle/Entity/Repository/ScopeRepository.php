@@ -34,27 +34,9 @@ class ScopeRepository extends EntityRepository
             ->getScalarResult();
         $ids = [];
         foreach ($scopes as $scope) {
-            $ids[] = $scope['id'];
+            $ids[] = (int)$scope['id'];
         }
         return $ids;
-    }
-
-    /**
-     * @param ScopeCriteria $criteria
-     * @return BufferedQueryResultIterator|Scope[]
-     */
-    public function findScalarByCriteria(ScopeCriteria $criteria)
-    {
-        $qb = $this->createQueryBuilder('scope');
-        $criteria->applyWhere($qb, 'scope');
-        $result = $qb->select('scope.id')
-            ->getQuery()
-            ->getScalarResult();
-        $scopeIds = array_map(function ($scope) {
-            return $scope['id'];
-        }, $result);
-
-        return $scopeIds;
     }
 
     /**
