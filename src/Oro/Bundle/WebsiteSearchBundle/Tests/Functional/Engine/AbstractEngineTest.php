@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine;
 
+use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
@@ -141,7 +142,7 @@ abstract class AbstractEngineTest extends WebTestCase
         return $listener;
     }
 
-    public function testSearchAll()
+    public function testRecordUrlForSearchAll()
     {
         $query = new Query();
         $query->from('*');
@@ -160,40 +161,54 @@ abstract class AbstractEngineTest extends WebTestCase
         $this->assertStringStartsWith('item9@mail.com', $items[8]->getRecordTitle());
     }
 
-    public function testSearchByAliasWithSelect()
+    public function testSearchAll()
     {
         $query = new Query();
+        $query->from('*');
+        $query->getCriteria()->orderBy(['stringValue' => Query::ORDER_ASC]);
+        $items = $this->getSearchItems($query);
+
+        $this->assertCount(LoadSearchItemData::COUNT, $items);
+    }
+
+    public function testSearchByAliasWithSelect()
+    {
+        $searchField = 'stringValue';
+
+        $query = new Query();
         $query->from('oro_test_item_WEBSITE_ID');
-        $query->select('stringValue');
+        $query->select($searchField);
         $query->getCriteria()->orderBy(['stringValue' => Query::ORDER_ASC]);
 
         $items = $this->getSearchItems($query);
 
         $this->assertCount(LoadSearchItemData::COUNT, $items);
-        $this->assertStringStartsWith('item1@mail.com', $items[0]->getRecordTitle());
-        $this->assertStringStartsWith('item2@mail.com', $items[1]->getRecordTitle());
-        $this->assertStringStartsWith('item3@mail.com', $items[2]->getRecordTitle());
-        $this->assertStringStartsWith('item4@mail.com', $items[3]->getRecordTitle());
-        $this->assertStringStartsWith('item5@mail.com', $items[4]->getRecordTitle());
-        $this->assertStringStartsWith('item6@mail.com', $items[5]->getRecordTitle());
-        $this->assertStringStartsWith('item7@mail.com', $items[6]->getRecordTitle());
-        $this->assertStringStartsWith('item8@mail.com', $items[7]->getRecordTitle());
-        $this->assertStringStartsWith('item9@mail.com', $items[8]->getRecordTitle());
+        $this->assertSame('item1@mail.com', $this->getSelectData($searchField, $items[0]));
+        $this->assertSame('item2@mail.com', $this->getSelectData($searchField, $items[1]));
+        $this->assertSame('item3@mail.com', $this->getSelectData($searchField, $items[2]));
+        $this->assertSame('item4@mail.com', $this->getSelectData($searchField, $items[3]));
+        $this->assertSame('item5@mail.com', $this->getSelectData($searchField, $items[4]));
+        $this->assertSame('item6@mail.com', $this->getSelectData($searchField, $items[5]));
+        $this->assertSame('item7@mail.com', $this->getSelectData($searchField, $items[6]));
+        $this->assertSame('item8@mail.com', $this->getSelectData($searchField, $items[7]));
+        $this->assertSame('item9@mail.com', $this->getSelectData($searchField, $items[8]));
     }
 
     public function testSearchByAliasWithCriteria()
     {
-        $query = new Query();
-        $query->from('oro_test_item_WEBSITE_ID');
         $expr = new Comparison('integer.integerValue', '=', 5000);
-        $criteria = new Criteria();
-        $criteria->where($expr);
-        $query->setCriteria($criteria);
+        $criteria = new Criteria($expr);
+        $searchField = 'stringValue';
+
+        $query = new Query();
+        $query->select($searchField)
+            ->from('oro_test_item_WEBSITE_ID')
+            ->setCriteria($criteria);
 
         $items = $this->getSearchItems($query);
 
         $this->assertCount(1, $items);
-        $this->assertStringStartsWith('item5@mail.com', $items[0]->getRecordTitle());
+        $this->assertSame('item5@mail.com', $this->getSelectData($searchField, $items[0]));
     }
 
     /**
@@ -223,6 +238,21 @@ abstract class AbstractEngineTest extends WebTestCase
             ->willReturn($this->mappingConfig[TestEntity::class]);
 
         return $mappingProvider;
+    }
+
+    /**
+     * @param string $field
+     * @param Item $item
+     */
+    protected function getSelectData($field, Item $item)
+    {
+        $selectedData = $item->getSelectedData();
+
+        if (!array_key_exists($field, $selectedData)) {
+            throw new \RuntimeException(sprintf('Field "%s" not found in selectedData', $field));
+        }
+
+        return $selectedData[$field];
     }
 
     /**
