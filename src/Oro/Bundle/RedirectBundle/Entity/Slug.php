@@ -10,7 +10,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 /**
  * @ORM\Table(name="oro_redirect_slug", indexes={@ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"})})
  * @ORM\Entity
-^ * @Config(
+ * @Config(
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-share-sign"
