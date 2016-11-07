@@ -61,8 +61,8 @@
         '~class': ' main-menu-outer collapse-view',
         'data-page-component-module': "oroui/js/app/components/jquery-widget-component",
         '~data-page-component-options': {
-        widgetModule: 'oroui/js/widget/collapse-widget',
-        storageKey: 'main-menu-outer'
+            widgetModule: 'oroui/js/widget/collapse-widget',
+            storageKey: 'main-menu-outer'
         }
     }) %}
 
@@ -73,7 +73,7 @@
 
 {% block _main_menu_list_widget %}
     {% set attr =  layout_attr_defaults(attr, {
-    '~class': ' main-menu-outer__container main-menu'
+        '~class': ' main-menu-outer__container main-menu'
     }) %}
     <ul {{ block('block_attributes') }}>
         {{ block_widget(block) }}
