@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Entity\Repository\PageRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData;
 use Symfony\Component\DomCrawler\Crawler;
@@ -62,11 +63,12 @@ class PageControllerTest extends WebTestCase
      */
     protected function getPage()
     {
+        /** @var PageRepository $repository */
         $repository = $this->getContainer()->get('doctrine')->getRepository(
             $this->getContainer()->getParameter('oro_cms.entity.page.class')
         );
 
-        return $repository->findOneBy(['title' => 'page.1']);
+        return $repository->findOneByDefaultTitle('page.1');
     }
 
     /**

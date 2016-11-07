@@ -4,6 +4,7 @@ oro.cms:
         entity_plural_label:    'Landing Pages'
         id.label:               'ID'
         titles.label:            'Titles'
+        title.label:            'Title'
         content.label:          'Content'
         organization.label:     'Organization'
         slugs.label:            'Slugs'

@@ -15,7 +15,7 @@ use Oro\Bundle\CMSBundle\Model\ExtendPage;
 
 /**
  * @ORM\Table(name="oro_cms_page")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\PageRepository")
  * @Config(
  *      routeName="oro_cms_page_index",
  *      routeView="oro_cms_page_view",
