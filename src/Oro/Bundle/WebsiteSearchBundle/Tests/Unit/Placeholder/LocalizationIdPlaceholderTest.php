@@ -75,7 +75,7 @@ class LocalizationIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             'string_1',
-            $this->placeholder->replace('string_LOCALIZATION_ID', ['LOCALIZATION_ID' => '1'])
+            $this->placeholder->replace('string_LOCALIZATION_ID', ['LOCALIZATION_ID' => 1])
         );
     }
 
@@ -85,7 +85,7 @@ class LocalizationIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             'string_LOCALIZATION_ID',
-            $this->placeholder->replace('string_LOCALIZATION_ID', ['NOT_LOCALIZATION_ID' => '1'])
+            $this->placeholder->replace('string_LOCALIZATION_ID', ['NOT_LOCALIZATION_ID' => 1])
         );
     }
 }

@@ -158,7 +158,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
         $expected = new Comparison(
             'integer.visibility_anonymous',
             Comparison::EQ,
-            new Value(ProductVisibilityIndexer::ACCOUNT_VISIBILITY_VALUE)
+            new Value(BaseVisibilityResolved::VISIBILITY_VISIBLE)
         );
 
         $query = new Query();

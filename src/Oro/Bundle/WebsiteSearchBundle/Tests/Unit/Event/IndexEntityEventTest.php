@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Event;
 
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 
@@ -83,12 +84,12 @@ class IndexEntityEventTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Strings are supported only, "array" given
+     * @expectedExceptionMessage supported only, "Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue" given
      */
-    public function testAddPlaceholderField()
+    public function testAddPlaceholderFieldNotSupported()
     {
         $event = new IndexEntityEvent([], []);
-        $event->addPlaceholderField(1, 'sku', [], []);
+        $event->addPlaceholderField(1, 'sku', new LocalizedFallbackValue(), []);
     }
 
     public function testSamePlaceholderValueDoestOverridePrevious()

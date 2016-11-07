@@ -126,9 +126,11 @@ class IndexDataProvider
                         $placeholders = $value->getPlaceholders();
                         $value = $value->getValue();
 
-                        $L10NFieldName = $this->placeholder->replace($allTextL10N, $placeholders);
-                        $L10NFieldNames[$L10NFieldName] = $L10NFieldName;
-                        $this->setIndexValue($preparedIndexData, $entityId, $L10NFieldName, $value, $type);
+                        if ($type === Query::TYPE_TEXT) {
+                            $L10NFieldName = $this->placeholder->replace($allTextL10N, $placeholders);
+                            $L10NFieldNames[$L10NFieldName] = $L10NFieldName;
+                            $this->setIndexValue($preparedIndexData, $entityId, $L10NFieldName, $value, $type);
+                        }
 
                         $singleValueFieldName = $this->placeholder->replace($singleValueFieldName, $placeholders);
                     } elseif ($type === Query::TYPE_TEXT) {

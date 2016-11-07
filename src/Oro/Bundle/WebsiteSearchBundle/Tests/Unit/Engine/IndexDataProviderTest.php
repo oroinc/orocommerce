@@ -166,6 +166,8 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function entitiesDataProvider()
     {
+        $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2015-02-03 00:00:00', new \DateTimeZone('UTC'));
+
         return [
             'simple field' => [
                 'entityConfig' => ['fields' => [['name' => 'sku', 'type' => Query::TYPE_TEXT]]],
@@ -292,6 +294,42 @@ class IndexDataProviderTest extends \PHPUnit_Framework_TestCase
                             'all_text_6' => 'SKU-01-gb en_GB title6 descr6 keywords6 for_all_text',
                             'description_5' => 'en_US',
                             'description_6' => 'en_GB',
+                        ],
+                    ],
+                ],
+            ],
+            'support placeholders in non text fields' => [
+                'entityConfig' => [
+                    'fields' => [
+                        [
+                            'name' => 'integer_WEBSITE_ID',
+                            'type' => Query::TYPE_INTEGER,
+                        ],
+                        [
+                            'name' => 'datetime_LOCALIZATION_ID',
+                            'type' => Query::TYPE_DATETIME,
+                        ],
+                        [
+                            'name' => 'decimal_WEBSITE_ID',
+                            'type' => Query::TYPE_DECIMAL,
+                        ],
+                    ],
+                ],
+                'indexData' => [
+                    [1, 'integer_WEBSITE_ID', 1, ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 5]],
+                    [1, 'datetime_LOCALIZATION_ID', $date, ['WEBSITE_ID' => 1, 'LOCALIZATION_ID' => 6]],
+                    [1, 'decimal_WEBSITE_ID', 1.1, ['WEBSITE_ID' => 2, 'LOCALIZATION_ID' => 5]],
+                ],
+                'expected' => [
+                    1 => [
+                        'integer' => [
+                            'integer_1' => 1
+                        ],
+                        'datetime' => [
+                            'datetime_6' => $date
+                        ],
+                        'decimal' => [
+                            'decimal_2' => 1.1
                         ],
                     ],
                 ],

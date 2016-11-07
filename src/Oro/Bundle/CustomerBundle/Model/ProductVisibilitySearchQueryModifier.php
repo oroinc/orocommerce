@@ -78,7 +78,7 @@ class ProductVisibilitySearchQueryModifier implements QueryModifierInterface
                     $exprBuilder->eq($defaultField, BaseVisibilityResolved::VISIBILITY_HIDDEN),
                     $exprBuilder->eq(
                         $accountField,
-                        ProductVisibilityIndexer::ACCOUNT_VISIBILITY_VALUE
+                        BaseVisibilityResolved::VISIBILITY_VISIBLE
                     )
                 )
             );

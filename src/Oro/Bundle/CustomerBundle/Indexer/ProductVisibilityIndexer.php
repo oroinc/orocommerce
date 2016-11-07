@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\CustomerBundle\Indexer;
 
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
 
 class ProductVisibilityIndexer
 {
-    const ACCOUNT_VISIBILITY_VALUE = '1';
-
     const FIELD_VISIBILITY_ANONYMOUS = 'visibility_anonymous';
 
     const FIELD_VISIBILITY_NEW = 'visibility_new';
@@ -46,7 +45,7 @@ class ProductVisibilityIndexer
             $event->addPlaceholderField(
                 $accountVisibility['productId'],
                 self::FIELD_VISIBILITY_ACCOUNT,
-                self::ACCOUNT_VISIBILITY_VALUE,
+                BaseVisibilityResolved::VISIBILITY_VISIBLE,
                 [
                     AccountIdPlaceholder::NAME => $accountVisibility['accountId']
                 ]

@@ -12,4 +12,10 @@ class PlaceholderValueTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('PLACEHOLDER', $value->getValue());
         $this->assertEquals(['PLACEHOLDER' => 'value'], $value->getPlaceholders());
     }
+
+    public function testToString()
+    {
+        $value = new PlaceholderValue('PLACEHOLDER', ['PLACEHOLDER' => 'value']);
+        $this->assertEquals('PLACEHOLDER', (string)$value);
+    }
 }
