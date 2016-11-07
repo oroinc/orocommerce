@@ -347,16 +347,6 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_checkout.entity.checkout.class%', event: preRemove }
 
-    oro_checkout.condition.has_applicable_shipping_methods:
-        class: 'Oro\Bundle\CheckoutBundle\Condition\HasApplicableShippingMethods'
-        arguments:
-            - '@oro_shipping.shipping_method.registry'
-            - '@oro_shipping.shipping_price.provider'
-            - '@oro_checkout.factory.shipping_context_provider_factory'
-        tags:
-            - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
-            - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
-
     oro_checkout.provider.checkout_totals:
         class: 'Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider'
         arguments:

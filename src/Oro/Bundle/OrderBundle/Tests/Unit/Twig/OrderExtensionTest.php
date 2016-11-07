@@ -19,6 +19,11 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
     protected $shippingTrackingFormatter;
 
     /**
+     * @var ShippingMethodFormatter|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $shippingMethodFormatter;
+
+    /**
      * @var OrderExtension
      */
     protected $extension;
@@ -33,7 +38,15 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->extension = new OrderExtension($this->sourceDocumentFormatter, $this->shippingTrackingFormatter);
+        $this->shippingMethodFormatter = $this
+            ->getMockBuilder('Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->extension = new OrderExtension(
+            $this->sourceDocumentFormatter,
+            $this->shippingTrackingFormatter,
+            $this->shippingMethodFormatter
+        );
     }
 
     public function testGetName()
@@ -46,8 +59,7 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
         $expected = [
             new \Twig_SimpleFilter(
                 'oro_order_format_source_document',
-                [$this->sourceDocumentFormatter, 'format'],
-                ['is_safe' => ['html']]
+                [$this->sourceDocumentFormatter, 'format']
             ),
         ];
         static::assertEquals($expected, $this->extension->getFilters());
@@ -58,13 +70,15 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
         $expected = [
             new \Twig_SimpleFunction(
                 'oro_order_format_shipping_tracking_method',
-                [$this->shippingTrackingFormatter, 'formatShippingTrackingMethod'],
-                ['is_safe' => ['html']]
+                [$this->shippingTrackingFormatter, 'formatShippingTrackingMethod']
             ),
             new \Twig_SimpleFunction(
                 'oro_order_format_shipping_tracking_link',
-                [$this->shippingTrackingFormatter, 'formatShippingTrackingLink'],
-                ['is_safe' => ['html']]
+                [$this->shippingTrackingFormatter, 'formatShippingTrackingLink']
+            ),
+            new \Twig_SimpleFunction(
+                'oro_order_shipping_method_with_type_label',
+                [$this->shippingMethodFormatter, 'formatShippingMethodWithTypeLabel']
             )
         ];
         static::assertEquals($expected, $this->extension->getFunctions());

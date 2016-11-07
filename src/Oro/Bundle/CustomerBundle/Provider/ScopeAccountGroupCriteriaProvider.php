@@ -7,58 +7,69 @@ use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ScopeBundle\Manager\AbstractScopeCriteriaProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
 {
-    const FIELD_NAME = 'accountGroup';
+        const FIELD_NAME = 'accountGroup';
 
-    /**
-     * @var SecurityFacade
-     */
-    protected $securityFacade;
+        /**
+         * @var SecurityFacade
+         */
+        protected $tokenStorage;
 
-    /**
-     * @var PropertyAccessor
-     */
-    protected $propertyAccessor;
+        /**
+         * @var PropertyAccessor
+         */
+        protected $propertyAccessor;
 
-    /**
-     * @param SecurityFacade $securityFacade
-     */
-    public function __construct(SecurityFacade $securityFacade)
-    {
-        $this->securityFacade = $securityFacade;
-    }
+        /**
+         * @var AccountUserRelationsProvider
+         */
+        protected $accountUserProvider;
 
-    /**
-     * @return string
-     */
-    public function getCriteriaField()
-    {
-        return self::FIELD_NAME;
-    }
-
-    /**
-     * @return array
-     */
-    public function getCriteriaForCurrentScope()
-    {
-        $loggedUser = $this->securityFacade->getLoggedUser();
-        if (null !== $loggedUser
-            && $loggedUser instanceof AccountUser
-            && null !== $loggedUser->getAccount()
+        /**
+         * @param TokenStorageInterface $tokenStorage
+         * @param AccountUserRelationsProvider $accountUserRelationsProvider
+         */
+        public function __construct(
+            TokenStorageInterface $tokenStorage,
+            AccountUserRelationsProvider $accountUserRelationsProvider
         ) {
-            return [$this->getCriteriaField() => $loggedUser->getAccount()->getGroup()];
+                $this->tokenStorage = $tokenStorage;
+                $this->accountUserProvider = $accountUserRelationsProvider;
         }
 
-        return [];
-    }
+        /**
+         * @return string
+         */
+        public function getCriteriaField()
+        {
+                return self::FIELD_NAME;
+        }
 
-    /**
-     * @return string
-     */
-    protected function getCriteriaValueType()
-    {
-        return AccountGroup::class;
-    }
+        /**
+         * @return array
+         */
+        public function getCriteriaForCurrentScope()
+        {
+                $token = $this->tokenStorage->getToken();
+                if (!$token) {
+                        return [];
+                }
+                $loggedUser = $token->getUser();
+                if (null === $loggedUser || $loggedUser instanceof AccountUser) {
+                        return [$this->getCriteriaField() => $this->accountUserProvider->getAccountGroup($loggedUser)];
+                }
+
+                return [];
+        }
+
+        /**
+         * @return string
+         */
+        protected function getCriteriaValueType()
+        {
+                return AccountGroup::class;
+        }
 }

@@ -1,9 +1,5 @@
 {% block _shopping_list_view_container_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-
-    <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-        module: 'oroshoppinglist/js/app/components/shoppinglist-view-component'
-    }) }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -13,7 +9,6 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
-
 
 {% block _no_shopping_lists_widget %}
     <div class="cart-list_empty">

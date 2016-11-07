@@ -588,6 +588,11 @@ workflows:
                                 entity: $checkout
                                 state: $.result.currentCheckoutState
                                 token: $state_token
+                    - '@call_service_method':
+                        service: oro_checkout.factory.shipping_context_provider_factory
+                        method: create
+                        method_parameters: [$checkout]
+                        attribute: $.result.shippingContext
                 preconditions:
                     '@and':
                         - '@order_line_item_has_count':
@@ -595,8 +600,7 @@ workflows:
                             parameters:
                                 entity: $checkout
                         - '@has_applicable_shipping_methods':
-                            parameters:
-                                entity: $checkout
+                            shippingContext: $.result.shippingContext
                 conditions:
                     '@and':
                         - '@or':
