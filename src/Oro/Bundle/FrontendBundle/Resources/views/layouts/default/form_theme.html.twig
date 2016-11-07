@@ -26,11 +26,12 @@
 
 {%- block form_row -%}
     {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
-    {% set attr = attr|merge({
+    {% set attr = layout_attr_defaults(attr, {
         class: [
             attr.class|default(''),
             "form-field-" ~ form.vars.name,
-        ]|join(' ')
+        ]|join(' '),
+        placeholder: label
     }) %}
 
     <fieldset class="{{ class_prefix }}__form__row">
