@@ -7,6 +7,7 @@ use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -133,10 +134,20 @@ class OrderControllerTest extends WebTestCase
 
         $result = static::getJsonResponseContent($response, 200);
 
-        $first = reset($result['data']);
+        $myOrderData = [];
+        foreach ($result['data'] as $row) {
+            if ($row['identifier'] === LoadOrders::MY_ORDER) {
+                $myOrderData = $row;
+                break;
+            }
+        }
 
-        $this->assertArrayHasKey('shippingMethod', $first);
-        $this->assertEquals('N/A', $first['shippingMethod']);
+        $order = $this->getReference(LoadOrders::MY_ORDER);
+        $shippingMethodLabel = $this->getContainer()->get('oro_order.formatter.shipping_method')
+            ->formatShippingMethodWithTypeLabel($order->getShippingMethod(), $order->getShippingMethodType());
+        $shippingMethodLabel = $this->getContainer()->get('translator')->trans($shippingMethodLabel);
+        $this->assertArrayHasKey('shippingMethod', $myOrderData);
+        $this->assertEquals($shippingMethodLabel, $myOrderData['shippingMethod']);
     }
 
     /**
