@@ -972,3 +972,27 @@ services:
         arguments: ["@oro_organization.link.security_context", "@oro_entity_config.provider.ownership"]
         tags:
              - { name: doctrine.event_listener, event: prePersist }
+
+    oro_customer.account_scope_criteria_provider:
+        class: 'Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider'
+        public: false
+        arguments:
+            - "@oro_security.security_facade"
+
+    oro_customer.account_group_scope_criteria_provider:
+        class: 'Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider'
+        public: false
+        arguments:
+            - "@oro_security.security_facade"
+
+    oro_customer.account_scope_criteria_provider.link:
+        public: false
+        tags:
+            - { name: oro_service_link, service: oro_customer.account_scope_criteria_provider }
+            - { name: oro_scope.provider, scopeType: web_content, priority: 1000 }
+
+    oro_customer.account_group_scope_criteria_provider.link:
+        public: false
+        tags:
+            - { name: oro_service_link, service: oro_customer.account_group_scope_criteria_provider }
+            - { name: oro_scope.provider, scopeType: web_content, priority: 100 }
