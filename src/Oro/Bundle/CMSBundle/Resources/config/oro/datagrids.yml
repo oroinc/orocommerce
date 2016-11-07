@@ -8,7 +8,6 @@ datagrids:
             query:
                 select:
                     - page.id
-                    - page.title
                 from:
                     - { table: '%oro_cms.entity.page.class%', alias: page }
         columns:
@@ -18,12 +17,15 @@ datagrids:
                 label: oro.cms.page.title.label
         properties:
             id: ~
+            title:
+                type: localized_value
+                data_name: title
         sorters:
             columns:
                 id:
                     data_name: page.id
                 title:
-                    data_name: page.title
+                    data_name: title
             default:
                 id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
@@ -33,7 +35,7 @@ datagrids:
                     data_name: page.id
                 title:
                     type:      string
-                    data_name: page.title
+                    data_name: title
 
     cms-login-page-grid:
         acl_resource: oro_cms_loginpage_view
@@ -75,7 +77,6 @@ datagrids:
             query:
                 select:
                     - page.id
-                    - page.title
                 from:
                     - { table: '%oro_cms.entity.page.class%', alias: page }
         columns:
@@ -85,6 +86,9 @@ datagrids:
               label: oro.cms.page.title.label
         properties:
             id: ~
+            title:
+                type: localized_value
+                data_name: title
             view_link:
                 type:   url
                 route:  oro_cms_page_view
@@ -102,7 +106,7 @@ datagrids:
                 id:
                     data_name: page.id
                 title:
-                    data_name: page.title
+                    data_name: title
         filters:
             columns:
                 id:
@@ -110,4 +114,4 @@ datagrids:
                     data_name: page.id
                 title:
                     type: string
-                    data_name: page.title
+                    data_name: title

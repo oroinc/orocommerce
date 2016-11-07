@@ -6,11 +6,11 @@ layout:
             id: title
             optionName: params
             optionValue:
-                '%title%': '=data["page"].getTitle()'
+                '%title%': '=data["page"].getDefaultTitle()'
         - '@setOption':
             id: page_title
             optionName: text
-            optionValue: '=data["page"].getTitle()'
+            optionValue: '=data["page"].getDefaultTitle()'
         - '@addTree':
             items:
                 cms_page_content:

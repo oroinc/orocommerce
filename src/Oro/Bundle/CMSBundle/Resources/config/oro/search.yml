@@ -9,9 +9,17 @@ search:
         search_template:                OroCMSBundle:Page:searchResult.html.twig
         fields:
             -
-                name:                   title
+                name:                   defaultTitle
                 target_type:            text
-                target_fields:          [title]
+                target_fields:          [defaultTitle]
+            -
+                name: titles
+                relation_type: many-to-many
+                relation_fields:
+                    -
+                        name: string
+                        target_type: text
+                        target_fields: [titles]
             -
                 name:                   defaultSlug
                 target_type:            text

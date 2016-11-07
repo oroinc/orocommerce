@@ -1,8 +1,4 @@
 Oro\Bundle\CMSBundle\Entity\Page:
     properties:
-        title:
-            - NotBlank: ~
-            - Length:
-                max: 255
         organization:
             - NotBlank: ~

@@ -1,13 +1,13 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 
-{% oro_title_set({params : {"%title%": entity.title }}) %}
+{% oro_title_set({params : {"%title%": entity.defaultTitle }}) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('oro_cms_page_index'),
         'indexLabel': 'oro.cms.page.entity_plural_label'|trans,
-        'entityTitle': entity.title|default('N/A'|trans)
+        'entityTitle': entity.defaultTitle|default('N/A'|trans)
     } %}
     {{ parent() }}
 {% endblock pageHeader %}
