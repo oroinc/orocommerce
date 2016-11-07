@@ -203,12 +203,6 @@ class ScopeManager
             }
         }
 
-        foreach ($this->getNullContext() as $emptyKey => $emptyValue) {
-            if (!isset($criteria[$emptyKey])) {
-                $criteria[$emptyKey] = $emptyValue;
-            }
-        }
-
         return new ScopeCriteria($criteria);
     }
 
