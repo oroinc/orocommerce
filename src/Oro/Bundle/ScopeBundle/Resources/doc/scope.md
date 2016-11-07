@@ -28,17 +28,13 @@ Scope Manager is a service that provides an interface for collecting the scope i
 * Create a collected scope in response to the findOrCreate operation (if the scope is not found).
 * Call Scope Criteria Provider's getCriteriaForCurrentScope() method to get a portion of the scope information.
 
-Scope Repository
-----------------
-Scope Repository stores the scope instances created in Scope Manager using *findOrCreate* method. 
-
 Scope Criteria Providers
 ------------------------
 Scope Criteria Provider is a service that calculates the value for the scope criterion based on the provided context. Scope criteria help model a relationship between the scope and the scope-consuming context. In any bundle, you can create a [Scope Criteria Provider](#configuring-scope-criteria-providers) service and register it as scope provider for the specific scope type. This service shall deliver the scope criterion value to the Scope Manager, who, in turn, use the scope criteria to filter the scope instances or find the one matching to the provided context.
 
 Scope Type
 ----------
-Scope Type is a tag that groups scope criteria that are used by particular scope consumers. One scope type may be reused by multiple scope consumers. It may happen, that a particular scope criteria provider, like the one for Account Group, is not involved in the scope construction because it serves the scope-consumers with the different scope type (e.g. web_content). In this case, Scope Manager looks for the scope(s) that do(es) not prompt to evaluate this criterion. 
+Scope Type is a tag that groups scope providers that are used by particular scope consumers. One scope provider may be reused in several scope types. It may happen, that a particular scope criteria provider, like the one for Account Group, is not involved in the scope construction because it serves the scope-consumers with the different scope type (e.g. web_content). In this case, Scope Manager looks for the scope(s) that do(es) not prompt to evaluate this criterion. 
 
 Scope Model
 -----------
@@ -46,14 +42,43 @@ Scope model is a data structure for storing scope items. Every scope item has fi
 
 Add Scope Criterion
 -------------------
-To add criterion to the scope, run the following SQL query that adds a new column to the **ADD ME PLEASE** table. Replace *Criterion* with a unique criterion name:
+To add criterion to the scope, extend Scope entity using migration, as shown int the following example:
 ```
+class OroAccountBundleScopeRelations implements Migration, ExtendExtensionAwareInterface
+{
+    ...
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function up(Schema $schema, QueryBag $queries)
+    {
+        $this->extendExtension->addManyToOneRelation(
+            $schema,
+            OroScopeBundleInstaller::ORO_SCOPE,
+            'account',
+            OroAccountBundleInstaller::ORO_ACCOUNT_TABLE_NAME,
+            'id',
+            [
+                'extend' => [
+                    'owner' => ExtendScope::OWNER_CUSTOM,
+                    'cascade' => ['all'],
+                    'on_delete' => 'CASCADE',
+                    'nullable' => true
+                ]
+            ],
+            RelationType::MANY_TO_ONE
+        );
+    }
+}
+
 ```
 
 Configuring Scope Criteria Providers
 ------------------------------------
 To extend a scope with a criterion that may be provided by your bundle:
-1. Create a **Scope<your bundle>CriteriaProvider** class and implement getCriteriaForCurrentScope() and getCriteriaField() methods, as shown in the following examples. Return an array of key/value structures in getCriteriaForCurrentScope(). Return a criterion id in getCriteriaField(). 
+
+1. Create a **Scope<your criterion name>CriteriaProvider** class and implement getCriteriaForCurrentScope() and getCriteriaField() methods, as shown in the following examples. 
 
 ```
 class ScopeAccountCriteriaProvider extends AbstractScopeCriteriaProvider
@@ -97,7 +122,7 @@ oro_customer.account_scope_criteria_provider:
 
 Using Context
 -------------
-When you need to find a scope based on the information that differs from the current context, you can pass the custom context (array of objects) as a second parameter of *find* and *findOrCreate* method.
+When you need to find a scope based on the information that differs from the current context, you can pass the custom context (array or object) as a second parameter of *find* and *findOrCreate* method.
 
 Scope Operations
 ----------------
@@ -209,6 +234,7 @@ $scopeCriteria->applyToJoinWithPriority($qb, 'scopes');
 As you do not pass a context to the Scope Manager in the getCriteria method, the current context is used by default(e.g. a logged on customer is a part of Account with id=1, and this account is a part of AccountGroup with id=1.
 
 The scopes applicable for the current context are:
+
 |id|account_id|accountGroup|
 |---|---|---|
 |4|1||
