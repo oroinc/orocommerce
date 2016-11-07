@@ -1,10 +1,8 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Condition;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\Condition;
 
-use Oro\Bundle\CheckoutBundle\Condition\HasApplicableShippingMethods;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory;
+use Oro\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
@@ -25,8 +23,6 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
     /** @var ShippingPriceProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $shippingPriceProvider;
 
-    /** @var ShippingContextProviderFactory|\PHPUnit_Framework_MockObject_MockObject */
-    protected $shippingContextProviderFactory;
 
     protected function setUp()
     {
@@ -37,18 +33,9 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->shippingContextProviderFactory = $this
-            ->getMockBuilder('Oro\Bundle\CheckoutBundle\Factory\ShippingContextProviderFactory')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->shippingContextProviderFactory->expects(static::any())
-            ->method('create')
-            ->willReturn(new ShippingContext([]));
-
         $this->condition = new HasApplicableShippingMethods(
             $this->shippingMethodRegistry,
-            $this->shippingPriceProvider,
-            $this->shippingContextProviderFactory
+            $this->shippingPriceProvider
         );
     }
 
@@ -64,7 +51,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Oro\Component\ConfigExpression\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Missing "entity" option
+     * @expectedExceptionMessage Missing "shippingContext" option
      */
     public function testInitializeInvalid()
     {
@@ -96,7 +83,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
             ->method('getApplicableMethodsWithTypesData')
             ->willReturn($methods);
 
-        $this->condition->initialize(['entity' => new Checkout()]);
+        $this->condition->initialize(['shippingContext' => new ShippingContext([])]);
         $this->assertEquals($expected, $this->condition->evaluate([]));
     }
 
@@ -124,7 +111,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
     public function testToArray()
     {
         $stdClass = new \stdClass();
-        $this->condition->initialize(['entity' => $stdClass]);
+        $this->condition->initialize(['shippingContext' => $stdClass]);
         $result = $this->condition->toArray();
 
         $key = '@' . HasApplicableShippingMethods::NAME;
@@ -141,7 +128,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
     public function testCompile()
     {
         $toStringStub = new ToStringStub();
-        $options = ['entity' => $toStringStub];
+        $options = ['shippingContext' => $toStringStub];
 
         $this->condition->initialize($options);
         $result = $this->condition->compile('$factory');
