@@ -6,6 +6,7 @@ use Doctrine\ORM\Query;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\CustomerBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\CustomerBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -73,7 +74,7 @@ abstract class AbstractAccountPartialUpdateDriver implements AccountPartialUpdat
                         $productIds,
                         $productAlias,
                         $accountVisibilityFieldName,
-                        ProductVisibilityIndexer::ACCOUNT_VISIBILITY_VALUE
+                        BaseVisibilityResolved::VISIBILITY_VISIBLE
                     );
                     $productIds = [];
                 }
@@ -84,7 +85,7 @@ abstract class AbstractAccountPartialUpdateDriver implements AccountPartialUpdat
                     $productIds,
                     $productAlias,
                     $accountVisibilityFieldName,
-                    ProductVisibilityIndexer::ACCOUNT_VISIBILITY_VALUE
+                    BaseVisibilityResolved::VISIBILITY_VISIBLE
                 );
             }
         }

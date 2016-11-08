@@ -74,7 +74,7 @@ class WebsiteIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             'string_1',
-            $this->placeholder->replace('string_WEBSITE_ID', ['WEBSITE_ID' => '1'])
+            $this->placeholder->replace('string_WEBSITE_ID', ['WEBSITE_ID' => 1])
         );
     }
 
@@ -84,7 +84,7 @@ class WebsiteIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             'string_WEBSITE_ID',
-            $this->placeholder->replace('string_WEBSITE_ID', ['NON_WEBSITE_ID' => '1'])
+            $this->placeholder->replace('string_WEBSITE_ID', ['NON_WEBSITE_ID' => 1])
         );
     }
 }

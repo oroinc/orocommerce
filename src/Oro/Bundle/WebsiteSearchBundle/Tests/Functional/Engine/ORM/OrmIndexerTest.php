@@ -309,7 +309,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
         $this->setEntityAliasExpectation();
         $this->setGetEntityConfigExpectation();
-        $this->listener = $this->setListener();
+        $this->setListener();
         $this->indexer->reindex(TestProduct::class);
         $removedProduct = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $removedProductId = $removedProduct->getId();

@@ -14,12 +14,12 @@ class PlaceholderValue
     private $placeholders = [];
 
     /**
-     * @param string $value
+     * @param string|int|float|\DateTime $value
      * @param array $placeholders
      */
     public function __construct($value, array $placeholders = [])
     {
-        $this->value = (string)$value;
+        $this->value = $value;
         $this->placeholders = $placeholders;
     }
 

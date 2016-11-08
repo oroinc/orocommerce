@@ -16,6 +16,7 @@ use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultLocalizationIdTestTrait;
 
@@ -84,7 +85,11 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
 
         $indexer = $this->getContainer()->get('oro_website_search.indexer');
         $indexer->resetIndex(Product::class, $context);
-        $indexer->reindex(Product::class, $context);
+
+        $this->getContainer()->get('event_dispatcher')->dispatch(
+            ReindexationRequestEvent::EVENT_NAME,
+            new ReindexationRequestEvent([Product::class], [$this->getDefaultWebsiteId()], [], false)
+        );
 
         $alias = 'oro_product_' . $this->getDefaultWebsiteId();
         $this->ensureItemsLoaded($alias, $expectedItems, 'oro_website_search.engine');

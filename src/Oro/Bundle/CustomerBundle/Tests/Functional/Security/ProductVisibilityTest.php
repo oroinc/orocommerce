@@ -22,7 +22,10 @@ class ProductVisibilityTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient();
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+        );
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
             LoadFrontendProductVisibilityData::class,
@@ -38,15 +41,15 @@ class ProductVisibilityTest extends WebTestCase
      */
     public function testVisibility($configValue, $expectedData)
     {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
-        );
-        $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
+        $configManager = $this->getContainer()->get('oro_config.global');
         $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, $configValue);
         $configManager->flush();
+
+        $indexer = $this->getContainer()->get('oro_website_search.indexer');
         foreach ($expectedData as $productSKU => $resultCode) {
             $product = $this->getReference($productSKU);
+            $indexer->save($product);
+
             $this->assertInstanceOf(Product::class, $product);
             $this->client->request(
                 'GET',
@@ -69,8 +72,11 @@ class ProductVisibilityTest extends WebTestCase
                     LoadProductData::PRODUCT_1 => 200,
                     LoadProductData::PRODUCT_2 => 200,
                     LoadProductData::PRODUCT_3 => 200,
-                    LoadProductData::PRODUCT_4 => 403,
-                    LoadProductData::PRODUCT_5 => 200,
+                    LoadProductData::PRODUCT_4 => 403, // inventoryStatus: discontinued and visibility: hidden
+                    LoadProductData::PRODUCT_5 => 403, // status: disabled
+                    LoadProductData::PRODUCT_6 => 200,
+                    LoadProductData::PRODUCT_7 => 200,
+                    LoadProductData::PRODUCT_8 => 200,
                 ]
             ],
             'config hidden' => [
@@ -79,8 +85,11 @@ class ProductVisibilityTest extends WebTestCase
                     LoadProductData::PRODUCT_1 => 403,
                     LoadProductData::PRODUCT_2 => 200,
                     LoadProductData::PRODUCT_3 => 200,
-                    LoadProductData::PRODUCT_4 => 403,
-                    LoadProductData::PRODUCT_5 => 403,
+                    LoadProductData::PRODUCT_4 => 403, // inventoryStatus: discontinued and visibility: hidden
+                    LoadProductData::PRODUCT_5 => 403, // status: disabled
+                    LoadProductData::PRODUCT_6 => 200, // config for Default website only, visibility is for US
+                    LoadProductData::PRODUCT_7 => 200, // config for Default website only, visibility is for US
+                    LoadProductData::PRODUCT_8 => 200, // config for Default website only, visibility is for US
                 ]
             ],
         ];
@@ -89,7 +98,9 @@ class ProductVisibilityTest extends WebTestCase
     protected function tearDown()
     {
         $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
-        $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, ProductVisibility::VISIBLE);
+        $configManager->reset(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH);
         $configManager->flush();
+
+        parent::tearDown();
     }
 }
