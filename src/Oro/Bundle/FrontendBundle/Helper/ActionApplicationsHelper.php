@@ -2,14 +2,17 @@
 
 namespace Oro\Bundle\FrontendBundle\Helper;
 
-use Oro\Bundle\ActionBundle\Helper\ApplicationsHelperInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelperInterface;
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelperTrait;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 
 class ActionApplicationsHelper implements ApplicationsHelperInterface
 {
+    use ApplicationsHelperTrait;
+
     const COMMERCE_APPLICATION = 'commerce';
 
     /** @var  ApplicationsHelper */
@@ -18,7 +21,13 @@ class ActionApplicationsHelper implements ApplicationsHelperInterface
     /** @var TokenStorageInterface */
     protected $tokenStorage;
 
+    /** @var string */
+    protected $currentApplication = false;
 
+    /**
+     * @param ApplicationsHelperInterface $applicationsHelper
+     * @param TokenStorageInterface $tokenStorage
+     */
     public function __construct(ApplicationsHelperInterface $applicationsHelper, TokenStorageInterface $tokenStorage)
     {
         $this->applicationsHelper = $applicationsHelper;
@@ -66,13 +75,5 @@ class ActionApplicationsHelper implements ApplicationsHelperInterface
         $token = $this->tokenStorage->getToken();
 
         return $token && $token->getUser() instanceof AccountUser;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isApplicationsValid(array $applications)
-    {
-        return $this->applicationsHelper->isApplicationsValid($applications);
     }
 }

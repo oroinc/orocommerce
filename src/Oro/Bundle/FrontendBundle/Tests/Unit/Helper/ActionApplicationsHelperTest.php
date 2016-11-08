@@ -21,7 +21,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
     {
         parent::setUp();
 
-        $this->helper = new ActionApplicationsHelper($this->tokenStorage);
+        $this->helper = new ActionApplicationsHelper($this->helper, $this->tokenStorage);
     }
 
     /**
