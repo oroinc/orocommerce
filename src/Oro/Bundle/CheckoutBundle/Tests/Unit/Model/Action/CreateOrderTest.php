@@ -13,7 +13,7 @@ use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\CheckoutBundle\Model\Action\CreateOrder;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Component\Action\Exception\InvalidParameterException;
-use Oro\Component\Action\Model\ContextAccessor;
+use Oro\Component\ConfigExpression\ContextAccessor;
 
 class CreateOrderTest extends \PHPUnit_Framework_TestCase
 {
