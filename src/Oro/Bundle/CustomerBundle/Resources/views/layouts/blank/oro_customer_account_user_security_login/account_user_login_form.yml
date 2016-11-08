@@ -53,7 +53,7 @@ layout:
                         id: userNameSignIn
                         name: _username
                         value: '=data["oro_account_sign_in"].getLastName()'
-                        placeholder: oro.customer.accountuser.email.label
+                        placeholder: oro.customer.accountuser.placeholder.email
                         label: oro.customer.accountuser.email.label
                 login_form_password:
                     blockType: input
@@ -61,7 +61,7 @@ layout:
                         type: password
                         id: passwordSignIn
                         name: _password
-                        placeholder: oro.customer.accountuser.profile.enter_password
+                        placeholder: oro.customer.accountuser.placeholder.password
                         label: oro.customer.accountuser.password.label
                 login_form_remember:
                     blockType: input

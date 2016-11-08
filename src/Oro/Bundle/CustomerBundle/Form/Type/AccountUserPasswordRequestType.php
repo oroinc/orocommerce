@@ -25,6 +25,9 @@ class AccountUserPasswordRequestType extends AbstractType
                 'constraints' => [
                     new NotBlank(),
                     new Email()
+                ],
+                'attr' => [
+                    'placeholder' => 'oro.customer.accountuser.placeholder.email'
                 ]
             ]
         );

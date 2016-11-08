@@ -56,7 +56,10 @@ class FrontendAccountUserRegistrationType extends AbstractType
                     'required' => true,
                     'mapped' => false,
                     'label' => 'oro.customer.accountuser.profile.company_name',
-                    'constraints' => [new Assert\NotBlank()]
+                    'constraints' => [new Assert\NotBlank()],
+                    'attr' => [
+                        'placeholder' => 'oro.customer.accountuser.placeholder.company_name'
+                    ]
                 ]
             )
             ->add(
@@ -64,7 +67,10 @@ class FrontendAccountUserRegistrationType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'oro.customer.accountuser.first_name.label'
+                    'label' => 'oro.customer.accountuser.first_name.label',
+                    'attr' => [
+                        'placeholder' => 'oro.customer.accountuser.placeholder.first_name'
+                    ]
                 ]
             )
             ->add(
@@ -72,7 +78,10 @@ class FrontendAccountUserRegistrationType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'oro.customer.accountuser.last_name.label'
+                    'label' => 'oro.customer.accountuser.last_name.label',
+                    'attr' => [
+                        'placeholder' => 'oro.customer.accountuser.placeholder.last_name'
+                    ]
                 ]
             )
             ->add(
@@ -80,7 +89,10 @@ class FrontendAccountUserRegistrationType extends AbstractType
                 'email',
                 [
                     'required' => true,
-                    'label' => 'oro.customer.accountuser.email.label'
+                    'label' => 'oro.customer.accountuser.email.label',
+                    'attr' => [
+                        'placeholder' => 'oro.customer.accountuser.placeholder.email'
+                    ]
                 ]
             );
 
@@ -89,8 +101,18 @@ class FrontendAccountUserRegistrationType extends AbstractType
             'repeated',
             [
                 'type' => 'password',
-                'first_options' => ['label' => 'oro.customer.accountuser.password.label'],
-                'second_options' => ['label' => 'oro.customer.accountuser.password_confirmation.label'],
+                'first_options' => [
+                    'label' => 'oro.customer.accountuser.password.label',
+                    'attr' => [
+                        'placeholder' => 'oro.customer.accountuser.placeholder.password'
+                    ]
+                ],
+                'second_options' => [
+                    'label' => 'oro.customer.accountuser.password_confirmation.label',
+                    'attr' => [
+                        'placeholder' => 'oro.customer.accountuser.placeholder.password_confirmation'
+                    ]
+                ],
                 'invalid_message' => 'oro.customer.message.password_mismatch',
                 'required' => true,
                 'validation_groups' => ['create']
