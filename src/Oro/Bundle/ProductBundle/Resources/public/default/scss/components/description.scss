@@ -10,7 +10,8 @@ $product-specification-container-width: 240px !default;
 
   @include clearfix();
 
-  @media (max-width: $screen-md) {
+  @include breakpoint('tablet-small') {
+    max-width: 100%;
     margin: 15px 0 0;
   }
 }
@@ -18,11 +19,11 @@ $product-specification-container-width: 240px !default;
 .product__specification-container {
   width: $product-specification-container-width;
 
-  @media (min-width: 992px) and (max-width: 1199px) {
+  @media (min-width: $breakpoint-tablet-small) and (max-width: $breakpoint-tablet) {
     width: $product-specification-container-width - 5px;
   }
 
-  @media (max-width: $screen-md) {
+  @include breakpoint('tablet-small') {
     width: 100%;
   }
 
@@ -31,7 +32,7 @@ $product-specification-container-width: 240px !default;
     position: relative;
     z-index: 2;
 
-    @media (max-width:767px) {
+    @include breakpoint('tablet-small') {
       float: none;
     }
   }
@@ -65,7 +66,7 @@ $product-specification-container-width: 240px !default;
   &_mobile {
     display: none;
   
-    @media (max-width: $screen-md) {
+    @include breakpoint('tablet-small') {
       display: block;
       margin: 0 0 10px;
     }
@@ -76,7 +77,7 @@ $product-specification-container-width: 240px !default;
   &_mobile {
     display: none;
 
-    @media (max-width: $screen-md) {
+    @include breakpoint('tablet-small') {
       display: block;
       margin: 0 0 20px;
     }
@@ -139,7 +140,7 @@ $product-specification-container-width: 240px !default;
     margin: 0 0 8px;
   }
 
-  @media (max-width: $screen-md) {
+  @include breakpoint('tablet-small') {
     @include ellipsis();
   }
 
@@ -252,20 +253,20 @@ $product-specification-container-width: 240px !default;
   }
 
   &_list-view {
-    @media (max-width: $screen-sm) {
+    @include breakpoint('tablet-small') {
       display: none;
     }
   }
 
   &_no-image-view {
-    @media (max-width: $screen-sm) {
+    @include breakpoint('tablet-small') {
       display: none;
     }
 
     .product-item--compact & {
       display: inline-block;
 
-      @media (max-width: $screen-sm) {
+      @include breakpoint('tablet-small') {
         display: none;
       }
     }
@@ -275,7 +276,7 @@ $product-specification-container-width: 240px !default;
     clear: left;
     margin-left: 34%;
 
-    @media (max-width: $screen-sm) {
+    @include breakpoint('tablet-small') {
       display: none;
     }
   }
@@ -365,7 +366,7 @@ $product-specification-container-width: 240px !default;
   max-width: 205px;
   margin: 0 0 20px;
 
-  @media (max-width: $screen-md) {
+  @include breakpoint('tablet-small') {
     max-width: 100%;
   }
 
@@ -375,7 +376,7 @@ $product-specification-container-width: 240px !default;
 
   &_list-view {
 
-    @media (max-width: $screen-sm) {
+    @include breakpoint('tablet-small') {
       margin: 0;
 
       &.product__specification_delivery {
@@ -387,7 +388,7 @@ $product-specification-container-width: 240px !default;
   &_no-image-view {
     margin-bottom: 10px !important;
 
-    @media (max-width: $screen-sm) {
+    @include breakpoint('tablet-small') {
       margin: 0 !important;
     }
     
@@ -413,7 +414,7 @@ $product-specification-container-width: 240px !default;
       display: none
     }
 
-    @media (max-width: $screen-sm) {
+    @include breakpoint('tablet-small') {
       float: none;
       width: 100%;
       max-width: 205px;
@@ -431,7 +432,7 @@ $product-specification-container-width: 240px !default;
 
   background: get-color('additional', 'base');
 
-  @media (max-width: $screen-md) {
+  @include breakpoint('tablet-small') {
     max-width: 100%;
   }
 
@@ -465,7 +466,7 @@ $product-specification-container-width: 240px !default;
 
   @include clearfix();
 
-  @media (max-width: $screen-sm) {
+  @include breakpoint('tablet-small') {
     max-width: 100%;
   }
 }
@@ -473,7 +474,7 @@ $product-specification-container-width: 240px !default;
 .product__description-content {
   width: calc(100% - #{$product-specification-container-width});
 
-  @media (max-width: $screen-md) {
+  @include breakpoint('tablet-small') {
     width: 100%;
     margin-top: 20px !important;
   }
@@ -485,7 +486,7 @@ $product-specification-container-width: 240px !default;
     float: left;
     margin: 0 0 10px;
 
-    @media (max-width: $screen-sm) {
+    @include breakpoint('tablet-small') {
       z-index: 1;
 
       float: none;
@@ -500,7 +501,7 @@ $product-specification-container-width: 240px !default;
 
   &_list-view {
 
-    @media (max-width: $screen-sm) {
+    @include breakpoint('tablet-small') {
       height: 40px;
       overflow: hidden;
     }
@@ -514,7 +515,7 @@ $product-specification-container-width: 240px !default;
     float: left;
     width: 66%;
 
-    @media (max-width: $screen-sm) {
+    @include breakpoint('tablet-small') {
       display: none;
     }
   }
