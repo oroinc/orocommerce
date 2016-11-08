@@ -1,6 +1,6 @@
 {% block _footer_menu_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ""
+        '~class': "grid__row"
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -16,9 +16,11 @@
     {% spaceless %}
         {% for child in item.children %}
             {% if child.extras.isAllowed %}
-                <h3>{{ child.label }}</h3>
-                {% set item = child %}
-                {{ block('menu_widget') }}
+                <div class="grid__column">
+                    <h3>{{ child.label }}</h3>
+                    {% set item = child %}
+                    {{ block('menu_widget') }}
+                </div>
             {% endif %}
         {% endfor %}
     {% endspaceless %}
