@@ -272,8 +272,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
 
     public function testReindexForSpecificWebsiteWithDependentEntities()
     {
-        $this->loadFixtures([LoadEmployeesToIndex::class]);
-        $this->loadFixtures([LoadProductsToIndex::class]);
+        $this->loadFixtures([LoadEmployeesToIndex::class, LoadProductsToIndex::class]);
 
         $collectDependentClassesListener = function (CollectDependentClassesEvent $event) {
             $event->addClassDependencies(TestEmployee::class, [TestProduct::class]);
@@ -486,8 +485,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
      */
     public function testSaveForNotSupportedEntity()
     {
-        $this->loadFixtures([LoadOtherWebsite::class]);
-        $this->loadFixtures([LoadProductsToIndex::class]);
+        $this->loadFixtures([LoadOtherWebsite::class, LoadProductsToIndex::class]);
 
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
@@ -535,8 +533,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
 
     public function testSaveForSingleEntityAndAllWebsites()
     {
-        $this->loadFixtures([LoadOtherWebsite::class]);
-        $this->loadFixtures([LoadProductsToIndex::class]);
+        $this->loadFixtures([LoadOtherWebsite::class, LoadProductsToIndex::class]);
         $this->setClassSupportedExpectation(TestProduct::class, true);
         $this->setEntityAliasExpectation();
         $this->setGetEntityConfigExpectation();
@@ -571,8 +568,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
 
     public function testSaveForSeveralEntitiesAndAllWebsites()
     {
-        $this->loadFixtures([LoadOtherWebsite::class]);
-        $this->loadFixtures([LoadProductsToIndex::class]);
+        $this->loadFixtures([LoadOtherWebsite::class, LoadProductsToIndex::class]);
 
         $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
