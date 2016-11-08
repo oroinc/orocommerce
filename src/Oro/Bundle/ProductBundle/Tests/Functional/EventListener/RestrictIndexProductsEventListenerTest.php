@@ -10,7 +10,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestT
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -55,13 +55,9 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
             $this->markTestSkipped('Disabled for Elastic Search until search method is ready in BB-4512');
         }
 
-        $indexer = $this->getContainer()->get('oro_website_search.indexer');
-        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
-        $indexer->reindex(
-            Product::class,
-            [
-                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
-            ]
+        $this->getContainer()->get('event_dispatcher')->dispatch(
+            ReindexationRequestEvent::EVENT_NAME,
+            new ReindexationRequestEvent([Product::class], [$this->getDefaultWebsiteId()], [], false)
         );
 
         $query = new Query();
@@ -69,6 +65,7 @@ class RestrictIndexProductsEventListenerTest extends WebTestCase
         $query->select('recordTitle');
         $query->getCriteria()->orderBy(['title_' . $this->getDefaultLocalizationId() => Query::ORDER_ASC]);
 
+        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
         $result = $searchEngine->search($query);
         $values = $result->getElements();
 

@@ -13,8 +13,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 
 /**
@@ -78,13 +78,9 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
      */
     private function runIndexationAndSearch()
     {
-        $indexer = $this->getContainer()->get('oro_website_search.indexer');
-        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
-        $indexer->reindex(
-            Product::class,
-            [
-                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
-            ]
+        $this->getContainer()->get('event_dispatcher')->dispatch(
+            ReindexationRequestEvent::EVENT_NAME,
+            new ReindexationRequestEvent([Product::class], [$this->getDefaultWebsiteId()], [], false)
         );
 
         $query = new Query();
@@ -92,6 +88,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $query->select('recordTitle');
         $query->getCriteria()->orderBy(['title_' . $this->getDefaultWebsiteId() => Query::ORDER_ASC]);
 
+        $searchEngine = $this->getContainer()->get('oro_website_search.engine');
         $result = $searchEngine->search($query);
 
         return $result->getElements();
