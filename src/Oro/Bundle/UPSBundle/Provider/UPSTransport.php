@@ -118,7 +118,8 @@ class UPSTransport extends AbstractRestTransport
             );
         } catch (RestException $restException) {
             $this->logger->error(
-                sprintf('Price REST request failed for transport #%s. %s',
+                sprintf(
+                    'Price REST request failed for transport #%s. %s',
                     $transportEntity->getId(),
                     $restException->getMessage()
                 )
