@@ -30,8 +30,8 @@ class ContentNodeTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyCollections(new ContentNode(), [
             ['childNodes', new ContentNode()],
             ['titles', new LocalizedFallbackValue()],
-            ['slugs', new LocalizedFallbackValue()],
-            ['contentVariantSlugs', new Slug()],
+            ['slugPrototypes', new LocalizedFallbackValue()],
+            ['slugs', new Slug()],
             ['contentVariants', new ContentVariant()],
         ]);
     }
