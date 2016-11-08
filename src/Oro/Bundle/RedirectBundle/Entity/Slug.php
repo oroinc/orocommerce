@@ -99,6 +99,7 @@ class Slug
     public function __construct()
     {
         $this->redirects = new ArrayCollection();
+        $this->scopes = new ArrayCollection();
     }
 
     /**
@@ -220,6 +221,42 @@ class Slug
     {
         if ($this->redirects->contains($redirect)) {
             $this->redirects->removeElement($redirect);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Scope[]|Collection
+     */
+    public function getScopes()
+    {
+        return $this->scopes;
+    }
+
+    /**
+     * @param Scope $scope
+     *
+     * @return $this
+     */
+    public function addScope(Scope $scope)
+    {
+        if (!$this->scopes->contains($scope)) {
+            $this->scopes->add($scope);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Scope $scope
+     *
+     * @return $this
+     */
+    public function removeScope(Scope $scope)
+    {
+        if ($this->scopes->contains($scope)) {
+            $this->scopes->removeElement($scope);
         }
 
         return $this;

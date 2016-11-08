@@ -16,11 +16,18 @@ class RedirectTest extends \PHPUnit_Framework_TestCase
             ['id', 42],
             ['from', 'url/from'],
             ['to', 'url/to'],
-            ['type', Redirect::MOVED_PERMANENTLY]
+            ['type', Redirect::MOVED_PERMANENTLY],
+            ['website', new Website()]
         ]);
+    }
 
-        $this->assertPropertyCollections(new Redirect(), [
-            ['websites', new Website()],
-        ]);
+    public function testSetFromHash()
+    {
+        $from = 'test';
+
+        $redirect = new Redirect();
+        $redirect->setFrom($from);
+
+        $this->assertAttributeEquals(md5($from), 'fromHash', $redirect);
     }
 }

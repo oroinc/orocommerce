@@ -17,9 +17,9 @@ class OroRedirectBundle implements Migration
         $this->createOroSlugScopeTable($schema);
         $this->createOroRedirectTable($schema);
         $this->createOroSlugRedirectTable($schema);
-        $this->createOroRedirectWebsiteTable($schema);
 
         /** Foreign keys generation **/
+        $this->addOroRedirectForeignKeys($schema);
         $this->addOroSlugScopeForeignKeys($schema);
         $this->addOroSlugRedirectForeignKeys($schema);
 
@@ -89,6 +89,7 @@ class OroRedirectBundle implements Migration
     {
         $table = $schema->createTable('oro_redirect');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('redirect_from', 'string', ['notnull' => true, 'length' => 1024]);
         $table->addColumn('redirect_to', 'string', ['notnull' => true, 'length' => 1024]);
         $table->addColumn('redirect_type', 'integer', ['notnull' => true, 'comment' => '(301 or 302)']);
@@ -113,18 +114,6 @@ class OroRedirectBundle implements Migration
     }
         
     /**
-     * Create oro_redirect_website table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroRedirectWebsiteTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_redirect_website');
-        $table->addColumn('website_id', 'integer', []);
-        $table->setPrimaryKey(['website_id']);
-    }
-        
-    /**
      * Add oro_slug_redirect foreign keys.
      *
      * @param Schema $schema
@@ -143,6 +132,22 @@ class OroRedirectBundle implements Migration
             ['redirect_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_redirect foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroRedirectForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_redirect');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_website'),
+            ['website_id'],
+            ['id'],
+            ['onDelete' => null, 'onUpdate' => null]
         );
     }
 }

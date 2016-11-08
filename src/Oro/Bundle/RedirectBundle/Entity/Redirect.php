@@ -2,16 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="oro_redirect", indexes={@ORM\Index(name="idx_oro_redirect_from_hash", columns={"from_hash"})})
- * @ORM\Entity
- * @ORM\HasLifecycleCallbacks
+ * @ORM\Entity(repositoryClass="Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository")
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -67,20 +64,12 @@ class Redirect
     protected $type;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinTable(name="oro_redirect_website",
-     *      joinColumns={@ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")}
-     * )
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id")
      *
-     * @var Website[]|Collection
+     * @var Website
      */
-    protected $websites;
-
-    public function __construct()
-    {
-        $this->websites = new ArrayCollection();
-    }
+    protected $website;
 
     /**
      * @return integer
@@ -105,6 +94,7 @@ class Redirect
     public function setFrom($from)
     {
         $this->from = $from;
+        $this->fromHash = md5($this->from);
         
         return $this;
     }
@@ -146,60 +136,23 @@ class Redirect
         
         return $this;
     }
-    
+
     /**
-     * @return Website[]|Collection
+     * @return Website
      */
-    public function getWebsites()
+    public function getWebsite()
     {
-        return $this->websites;
+        return $this->website;
     }
 
     /**
      * @param Website $website
-     *
      * @return $this
      */
-    public function addWebsite(Website $website)
+    public function setWebsite($website)
     {
-        if (!$this->websites->contains($website)) {
-            $this->websites->add($website);
-        }
+        $this->website = $website;
 
         return $this;
-    }
-
-    /**
-     * @param Website $website
-     *
-     * @return $this
-     */
-    public function removeWebsite(Website $website)
-    {
-        if ($this->websites->contains($website)) {
-            $this->websites->removeElement($website);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Pre persist event handler
-     *
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->fromHash = md5($this->from);
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->fromHash = md5($this->from);
     }
 }
