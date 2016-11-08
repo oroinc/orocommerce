@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class SlugTest extends \PHPUnit_Framework_TestCase
@@ -19,6 +20,8 @@ class SlugTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertPropertyAccessors(new Slug(), $properties);
+
+        $this->assertPropertyCollection(new Slug(), 'scopes', new Scope());
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SlugBundle\Tests\Functional\Entity;
+namespace Oro\Bundle\RedirectBundle\Tests\Functional\Entity;
 
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;

@@ -264,6 +264,9 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
      */
     protected function getResolvedUrl($routeName, array $routeParameters = [])
     {
-        return '/' . $this->router->generate($routeName, $routeParameters, UrlGeneratorInterface::RELATIVE_PATH);
+        return '/' . ltrim(
+            $this->router->generate($routeName, $routeParameters, UrlGeneratorInterface::RELATIVE_PATH),
+            './'
+        );
     }
 }

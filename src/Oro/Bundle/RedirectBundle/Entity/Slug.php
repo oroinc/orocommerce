@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -79,6 +80,11 @@ class Slug
      */
     protected $scopes;
 
+    public function __construct()
+    {
+        $this->scopes = new ArrayCollection();
+    }
+
     /**
      * @return integer
      */
@@ -155,6 +161,42 @@ class Slug
     public function setRouteParameters($routeParameters)
     {
         $this->routeParameters = $routeParameters;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Scope[]
+     */
+    public function getScopes()
+    {
+        return $this->scopes;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     *
+     */
+    public function addScope(Scope $scope)
+    {
+        if (!$this->scopes->contains($scope)) {
+            $this->scopes->add($scope);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Scope $scope
+     *
+     * @return $this
+     */
+    public function removeScope(Scope $scope)
+    {
+        if ($this->scopes->contains($scope)) {
+            $this->scopes->removeElement($scope);
+        }
 
         return $this;
     }
