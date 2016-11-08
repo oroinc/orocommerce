@@ -18,7 +18,9 @@ class SlugRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('slug');
         $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)
-            ->where($qb->expr()->eq('slug.url', ':url'))
+            ->where($qb->expr()->eq('slug.urlHash', ':urlHash'))
+            ->andWhere($qb->expr()->eq('slug.url', ':url'))
+            ->setParameter('urlHash', md5($url))
             ->setParameter('url', $url)
             ->setMaxResults(1);
 

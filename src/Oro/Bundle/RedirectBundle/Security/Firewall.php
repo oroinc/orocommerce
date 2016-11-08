@@ -129,7 +129,9 @@ class Firewall
             $request->server->all(),
             $request->getContent()
         );
-        $newRequest->setSession($request->getSession());
+        if ($request->hasSession()) {
+            $newRequest->setSession($request->getSession());
+        }
         $newRequest->setLocale($request->getLocale());
         $newRequest->setDefaultLocale($request->getDefaultLocale());
 

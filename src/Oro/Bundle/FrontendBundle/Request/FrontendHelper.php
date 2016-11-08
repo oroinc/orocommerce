@@ -33,13 +33,20 @@ class FrontendHelper
      */
     public function isFrontendRequest(Request $request = null)
     {
-        $request = $request ?: $this->container->get('request_stack')->getCurrentRequest();
-        if (!$request || !$this->container->getParameter('installed')) {
-            // no request means CLI i.e. not frontend
-            return false;
+        if (!$request) {
+            $request = $this->container->get('request_stack')->getCurrentRequest();
         }
 
+        return $request && $this->isFrontendUrl($request->getPathInfo());
+    }
+
+    /**
+     * @param string $url
+     * @return bool
+     */
+    public function isFrontendUrl($url)
+    {
         // the least time consuming method to check whether URL is frontend
-        return strpos($request->getPathInfo(), $this->backendPrefix) !== 0;
+        return $this->container->getParameter('installed') && strpos($url, $this->backendPrefix) !== 0;
     }
 }
