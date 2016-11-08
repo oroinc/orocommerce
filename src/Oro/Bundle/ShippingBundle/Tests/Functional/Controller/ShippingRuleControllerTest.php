@@ -65,13 +65,11 @@ class ShippingRuleControllerTest extends WebTestCase
         /** @var ShippingRule $shippingRule */
         $shippingRule = $this->getReference('shipping_rule.1');
 
-        $shipMethods = $shippingRule->getMethodConfigs()->getValues();
+        $shipMethods = $shippingRule->getMethodConfigs();
         $shipMethodsLabels = [];
         foreach ($shipMethods as $method) {
-            $label = $this->registry->getShippingMethod($method->getMethod())->getLabel();
-            if (strlen($label) > 0) {
-                $shipMethodsLabels[] = '<li>' . $this->translator->trans($label) . '</li>';
-            }
+            $shipMethodsLabels[] = $this->translator
+                ->trans($this->registry->getShippingMethod($method->getMethod())->getLabel());
         }
 
         $expectedData = [
@@ -83,7 +81,7 @@ class ShippingRuleControllerTest extends WebTestCase
                     'priority' => $shippingRule->getPriority(),
                     'currency' => $shippingRule->getCurrency(),
                     'conditions' => $shippingRule->getConditions(),
-                    'methodConfigs' => '<ol>'. implode('</br>', $shipMethodsLabels) . '</ol>',
+                    'methodConfigs' => $shipMethodsLabels,
                     'destinations' => implode('</br>', $shippingRule->getDestinations()->getValues()),
                 ],
             ],
@@ -118,7 +116,15 @@ class ShippingRuleControllerTest extends WebTestCase
         for ($i = 0; $i < $expectedDataCount; $i++) {
             foreach ($expectedData['data'][$i] as $key => $value) {
                 $this->assertArrayHasKey($key, $data[$i]);
-                $this->assertEquals(trim($value), trim($data[$i][$key]));
+                switch ($key) {
+                    case 'methodConfigs':
+                        foreach ($value as $methodLabel) {
+                            $this->assertContains($methodLabel, $data[$i][$key]);
+                        }
+                        break;
+                    default:
+                        $this->assertEquals(trim($value), trim($data[$i][$key]));
+                }
             }
         }
     }

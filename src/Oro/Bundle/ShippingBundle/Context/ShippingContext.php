@@ -13,6 +13,16 @@ use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface;
 class ShippingContext implements ShippingContextInterface
 {
     /**
+     * @var object
+     */
+    private $sourceEntity;
+
+    /**
+     * @var mixed
+     */
+    private $sourceEntityIdentifier;
+
+    /**
      * @var ShippingLineItemInterface[]
      */
     private $lineItems = [];
@@ -46,6 +56,42 @@ class ShippingContext implements ShippingContextInterface
      * @var Price
      */
     private $subtotal;
+
+    /**
+     * @return object
+     */
+    public function getSourceEntity()
+    {
+        return $this->sourceEntity;
+    }
+
+    /**
+     * @param object $sourceEntity
+     * @return $this
+     */
+    public function setSourceEntity($sourceEntity)
+    {
+        $this->sourceEntity = $sourceEntity;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSourceEntityIdentifier()
+    {
+        return $this->sourceEntityIdentifier;
+    }
+
+    /**
+     * @param mixed $sourceEntityIdentifier
+     * @return $this
+     */
+    public function setSourceEntityIdentifier($sourceEntityIdentifier)
+    {
+        $this->sourceEntityIdentifier = $sourceEntityIdentifier;
+        return $this;
+    }
 
     /**
      * @param array $items
@@ -96,7 +142,6 @@ class ShippingContext implements ShippingContextInterface
 
         return $shippingLineItem;
     }
-
 
     /**
      * @return ShippingLineItemInterface[]
@@ -171,7 +216,7 @@ class ShippingContext implements ShippingContextInterface
     {
         $this->paymentMethod = $paymentMethod;
 
-        return $this->paymentMethod;
+        return $this;
     }
 
     /**
@@ -218,93 +263,5 @@ class ShippingContext implements ShippingContextInterface
     public function getSubtotal()
     {
         return $this->subtotal;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function generateHash()
-    {
-        $lineItems = array_map(function (ShippingLineItemInterface $item) {
-            return $this->lineItemToString($item);
-        }, $this->lineItems);
-
-        // if order of line item was changed, hash should not be changed
-        usort($lineItems, function ($a, $b) {
-            return strcmp(md5($a), md5($b));
-        });
-
-        return hash('sha512', implode('', array_merge($lineItems, [
-            $this->currency,
-            $this->paymentMethod,
-            $this->addressToString($this->billingAddress),
-            $this->addressToString($this->shippingAddress),
-            $this->addressToString($this->shippingOrigin),
-            $this->subtotal ? $this->subtotal->getValue() : '',
-            $this->subtotal ? $this->subtotal->getCurrency() : '',
-        ])));
-    }
-
-    /**
-     * @param AddressInterface|null $address
-     * @return string
-     */
-    protected function addressToString(AddressInterface $address = null)
-    {
-        return $address ? implode('', [
-            $address->getStreet(),
-            $address->getStreet2(),
-            $address->getCity(),
-            $address->getRegionName(),
-            $address->getRegionCode(),
-            $address->getPostalCode(),
-            $address->getCountryName(),
-            $address->getCountryIso2(),
-            $address->getCountryIso3(),
-            $address->getOrganization(),
-        ]) : '';
-    }
-
-    /**
-     * @param ShippingLineItemInterface $item
-     * @return string
-     */
-    protected function lineItemToString(ShippingLineItemInterface $item)
-    {
-        $strings = [
-            $item->getEntityIdentifier(),
-            $item->getQuantity(),
-            $item->getProductUnitCode()
-        ];
-
-        if ($item->getProduct()) {
-            $strings[] = $item->getProduct()->getId();
-            $strings[] = $item->getProduct()->getSku();
-        }
-
-        if ($item->getPrice()) {
-            $strings[] = $item->getPrice()->getValue();
-            $strings[] = $item->getPrice()->getCurrency();
-        }
-
-        if ($item->getWeight()) {
-            $strings[] = $item->getWeight()->getValue();
-            if ($item->getWeight()->getUnit()) {
-                $strings[] = $item->getWeight()->getUnit()->getCode();
-            }
-        }
-
-        if ($item->getDimensions()) {
-            if ($item->getDimensions()->getValue()) {
-                $strings[] = $item->getDimensions()->getValue()->getHeight();
-                $strings[] = $item->getDimensions()->getValue()->getLength();
-                $strings[] = $item->getDimensions()->getValue()->getWidth();
-            }
-            if ($item->getDimensions()->getUnit()) {
-                $strings[] = $item->getDimensions()->getUnit()->getCode();
-            }
-        }
-
-        return implode('', $strings);
     }
 }

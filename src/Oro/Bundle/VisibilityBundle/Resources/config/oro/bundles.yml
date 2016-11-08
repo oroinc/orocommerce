@@ -1,0 +1,2 @@
+bundles:
+    - { name: Oro\Bundle\VisibilityBundle\OroVisibilityBundle, priority: 26 }
