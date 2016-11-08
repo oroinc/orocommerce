@@ -4,8 +4,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ImportExport\DataConverter;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\ImportExportBundle\Converter\RelationCalculator;
-use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
 use Oro\Bundle\ProductBundle\ImportExport\DataConverter\ProductDataConverter;
 
 class ProductDataConverterTest extends \PHPUnit_Framework_TestCase
@@ -27,7 +27,7 @@ class ProductDataConverterTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fieldHelper = $this->getMockBuilder('Oro\Bundle\ImportExportBundle\Field\FieldHelper')
+        $this->fieldHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\Helper\FieldHelper')
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -5,7 +5,7 @@
 .table>tfoot>tr>th,
 .table>thead>tr>td,
 .table>thead>tr>th {
-  border-color: $theme-lighter-gray-color;
+  border-color: get-color('additional', 'light');
 }
 
 //Bootstrap button override
@@ -67,7 +67,7 @@
   &.btn-default {
     border: 0;
 
-    background: $theme-gray-color;
+    background: get-color('additional', 'base');
   }
 
   &.theme-btn {
@@ -112,24 +112,24 @@
   &.btn-dark {
     position: relative;
 
-    background: $theme-dark-gray-color;
-    color: $base-white-color;
+    background: get-color('additional', 'darker');
+    color: get-color('additional', 'ultra');
 
     &:hover {
-      background: lighten($theme-dark-gray-color, 5%);
+      background: lighten(get-color('additional', 'darker'), 5%);
     }
 
     &:active,
     &:focus {
       box-shadow: inset 0 3px 5px 0 rgba(0,0,0,.35);
 
-      color: $base-white-color;
+      color: get-color('additional', 'ultra');
     }
 
     > a {
       text-decoration: none !important;
 
-      color: $base-white-color;
+      color: get-color('additional', 'ultra');
 
       &.action-button:before {
         position: absolute;
@@ -148,22 +148,22 @@
   }
 
   &.btn-gray {
-    background: $theme-middle-gray-color;
-    color: $base-white-color;
+    background: get-color('additional', 'middle');
+    color: get-color('additional', 'ultra');
 
     &:hover {
-      background: lighten($theme-middle-gray-color, 5%);
+      background: lighten(get-color('additional', 'middle'), 5%);
     }
 
     &:active,
     &:focus {
       box-shadow: inset 0 3px 5px 0 rgba(0,0,0,.35);
 
-      color: $base-white-color;
+      color: get-color('additional', 'ultra');
     }
 
     > a {
-      color: $base-white-color;
+      color: get-color('additional', 'ultra');
       text-decoration: none !important;
 
       &:hover {
@@ -173,22 +173,22 @@
   }
 
   &.btn-orange {
-    background: $theme-orange-color;
-    color: $base-white-color;
+    background: get-color('primary', 'base');
+    color: get-color('additional', 'ultra');
 
     &:hover {
-      background: lighten($theme-orange-color, 5%);
+      background: lighten(get-color('primary', 'base'), 5%);
     }
 
     &:active,
     &:focus {
       box-shadow: inset 0 3px 5px 0 rgba(0,0,0,.35);
 
-      color: $base-white-color;
+      color: get-color('additional', 'ultra');
     }
 
     > a {
-      color: $base-white-color;
+      color: get-color('additional', 'ultra');
       text-decoration: none !important;
 
       &:hover {
@@ -198,8 +198,10 @@
   }
 
   &.btn-green {
+    $theme-green-color: #598527 !default;
+
     background: $theme-green-color;
-    color: $base-white-color;
+    color: get-color('additional', 'ultra');
 
     &:hover {
       background: lighten($theme-green-color, 5%);
@@ -207,12 +209,12 @@
 
     &:active,
     &:focus {
-      color: $base-white-color;
+      color: get-color('additional', 'ultra');
       box-shadow: inset 0 .3rem .5rem 0 rgba(0,0,0,.35);
     }
 
     > a {
-      color: $base-white-color;
+      color: get-color('additional', 'ultra');
       text-decoration: none !important;
 
       &:hover {
@@ -227,7 +229,7 @@
 
   &.disabled,
   &[disabled] {
-    color: $base-background-color;
+    color: get-color('additional', 'ultra');
     cursor: default;
 
     a, button {
@@ -241,7 +243,7 @@
   }
 
   &.btn_bordered {
-    border: 1px solid $theme-lighter-gray-color;
+    border: 1px solid get-color('additional', 'middle');
   }
 
   &.btn_has-options {
@@ -347,7 +349,7 @@
         width: 1px;
         height: 100%;
 
-        background: $base-white-semi-transparent;
+        background: transparentize(get-color('additional', 'ultra'), .3);
       }
     }
   }
@@ -361,7 +363,7 @@
     @include clearfix();
 
     &.disabled {
-      background: $alt-border-color;
+      background: get-color('additional', 'light');
 
       opacity: 1;
       cursor: not-allowed;
@@ -398,7 +400,7 @@
 
         &.dropdown-toggle {
           width: 43px;
-          border-left: 1px solid $base-white-semi-transparent;
+          border-left: 1px solid transparentize(get-color('additional', 'ultra'), .3);
         }
       }
     }
@@ -426,7 +428,7 @@
 
         &.dropdown-toggle {
           width: 30px;
-          border-left: 1px solid $base-white-semi-transparent;
+          border-left: 1px solid transparentize(get-color('additional', 'ultra'), .3);
         }
 
         [class^="cf-"] {
@@ -459,7 +461,7 @@
 
         &.dropdown-toggle {
           width: 36px;
-          border-left: 1px solid $base-white-semi-transparent;
+          border-left: 1px solid transparentize(get-color('additional', 'ultra'), .3);
         }
       }
     }
@@ -490,7 +492,7 @@
         &.dropdown-toggle {
           width: 48px;
           padding: 0;
-          border-left: 1px solid $base-white-semi-transparent;
+          border-left: 1px solid rgba(get-color('additional', 'ultra'), .3);
         }
       }
     }
@@ -515,7 +517,7 @@
 
         &.dropdown-toggle {
           width: 48px;
-          border-left: 1px solid $base-white-semi-transparent;
+          border-left: 1px solid rgba(get-color('additional', 'ultra'), .3);
         }
       }
     }
@@ -523,13 +525,13 @@
     &.btn_has-dropdown_separate {
       .direct-link {
         &:active {
-          box-shadow: inset 0 2px 5px 0 $base-dark-semi-transparent;
+          box-shadow: inset 0 2px 5px 0 rgba(get-color('additional', 'darker'), .3);
         }
       }
 
       .dropdown-toggle {
         &:active {
-          box-shadow: inset 0 2px 5px 0 $base-dark-semi-transparent;
+          box-shadow: inset 0 2px 5px 0 rgba(get-color('additional', 'darker'), .3);
         }
       }
 
@@ -560,7 +562,7 @@
   vertical-align: middle;
   padding: 0;
 
-  color: $base-white-color;
+  color: get-color('additional', 'ultra');
   font-weight: 400;
   text-align: center;
 
@@ -647,7 +649,7 @@
   }
 
   &.badge_bordered {
-    border: 1px solid $theme-lighter-gray-color;
+    border: 1px solid get-color('additional', 'light');
   }
 
   &.badge_circle {
@@ -664,83 +666,89 @@
 
   &.badge_transparent {
     background: transparent;
-    color: $base-font-color-lighter;
+    color: get-color('additional', 'dark');
   }
 
   &.badge_dark {
-    background: $theme-dark-gray-color;
+    background: get-color('additional', 'darker');
   }
 
   &.badge_white {
-    background: $base-white-color;
+    background: get-color('additional', 'ultra');
   }
 
   &.badge_l-dark {
-    background: $base-font-color-lighter;
+    background: get-color('additional', 'dark');
   }
 
   &.badge_orange {
-    background:$theme-orange-color;
+    background:get-color('primary', 'base');
   }
 
   &.badge_orange-light {
+    $theme-orange-color-light: #f2994b !default;
+
     background: $theme-orange-color-light;
   }
 
   &.badge_yellow {
+    $theme-yellow-color: #fcb91d !default;
+
     background: $theme-yellow-color;
   }
 
   &.badge_blue {
-    background: $theme-blue-color;
+    background: get-color('ui', 'focus');
   }
 
   &.badge_l-gray {
-    background: $theme-bucket-color;
+    background: get-color('additional', 'base');
   }
 
   &.badge_ll_gray {
-    background: $theme-light-gray-color;
+    background: get-color('additional', 'middle');
   }
 
   &.badge_lll_gray {
-    background: $theme-lightest-gray-color;
-    color: $base-font-color;
+    background: get-color('additional', 'base');
+    color: get-color('additional', 'dark');
   }
 
   &.badge_complete {
-    color: $base-white-color;
+    $theme-checkout-complete: #7ea6a4 !default;
+
+    color: get-color('additional', 'ultra');
     background: $theme-checkout-complete;
   }
 
   &.badge_error {
-    color: $base-white-color;
-    background: $theme-error-font-color;
+    color: get-color('additional', 'ultra');
+    background: get-color('ui', 'error-dark');
   }
 
   &.badge_alert {
-    color: $base-white-color;
-    background: $theme-alert-font-color;
+    color: get-color('additional', 'ultra');
+    background: get-color('ui', 'warning-dark');
   }
 
   &.badge_warning {
-    color: $base-white-color;
-    background: $theme-alert-font-color;
+    color: get-color('additional', 'ultra');
+    background: get-color('ui', 'warning-dark');
   }
 
   &.badge_success {
-    color: $base-white-color;
-    background: $theme-notice-font-color;
+    color: get-color('additional', 'ultra');
+    background: get-color('ui', 'success-dark');
   }
 
   &.badge_notice {
-    color: $base-white-color;
-    background: $theme-notice-font-color;
+    color: get-color('additional', 'ultra');
+    background: get-color('ui', 'success-dark');
   }
 
   &.badge_info {
-    color: $base-white-color;
-    background: $theme-notice-font-color;
+    color: get-color('additional', 'ultra');
+    background: get-color('ui', 'success-dark');
   }
 
   &.badge-hidden {
@@ -761,8 +769,8 @@
   }
 
   &.disabled {
-    border-color: $theme-lightest-gray-color;
-    color: $base-font-color-lightest;
+    border-color: get-color('additional', 'base');
+    color: get-color('additional', 'light');
   }
 
   i {

@@ -1,0 +1,261 @@
+.main-menu {
+  max-height: 49px;
+
+  vertical-align: middle;
+
+  .container-fluid {
+    position: relative;
+  }
+
+  &__list {
+    @include list-normalize();
+
+    display: flex;
+
+    @include clearfix();
+
+    &--nested {
+      display: block;
+
+      font-size: 0;
+    }
+  }
+
+  &__item {
+    display: block;
+    min-height: 49px;
+
+    &[data-dropdown-trigger] {
+      &:hover {
+        .main-menu__sublist-container {
+          display: block;
+        }
+
+        .order-widget--dropdown-mode {
+          display: block;
+        }
+
+        .messages-widget__dropdown-mode {
+          display: block;
+        }
+      }
+    }
+
+    .messages-widget {
+      &__trigger {
+        margin-top: 9px;
+      }
+
+      &__title {
+        margin-left: 5px;
+
+        @media (max-width: 1069px) {
+          font-size: 13px;
+        }
+
+        @media (max-width: $screen-md) {
+          display: none;
+        }
+      }
+    }
+
+    .cart-widget__content {
+      @media (max-width: 820px) {
+        margin: 9px -5px 0 0;
+      }
+    }
+
+    &--ancestor {
+      .main-menu__link {
+        text-indent: 4px;
+      }
+
+      &:hover {
+        .main-menu__link {
+          background: get-color('additional', 'base');
+        }
+      }
+    }
+
+    &--nested {
+      position: relative;
+
+      display: inline-block;
+      vertical-align: middle;
+      padding-left: 22px;
+      padding-right: 24px;
+
+      background: get-color('additional', 'base');
+      font-size: $base-font-size;
+
+      @media (max-width: 1069px) {
+        padding-left: 13px;
+        padding-right: 15px;
+      }
+
+      @media (max-width: $screen-md) {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      + .main-menu__item--nested {
+        border-left: 1px solid get-color('additional', 'ultra');
+      }
+
+      .order-widget--dropdown-mode {
+        top: 48px;
+        right: 0;
+
+        display: none;
+        margin-right:10px;
+
+        font-size: $base-font-size - 1;
+
+        .order-widget__item{
+          &:first-child {
+            border-top: 0;
+          }
+        }
+      }
+    }
+  }
+
+  &__link {
+    text-transform: uppercase;
+
+    @media (max-width: 1069px) {
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    > i {
+      margin: 0;
+    }
+
+    &:hover, &:focus {
+      color: get-color('additional', 'dark');
+      text-decoration: none;
+    }
+  }
+
+  &__sublist {
+    display: flex;
+    padding: 15px 40px 15px 0;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.2);
+
+    background: get-color('additional', 'ultra');
+
+    @media (max-width: 1024px) {
+      padding: 15px 30px 30px 0;
+    }
+
+    @include clearfix();
+
+    &__item {
+      position: relative;
+
+      flex-grow: 1;
+      margin: 10px 0 0;
+      padding: 0 0 0 40px;
+
+      @media (max-width: 1069px) {
+        padding: 0 0 0 25px;
+      }
+
+      &_has-sales-block {
+        flex-grow: 0;
+
+        @media (max-width: $screen-md) {
+          order: 1;
+        }
+      }
+
+      &_has-2columns {
+        flex-grow: 2;
+      }
+
+      &:last-child {
+        &:after {
+          display: none;
+        }
+      }
+
+      &:after {
+        @include after();
+
+        top: 40px;
+        right: 0;
+
+        height: calc(100% - 38px);
+        width: 1px;
+
+        background: get-color(additional, 'light');
+      }
+    }
+
+    &__sublist-item {
+      margin: 10px 0 0;
+
+      a {
+        color: get-color('additional', 'dark');
+
+        &:hover {
+          color: get-color('additional', 'dark');
+        }
+      }
+
+      ul {
+        @include list-normalize();
+        padding: 0 0 0 15px;
+
+        li {
+          margin: 10px 0 0;
+        }
+
+        a {
+          color: get-color('additional', 'dark');
+
+          &:hover {
+            color: get-color('additional', 'dark');
+          }
+        }
+      }
+    }
+
+    &__title {
+      color: get-color('primary', 'base');
+      text-transform: uppercase;
+    }
+
+    &--nested {
+      @include list-normalize();
+
+      margin: 15px 0 0;
+
+      &.top-nav__sublist--has-sibling {
+        float: left;
+        width: 50%;
+        margin: 5px 0 0;
+      }
+    }
+  }
+}
+
+@include breakpoint('tablet') {
+  .main-menu {
+    display: block;
+
+    max-height: none;
+    padding: 10px 15px 0 15px;
+
+    &__item {
+      min-height: 0;
+    }
+
+    &__link {
+      padding: 5px 0;
+
+      text-align: left;
+    }
+  }
+}

@@ -1,11 +1,11 @@
 .loading-mask .loading-frame .box .loading-content {
-    background: #fff url('#{global-url}/orofrontend/default/images/loader.gif') no-repeat center left;
+    background: get-color('additional', 'ultra') url('#{global-url}/orofrontend/default/images/loader.gif') no-repeat center left;
 }
 
 .loading {
     > .loader-mask {
         .loader-content {
-            background: #fff url('#{$global-url}/orofrontend/default/images/loader.gif') no-repeat center left;
+            background: get-color('additional', 'ultra') url('#{$global-url}/orofrontend/default/images/loader.gif') no-repeat center left;
         }
     }
 }

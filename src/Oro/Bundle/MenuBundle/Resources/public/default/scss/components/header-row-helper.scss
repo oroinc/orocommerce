@@ -1,0 +1,20 @@
+.header-row-helper {
+    &:checked {
+        ~ .header-row__toggle {
+            visibility: inherit;
+
+            transition: opacity .2s;
+
+            opacity: 1;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .header-row-helper {
+        &:checked ~ .header-row__trigger {
+            border-bottom-width: 0;
+            box-shadow: inset 0 4px 4px -2px rgba(0, 0, 0, .2);
+        }
+    }
+}

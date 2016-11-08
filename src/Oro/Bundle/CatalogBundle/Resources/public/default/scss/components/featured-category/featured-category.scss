@@ -4,14 +4,14 @@
 
     vertical-align: top;
 
-    color: $base-dark-color;
+    color: get-color('additional', 'darker');
 
     &__image {
         display: block;
         max-width: 100%;
         max-height: 260px;
 
-        border: 1px solid $theme-lighter-gray-color;
+        border: 1px solid get-color('additional', 'light');
     }
 
     &__desc {
@@ -38,7 +38,7 @@
     &:hover {
         text-decoration: none;
 
-        color: $base-dark-color;
+        color: get-color('additional', 'darker');
 
         .featured-category__name {
             text-decoration: underline;
