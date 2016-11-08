@@ -22,9 +22,14 @@ class ScopeManager
     protected $registry;
 
     /**
-     * @var
+     * @var EntityFieldProvider
      */
     protected $entityFieldProvider;
+
+    /**
+     * @var ServiceLink
+     */
+    protected $entityFieldProviderLink;
 
     /**
      * @var PropertyAccessor
@@ -33,12 +38,12 @@ class ScopeManager
 
     /**
      * @param ManagerRegistry $registry
-     * @param EntityFieldProvider $entityFieldProvider
+     * @param ServiceLink $entityFieldProviderLink
      */
-    public function __construct(ManagerRegistry $registry, EntityFieldProvider $entityFieldProvider)
+    public function __construct(ManagerRegistry $registry, ServiceLink $entityFieldProviderLink)
     {
         $this->registry = $registry;
-        $this->entityFieldProvider = $entityFieldProvider;
+        $this->entityFieldProviderLink = $entityFieldProviderLink;
     }
 
     /**
@@ -178,9 +183,9 @@ class ScopeManager
      */
     public function getCriteria($scopeType, $context = null)
     {
-        $criteria = $this->getNullContext();
+        $criteria = [];
         if (self::BASE_SCOPE == $scopeType && is_array($context)) {
-            $criteria = array_replace($criteria, $context);
+            $criteria = $context;
         } else {
             /** @var ScopeCriteriaProviderInterface[] $providers */
             $providers = $this->getProviders($scopeType);
@@ -190,6 +195,11 @@ class ScopeManager
                 } else {
                     $criteria = array_merge($criteria, $provider->getCriteriaByContext($context));
                 }
+            }
+        }
+        foreach ($this->getNullContext() as $emptyKey => $emptyValue) {
+            if (!isset($criteria[$emptyKey])) {
+                $criteria[$emptyKey] = $emptyValue;
             }
         }
 
@@ -203,7 +213,7 @@ class ScopeManager
     {
         if ($this->nullContext === null) {
             $this->nullContext = [];
-            $fields = $this->entityFieldProvider->getRelations(Scope::class);
+            $fields = $this->getEntityFieldProvider()->getRelations(Scope::class);
             foreach ($fields as $field) {
                 $this->nullContext[$field['name']] = null;
             }
@@ -271,5 +281,17 @@ class ScopeManager
         }
 
         return new ScopeCriteria($criteria);
+    }
+
+    /**
+     * @return EntityFieldProvider
+     */
+    protected function getEntityFieldProvider()
+    {
+        if (!$this->entityFieldProvider) {
+            $this->entityFieldProvider = $this->entityFieldProviderLink->getService();
+        }
+
+        return $this->entityFieldProvider;
     }
 }

@@ -1,6 +1,6 @@
 {% block __oro_customer_only_content_form__form_submit_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' button button--large'
+        '~class': ' button button--large button--full-in-mobile'
     }) %}
     {{ block_widget(block, {attr: attr}) }}
 {% endblock %}

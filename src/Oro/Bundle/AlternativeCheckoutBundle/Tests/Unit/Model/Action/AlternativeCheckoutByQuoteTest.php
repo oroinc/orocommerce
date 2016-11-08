@@ -8,7 +8,7 @@ use Oro\Bundle\AlternativeCheckoutBundle\Model\Action\AlternativeCheckoutByQuote
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Component\Action\Model\ContextAccessor;
+use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Component\Action\Tests\Unit\Action\Stub\StubStorage;
 
 class AlternativeCheckoutByQuoteTest extends \PHPUnit_Framework_TestCase

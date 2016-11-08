@@ -13,7 +13,6 @@ class NamespaceMigrationProvider implements NamespaceMigrationProviderInterface
             'OroB2BAccountBundle'               => 'OroB2BCustomerBundle',
             'Oro\Bundle\AccountBundle'          => 'Oro\Bundle\CustomerBundle',
             'OroAccountBundle'                  => 'OroCustomerBundle',
-            'AccountBundle'                     => 'CustomerBundle',
             'oro.account.entity_plural_label'   => 'oro.customer.account.entity_plural_label',
             'oro.account.entity_label'          => 'oro.customer.account.entity_label',
             'oro.account.id'                    => 'oro.customer.account.id',

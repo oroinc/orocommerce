@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShippingBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
@@ -134,8 +133,12 @@ class OroShippingBundleInstaller implements Installation, NoteExtensionAwareInte
         $table->addColumn('conditions', 'text', ['notnull' => false]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('stop_processing', 'boolean', ['default' => false]);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['enabled', 'currency'], 'oro_shipping_rule_en_cur_idx', []);
+        $table->addIndex(['created_at'], 'idx_oro_shipping_rule_created_at', []);
+        $table->addIndex(['updated_at'], 'idx_oro_shipping_rule_updated_at', []);
 
         $this->noteExtension->addNoteAssociation($schema, 'oro_shipping_rule');
     }

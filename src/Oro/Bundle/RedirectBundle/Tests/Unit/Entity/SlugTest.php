@@ -9,7 +9,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 class SlugTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
-
+    
     public function testProperties()
     {
         $properties = [
@@ -36,6 +36,7 @@ class SlugTest extends \PHPUnit_Framework_TestCase
         $slug = new Slug();
         $slug->setUrl($fullUrl);
         $this->assertEquals($slugUrl, $slug->getSlugUrl());
+        $this->assertAttributeEquals(md5($slug->getUrl()), 'urlHash', $slug);
     }
 
     /**

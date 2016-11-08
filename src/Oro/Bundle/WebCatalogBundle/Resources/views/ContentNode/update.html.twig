@@ -68,8 +68,8 @@
         form_row(form.titles)
     ] %}
 
-    {% if form.slugs is defined %}
-        {% set formRows = formRows|merge([form_row(form.slugs)]) %}
+    {% if form.slugPrototypes is defined %}
+        {% set formRows = formRows|merge([form_row(form.slugPrototypes)]) %}
     {% endif %}
 
     {% set dataBlocks = [

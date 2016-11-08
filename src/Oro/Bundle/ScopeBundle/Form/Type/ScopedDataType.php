@@ -132,13 +132,11 @@ class ScopedDataType extends AbstractType
      */
     public function preSetData(FormEvent $event)
     {
+        if (!is_array($event->getData())) {
+            return;
+        }
         foreach ($event->getData() as $scopeId => $value) {
-            $data = [];
-            if (is_array($value)) {
-                $data = $value;
-            }
-
-            $this->addTypeByScope($event->getForm(), $scopeId, $data);
+            $this->addTypeByScope($event->getForm(), $scopeId, $value);
         }
     }
 

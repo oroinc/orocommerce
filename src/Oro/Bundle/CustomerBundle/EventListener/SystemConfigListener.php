@@ -47,6 +47,9 @@ class SystemConfigListener
         }
     }
 
+    /**
+     * @param ConfigSettingsUpdateEvent $event
+     */
     public function onSettingsSaveBefore(ConfigSettingsUpdateEvent $event)
     {
         $settingsKey = $this->getSettingsKey();

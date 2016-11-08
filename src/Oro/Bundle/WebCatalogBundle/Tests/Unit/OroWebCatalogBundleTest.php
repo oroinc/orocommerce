@@ -35,7 +35,7 @@ class OroWebCatalogBundleTest extends \PHPUnit_Framework_TestCase
             new DefaultFallbackExtensionPass([
                 ContentNode::class => [
                     'title' => 'titles',
-                    'slug' => 'slugs'
+                    'slugPrototype' => 'slugPrototypes'
                 ]
             ])
         ];
