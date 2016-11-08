@@ -1,0 +1,7 @@
+.page-footer {
+    background: get-color('additional', 'base');
+}
+
+@include breakpoint('mobile') {
+    padding: $page-footer-mobile-inner-offset;
+}

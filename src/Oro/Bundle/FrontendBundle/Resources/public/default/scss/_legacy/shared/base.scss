@@ -13,38 +13,9 @@
 }
 
 //Bootstrap override
-.container-fluid,
-.main {
+.container-fluid {
   max-width: $site-width;
   margin: 0 auto;
-}
-
-.main {
-  margin: 0 auto 70px;
-
-  display: flex;
-
-  &_home {
-    max-width: 100%;
-  }
-
-  @include clearfix();
-
-  @media (max-width: $screen-sm) {
-    margin-bottom: 0;
-  }
-
-  &.sticky-nav {
-    @media (max-width: $screen-md) {
-      padding-top: 5rem;
-    }
-  }
-}
-
-@include breakpoint('tablet-small') {
-  .main {
-    flex-direction: column;
-  }
 }
 
 //Links

@@ -1,0 +1,20 @@
+.header-row-helper {
+    &:checked {
+        ~ .header-row__trigger {
+            z-index: auto;
+        }
+
+        ~ .header-row-overlay {
+            display: none;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .header-row-helper {
+        &:checked ~ .header-row__trigger {
+            background: get-color('additional', 'ultra');
+            border-bottom: 1px solid get-color('additional', 'light');
+        }
+    }
+}

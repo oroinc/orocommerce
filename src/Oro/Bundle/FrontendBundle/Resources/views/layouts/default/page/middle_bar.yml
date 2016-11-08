@@ -2,6 +2,8 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroFrontendBundle:layouts:default/page/middle_bar.html.twig'
+        - '@remove':
+            id: logo
         - '@addTree':
             items:
                 middle_bar:
@@ -13,7 +15,7 @@ layout:
                 middle_bar_center:
                     blockType: container
             tree:
-                header:
+                page_header:
                     middle_bar:
                         middle_bar_center: ~
                             #middle_bar_search: ~

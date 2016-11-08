@@ -11,7 +11,7 @@ layout:
 
         - '@add':
             id: order_history
-            parentId: content
+            parentId: page_content
             blockType: text
             prepend: true
             options:
@@ -19,7 +19,7 @@ layout:
 
         - '@add':
             id: checkouts_container
-            parentId: content
+            parentId: page_content
             blockType: container
             siblingId: order_history
 

@@ -19,7 +19,7 @@ layout:
                 sidebar_main_menu_container:
                     blockType: container
             tree:
-                sidebar_left:
+                page_sidebar:
                     sidebar_quick_access_menu_container: ~
                     sidebar_product_categories_container: ~
                     sidebar_main_menu_container: ~

@@ -17,8 +17,8 @@
 .header-row {
     display: flex;
 
-    border: 1px solid get-color('additional', 'light');
-    border-width: 1px 0;
+    max-width: $site-width;
+    margin: 0 auto;
 
     justify-content: space-between;
 
@@ -31,13 +31,7 @@
     }
 
     &__trigger {
-        display: block;
-
-        margin: 0;
-        padding: 7px 20px;
-
         border-right: 1px solid get-color('additional', 'ultra');
-        background-color: get-color('additional', 'base');
 
         &.active,
         &:hover {
@@ -55,34 +49,8 @@
     }
 }
 
-@include breakpoint('desktop') {
-    %hidden-on-desktop {
-        &.hidden-on-desktop {
-            display: none !important;
-        }
-    }
-
-    .header-row {
-        &__container {
-            @extend %hidden-on-desktop;
-        }
-
-        &__trigger {
-            @extend %hidden-on-desktop;
-
-            padding: 0;
-        }
-
-        &__toggle {
-            @extend %hidden-on-desktop;
-        }
-    }
-}
-
 @include breakpoint('tablet') {
     .header-row {
-        margin: 0 -15px;
-
         &__container {
             position: static;
 
@@ -94,14 +62,9 @@
             }
         }
 
-        &__trigger {
-            position: relative;
-            z-index: 9;
-
-            text-align: center;
-        }
-
         &__toggle {
+            display: block;
+
             position: absolute;
             z-index: 9;
             right: 0;
@@ -130,14 +93,6 @@
             top: 0 !important;
             bottom: 0;
             overflow-y: scroll;
-        }
-
-        & .main-menu__sublist-container {
-            width: auto;
-        }
-
-        & .main-menu__sublist {
-            display: block;
         }
     }
 }

@@ -75,7 +75,7 @@ layout:
                         route_name: oro_rfp_frontend_request_index
                         text: 'oro.frontend.rfp.request.sections.back.label'
             tree:
-                content:
+                page_content:
                     rfp_request_view_page:
                         rfp_request_view_top:
                             rfp_request_view_top_actions: ~

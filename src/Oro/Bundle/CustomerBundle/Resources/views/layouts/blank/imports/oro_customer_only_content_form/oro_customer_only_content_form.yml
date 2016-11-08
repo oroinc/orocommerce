@@ -5,7 +5,7 @@ layout:
         - '@remove':
             id: sticky_panel
         - '@remove':
-            id: main
+            id: page_container
         - '@remove':
             id: footer
 

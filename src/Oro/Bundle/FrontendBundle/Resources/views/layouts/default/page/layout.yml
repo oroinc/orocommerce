@@ -6,43 +6,39 @@ layout:
             id: title
             optionName: value
             optionValue: oro_frontend.home_page.title
-        - '@addTree':
-            items:
-                header:
-                    blockType: container
-                sticky_panel:
-                    blockType: container
-                sticky_panel_content:
-                    blockType: container
-                notification:
-                    blockType: block
-                main:
-                    blockType: container
-                content:
-                    blockType: container
-                sidebar_left:
-                    blockType: container
-                page_title_container:
-                    blockType: container
-                page_title:
-                    blockType: text
-                    options:
-                        text: ~
-            tree:
-                wrapper:
-                    header: ~
-                    sticky_panel:
-                        sticky_panel_content: ~
-                    notification: ~
-                    main:
-                        content:
-                            page_title_container:
-                                page_title: ~
-                        sidebar_left: ~
+
+        - '@add':
+            id: sticky_panel
+            parentId: page_container
+            siblingId: page_header
+            blockType: container
+        - '@add':
+            id: sticky_panel_content
+            parentId: sticky_panel
+            blockType: container
+
+        - '@add':
+            id: notification
+            parentId: page_container
+            siblingId: sticky_panel
+            blockType: block
+
+        - '@add':
+            id: page_title_container
+            parentId: page_content
+            blockType: container
+        - '@add':
+            id: page_title
+            parentId: page_title_container
+            blockType: text
+            options:
+                text: ~
+
         - '@add':
             id: require_js_config
             parentId: require_js
             blockType: block
+
         - '@add':
             id: sticky_header_row
             parentId: sticky_panel_content
@@ -51,6 +47,7 @@ layout:
             id: sticky_element_notification
             parentId: sticky_panel_content
             blockType: block
+
         - '@setOption':
             id: title
             optionName: separator

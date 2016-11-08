@@ -3,15 +3,17 @@ $sidebar-width: 255px !default;
 .sidebar {
     width: $sidebar-width;
 
-    padding-left: 15px;
+    &--left {
+        padding-right: 30px;
 
-    &_left {
         order: 1;
         flex: none;
     }
 
-    &_right {
+    &--right {
         width: sidebar-width - 40px;
+        padding-left: 30px;
+
         order: 2;
     }
 }
@@ -19,6 +21,6 @@ $sidebar-width: 255px !default;
 @include breakpoint('tablet-small') {
     .sidebar {
         width: 100%;
-        padding: 0 15px;
+        padding: 0;
     }
 }
