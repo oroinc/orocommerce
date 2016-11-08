@@ -203,7 +203,7 @@ class SlugUrlMatcher implements RequestMatcherInterface
      */
     protected function getSlug($url)
     {
-        /** @var SlugRepository $em */
+        /** @var SlugRepository $repository */
         $repository = $this->registry
             ->getManagerForClass(Slug::class)
             ->getRepository(Slug::class);

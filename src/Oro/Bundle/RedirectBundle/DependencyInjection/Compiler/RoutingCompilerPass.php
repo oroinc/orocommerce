@@ -6,6 +6,9 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * Decorate default URL matcher with Slug aware matcher, replace default matcher with decorated one in router listener.
+ */
 class RoutingCompilerPass implements CompilerPassInterface
 {
     /**

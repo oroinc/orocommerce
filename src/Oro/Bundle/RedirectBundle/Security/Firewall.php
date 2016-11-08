@@ -34,14 +34,16 @@ class Firewall
     /**
      * @param FirewallMapInterface $map
      * @param EventDispatcherInterface $dispatcher
+     * @param FirewallFactory $firewallFactory
      * @param RequestContext|null $context
      */
     public function __construct(
         FirewallMapInterface $map,
         EventDispatcherInterface $dispatcher,
+        FirewallFactory $firewallFactory,
         RequestContext $context = null
     ) {
-        $this->baseFirewall = new FrameworkFirewall($map, $dispatcher);
+        $this->baseFirewall = $firewallFactory->create($map, $dispatcher);
         $this->context = $context;
     }
 
