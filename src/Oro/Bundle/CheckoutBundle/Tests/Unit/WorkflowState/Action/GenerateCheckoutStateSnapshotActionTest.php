@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Action;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
-use Oro\Component\Action\Model\ContextAccessor;
+use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Action\GenerateCheckoutStateSnapshotAction;
 
