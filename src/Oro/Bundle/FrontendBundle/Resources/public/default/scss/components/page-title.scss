@@ -8,8 +8,6 @@
 
 @include breakpoint('tablet') {
     .page-title {
-        margin: $page-title-offset--s;
-
         &--decreased {
             margin: $page-title-offset--m;
         }

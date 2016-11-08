@@ -4,7 +4,7 @@ services:
         arguments:
             - '@oro_security.security_facade'
         tags:
-            - { name: oro_workflow.condition, alias: assert_account }
+            - { name: oro_action.condition, alias: assert_account }
 
     oro_alternativecheckout.conditions.less_order_total_limit:
         class: 'Oro\Bundle\AlternativeCheckoutBundle\Condition\OrderTotalLimit'
@@ -12,12 +12,12 @@ services:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
-            - { name: oro_workflow.condition, alias: less_order_total_limit }
+            - { name: oro_action.condition, alias: less_order_total_limit }
 
     oro_alternativecheckout.model.action.checkout_to_quote:
         class: 'Oro\Bundle\AlternativeCheckoutBundle\Model\Action\AlternativeCheckoutByQuote'
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@doctrine'
         tags:
             - { name: oro_action.action, alias: alternative_checkout_to_quote }

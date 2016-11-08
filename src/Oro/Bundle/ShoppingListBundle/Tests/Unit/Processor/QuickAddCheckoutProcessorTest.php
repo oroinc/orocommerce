@@ -42,6 +42,9 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
      */
     protected $operationName;
 
+    /**
+     * @return string
+     */
     public function getProcessorName()
     {
         return QuickAddCheckoutProcessor::NAME;

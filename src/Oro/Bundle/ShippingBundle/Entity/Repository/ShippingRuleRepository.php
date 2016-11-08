@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
 
@@ -65,5 +66,24 @@ class ShippingRuleRepository extends EntityRepository
                 ->setParameter('rules', $enabledRulesIds)
                 ->getQuery()->execute();
         }
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getLastUpdateAt()
+    {
+        $updatedAt = $this->createQueryBuilder('s')
+            ->select('s.updatedAt')
+            ->orderBy('s.updatedAt', Criteria::DESC)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->execute();
+
+        if (count($updatedAt) === 1) {
+            $updatedAt = reset($updatedAt);
+            return $updatedAt['updatedAt'];
+        }
+        return null;
     }
 }

@@ -4,14 +4,12 @@ namespace Oro\Bundle\CustomerBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
+use Oro\Bundle\CustomerBundle\Entity\Account;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorInterface;
 use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorTrait;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class AccountRepository extends EntityRepository implements BatchIteratorInterface
 {
@@ -55,41 +53,6 @@ class AccountRepository extends EntityRepository implements BatchIteratorInterfa
 
         return $children;
     }
-
-    /**
-     * @param Category $category
-     * @param $visibility
-     * @param array $restrictedAccountIds
-     * @return array
-     */
-    public function getCategoryAccountIdsByVisibility(
-        Category $category,
-        $visibility,
-        array $restrictedAccountIds = null
-    ) {
-        $qb = $this->createQueryBuilder('account');
-
-        $qb->select('account.id')
-            ->join(
-                'OroCustomerBundle:Visibility\AccountCategoryVisibility',
-                'accountCategoryVisibility',
-                Join::WITH,
-                $qb->expr()->eq('accountCategoryVisibility.account', 'account')
-            )
-            ->where($qb->expr()->eq('accountCategoryVisibility.category', ':category'))
-            ->andWhere($qb->expr()->eq('accountCategoryVisibility.visibility', ':visibility'))
-            ->setParameters([
-                'category' => $category,
-                'visibility' => $visibility,
-            ]);
-
-        if ($restrictedAccountIds !== null) {
-            $qb->andWhere($qb->expr()->in('account.id', ':restrictedAccountIds'))
-                ->setParameter('restrictedAccountIds', $restrictedAccountIds);
-        }
-
-        // Return only account ids
-        return array_map('current', $qb->getQuery()->getScalarResult());
     }
 
     /**
@@ -108,5 +71,4 @@ class AccountRepository extends EntityRepository implements BatchIteratorInterfa
             ['account' => 'a.id']
         );
         return $qb->addCriteria($criteria);
-    }
 }

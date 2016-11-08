@@ -3,9 +3,8 @@
         'data-page-component-module': 'oroshoppinglist/js/app/components/shoppinglist-widget-view-component',
         '~data-page-component-options': {
             view: 'oroui/js/app/views/layout-subtree-view',
-            rootId : block.vars.id,
+            blockId: id,
             reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete'],
-            eventChannelId: 'shopping-list-title'
         },
         'data-dropdown-trigger': true,
         '~class': " main-menu__item main-menu__item--nested shopping-lists-frontend-widget"
@@ -21,9 +20,8 @@
         'data-page-component-module': 'oroshoppinglist/js/app/components/shoppinglist-widget-view-component',
         '~data-page-component-options': {
             view: 'oroui/js/app/views/layout-subtree-view',
-            rootId : block.vars.id,
+            blockId: id,
             reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete'],
-            eventChannelId: 'shopping-list-title'
         },
         '~class': " header-row__toggle hidden-on-desktop"
     }) %}
