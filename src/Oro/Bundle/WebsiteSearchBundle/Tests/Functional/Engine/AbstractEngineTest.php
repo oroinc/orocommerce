@@ -137,8 +137,6 @@ abstract class AbstractEngineTest extends WebTestCase
             }
         };
 
-
-
         return $listener;
     }
 
