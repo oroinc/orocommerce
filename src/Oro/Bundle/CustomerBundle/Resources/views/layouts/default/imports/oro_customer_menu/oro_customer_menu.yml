@@ -1,0 +1,7 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'oro_customer_menu.html.twig'
+        - '@move':
+            id: __container
+            parentId: sidebar_left

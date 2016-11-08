@@ -1,9 +1,9 @@
 {% block __oro_customer_menu__container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' customer-menu-container'
+        '~class': ' primary-menu-container'
     }) %}
     <div {{ block('block_attributes') }}>
-        <h3 class="customer-menu-title">
+        <h3 class="primary-menu__title">
             {{ 'oro.customer.frontend.menu.account_user_profile.label'|trans }}
         </h3>
         {{ block_widget(block) }}
@@ -24,13 +24,13 @@
             {% set linkCurrentClass = '' %}
             {% if currentUrl in requestUrl and not found %}
                 {% set itemCurrentClass = 'primary-menu__item--current' %}
-                {% set linkCurrentClass = 'link--current' %}
+                {% set linkCurrentClass = 'primary-menu__link--current' %}
             {% endif %}
 
             <li class="primary-menu__item {{ itemCurrentClass }}">
                 {{ block_widget(child, {
                     attr: layout_attr_defaults(child.vars.attr, {
-                        '~class': ' link ' ~ linkCurrentClass
+                        '~class': ' primary-menu__link ' ~ linkCurrentClass
                     })
                 }) }}
             </li>

@@ -1,37 +1,30 @@
-.account-menu {
+.primary-menu-container {
     margin-top: 35px;
-    padding: 25px 30px;
+    padding: $primary-menu-inner-offset;
 
-    background: get-color('additional', 'base');
+    background: $primary-menu-background;
     border-radius: 3px;
+}
 
-    &__section:not(:first-child) {
-        margin-top: 18px;
-    }
-
+.primary-menu {
     &__title {
         position: relative;
 
         margin-bottom: 9px;
 
-        font-size: 15px;
+        font-size: $primary-menu-title-size;
         font-weight: 400;
         text-transform: uppercase;
-    }
-
-    &__list {
-        @include list-normalize();
     }
 
     &__item {
         position: relative;
 
-        margin: 5px 0 0;
-        padding: 0 0 0 18px;
+        padding: $primary-menu-item-inner-offset;
 
         &--current {
             &:before {
-                top: 5px;
+                top: 10px;
                 left: 0;
 
                 width: 7px;
@@ -42,17 +35,7 @@
 
                 @include after();
             }
-
-            .account-menu__link {
-                font-weight: 700;
-            }
         }
-    }
-
-    &__link {
-        display: block;
-
-        color: get-color('additional', 'dark')
     }
 
     &__badge {
@@ -63,7 +46,7 @@
 }
 
 @include breakpoint('desktop') {
-    .account-menu {
+    .primary-menu-container {
         .icon-minus,
         .icon-plus {
             opacity: 0;
@@ -72,12 +55,14 @@
 }
 
 @include breakpoint('tablet') {
-    .account-menu {
+    .primary-menu-container {
+        padding: 0 10px;
+
         .icon-minus,
         .icon-plus {
             position: absolute;
-            right: 0;
-            top: 4px;
+            right: 10px;
+            top: 15px;
 
             font-size: 12px;
         }
@@ -100,15 +85,16 @@
 }
 
 @include breakpoint('tablet-small') {
-    .account-menu {
-        padding: 0;
+    .primary-menu-container {
         margin: 35px -15px 0;
 
         border-top: 1px solid get-color('additional', 'light');
         border-bottom: 1px solid get-color('additional', 'light');
+    }
 
+    .primary-menu {
         &__title {
-            padding: 14px 13px;
+            padding: 15px 0;
             margin: 0;
 
             font-size: $base-font-size;
@@ -130,14 +116,10 @@
                     content: none;
                 }
 
-                .account-menu__link {
+                .primary-menu__link {
                     color: inherit;
                 }
             }
-        }
-
-        &__link {
-            color: get-color('additional', 'dark');
         }
 
         .icon-minus,
