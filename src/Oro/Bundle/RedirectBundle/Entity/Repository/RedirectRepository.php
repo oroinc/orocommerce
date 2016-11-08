@@ -20,8 +20,9 @@ class RedirectRepository extends EntityRepository
                 $qb->expr()->eq('redirect.fromHash', ':fromHash'),
                 $qb->expr()->eq('redirect.from', ':fromUrl')
             )
-        );
-        $qb->setParameters([
+        )
+        ->setMaxResults(1)
+        ->setParameters([
             'fromHash' => md5($from),
             'fromUrl' => $from
         ]);
@@ -29,6 +30,8 @@ class RedirectRepository extends EntityRepository
         if ($website) {
             $qb->andWhere($qb->expr()->eq('redirect.website', ':website'))
                 ->setParameter('website', $website);
+        } else {
+            $qb->andWhere($qb->expr()->isNull('redirect.website'));
         };
         
         return $qb->getQuery()->getOneOrNullResult();
