@@ -1,16 +1,16 @@
 <?php
 
-namespace Oro\Bundle\CustomerBundle\Form\Type;
+namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRepository;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
-class FrontendAccountSelectType extends AbstractType
+class FrontendAccountUserSelectTypeStub extends AbstractType
 {
-    const NAME = 'oro_customer_frontend_account_select';
+    const NAME = 'oro_account_frontend_account_user_select';
 
     /**
      * @var AclHelper
@@ -28,13 +28,13 @@ class FrontendAccountSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(
             [
-                'class' => 'OroCustomerBundle:Account',
-                'query_builder' => function (AccountRepository $repository) {
-                    return $repository->getAccountsQueryBuilder($this->aclHelper);
+                'class' => 'OroCustomerBundle:AccountUser',
+                'query_builder' => function (AccountUserRepository $repository) {
+                    return $repository->getAccountUsersQueryBuilder($this->aclHelper);
                 },
             ]
         );
@@ -44,14 +44,6 @@ class FrontendAccountSelectType extends AbstractType
      * {@inheritdoc}
      */
     public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
     {
         return self::NAME;
     }
@@ -64,3 +56,4 @@ class FrontendAccountSelectType extends AbstractType
         return 'genemu_jqueryselect2_translatable_entity';
     }
 }
+

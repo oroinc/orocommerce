@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\CustomerBundle\Entity\Repository;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorInterface;
 use Oro\Bundle\EntityBundle\ORM\Repository\BatchIteratorTrait;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -87,5 +90,23 @@ class AccountRepository extends EntityRepository implements BatchIteratorInterfa
 
         // Return only account ids
         return array_map('current', $qb->getQuery()->getScalarResult());
+    }
+
+    /**
+     * @param AclHelper $aclHelper
+     * @return QueryBuilder
+     */
+    public function getAccountsQueryBuilder(AclHelper $aclHelper)
+    {
+        $qb = $this->createQueryBuilder('a');
+
+        $criteria = new Criteria();
+        $aclHelper->applyAclToCriteria(
+            AccountUser::class,
+            $criteria,
+            'VIEW',
+            ['account' => 'a.id']
+        );
+        return $qb->addCriteria($criteria);
     }
 }

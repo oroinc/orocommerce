@@ -1,14 +1,14 @@
 <?php
 
-namespace Oro\Bundle\CustomerBundle\Form\Type;
+namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
-class FrontendAccountSelectType extends AbstractType
+class FrontendAccountSelectTypeStub extends AbstractType
 {
     const NAME = 'oro_customer_frontend_account_select';
 
@@ -28,7 +28,7 @@ class FrontendAccountSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(
             [
@@ -44,14 +44,6 @@ class FrontendAccountSelectType extends AbstractType
      * {@inheritdoc}
      */
     public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
     {
         return self::NAME;
     }

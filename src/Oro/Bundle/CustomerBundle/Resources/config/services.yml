@@ -969,13 +969,6 @@ services:
 
     oro_customer.entity_ownership.listener:
         class: Oro\Bundle\CustomerBundle\EventListener\RecordOwnerDataListener
-        arguments: ["@oro_organization.link.security_context", "@oro_customer.frontend.customer_user_helper"]
+        arguments: ["@oro_organization.link.security_context", "@oro_entity_config.provider.ownership"]
         tags:
              - { name: doctrine.event_listener, event: prePersist }
-
-    oro_customer.frontend.customer_user_helper:
-        class: Oro\Bundle\CustomerBundle\Helper\CustomerUserHelper
-        arguments:
-            - '@doctrine'
-            - '@oro_entity_config.provider.ownership'
-            - '@property_accessor'

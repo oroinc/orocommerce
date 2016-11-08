@@ -2,10 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Form\Type;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 
 class FrontendAccountUserTypedAddressType extends AccountTypedAddressType
 {
