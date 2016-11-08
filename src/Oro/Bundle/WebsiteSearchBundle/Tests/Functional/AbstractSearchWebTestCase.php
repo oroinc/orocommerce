@@ -55,6 +55,9 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
      */
     protected $entityAliasResolver;
 
+    /**
+     * @var callable
+     */
     protected $listener;
 
     /** @var AbstractIndexer */
@@ -85,6 +88,11 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     ];
 
     /**
+     * @param DoctrineHelper $doctrineHelper
+     * @param WebsiteSearchMappingProvider $mappingProvider
+     * @param EntityDependenciesResolver $entityDependenciesResolver
+     * @param IndexDataProvider $indexDataProvider
+     * @param PlaceholderInterface $placeholder
      * @return AbstractIndexer
      */
     abstract protected function getIndexer(
@@ -238,7 +246,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             ]
         );
 
-        /** @var Item[] $items */
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
@@ -263,7 +270,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             ]
         );
 
-        /** @var Item[] $items */
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 1]);
 
         $this->assertCount(1, $items);
@@ -295,14 +301,12 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             ]
         );
 
-        /** @var Item[] $items */
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
         $this->assertContains('Reindexed product', $items[0]->getTitle());
         $this->assertContains('Reindexed product', $items[1]->getTitle());
 
-        /** @var Item[] $items */
         $items = $this->getResultItems(['alias' => 'oro_employee_' . $this->getDefaultWebsiteId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
@@ -325,7 +329,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             ]
         );
 
-        /** @var Item[] $items */
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
@@ -361,7 +364,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             ]
         );
 
-        /** @var Item[] $items */
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 1]);
 
         $this->assertCount(1, $items);
@@ -399,7 +401,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             ]
         );
 
-        /** @var Item[] $items */
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId()]);
 
         $this->assertCount(0, $items);
@@ -434,7 +435,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
             ]
         );
 
-        /** @var Item[] $items */
         $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 1]);
 
         $this->assertCount(1, $items);
@@ -456,7 +456,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->indexer->reindex();
 
         $otherWebsite = $this->getReference(LoadOtherWebsite::REFERENCE_OTHER_WEBSITE);
-        /** @var Item[] $items */
         $items = $this->getResultItems(['alias' => 'oro_product_' . $otherWebsite->getId(), 'items_count' => 2]);
 
         $this->assertCount(2, $items);
