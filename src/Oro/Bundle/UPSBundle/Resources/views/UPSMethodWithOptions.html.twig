@@ -1,0 +1,22 @@
+{% spaceless %}
+    {% set methodLabel = get_shipping_method_label(methodData.identifier)|trans %}
+    {% if methodLabel|length > 0 %}
+    <li>{{ methodLabel }}
+        {%- if methodData.options.surcharge is not empty -%}
+            &nbsp;({{ 'oro.ups.form.shipping_method_config_options.surcharge.label'|trans}}: {{ methodData.options.surcharge|oro_format_currency({'currency': currency}) }})
+        {%- endif -%}
+        <ul>
+    {% endif %}
+            {%- for type in methodData.types -%}
+            <li>{{ get_shipping_method_type_label(methodData.identifier, type.identifier)|trans }}
+                {%- if type.options.surcharge is not empty -%}
+                &nbsp;({{ 'oro.ups.form.shipping_method_config_options.surcharge.label'|trans}}: {{ type.options.surcharge|oro_format_currency({'currency': currency}) }})
+                {%- endif -%}
+            </li>
+            {%- endfor -%}
+
+    {% if methodLabel|length > 0 %}
+        </ul>
+    </li>
+    {% endif %}
+{% endspaceless %}
