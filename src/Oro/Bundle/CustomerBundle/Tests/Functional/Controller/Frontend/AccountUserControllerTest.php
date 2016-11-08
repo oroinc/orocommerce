@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 
-use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
-
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Controller\AbstractUserControllerTest;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -33,15 +35,11 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     protected function setUp()
     {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
-        );
+        $this->initClient();
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
+                LoadAccountUserACLData::class,
             ]
         );
     }
@@ -56,25 +54,19 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testCreate($email, $password, $isPasswordGenerate, $isSendEmail, $emailsCount)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_create'));
-
-        /** @var AccountUser $loggedUser */
-        $loggedUser = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
-
-        $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\AccountUser', $loggedUser);
-
-        /** @var AccountUserRole[] $roles */
-        $roles = $this->getUserRoleRepository()
-            ->getAvailableSelfManagedRolesByAccountUserQueryBuilder(
-                $loggedUser->getOrganization(),
-                $loggedUser->getAccount()
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(
+                LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
+                LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP
             )
-            ->getQuery()
-            ->getResult();
-
-        $role = reset($roles);
-
-        $this->assertNotNull($role);
+        );
+        $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_create'));
+        $t = $this->client->getContainer()->get('security.token_storage')->getToken();
+        $r = $this->client->getResponse();
+        $u = $this->getUserRepository()->findBy([]);
+//        $r->get
+        $role = $this->getReference(LoadAccountUserACLData::ROLE_LOCAL);
 
         $form = $crawler->selectButton('Save')->form();
         $form['oro_account_frontend_account_user[enabled]'] = true;
@@ -135,7 +127,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
             [
                 'frontend-account-account-user-grid[_filter][firstName][value]' => self::FIRST_NAME,
                 'frontend-account-account-user-grid[_filter][LastName][value]' => self::LAST_NAME,
-                'frontend-account-account-user-grid[_filter][email][value]' => self::EMAIL
+                'frontend-account-account-user-grid[_filter][email][value]' => self::EMAIL,
             ]
         );
 

@@ -29,16 +29,6 @@ abstract class AbstractFixture extends DoctrineAbstractFixture implements Contai
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-        ];
-    }
-
-    /**
      * @param ObjectManager $manager
      * @return User
      */

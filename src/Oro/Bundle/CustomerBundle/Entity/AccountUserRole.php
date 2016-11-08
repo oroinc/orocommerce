@@ -333,7 +333,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     }
 
     /**
-     * @return string
+     * @return boolean
      */
     public function isSelfManaged()
     {
@@ -341,7 +341,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     }
 
     /**
-     * @param string $selfManaged
+     * @param boolean $selfManaged
      */
     public function setSelfManaged($selfManaged)
     {
