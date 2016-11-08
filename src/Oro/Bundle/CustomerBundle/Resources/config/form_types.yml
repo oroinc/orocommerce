@@ -204,3 +204,13 @@ services:
             - '@security.token_storage'
         tags:
             - { name: form.type_extension, alias: "oro_address" }
+
+    oro_customer.form.extension.account_scope:
+        class: 'Oro\Bundle\CustomerBundle\Form\Extension\AccountScopeExtension'
+        tags:
+            - { name: form.type_extension, alias: "oro_scope" }
+
+    oro_customer.form.extension.account_group_scope:
+        class: 'Oro\Bundle\CustomerBundle\Form\Extension\AccountGroupScopeExtension'
+        tags:
+            - { name: form.type_extension, alias: "oro_scope" }

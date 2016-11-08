@@ -42,7 +42,7 @@ class ScopeCriteriaProvider extends AbstractScopeCriteriaProvider
     /**
      * @return string
      */
-    protected function getCriteriaValueType()
+    public function getCriteriaValueType()
     {
         return Website::class;
     }
