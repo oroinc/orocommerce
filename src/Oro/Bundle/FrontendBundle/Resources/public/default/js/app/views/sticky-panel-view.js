@@ -32,8 +32,6 @@ define(function(require) {
             this.options = _.extend({}, this.options, options || {});
             StickyPanelView.__super__.initialize.apply(this, arguments);
 
-            this.$document = $(document);
-            this.elements = [];
             this.scrollState = {
                 directionClass: '',
                 position: 0
@@ -42,6 +40,15 @@ define(function(require) {
                 top: 0,
                 bottom: 0
             };
+        },
+
+        /**
+         * @inheritDoc
+         */
+        setElement: function(element) {
+            this.$document = $(document);
+            this.elements = [];
+            return StickyPanelView.__super__.setElement.call(this, element);
         },
 
         /**
