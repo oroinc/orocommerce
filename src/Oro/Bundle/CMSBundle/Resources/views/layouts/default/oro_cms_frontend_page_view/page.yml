@@ -18,5 +18,5 @@ layout:
                         text: '=data["page"].getContent()'
                         escape: false
             tree:
-                content:
+                page_content:
                     cms_page_content: ~

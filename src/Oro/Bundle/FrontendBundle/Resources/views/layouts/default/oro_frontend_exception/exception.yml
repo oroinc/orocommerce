@@ -8,7 +8,7 @@ layout:
             optionValue: '=data["status_text"]'
         - '@add':
             id: exception
-            parentId: content
+            parentId: page_content
             blockType: exception
             options:
                 status_code: '=data["status_code"]'

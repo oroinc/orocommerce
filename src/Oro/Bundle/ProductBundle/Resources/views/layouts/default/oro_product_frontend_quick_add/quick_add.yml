@@ -13,12 +13,12 @@ layout:
             optionName: text
             optionValue: 'oro.product.frontend.quick_add.title'
         - '@setOption':
-            id: content
+            id: page_content
             optionName: class_prefix
             optionValue: 'quick-order'
         - '@add':
             id: quick_add_container
-            parentId: content
+            parentId: page_content
             blockType: container
         - '@add':
             id: quick_add_import_button

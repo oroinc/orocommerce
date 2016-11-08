@@ -3,7 +3,7 @@ layout:
         - oro_account_menu
         -
             id: oro_sale_quote_grid
-            root: content
+            root: page_content
             namespace: quotes
 
     actions:
@@ -18,6 +18,6 @@ layout:
             optionName: text
             optionValue: 'oro.frontend.sale.quote.entity_plural_label'
         - '@setOption':
-            id: content
+            id: page_content
             optionName: class_prefix
             optionValue: 'account'

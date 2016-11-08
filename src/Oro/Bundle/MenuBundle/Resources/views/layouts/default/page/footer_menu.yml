@@ -6,15 +6,13 @@ layout:
             items:
                 footer_menu_container:
                     blockType: container
+                    prepend: true
                 footer_menu:
                     blockType: menu
                     options:
                         item: '=data["menu"].getMenu("footer-links")'
                         depth: 2
             tree:
-                footer:
+                page_footer:
                     footer_menu_container:
                         footer_menu: ~
-        - '@move':
-            id: footer_copyright
-            siblingId: footer_menu_container
