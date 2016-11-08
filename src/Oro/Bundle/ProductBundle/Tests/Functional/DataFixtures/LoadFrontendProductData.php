@@ -8,6 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Bridge\Doctrine\Tests\Fixtures\ContainerAwareFixture;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class LoadFrontendProductData extends ContainerAwareFixture implements DependentFixtureInterface
@@ -32,6 +33,10 @@ class LoadFrontendProductData extends ContainerAwareFixture implements Dependent
      */
     public function load(ObjectManager $manager)
     {
-        $this->container->get('oro_website_search.indexer')->reindex(Product::class);
+        $this->container->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
+        $this->container->get('event_dispatcher')->dispatch(
+            ReindexationRequestEvent::EVENT_NAME,
+            new ReindexationRequestEvent([Product::class], [], [], false)
+        );
     }
 }

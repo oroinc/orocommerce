@@ -15,6 +15,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 
 /**
@@ -91,8 +92,10 @@ abstract class AbstractAccountPartialUpdateDriverTest extends WebTestCase
 
     private function reindexProducts()
     {
-        $indexer = $this->getContainer()->get('oro_website_search.indexer');
-        $indexer->reindex(Product::class);
+        $this->getContainer()->get('event_dispatcher')->dispatch(
+            ReindexationRequestEvent::EVENT_NAME,
+            new ReindexationRequestEvent([Product::class], [], [], false)
+        );
     }
 
     public function testCreateAccountWithoutAccountGroupVisibility()

@@ -4,12 +4,12 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional;
 
 use Symfony\Component\DomCrawler\Crawler;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
 
 /**
  * @dbIsolation
@@ -29,12 +29,9 @@ class RFPFrontendActionsTest extends WebTestCase
         $this->loadFixtures(
             [
                 LoadProductPrices::class,
-                LoadProductVisibilityData::class,
+                LoadFrontendProductVisibilityData::class,
             ]
         );
-
-        $this->getContainer()->get('oro_customer.visibility.cache.product.cache_builder')->buildCache();
-        $this->getContainer()->get('oro_website_search.indexer')->reindex(Product::class);
     }
 
     public function testQuickAdd()

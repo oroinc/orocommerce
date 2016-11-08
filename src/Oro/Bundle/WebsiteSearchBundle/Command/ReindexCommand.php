@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Command;
 
-use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
-
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
+
 class ReindexCommand extends ContainerAwareCommand
 {
-    use ContextTrait;
-
     const COMMAND_NAME = 'oro:website-search:reindex';
 
     /**
@@ -47,19 +45,16 @@ class ReindexCommand extends ContainerAwareCommand
 
         $class = $class ? $this->getFQCN($class) : null;
         
-        $context = [];
-        if ($websiteId !== null) {
-            $websiteId = (int)$websiteId;
-            $context = $this->setContextWebsiteIds($context, [$websiteId]);
-        }
+        $classes = $class ? [$class] : [];
+        $websiteIds = $websiteId ? [(int)$websiteId] : [];
 
         $output->writeln($this->getStartingMessage($class, $websiteId));
 
-        // TODO: trigger immediate reindexation event instead
-        $indexer = $this->getContainer()->get('oro_website_search.indexer');
-        $recordsCount = $indexer->reindex($class, $context);
+        $event = new ReindexationRequestEvent($classes, $websiteIds, [], false);
+        $dispatcher = $this->getContainer()->get('event_dispatcher');
+        $dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
 
-        $output->writeln(sprintf('Total indexed items: %u', $recordsCount));
+        $output->writeln('Reindex finished successfully.');
     }
 
     /**
@@ -69,11 +64,10 @@ class ReindexCommand extends ContainerAwareCommand
      */
     private function getStartingMessage($class, $websiteId)
     {
-
         $websitePlaceholder = $websiteId ? sprintf(' and website id %d', $websiteId) : '';
 
         return sprintf(
-            'Starting reindex task for "%s"%s',
+            'Starting reindex task for "%s"%s...',
             $class ?: 'all mapped entities',
             $websitePlaceholder
         );
