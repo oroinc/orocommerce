@@ -27,7 +27,7 @@ layout:
                         grid_parameters:
                             role: '=data["entity"].getId()'
                             account: '=data["entity"].getAccount()'
-                        form: '=data["oro_account_frontend_account_user_role_form"].getRoleForm(data["entity"])'
+                        form: '=data["oro_account_frontend_account_user_role_form"].getRoleFormView(data["entity"])'
                 __account_user_role_form_end:
                     blockType: form_end
                     options:
