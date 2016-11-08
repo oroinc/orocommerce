@@ -2,20 +2,24 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Acl\Voter;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
-use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
-use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Acl\Voter\AccountVoter;
 use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\CustomerBundle\Security\AccountUserProvider;
+use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
+use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class AccountVoterTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -39,25 +43,43 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     protected $securityFacade;
 
     /**
+     * @var AuthenticationTrustResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $trustResolver;
+
+    /**
+     * @var AccountUserRelationsProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $relationsProvider;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityProvider = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Security\AccountUserProvider')
+        $this->securityProvider = $this->getMockBuilder(AccountUserProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->trustResolver = $this->getMock(AuthenticationTrustResolverInterface::class);
+
+        $this->relationsProvider = $this->getMockBuilder(AccountUserRelationsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $services = [
             'oro_customer.security.account_user_provider' => $this->securityProvider,
             'oro_security.security_facade' => $this->securityFacade,
+            'oro_customer.provider.account_user_relations_provider' => $this->relationsProvider,
+            'security.authentication.trust_resolver' => $this->trustResolver
         ];
 
         /* @var $container ContainerInterface|\PHPUnit_Framework_MockObject_MockObject */
@@ -66,8 +88,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->willReturnCallback(function ($id) use ($services) {
                 return $services[$id];
-            })
-        ;
+            });
 
         $this->voter = new AccountVoter($this->doctrineHelper);
         $this->voter->setContainer($container);
@@ -104,8 +125,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())
             ->method('getUser')
-            ->willReturn($this->getAccountUser(1))
-        ;
+            ->willReturn($this->getAccountUser(1));
 
         $this->doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifier')
@@ -144,41 +164,38 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         $this->securityFacade->expects($this->any())
             ->method('isGranted')
             ->with($inputData['isGrantedAttr'], $inputData['isGrantedDescr'])
-            ->willReturn($inputData['isGranted'])
-        ;
+            ->willReturn($inputData['isGranted']);
 
         $this->securityProvider->expects($this->any())
             ->method('isGrantedViewBasic')
             ->with($class)
-            ->willReturn($inputData['grantedViewBasic'])
-        ;
+            ->willReturn($inputData['grantedViewBasic']);
 
         $this->securityProvider->expects($this->any())
             ->method('isGrantedViewLocal')
             ->with($class)
-            ->willReturn($inputData['grantedViewLocal'])
-        ;
+            ->willReturn($inputData['grantedViewLocal']);
 
         $this->securityProvider->expects($this->any())
             ->method('isGrantedEditBasic')
             ->with($class)
-            ->willReturn($inputData['grantedEditBasic'])
-        ;
+            ->willReturn($inputData['grantedEditBasic']);
 
         $this->securityProvider->expects($this->any())
             ->method('isGrantedEditLocal')
             ->with($class)
-            ->willReturn($inputData['grantedEditLocal'])
-        ;
-
-        $this->voter->setClassName($class);
+            ->willReturn($inputData['grantedEditLocal']);
 
         /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())
             ->method('getUser')
-            ->willReturn($inputData['user'])
-        ;
+            ->willReturn($inputData['user']);
+
+        $this->trustResolver->expects($this->any())
+            ->method('isAnonymous')
+            ->with($token)
+            ->willReturn(false);
 
         $this->assertEquals(
             $expectedResult,
@@ -293,7 +310,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'isGrantedAttr'    => null,
                     'isGrantedDescr'   => null,
                 ],
-                'expected' => AccountVoter::ACCESS_ABSTAIN,
+                'expected' => AccountVoter::ACCESS_DENIED,
             ],
             'Entity::VIEW_BASIC and equal users' => [
                 'input' => [
@@ -327,7 +344,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'isGrantedAttr'    => null,
                     'isGrantedDescr'   => null,
                 ],
-                'expected' => AccountVoter::ACCESS_ABSTAIN,
+                'expected' => AccountVoter::ACCESS_DENIED,
             ],
             'Entity::VIEW_LOCAL, equal accounts and different users' => [
                 'input' => [
@@ -378,7 +395,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'isGrantedAttr'    => null,
                     'isGrantedDescr'   => null,
                 ],
-                'expected' => AccountVoter::ACCESS_ABSTAIN,
+                'expected' => AccountVoter::ACCESS_DENIED,
             ],
             'Entity::EDIT_BASIC and equal users' => [
                 'input' => [
@@ -412,7 +429,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'isGrantedAttr'    => null,
                     'isGrantedDescr'   => null,
                 ],
-                'expected' => AccountVoter::ACCESS_ABSTAIN,
+                'expected' => AccountVoter::ACCESS_DENIED,
             ],
             'Entity::EDIT_LOCAL, equal accounts and different users' => [
                 'input' => [
@@ -463,7 +480,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'isGrantedAttr'    => BasicPermissionMap::PERMISSION_VIEW,
                     'isGrantedDescr'   => $this->getDescriptor(),
                 ],
-                'expected' => AccountVoter::ACCESS_ABSTAIN,
+                'expected' => AccountVoter::ACCESS_DENIED,
             ],
             '!ident and !Entity:ACCOUNT_EDIT' => [
                 'input' => [
@@ -480,7 +497,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'isGrantedAttr'    => BasicPermissionMap::PERMISSION_EDIT,
                     'isGrantedDescr'   => $this->getDescriptor(),
                 ],
-                'expected' => AccountVoter::ACCESS_ABSTAIN,
+                'expected' => AccountVoter::ACCESS_DENIED,
             ],
             '!ident and Entity:ACCOUNT_VIEW' => [
                 'input' => [
@@ -524,7 +541,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
      */
     protected function getIdentity()
     {
-        return new ObjectIdentity('entity', 'Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface');
+        return new ObjectIdentity('entity', 'commerce@Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface');
     }
 
     /**
@@ -553,14 +570,12 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         if ($accountUserId) {
             $object->expects($this->any())
                 ->method('getAccountUser')
-                ->willReturn($this->getAccountUser($accountUserId, $accountId))
-            ;
+                ->willReturn($this->getAccountUser($accountUserId, $accountId));
 
             if ($accountId) {
                 $object->expects($this->any())
                     ->method('getAccount')
-                    ->willReturn($this->getAccount($accountId))
-                ;
+                    ->willReturn($this->getAccount($accountId));
             }
         }
 
@@ -634,8 +649,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         if (!isset($entities[$className][$id])) {
             $mock = $this->getMockBuilder($className)
                 ->disableOriginalConstructor()
-                ->getMock()
-            ;
+                ->getMock();
 
             $entities[$className][$id] = $mock;
         }
@@ -670,5 +684,116 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         $token->expects($this->any())->method('getUser')->willReturn($accountUser);
 
         $voter->vote($token, $object, [AccountVoter::ATTRIBUTE_VIEW]);
+    }
+
+    /**
+     * @param mixed $object
+     *
+     * @dataProvider voteAnonymousAbstainProvider
+     */
+    public function testVoteAnonymousAbstain($object)
+    {
+        $this->securityFacade->expects($this->never())
+            ->method('isGranted');
+
+        /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->any())
+            ->method('getUser')
+            ->willReturn('anon.');
+
+        $this->trustResolver->expects($this->once())
+            ->method('isAnonymous')
+            ->with($token)
+            ->willReturn(true);
+
+        $this->relationsProvider->expects($this->once())
+            ->method('getAccountIncludingEmpty')
+            ->willReturn(new Account());
+
+        $this->assertEquals(
+            AccountVoter::ACCESS_ABSTAIN,
+            $this->voter->vote($token, $object, [AccountVoter::ATTRIBUTE_VIEW])
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function voteAnonymousAbstainProvider()
+    {
+        return [
+            '!Entity' => ['object' => null],
+            'Entity is !object' => ['object' => 'string']
+        ];
+    }
+
+    /**
+     * @dataProvider voteAnonymousProvider
+     *
+     * @param string $attribute
+     * @param string $permissionAttribute
+     * @param bool $isGranted
+     * @param int $expectedResult
+     */
+    public function testVoteAnonymous($attribute, $permissionAttribute, $isGranted, $expectedResult)
+    {
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->with($permissionAttribute, $this->getDescriptor())
+            ->willReturn($isGranted);
+
+        /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->any())
+            ->method('getUser')
+            ->willReturn('anon.');
+
+        $this->trustResolver->expects($this->once())
+            ->method('isAnonymous')
+            ->with($token)
+            ->willReturn(true);
+
+        $this->relationsProvider->expects($this->once())
+            ->method('getAccountIncludingEmpty')
+            ->willReturn(new Account());
+
+        $this->assertEquals(
+            $expectedResult,
+            $this->voter->vote($token, $this->getIdentity(), [$attribute])
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function voteAnonymousProvider()
+    {
+        return [
+            'view allowed' => [
+                AccountVoter::ATTRIBUTE_VIEW,
+                BasicPermissionMap::PERMISSION_VIEW,
+                true,
+                AccountVoter::ACCESS_GRANTED
+            ],
+            'view denied' => [
+                AccountVoter::ATTRIBUTE_VIEW,
+                BasicPermissionMap::PERMISSION_VIEW,
+                false,
+                AccountVoter::ACCESS_DENIED
+            ],
+            'edit allowed' => [
+                AccountVoter::ATTRIBUTE_EDIT,
+                BasicPermissionMap::PERMISSION_EDIT,
+                true,
+                AccountVoter::ACCESS_GRANTED
+            ],
+            'edit denied' => [
+                AccountVoter::ATTRIBUTE_EDIT,
+                BasicPermissionMap::PERMISSION_EDIT,
+                false,
+                AccountVoter::ACCESS_DENIED
+            ],
+        ];
     }
 }
