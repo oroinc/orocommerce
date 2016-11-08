@@ -15,7 +15,7 @@
 
 {% block _page_header_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': ' header'
+        '~class': ' page-header'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -71,35 +71,6 @@
     </div>
 {% endblock %}
 
-{% block _page_main_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-    '~class': ' main'
-    }) %}
-
-    <main{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </main>
-{% endblock %}
-
-{% block _page_content_widget %}
-    {% set visibleSidebarChildren = [] %}
-    {% if blocks.page_sidebar is defined %}
-        {% for child in blocks.page_sidebar.children %}
-            {% if child.vars.visible %}
-                {% set visibleSidebarChildren  = visibleSidebarChildren|merge([child]) %}
-            {% endif %}
-        {% endfor %}
-    {% endif %}
-
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' content' ~ (visibleSidebarChildren|length > 0 ? ' content--has-sidebar')
-    }) %}
-
-    <section {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </section>
-{% endblock %}
-
 {% block _page_title_container_widget %}
     {% set content = block_widget(block)|trim %}
     {% set attr = layout_attr_defaults(attr, {
@@ -112,18 +83,6 @@
 
 {% block _page_title_widget %}
     {{ block_widget(block) }}
-{% endblock %}
-
-{% block _page_sidebar_widget %}
-    {% if block.count > 0 %}
-        {% set attr = layout_attr_defaults(attr, {
-        '~class': ' sidebar sidebar--left'
-        }) %}
-
-        <aside {{ block('block_attributes') }}>
-            {{ block_widget(block) }}
-        </aside>
-    {% endif %}
 {% endblock %}
 
 {% block _notification_widget %}

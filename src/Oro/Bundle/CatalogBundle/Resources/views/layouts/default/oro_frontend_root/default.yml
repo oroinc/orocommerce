@@ -6,6 +6,10 @@ layout:
             id: title
             optionName: value
             optionValue: 'oro.catalog.frontend.root.title'
+        - '@appendOption':
+            id: page_main
+            optionName: attr.class
+            optionValue: ' offset-none'
         - '@addTree':
             items:
                 hero_promo_container:

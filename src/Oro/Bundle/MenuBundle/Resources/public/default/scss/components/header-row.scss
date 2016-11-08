@@ -17,7 +17,8 @@
 .header-row {
     display: flex;
 
-    margin-top: 0;
+    max-width: $site-width;
+    margin: 0 auto;
 
     justify-content: space-between;
 
