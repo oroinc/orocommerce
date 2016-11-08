@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShippingBundle\Context;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 
-interface ShippingContextInterface extends ShippingContextHashInterface
+interface ShippingContextInterface
 {
     /**
      * @return ShippingLineItemInterface[]
@@ -41,4 +41,14 @@ interface ShippingContextInterface extends ShippingContextHashInterface
      * @return Price
      */
     public function getSubtotal();
+
+    /**
+     * @return object
+     */
+    public function getSourceEntity();
+
+    /**
+     * @return mixed
+     */
+    public function getSourceEntityIdentifier();
 }

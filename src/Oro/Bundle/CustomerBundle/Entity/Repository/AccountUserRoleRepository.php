@@ -110,7 +110,6 @@ class AccountUserRoleRepository extends EntityRepository
         }
 
         $qb = $this->createQueryBuilder('accountUserRole');
-        $all = $this->findBy([]);
 
         $expr = $qb->expr()->isNull('accountUserRole.account');
         if ($account) {
@@ -140,7 +139,6 @@ class AccountUserRoleRepository extends EntityRepository
         }
 
         $qb->setParameter('organization', $organization);
-        $r = $qb->getQuery()->execute();
 
         return $qb;
     }

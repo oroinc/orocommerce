@@ -62,10 +62,6 @@ class AccountUserControllerTest extends AbstractUserControllerTest
             )
         );
         $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_create'));
-        $t = $this->client->getContainer()->get('security.token_storage')->getToken();
-        $r = $this->client->getResponse();
-        $u = $this->getUserRepository()->findBy([]);
-//        $r->get
         $role = $this->getReference(LoadAccountUserACLData::ROLE_LOCAL);
 
         $form = $crawler->selectButton('Save')->form();
