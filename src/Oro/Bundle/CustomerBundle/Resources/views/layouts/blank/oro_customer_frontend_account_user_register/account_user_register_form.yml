@@ -3,7 +3,7 @@ layout:
         -
             id: oro_customer_only_content_form
             namespace: registration
-            root: wrapper
+            root: content
     actions:
         - '@setBlockTheme':
             themes: 'account_user_register_form.html.twig'

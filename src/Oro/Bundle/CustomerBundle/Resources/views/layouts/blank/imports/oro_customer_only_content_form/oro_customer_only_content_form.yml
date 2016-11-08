@@ -1,14 +1,5 @@
 layout:
     actions:
-        - '@remove':
-            id: header
-        - '@remove':
-            id: sticky_panel
-        - '@remove':
-            id: main
-        - '@remove':
-            id: footer
-
         - '@setBlockTheme':
             themes: 'oro_customer_only_content_form.html.twig'
         - '@addTree':
