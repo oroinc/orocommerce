@@ -1,6 +1,5 @@
 workflows:
     b2b_flow_alternative_checkout:
-        label: Alternative Checkout
         entity: Oro\Bundle\CheckoutBundle\Entity\Checkout
         entity_attribute: checkout
         start_step: enter_billing_address
@@ -37,72 +36,53 @@ workflows:
                 property_path: checkout.shippingMethodType
             request_approval_notes:
                 type: string
-                label: Notes
             billing_address_has_shipping:
                 type: boolean
-                label: If billing address also shipping
             allow_manual_source_remove:
                 type: boolean
-                label: Allow manual source entity removal
             disallow_billing_address_edit:
                 type: boolean
-                label: Disallow billing address edit
             disallow_shipping_address_edit:
                 type: boolean
-                label: Disallow shipping address edit
             disallow_shipping_method_edit:
                 type: boolean
-                label: Disallow shipping method edit
             remove_source:
                 type: boolean
-                label: Remove Source Entity
             auto_remove_source:
                 type: boolean
-                label: Always remove source entity automatically
             source_remove_label:
                 type: string
-                label: Label for remove source
             edit_order_link:
                 type: string
-                label: Edit Order Link
             allowed:
                 type: bool
-                label: Is checkout approved
             allow_request_date:
                 type: object
-                label: Data of approving
                 options:
                     class: DateTime
             requested_for_approve:
                 type: bool
-                label: Is requested for approve
             state_token:
                 type: string
-                label: Token to track checkout state
             internal_state_token:
                 type: string
-                label: Internal checkout state token
         steps:
             enter_billing_address:
-                label: Billing Information
                 order: 10
                 allowed_transitions:
                     - continue_to_shipping_address
             enter_shipping_address:
-                label: Shipping Information
                 order: 20
                 allowed_transitions:
                     - continue_to_shipping_method
                     - back_to_billing_address
             enter_shipping_method:
-                label: Shipping Method
                 order: 30
                 allowed_transitions:
                     - continue_to_payment
                     - back_to_billing_address
                     - back_to_shipping_address
             enter_payment:
-                label: Payment
                 order: 40
                 allowed_transitions:
                     - continue_to_order_review
@@ -110,7 +90,6 @@ workflows:
                     - back_to_shipping_address
                     - back_to_shipping_method
             order_review:
-                label: Order Review
                 order: 50
                 allowed_transitions:
                     - continue_to_request_approval
@@ -120,7 +99,6 @@ workflows:
                     - back_to_shipping_method
                     - back_to_payment
             request_approval:
-                label: Request Approval
                 order: 60
                 allowed_transitions:
                     - continue_to_approve_request
@@ -131,7 +109,6 @@ workflows:
                     - back_to_payment
                     - back_to_order_review
             approve_request:
-                label: Order Approval
                 order: 70
                 is_final: true
                 allowed_transitions:
@@ -146,7 +123,6 @@ workflows:
                     - back_to_request_approval
         transitions:
             continue_to_shipping_address:
-                label: Continue
                 step_to: enter_shipping_address
                 transition_definition: continue_to_shipping_address_definition
                 display_type: page
@@ -174,18 +150,15 @@ workflows:
                                 disabled: $disallow_billing_address_edit
                         save_billing_address:
                             options:
-                                label: Save address
                         ship_to_billing_address:
                             form_type: oro_ship_to_billing_address
                             options:
-                                label: Ship to this address
                         state_token:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
 
             continue_to_shipping_method:
-                label: Continue
                 step_to: enter_shipping_method
                 transition_definition: continue_to_shipping_method_definition
                 display_type: page
@@ -213,18 +186,15 @@ workflows:
                                         validationGroups: ['Default', 'Frontend']
                         save_shipping_address:
                             options:
-                                label: Save address
                         ship_to_billing_address:
                             form_type: oro_ship_to_billing_address
                             options:
-                                label: Use billing address
                         state_token:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
 
             continue_to_payment:
-                label: Continue
                 step_to: enter_payment
                 transition_definition: continue_to_payment_definition
                 frontend_options:
@@ -255,7 +225,6 @@ workflows:
                                 data: $internal_state_token
 
             continue_to_order_review:
-                label: Continue
                 step_to: order_review
                 transition_definition: continue_to_order_review_definition
                 frontend_options:
@@ -274,7 +243,6 @@ workflows:
                             options:
                                 data: $internal_state_token
             continue_to_request_approval:
-                label: Request Approval
                 step_to: request_approval
                 transition_definition: continue_to_request_approval_definition
                 is_unavailable_hidden: true
@@ -299,12 +267,10 @@ workflows:
                                 data: $internal_state_token
 
             continue_to_approve_request:
-                label: Request Approval
                 step_to: approve_request
                 transition_definition: request_for_approve_order_definition
                 frontend_options:
                     is_checkout_continue: true
-                message: 'You exceeded the allowable amount of $5,000.00. <br/> To proceed please request manager approval. <br/>'
                 form_options:
                     form_init:
                         - '@generate_checkout_state_snapshot':
@@ -321,49 +287,42 @@ workflows:
                                 data: $internal_state_token
 
             back_to_billing_address:
-                label: Edit Billing Information
                 step_to: enter_billing_address
                 transition_definition: back_to_billing_address_definition
                 frontend_options:
                     is_checkout_back: true
 
             back_to_shipping_address:
-                label: Edit Shipping Information
                 step_to: enter_shipping_address
                 transition_definition: back_to_shipping_address_definition
                 frontend_options:
                     is_checkout_back: true
 
             back_to_shipping_method:
-                label: Edit Shipping Method
                 step_to: enter_shipping_method
                 transition_definition: go_back_definition
                 frontend_options:
                     is_checkout_back: true
 
             back_to_payment:
-                label: Edit Payment
                 step_to: enter_payment
                 transition_definition: go_back_definition
                 frontend_options:
                     is_checkout_back: true
 
             back_to_order_review:
-                label: Back To Order Review
                 step_to: order_review
                 transition_definition: go_back_definition
                 frontend_options:
                     is_checkout_back: true
 
             back_to_request_approval:
-                label: Back To Request Approval
                 step_to: request_approval
                 transition_definition: go_back_definition
                 frontend_options:
                     is_checkout_back: true
 
             place_order:
-                label: Submit Order
                 step_to: approve_request
                 transition_definition: place_order_definition
                 display_type: page
@@ -379,7 +338,6 @@ workflows:
                             form_type: textarea
 
             place_order_with_inactive_possibility:
-                label: Submit Order
                 step_to: approve_request
                 transition_definition: place_order_definition
                 display_type: page
@@ -402,7 +360,6 @@ workflows:
                             options:
                                 data: $internal_state_token
             approve_order:
-                label: Approve Order
                 step_to: approve_request
                 transition_definition: approve_order_definition
                 is_unavailable_hidden: true
@@ -685,6 +642,11 @@ workflows:
                                 entity: $checkout
                                 state: $.result.currentCheckoutState
                                 token: $state_token
+                    - '@call_service_method':
+                        service: oro_checkout.factory.shipping_context_provider_factory
+                        method: create
+                        method_parameters: [$checkout]
+                        attribute: $.result.shippingContext
                 preconditions:
                     '@and':
                         - '@order_line_item_has_count':
@@ -692,8 +654,7 @@ workflows:
                             parameters:
                                 entity: $checkout
                         - '@has_applicable_shipping_methods':
-                            parameters:
-                                entity: $checkout
+                            shippingContext: $.result.shippingContext
                 conditions:
                     '@or':
                         - '@empty': $.result.savedCheckoutState
