@@ -13,6 +13,6 @@ layout:
                 shopping_lists_menu_item:
                     blockType: block
             tree:
-                sidebar_left:
+                page_sidebar:
                     shopping_lists_menu:
                         shopping_lists_menu_item: ~

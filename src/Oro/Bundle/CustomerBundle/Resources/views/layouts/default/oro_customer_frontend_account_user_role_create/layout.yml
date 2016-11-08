@@ -2,7 +2,7 @@ layout:
     imports:
         -
             id: oro_account_user_role_form
-            root: content
+            root: page_content
         - oro_account_menu
     actions:
         - '@appendOption':

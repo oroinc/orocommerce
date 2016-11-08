@@ -32,7 +32,7 @@ layout:
                 account_address_book_user_addresses:
                     blockType: container
             tree:
-                content:
+                page_content:
                     account_address_book_page:
                         account_address_book_addresses: ~
                         account_address_book_user_addresses: ~

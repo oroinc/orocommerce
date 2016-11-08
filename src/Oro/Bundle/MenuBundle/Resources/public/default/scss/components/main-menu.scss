@@ -25,19 +25,17 @@
     display: block;
     min-height: 49px;
 
-    &[data-dropdown-trigger] {
-      &:hover {
-        .main-menu__sublist-container {
-          display: block;
-        }
+    &:hover {
+      .main-menu__sublist-container {
+        display: block;
+      }
 
-        .order-widget--dropdown-mode {
-          display: block;
-        }
+      .order-widget--dropdown-mode {
+        display: block;
+      }
 
-        .messages-widget__dropdown-mode {
-          display: block;
-        }
+      .messages-widget__dropdown-mode {
+        display: block;
       }
     }
 
