@@ -7,11 +7,12 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelperInterface;
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelperTrait;
+use Oro\Bundle\ActionBundle\Helper\RouteHelperTrait;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 
 class ActionApplicationsHelper implements ApplicationsHelperInterface
 {
-    use ApplicationsHelperTrait;
+    use ApplicationsHelperTrait, RouteHelperTrait;
 
     const COMMERCE_APPLICATION = 'commerce';
 
@@ -20,9 +21,6 @@ class ActionApplicationsHelper implements ApplicationsHelperInterface
 
     /** @var TokenStorageInterface */
     protected $tokenStorage;
-
-    /** @var string */
-    protected $currentApplication = false;
 
     /**
      * @param ApplicationsHelperInterface $applicationsHelper
