@@ -1,17 +1,10 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'OroMenuBundle:layouts:default/page/quick_access.html.twig'
-        - '@addTree':
-            items:
-                quick_access_container:
-                    blockType: container
-                    siblingId: middle_bar_center
-            tree:
-                middle_bar:
-                    quick_access_container: ~
+            themes: 'quick_access.html.twig'
         - '@move':
-            id: quick_access_menu
-            parentId: quick_access_container
+            id: quick_access_container
+            parentId: middle_bar
+            siblingId: middle_bar_center
 
     conditions: 'context["is_logged_in"]'

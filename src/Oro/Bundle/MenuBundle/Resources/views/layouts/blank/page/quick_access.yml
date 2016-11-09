@@ -4,12 +4,17 @@ layout:
             themes: 'OroMenuBundle:layouts:blank/page/quick_access.html.twig'
         - '@addTree':
             items:
+                quick_access_container:
+                    blockType: container
+                    siblingId: logo
+                    prepend: false
                 quick_access_menu:
                     blockType: menu
                     options:
                         item: '=data["menu"].getMenu("quick-access")'
             tree:
                 page_header:
-                    quick_access_menu: ~
+                    quick_access_container:
+                        quick_access_menu: ~
 
     conditions: 'context["is_logged_in"]'

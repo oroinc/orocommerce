@@ -1,7 +1,9 @@
+// @theme: default
+
 @mixin header-row-dropdown {
     position: absolute;
-    z-index: z('dropdown');
     top: 100%;
+    z-index: z('dropdown');
 
     min-width: 260px;
     padding: 0;
