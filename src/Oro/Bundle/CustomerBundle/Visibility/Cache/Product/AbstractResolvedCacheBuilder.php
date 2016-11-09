@@ -176,9 +176,13 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
      * @param Product $product
      * @param Website $website
      */
-    protected function triggerProductReindexation(Product $product, Website $website)
+    protected function triggerProductReindexation(Product $product, Website $website = null)
     {
-        $this->indexScheduler->triggerReindexationRequestEvent([$product->getId()], $website->getId(), false);
+        $this->indexScheduler->triggerReindexationRequestEvent(
+            [$product->getId()],
+            $website ? $website->getId() : null,
+            false
+        );
     }
 
     /**
