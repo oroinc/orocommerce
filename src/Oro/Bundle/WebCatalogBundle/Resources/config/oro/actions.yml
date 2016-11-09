@@ -12,7 +12,7 @@ operations:
             - '@redirect':
                 route: 'oro_content_node_update_root'
                 route_parameters:
-                    id: $.entity.id
+                    id: $.data.id
     oro_web_catalog_delete_content_node:
         extends: DELETE
         acl_resource: oro_web_catalog_update
