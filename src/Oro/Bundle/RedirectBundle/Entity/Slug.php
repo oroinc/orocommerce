@@ -86,6 +86,22 @@ class Slug
     }
 
     /**
+     * @ORM\OneToMany(
+     *     targetEntity="Oro\Bundle\RedirectBundle\Entity\Redirect",
+     *     mappedBy="slug"
+     * )
+     *
+     * @var Redirect[]|Collection
+     */
+    protected $redirects;
+
+    public function __construct()
+    {
+        $this->redirects = new ArrayCollection();
+        $this->scopes = new ArrayCollection();
+    }
+
+    /**
      * @return integer
      */
     public function getId()
@@ -207,5 +223,78 @@ class Slug
     public function __toString()
     {
         return (string)$this->getUrl();
+    }
+
+    /**
+     * @return Redirect[]|Collection
+     */
+    public function getRedirects()
+    {
+        return $this->redirects;
+    }
+
+    /**
+     * @param Redirect $redirect
+     *
+     * @return $this
+     */
+    public function addRedirect(Redirect $redirect)
+    {
+        if (!$this->redirects->contains($redirect)) {
+            $this->redirects->add($redirect);
+            $redirect->setSlug($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Redirect $redirect
+     *
+     * @return $this
+     */
+    public function removeRedirect(Redirect $redirect)
+    {
+        if ($this->redirects->contains($redirect)) {
+            $this->redirects->removeElement($redirect);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Scope[]|Collection
+     */
+    public function getScopes()
+    {
+        return $this->scopes;
+    }
+
+    /**
+     * @param Scope $scope
+     *
+     * @return $this
+     */
+    public function addScope(Scope $scope)
+    {
+        if (!$this->scopes->contains($scope)) {
+            $this->scopes->add($scope);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Scope $scope
+     *
+     * @return $this
+     */
+    public function removeScope(Scope $scope)
+    {
+        if ($this->scopes->contains($scope)) {
+            $this->scopes->removeElement($scope);
+        }
+
+        return $this;
     }
 }
