@@ -166,11 +166,11 @@ define(function(require) {
                         totals.subtotals[key].amount = cost;
                         totals.subtotals[key].formattedAmount = subtotal.currency + ' ' + cost;
                     }
-                    newTotalAmount = newTotalAmount + totals.subtotals[key].amount;
+                    newTotalAmount = newTotalAmount + parseInt(totals.subtotals[key].amount, 10);
                 });
                 totals.total.amount = newTotalAmount;
                 totals.total.formattedAmount = totals.total.currency + ' ' +  newTotalAmount;
-                
+
                 mediator.trigger('shipping-cost:updated', {'totals': totals});
             }
         },
