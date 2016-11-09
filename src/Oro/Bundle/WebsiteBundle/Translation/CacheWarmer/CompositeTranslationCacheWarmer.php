@@ -47,7 +47,7 @@ class CompositeTranslationCacheWarmer implements CacheWarmerInterface
     {
         foreach ($this->strategyProvider->getStrategies() as $strategy) {
             $this->strategyProvider->selectStrategy($strategy->getName());
-            $this->innerWarmer->warmUp($cacheDir, $strategy);
+            $this->innerWarmer->warmUp($cacheDir);
         }
     }
 

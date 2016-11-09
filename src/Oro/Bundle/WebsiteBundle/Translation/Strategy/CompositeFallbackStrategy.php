@@ -46,7 +46,7 @@ class CompositeFallbackStrategy implements TranslationStrategyInterface
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function isApplicable()
     {
