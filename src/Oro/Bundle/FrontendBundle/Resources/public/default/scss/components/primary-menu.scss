@@ -1,28 +1,14 @@
-.primary-menu-container {
-    margin-top: 35px;
-    padding: $primary-menu-inner-offset;
-
-    background: $primary-menu-background;
-    border-radius: 3px;
-}
+// @theme: default
 
 .primary-menu {
-    &__title {
-        position: relative;
-
-        margin-bottom: 9px;
-
-        font-size: $primary-menu-title-size;
-        font-weight: 400;
-        text-transform: uppercase;
-    }
-
     &__item {
         position: relative;
 
         padding: $primary-menu-item-inner-offset;
 
         &--current {
+            font-weight: $primary-menu-link-font-weight-current;
+
             &:before {
                 top: 10px;
                 left: 0;

@@ -1,0 +1,11 @@
+// @theme: default
+
+.primary-menu-title {
+    position: relative;
+
+    margin: $primary-menu-title-offset;
+
+    font-size: $primary-menu-title-size;
+    font-weight: $primary-menu-title-font-weight;
+    text-transform: $primary-menu-title-text-transform;
+}

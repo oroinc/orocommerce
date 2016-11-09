@@ -1,3 +1,7 @@
-$primary-menu-background: get-color('additional', 'base') !default;
-$primary-menu-inner-offset: 25px 30px !default;
-$primary-menu-title-size: 15px !default;
+// @theme: default
+
+$primary-menu-link-color: get-color('additional', 'dark');
+$primary-menu-link-color-current: get-color('additional', 'dark');
+
+$primary-menu-item-inner-offset: 5px 0 0 18px !default;
+$primary-menu-link-font-weight-current: bold !default;
