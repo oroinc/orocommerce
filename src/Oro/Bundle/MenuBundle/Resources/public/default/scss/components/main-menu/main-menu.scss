@@ -73,15 +73,35 @@
             min-height: inherit;
         }
 
-        &__link {
+        &__sublist__link {
+            display: block;
+
+            line-height: 1.5;
+            text-transform: uppercase;
+
+            color: get-color('additional', 'dark');
+
+            &:hover,
+            &:focus {
+                text-decoration: none;
+
+                color: get-color('additional', 'dark');
+            }
+
+        }
+
+        &__link,
+        &__sublist__link {
             font-size: 14px;
             font-weight: bold;
 
-            padding: 8px 0 7px;
+            padding: 8px 0 7px 8px;
 
             text-align: left;
+        }
 
-            &--active {
+        &__item.expanded {
+            .main-menu__link {
                 position: relative;
                 padding-left: 15px;
 
@@ -96,6 +116,18 @@
                     transform: rotate(90deg);
                 }
             }
+        }
+
+        &__sublist__title {
+            display: none;
+        }
+
+        &__sublist--nested {
+            margin-top: 0;
+        }
+
+        &__sublist__item {
+            margin-top: 0;
         }
     }
 }
