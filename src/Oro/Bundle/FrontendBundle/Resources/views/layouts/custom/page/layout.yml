@@ -1,0 +1,6 @@
+layout:
+    actions:
+        - '@setOption':
+            id: header
+            optionName: attr.class
+            optionValue: 'header--custom'

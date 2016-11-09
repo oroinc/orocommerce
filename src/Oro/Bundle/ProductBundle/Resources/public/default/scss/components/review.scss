@@ -65,7 +65,7 @@
   &__item {
     margin: 15px 0 0;
     padding: 0 0 15px;
-    border-bottom: 1px solid $theme-lighter-gray-color;
+    border-bottom: 1px solid get-color('additional', 'light');
 
     &__title {
       position: relative;
@@ -113,7 +113,7 @@
   border: 0;
   box-shadow: none;
 
-  color: $theme-bucket-color;
+  color: get-color('additional', 'base');
   background: transparent;
 
   cursor: pointer;

@@ -1,0 +1,4 @@
+navigation:
+    titles:
+        oro_frontend_root: 'oro_frontend.home_page.welcome - oro_frontend.home_page.title'
+        oro_frontend_exception: '%%status%% - oro_frontend.home_page.title'

@@ -107,10 +107,12 @@ define(function(require) {
         },
 
         undelegateElementsEvents: function() {
-            var elementEventNamespace = this.elementEventNamespace + this.cid;
-            _.each(this.$elements, function($element) {
-                $element.off(elementEventNamespace);
-            });
+            if (this.$elements) {
+                var elementEventNamespace = this.elementEventNamespace + this.cid;
+                _.each(this.$elements, function ($element) {
+                    $element.off(elementEventNamespace);
+                });
+            }
 
             this.model.off(null, null, this);//off all events with this context.
         },
@@ -171,9 +173,13 @@ define(function(require) {
             var validator = $element.closest('form').validate();
             if (!validator || validator.element(element)) {
                 var options = {
-                    event: e
+                    event: e,
+                    manually: false
                 };
-                options.manually = Boolean(e && e.originalEvent && e.currentTarget === element);
+                if (e) {
+                    e.manually = options.manually = e.manually || (e.originalEvent && e.currentTarget === element);
+                }
+
                 this.model.set(modelKey, value, options);
             }
         },

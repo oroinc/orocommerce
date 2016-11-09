@@ -68,7 +68,7 @@ class PageControllerTest extends WebTestCase
                 ],
             ],
             'Product 2' => [
-                'product' => LoadPageData::PAGE_1_2,
+                'product' => LoadPageData::PAGE_2,
                 'metaTags' => [
                     ['name' => 'title', 'content' => ''],
                     ['name' => 'description', 'content' => ''],
@@ -88,10 +88,9 @@ class PageControllerTest extends WebTestCase
     }
 
     /**
-     * @param string $entity
      * @return array
      */
-    protected function getMetadataArray($entity)
+    protected function getMetadataArray()
     {
         return LoadPageMetaData::$metadata;
     }

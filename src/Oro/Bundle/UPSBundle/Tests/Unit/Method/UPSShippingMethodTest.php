@@ -20,6 +20,10 @@ use Oro\Bundle\UPSBundle\Model\PriceResponse;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
@@ -206,6 +210,38 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
                 'typeSurcharge' => 0,
                 'expectedPrice' => 50
             ]
+        ];
+    }
+
+    /**
+     * @param string $number
+     * @param string|null $resultURL
+     *
+     * @dataProvider trackingDataProvider
+     */
+    public function testGetTrackingLink($number, $resultURL)
+    {
+        static::assertEquals($resultURL, $this->upsShippingMethod->getTrackingLink($number));
+    }
+
+    /**
+     * @return array
+     */
+    public function trackingDataProvider()
+    {
+        return [
+            'emptyTrackingNumber' => [
+                'number' => '',
+                'resultURL' => null,
+            ],
+            'wrongTrackingNumber2' => [
+                'number' => '123123123123',
+                'resultURL' => null,
+            ],
+            'rightTrackingNumber' => [
+                'number' => '1Z111E111111111111',
+                'resultURL' => UPSShippingMethod::TRACKING_URL.'1Z111E111111111111',
+            ],
         ];
     }
 }

@@ -10,7 +10,5 @@ config:
         'oro/product-shopping-lists-widget': 'bundles/oroshoppinglist/js/app/widget/product-shopping-lists-widget.js'
         'oro/shopping-list-create-widget': 'bundles/oroshoppinglist/js/app/widget/shopping-list-create-widget.js'
         'oroshoppinglist/js/shopping-list-item-errors-handler': 'bundles/oroshoppinglist/js/shopping-list-item-errors-handler.js'
-        'oroshoppinglist/js/app/components/shoppinglist-view-component': 'bundles/oroshoppinglist/js/app/components/shoppinglist-view-component.js'
-        'oroshoppinglist/js/app/views/shoppinglist-sidebar-view': 'bundles/oroshoppinglist/js/app/views/shoppinglist-sidebar-view.js'
         'oroshoppinglist/js/app/components/shoppinglist-widget-view-component': 'bundles/oroshoppinglist/js/app/components/shoppinglist-widget-view-component.js'
         'oroshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component': 'bundles/oroshoppinglist/js/app/components/shoppinglist-title-inline-editable-view-component.js'

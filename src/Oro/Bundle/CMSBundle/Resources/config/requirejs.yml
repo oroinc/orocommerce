@@ -1,4 +1,3 @@
 config:
     paths:
         'orocms/js/app/components/slugify-component': 'bundles/orocms/js/app/components/slugify-component.js'
-        'orocms/js/app/components/tree-manage-component': 'bundles/orocms/js/app/components/tree-manage-component.js'

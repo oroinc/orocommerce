@@ -5,18 +5,14 @@ layout:
             root: content
         - oro_account_menu
     actions:
+        - '@setOption':
         - '@setBlockTheme':
             themes: 'layout.html.twig'
         - '@appendOption':
             id: title
-            optionName: value
+            optionName: params
             optionValue:
-                - 'oro.customer.menu.account_user.label'
-                - 'oro.frontend.rfp.request.entity_plural_label'
-                -
-                    label: 'oro.frontend.rfp.request.edit_title.label'
-                    parameters:
-                        '%id%': '=data["entity"].getId()'
+                '%id%': '=data["entity"].getId()'
 
         - '@setOption':
             id: oro_rfp_request_form_title

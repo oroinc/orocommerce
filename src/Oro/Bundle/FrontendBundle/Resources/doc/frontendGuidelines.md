@@ -88,7 +88,7 @@ This gives the following advantages:
 <div class="product">
     <p class="product__name">Product name</p>
     <div class="product__prices">...</div>
-    <div class="product__ifo">...</div>
+    <div class="product__info">...</div>
 </div>
 ```
 
@@ -224,7 +224,7 @@ div.element {
     ...
 }
 
-div.#element {
+div#element {
     ...
 }
 ```
@@ -490,9 +490,9 @@ After each group leaves behind an empty string.
 ##### Acceptable
 ```scss
 // variables
-$element-color: #000;
-$element-font: 12px;
-$element-line-height: 1.2;
+$element-color: #000 !default;
+$element-font: 12px !default;
+$element-line-height: 1.2 !default;
 
 .element {
     // positioning
@@ -543,9 +543,28 @@ $element-line-height: 1.2;
 
 ### Use @extend directive
 
-**use @extend only selector that is a single class**.
+**Use @extend only selector that is a single class**.
+
+1. Helper class include after variables.
+2. Helper class has maximum **5** rules.
+3. Helper class has abstract name and overall design style.
 
 ##### Examples:
+```scss
+$default-size: 400px !default;
+$default-offset: 10px auto !default;
+$default-inner-offset: 15px !default;
+$default-background: #dadada !default;
+
+%dialog {
+    width: $default-size;
+    margin: $default-offset;
+    padding: $default-inner-offset;
+
+    background: $default-background;
+}
+```
+
 ```scss
 .modal {
     @extend %dialog;
@@ -705,8 +724,8 @@ Helper mixin for organizing @media rules
 ## Best practices
 
 ```scss
-$list-font-title: 'Tahoma';
-$list-offset: 10px;
+$list-font-title: 'Tahoma' !default;
+$list-offset: 10px !default;
 
 .list {
     @include clearfix;

@@ -48,33 +48,33 @@
 
 .notification {
   &_success {
-    background: $theme-notice-bg-color;
-    color: $theme-notice-font-color;
+    background: get-color('ui', 'success');
+    color: get-color('ui', 'success-dark');
   }
 
   &_notice {
-    background: $theme-notice-bg-color;
-    color: $theme-notice-font-color;
+    background: get-color('ui', 'success');
+    color: get-color('ui', 'success-dark');
   }
 
   &_alert {
-    background: $theme-alert-bg-color;
-    color: $theme-alert-font-color;
+    background: get-color('ui', 'warring');
+    color: get-color('ui', 'warring-dark');
   }
 
   &_warning {
-    background: $theme-alert-bg-color;
-    color: $theme-alert-font-color;
+    background: get-color('ui', 'warring');
+    color: get-color('ui', 'warring-dark');
   }
 
   &_error {
-    background: $theme-error-bg-color;
-    color: $theme-error-font-color;
+    background: get-color('ui', 'error');
+    color: get-color('ui', 'error-dark');
   }
 
   &_info {
-    background: $theme-notice-bg-color;
-    color: $theme-notice-font-color;
+    background: get-color('ui', 'success');
+    color: get-color('ui', 'success-dark');
   }
 
   &_xsm {
@@ -180,7 +180,7 @@
   &__additional-content {
     padding-left: 30px;
 
-    color: $base-font-color;
+    color: get-color('additional', 'dark');
   }
 }
 
@@ -195,7 +195,7 @@
 }
 
 .error-message {
-  color: $theme-input-error;
+  color: get-color('ui', 'error-dark');
   font-size: 13px;
   line-height: 1;
 

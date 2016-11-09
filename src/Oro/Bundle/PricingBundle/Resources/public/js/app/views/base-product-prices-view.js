@@ -5,7 +5,6 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var layout = require('oroui/js/layout');
-    var NumberFormatter = require('orolocale/js/formatter/number');
     var _ = require('underscore');
     var $ = require('jquery');
 
@@ -13,7 +12,6 @@ define(function(require) {
         autoRender: true,
 
         options: {
-            unitLabel: 'oro.product.product_unit.%s.label.full',
             defaultQuantity: 1
         },
 
@@ -83,11 +81,12 @@ define(function(require) {
 
         renderHint: function() {
             var $pricesHint = this.getElement('pricesHint');
-            if (!$pricesHint.length) {
+            var content = this.getHintContent();
+
+            if (!$pricesHint.length || !content.length) {
                 return;
             }
 
-            var content = this.getHintContent();
             $pricesHint.toggleClass('disabled', content.length === 0);
 
             if (!$pricesHint.data('popover')) {
@@ -100,7 +99,7 @@ define(function(require) {
         },
 
         getHintContent: function() {
-            return this.getElement('pricesHintContent').html();
+            return this.getElement('pricesHintContent').html() || '';
         },
 
         setPrices: function() {
@@ -132,7 +131,7 @@ define(function(require) {
         },
 
         onUnitChange: function(options) {
-            this.setPrice(true);
+            this.setPrice(options.manually || false);
         },
 
         setPrice: function(changeQuantity) {
@@ -146,7 +145,7 @@ define(function(require) {
         findPrice: function(changeQuantity) {
             var quantity = this.model.get('quantity');
             var unit = this.model.get('unit');
-            var changeQuantity = changeQuantity && this.changeQuantity;
+            changeQuantity = changeQuantity && this.changeQuantity;
 
             var foundKey = unit + ' ' + quantity + ' ' + (changeQuantity ? 1 : 0);
             var price = null;
@@ -184,10 +183,9 @@ define(function(require) {
                 this.getElement('price').addClass('hidden');
                 this.getElement('priceNotFound').removeClass('hidden');
             } else {
-                this.getElement('unit').html(_.__(this.options.unitLabel.replace('%s', price.unit)));
+                this.getElement('unit').html(price.formatted_unit);
 
-                price = NumberFormatter.formatCurrency(price.price, price.currency);
-                this.getElement('priceValue').html(price);
+                this.getElement('priceValue').html(price.formatted_price);
 
                 this.getElement('priceNotFound').addClass('hidden');
                 this.getElement('price').removeClass('hidden');

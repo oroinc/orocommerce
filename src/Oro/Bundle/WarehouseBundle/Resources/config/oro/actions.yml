@@ -1,8 +1,0 @@
-operations:
-    UPDATE:
-      exclude_datagrids:
-          - warehouse-inventory-level-grid
-
-    DELETE:
-      exclude_datagrids:
-          - warehouse-inventory-level-grid

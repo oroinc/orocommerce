@@ -15,8 +15,6 @@ define(function(require) {
         options: {
             buttonTemplate: '',
             removeButtonTemplate: '',
-            defaultClass: '',
-            editClass: '',
             buttonsSelector: '.add-to-shopping-list-button',
             messages: {
                 success: 'oro.form.inlineEditing.successMessage'
@@ -271,8 +269,6 @@ define(function(require) {
 
         updateMainButton: function() {
             if (this.dropdownWidget.main && this.dropdownWidget.main.data('shoppinglist')) {
-                this.toggleButtonsClass();
-
                 this.setButtonLabel(this.dropdownWidget.main);
                 this.setButtonLabel(this.dropdownWidget.main.data('clone'));
 
@@ -280,18 +276,6 @@ define(function(require) {
             }
 
             this.initButtons();
-        },
-
-        toggleButtonsClass: function() {
-            if (!this.model) {
-                return;
-            }
-
-            if (_.isEmpty(this.editShoppingList)) {
-                this.dropdownWidget.group.removeClass(this.options.editClass).addClass(this.options.defaultClass);
-            } else {
-                this.dropdownWidget.group.removeClass(this.options.defaultClass).addClass(this.options.editClass);
-            }
         },
 
         setButtonLabel: function($button) {

@@ -1,0 +1,5 @@
+oro:
+    inventory:
+        inventory_level_save:
+            flash:
+                success: Inventory has been updated

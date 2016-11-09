@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener;
 
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 
 /**
  * @method static ContainerInterface getContainer

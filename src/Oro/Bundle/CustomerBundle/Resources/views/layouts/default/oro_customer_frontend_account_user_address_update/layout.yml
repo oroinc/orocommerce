@@ -6,12 +6,6 @@ layout:
             root: content
         - oro_account_menu
     actions:
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue:
-                - oro.customer.frontend.address.title.edit
-                - oro.customer.frontend.address.title.subject
         - '@setOption':
             id: page_title
             optionName: text

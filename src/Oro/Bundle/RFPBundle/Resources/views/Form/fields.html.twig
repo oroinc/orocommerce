@@ -215,7 +215,7 @@
         <p class="request-form-note">
             Note: This item may be moved to a different quote later.
         </p>
-        
+
         <div class="row-oro">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}
@@ -233,7 +233,7 @@
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
                 {% endif %}
-                
+
             </div>
 
             <div class="request-form-footer">
@@ -280,6 +280,37 @@
                         <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
                     </label>
                     <div class="request-form-editnote__body">
+
+            <td class="rfp-lineitem-remove">
+                <button type="button" class="removeRow item-remove button-icon gray fs20" data-closest="tbody">
+                    <i class="icon-trash"></i>
+                </button>
+            </td>
+        </tr>
+
+        <tr class="borderless t_paddingless">
+            {% set notes = form.comment %}
+            <td colspan="5" class="comment">
+                <div class="editable">
+                    <div class="editable__trigger">
+                        <label for="{{ 'lineItem-'~prototype_name }}"
+                               data-checkbox
+                               class="custom-checkbox
+                           {% if notes is not empty %} checked {% endif %}"
+                        >
+                            <input name="{{ 'lineItem'~id }}"
+                                   id="{{ 'lineItem-'~prototype_name }}"
+                                   type="checkbox"
+                                    {% if notes is not empty %} checked = "checked" {% endif %}
+                                   data-role="start-editing"
+                                   class="custom-checkbox__input"
+                            >
+                            <span class="custom-checkbox__icon"></span>
+                            <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
+                        </label>
+                    </div>
+
+                    <div data-role="editor">
                         {{ form_widget(form.comment) }}
                         {{ form_errors(form.comment) }}
                     </div>

@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper;
 use Oro\Bundle\CurrencyBundle\Config\CurrencyConfigManager;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;

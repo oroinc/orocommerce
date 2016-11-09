@@ -12,7 +12,6 @@
     {% set html = UI.saveAndCloseButton() %}
     {% if resource_granted('oro_product_create') %}
         {% set saveAndDuplicateButton = UI.buttonType({
-            'type': 'button',
             'class': 'btn-success main-group',
             'label': 'oro.product.ui.save_and_duplicate'|trans,
             'action': 'save_and_duplicate'

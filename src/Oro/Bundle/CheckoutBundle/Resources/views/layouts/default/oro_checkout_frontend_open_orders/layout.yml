@@ -18,10 +18,3 @@ layout:
             prepend: true
             options:
                 text: 'oro.checkout.entity_plural_label'
-
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue:
-                - 'oro.customer.menu.account_user.label'
-                - 'oro.checkout.entity_plural_label'
