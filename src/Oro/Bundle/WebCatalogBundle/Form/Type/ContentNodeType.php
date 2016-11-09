@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -52,7 +53,7 @@ class ContentNodeType extends AbstractType
                 [
                     'label'    => 'oro.webcatalog.contentnode.slugs.label',
                     'required' => true,
-                    'options'  => ['constraints' => [new NotBlank()]],
+                    'options'  => ['constraints' => [new NotBlank(), new UrlSafe()]],
                 ]
             );
         }
