@@ -5,7 +5,6 @@ layout:
             root: content
         - oro_account_menu
     actions:
-        - '@setOption':
         - '@setBlockTheme':
             themes: 'layout.html.twig'
         - '@appendOption':
