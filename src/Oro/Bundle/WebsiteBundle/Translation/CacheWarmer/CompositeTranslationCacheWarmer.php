@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\CacheWarmer\TranslationsCacheWarmer;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 use Oro\Bundle\TranslationBundle\Strategy\TranslationStrategyProvider;
-use Oro\Bundle\TranslationBundle\Strategy\TranslationStrategyInterface;
 
 class CompositeTranslationCacheWarmer implements CacheWarmerInterface
 {
@@ -21,23 +20,14 @@ class CompositeTranslationCacheWarmer implements CacheWarmerInterface
     protected $strategyProvider;
 
     /**
-     * @var TranslationStrategyInterface
-     */
-    protected $mixingStrategy;
-
-    /**
      * @param TranslationsCacheWarmer $innerWarmer
-     * @param TranslationStrategyProvider $strategyProvider
-     * @param TranslationStrategyInterface $mixingStrategy
      */
     public function __construct(
         TranslationsCacheWarmer $innerWarmer,
-        TranslationStrategyProvider $strategyProvider,
-        TranslationStrategyInterface $mixingStrategy
+        TranslationStrategyProvider $strategyProvider
     ) {
         $this->innerWarmer = $innerWarmer;
         $this->strategyProvider = $strategyProvider;
-        $this->mixingStrategy = $mixingStrategy;
     }
 
     /**

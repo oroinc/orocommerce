@@ -55,7 +55,6 @@ services:
         arguments:
             - '@translation.warmer.default'
             - '@oro_translation.strategy.provider'
-            - '@oro_locale.translation.strategy.localization_fallback_strategy'
 
     oro_website.event_listener.routing:
         class: 'Oro\Bundle\WebsiteBundle\EventListener\RoutingListener'

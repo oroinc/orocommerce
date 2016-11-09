@@ -21,11 +21,6 @@ class CompositeTranslationCacheWarmerTest extends \PHPUnit_Framework_TestCase
     protected $strategyProvider;
 
     /**
-     * @var TranslationStrategyInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $mixingStrategy;
-
-    /**
      * @var CompositeTranslationCacheWarmer
      */
     protected $warmer;
@@ -42,13 +37,7 @@ class CompositeTranslationCacheWarmerTest extends \PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->mixingStrategy = $this->getMock('Oro\Bundle\TranslationBundle\Strategy\TranslationStrategyInterface');
-
-        $this->warmer = new CompositeTranslationCacheWarmer(
-            $this->innerWarmer,
-            $this->strategyProvider,
-            $this->mixingStrategy
-        );
+        $this->warmer = new CompositeTranslationCacheWarmer($this->innerWarmer, $this->strategyProvider);
     }
 
     public function testWarmUp()
@@ -57,41 +46,20 @@ class CompositeTranslationCacheWarmerTest extends \PHPUnit_Framework_TestCase
         $defaultStrategyName = 'default';
         $mixingStrategyName = 'mix';
 
-        $defaultStrategy = $this->getMock('Oro\Bundle\TranslationBundle\Strategy\TranslationStrategyInterface');
-        $defaultStrategy->expects($this->any())
-            ->method('getName')
-            ->willReturn($defaultStrategyName);
+        $defaultStrategy = $this->getStrategy($defaultStrategyName);
+        $mixingStrategy = $this->getStrategy($mixingStrategyName);
 
-        $this->mixingStrategy->expects($this->any())
-            ->method('getName')
-            ->willReturn($mixingStrategyName);
+        $this->strategyProvider->expects($this->at(0))->method('getStrategies')
+            ->willReturn(['default' => $defaultStrategy, 'mix' => $mixingStrategy]);
 
-        $currentStrategy = $defaultStrategy;
-        $calledStrategies = [];
+        $this->strategyProvider->expects($this->at(1))->method('selectStrategy')->with($defaultStrategyName);
+        $this->strategyProvider->expects($this->at(2))->method('selectStrategy')->with($mixingStrategyName);
 
-        $this->strategyProvider->expects($this->once())
-            ->method('getStrategy')
-            ->willReturn($defaultStrategy);
-        $this->strategyProvider->expects($this->exactly(2))
-            ->method('setStrategy')
-            ->willReturnCallback(
-                function (TranslationStrategyInterface $strategy) use (&$currentStrategy) {
-                    $currentStrategy = $strategy;
-                }
-            );
-        $this->innerWarmer->expects($this->exactly(2))
-            ->method('warmUp')
-            ->with($directory)
-            ->willReturnCallback(
-                function () use (&$currentStrategy, &$calledStrategies) {
-                    /** @var TranslationStrategyInterface $currentStrategy */
-                    $this->assertNotEmpty($currentStrategy);
-                    $calledStrategies[] = $currentStrategy->getName();
-                }
-            );
+        $this->strategyProvider->expects($this->at(3))->method('resetStrategy');
+
+        $this->innerWarmer->expects($this->exactly(2))->method('warmUp')->with($directory);
 
         $this->warmer->warmUp($directory);
-        $this->assertEquals([$mixingStrategyName, $defaultStrategyName], $calledStrategies);
     }
 
     /**
@@ -113,5 +81,18 @@ class CompositeTranslationCacheWarmerTest extends \PHPUnit_Framework_TestCase
             'optional' => [true],
             'not optional' => [false],
         ];
+    }
+
+    /**
+     * @param string $name
+     * @return TranslationStrategyInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getStrategy($name)
+    {
+        $strategy = $this->getMock(TranslationStrategyInterface::class);
+        $strategy->expects($this->any())->method('isApplicable')->willReturn(true);
+        $strategy->expects($this->any())->method('getName')->willReturn($name);
+
+        return $strategy;
     }
 }
