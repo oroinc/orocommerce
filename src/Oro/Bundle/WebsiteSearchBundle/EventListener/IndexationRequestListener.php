@@ -181,7 +181,7 @@ class IndexationRequestListener implements OptionalListenerInterface
              * @var object $entity
              */
             foreach ($entities as $entity) {
-                $ids[] = $this->doctrineHelper->getEntityIdentifier($entity)['id'];
+                $ids[] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
             }
 
             $reindexationRequestEvent = new ReindexationRequestEvent(
