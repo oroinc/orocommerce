@@ -15,8 +15,10 @@ class OroRedirectBundle implements Migration
     {
         /** Tables generation **/
         $this->createOroSlugScopeTable($schema);
+        $this->createOroRedirectTable($schema);
 
         /** Foreign keys generation **/
+        $this->addOroRedirectForeignKeys($schema);
         $this->addOroSlugScopeForeignKeys($schema);
 
         $this->addUrlHashField($schema);
@@ -74,5 +76,46 @@ class OroRedirectBundle implements Migration
     {
         $table = $schema->getTable('oro_redirect_slug');
         $table->addIndex(['url_hash'], 'oro_redirect_slug_url_hash', []);
+    }
+        
+    /**
+     * Create orob2b_redirect table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroRedirectTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_redirect');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('website_id', 'integer', ['notnull' => false]);
+        $table->addColumn('slug_id', 'integer', ['notnull' => false]);
+        $table->addColumn('redirect_from', 'string', ['notnull' => true, 'length' => 1024]);
+        $table->addColumn('redirect_to', 'string', ['notnull' => true, 'length' => 1024]);
+        $table->addColumn('redirect_type', 'integer', ['notnull' => true]);
+        $table->addColumn('from_hash', 'string', ['length' => 32]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['from_hash'], 'idx_oro_redirect_from_hash', []);
+    }
+
+    /**
+     * Add oro_redirect foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroRedirectForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_redirect');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_website'),
+            ['website_id'],
+            ['id'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_redirect_slug'),
+            ['slug_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 }
