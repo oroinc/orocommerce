@@ -3,7 +3,7 @@ layout:
         - oro_account_menu
         -
             id: oro_checkout_grid
-            root: content
+            root: page_content
             namespace: checkouts
 
     actions:
@@ -12,7 +12,7 @@ layout:
 
         - '@add':
             id: checkouts_title
-            parentId: content
+            parentId: page_content
             blockType: text
             siblingId: ~
             prepend: true

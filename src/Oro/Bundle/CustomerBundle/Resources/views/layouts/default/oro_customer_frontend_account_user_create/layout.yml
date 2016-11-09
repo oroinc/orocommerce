@@ -2,7 +2,7 @@ layout:
     imports:
         -
             id: oro_account_user_form
-            root: content
+            root: page_content
         - oro_account_menu
     actions:
         - '@appendOption':
@@ -19,7 +19,7 @@ layout:
                 label: 'oro.customer.frontend.title.account_user.create'
 
         - '@setOption':
-            id: content
+            id: page_content
             optionName: class_prefix
             optionValue: 'user'
 

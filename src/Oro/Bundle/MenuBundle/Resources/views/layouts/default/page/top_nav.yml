@@ -21,7 +21,7 @@ layout:
                         attr:
                             class: pull-left
             tree:
-                header:
+                page_header:
                     top_nav_container:
                         top_nav_controls: ~
                         top_nav_menu_container:

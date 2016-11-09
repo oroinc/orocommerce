@@ -27,7 +27,7 @@ layout:
                 parameters:
                     '%identifier%': '=data["order"].getIdentifier()'
         - '@setOption':
-            id: content
+            id: page_content
             optionName: class_prefix
             optionValue: 'account'
         - '@addTree':
@@ -156,7 +156,7 @@ layout:
                         total: '=data["totals"].total'
                         subtotals: '=data["totals"].subtotals'
             tree:
-                content:
+                page_content:
                     order_view_page:
                         order_container:
                             order_body:

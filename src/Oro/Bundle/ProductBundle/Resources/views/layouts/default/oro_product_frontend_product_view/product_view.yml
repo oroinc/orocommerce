@@ -69,7 +69,7 @@ layout:
                 product_tabs:
                     blockType: block
             tree:
-                content:
+                page_content:
                     product_view_page:
                         product_container:
                             product_title_mobile: ~

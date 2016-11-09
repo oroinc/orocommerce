@@ -2,7 +2,7 @@ layout:
     imports:
         -
             id: oro_rfp_frontend_request_edit
-            root: content
+            root: page_content
         - oro_account_menu
     actions:
         - '@appendOption':

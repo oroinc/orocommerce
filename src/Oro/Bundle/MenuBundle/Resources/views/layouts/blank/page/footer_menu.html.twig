@@ -1,0 +1,27 @@
+{% block _footer_menu_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': "grid__row"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _footer_menu_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " primary-menu primary-menu--vertical"
+    }) %}
+
+    {% spaceless %}
+        {% for child in item.children %}
+            {% if child.extras.isAllowed %}
+                <div class="grid__column">
+                    <h3>{{ child.label }}</h3>
+                    {% set item = child %}
+                    {{ block('menu_widget') }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endspaceless %}
+{% endblock %}

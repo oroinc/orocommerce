@@ -4,7 +4,7 @@ layout:
             themes: 'oro_account_menu.html.twig'
         - '@add':
             id: account_sidebar_container
-            parentId: sidebar_left
+            parentId: page_sidebar
             blockType: container
             prepend: true
         - '@add':

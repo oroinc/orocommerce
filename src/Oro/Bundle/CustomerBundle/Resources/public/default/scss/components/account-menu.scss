@@ -1,5 +1,4 @@
 .account-menu {
-    margin-top: 35px;
     padding: 25px 30px;
 
     background: get-color('additional', 'base');
@@ -102,7 +101,7 @@
 @include breakpoint('tablet-small') {
     .account-menu {
         padding: 0;
-        margin: 35px -15px 0;
+        margin: 0 -15px;
 
         border-top: 1px solid get-color('additional', 'light');
         border-bottom: 1px solid get-color('additional', 'light');

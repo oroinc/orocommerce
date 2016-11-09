@@ -4,4 +4,5 @@ layout:
             themes: 'OroMenuBundle:layouts:default/page/main_menu.html.twig'
         - '@move':
             id: header_row
-            parentId: header
+            parentId: page_header
+

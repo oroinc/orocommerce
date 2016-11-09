@@ -67,7 +67,7 @@ layout:
                         label: 'oro.sale.quote.shipping_address.label'
                         additional_block_prefixes: ['quote_body_column_element']
             tree:
-                content:
+                page_content:
                     quote_view_page:
                         quote_view_controls_list: ~
                         quote_view_information:

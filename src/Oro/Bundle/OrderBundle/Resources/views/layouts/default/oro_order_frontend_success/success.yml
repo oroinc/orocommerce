@@ -8,7 +8,7 @@ layout:
             optionValue: 'oro.order.success.thank_you'
         - '@add':
             id: success_order
-            parentId: content
+            parentId: page_content
             blockType: success_order
             options:
                 order: '=data["order"]'

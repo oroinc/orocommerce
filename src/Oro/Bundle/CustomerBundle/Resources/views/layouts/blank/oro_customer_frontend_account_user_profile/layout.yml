@@ -2,7 +2,7 @@ layout:
     imports:
         -
             id: oro_customer_menu
-            root: body
+            root: page_sidebar
     actions:
         - '@appendOption':
             id: title

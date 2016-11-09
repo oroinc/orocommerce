@@ -12,7 +12,7 @@ layout:
     imports:
         -
             id: oro_checkout_content
-            root: content
+            root: page_content
         -
             id: oro_checkout_sidebar
-            root: sidebar_left
+            root: page_sidebar

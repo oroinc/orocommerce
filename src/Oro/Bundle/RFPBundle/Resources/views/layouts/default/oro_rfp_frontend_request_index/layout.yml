@@ -3,7 +3,7 @@ layout:
         - oro_account_menu
         -
             id: oro_rfp_request_grid
-            root: content
+            root: page_content
             namespace: requests
 
     actions:
@@ -23,7 +23,7 @@ layout:
             optionValue: 'oro.frontend.rfp.request.entity_plural_label'
 
         - '@setOption':
-            id: content
+            id: page_content
             optionName: class_prefix
             optionValue: 'requests'
 

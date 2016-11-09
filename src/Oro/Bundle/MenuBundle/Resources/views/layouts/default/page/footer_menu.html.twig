@@ -1,10 +1,12 @@
 {% block _footer_menu_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " row"
+        '~class': " container-fluid"
     }) %}
     <div {{ block('block_attributes') }}>
-        <div class="col-md-8 col-sm-12 clearfix">
-            {{ block_widget(block) }}
+        <div class="row">
+            <div class="col-md-8 col-sm-12 clearfix">
+                {{ block_widget(block) }}
+            </div>
         </div>
     </div>
 {% endblock %}
