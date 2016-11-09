@@ -53,7 +53,6 @@ class AccountRepository extends EntityRepository implements BatchIteratorInterfa
 
         return $children;
     }
-    }
 
     /**
      * @param AclHelper $aclHelper
@@ -71,4 +70,5 @@ class AccountRepository extends EntityRepository implements BatchIteratorInterfa
             ['account' => 'a.id']
         );
         return $qb->addCriteria($criteria);
+    }
 }
