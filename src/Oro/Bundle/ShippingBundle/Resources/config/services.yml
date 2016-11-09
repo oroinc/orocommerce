@@ -209,9 +209,31 @@ services:
     oro_shipping.shipping_price.provider:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider'
         arguments:
-            - '@oro_entity.doctrine_helper'
+            - '@oro_shipping.shipping_rule.provider'
             - '@oro_shipping.shipping_method.registry'
+            - '@oro_shipping.shipping_price.provider.cache'
+
+    oro_shipping.shipping_rule.provider:
+        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingRulesProvider'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
             - '@oro_shipping.expression_language.line_item_decorator_factory'
+            - '@logger'
+
+    oro_shipping.shipping_price.provider.cache:
+        class: 'Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache'
+        public: false
+        arguments:
+            - '@oro_shipping.price.cache'
+            - '@doctrine'
+            - '@oro_shipping.shipping_context.cache_key_generator'
+
+    oro_shipping.price.cache:
+        public: false
+        parent: oro.cache.abstract
+        calls:
+            - [setNamespace, ['oro_shipping_price']]
 
     oro_shipping.form.handler.shipping_rule:
         class: 'Oro\Bundle\ShippingBundle\Form\Handler\ShippingRuleHandler'
@@ -250,3 +272,16 @@ services:
             - '@oro_shipping.query_designer.select_query_converter'
             - '@doctrine'
             - '@oro_entity.helper.field_helper'
+
+    oro_shipping.condition.has_applicable_shipping_methods:
+        class: 'Oro\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods'
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
+            - '@oro_shipping.shipping_price.provider'
+        tags:
+            - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
+            - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
+
+    oro_shipping.shipping_context.cache_key_generator:
+        class: 'Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator'
+        public: false

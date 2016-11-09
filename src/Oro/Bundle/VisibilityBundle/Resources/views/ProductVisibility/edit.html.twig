@@ -1,0 +1,89 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
+
+{% set formAction = path('oro_product_visibility_edit', { 'id': entity.id })  %}
+
+{% block navButtons %}
+    {{ UI.cancelButton(path('oro_product_index')) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if entity.id or resource_granted('oro_product_update') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% if entity.id %}
+        {% set breadcrumbs = {
+            'entity':      entity,
+            'indexPath':   path('oro_product_index'),
+            'indexLabel': 'oro.product.entity_plural_label'|trans,
+            'entityTitle': UI.link({
+                'path': path('oro_product_view', {'id': entity.id}),
+                'label': entity.sku ~ ' - ' ~ entity.defaultName
+            })
+        } %}
+        {{ parent() }}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'product-visibility-edit' %}
+
+    {% set productVisibilityWidget %}
+        <div class="responsive-cell">
+            {% set scopes = form.vars.scopes %}
+            {% if scopes|length == 1 %}
+                {% set scope = scopes|first %}
+                {% if scope %}
+                    {% set content = '' %}
+                    {% if form.children[scope.id] is defined  %}
+                        {% include 'OroVisibilityBundle:ProductVisibility/widget:scope.html.twig' with {form: form.children[scope.id]} %}
+                    {% endif %}
+                {% endif %}
+            {% else %}
+                {% set tabs = [] %}
+                {% for label, scope in scopes %}
+                    {% set content = '' %}
+                    {% if form.children[scope.id] is defined  %}
+                        {% set content %}
+                            {% include 'OroVisibilityBundle:ProductVisibility/widget:scope.html.twig' with {form: form.children[scope.id]} %}
+                        {% endset %}
+                    {% endif %}
+
+                    {% set tab = {
+                        'alias': scope.id,
+                        'widgetType': 'block',
+                        'label': label,
+                        'url': path(
+                            'oro_product_visibility_scoped',
+                            { productId: entity.id,  id: scope.id}
+                        ),
+                        'content': content
+                    } %}
+
+                    {% set tabs = tabs|merge([tab]) %}
+                {% endfor %}
+                {{ tabPanel(tabs, {'useDropdown': true}) }}
+            {% endif %}
+        </div>
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'Product visibility',
+            'subblocks': [
+                {'data' : [productVisibilityWidget] }
+            ]
+        }
+    ] %}
+
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
+{% endblock content_data %}

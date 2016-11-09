@@ -60,7 +60,7 @@
     font-size: 18px;
   }
 
-  @include breakpoint('mobile-portrait') {
+  @include breakpoint('mobile-landscape') {
     position: static;
   }
 
