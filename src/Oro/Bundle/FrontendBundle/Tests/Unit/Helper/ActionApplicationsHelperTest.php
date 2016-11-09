@@ -22,6 +22,9 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
         parent::setUp();
 
         $this->helper = new ActionApplicationsHelper($this->helper, $this->tokenStorage);
+        $this->helper->setDialogRoute('oro_frontend_action_widget_form')
+            ->setWidgetRoute('oro_frontend_action_widget_buttons')
+            ->setExecutionRoute('oro_frontend_action_operation_execute');
     }
 
     /**

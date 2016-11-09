@@ -16,7 +16,7 @@ class ActionApplicationsHelper implements ApplicationsHelperInterface
 
     const COMMERCE_APPLICATION = 'commerce';
 
-    /** @var  ApplicationsHelper */
+    /** @var ApplicationsHelper */
     protected $applicationsHelper;
 
     /** @var TokenStorageInterface */
@@ -45,7 +45,7 @@ class ActionApplicationsHelper implements ApplicationsHelperInterface
      */
     public function getWidgetRoute()
     {
-        return $this->isFrontend() ? 'oro_frontend_action_widget_buttons' : $this->applicationsHelper->getWidgetRoute();
+        return $this->isFrontend() ? $this->widgetRoute : $this->applicationsHelper->getWidgetRoute();
     }
 
     /**
@@ -53,7 +53,7 @@ class ActionApplicationsHelper implements ApplicationsHelperInterface
      */
     public function getDialogRoute()
     {
-        return $this->isFrontend() ? 'oro_frontend_action_widget_form' : $this->applicationsHelper->getDialogRoute();
+        return $this->isFrontend() ? $this->dialogRoute : $this->applicationsHelper->getDialogRoute();
     }
 
     /**
@@ -61,8 +61,7 @@ class ActionApplicationsHelper implements ApplicationsHelperInterface
      */
     public function getExecutionRoute()
     {
-        return $this->isFrontend() ? 'oro_frontend_action_operation_execute' :
-            $this->applicationsHelper->getExecutionRoute();
+        return $this->isFrontend() ? $this->executionRoute : $this->applicationsHelper->getExecutionRoute();
     }
 
     /**

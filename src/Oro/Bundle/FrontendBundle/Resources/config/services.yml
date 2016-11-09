@@ -154,3 +154,7 @@ services:
         arguments:
             - '@oro_frontend.helper.applications.inner'
             - '@security.token_storage'
+        calls:
+            - [setDialogRoute, ['oro_frontend_action_widget_form']]
+            - [setExecutionRoute, ['oro_frontend_action_operation_execute']]
+            - [setWidgetRoute, ['oro_frontend_action_widget_buttons']]
