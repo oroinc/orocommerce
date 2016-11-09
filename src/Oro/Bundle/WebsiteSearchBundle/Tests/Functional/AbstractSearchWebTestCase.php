@@ -117,6 +117,9 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     /** Check for engine before initialization but after init client */
     abstract protected function preSetUp();
 
+    /** Check for engine after test excution */
+    abstract protected function preTearDown();
+
     /**
      * {@inheritdoc}
      */
@@ -160,6 +163,8 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
      */
     protected function tearDown()
     {
+        $this->preTearDown();
+
         //Remove listener to not interact with other tests
         $this->dispatcher->removeListener(IndexEntityEvent::NAME, $this->listener);
     }

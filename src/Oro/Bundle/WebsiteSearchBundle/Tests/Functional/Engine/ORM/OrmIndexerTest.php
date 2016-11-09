@@ -43,6 +43,16 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
     protected function preSetUp()
     {
+        $this->checkEngine();
+    }
+
+    protected function preTearDown()
+    {
+        $this->checkEngine();
+    }
+
+    protected function checkEngine()
+    {
         if ($this->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
             $this->markTestSkipped('Should be tested only with ORM engine');
         }
