@@ -57,3 +57,10 @@ services:
         public: false
         arguments:
             - "@doctrine"
+
+    oro_ups.event_listener.shipping_method_config_data:
+        class: 'Oro\Bundle\UPSBundle\EventListener\ShippingMethodConfigDataListener'
+        arguments:
+            - '@oro_ups.shipping_method_provider.ups'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }

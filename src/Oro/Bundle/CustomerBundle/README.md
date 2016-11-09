@@ -16,8 +16,6 @@ Bundle responsibilities:
 - Activate and deactivate Customer Users.
 - Send welcome email.
 - Password edit and automatic password generation for new Customer User.
-- [Product visibility](./Resources/doc/product-visibility.md)
-- [Category visibility](./Resources/doc/category-visibility.md)
 
 Expected dependencies:
 ----------------------

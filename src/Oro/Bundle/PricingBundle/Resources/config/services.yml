@@ -399,10 +399,9 @@ services:
     oro_pricing.model.assign_user_currency:
         class: 'Oro\Bundle\PricingBundle\Model\AssignUserCurrencyAction'
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@oro_pricing.user_currency_manager'
         tags:
-            - { name: oro_workflow.action, alias: assign_user_currency }
             - { name: oro_action.action, alias: assign_user_currency }
 
     oro_pricing.filter.abstract_product_price:

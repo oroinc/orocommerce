@@ -2,20 +2,6 @@ parameters:
     oro_redirect.entity.slug.class: Oro\Bundle\RedirectBundle\Entity\Slug
 
 services:
-    oro_redirect.kernel.listener.process_redirects:
-        class: 'Oro\Bundle\RedirectBundle\EventListener\ForwardListener'
-        arguments:
-            - "@router"
-            - "@doctrine"
-            - "@oro_frontend.request.frontend_helper"
-            - '%installed%'
-            - '%kernel.environment%'
-        calls:
-            - [addSkippedUrlPattern, ['/_profiler', 'dev']]
-            - [addSkippedUrlPattern, ['/_wdt', 'dev']]
-        tags:
-            - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 64}
-
     oro_redirect.slug.manager:
         class: 'Oro\Bundle\RedirectBundle\Manager\SlugManager'
         arguments:

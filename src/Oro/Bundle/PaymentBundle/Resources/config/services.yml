@@ -134,7 +134,7 @@ services:
     oro_payment.action.payment_method_action.abstract:
         abstract: true
         arguments:
-            - '@oro_action.context_accessor'
+            - '@oro_action.expression.context_accessor'
             - '@oro_payment.payment_method.registry'
             - '@oro_payment.provider.payment_transaction'
             - '@router'
@@ -145,21 +145,18 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Action\CaptureAction'
         parent: oro_payment.action.payment_method_action.abstract
         tags:
-            - { name: oro_workflow.action, alias: payment_capture }
             - { name: oro_action.action, alias: payment_capture }
 
     oro_payment.action.purchase:
         class: 'Oro\Bundle\PaymentBundle\Action\PurchaseAction'
         parent: oro_payment.action.payment_method_action.abstract
         tags:
-            - { name: oro_workflow.action, alias: payment_purchase }
             - { name: oro_action.action, alias: payment_purchase }
 
     oro_payment.action.validate:
         class: 'Oro\Bundle\PaymentBundle\Action\ValidateAction'
         parent: oro_payment.action.payment_method_action.abstract
         tags:
-            - { name: oro_workflow.action, alias: payment_validate }
             - { name: oro_action.action, alias: payment_validate }
 
     oro_payment.event_listener.callback.redirect:
@@ -176,7 +173,6 @@ services:
         arguments:
             - '@oro_payment.payment_method.registry'
         tags:
-            - { name: oro_workflow.condition, alias: 'payment_method_enabled' }
             - { name: oro_action.condition, alias: 'payment_method_enabled' }
 
     oro_payment.condition.payment_method_applicable:
@@ -185,7 +181,6 @@ services:
             - '@oro_payment.payment_method.registry'
             - '@oro_payment.provider.payment_context'
         tags:
-            - { name: oro_workflow.condition, alias: 'payment_method_applicable' }
             - { name: oro_action.condition, alias: 'payment_method_applicable' }
 
     oro_payment.condition.has_applicable_payment_methods:
@@ -194,7 +189,6 @@ services:
             - '@oro_payment.payment_method.registry'
             - '@oro_payment.provider.payment_context'
         tags:
-            - { name: oro_workflow.condition, alias: 'has_applicable_payment_methods' }
             - { name: oro_action.condition, alias: 'has_applicable_payment_methods' }
 
     oro_payment.provider.address_extractor:
@@ -215,7 +209,6 @@ services:
         arguments:
             - '@oro_payment.payment_method.registry'
         tags:
-            - { name: oro_workflow.condition, alias: 'payment_method_supports' }
             - { name: oro_action.condition, alias: 'payment_method_supports' }
 
     oro_payment.listener.payment_transaction_listener:
@@ -251,5 +244,4 @@ services:
             - '@oro_payment.payment_method.registry'
             - '@event_dispatcher'
         tags:
-            - { name: oro_workflow.condition, alias: 'require_payment_redirect' }
             - { name: oro_action.condition, alias: 'require_payment_redirect' }

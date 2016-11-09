@@ -248,8 +248,6 @@ navigation:
         oro_customer_frontend_account_user_role_update: 'oro.customer.frontend.account_user.role.entity_plural_label - oro.ui.edit'
         oro_customer_frontend_account_user_role_create: 'oro.customer.frontend.account_user.role.entity_plural_label - oro.ui.create'
 
-        oro_product_visibility_edit: '%%sku%% - %%name%% - Edit'
-
         oro_customer_frontend_account_address_create: 'oro.customer.frontend.address.title.company - oro.customer.frontend.address.title.create'
         oro_customer_frontend_account_address_update: 'oro.customer.frontend.address.title.company - oro.customer.frontend.address.title.edit'
         oro_customer_frontend_account_user_address_create: 'oro.customer.frontend.address.title.personal - oro.customer.frontend.address.title.create'

@@ -1,0 +1,83 @@
+oro:
+    workflow:
+        b2b_flow_checkout:
+            label: Checkout
+            step:
+                enter_billing_address:
+                    label: 'Billing Information'
+                enter_shipping_address:
+                    label: 'Shipping Information'
+                enter_shipping_method:
+                    label: 'Shipping Method'
+                enter_payment:
+                    label: Payment
+                order_review:
+                    label: 'Order Review'
+            attribute:
+                billing_address_has_shipping:
+                    label: 'If billing address also shipping'
+                allow_manual_source_remove:
+                    label: 'Allow manual source entity removal'
+                disallow_billing_address_edit:
+                    label: 'Disallow billing address edit'
+                disallow_shipping_address_edit:
+                    label: 'Disallow shipping address edit'
+                disallow_shipping_method_edit:
+                    label: 'Disallow shipping method edit'
+                remove_source:
+                    label: 'Remove Source Entity'
+                auto_remove_source:
+                    label: 'Always remove source entity automatically'
+                source_remove_label:
+                    label: 'Label for remove source'
+                edit_order_link:
+                    label: 'Edit Order Link'
+                payment_in_progress:
+                    label: 'Flag indicates that payment is in progress'
+                payment_validate:
+                    label: 'Payment validation required'
+                payment_save_for_later:
+                    label: 'Save payment data for later use'
+                state_token:
+                    label: 'Token to track checkout state'
+                internal_state_token:
+                    label: 'Internal checkout state token'
+                order:
+                    label: 'Instance of Order entity'
+            transition:
+                continue_to_shipping_address:
+                    label: Continue
+                    attribute:
+                        save_billing_address:
+                            label: 'Save address'
+                        ship_to_billing_address:
+                            label: 'Ship to this address'
+                continue_to_shipping_method:
+                    label: Continue
+                    attribute:
+                        save_shipping_address:
+                            label: 'Save address'
+                        ship_to_billing_address:
+                            label: 'Use billing address'
+                continue_to_payment:
+                    label: Continue
+                continue_to_order_review:
+                    label: Continue
+                back_to_billing_address:
+                    label: 'Edit Billing Information'
+                back_to_shipping_address:
+                    label: 'Edit Shipping Information'
+                back_to_shipping_address_on_fail_address:
+                    label: 'Edit Shipping Information'
+                back_to_shipping_method:
+                    label: 'Edit Shipping Method'
+                back_to_payment:
+                    label: 'Edit Payment'
+                verify_payment:
+                    label: 'Verify Payment'
+                place_order:
+                    label: 'Submit Order'
+                finish_checkout:
+                    label: 'Finish checkout'
+                payment_error:
+                    label: 'Payment error'
