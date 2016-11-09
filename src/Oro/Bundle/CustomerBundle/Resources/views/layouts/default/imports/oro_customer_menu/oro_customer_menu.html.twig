@@ -1,6 +1,6 @@
 {% block __oro_customer_menu__container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' primary-menu-container'
+        '~class': ' customer-menu-container'
     }) %}
     {% if isMobileVersion() %}
         <div class="collapse-view"
@@ -11,7 +11,7 @@
              }|json_encode() }}"
         >
             <div {{ block('block_attributes') }}>
-                <h3 class="primary-menu-title" data-collapse-trigger>
+                <h3 class="customer-menu-container" data-collapse-trigger>
                     {{ 'oro.customer.frontend.menu.account_user_profile.label'|trans }}
                     <i class="icon-plus"></i>
                     <i class="icon-minus"></i>
@@ -23,7 +23,7 @@
         </div>
     {% else %}
         <div {{ block('block_attributes') }}>
-            <h3 class="primary-menu-title">
+            <h3 class="customer-menu-container">
                 {{ 'oro.customer.frontend.menu.account_user_profile.label'|trans }}
             </h3>
             {{ block_widget(block) }}

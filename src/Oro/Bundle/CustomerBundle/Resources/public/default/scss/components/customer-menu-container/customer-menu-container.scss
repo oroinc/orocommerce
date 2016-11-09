@@ -1,0 +1,9 @@
+// @theme: default
+
+.customer-menu-container {
+    margin: $customer-menu-container-offset;
+    padding: $customer-menu-container-inner-offset;
+
+    background: $customer-menu-container-background;
+    border-radius: $customer-menu-container-border-radius;
+}
