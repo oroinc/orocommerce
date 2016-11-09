@@ -81,15 +81,9 @@ class Slug
     protected $scopes;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\RedirectBundle\Entity\Redirect")
-     * @ORM\JoinTable(
-     *      name="oro_slug_redirect",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="slug_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="redirect_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
+     * @ORM\OneToMany(
+     *     targetEntity="Oro\Bundle\RedirectBundle\Entity\Redirect",
+     *     mappedBy="slug"
      * )
      *
      * @var Redirect[]|Collection
@@ -207,6 +201,7 @@ class Slug
     {
         if (!$this->redirects->contains($redirect)) {
             $this->redirects->add($redirect);
+            $redirect->setSlug($this);
         }
 
         return $this;

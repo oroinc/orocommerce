@@ -3,14 +3,15 @@
 namespace Oro\Bundle\RedirectBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class RedirectRepository extends EntityRepository
 {
     /**
      * @param string $from
-     * @param Website $website
-     * @return array
+     * @param Website|null $website
+     * @return array|Redirect[]
      */
     public function findByFrom($from, Website $website = null)
     {

@@ -25,12 +25,10 @@ class OroRedirectBundleInstaller implements Installation
         /** Tables generation **/
         $this->createOroRedirectSlugTable($schema);
         $this->createOroRedirectTable($schema);
-        $this->createOroSlugRedirectTable($schema);
         $this->createOroSlugScopeTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroRedirectForeignKeys($schema);
-        $this->addOroSlugRedirectForeignKeys($schema);
         $this->addOroSlugScopeForeignKeys($schema);
     }
 
@@ -96,9 +94,10 @@ class OroRedirectBundleInstaller implements Installation
         $table = $schema->createTable('oro_redirect');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
+        $table->addColumn('slug_id', 'integer', ['notnull' => false]);
         $table->addColumn('redirect_from', 'string', ['notnull' => true, 'length' => 1024]);
         $table->addColumn('redirect_to', 'string', ['notnull' => true, 'length' => 1024]);
-        $table->addColumn('redirect_type', 'integer', ['notnull' => true, 'comment' => '(301 or 302)']);
+        $table->addColumn('redirect_type', 'integer', ['notnull' => true]);
         $table->addColumn('from_hash', 'string', ['length' => 32]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['from_hash'], 'idx_oro_redirect_from_hash', []);
@@ -154,6 +153,12 @@ class OroRedirectBundleInstaller implements Installation
             ['website_id'],
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_redirect_slug'),
+            ['slug_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }

@@ -59,7 +59,7 @@ class Redirect
     /**
      * @var integer
      *
-     * @ORM\Column(name="redirect_type", type="integer")
+     * @ORM\Column(name="redirect_type", type="integer", nullable=false)
      */
     protected $type;
 
@@ -70,6 +70,14 @@ class Redirect
      * @var Website
      */
     protected $website;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\RedirectBundle\Entity\Slug")
+     * @ORM\JoinColumn(name="slug_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     *
+     * @var Slug
+     */
+    protected $slug;
 
     /**
      * @return integer
@@ -152,6 +160,25 @@ class Redirect
     public function setWebsite($website)
     {
         $this->website = $website;
+
+        return $this;
+    }
+
+    /**
+     * @return Slug
+     */
+    public function getSlug()
+    {
+        return $this->slug;
+    }
+
+    /**
+     * @param Slug $slug
+     * @return $this
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
 
         return $this;
     }
