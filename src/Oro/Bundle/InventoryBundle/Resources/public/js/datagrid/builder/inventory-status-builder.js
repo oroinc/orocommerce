@@ -49,10 +49,30 @@ define(['jquery', 'underscore'], function ($, _) {
             var statusColumn = self.options.statusColumnName;
 
             _.each(this.datagrid.collection.models, function(model) {
+                self._initializeInventoryStatus(model, statusColumn );
+
                 model.on('change:' + statusColumn, function(model, value) {
                     self._updateInventoryStatus(model, value);
                 });
            });
+        },
+
+        /**
+         * Initializes all inventory statuses with the correct label.
+         * @param {Object} model
+         * @param {string} statusColumn
+         */
+        _initializeInventoryStatus: function(model, statusColumn) {
+            var self = this;
+            var value = model.get(statusColumn);
+
+            if (typeof value === 'string') {
+                value = value.trim();
+            }
+            var columnValue = self.statusMetadata.choices[value];
+            if (typeof columnValue !== 'undefined') {
+                model.set(statusColumn, columnValue);
+            }
         },
 
         /**

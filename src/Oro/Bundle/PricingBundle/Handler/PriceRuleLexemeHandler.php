@@ -3,14 +3,14 @@
 namespace Oro\Bundle\PricingBundle\Handler;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
-use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
+use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
+use Oro\Component\Expression\ExpressionParser;
+use Oro\Component\Expression\FieldsProviderInterface;
 
 class PriceRuleLexemeHandler
 {
@@ -25,19 +25,19 @@ class PriceRuleLexemeHandler
     protected $parser;
 
     /**
-     * @var PriceRuleFieldsProvider
+     * @var FieldsProviderInterface
      */
     protected $priceRuleProvider;
 
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param ExpressionParser $parser
-     * @param PriceRuleFieldsProvider $priceRuleProvider
+     * @param FieldsProviderInterface $priceRuleProvider
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ExpressionParser $parser,
-        PriceRuleFieldsProvider $priceRuleProvider
+        FieldsProviderInterface $priceRuleProvider
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->parser = $parser;

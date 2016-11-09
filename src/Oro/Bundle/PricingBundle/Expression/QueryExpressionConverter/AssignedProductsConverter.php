@@ -5,25 +5,22 @@ namespace Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter;
 use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
-use Oro\Bundle\PricingBundle\Expression\BinaryNode;
-use Oro\Bundle\PricingBundle\Expression\ContainerHolderNodeInterface;
-use Oro\Bundle\PricingBundle\Expression\NameNode;
-use Oro\Bundle\PricingBundle\Expression\NodeInterface;
-use Oro\Bundle\PricingBundle\Expression\RelationNode;
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Expression\FieldsProviderInterface;
+use Oro\Component\Expression\Node;
+use Oro\Component\Expression\QueryExpressionConverter\QueryExpressionConverterInterface;
 
 class AssignedProductsConverter implements QueryExpressionConverterInterface
 {
     /**
-     * @var PriceRuleFieldsProvider
+     * @var FieldsProviderInterface
      */
     protected $fieldsProvider;
 
     /**
-     * @param PriceRuleFieldsProvider $fieldsProvider
+     * @param FieldsProviderInterface $fieldsProvider
      */
-    public function __construct(PriceRuleFieldsProvider $fieldsProvider)
+    public function __construct(FieldsProviderInterface $fieldsProvider)
     {
         $this->fieldsProvider = $fieldsProvider;
     }
@@ -31,17 +28,17 @@ class AssignedProductsConverter implements QueryExpressionConverterInterface
     /**
      * {@inheritdoc}
      */
-    public function convert(NodeInterface $node, Expr $expr, array &$params, array $aliasMapping = [])
+    public function convert(Node\NodeInterface $node, Expr $expr, array &$params, array $aliasMapping = [])
     {
-        if ($node instanceof BinaryNode) {
+        if ($node instanceof Node\BinaryNode) {
             $operation = $node->getOperation();
             if ($operation === 'in' || $operation === 'not in') {
-                /** @var ContainerHolderNodeInterface $right */
+                /** @var Node\ContainerHolderNodeInterface $right */
                 $right = $node->getRight();
-                if ($right instanceof NameNode
+                if ($right instanceof Node\NameNode
                     && $right->getContainer() === PriceList::class && $right->getField() === 'assignedProducts'
                 ) {
-                    /** @var ContainerHolderNodeInterface|NodeInterface $left */
+                    /** @var Node\ContainerHolderNodeInterface|Node\NodeInterface $left */
                     $left = $node->getLeft();
                     $this->assertLeftOperand($left);
 
@@ -66,14 +63,14 @@ class AssignedProductsConverter implements QueryExpressionConverterInterface
     }
 
     /**
-     * @param NodeInterface $left
+     * @param Node\NodeInterface $left
      */
-    protected function assertLeftOperand(NodeInterface $left)
+    protected function assertLeftOperand(Node\NodeInterface $left)
     {
         $isAllowedNode = false;
-        if ($left instanceof NameNode) {
+        if ($left instanceof Node\NameNode) {
             $isAllowedNode = $left->getContainer() === Product::class && $left->getField() === 'id';
-        } elseif ($left instanceof RelationNode) {
+        } elseif ($left instanceof Node\RelationNode) {
             $relationClass = $this->fieldsProvider->getRealClassName($left->getContainer(), $left->getField());
             $isAllowedNode = $relationClass === Product::class && $left->getRelationField() === 'id';
         }
@@ -87,10 +84,10 @@ class AssignedProductsConverter implements QueryExpressionConverterInterface
 
     /**
      * @param array $aliasMapping
-     * @param ContainerHolderNodeInterface $node
+     * @param Node\ContainerHolderNodeInterface $node
      * @return string
      */
-    protected function getTableAliasByNode(array $aliasMapping, ContainerHolderNodeInterface $node)
+    protected function getTableAliasByNode(array $aliasMapping, Node\ContainerHolderNodeInterface $node)
     {
         $aliasKey = $node->getResolvedContainer();
         if (array_key_exists($aliasKey, $aliasMapping)) {

@@ -2,10 +2,8 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'default.html.twig'
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue: 'oro.catalog.frontend.root.title'
+        - '@remove':
+            id: page_container
         - '@addTree':
             items:
                 hero_promo_container:

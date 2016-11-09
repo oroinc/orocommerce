@@ -2,10 +2,11 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'OroCMSBundle:layouts:default/oro_cms_frontend_page_view/page.html.twig'
-        - '@appendOption':
+        - '@setOption':
             id: title
-            optionName: value
-            optionValue: '=data["page"].getTitle()'
+            optionName: params
+            optionValue:
+                '%title%': '=data["page"].getTitle()'
         - '@setOption':
             id: page_title
             optionName: text

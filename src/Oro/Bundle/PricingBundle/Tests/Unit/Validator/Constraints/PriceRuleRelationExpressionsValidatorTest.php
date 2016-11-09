@@ -3,15 +3,15 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
-use Oro\Bundle\PricingBundle\Expression\BinaryNode;
-use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
-use Oro\Bundle\PricingBundle\Expression\NameNode;
-use Oro\Bundle\PricingBundle\Expression\NodeInterface;
-use Oro\Bundle\PricingBundle\Expression\RelationNode;
-use Oro\Bundle\PricingBundle\Expression\ValueNode;
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressions;
 use Oro\Bundle\PricingBundle\Validator\Constraints\PriceRuleRelationExpressionsValidator;
+use Oro\Component\Expression\ExpressionParser;
+use Oro\Component\Expression\FieldsProviderInterface;
+use Oro\Component\Expression\Node\BinaryNode;
+use Oro\Component\Expression\Node\NameNode;
+use Oro\Component\Expression\Node\NodeInterface;
+use Oro\Component\Expression\Node\RelationNode;
+use Oro\Component\Expression\Node\ValueNode;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
@@ -33,9 +33,9 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
     protected $parser;
 
     /**
-     * @var PriceRuleFieldsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $fieldProvider;
+    protected $fieldsProvider;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
@@ -57,9 +57,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         $this->context = $this->getMock(ExecutionContextInterface::class);
 
         $this->parser = $this->getMockBuilder(ExpressionParser::class)->disableOriginalConstructor()->getMock();
-        $this->fieldProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->fieldsProvider = $this->getMock(FieldsProviderInterface::class);
         $this->translator = $this->getMock(TranslatorInterface::class);
 
         $this->translator->expects($this->any())
@@ -81,7 +79,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
 
         $this->validator = new PriceRuleRelationExpressionsValidator(
             $this->parser,
-            $this->fieldProvider,
+            $this->fieldsProvider,
             $this->translator
         );
         $this->validator->initialize($this->context);
@@ -96,7 +94,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
             ->setProductUnitExpression('product.msrp.unit')
             ->setQuantityExpression('product.msrp.quantity');
 
-        $this->fieldProvider->method('getRealClassName')
+        $this->fieldsProvider->method('getRealClassName')
             ->will(
                 $this->returnValueMap(
                     [
@@ -113,7 +111,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
                     ]
                 )
             );
-        $this->fieldProvider->method('isRelation')
+        $this->fieldsProvider->method('isRelation')
             ->will(
                 $this->returnValueMap(
                     [
@@ -172,7 +170,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         array $messageParams,
         NodeInterface $parsedCurrencyExpression
     ) {
-        $this->fieldProvider->method('getRealClassName')
+        $this->fieldsProvider->method('getRealClassName')
             ->will(
                 $this->returnValueMap(
                     [
@@ -263,7 +261,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         NodeInterface $parsedCurrencyExpression,
         NodeInterface $parsedRuleExpression = null
     ) {
-        $this->fieldProvider->method('getRealClassName')
+        $this->fieldsProvider->method('getRealClassName')
             ->will(
                 $this->returnValueMap(
                     [
@@ -531,7 +529,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         array $messageParams,
         NodeInterface $parsedUnitExpression
     ) {
-        $this->fieldProvider->method('getRealClassName')
+        $this->fieldsProvider->method('getRealClassName')
             ->will(
                 $this->returnValueMap(
                     [
@@ -624,7 +622,7 @@ class PriceRuleRelationExpressionsValidatorTest extends \PHPUnit_Framework_TestC
         NodeInterface $parsedUnitExpression,
         NodeInterface $parsedRuleExpression = null
     ) {
-        $this->fieldProvider->method('getRealClassName')
+        $this->fieldsProvider->method('getRealClassName')
             ->will(
                 $this->returnValueMap(
                     [

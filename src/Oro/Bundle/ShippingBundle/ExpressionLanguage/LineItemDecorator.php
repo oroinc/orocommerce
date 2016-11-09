@@ -36,7 +36,7 @@ class LineItemDecorator extends ShippingLineItem
         $this->factory = $factory;
         $this->lineItems = $lineItems;
         $this->setDimensions($lineItem->getDimensions())
-            ->setEntityIdentifier($lineItem->getEntityIdentifier())
+            ->setProductHolder($lineItem->getProductHolder())
             ->setPrice($lineItem->getPrice())
             ->setProduct($lineItem->getProduct())
             ->setProductUnit($lineItem->getProductUnit())

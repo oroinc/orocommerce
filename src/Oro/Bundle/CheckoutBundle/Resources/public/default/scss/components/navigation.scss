@@ -2,7 +2,7 @@
   @include list-normalize();
 
   margin: 30px 0 0 16px;
-  border-left: 2px solid $theme-lighter-gray-color;
+  border-left: 2px solid get-color('additional', 'light');
 
   &__step {
     position: relative;
@@ -27,7 +27,7 @@
   }
 
   &__title {
-    color: $base-font-color-lighter;
+    color: get-color('additional', 'dark');
     font-size: 16px;
     line-height: 1.875;
 

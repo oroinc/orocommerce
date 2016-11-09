@@ -4,11 +4,10 @@ namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
-use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
-use Oro\Bundle\PricingBundle\Expression\NameNode;
-use Oro\Bundle\PricingBundle\Expression\NodeInterface;
-use Oro\Bundle\PricingBundle\Expression\RelationNode;
-
+use Oro\Component\Expression\ExpressionParser;
+use Oro\Component\Expression\Node\NameNode;
+use Oro\Component\Expression\Node\NodeInterface;
+use Oro\Component\Expression\Node\RelationNode;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -101,7 +100,7 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
                 }
             }
         } catch (\Exception $ex) {
-            $this->context->buildViolation($constraint->invalidNodeMessage)->atPath($field)->addViolation();
+            $this->context->buildViolation($constraint->invalidNodeMessage)->addViolation();
         }
     }
 

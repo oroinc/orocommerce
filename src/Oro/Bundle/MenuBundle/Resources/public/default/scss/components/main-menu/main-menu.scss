@@ -13,16 +13,6 @@
     &__item {
         flex-grow: 1;
     }
-
-    &__link {
-        display: block;
-
-        padding: 14px 0;
-
-        text-transform: uppercase;
-
-        color: $theme-middle-gray-color;
-    }
 }
 
 @include breakpoint('tablet') {

@@ -5,19 +5,19 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Expression\QueryExpressionConverte
 use Doctrine\ORM\Query\Expr;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\PricingBundle\Expression\BinaryNode;
-use Oro\Bundle\PricingBundle\Expression\NameNode;
-use Oro\Bundle\PricingBundle\Expression\NodeInterface;
 use Oro\Bundle\PricingBundle\Expression\QueryExpressionConverter\AssignedProductsConverter;
-use Oro\Bundle\PricingBundle\Expression\RelationNode;
-use Oro\Bundle\PricingBundle\Expression\ValueNode;
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Expression\Node\BinaryNode;
+use Oro\Component\Expression\FieldsProviderInterface;
+use Oro\Component\Expression\Node\NameNode;
+use Oro\Component\Expression\Node\NodeInterface;
+use Oro\Component\Expression\Node\RelationNode;
+use Oro\Component\Expression\Node\ValueNode;
 
 class AssignedProductsConverterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PriceRuleFieldsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $fieldsProvider;
 
@@ -28,9 +28,7 @@ class AssignedProductsConverterTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->fieldsProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->fieldsProvider = $this->getMock(FieldsProviderInterface::class);
         $this->converter = new AssignedProductsConverter($this->fieldsProvider);
     }
 

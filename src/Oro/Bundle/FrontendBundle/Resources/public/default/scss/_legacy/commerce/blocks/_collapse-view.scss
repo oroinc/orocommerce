@@ -3,7 +3,7 @@
     display: inline-block;
     vertical-align: middle;
 
-    color: $base-link-color;
+    color: get-color('ui', 'normal');
 
     cursor: pointer;
 
@@ -11,7 +11,7 @@
       transition: all 200ms linear;
 
       &:hover {
-        color: $base-font-color;
+        color: get-color('additional', 'dark');
       }
     }
 
@@ -21,7 +21,7 @@
     }
 
     &.orange {
-      color: $theme-orange-color;
+      color: get-color('primary', 'base');
     }
   }
 

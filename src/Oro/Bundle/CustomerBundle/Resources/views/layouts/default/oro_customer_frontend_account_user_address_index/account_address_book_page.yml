@@ -11,13 +11,6 @@ layout:
             namespace: account_address_book
 
     actions:
-        - '@appendOption':
-            id: title
-            optionName: value
-            optionValue:
-                - 'oro.customer.menu.account_user.label'
-                - 'oro.customer.frontend.account_user.address.label'
-
         - '@setOption':
             id: page_title
             optionName: text

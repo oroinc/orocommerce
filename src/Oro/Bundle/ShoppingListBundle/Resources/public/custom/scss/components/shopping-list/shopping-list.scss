@@ -2,7 +2,7 @@
     &__content {
         padding: 15px;
 
-        border: 1px solid $theme-lighter-gray-color;
+        border: 1px solid get-color('additional', 'light');
         border-top: 0;
     }
 }

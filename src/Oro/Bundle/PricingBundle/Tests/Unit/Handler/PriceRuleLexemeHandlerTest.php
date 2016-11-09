@@ -3,17 +3,16 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Handler;
 
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
-use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
-use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
 use Oro\Bundle\PricingBundle\Handler\PriceRuleLexemeHandler;
-use Oro\Bundle\PricingBundle\Provider\PriceRuleFieldsProvider;
+use Oro\Component\Expression\ExpressionParser;
+use Oro\Component\Expression\FieldsProviderInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,9 +34,9 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
     protected $priceRuleLexemeHandler;
 
     /**
-     * @var PriceRuleFieldsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var FieldsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $priceRuleProvider;
+    protected $fieldsProvider;
 
     protected function setUp()
     {
@@ -49,14 +48,12 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->priceRuleProvider = $this->getMockBuilder(PriceRuleFieldsProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->fieldsProvider = $this->getMock(FieldsProviderInterface::class);
 
         $this->priceRuleLexemeHandler = new PriceRuleLexemeHandler(
             $this->doctrineHelper,
             $this->parser,
-            $this->priceRuleProvider
+            $this->fieldsProvider
         );
     }
 
@@ -91,7 +88,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit_Framework_TestCase
                 [$ruleCondition, true, ['Oro\Bundle\ProductBundle\Entity\Product' => ['sku']]]
             ]);
 
-        $this->priceRuleProvider->expects($this->any())
+        $this->fieldsProvider->expects($this->any())
             ->method('getRealClassName')
             ->willReturnMap([
                 ['Oro\Bundle\ProductBundle\Entity\Category', null, 'Oro\Bundle\ProductBundle\Entity\Category'],
