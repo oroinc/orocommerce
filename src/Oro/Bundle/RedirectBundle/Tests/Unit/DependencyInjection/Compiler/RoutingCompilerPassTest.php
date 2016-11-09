@@ -36,6 +36,7 @@ class RoutingCompilerPassTest extends \PHPUnit_Framework_TestCase
             ->method('replaceArgument')
             ->with(0, $urlMatcherDefinition);
 
+        /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject $container */
         $container = $this->getMockBuilder(ContainerBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
