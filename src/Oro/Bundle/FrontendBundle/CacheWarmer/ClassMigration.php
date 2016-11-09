@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
 
+use Oro\Bundle\EntityBundle\ORM\DatabasePlatformInterface;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
 
@@ -77,11 +78,10 @@ class ClassMigration
             $this->migrateTableColumn($defaultConnection, 'acl_classes', 'class_type', $from, $to);
             $this->migrateTableColumn($defaultConnection, 'oro_security_permission_entity', 'name', $from, $to);
             $this->migrateTableColumn($defaultConnection, 'oro_email_template', 'entityname', $from, $to);
-            $this->migrateTableColumn($searchConnection, 'oro_search_item', 'entity', $from, $to);
-
-            $this->migrateTableColumn($defaultConnection, 'acl_classes', 'class_type', $from, $to);
             $this->migrateTableColumn($defaultConnection, 'oro_email_template', 'content', $from, $to);
             $this->migrateTableColumn($defaultConnection, 'oro_navigation_title', 'route', $from, $to);
+
+            $this->migrateTableColumn($searchConnection, 'oro_search_item', 'entity', $from, $to);
             $this->migrateTableColumn($searchConnection, 'oro_search_item', 'alias', $from, $to);
             $this->migrateTableColumn($searchConnection, 'oro_search_index_integer', 'field', $from, $to);
 
@@ -110,9 +110,9 @@ class ClassMigration
     protected function isUpdateRequired(Connection $defaultConnection, $from, $to)
     {
         try {
-            $preparedFrom = str_replace('\\', '\\\\', $from);
+            $preparedFrom = $this->prepareFrom($defaultConnection, $from);
             $aclCheck = $defaultConnection->fetchColumn(
-                "SELECT id FROM acl_classes WHERE class_type LIKE '%$preparedFrom%' LIMIT 1"
+                "SELECT id FROM oro_navigation_title WHERE title LIKE '%$preparedFrom%' LIMIT 1"
             );
             $configCheck = $defaultConnection->fetchColumn(
                 "SELECT id FROM oro_entity_config WHERE class_name LIKE '%$preparedFrom%' LIMIT 1"
@@ -122,6 +122,22 @@ class ClassMigration
         }
 
         return $aclCheck || $configCheck;
+    }
+
+    /**
+     * @param Connection $connection
+     * @param string $from
+     * @return string
+     */
+    protected function prepareFrom(Connection $connection, $from)
+    {
+        $from = str_replace('\\', '\\\\', $from);
+
+        if ($connection->getDatabasePlatform()->getName() === DatabasePlatformInterface::DATABASE_MYSQL) {
+            return str_replace('\\', '\\\\', $from);
+        }
+
+        return $from;
     }
 
     /**
@@ -201,7 +217,7 @@ class ClassMigration
      */
     protected function migrateTableColumn(Connection $connection, $table, $column, $from, $to)
     {
-        $preparedFrom = str_replace('\\', '\\\\', $from);
+        $preparedFrom = $this->prepareFrom($connection, $from);
         $rows = $connection->fetchAll("SELECT id, $column FROM $table WHERE $column LIKE '%$preparedFrom%'");
         foreach ($rows as $row) {
             $id = $row['id'];

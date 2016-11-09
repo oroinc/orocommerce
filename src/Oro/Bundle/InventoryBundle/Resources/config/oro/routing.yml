@@ -1,0 +1,13 @@
+oro_inventory_product:
+    resource:     "@OroInventoryBundle/Controller/InventoryLevelController.php"
+    type:         annotation
+    prefix:       /inventory/inventory-level
+
+oro_inventory_bundle_api:
+    resource:     "@OroInventoryBundle/Resources/config/oro/routing_api.yml"
+    prefix:       api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest

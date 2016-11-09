@@ -29,8 +29,8 @@ class AccountUserMenuBuilderTest extends \PHPUnit_Framework_TestCase
             ->with('')
             ->willReturnSelf();
         $child->expects($this->once())
-            ->method('setAttribute')
-            ->with('class', 'divider')
+            ->method('setExtra')
+            ->with('divider', true)
             ->willReturnSelf();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Knp\Menu\ItemInterface $menu */

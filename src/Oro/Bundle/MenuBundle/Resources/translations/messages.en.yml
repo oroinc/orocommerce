@@ -20,7 +20,7 @@ oro:
             children.label: 'Children'
             data.label: 'Data'
             roots_entity_label: 'Menu'
-            roots_plural_label: 'Menus'
+            roots_plural_label: 'Frontend Menus'
             sections:
                 additional: 'Additional'
                 general: 'General'

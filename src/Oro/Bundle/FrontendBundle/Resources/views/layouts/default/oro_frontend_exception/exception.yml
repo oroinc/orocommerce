@@ -2,10 +2,11 @@ layout:
     actions:
         - '@setBlockTheme':
               themes: 'OroFrontendBundle:layouts:default/oro_frontend_exception/exception.html.twig'
-        - '@appendOption':
+        - '@setOption':
             id: title
-            optionName: value
-            optionValue: '=data["status_text"]'
+            optionName: params
+            optionValue:
+                '%status%': '=data["status_text"]'
         - '@add':
             id: exception
             parentId: content

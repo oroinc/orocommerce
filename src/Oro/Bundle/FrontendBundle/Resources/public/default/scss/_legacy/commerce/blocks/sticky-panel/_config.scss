@@ -1,5 +1,5 @@
 $sticky-panel-z-index: z('fixed') !default;
-$sticky-panel-background: $base-white-color !default;
+$sticky-panel-background: get-color('additional', 'ultra') !default;
 
 // Inner container
 $sticky-panel-width: 100% !default;

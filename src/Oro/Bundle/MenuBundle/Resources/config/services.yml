@@ -138,7 +138,7 @@ services:
             - [ setHideAllForNotLoggedInUsers, [ false ] ]
 
     oro_menu.menu.feature_extension:
-        class: 'Oro\Bundle\NavigationBundle\Menu\FeatureAwareMenuFactoryExtension'
+        class: 'Oro\Bundle\FeatureToggleBundle\Menu\FeatureAwareMenuFactoryExtension'
         public: false
         arguments:
             - '@oro_featuretoggle.checker.feature_checker'

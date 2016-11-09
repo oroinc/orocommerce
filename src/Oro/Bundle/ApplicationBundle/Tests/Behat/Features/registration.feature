@@ -7,7 +7,7 @@ Feature: New user registration
     Given I am on homepage
     And I follow "Sign In"
     And I follow "Create An Account"
-    And I fill "Registration" form with:
+    And I fill "Registration Form" with:
       | Company Name     | OroCommerce         |
       | First Name       | Charlie             |
       | Last Name        | SHeen               |

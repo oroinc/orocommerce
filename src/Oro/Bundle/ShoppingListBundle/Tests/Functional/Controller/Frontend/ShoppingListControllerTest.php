@@ -114,7 +114,7 @@ class ShoppingListControllerTest extends WebTestCase
         return [
             'price defined' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
-                'expectedLineItemPrice' => '$13.10',
+                'expectedLineItemPrice' => 'USD 13.10',
                 'needToTestRequestQuote' => true,
                 'expectedCreateOrderButtonVisible' => true
             ],
@@ -126,7 +126,7 @@ class ShoppingListControllerTest extends WebTestCase
             ],
             'zero price' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_4,
-                'expectedLineItemPrice' => '$0.00',
+                'expectedLineItemPrice' => 'USD 0.00',
                 'needToTestRequestQuote' => true,
                 'expectedCreateOrderButtonVisible' => true
             ],
@@ -134,7 +134,7 @@ class ShoppingListControllerTest extends WebTestCase
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
                 'expectedLineItemPrice' => [
                     'N/A',
-                    '$0.00',
+                    'USD 0.00',
                 ],
                 'needToTestRequestQuote' => true,
                 'expectedCreateOrderButtonVisible' => true

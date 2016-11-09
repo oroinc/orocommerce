@@ -1,3 +1,7 @@
+//Badge sizes
+$badge-sm-xs: 20px;
+$badge-sm: 26px;
+
 .quick-access {
   &__list {
     @include list-normalize();
@@ -30,14 +34,14 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 
-    color: $base-font-color-light;
+    color: get-color('additional', 'dark');
 
     overflow: hidden;
 
     &:hover, &:visited, &:focus {
       text-decoration: none;
 
-      color: $base-font-color-light;
+      color: get-color('additional', 'dark');
     }
 
     &:hover {
@@ -103,10 +107,10 @@
 
   display: block;
   min-width: 345px;
-  border: 1px solid $base-border-color;
+  border: 1px solid get-color(additional, 'light');
   box-shadow: 0 2px 5px 0 rgba(0,0,0,.3);
 
-  background: $base-footer-background-color;
+  background: get-color('additional', 'base');
 
   &__title {
     padding: 20px 0;
@@ -138,7 +142,7 @@
   }
 
   .btn_close {
-    color: $base-link-color;
+    color: get-color('ui', 'normal');
 
     opacity: 1;
   }
@@ -154,7 +158,7 @@
     margin: 0 0 20px;
 
     > a {
-      color: $base-font-color-light;
+      color: get-color('additional', 'dark');
       font-weight: 400;
       text-transform: uppercase;
 

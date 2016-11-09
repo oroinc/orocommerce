@@ -35,7 +35,7 @@ class CheckoutStepsProvider
         $workflow = $this->workflowManager->getWorkflow($workflowItem);
 
         if ($workflow->getDefinition()->isStepsDisplayOrdered()) {
-            $steps = $workflow->getStepManager()->getOrderedSteps();
+            $steps = $workflow->getStepManager()->getOrderedSteps(true);
         } else {
             $steps = $workflow->getPassedStepsByWorkflowItem($workflowItem);
         }

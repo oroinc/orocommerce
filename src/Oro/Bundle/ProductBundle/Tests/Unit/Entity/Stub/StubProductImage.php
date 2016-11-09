@@ -30,4 +30,12 @@ class StubProductImage extends ProductImage
 
         return $this;
     }
+
+    /**
+     * @param int $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 }

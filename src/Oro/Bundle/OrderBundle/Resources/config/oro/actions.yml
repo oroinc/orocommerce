@@ -65,3 +65,49 @@ operations:
             '@not_blank': $.data
         datagrids:
             - account-user-orders-grid
+
+    oro_order_shipping_trackings_change:
+        label: oro.order.widgets.shipping_tracking
+        routes:
+            - oro_order_view
+        acl_resource: [UPDATE, entity:Oro\Bundle\OrderBundle\Entity\Order]
+        button_options:
+            icon: icon-list-alt
+        frontend_options:
+            template: OroOrderBundle:Action:shippingTrackingsChange.html.twig
+            title: oro.order.shipping_tracking.entity_label
+            options:
+                width: 550
+                modal: false
+                stateEnabled: false
+                incrementalPosition: false
+                allowMaximize: true
+                allowMinimize: true
+                dblclick: maximize
+                maximizedHeightDecreaseBy: minimize-bar
+        attributes:
+            shippingTrackings:
+                label: ' '
+                type: entity
+                options:
+                    class: Oro\Bundle\OrderBundle\Entity\OrderShippingTracking
+        form_options:
+            attribute_fields:
+                shippingTrackings:
+                    form_type: Oro\Bundle\OrderBundle\Form\Type\OrderShippingTrackingCollectionType
+                    options:
+                        show_form_when_empty: false
+            attribute_default_values:
+                shippingTrackings:
+                    $.shippingTrackings
+        form_init:
+            - '@assign_value': [$.shippingTrackings, $.data.shippingTrackings]
+        actions:
+            - '@call_service_method':
+                service: oro_order.handler.order_shipping_tracking
+                method: process
+                method_parameters: [$.data, $.form]
+            - '@flash_message':
+                message: oro.order.shipping_tracking.flash.save_success
+                type: 'success'
+            - '@refresh_grid': order-shipping-trackings-grid

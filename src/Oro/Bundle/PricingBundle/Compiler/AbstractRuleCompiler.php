@@ -4,12 +4,11 @@ namespace Oro\Bundle\PricingBundle\Compiler;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\ORM\QueryBuilder;
-
-use Oro\Bundle\PricingBundle\Expression\ExpressionParser;
-use Oro\Bundle\PricingBundle\Expression\NodeToQueryDesignerConverter;
-use Oro\Bundle\PricingBundle\Expression\Preprocessor\ExpressionPreprocessorInterface;
-use Oro\Bundle\PricingBundle\Expression\QueryExpressionBuilder;
-use Oro\Bundle\PricingBundle\Query\PriceListExpressionQueryConverter;
+use Oro\Bundle\ProductBundle\Expression\NodeToQueryDesignerConverter;
+use Oro\Bundle\ProductBundle\Expression\QueryConverter;
+use Oro\Component\Expression\ExpressionParser;
+use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
+use Oro\Component\Expression\QueryExpressionBuilder;
 
 abstract class AbstractRuleCompiler
 {
@@ -29,7 +28,7 @@ abstract class AbstractRuleCompiler
     protected $nodeConverter;
 
     /**
-     * @var PriceListExpressionQueryConverter
+     * @var QueryConverter
      */
     protected $queryConverter;
 
@@ -47,7 +46,7 @@ abstract class AbstractRuleCompiler
      * @param ExpressionParser $parser
      * @param ExpressionPreprocessorInterface $preprocessor
      * @param NodeToQueryDesignerConverter $nodeConverter
-     * @param PriceListExpressionQueryConverter $queryConverter
+     * @param QueryConverter $queryConverter
      * @param QueryExpressionBuilder $expressionBuilder
      * @param Cache $cache
      */
@@ -55,7 +54,7 @@ abstract class AbstractRuleCompiler
         ExpressionParser $parser,
         ExpressionPreprocessorInterface $preprocessor,
         NodeToQueryDesignerConverter $nodeConverter,
-        PriceListExpressionQueryConverter $queryConverter,
+        QueryConverter $queryConverter,
         QueryExpressionBuilder $expressionBuilder,
         Cache $cache
     ) {
