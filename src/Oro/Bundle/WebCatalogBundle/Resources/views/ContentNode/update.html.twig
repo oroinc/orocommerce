@@ -123,7 +123,7 @@
     {% if entity.parentNode is not empty %}
         {% set options = {
         'target': form.titles.vars.full_name,
-        'recipient': form.slugs.vars.full_name
+        'recipient': form.slugPrototypes.vars.full_name
         } %}
         <div
                 data-page-component-module="orowebcatalog/js/app/components/web-catalog-slugify-component"
