@@ -18,23 +18,15 @@ class CompositeFallbackStrategy implements TranslationStrategyInterface
     protected $frontendStrategy;
 
     /**
-     * @var TranslationStrategyInterface
-     */
-    protected $backendStrategy;
-
-    /**
      * @param FrontendHelper $frontendHelper
      * @param TranslationStrategyInterface $frontendStrategy
-     * @param TranslationStrategyInterface $backendStrategy
      */
     public function __construct(
         FrontendHelper $frontendHelper,
-        TranslationStrategyInterface $frontendStrategy,
-        TranslationStrategyInterface $backendStrategy
+        TranslationStrategyInterface $frontendStrategy
     ) {
         $this->frontendHelper = $frontendHelper;
         $this->frontendStrategy = $frontendStrategy;
-        $this->backendStrategy = $backendStrategy;
     }
 
     /**
@@ -42,7 +34,7 @@ class CompositeFallbackStrategy implements TranslationStrategyInterface
      */
     public function getName()
     {
-        return $this->getCurrentStrategy()->getName();
+        return $this->frontendStrategy->getName();
     }
 
     /**
@@ -50,14 +42,14 @@ class CompositeFallbackStrategy implements TranslationStrategyInterface
      */
     public function getLocaleFallbacks()
     {
-        return $this->getCurrentStrategy()->getLocaleFallbacks();
+        return $this->frontendStrategy->getLocaleFallbacks();
     }
 
     /**
-     * @return TranslationStrategyInterface
+     * @return bool
      */
-    protected function getCurrentStrategy()
+    public function isApplicable()
     {
-        return $this->frontendHelper->isFrontendRequest() ? $this->frontendStrategy : $this->backendStrategy;
+        return $this->frontendHelper->isFrontendRequest();
     }
 }

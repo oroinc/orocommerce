@@ -45,15 +45,10 @@ class CompositeTranslationCacheWarmer implements CacheWarmerInterface
      */
     public function warmUp($cacheDir)
     {
-        $defaultStrategy = $this->strategyProvider->getStrategy();
-
-        // first warm up cache for mixing strategy
-        $this->strategyProvider->setStrategy($this->mixingStrategy);
-        $this->innerWarmer->warmUp($cacheDir);
-
-        // then warm up cache for default strategy and leave default strategy in provider
-        $this->strategyProvider->setStrategy($defaultStrategy);
-        $this->innerWarmer->warmUp($cacheDir);
+        foreach ($this->strategyProvider->getStrategies() as $strategy) {
+            $this->strategyProvider->selectStrategy($strategy->getName());
+            $this->innerWarmer->warmUp($cacheDir, $strategy);
+        }
     }
 
     /**
