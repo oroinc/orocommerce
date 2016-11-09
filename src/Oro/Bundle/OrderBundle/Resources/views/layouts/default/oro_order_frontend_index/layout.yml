@@ -18,13 +18,13 @@ layout:
                 - 'oro.order.order_history.label'
 
         - '@setOption':
-            id: content
+            id: page_content
             optionName: class_prefix
             optionValue: 'orders'
 
         - '@add':
             id: orders_container
-            parentId: content
+            parentId: page_content
             blockType: container
 
         - '@add':

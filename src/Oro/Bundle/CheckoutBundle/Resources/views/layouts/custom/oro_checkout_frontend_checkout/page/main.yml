@@ -5,7 +5,7 @@ layout:
         - '@add':
             id: checkout_container
             blockType: container
-            parentId: content
+            parentId: page_content
             siblingId: checkout_sidebar
         - '@move':
             id: checkout_content

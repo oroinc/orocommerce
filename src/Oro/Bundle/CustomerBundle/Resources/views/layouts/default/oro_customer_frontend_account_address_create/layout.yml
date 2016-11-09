@@ -3,7 +3,7 @@ layout:
         -
             id: oro_account_address_form
             namespace: account_address_edit
-            root: content
+            root: page_content
         - oro_account_menu
     actions:
         - '@appendOption':

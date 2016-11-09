@@ -6,6 +6,12 @@ styles:
         - 'bundles/orofrontend/default/scss/variables/base-config.scss'
         - 'bundles/orofrontend/default/scss/variables/link-config.scss'
         - 'bundles/orofrontend/default/scss/variables/page-title-config.scss'
+        - 'bundles/orofrontend/default/scss/variables/page-container-config.scss'
+        - 'bundles/orofrontend/default/scss/variables/page-content-config.scss'
+        - 'bundles/orofrontend/default/scss/variables/page-header-config.scss'
+        - 'bundles/orofrontend/default/scss/variables/page-footer-config.scss'
+        - 'bundles/orofrontend/default/scss/variables/page-sidebar-config.scss'
+        - 'bundles/orofrontend/default/scss/variables/copyright-config.scss'
         - 'bundles/orofrontend/default/scss/variables/section-title-config.scss'
         - 'bundles/orofrontend/default/scss/variables/notifications-config.scss'
         - 'bundles/orofrontend/default/scss/variables/notification-config.scss'
@@ -14,3 +20,4 @@ styles:
         - 'bundles/orofrontend/default/vendors/bootstrap/css/bootstrap.scss'
         - 'bundles/orofrontend/default/scss/styles.scss'
     output: 'css/layout/default/styles.css'
+

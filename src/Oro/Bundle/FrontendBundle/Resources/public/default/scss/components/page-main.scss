@@ -1,0 +1,27 @@
+.page-main {
+    &__content {
+        max-width: $site-width;
+        margin: 0 auto 70px;
+        padding-top: 35px;
+
+        @include clearfix();
+    }
+
+    &.offset-none {
+        .page-main__content {
+            padding-top: 0;
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .page-main {
+        &__content {
+            flex-direction: column;
+
+            &.sticky-nav {
+                padding-top: 50px;
+            }
+        }
+    }
+}
