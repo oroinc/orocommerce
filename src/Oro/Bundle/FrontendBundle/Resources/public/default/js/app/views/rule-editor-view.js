@@ -43,16 +43,18 @@ define(function(require) {
                     return sourceData.array;
                 },
                 matcher: function() {
-                    //we already match
+                    // we already match
                     return true;
                 },
                 updater: function(item) {
-                    //place selected value into right position
+                    // place selected value into correct position
                     var update  = component.getUpdateValue(this.query, item, _position);
+
                     setTimeout(function() {
                         el.selectionStart = update.position;
                         $el.trigger('keyup');
                     }, 10);
+
                     return update.value;
                 },
                 focus: function() {
@@ -76,6 +78,7 @@ define(function(require) {
                 }
             });
 
+            // adds 'click' handling to typeahead
             $el.on('click', function() {
                 clickHandler.apply($el, arguments);
             });

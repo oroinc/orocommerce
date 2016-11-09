@@ -50,14 +50,15 @@ define(function(require) {
         },
 
         /**
+         * Component initialize.
          *
          * @param options
          */
         initialize: function(options) {
-            this.cases = {};
-            this.error = {};
-            this.opsRegEx = {};
-            this.allowed = {};
+            this.cases = {}; // all string cases based on options.data
+            this.error = {}; // reserved for error messages
+            this.opsRegEx = {}; // regexp for operations
+            this.allowed = {}; // allowed operations based on current input options
 
             this.options = _.defaults(options || {}, this.options);
 
@@ -78,6 +79,7 @@ define(function(require) {
         },
 
         /**
+         * Returns boolean of string validation.
          *
          * @param {String} expression
          * @returns {Boolean}
@@ -113,6 +115,7 @@ define(function(require) {
         },
 
         /**
+         * Returns word on cursor position.
          *
          * @param {String} expression
          * @param {Number} caretPosition
@@ -125,6 +128,7 @@ define(function(require) {
         },
 
         /**
+         * Returns boolean of brackets validation.
          *
          * @param {String} expression
          * @returns {Boolean}
@@ -150,12 +154,26 @@ define(function(require) {
 
             return true;
 
+            /**
+             * Adds expected 'close' bracket.
+             *
+             * @param symbol
+             * @param char
+             * @param closeExpect
+             */
+
             function setOpen(symbol, char, closeExpect) {
                 if (char === symbol) {
                     expected.push(closeExpect);
                 }
             }
 
+            /**
+             * Check expected 'close' bracket and set 'unloop' if not.
+             *
+             * @param symbol
+             * @param char
+             */
             function checkClose(symbol, char) {
                 if (char === symbol) {
                     breakLoop = expected.pop() !== char;
@@ -164,6 +182,7 @@ define(function(require) {
         },
 
         /**
+         * Returns value string with injected selected item in position.
          *
          * @param {String} expression
          * @param item
@@ -186,6 +205,7 @@ define(function(require) {
         },
 
         /**
+         * Returns object with suggested list and word position.
          *
          * @param {String} expression
          * @param {Number} caretPosition
@@ -202,6 +222,7 @@ define(function(require) {
         },
 
         /**
+         * Getting the word's start position.
          *
          * @param {String} expression
          * @param {Number} caretPosition
@@ -236,6 +257,7 @@ define(function(require) {
         },
 
         /**
+         * Getting a list of matching words.
          *
          * @param normalized
          * @param wordUnderCaret
@@ -285,6 +307,7 @@ define(function(require) {
             return result;
 
             /**
+             * Getting of the word's correspondences.
              *
              * @param word
              * @returns {{isCompare: (*|boolean), isInclusion: (*|boolean), hasTerm: *}}
@@ -306,6 +329,13 @@ define(function(require) {
                 };
             }
 
+            /**
+             * Getting list of cases from all subcases.
+             *
+             * @param word
+             * @returns {*}
+             */
+
             function getCases(word) {
                 var base = Array.prototype.slice.call(arguments, 1),
                     cases = _.union(_.flatten(_.isEmpty(base) ? _.values(_this.cases) : base));
@@ -315,6 +345,7 @@ define(function(require) {
         },
 
         /**
+         * Checking of accessory word to terms.
          *
          * @param term
          * @param base
@@ -338,6 +369,7 @@ define(function(require) {
         },
 
         /**
+         * Returns boolean whether string is a expression of comparison.
          *
          * @param string
          * @param match
@@ -351,6 +383,7 @@ define(function(require) {
         },
 
         /**
+         * Returns boolean whether string is a expression of inclusion.
          *
          * @param string
          * @param match
@@ -366,6 +399,7 @@ define(function(require) {
         },
 
         /**
+         * Returns boolean whether string is a array, non empty array, and has valid values.
          *
          * @param array
          * @returns {boolean}
@@ -388,6 +422,13 @@ define(function(require) {
                 }
             }
 
+            /**
+             * Getting array of string matches.
+             *
+             * @param string
+             * @param re
+             * @returns {Array}
+             */
             function getMatches(string, re) {
                 var match,
                     matches = [];
@@ -399,6 +440,12 @@ define(function(require) {
                 return matches;
             }
 
+            /**
+             * Returns boolean whether several values are valid.
+             *
+             * @param array
+             * @returns {boolean}
+             */
             function checkValues(array) {
                 return _.every(array, function(value) {
                     if (_.isEmpty(value)) {
@@ -412,6 +459,7 @@ define(function(require) {
         },
 
         /**
+         * Returns boolean whether value is valid: is number, is not NaN, or is a term.
          *
          * @param value
          * @returns {boolean}
@@ -428,6 +476,7 @@ define(function(require) {
         },
 
         /**
+         * Returns pair of term and expression.
          *
          * @param string
          * @param match
@@ -443,6 +492,7 @@ define(function(require) {
         },
 
         /**
+         * Returns boolean whether expression is: valid value, or valid array, or belongs to keyData array.
          *
          * @param expr
          * @param keyData
@@ -475,6 +525,7 @@ define(function(require) {
         },
 
         /**
+         * Returns boolean for operations type used in string and the matched string.
          *
          * @param string
          * @returns {{compare: (*|boolean), inclusion: (*|boolean), math: (*|boolean), match: undefined}}
@@ -505,6 +556,7 @@ define(function(require) {
         },
 
         /**
+         * Returns the word's state.
          *
          * @param string
          * @returns {*}
@@ -536,6 +588,7 @@ define(function(require) {
         },
 
         /**
+         * Returns RegExp object for operations array.
          *
          * @param opsArr
          * @param name
@@ -570,6 +623,7 @@ define(function(require) {
         },
 
         /**
+         * Returns normalized string and corrected cursor position.
          *
          * @param {String} expression
          * @param caretPosition
@@ -610,6 +664,7 @@ define(function(require) {
         },
 
         /**
+         * Returns list filtered by the word.
          *
          * @param list
          * @param word
@@ -631,6 +686,7 @@ define(function(require) {
         },
 
         /**
+         * Returns list of cases based on options.date structure.
          *
          * @param src
          * @param baseName
@@ -667,10 +723,11 @@ define(function(require) {
         },
 
         /**
+         * Returns part of string from startPos to endPos.
          *
-         * @param string
-         * @param startPos
-         * @param endPos
+         * @param string {String}
+         * @param startPos {Number}
+         * @param endPos {Number}
          * @returns {String}
          */
         getStringPart: function(string, startPos, endPos) {
@@ -684,9 +741,10 @@ define(function(require) {
         },
 
         /**
+         * Returns array of string part parted by splitter.
          *
-         * @param string
-         * @param splitter
+         * @param string {String}
+         * @param splitter {String}
          * @returns {Array}
          */
         splitString: function(string, splitter) {
@@ -694,6 +752,7 @@ define(function(require) {
         },
 
         /**
+         * Returns groups of expressions (even) and booleans (odd) from array of words.
          *
          * @param string
          * @returns {{expr: *, bool: *}}
@@ -713,6 +772,7 @@ define(function(require) {
         },
 
         /**
+         * Returns boolean when value contains in array. Function is case insensitive of values.
          *
          * @param arr
          * @param value
@@ -729,6 +789,7 @@ define(function(require) {
         },
 
         /**
+         * Returns value of object key requested by path.
          *
          * @param obj
          * @param path
@@ -747,11 +808,12 @@ define(function(require) {
         },
 
         /**
+         * Returns cleared of brackets. Types: trim, wipe, remove (by default).
          *
-         * @param input
-         * @param brackets
-         * @param type
-         * @param replace
+         * @param input {String}
+         * @param brackets {String}
+         * @param type {String}
+         * @param replace {String}
          * @returns {String}
          */
         replaceWraps: function(input, brackets, type, replace) {
