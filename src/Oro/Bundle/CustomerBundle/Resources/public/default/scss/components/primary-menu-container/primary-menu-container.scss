@@ -1,0 +1,54 @@
+// @theme: default
+
+.primary-menu-container {
+    margin: $primary-menu-container-offset;
+    padding: $primary-menu-container-inner-offset;
+
+    background: $primary-menu-container-background;
+    border-radius: $primary-menu-container-border-radius;
+}
+
+@include breakpoint('desktop') {
+    .primary-menu-container {
+        .icon-minus,
+        .icon-plus {
+            opacity: 0;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .primary-menu-container {
+        padding: $primary-menu-container-inner-offset-tablet;
+
+        .icon-minus,
+        .icon-plus {
+            position: absolute;
+            right: 10px;
+            top: 15px;
+
+            font-size: 12px;
+        }
+
+        .icon-minus {
+            opacity: 0;
+        }
+
+        .expanded & {
+            .icon-plus {
+                opacity: 0;
+            }
+
+            .icon-minus {
+                opacity: 1;
+            }
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .primary-menu-container {
+        border-top: 1px solid get-color('additional', 'light');
+        border-bottom: 1px solid get-color('additional', 'light');
+    }
+}

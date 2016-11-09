@@ -31,69 +31,10 @@
     }
 }
 
-@include breakpoint('desktop') {
-    .primary-menu-container {
-        .icon-minus,
-        .icon-plus {
-            opacity: 0;
-        }
-    }
-}
-
-@include breakpoint('tablet') {
-    .primary-menu-container {
-        padding: 0 10px;
-
-        .icon-minus,
-        .icon-plus {
-            position: absolute;
-            right: 10px;
-            top: 15px;
-
-            font-size: 12px;
-        }
-
-        .icon-minus {
-            opacity: 0;
-        }
-
-        .expanded {
-            .icon-plus {
-                opacity: 0;
-
-            }
-
-            .icon-minus {
-                opacity: 1;
-            }
-        }
-    }
-}
-
 @include breakpoint('tablet-small') {
-    .primary-menu-container {
-        margin: 35px -15px 0;
-
-        border-top: 1px solid get-color('additional', 'light');
-        border-bottom: 1px solid get-color('additional', 'light');
-    }
-
     .primary-menu {
-        &__title {
-            padding: 15px 0;
-            margin: 0;
-
-            font-size: $base-font-size;
-        }
-
-        &__list {
-            padding-left: 13px;
-            padding-right: 13px;
-        }
-
         &__item {
-            padding: 13px 0;
-            margin: 0;
+            padding: $primary-menu-item-inner-offset-tablet-small;
 
             border-top: 1px solid get-color('additional', 'light');
 

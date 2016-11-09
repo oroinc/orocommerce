@@ -41,10 +41,10 @@
 
 {% block _login_form_notifications_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' notifications'
+        '~class': ' notification'
     }) %}
     <div class="form-row">
-        <p  class="notifications notifications--error">{{ block_widget(block) }}</p>
+        <div class="notification--xmd notification--error">{{ block_widget(block) }}</div>
     </div>
 {% endblock %}
 
