@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
 use Symfony\Component\Form\Forms;
@@ -140,7 +141,7 @@ class PageTypeTest extends FormIntegrationTestCase
                     [
                         'label'    => 'oro.cms.page.slugs.label',
                         'required' => true,
-                        'options'  => ['constraints' => [new NotBlank()]],
+                        'options'  => ['constraints' => [new NotBlank(), new UrlSafe()]],
                     ]
                 )
                 ->will($this->returnSelf());
