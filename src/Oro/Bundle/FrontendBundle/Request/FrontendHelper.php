@@ -39,6 +39,8 @@ class FrontendHelper
             return false;
         }
 
+        // TODO: fix detecting in scope https://magecore.atlassian.net/browse/BB-5368
+
         // the least time consuming method to check whether URL is frontend
         return strpos($request->getPathInfo(), $this->backendPrefix) !== 0;
     }

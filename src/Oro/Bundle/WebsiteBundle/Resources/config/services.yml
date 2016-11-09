@@ -45,7 +45,7 @@ services:
             - '@oro_frontend.request.frontend_helper'
             - '@oro_locale.translation.strategy.localization_fallback_strategy'
         tags:
-            - { name: oro_translation.extension.translation_strategy, alias: composite_fallback_strategy, priority: -100 }
+            - { name: oro_translation.extension.translation_strategy, priority: -100 }
 
     oro_website.translation.cache_warmer.composite:
         class: 'Oro\Bundle\WebsiteBundle\Translation\CacheWarmer\CompositeTranslationCacheWarmer'
