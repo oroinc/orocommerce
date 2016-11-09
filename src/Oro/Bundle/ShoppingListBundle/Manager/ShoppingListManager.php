@@ -4,20 +4,19 @@ namespace Oro\Bundle\ShoppingListBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
-
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ShoppingListManager
 {
@@ -62,6 +61,11 @@ class ShoppingListManager
     protected $totalManager;
 
     /**
+     * @var AclHelper
+     */
+    protected $aclHelper;
+
+    /**
      * @param ManagerRegistry $managerRegistry
      * @param TokenStorageInterface $tokenStorage
      * @param TranslatorInterface $translator
@@ -69,6 +73,7 @@ class ShoppingListManager
      * @param UserCurrencyManager $userCurrencyManager
      * @param WebsiteManager $websiteManager
      * @param ShoppingListTotalManager $totalManager
+     * @param AclHelper $aclHelper
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
@@ -77,7 +82,8 @@ class ShoppingListManager
         QuantityRoundingService $rounding,
         UserCurrencyManager $userCurrencyManager,
         WebsiteManager $websiteManager,
-        ShoppingListTotalManager $totalManager
+        ShoppingListTotalManager $totalManager,
+        AclHelper $aclHelper
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->tokenStorage = $tokenStorage;
@@ -86,6 +92,7 @@ class ShoppingListManager
         $this->userCurrencyManager = $userCurrencyManager;
         $this->websiteManager = $websiteManager;
         $this->totalManager = $totalManager;
+        $this->aclHelper = $aclHelper;
     }
 
     /**
@@ -285,11 +292,10 @@ class ShoppingListManager
      */
     public function getShoppingLists()
     {
-        $accountUser = $this->getAccountUser();
         /* @var $repository ShoppingListRepository */
         $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
 
-        return $repository->findByUser($accountUser);
+        return $repository->findByUser($this->aclHelper);
     }
 
     /**

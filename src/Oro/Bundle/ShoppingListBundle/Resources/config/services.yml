@@ -35,6 +35,7 @@ services:
             - '@oro_pricing.user_currency_manager'
             - "@oro_website.manager"
             - "@oro_shopping_list.manager.shopping_list_total"
+            - "@oro_security.acl_helper"
 
     oro_shopping_list.placeholder.filter:
         class: 'Oro\Bundle\ShoppingListBundle\Placeholder\PlaceholderFilter'
@@ -115,6 +116,7 @@ services:
             - "@oro_security.security_facade"
             - "@request_stack"
             - "@oro_shopping_list.manager.shopping_list_total"
+            - "@oro_security.acl_helper"
         calls:
             - [setShoppingListClass, ['%oro_shopping_list.entity.shopping_list.class%']]
         tags:

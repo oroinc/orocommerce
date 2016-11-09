@@ -2,7 +2,9 @@
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         'data-page-component-options': {
-            view: 'oroshoppinglist/js/app/views/shoppinglist-sidebar-view'
+            view: 'oroui/js/app/views/layout-subtree-view',
+            blockId: id,
+            reloadEvents: ['shopping-list:created', 'shopping-list:updated', 'frontend:item:delete']
         },
         'data-dropdown-trigger': true,
         '~class': ' shopping-list-navigation'
