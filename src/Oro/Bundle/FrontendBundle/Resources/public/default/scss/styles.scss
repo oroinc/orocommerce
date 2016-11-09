@@ -1,3 +1,5 @@
+// @theme: default
+
 /*Reset*/
 @import './shared/_reset';
 
@@ -21,10 +23,12 @@
 @import './components/editable';
 @import './components/sidebar';
 @import './components/notifications';
+@import './components/notification';
+@import './components/notification-flash-container';
+@import './components/notification-flash';
 @import './components/custom-radio';
 @import './components/actions-row';
 @import './components/collapse-view';
 @import './components/expand-text';
 @import './components/toggle-block';
 @import './components/sticky-panel/sticky-panel';
-

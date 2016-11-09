@@ -3,9 +3,7 @@
         '~class': " middlebar__right"
     }) %}
     <div {{ block('block_attributes') }}>
-        <ul class="shopping-list pull-right">
-            {{ block_widget(block) }}
-        </ul>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
@@ -13,32 +11,23 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': " quick-access"
     }) %}
+    {% set iconsClasses = ['cf-assignment', 'cf-local_offer', 'cf-flash'] %}
+    {% set colorClasses = ['badge_yellow', 'badge_orange-light', 'badge_orange'] %}
+
     <div {{ block('block_attributes') }}>
         <ul class="quick-access__list">
+        {% set i = 0 %}
+        {% for children in item.children %}
             <li class="quick-access__item">
-                <a class="quick-access__link"  href="{{ path('oro_order_frontend_index') }}">
-                    <span class="badge badge_circled-corners badge_yellow quick-access__badge">
-                        <i class="cf-assignment"></i>
+                <a class="quick-access__link" href="{{ children.uri }}">
+                    <span class="badge badge_circled-corners {{ colorClasses[i] }} quick-access__badge">
+                        <i class="{{ iconsClasses[i] }}"></i>
                     </span>
-                    <span class="quick-access__text">Orders</span>
+                    <span class="quick-access__text">{{ children.label }}</span>
                 </a>
             </li>
-            <li class="quick-access__item">
-                <a class="quick-access__link" href="{{ path('oro_sale_quote_frontend_index') }}">
-                    <span class="badge badge_circled-corners badge_orange-light quick-access__badge">
-                        <i class="cf-local_offer"></i>
-                    </span>
-                    <span class="quick-access__text">Quotes</span>
-                </a>
-            </li>
-            <li class="quick-access__item">
-                <a class="quick-access__link" href="{{ path('oro_product_frontend_quick_add') }}">
-                    <span class="badge badge_circled-corners badge_orange quick-access__badge">
-                        <i class="cf-flash"></i>
-                    </span>
-                    <span class="quick-access__text">Quick Order Form</span>
-                </a>
-            </li>
+            {% set i = i+1 %}
+        {% endfor %}
         </ul>
     </div>
 {% endblock %}
