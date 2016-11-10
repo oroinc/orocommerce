@@ -1,6 +1,6 @@
 /* Topbar component */
 .topbar {
-  background: $base-topbar-background-color;
+  background: get-color('additional', 'light');
   font-size: 12px;
 
   @media (max-width: $screen-md) {
@@ -43,7 +43,7 @@
     }
 
     a {
-      color: $base-font-color-lighter;
+      color: get-color('additional', 'dark');
       text-decoration: none;
 
       &:hover {
@@ -75,17 +75,6 @@
           cursor: pointer;
         }
       }
-
-      // *** Currency class has not implemented yet or will not be used anymore!!!
-      + .currency {
-        @media (max-width: 880px) {
-          &:before {
-            content: "\A";
-
-            white-space: pre;
-          }
-        }
-      }
     }
   }
 
@@ -97,7 +86,7 @@
 
     display: none;
 
-    background: $base-background-color;
+    background: get-color('additional', 'ultra');
     box-shadow: 0 4px 5px 0 rgba(0,0,0,.4);
     border-radius: 2px;
 
@@ -133,65 +122,8 @@
 
       a {
         font-size: $base-font-size;
-        color: $base-font-color;
+        color: get-color('additional', 'dark');
       }
-    }
-  }
-}
-
-
-// *** The following code has not implemented yet or will not be used anymore!!!
-.currency {
-  position: relative;
-
-  display: inline-block;
-  width: 50px;
-  height: 26px;
-
-  font-family: $roboto-font;
-  font-size: 13px;
-  vertical-align: top;
-  text-align: center;
-  white-space: nowrap;
-
-  cursor: pointer;
-
-  i {
-    height: 26px;
-  }
-
-  &.active {
-    box-shadow: inset 1px 1px 3px 0 rgba(0,0,0,.3);
-
-    .topbar__dropdown {
-      display: block;
-    }
-  }
-}
-
-.language {
-  position: relative;
-
-  display: inline-block;
-  width: 50px;
-  height: 26px;
-
-  font-size: 12px;
-  vertical-align: top;
-  text-align: center;
-  white-space: nowrap;
-
-  cursor: pointer;
-
-  i {
-    height: 26px;
-  }
-
-  &.active {
-    box-shadow: inset 1px 1px 3px 0 rgba(0,0,0,.3);
-
-    .topbar__dropdown {
-      display: block;
     }
   }
 }

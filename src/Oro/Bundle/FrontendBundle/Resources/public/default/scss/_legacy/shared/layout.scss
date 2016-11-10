@@ -70,15 +70,15 @@
   }
 
   &__link {
-    color: $base-font-color;
+    color: get-color('additional', 'dark');
 
     &:hover {
-      color: $base-font-color;
+      color: get-color('additional', 'dark');
     }
 
     span {
-      font-size: 16px;
-      color: $theme-red-color;
+      font-size: $base-font-size + 2;
+      color: get-color('primary', 'dark');
 
       @media (max-width: $screen-md) {
         font-size: $base-font-size;
@@ -105,7 +105,7 @@
   &--has-sidebar { //Layout with left sidebar;
     order: 2;
     flex: 1;
-    max-width: calc(#{$site-width} - #{$base-sidebar-width});
+    max-width: calc(#{$site-width} - 25.5rem);
     overflow-y: auto;
 
     .content__inner {
@@ -141,205 +141,16 @@
         }
       }
     }
-
-    .create-account {
-      &__form {
-        &.create-account__form_register {
-          padding: 40px 12%;
-
-          @media (max-width: $screen-md) {
-            padding: 10px;
-          }
-        }
-
-        &.create-account__form_new-customer {
-          padding: 40px 7%;
-
-          @media (max-width: $screen-md) {
-            padding: 10px;
-          }
-        }
-      }
-
-      &--full {
-        width: 90%;
-        max-width: 860px;
-        margin: 0;
-
-        @media (max-width: $screen-md) {
-          width: 100%;
-          max-width: 100%;
-        }
-      }
-    }
-  }
-}
-
-.form-input {
-  &_datepicker {
-    position: relative;
-  }
-
-  &_edit-mode {
-    margin: 0 30px 5px 0;
-  }
-
-  &_has-btn {
-    max-width: 100px;
-  }
-
-  &_inline {
-    @media (min-width: 1200px) {
-      display: flex;
-      align-items: center;
-
-      .chosen-container {
-        flex-basis: 120px;
-      }
-    }
-  }
-
-  &.wsnr {
-    white-space: nowrap;
-  }
-
-  input[type="text"] {
-    @include input();
-
-    &:focus {
-      outline: 0;
-      border-color: $base-link-color;
-      box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075),
-      0 0 7px rgba(102, 175, 233, .6);
-    }
-
-    &.input_with-btn {
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-
-      text-align: right;
-
-      + .input-group-btn {
-        border: 1px solid $theme-lighter-gray-color;
-        border-left: 0;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-
-        background: $base-background-color;
-        text-align: center;
-
-        > .form-input_has-btn__dropdown {
-          left: auto;
-          right: 0;
-
-          margin: 0;
-          padding: 10px 0;
-          border: 1px solid $theme-lighter-gray-color;
-
-          .table {
-            margin: 0;
-
-            tbody {
-              tr {
-                cursor: pointer;
-
-                td {
-                  padding: 10px 6px !important;
-
-                  &:first-child {
-                    padding-left: 25px !important;
-                  }
-
-                  &:last-child {
-                    padding-right: 15px !important;
-                  }
-                }
-
-                &:hover {
-                  td {
-                    background: $theme-slight-lightest-gray-color;
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        button {
-          width: 30px;
-          padding: 0;
-          border: 0;
-          box-shadow: none;
-
-          background: none;
-
-          cursor: pointer;
-        }
-      }
-    }
-  }
-
-  .form-label {
-    display: block;
-    margin: 0 0 5px;
-
-    font-weight: 400;
-  }
-
-  textarea {
-    @include input();
-
-    &:focus {
-      outline: 0;
-      border-color: $base-link-color;
-      box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075),
-      0 0 8px rgba(102, 175, 233, .6);
-    }
-  }
-
-  .input-group-addon {
-    border-color: $theme-lighter-gray-color;
-    background: $theme-lightest-gray-color;
-  }
-
-  ~ .order-widget__edit-mode-btn {
-    color: $base-link-color;
   }
 }
 
 /* END CONTENT */
 
-/* START SIDEBAR */
-.sidebar {
-  width: $base-sidebar-width;
-
-  padding-left: 15px;
-
-  &_left {
-    order: 1;
-    flex: none;
-  }
-
-  &_right {
-    width: $base-sidebar-width - 4rem;
-    order: 2;
-  }
-}
-
-@include breakpoint('tablet-small') {
-  .sidebar {
-    width: 100%;
-    padding: 0 15px;
-  }
-}
-
-/* END SIDEBAR */
-
 /*===== START FOOTER =====*/
 .footer {
   padding-top: 5rem;
 
-  background: $theme-lightest-gray-color;
+  background: get-color('additional', 'base');
 
   @media (max-width: $screen-sm) {
     padding: 4rem .5rem 0;
@@ -354,8 +165,8 @@
   line-height: normal;
   text-align: center;
 
-  border-top: 1px solid $theme-lighter-gray-color;
-  color: $theme-slight-middle-gray-color;
+  border-top: 1px solid get-color('additional', 'light');
+  color: get-color('additional', 'middle');
 
   @media (max-width: $screen-sm) {
     margin: 0;
@@ -402,7 +213,7 @@
         box-shadow: none;
 
         background: transparent;
-        color: $base-link-color;
+        color: get-color('ui', 'normal');
         font-size: $base-font-size;
 
         &:hover {
@@ -427,7 +238,7 @@
     display: inline-block;
     margin: 0 6px 0 0;
     padding-right: 6px;
-    border-right: 1px solid $base-link-color;
+    border-right: 1px solid get-color('ui', 'normal');
 
     font-size: $base-font-size;
     line-height: 1;
@@ -442,7 +253,7 @@
       &:focus, &:visited {
         outline: 0;
 
-        color: $base-link-color;
+        color: get-color('ui', 'normal');
         text-decoration: none;
       }
 
@@ -472,7 +283,7 @@
   min-height: 90px;
   margin-top: 15px;
   padding: 20px 20px 20px 90px;
-  border: 1px solid $theme-lighter-gray-color;
+  border: 1px solid get-color('additional', 'light');
   border-radius: 5px;
 
   line-height: 2;
@@ -509,88 +320,6 @@
 
 /*END CART*/
 
-/*ORO CUSTOM CHECKBOX SELECTBOX*/
-.oro-custom-selectbox {
-  position: relative;
-
-  display: inline-block;
-  vertical-align: middle;
-
-  color: $base-font-color-lighter;
-
-  &__trigger {
-    position: relative;
-    z-index: 2;
-
-    display: block;
-    width: 100%;
-    padding: 0 0 0 4px;
-    border: 1px solid $theme-lighter-gray-color;
-    border-radius: 3px;
-    box-shadow: none;
-
-    background: $base-background-color;
-    font-size: 0;
-    white-space: nowrap;
-
-    cursor: pointer;
-
-    &__content {
-      margin-right: -4px;
-
-      .checkbox_checked {
-        color: $base-link-color;
-      }
-
-      .checkbox_not-checked {
-        color: $theme-slight-light-gray-color;
-      }
-    }
-
-    &.active {
-      border-bottom: 0;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-
-      + .oro-custom-selectbox__dropdown {
-        display: block;
-      }
-    }
-  }
-
-  &__dropdown {
-    position: absolute;
-    top: 2.4rem;
-    left: 0;
-    z-index: 3;
-
-    @include list-normalize();
-
-    display: none;
-    padding: 5px 0;
-    border: 1px solid $theme-lighter-gray-color;
-    border-radius: 0 3px 3px 3px;
-
-    background: $base-white-color;
-
-    li {
-      padding: 5px 10px;
-
-      white-space: nowrap;
-
-      cursor: pointer;
-
-      .checkbox_checked {
-        color: $base-link-color;
-      }
-
-      .checkbox_not-checked {
-        color: $theme-slight-light-gray-color;
-      }
-    }
-  }
-}
-
 .oq-group-btn {
   padding: 8px 15px !important;
 
@@ -623,7 +352,7 @@
 }
 
 .input-append {
-  .select2-container.input.input_block {
+  .select2-container.input {
     display: inline-block;
     width: auto;
     height: auto;
@@ -670,15 +399,13 @@
   @include clearfix();
 }
 
-.action-select {
-  @include input();
-
+.action-select  {
   position: relative;
 
   padding: 6px 9px 6px !important;
 
-  border: 1px solid $theme-lighter-gray-color;
-  background: $base-white-color;
+  border: 1px solid get-color('additional', 'light');
+  background: get-color('additional', 'ultra');
 
   appearance: none;
 

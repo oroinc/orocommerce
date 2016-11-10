@@ -1,9 +1,5 @@
 {% block _shopping_list_view_container_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
-
-    <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
-        module: 'oroshoppinglist/js/app/components/shoppinglist-view-component'
-    }) }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -13,7 +9,6 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
-
 
 {% block _no_shopping_lists_widget %}
     <div class="cart-list_empty">
@@ -123,10 +118,10 @@
                     <span class="custom-checkbox__icon"></span>
                     <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_note.label'|trans }}</span>
                 </label>
-                <div class="form-input" data-role="editor">
+                <div data-role="editor">
                 <textarea placeholder="{{ 'oro.frontend.shoppinglist.view.add_note.placeholder'|trans }}"
                           rows="3" cols="30" name="shopping_list_notes" disabled="disabled"
-                          class="input input_sm input_block">{{ notes }}</textarea>
+                          class="textarea textarea--full">{{ notes }}</textarea>
                 </div>
             </div>
         </div>
@@ -218,11 +213,11 @@
                                     <div class="product__qty-input__count-option">
                                         <input type="number" value="{{ lineItem.quantity }}" name="product_qty" data-name="field__quantity"
                                             placeholder="{{ 'oro.frontend.shoppinglist.view.qty.label'|trans }}"
-                                            class="input input_md input_block text-center" disabled="disabled" required />
+                                            class="input  input--full text-center" disabled="disabled" required />
                                     </div>
                                 </div>
                                 <div class="product__select inline va-m_md">
-                                    <select class="input input_block input_sm" name="product_unit" data-name="field__unit" required>
+                                    <select class="select select--full" name="product_unit" data-name="field__unit" required>
                                         {% if productsUnits[lineItem.product.id] is defined %}
                                             {% for unit in productsUnits[lineItem.product.id] %}
                                             <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|oro_format_product_unit_label}}</option>
@@ -365,8 +360,8 @@
                                         <span class="custom-checkbox__text">{{ 'oro.frontend.shoppinglist.view.add_item_note.label'|trans }}</span>
                                     </label>
                                 </div>
-                            <div class="form-input form-input_textarea" data-role="editor">
-                                <textarea class="input input_sm input_block" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
+                            <div data-role="editor">
+                                <textarea class="textarea textarea--full" name="copy_paste_order" cols="30" rows="3" disabled="disabled"
                                     placeholder="{{ 'oro.frontend.shoppinglist.view.add_item_note.placeholder'|trans }}">{{ lineItem.notes }}</textarea>
                             </div>
                         </div>

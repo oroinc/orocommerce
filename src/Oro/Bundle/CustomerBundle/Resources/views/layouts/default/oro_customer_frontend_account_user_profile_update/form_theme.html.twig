@@ -1,25 +1,18 @@
 {% extends 'form_div_layout.html.twig' %}
 
 {%- block form_label -%}
-    {% set label_attr = label_attr|merge({
-        class: [
-            label_attr.class|default(''),
-            "profile__form__label profile__form__label_additional"
-            ]|join(' ')
-        })
-    %}
+    {% set label_attr = layout_attr_defaults(label_attr, {
+        '~class': ' label'
+    }) %}
 
     {{ parent() }}
 {%- endblock form_label -%}
 
 {% block form_widget_simple %}
-    {% set attr = attr|merge({
-        class: [
-            attr.class|default(''),
-            'input input_md input_block profile__form__input'
-        ]|join(' ')
-    })
-    %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' input input--full input--size-m'
+    }) %}
+
     {{ parent() }}
 {% endblock %}
 
@@ -33,10 +26,11 @@
 
 {% block widget_attributes %}
     {% if errors|length > 0 %}
-        {% set attr = attr|merge({
-            class: attr.class|default('') ~ ' input_error'
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' error'
         }) %}
     {% endif %}
+
     {{ parent() }}
 {% endblock widget_attributes %}
 

@@ -89,6 +89,8 @@ class ShippingContextProviderFactoryTest extends \PHPUnit_Framework_TestCase
             ->setPaymentMethod($paymentMethod);
 
         $context = new ShippingContext();
+        $context->setSourceEntity($checkout);
+        $context->setSourceEntityIdentifier($checkout->getId());
         $context->setBillingAddress($address);
         $context->setShippingAddress($address);
         $context->setCurrency($currency);

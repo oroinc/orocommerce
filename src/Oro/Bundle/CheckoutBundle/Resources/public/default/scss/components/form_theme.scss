@@ -32,20 +32,8 @@
       }
     }
 
-    &.col-country {
-      select {
-        @include input();
-
-        width: 100%;
-      }
-    }
-
     &.col-state {
       width: 80px;
-
-      select {
-        @include input();
-      }
 
       @media (max-width: $screen-md) {
         width: 100px;
@@ -100,12 +88,6 @@
   }
 
   &__select {
-    select {
-      @include input();
-
-      width: 100%;
-    }
-
     &--exp-month {
       display: inline-block;
       width: 130px;
@@ -119,43 +101,6 @@
     &--exp-year {
       display: inline-block;
       width: 90px;
-    }
-  }
-
-  &__label {
-    display: block;
-    margin: 0 0 10px;
-
-    font-weight: 400;
-    text-transform: uppercase;
-
-    &.notification {
-      text-transform: none;
-    }
-
-    &--additional {
-      text-transform: none;
-    }
-  }
-
-  &__input {
-    @include input();
-
-    &.checkout__form__input_ccv {
-      width: 75px;
-    }
-
-    &:focus {
-      border-color: #4597ca;
-      outline: 0;
-      box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
-    }
-
-    &::-webkit-input-placeholder,
-    &::-moz-placeholder,
-    &:-moz-placeholder,
-    &:-ms-input-placeholder {
-      color: $base-font-color-lightest;
     }
   }
 
@@ -203,7 +148,7 @@
     padding: 23px 20px;
     border-radius: 5px;
 
-    background: $base-white-color;
+    background: get-color('additional', 'ultra');
   }
 
   &__payment-methods-authorized-card {
@@ -236,38 +181,18 @@
       text-align: right;
     }
   }
-}
 
-// *** The code below has not implemented yet!!!
-.checkout__form__row_custom {
-  position: relative;
-  margin: 0 -1rem;
-  font-size: 0;
+  &__req-text {
+    position: absolute;
+    left: 230px;
+    top: 18px;
 
-  &:before, &:after {
-    content: "";
-    display: block;
-    height: 0;
-    clear: both;
-  }
-}
+    color: get-color('primary', 'dark');
 
-.checkout__form__col_custom {
-  margin: 0 0 1.5rem;
-  padding: 0 1rem;
+    @media (max-width: $screen-md) {
+      position: static;
 
-  &.form__col_x3 {
-    display: inline-block;
-    width: 33.3333%;
-    vertical-align: top;
-
-    @media (min-width: 992px) and (max-width: 1150px) {
-      width: 50%;
-    }
-
-    @media (max-width: 991px) {
-      display: block;
-      width: 100%;
+      margin: 0 0 20px 5px;
     }
   }
 }

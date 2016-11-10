@@ -107,10 +107,12 @@ define(function(require) {
         },
 
         undelegateElementsEvents: function() {
-            var elementEventNamespace = this.elementEventNamespace + this.cid;
-            _.each(this.$elements, function($element) {
-                $element.off(elementEventNamespace);
-            });
+            if (this.$elements) {
+                var elementEventNamespace = this.elementEventNamespace + this.cid;
+                _.each(this.$elements, function ($element) {
+                    $element.off(elementEventNamespace);
+                });
+            }
 
             this.model.off(null, null, this);//off all events with this context.
         },

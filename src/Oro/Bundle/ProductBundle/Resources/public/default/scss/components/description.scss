@@ -1,65 +1,17 @@
+$product-specification-container-width: 240px !default;
+
 /*Product description widget*/
 .product__description-container {
+  position: relative;
+
+  width: 955px;
+  margin-left: 35px;
+  float: left;
 
   @include clearfix();
 
   @media (max-width: $screen-md) {
     margin: 15px 0 0;
-  }
-
-  &_lg {
-    width: calc(100% - #{$gallery-width_lg} - #{$gallery-description-gutter_lg});
-    margin-left: $gallery-description-gutter_lg;
-
-    @media (max-width: $screen-md) {
-      width: 100%;
-      margin-left: 0;
-    }
-  }
-
-  &_md {
-    width: calc(100% - #{$gallery-width_md} - #{$gallery-description-gutter_md});
-    margin-left: $gallery-description-gutter_md;
-
-    @media (min-width: 992px) and (max-width: 1199px) {
-       margin-left: $gallery-description-gutter_md - 10px;
-    }
-
-    @media (max-width: $screen-md) {
-      width: 100%;
-      margin-left: 0;
-    }
-  }
-
-  &_m-sm {
-    width: calc(100% - #{$gallery-width_m-sm} - #{$gallery-description-gutter_sm});
-    margin-left: $gallery-description-gutter_sm;
-
-    @media (max-width: $screen-md) {
-      width: 100%;
-      margin-left: 0;
-    }
-  }
-
-  &_sm {
-    width: calc(100% - #{$gallery-width_sm} - #{$gallery-description-gutter_sm});
-    margin-left: $gallery-description-gutter_sm;
-
-    @media (max-width: $screen-md) {
-      width: 100%;
-      margin-left: 0;
-    }
-  }
-
-  &_l_floated {
-    position: relative;
-    z-index: 2;
-
-    float: left;
-  }
-
-  &_r_floated {
-    float: right;
   }
 }
 
@@ -70,7 +22,7 @@
     width: $product-specification-container-width - 5px;
   }
 
-  @media (max-width: $screen-sm) {
+  @media (max-width: $screen-md) {
     width: 100%;
   }
 
@@ -107,17 +59,6 @@
 
 .product__title-container {
   margin: 0 0 2rem;
-
-  &_no-image {
-    float: left;
-    width: $gallery-width_sm;
-    margin: 0;
-
-    @media (max-width: $screen-md) {
-      float: none;
-      width: 100%;
-    }
-  }
 }
 
 .product-title {
@@ -146,11 +87,11 @@
   max-width: 205px;
   margin: 0 0 20px;
   padding: 10px 0;
-  border: 1px solid $theme-lighter-gray-color;
+  border: 1px solid get-color('additional', 'light');
   border-radius: 5px;
 
 
-  background: $theme-lightest-gray-color;
+  background: get-color('additional', 'base');
   font-size: 13px;
   text-align: center;
 
@@ -227,28 +168,39 @@
     input {
       display: none;
     }
-
     &.color-item_red {
+      $product-color-red: #7a0026 !default;
+
       background: $product-color-red;
     }
 
     &.color-item_blue {
+      $product-color-blue: #005b7f !default;
+
       background: $product-color-blue;
     }
 
     &.color-item_purple {
+      $product-color-purple: #32004b !default;
+
       background: $product-color-purple;
     }
 
     &.color-item_green {
+      $product-color-green: #005826 !default;
+
       background: $product-color-green;
     }
 
     &.color-item_light-green {
+      $product-color-green-light: #00a651 !default;
+
       background: $product-color-green-light;
     }
 
     &.color-item_gray {
+      $products-color-gray: #959595 !default;
+
       background: $products-color-gray;
     }
 
@@ -276,14 +228,14 @@
   border-radius: 5px;
   box-shadow: 1px 1px 10px 0 rgba(0,0,0,.3);
 
-  background: $base-white-color;
+  background: get-color('additional', 'ultra');
 
   table {
     width: 100%;
     margin: 0 0 45px;
 
     > thead > tr > td {
-      border-bottom: 1px solid $theme-lighter-gray-color;
+      border-bottom: 1px solid get-color('additional', 'light');
     }
 
     > thead > tr > td,
@@ -329,14 +281,9 @@
   }
 }
 
-.form-field-quantity {
-  input[type="text"].input_block,
-  input[type="number"].input_block {
-    width: 70px !important;
-  }
-}
-
 .product__qty-input {
+  $base-active-border-color: #a2d4f3 !default;
+
   max-width: 60px;
   min-width: 60px;
   margin: 0 0 20px;
@@ -358,10 +305,6 @@
         .count-plus {
           display: block;
         }
-
-        input[type="number"] {
-         border-radius: 0;
-        }
       }
 
       .product__qty-input_more-info__popup {
@@ -373,19 +316,6 @@
       position: relative;
 
       border: 1px solid transparent;
-
-      input[type="number"] {
-        vertical-align: middle;
-
-        appearance: textfield;
-
-        &::-webkit-outer-spin-button,
-        &::-webkit-inner-spin-button {
-          margin: 0;
-
-          appearance: none;
-        }
-      }
 
       .count-minus,
       .count-plus {
@@ -399,7 +329,7 @@
         border: 1px solid $base-active-border-color;
         box-shadow: none;
 
-        background: $theme-lightest-gray-color;
+        background: get-color('additional', 'base');
         text-align: center;
       }
 
@@ -427,33 +357,6 @@
 
     &.wsnr {
       white-space: nowrap;
-    }
-  }
-
-  input[type="text"],
-  input[type="number"] {
-    @include input();
-
-    &::-webkit-input-placeholder {
-      color: $base-font-color-lightest;
-    }
-
-    &::-moz-placeholder {
-      color: $base-font-color-lightest;
-    }
-
-    &:-moz-placeholder {
-      color: $base-font-color-lightest;
-    }
-
-    &:-ms-input-placeholder {
-      color: $base-font-color-lightest;
-    }
-
-    &:focus {
-      border-color: $base-link-color;
-      outline: 0;
-      box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
     }
   }
 }
@@ -523,10 +426,10 @@
 .product__qnty {
   max-width: 205px;
   margin: 0 0 2rem;  
-  border: 1px solid $theme-lighter-gray-color;
+  border: 1px solid get-color('additional', 'light');
   border-radius: 5px;
 
-  background: $theme-lightest-gray-color;
+  background: get-color('additional', 'base');
 
   @media (max-width: $screen-md) {
     max-width: 100%;
@@ -570,7 +473,7 @@
 .product__description-content {
   width: calc(100% - #{$product-specification-container-width});
 
-  @media (max-width: $screen-sm) {
+  @media (max-width: $screen-md) {
     width: 100%;
     margin-top: 20px !important;
   }
@@ -652,7 +555,7 @@
   border-radius: 5px;
   box-shadow: 1px 1px 1px 0 rgba(0,0,0,.3);
 
-  background: $base-white-color;
+  background: get-color('additional', 'ultra');
 }
 
 .product-mi-widget {
@@ -678,7 +581,7 @@
 .product-mi__qty {
   margin: 10px 0;
   padding: 10px 0 0;
-  border-top: 1px solid $theme-lighter-gray-color;
+  border-top: 1px solid get-color('additional', 'light');
 
   .table {
     > tbody > tr > td {
@@ -705,11 +608,11 @@
     min-width: 30px;
     min-height: 27px;
 
-    background: $base-white-color;
-    color: $theme-light-gray-color;
+    background: get-color('additional', 'ultra');
+    color: get-color('additional', 'middle');
 
     &.btn_bordered {
-      border-color: $theme-bucket-color;
+      border-color: get-color('additional', 'middle');
     }
 
     &:not(:first-child):not(:last-child) {
@@ -729,7 +632,7 @@
     }
 
     &.current {
-      background: $theme-lightest-gray-color;
+      background: get-color('additional', 'base');
       box-shadow: inset 0 2px 5px 0 rgba(0,0,0,.2);
     }
 

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\ImportExport\Normalizer;
 
-use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
+use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\ImportExport\Serializer\InventoryLevelNormalizer;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;

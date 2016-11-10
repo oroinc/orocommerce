@@ -23,3 +23,5 @@ oro:
             fields:
                 url.label: URL
                 secure_url.label: Secure URL
+    scope:
+        website.label: Website
