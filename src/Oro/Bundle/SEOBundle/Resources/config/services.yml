@@ -50,5 +50,6 @@ services:
         arguments:
             - '@oro_website.provider.website_localization'
             - '@property_accessor'
+            - '@oro_website_search.manager.website_context_manager'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }

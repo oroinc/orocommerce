@@ -12,6 +12,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -42,6 +43,11 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
     private $websiteLocalizationProvider;
 
     /**
+     * @var WebsiteContextManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $websiteContextManager;
+
+    /**
      * @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     private $repository;
@@ -60,9 +66,14 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->websiteContextManager = $this->getMockBuilder(WebsiteContextManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->listener = new WebsiteSearchCategoryIndexerListener(
             $this->doctrineHelper,
-            $this->websiteLocalizationProvider
+            $this->websiteLocalizationProvider,
+            $this->websiteContextManager
         );
     }
 
@@ -146,7 +157,13 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
             ->method('getCategoryMapByProducts')
             ->willReturn([$product->getId() => $category]);
 
-        $event = new IndexEntityEvent([$product], []);
+        $event = new IndexEntityEvent([$product], ['some_context']);
+
+        $this->websiteContextManager
+            ->expects($this->once())
+            ->method('getWebsiteId')
+            ->with(['some_context'])
+            ->willReturn(1);
 
         $this->listener->onWebsiteSearchIndex($event);
 
@@ -180,6 +197,8 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
                 ),
             ],
         ];
+
+
 
         $this->assertEquals($expected, $event->getEntitiesData());
     }

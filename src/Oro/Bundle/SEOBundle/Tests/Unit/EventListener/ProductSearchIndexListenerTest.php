@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
@@ -67,7 +68,19 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
             );
 
         $propertyAccessor = new PropertyAccessor();
-        $testable         = new ProductSearchIndexListener($localizationProvider, $propertyAccessor);
+
+        /** @var WebsiteContextManager|\PHPUnit_Framework_MockObject_MockObject $websiteContextManager */
+        $websiteContextManager = $this->getMockBuilder(WebsiteContextManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $websiteContextManager->expects($this->once())->method('getWebsiteId')->with([])->willReturn(1);
+
+        $testable         = new ProductSearchIndexListener(
+            $localizationProvider,
+            $propertyAccessor,
+            $websiteContextManager
+        );
         $testable->onWebsiteSearchIndex($event);
     }
 

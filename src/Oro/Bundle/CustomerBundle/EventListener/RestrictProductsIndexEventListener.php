@@ -12,33 +12,38 @@ use Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\ProductVisibilityResolve
 use Oro\Bundle\CustomerBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
 class RestrictProductsIndexEventListener
 {
     use ProductVisibilityTrait;
-    use ContextTrait;
 
     /** @var DoctrineHelper */
     private $doctrineHelper;
+
+    /** @var  WebsiteContextManager */
+    private $websiteContextManager;
 
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param ConfigManager $configManager
      * @param string $productConfigPath
      * @param string $categoryConfigPath
+     * @param WebsiteContextManager $websiteContextManager
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ConfigManager $configManager,
         $productConfigPath,
-        $categoryConfigPath
+        $categoryConfigPath,
+        WebsiteContextManager $websiteContextManager
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->configManager = $configManager;
         $this->productConfigPath = $productConfigPath;
         $this->categoryConfigPath = $categoryConfigPath;
+        $this->websiteContextManager = $websiteContextManager;
     }
 
     /**
@@ -47,7 +52,12 @@ class RestrictProductsIndexEventListener
     public function onRestrictIndexEntityEvent(RestrictIndexEntityEvent $event)
     {
         $context = $event->getContext();
-        $websiteId = $this->requireContextCurrentWebsiteId($context);
+
+        $websiteId = $this->websiteContextManager->getWebsiteId($context);
+
+        if (!$websiteId) {
+            return;
+        }
 
         $qb = $event->getQueryBuilder();
         $qb->setParameter('website', $websiteId);

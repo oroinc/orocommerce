@@ -3,35 +3,43 @@
 namespace Oro\Bundle\CustomerBundle\EventListener;
 
 use Oro\Bundle\CustomerBundle\Indexer\ProductVisibilityIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
 class WebsiteSearchProductVisibilityIndexerListener
 {
-    use ContextTrait;
-
     /**
      * @var ProductVisibilityIndexer
      */
     private $visibilityIndexer;
 
     /**
-     * @param ProductVisibilityIndexer $visibilityIndexer
+     * @var WebsiteContextManager
      */
-    public function __construct(ProductVisibilityIndexer $visibilityIndexer)
-    {
+    private $websiteContextManager;
+
+    /**
+     * @param ProductVisibilityIndexer $visibilityIndexer
+     * @param WebsiteContextManager $websiteContextManager
+     */
+    public function __construct(
+        ProductVisibilityIndexer $visibilityIndexer,
+        WebsiteContextManager $websiteContextManager
+    ) {
         $this->visibilityIndexer = $visibilityIndexer;
+        $this->websiteContextManager = $websiteContextManager;
     }
 
     /**
      * @param IndexEntityEvent $event
-     * @throws \LogicException
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         $context = $event->getContext();
-        $websiteId = $this->requireContextCurrentWebsiteId($context);
+        $websiteId = $this->websiteContextManager->getWebsiteId($context);
 
-        $this->visibilityIndexer->addIndexInfo($event, $websiteId);
+        if ($websiteId) {
+            $this->visibilityIndexer->addIndexInfo($event, $websiteId);
+        }
     }
 }

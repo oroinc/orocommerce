@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\SEOBundle\EventListener;
 
-use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
@@ -14,8 +14,6 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ProductSearchIndexListener
 {
-    use ContextTrait;
-
     /**
      * @var PropertyAccessor
      */
@@ -27,15 +25,23 @@ class ProductSearchIndexListener
     private $websiteLocalizationProvider;
 
     /**
+     * @var WebsiteContextManager
+     */
+    private $websiteContextManager;
+
+    /**
      * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
-     * @param PropertyAccessor                    $propertyAccessor
+     * @param PropertyAccessor $propertyAccessor
+     * @param WebsiteContextManager $websiteContextManager
      */
     public function __construct(
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
-        PropertyAccessor $propertyAccessor
+        PropertyAccessor $propertyAccessor,
+        WebsiteContextManager $websiteContextManager
     ) {
         $this->websiteLocalizationProvider = $websiteLocalizationProvider;
         $this->propertyAccessor            = $propertyAccessor;
+        $this->websiteContextManager       = $websiteContextManager;
     }
 
     /**
@@ -48,7 +54,11 @@ class ProductSearchIndexListener
 
         $context = $event->getContext();
 
-        $websiteId = $this->getContextCurrentWebsiteId($context);
+        $websiteId = $this->websiteContextManager->getWebsiteId($context);
+
+        if (!$websiteId) {
+            return;
+        }
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 

@@ -10,14 +10,12 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
-use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
 class WebsiteSearchCategoryIndexerListener
 {
-    use ContextTrait;
-
     /**
      * @var DoctrineHelper
      */
@@ -34,15 +32,23 @@ class WebsiteSearchCategoryIndexerListener
     private $repository;
 
     /**
+     * @var WebsiteContextManager
+     */
+    private $websiteContextManager;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
+     * @param WebsiteContextManager $websiteContextManager
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
+        AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
+        WebsiteContextManager $websiteContextManager
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->websiteLocalizationProvider = $websiteLocalizationProvider;
+        $this->websiteContextManager = $websiteContextManager;
     }
 
     /**
@@ -55,7 +61,11 @@ class WebsiteSearchCategoryIndexerListener
 
         $context = $event->getContext();
 
-        $websiteId = $this->getContextCurrentWebsiteId($context);
+        $websiteId = $this->websiteContextManager->getWebsiteId($context);
+
+        if (!$websiteId) {
+            return;
+        }
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 

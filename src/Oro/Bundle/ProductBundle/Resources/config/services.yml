@@ -401,8 +401,8 @@ services:
     oro_product.event_listener.website_search_index:
         class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener'
         arguments:
-            - '@oro_entity.doctrine_helper'
             - '@oro_website.provider.website_localization'
+            - '@oro_website_search.manager.website_context_manager'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity.product, method: onWebsiteSearchIndex }
 

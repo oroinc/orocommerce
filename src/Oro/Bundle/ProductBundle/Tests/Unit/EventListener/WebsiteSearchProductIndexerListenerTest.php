@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -10,6 +9,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerListener;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -31,9 +31,9 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
     private $listener;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var WebsiteContextManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $doctrineHelper;
+    private $websiteContextManager;
 
     /**
      * @var AbstractWebsiteLocalizationProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -42,7 +42,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
 
     protected function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
+        $this->websiteContextManager = $this->getMockBuilder(WebsiteContextManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -51,8 +51,8 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
             ->getMock();
 
         $this->listener = new WebsiteSearchProductIndexerListener(
-            $this->doctrineHelper,
-            $this->websiteLocalizationProvider
+            $this->websiteLocalizationProvider,
+            $this->websiteContextManager
         );
     }
 
@@ -148,6 +148,12 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit_Framework_TestCas
         $product = $this->prepareProduct($firstLocale, $secondLocale);
 
         $event = new IndexEntityEvent([$product], []);
+
+        $this->websiteContextManager
+            ->expects($this->once())
+            ->method('getWebsiteId')
+            ->with([])
+            ->willReturn(1);
 
         $this->listener->onWebsiteSearchIndex($event);
 
