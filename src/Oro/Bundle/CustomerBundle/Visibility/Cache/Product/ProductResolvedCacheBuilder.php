@@ -106,6 +106,8 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
             $visibility,
             $category
         );
+
+        $this->triggerProductReindexation($product);
     }
 
     /**
