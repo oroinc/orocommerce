@@ -1,6 +1,6 @@
 {% block _top_nav_left_logged_user_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' `'
+        '~class': ' shown-on-desktop'
     }) %}
     <li {{ block('block_attributes') }}>
         {% for child in block %}
@@ -19,7 +19,7 @@
 
 {% block _top_nav_left_my_account_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' desktop'
+        '~class': ' shown-on-desktop'
     }) %}
     <li {{ block('block_attributes') }}>
         {{ block_widget(block) }}
