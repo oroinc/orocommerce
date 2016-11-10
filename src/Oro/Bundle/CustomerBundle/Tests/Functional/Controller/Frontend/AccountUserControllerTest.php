@@ -53,7 +53,6 @@ class AccountUserControllerTest extends AbstractUserControllerTest
     {
         $this->loginUser(LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_DEEP);
 
-        // todo: update in scope BB-5370, test with different roles
         /** @var AccountUserRole $role */
         $role = $this->getReference(LoadAccountUserACLData::ROLE_FRONTEND_ADMINISTRATOR);
 
@@ -94,15 +93,35 @@ class AccountUserControllerTest extends AbstractUserControllerTest
     }
 
     /**
+     * @dataProvider testCreatePermissionDeniedDataProvider
      * @group frontend-ACL
+     * @param string $login
+     * @param int $status
      */
-    public function testCreatePermissionDenied()
+    public function testCreatePermissionDenied($login, $status)
     {
-        $this->loginUser(LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY);
+        $this->loginUser($login);
         $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_create'));
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 403);
+        $this->assertHtmlResponseStatusCodeEquals($result, $status);
+    }
+
+    /**
+     * @return array
+     */
+    public function testCreatePermissionDeniedDataProvider()
+    {
+        return [
+            'anonymous user' => [
+                'login' => '',
+                'status' => 401,
+            ],
+            'user without create permissions' => [
+                'login' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+                'status' => 403,
+            ],
+        ];
     }
 
     /**
@@ -110,6 +129,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testIndex()
     {
+        $this->loginUser(LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_DEEP);
         $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_index'));
         $result = $this->client->getResponse();
 
@@ -125,6 +145,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testUpdate()
     {
+        $this->loginUser(LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_DEEP);
         $response = $this->client->requestGrid(
             'frontend-account-account-user-grid',
             [
@@ -170,6 +191,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testView($id)
     {
+        $this->loginUser(LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_DEEP);
         $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
@@ -300,7 +322,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->assertSame($indexResponseStatus, $this->client->getResponse()->getStatusCode());
         $response = $this->client->requestGrid(
             [
-                'gridName' => 'frontend-account-account-user-grid'
+                'gridName' => 'frontend-account-account-user-grid',
             ]
         );
 
