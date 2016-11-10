@@ -46,8 +46,17 @@ class AddWebContentPageTypes implements Migration, ExtendExtensionAwareInterface
                     'extend' => [
                         'is_extend' => true,
                         'owner' => ExtendScope::OWNER_CUSTOM,
-                        'cascade' => ['persist']
+                        'cascade' => ['persist'],
+                        'on_delete' => 'CASCADE',
                     ],
+                    'datagrid' => [
+                        'is_visible' => false
+                    ],
+                    'form' => [
+                        'is_enabled' => false
+                    ],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
                     'dataaudit' => ['auditable' => true]
                 ]
             );
@@ -59,9 +68,18 @@ class AddWebContentPageTypes implements Migration, ExtendExtensionAwareInterface
                     'oro_options' => [
                         'extend' => [
                             'is_extend' => true,
-                            'owner' => ExtendScope::OWNER_CUSTOM
+                            'owner' => ExtendScope::OWNER_CUSTOM,
+                            'cascade' => ['persist'],
+                            'on_delete' => 'CASCADE',
                         ],
-                        'merge' => ['display' => true],
+                        'datagrid' => [
+                            'is_visible' => false
+                        ],
+                        'form' => [
+                            'is_enabled' => false
+                        ],
+                        'view' => ['is_displayable' => false],
+                        'merge' => ['display' => false],
                         'dataaudit' => ['auditable' => true]
                     ]
                 ]

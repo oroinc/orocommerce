@@ -6,6 +6,9 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
@@ -103,6 +106,7 @@ class OroProductBundleInstaller implements
         $this->updateProductTable($schema);
         $this->addNoteAssociations($schema);
         $this->addAttachmentAssociations($schema);
+        $this->addProductContentVariants($schema);
     }
 
     /**
@@ -441,5 +445,66 @@ class OroProductBundleInstaller implements
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function addProductContentVariants(Schema $schema)
+    {
+        if ($schema->hasTable('oro_web_catalog_variant')) {
+            $table = $schema->getTable('oro_web_catalog_variant');
+
+            $this->extendExtension->addManyToOneRelation(
+                $schema,
+                $table,
+                'product_page_product',
+                'oro_product',
+                'id',
+                [
+                    ExtendOptionsManager::MODE_OPTION => ConfigModel::MODE_READONLY,
+                    'entity' => ['label' => 'oro.product.entity_label'],
+                    'extend' => [
+                        'is_extend' => true,
+                        'owner' => ExtendScope::OWNER_CUSTOM,
+                        'cascade' => ['persist'],
+                        'on_delete' => 'CASCADE',
+                    ],
+                    'datagrid' => [
+                        'is_visible' => false
+                    ],
+                    'form' => [
+                        'is_enabled' => false
+                    ],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                    'dataaudit' => ['auditable' => true]
+                ]
+            );
+
+            $table->addColumn(
+                'product_collection_page_rule',
+                'text',
+                [
+                    'oro_options' => [
+                        'extend' => [
+                            'is_extend' => true,
+                            'owner' => ExtendScope::OWNER_CUSTOM,
+                            'cascade' => ['persist'],
+                            'on_delete' => 'CASCADE',
+                        ],
+                        'datagrid' => [
+                            'is_visible' => false
+                        ],
+                        'form' => [
+                            'is_enabled' => false
+                        ],
+                        'view' => ['is_displayable' => false],
+                        'merge' => ['display' => false],
+                        'dataaudit' => ['auditable' => true]
+                    ]
+                ]
+            );
+        }
     }
 }

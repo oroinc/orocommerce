@@ -20,9 +20,15 @@ services:
         tags:
             - { name: security.voter, priority: 10 }
 
-    oro_web_catalog.page_type.registry:
-        class: 'Oro\Bundle\WebCatalogBundle\PageType\PageTypeRegistry'
+    oro_web_catalog.content_variant_type.registry:
+        class: 'Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry'
         public: false
+
+    oro_web_catalog.content_variant_type.system_page:
+        class: Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType
+        public: false
+        tags:
+            - { name: oro_web_catalog.content_variant_type }
 
     oro_web_catalog.content_variant_provider.registry:
         class: 'Oro\Bundle\WebCatalogBundle\ContentVariantProvider\ContentVariantProviderRegistry'
@@ -108,6 +114,11 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType
         tags:
             - { name: form.type, alias: oro_web_catalog_content_node }
+
+    oro_web_catalog.form.type.oro_web_catalog_content_variant_system_page:
+        class: Oro\Bundle\WebCatalogBundle\Form\Type\SystemPageVariantType
+        tags:
+            - { name: form.type, alias: oro_web_catalog_content_variant_system_page }
 
     oro_web_catalog.content_node_utils.content_node_name_filler:
         class: 'Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeNameFiller'

@@ -28,6 +28,7 @@ oro:
             slug_prototypes.label: Slug prototypes
             titles.label: Titles
             web_catalog.label: Web catalog
+            scopes.label: Used For
 
         contentvariant:
             entity_label: Content Variant
@@ -36,6 +37,10 @@ oro:
             type.label: Type
             system_page_route.label: System Page Route
             node.label: Content Node
+            scopes.label: Used For
+
+            variant_type:
+                system_page.label: System Page
         sections:
             general: 'General'
         button:

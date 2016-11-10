@@ -10,8 +10,8 @@ class ContentVariantTypeCompilerPass implements CompilerPassInterface
 {
     use TaggedServicesCompilerPassTrait;
     
-    const WEB_CATALOG_PAGE_TYPE_REGISTRY = 'oro_web_catalog.page_type.registry';
-    const WEB_CATALOG_PAGE_TYPE_TAG = 'oro_web_catalog.page_type';
+    const REGISTRY_SERVICE = 'oro_web_catalog.content_variant_type.registry';
+    const TAG = 'oro_web_catalog.content_variant_type';
 
     /**
      * {@inheritDoc}
@@ -20,8 +20,8 @@ class ContentVariantTypeCompilerPass implements CompilerPassInterface
     {
         $this->registerTaggedServices(
             $container,
-            self::WEB_CATALOG_PAGE_TYPE_REGISTRY,
-            self::WEB_CATALOG_PAGE_TYPE_TAG,
+            self::REGISTRY_SERVICE,
+            self::TAG,
             'addContentVariantType'
         );
     }

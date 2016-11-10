@@ -79,7 +79,7 @@ class WebCatalogTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(WebCatalogType::NAME, $this->type->getName());
+        $this->assertEquals(WebCatalogType::NAME, $this->type->getBlockPrefix());
     }
 
     /**
