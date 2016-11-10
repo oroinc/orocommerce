@@ -9,6 +9,7 @@ use Box\Spout\Reader\ReaderInterface;
 
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -27,11 +28,17 @@ class QuickAddRowCollectionBuilder
     protected $productRepository;
 
     /**
+     * @var ProductManager
+     */
+    protected $productManager;
+
+    /**
      * @param EntityRepository $productRepository
      */
-    public function __construct(EntityRepository $productRepository)
+    public function __construct(EntityRepository $productRepository, ProductManager $productManager)
     {
         $this->productRepository = $productRepository;
+        $this->productManager = $productManager;
     }
 
     /**
@@ -139,6 +146,25 @@ class QuickAddRowCollectionBuilder
     {
         $products = $this->productRepository->getProductWithNamesBySku($skus);
         $productsBySku = [];
+
+        foreach ($products as $product) {
+            $productsBySku[strtoupper($product->getSku())] = $product;
+        }
+
+        return $productsBySku;
+    }
+
+
+    /**
+     * @param string[] $skus
+     * @return Product[]
+     */
+    private function getVisibleProductsBySkus(array $skus)
+    {
+        $qb = $this->productManager->restrictQueryBuilder($this->productRepository->getProductWithNamesQueryBuilder($skus), []);
+        $products = $qb->getQuery()->execute();
+        $productsBySku = [];
+
         foreach ($products as $product) {
             $productsBySku[strtoupper($product->getSku())] = $product;
         }
@@ -170,7 +196,7 @@ class QuickAddRowCollectionBuilder
      */
     private function mapProductsAndValidate(QuickAddRowCollection $collection)
     {
-        $products = $this->getProductsBySkus($collection->getSkus());
+        $products = $this->getVisibleProductsBySkus($collection->getSkus());
         $collection->mapProducts($products)->validate();
     }
 }
