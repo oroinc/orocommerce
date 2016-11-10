@@ -59,6 +59,18 @@ class QuickAddRowCollection extends ArrayCollection
     }
 
     /**
+     * @return $this|QuickAddRow[]
+     */
+    public function getValidSkuRows()
+    {
+        return $this->filter(
+            function (QuickAddRow $row) {
+                return $row->getProduct();
+            }
+        );
+    }
+
+    /**
      * @return array
      */
     public function getSkus()
@@ -137,7 +149,7 @@ class QuickAddRowCollection extends ArrayCollection
     {
         $data = [QuickAddType::PRODUCTS_FIELD_NAME => []];
 
-        foreach ($this->getValidRows() as $row) {
+        foreach ($this->getValidSkuRows() as $row) {
             $productRow = new ProductRow();
             $productRow->productSku = $row->getSku();
             $productRow->productQuantity = $row->getQuantity();
