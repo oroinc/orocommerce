@@ -169,9 +169,4 @@ class AccountRepositoryTest extends WebTestCase
         $this->assertEquals($accountsQuantity, $iteratorQuantity);
         $this->assertEmpty($accounts);
     }
-
-    public function testGetAccountsQueryBuilder()
-    {
-        /** TODO Add in BB-4518 */
-    }
 }

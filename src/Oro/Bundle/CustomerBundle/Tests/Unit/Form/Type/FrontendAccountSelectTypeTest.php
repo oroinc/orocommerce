@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -20,12 +23,18 @@ class FrontendAccountSelectTypeTest extends FormIntegrationTestCase
     protected $aclHelper;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         $this->aclHelper = $this->createAclHelperMock();
-        $this->formType = new FrontendAccountSelectType($this->aclHelper);
+        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->formType = new FrontendAccountSelectType($this->aclHelper, $this->registry);
     }
 
     public function testGetName()
@@ -48,6 +57,39 @@ class FrontendAccountSelectTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $criteria = new Criteria();
+        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $accountUserRepository =
+            $this->getMockBuilder(EntityRepository::class)
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $accountUserRepository
+            ->expects($this->any())
+            ->method('createQueryBuilder')
+            ->with('account')
+            ->willReturn($queryBuilder);
+
+        $this->registry
+            ->expects($this->any())
+            ->method('getRepository')
+            ->with('OroCustomerBundle:Account')
+            ->willReturn($accountUserRepository);
+
+        $this->aclHelper
+            ->expects($this->any())
+            ->method('applyAclToCriteria')
+            ->with(AccountUser::class, $criteria, 'VIEW', ['account' => 'account.id'])
+            ->willReturn($queryBuilder);
+
+        $queryBuilder
+            ->expects($this->any())
+            ->method('addCriteria')
+            ->with($criteria);
+
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->isType('array'))
@@ -63,29 +105,6 @@ class FrontendAccountSelectTypeTest extends FormIntegrationTestCase
     {
         $this->assertArrayHasKey('class', $defaults);
         $this->assertArrayHasKey('query_builder', $defaults);
-
-        /** @var \Closure $callback */
-        $callback = $defaults['query_builder'];
-        $this->assertInstanceOf('\Closure', $callback);
-
-        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $repository = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $repository->expects($this->any())
-            ->method('getAccountsQueryBuilder')
-            ->with($this->aclHelper)
-            ->willReturn($queryBuilder);
-
-        /** @var \Closure $queryBuilderCallback */
-        $queryBuilderCallback = $callback($repository);
-        $this->assertInstanceOf('Doctrine\ORM\QueryBuilder', $queryBuilderCallback);
-
-        $this->assertEquals($queryBuilder, $callback($repository));
     }
 
     /**

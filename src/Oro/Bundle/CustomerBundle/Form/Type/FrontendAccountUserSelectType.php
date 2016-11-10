@@ -2,12 +2,16 @@
 
 namespace Oro\Bundle\CustomerBundle\Form\Type;
 
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRepository;
 
 class FrontendAccountUserSelectType extends AbstractType
 {
@@ -19,11 +23,18 @@ class FrontendAccountUserSelectType extends AbstractType
     protected $aclHelper;
 
     /**
-     * @param AclHelper $aclHelper
+     * @var ManagerRegistry
      */
-    public function __construct(AclHelper $aclHelper)
+    protected $registry;
+
+    /**
+     * @param AclHelper $aclHelper
+     * @param ManagerRegistry $registry
+     */
+    public function __construct(AclHelper $aclHelper, ManagerRegistry $registry)
     {
         $this->aclHelper = $aclHelper;
+        $this->registry = $registry;
     }
 
     /**
@@ -35,13 +46,29 @@ class FrontendAccountUserSelectType extends AbstractType
             [
                 'class' => 'OroCustomerBundle:AccountUser',
                 'choice_label' => function (AccountUser $user) {
-                    return $user->getFirstName().' '.$user->getLastName();
+                    return $user->getFullName();
                 },
-                'query_builder' => function (AccountUserRepository $repository) {
-                    return $repository->getAccountUsersQueryBuilder($this->aclHelper);
-                }
+                'query_builder' => $this->getAccountUsersQueryBuilder()
             ]
         );
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    private function getAccountUsersQueryBuilder()
+    {
+        /** @var EntityRepository $entityRepository */
+        $entityRepository = $this->registry->getRepository('OroCustomerBundle:AccountUser');
+        $criteria = new Criteria();
+        $qb = $entityRepository->createQueryBuilder('account_user');
+        $this->aclHelper->applyAclToCriteria(
+            AccountUser::class,
+            $criteria,
+            'VIEW',
+            ['account' => 'account_user.account']
+        );
+        return $qb->addCriteria($criteria);
     }
 
     /**

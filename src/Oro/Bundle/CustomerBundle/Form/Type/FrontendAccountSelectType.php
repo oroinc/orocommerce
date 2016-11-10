@@ -2,11 +2,15 @@
 
 namespace Oro\Bundle\CustomerBundle\Form\Type;
 
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\QueryBuilder;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 
 class FrontendAccountSelectType extends AbstractType
 {
@@ -18,11 +22,18 @@ class FrontendAccountSelectType extends AbstractType
     protected $aclHelper;
 
     /**
-     * @param AclHelper $aclHelper
+     * @var ManagerRegistry
      */
-    public function __construct(AclHelper $aclHelper)
+    protected $registry;
+
+    /**
+     * @param AclHelper $aclHelper
+     * @param ManagerRegistry $registry
+     */
+    public function __construct(AclHelper $aclHelper, ManagerRegistry $registry)
     {
         $this->aclHelper = $aclHelper;
+        $this->registry = $registry;
     }
 
     /**
@@ -33,11 +44,26 @@ class FrontendAccountSelectType extends AbstractType
         $resolver->setDefaults(
             [
                 'class' => 'OroCustomerBundle:Account',
-                'query_builder' => function (AccountRepository $repository) {
-                    return $repository->getAccountsQueryBuilder($this->aclHelper);
-                },
+                'query_builder' => $this->getAccountsQueryBuilder(),
             ]
         );
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    private function getAccountsQueryBuilder()
+    {
+        $entityRepository = $this->registry->getRepository('OroCustomerBundle:Account');
+        $criteria = new Criteria();
+        $qb = $entityRepository->createQueryBuilder('account');
+        $this->aclHelper->applyAclToCriteria(
+            AccountUser::class,
+            $criteria,
+            'VIEW',
+            ['account' => 'account.id']
+        );
+        return $qb->addCriteria($criteria);
     }
 
     /**
