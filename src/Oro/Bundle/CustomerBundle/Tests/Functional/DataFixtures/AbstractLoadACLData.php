@@ -33,20 +33,24 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
     const ROLE_DEEP_VIEW_ONLY = 'ROLE_DEEP_VIEW_ONLY';
     const ROLE_DEEP = 'ROLE_DEEP';
 
+    // account.level_1.1
     const USER_ACCOUNT_1_ROLE_LOCAL = 'account1-role-local@example.com';
     const USER_ACCOUNT_1_ROLE_BASIC = 'account1-role-basic@example.com';
     const USER_ACCOUNT_1_ROLE_DEEP = 'account1-role-deep@example.com';
     const USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY = 'account1-role-local-view-only@example.com';
     const USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY = 'account1-role-deep-view-only@example.com';
 
+    // account.level_1.1.1
     const USER_ACCOUNT_1_1_ROLE_LOCAL = 'account1-1-role-local@example.com';
     const USER_ACCOUNT_1_1_ROLE_BASIC = 'account1-1-role-basic@example.com';
     const USER_ACCOUNT_1_1_ROLE_DEEP = 'account1-1-role-deep@example.com';
 
+    // account.level_1.1.2
     const USER_ACCOUNT_1_2_ROLE_LOCAL = 'account1-2-role-local@example.com';
     const USER_ACCOUNT_1_2_ROLE_BASIC = 'account1-2-role-basic@example.com';
     const USER_ACCOUNT_1_2_ROLE_DEEP = 'account1-2-role-deep@example.com';
 
+    // account.level_1.2
     const USER_ACCOUNT_2_ROLE_LOCAL = 'account2-role-local@example.com';
     const USER_ACCOUNT_2_ROLE_BASIC = 'account2-role-basic@example.com';
     const USER_ACCOUNT_2_ROLE_DEEP = 'account2-role-deep@example.com';

@@ -324,8 +324,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->assertSame($indexResponseStatus, $this->client->getResponse()->getStatusCode());
         $response = $this->client->requestGrid(
             [
-                'gridName' => 'frontend-account-account-user-grid',
-                'frontend-requests-grid[_sort_by][id]' => 'ASC',
+                'gridName' => 'frontend-account-account-user-grid'
             ]
         );
 
