@@ -14,7 +14,7 @@ datagrids:
             id:
                 label: oro.cms.page.id.label
             title:
-                label: oro.cms.page.title.label
+                label: oro.cms.page.titles.singular_label
         properties:
             id: ~
             title:
@@ -83,7 +83,7 @@ datagrids:
             id:
               label: oro.cms.page.id.label
             title:
-              label: oro.cms.page.title.label
+              label: oro.cms.page.titles.singular_label
         properties:
             id: ~
             title:

@@ -3,14 +3,15 @@ oro.cms:
         entity_label:           'Landing Page'
         entity_plural_label:    'Landing Pages'
         id.label:               'ID'
-        titles.label:            'Titles'
-        title.label:            'Title'
+        titles:
+            label:              'Titles'
+            singular_label:     'Title'
         content.label:          'Content'
         organization.label:     'Organization'
-        slugs.label:            'Slugs'
+        slugs:
+            label:              'Slugs'
+            singular_label:     'Title'
         form.choose:            'Choose a Landing Page...'
-    slug:
-        default:             'Default Slug'
 
     controller:
         page.saved.message: 'Page has been saved'
