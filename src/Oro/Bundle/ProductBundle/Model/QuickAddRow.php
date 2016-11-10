@@ -37,6 +37,11 @@ class QuickAddRow
     protected $complete = false;
 
     /**
+     * @var array
+     */
+    protected $errors;
+
+    /**
      * @param int $index
      * @param string $sku
      * @param float $quantity
@@ -46,6 +51,7 @@ class QuickAddRow
         $this->index = $index;
         $this->sku = $sku;
         $this->quantity = $quantity;
+        $this->errors = [];
 
         if ($sku && $quantity) {
             $this->complete = true;
@@ -114,5 +120,30 @@ class QuickAddRow
     public function isComplete()
     {
         return $this->complete;
+    }
+
+    /**
+     * @param string $errorMessage
+     */
+    public function addError($errorMessage)
+    {
+        $this->errors[] = $errorMessage;
+        $this->valid = false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasErrors()
+    {
+        return count($this->errors) > 0;
     }
 }

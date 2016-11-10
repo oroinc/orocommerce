@@ -4,11 +4,30 @@ namespace Oro\Bundle\ProductBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Event\QuickAddRowCollectionValidateEvent;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 
 class QuickAddRowCollection extends ArrayCollection
 {
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     * @return $this
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+
+        return $this;
+    }
+
     /**
      * @return string
      */
@@ -102,6 +121,10 @@ class QuickAddRowCollection extends ArrayCollection
             ) {
                 $row->setValid(true);
             }
+        }
+        if ($this->eventDispatcher instanceof  EventDispatcherInterface) {
+            $event = new QuickAddRowCollectionValidateEvent($this);
+            $this->eventDispatcher->dispatch($event::NAME, $event);
         }
     }
 

@@ -9,6 +9,7 @@ use Box\Spout\Reader\ReaderInterface;
 
 use Doctrine\ORM\EntityRepository;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -27,11 +28,18 @@ class QuickAddRowCollectionBuilder
     protected $productRepository;
 
     /**
-     * @param EntityRepository $productRepository
+     * @var EventDispatcherInterface
      */
-    public function __construct(EntityRepository $productRepository)
+    protected $eventDispatcher;
+
+    /**
+     * @param EntityRepository $productRepository
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function __construct(EntityRepository $productRepository, EventDispatcherInterface $eventDispatcher)
     {
         $this->productRepository = $productRepository;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -78,6 +86,7 @@ class QuickAddRowCollectionBuilder
     {
         $lineNumber = 0;
         $collection = new QuickAddRowCollection();
+        $collection->setEventDispatcher($this->eventDispatcher);
 
         $reader = $this->createReaderForFile($file);
         $reader->open($file->getRealPath());
@@ -109,6 +118,7 @@ class QuickAddRowCollectionBuilder
     public function buildFromCopyPasteText($text)
     {
         $collection = new QuickAddRowCollection();
+        $collection->setEventDispatcher($this->eventDispatcher);
         $lineNumber = 1;
 
         $text = trim($text);

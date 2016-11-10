@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\InventoryBundle\Validator;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\AddQuantityToOrderFields;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -15,11 +17,18 @@ class QuantityToOrderValidatorService
     protected $fallbackResolver;
 
     /**
-     * @param EntityFallbackResolver $fallbackResolver
+     * @var TranslatorInterface
      */
-    public function __construct(EntityFallbackResolver $fallbackResolver)
+    protected $translator;
+
+    /**
+     * @param EntityFallbackResolver $fallbackResolver
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(EntityFallbackResolver $fallbackResolver, TranslatorInterface $translator)
     {
         $this->fallbackResolver = $fallbackResolver;
+        $this->translator = $translator;
     }
 
     /**
@@ -106,6 +115,58 @@ class QuantityToOrderValidatorService
         return $this->fallbackResolver->getFallbackValue(
             $product,
             AddQuantityToOrderFields::FIELD_MAXIMUM_QUANTITY_TO_ORDER
+        );
+    }
+
+    /**
+     * @param Product $product
+     * @param $quantity
+     * @return bool|string
+     */
+    public function getMinimumErrorIfInvalid(Product $product, $quantity)
+    {
+        $minLimit = $this->getMinimumLimit($product);
+        if ($this->isLowerThenMinLimit($minLimit, $quantity)) {
+            return $this->getErrorMessage($product, $minLimit, 'quantity_below_min_limit');
+        }
+
+        return false;
+    }
+
+    /**
+     * @param Product $product
+     * @param $quantity
+     * @return bool|string
+     */
+    public function getMaximumErrorIfInvalid(Product $product, $quantity)
+    {
+        $maxLimit = $this->getMaximumLimit($product);
+        if (0 == $maxLimit) {
+            return $this->getErrorMessage($product, $maxLimit, 'quantity_limit_is_zero');
+        }
+
+        if ($this->isHigherThanMaxLimit($maxLimit, $quantity)) {
+            return $this->getErrorMessage($product, $maxLimit, 'quantity_over_max_limit');
+        }
+
+        return false;
+    }
+
+    /**
+     * @param Product $product
+     * @param int $limit
+     * @param string $messageSuffix
+     * @return string
+     */
+    protected function getErrorMessage(Product $product, $limit, $messageSuffix)
+    {
+        return $this->translator->trans(
+            'oro.inventory.product.error.' . $messageSuffix,
+            [
+                '%limit%' => $limit,
+                '%sku%' => $product->getSku(),
+                '%product_name%' => $product->getName(),
+            ]
         );
     }
 }
