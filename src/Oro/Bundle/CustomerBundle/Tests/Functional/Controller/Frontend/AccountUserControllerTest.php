@@ -3,9 +3,9 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Controller\AbstractUserControllerTest;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 
 /**
  * @dbIsolation
@@ -53,11 +53,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
     {
         $this->loginUser(LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_DEEP);
 
-        /** @var AccountUserRole $role */
-        $role = $this->getReference(LoadAccountUserACLData::ROLE_FRONTEND_ADMINISTRATOR);
-
         $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_create'));
-
         $form = $crawler->selectButton('Save')->form();
         $form['oro_account_frontend_account_user[enabled]'] = true;
         $form['oro_account_frontend_account_user[namePrefix]'] = self::NAME_PREFIX;
@@ -71,8 +67,11 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $form['oro_account_frontend_account_user[plainPassword][second]'] = $password;
         $form['oro_account_frontend_account_user[passwordGenerate]'] = $isPasswordGenerate;
         $form['oro_account_frontend_account_user[sendEmail]'] = $isSendEmail;
-        $form['oro_account_frontend_account_user[roles]'] = [$role->getId()];
 
+        /** @var ChoiceFormField[] $roleChoices */
+        $roleChoices = $form['oro_account_frontend_account_user[roles]'];
+        $this->assertCount(6, $roleChoices);
+        $roleChoices[0]->tick();
         $this->client->submit($form);
 
         /** @var \Swift_Plugins_MessageLogger $emailLogging */

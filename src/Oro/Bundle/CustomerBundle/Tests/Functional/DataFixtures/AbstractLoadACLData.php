@@ -61,6 +61,11 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
     protected $container;
 
     /**
+     * @var User
+     */
+    protected $admin;
+
+    /**
      * @var array
      */
     protected $accountUsers = [
@@ -218,6 +223,7 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
      */
     protected function loadRoles(ObjectManager $manager)
     {
+        $user = $this->getAdminUser($manager);
         $repository = $manager->getRepository('OroCustomerBundle:AccountUserRole');
         $this->setReference(self::ROLE_FRONTEND_BUYER, $repository->findOneBy(['role' => 'ROLE_FRONTEND_BUYER']));
         $this->setReference(
@@ -226,9 +232,9 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
         );
 
         $roles = [
-            self::ROLE_BASIC => [['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC'],['DELETE_BASIC']],
+            self::ROLE_BASIC => [['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC'], ['DELETE_BASIC']],
             self::ROLE_LOCAL => [['VIEW_LOCAL', 'CREATE_LOCAL', 'EDIT_LOCAL'], ['DELETE_LOCAL']],
-            self::ROLE_LOCAL_VIEW_ONLY => [['VIEW_LOCAL'],[]],
+            self::ROLE_LOCAL_VIEW_ONLY => [['VIEW_LOCAL'], []],
             self::ROLE_DEEP => [['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP'], ['DELETE_DEEP']],
             self::ROLE_DEEP_VIEW_ONLY => [['VIEW_DEEP'], []],
         ];
@@ -238,7 +244,9 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
                 continue;
             }
             $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE.$key);
-            $role->setLabel($key);
+            $role->setLabel($key)
+                ->setSelfManaged(true)
+                ->setOrganization($user->getOrganization());
             $this->setRolePermissions($role, $this->getAclResourceClassName(), $permissions);
             $manager->persist($role);
             $this->setReference($key, $role);
@@ -289,9 +297,12 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
      */
     protected function getAdminUser(ObjectManager $manager)
     {
-        $role = $manager->getRepository('OroUserBundle:Role')->findOneBy(['role' => LoadRolesData::ROLE_ADMINISTRATOR]);
-        $user = $manager->getRepository('OroUserBundle:Role')->getFirstMatchedUser($role);
+        if (null === $this->admin) {
+            $role = $manager->getRepository('OroUserBundle:Role')
+                ->findOneBy(['role' => LoadRolesData::ROLE_ADMINISTRATOR]);
+            $this->admin = $manager->getRepository('OroUserBundle:Role')->getFirstMatchedUser($role);
+        }
 
-        return $user;
+        return $this->admin;
     }
 }
