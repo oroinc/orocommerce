@@ -51,13 +51,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testCreate($email, $password, $isPasswordGenerate, $isSendEmail, $emailsCount)
     {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(
-                LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_DEEP,
-                LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_DEEP
-            )
-        );
+        $this->loginUser(LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_DEEP);
 
         // todo: update in scope BB-5370, test with different roles
         /** @var AccountUserRole $role */
@@ -104,14 +98,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testCreatePermissionDenied()
     {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(
-                LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
-                LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY
-            )
-        );
-
+        $this->loginUser(LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY);
         $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_create'));
 
         $result = $this->client->getResponse();
@@ -206,13 +193,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testACL($route, $resource, $user, $status)
     {
-        if ('' !== $user) {
-            $this->initClient([], static::generateBasicAuthHeader($user, $user));
-        } else {
-            $this->initClient([]);
-            $this->client->getCookieJar()->clear();
-        }
-
+        $this->loginUser($user);
         /* @var $resource AccountUser */
         $resource = $this->getReference($resource);
 
@@ -314,12 +295,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      */
     public function testGridACL($user, $indexResponseStatus, $gridResponseStatus, array $data = [])
     {
-        if ('' !== $user) {
-            $this->initClient([], static::generateBasicAuthHeader($user, $user));
-        } else {
-            $this->initClient([]);
-            $this->client->getCookieJar()->clear();
-        }
+        $this->loginUser($user);
         $this->client->request('GET', $this->getUrl('oro_customer_frontend_account_user_index'));
         $this->assertSame($indexResponseStatus, $this->client->getResponse()->getStatusCode());
         $response = $this->client->requestGrid(

@@ -34,14 +34,7 @@ class AccountUserControllerTest extends WebTestCase
      */
     public function testDelete($login, $resource, $status)
     {
-        if ('' !== $login) {
-            $this->initClient([], static::generateBasicAuthHeader($login, $login));
-        } else {
-            $this->initClient([]);
-            $this->client->getCookieJar()->clear();
-        }
-
-
+        $this->loginUser($login);
         $this->client->request(
             'DELETE',
             $this->getUrl(
