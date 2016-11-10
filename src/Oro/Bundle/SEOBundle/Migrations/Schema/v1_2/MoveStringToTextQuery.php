@@ -4,6 +4,8 @@ namespace Oro\Bundle\SEOBundle\Migrations\Schema\v1_2;
 
 use Psr\Log\LoggerInterface;
 
+use Doctrine\DBAL\Types\Type;
+
 use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 
@@ -58,10 +60,11 @@ class MoveStringToTextQuery extends ParametrizedMigrationQuery
             if (!empty($row['string'])) {
                 $query = "UPDATE oro_fallback_localization_val SET string = NULL, text = ? WHERE id = ?";
                 $parameters = [$row['string'], $row['id']];
+                $types = [Type::STRING, Type::INTEGER];
 
-                $this->logQuery($logger, $query, $parameters);
+                $this->logQuery($logger, $query, $parameters, $types);
                 if (!$dryRun) {
-                    $this->connection->executeUpdate($query, $parameters);
+                    $this->connection->executeUpdate($query, $parameters, $types);
                 }
             }
         }

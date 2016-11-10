@@ -32,7 +32,6 @@ trait LoadDemoMetaDataTrait
      */
     protected function getSeoMetaFieldData(ObjectManager $manager, $seoFieldValue, $isString)
     {
-        // TODO: add migration to move data from string to text field
         $seoField = new LocalizedFallbackValue();
         if ($isString) {
             $seoField->setString($seoFieldValue);
