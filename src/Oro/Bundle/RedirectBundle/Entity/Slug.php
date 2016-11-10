@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -9,7 +10,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
  * @ORM\Table(name="oro_redirect_slug", indexes={@ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository")
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -78,6 +79,22 @@ class Slug
      * @var Scope[]|Collection
      */
     protected $scopes;
+
+    /**
+     * @ORM\OneToMany(
+     *     targetEntity="Oro\Bundle\RedirectBundle\Entity\Redirect",
+     *     mappedBy="slug"
+     * )
+     *
+     * @var Redirect[]|Collection
+     */
+    protected $redirects;
+
+    public function __construct()
+    {
+        $this->redirects = new ArrayCollection();
+        $this->scopes = new ArrayCollection();
+    }
 
     /**
      * @return integer
@@ -160,10 +177,83 @@ class Slug
     }
 
     /**
+     * @return Collection|Scope[]
+     */
+    public function getScopes()
+    {
+        return $this->scopes;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     *
+     */
+    public function addScope(Scope $scope)
+    {
+        if (!$this->scopes->contains($scope)) {
+            $this->scopes->add($scope);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Scope $scope
+     *
+     * @return $this
+     */
+    public function removeScope(Scope $scope)
+    {
+        if ($this->scopes->contains($scope)) {
+            $this->scopes->removeElement($scope);
+        }
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function __toString()
     {
         return (string)$this->getUrl();
+    }
+
+    /**
+     * @return Redirect[]|Collection
+     */
+    public function getRedirects()
+    {
+        return $this->redirects;
+    }
+
+    /**
+     * @param Redirect $redirect
+     *
+     * @return $this
+     */
+    public function addRedirect(Redirect $redirect)
+    {
+        if (!$this->redirects->contains($redirect)) {
+            $this->redirects->add($redirect);
+            $redirect->setSlug($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Redirect $redirect
+     *
+     * @return $this
+     */
+    public function removeRedirect(Redirect $redirect)
+    {
+        if ($this->redirects->contains($redirect)) {
+            $this->redirects->removeElement($redirect);
+        }
+
+        return $this;
     }
 }
