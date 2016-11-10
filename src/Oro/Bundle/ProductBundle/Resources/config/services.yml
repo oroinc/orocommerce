@@ -499,3 +499,10 @@ services:
             - [setProductSearchRepository, ["@oro_product.website_search.repository.product"]]
         tags:
             - { name: security.voter }
+
+    oro_product.exception.product_access_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductAccessExceptionListener'
+        arguments:
+           - "@request_stack"
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onAccessException }

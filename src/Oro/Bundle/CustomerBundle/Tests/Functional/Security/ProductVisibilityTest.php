@@ -72,8 +72,8 @@ class ProductVisibilityTest extends WebTestCase
                     LoadProductData::PRODUCT_1 => 200,
                     LoadProductData::PRODUCT_2 => 200,
                     LoadProductData::PRODUCT_3 => 200,
-                    LoadProductData::PRODUCT_4 => 403, // inventoryStatus: discontinued and visibility: hidden
-                    LoadProductData::PRODUCT_5 => 403, // status: disabled
+                    LoadProductData::PRODUCT_4 => 404, // inventoryStatus: discontinued and visibility: hidden
+                    LoadProductData::PRODUCT_5 => 404, // status: disabled
                     LoadProductData::PRODUCT_6 => 200,
                     LoadProductData::PRODUCT_7 => 200,
                     LoadProductData::PRODUCT_8 => 200,
@@ -82,11 +82,11 @@ class ProductVisibilityTest extends WebTestCase
             'config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
                 'expectedData' => [
-                    LoadProductData::PRODUCT_1 => 403,
+                    LoadProductData::PRODUCT_1 => 404,
                     LoadProductData::PRODUCT_2 => 200,
                     LoadProductData::PRODUCT_3 => 200,
-                    LoadProductData::PRODUCT_4 => 403, // inventoryStatus: discontinued and visibility: hidden
-                    LoadProductData::PRODUCT_5 => 403, // status: disabled
+                    LoadProductData::PRODUCT_4 => 404, // inventoryStatus: discontinued and visibility: hidden
+                    LoadProductData::PRODUCT_5 => 404, // status: disabled
                     LoadProductData::PRODUCT_6 => 200, // config for Default website only, visibility is for US
                     LoadProductData::PRODUCT_7 => 200, // config for Default website only, visibility is for US
                     LoadProductData::PRODUCT_8 => 200, // config for Default website only, visibility is for US
