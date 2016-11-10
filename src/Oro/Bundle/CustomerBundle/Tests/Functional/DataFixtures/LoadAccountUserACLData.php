@@ -22,7 +22,8 @@ class LoadAccountUserACLData extends AbstractLoadACLData
         return [
             self::ROLE_LOCAL,
             self::ROLE_LOCAL_VIEW_ONLY,
-            self::ROLE_DEEP
+            self::ROLE_DEEP,
+            self::ROLE_DEEP_VIEW_ONLY,
         ];
     }
 }

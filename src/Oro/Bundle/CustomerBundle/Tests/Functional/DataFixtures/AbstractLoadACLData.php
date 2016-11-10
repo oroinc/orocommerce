@@ -23,15 +23,21 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
 {
+    // existing roles
+    const ROLE_FRONTEND_BUYER = 'ROLE_FRONTEND_BUYER';
+    const ROLE_FRONTEND_ADMINISTRATOR = 'ROLE_FRONTEND_ADMINISTRATOR';
+
     const ROLE_BASIC = 'ROLE_BASIC';
     const ROLE_LOCAL = 'ROLE_LOCAL';
     const ROLE_LOCAL_VIEW_ONLY = 'ROLE_LOCAL_VIEW_ONLY';
+    const ROLE_DEEP_VIEW_ONLY = 'ROLE_DEEP_VIEW_ONLY';
     const ROLE_DEEP = 'ROLE_DEEP';
 
     const USER_ACCOUNT_1_ROLE_LOCAL = 'account1-role-local@example.com';
     const USER_ACCOUNT_1_ROLE_BASIC = 'account1-role-basic@example.com';
     const USER_ACCOUNT_1_ROLE_DEEP = 'account1-role-deep@example.com';
     const USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY = 'account1-role-local-view-only@example.com';
+    const USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY = 'account1-role-deep-view-only@example.com';
 
     const USER_ACCOUNT_1_1_ROLE_LOCAL = 'account1-1-role-local@example.com';
     const USER_ACCOUNT_1_1_ROLE_BASIC = 'account1-1-role-basic@example.com';
@@ -73,6 +79,11 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
             'email' => self::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
             'account' => 'account.level_1.1',
             'role' => self::ROLE_LOCAL_VIEW_ONLY,
+        ],
+        [
+            'email' => self::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
+            'account' => 'account.level_1.1',
+            'role' => self::ROLE_DEEP_VIEW_ONLY,
         ],
         [
             'email' => self::USER_ACCOUNT_1_1_ROLE_BASIC,
@@ -203,11 +214,19 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
      */
     protected function loadRoles(ObjectManager $manager)
     {
+        $repository = $manager->getRepository('OroCustomerBundle:AccountUserRole');
+        $this->setReference(self::ROLE_FRONTEND_BUYER, $repository->findOneBy(['role' => 'ROLE_FRONTEND_BUYER']));
+        $this->setReference(
+            self::ROLE_FRONTEND_ADMINISTRATOR,
+            $repository->findOneBy(['role' => 'ROLE_FRONTEND_ADMINISTRATOR'])
+        );
+
         $roles = [
-            self::ROLE_BASIC => ['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC'],
-            self::ROLE_LOCAL => ['VIEW_LOCAL', 'CREATE_LOCAL', 'EDIT_LOCAL'],
-            self::ROLE_LOCAL_VIEW_ONLY => ['VIEW_LOCAL'],
-            self::ROLE_DEEP => ['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP'],
+            self::ROLE_BASIC => [['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC'],['DELETE_BASIC']],
+            self::ROLE_LOCAL => [['VIEW_LOCAL', 'CREATE_LOCAL', 'EDIT_LOCAL'], ['DELETE_LOCAL']],
+            self::ROLE_LOCAL_VIEW_ONLY => [['VIEW_LOCAL'],[]],
+            self::ROLE_DEEP => [['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP'], ['DELETE_DEEP']],
+            self::ROLE_DEEP_VIEW_ONLY => [['VIEW_DEEP'], []],
         ];
 
         foreach ($roles as $key => $permissions) {
@@ -215,9 +234,7 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
                 continue;
             }
             $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE.$key);
-            $role->setLabel($key)
-                ->setAccount($this->getReference('account.level_1.1'))
-                ->setSelfManaged(true);
+            $role->setLabel($key);
             $this->setRolePermissions($role, $this->getAclResourceClassName(), $permissions);
             $manager->persist($role);
             $this->setReference($key, $role);
@@ -244,10 +261,18 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
                 $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
                 $builder = $aclManager->getMaskBuilder($oid);
                 $mask = $builder->reset()->get();
-                foreach ($allowedACL as $acl) {
+                foreach ($allowedACL[0] as $acl) {
                     $mask = $builder->add($acl)->get();
                 }
+
+                $deleteBuilder = $aclManager->getMaskBuilder($oid, 'DELETE');
+                $deleteMask = $deleteBuilder->reset()->get();
+                foreach ($allowedACL[1] as $acl) {
+                    $deleteMask = $deleteBuilder->add($acl)->get();
+                }
+
                 $aclManager->setPermission($sid, $oid, $mask);
+                $aclManager->setPermission($sid, $oid, $deleteMask);
 
                 $chainMetadataProvider->stopProviderEmulation();
             }
