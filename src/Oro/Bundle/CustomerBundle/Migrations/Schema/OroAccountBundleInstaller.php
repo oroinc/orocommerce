@@ -15,9 +15,6 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
 use Oro\Bundle\ScopeBundle\Migrations\Schema\OroScopeBundleInstaller;
 
 /**
@@ -28,7 +25,6 @@ use Oro\Bundle\ScopeBundle\Migrations\Schema\OroScopeBundleInstaller;
 class OroAccountBundleInstaller implements
     Installation,
     AttachmentExtensionAwareInterface,
-    NoteExtensionAwareInterface,
     ActivityExtensionAwareInterface,
     ExtendExtensionAwareInterface
 {
@@ -46,7 +42,7 @@ class OroAccountBundleInstaller implements
     const ORO_DICTIONARY_REGION_TABLE_NAME = 'oro_dictionary_region';
     const ORO_DICTIONARY_COUNTRY_TABLE_NAME = 'oro_dictionary_country';
     const ORO_ADDRESS_TYPE_TABLE_NAME = 'oro_address_type';
-    const ORO_EMAIL = 'oro_email';
+    const ORO_EMAIL_TABLE_NAME = 'oro_email';
     const ORO_ACCOUNT_USER_ADDRESS_TABLE_NAME = 'oro_account_user_address';
     const ORO_ACC_USR_ADR_TO_ADR_TYPE_TABLE_NAME = 'oro_acc_usr_adr_to_adr_type';
 
@@ -60,9 +56,6 @@ class OroAccountBundleInstaller implements
 
     /** @var ExtendExtension */
     protected $extendExtension;
-
-    /** @var NoteExtension */
-    protected $noteExtension;
 
     /** @var AttachmentExtension */
     protected $attachmentExtension;
@@ -78,16 +71,6 @@ class OroAccountBundleInstaller implements
     public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
     {
         $this->attachmentExtension = $attachmentExtension;
-    }
-
-    /**
-     * Sets the NoteExtension
-     *
-     * @param NoteExtension $noteExtension
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
     }
 
     /**
@@ -232,11 +215,15 @@ class OroAccountBundleInstaller implements
             ]
         );
 
-        $this->noteExtension->addNoteAssociation($schema, static::ORO_ACCOUNT_USER_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation(
+            $schema,
+            'oro_note',
+            static::ORO_ACCOUNT_USER_TABLE_NAME
+        );
 
         $this->activityExtension->addActivityAssociation(
             $schema,
-            static::ORO_EMAIL,
+            static::ORO_EMAIL_TABLE_NAME,
             static::ORO_ACCOUNT_USER_TABLE_NAME
         );
     }
@@ -278,12 +265,16 @@ class OroAccountBundleInstaller implements
             ]
         );
 
-        $this->noteExtension->addNoteAssociation($schema, static::ORO_ACCOUNT_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation(
+            $schema,
+            'oro_note',
+            static::ORO_ACCOUNT_TABLE_NAME
+        );
         $this->extendExtension->addEnumField(
             $schema,
             static::ORO_ACCOUNT_TABLE_NAME,
             'internal_rating',
-            Account::INTERNAL_RATING_CODE,
+            'acc_internal_rating',
             false,
             false,
             ['dataaudit' => ['auditable' => true]]
@@ -321,7 +312,11 @@ class OroAccountBundleInstaller implements
 
         $table->addIndex(['name'], 'oro_account_group_name_idx', []);
 
-        $this->noteExtension->addNoteAssociation($schema, static::ORO_ACCOUNT_GROUP_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation(
+            $schema,
+            'oro_note',
+            static::ORO_ACCOUNT_GROUP_TABLE_NAME
+        );
     }
 
     /**
@@ -376,7 +371,11 @@ class OroAccountBundleInstaller implements
         $table->addUniqueIndex(['role']);
         $table->addUniqueIndex(['account_id', 'label'], 'oro_account_user_role_account_id_label_idx');
 
-        $this->noteExtension->addNoteAssociation($schema, static::ORO_ACCOUNT_USER_ROLE_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation(
+            $schema,
+            'oro_note',
+            static::ORO_ACCOUNT_USER_ROLE_TABLE_NAME
+        );
     }
 
     /**

@@ -4,14 +4,14 @@ namespace Oro\Bundle\ProductBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -19,8 +19,8 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 class OroProductBundleInstaller implements
     Installation,
     ExtendExtensionAwareInterface,
-    NoteExtensionAwareInterface,
-    AttachmentExtensionAwareInterface
+    AttachmentExtensionAwareInterface,
+    ActivityExtensionAwareInterface
 {
     const PRODUCT_TABLE_NAME = 'oro_product';
     const PRODUCT_UNIT_TABLE_NAME = 'oro_product_unit';
@@ -38,11 +38,11 @@ class OroProductBundleInstaller implements
     /** @var ExtendExtension */
     protected $extendExtension;
 
-    /** @var NoteExtension */
-    protected $noteExtension;
-
     /** @var AttachmentExtension */
     protected $attachmentExtension;
+
+    /** @var  ActivityExtension */
+    protected $activityExtension;
 
     /**
      * {@inheritdoc}
@@ -63,9 +63,9 @@ class OroProductBundleInstaller implements
     /**
      * {@inheritdoc}
      */
-    public function setNoteExtension(NoteExtension $noteExtension)
+    public function setActivityExtension(ActivityExtension $activityExtension)
     {
-        $this->noteExtension = $noteExtension;
+        $this->activityExtension = $activityExtension;
     }
 
     /**
@@ -300,7 +300,7 @@ class OroProductBundleInstaller implements
      */
     protected function addNoteAssociations(Schema $schema)
     {
-        $this->noteExtension->addNoteAssociation($schema, self::PRODUCT_TABLE_NAME);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::PRODUCT_TABLE_NAME);
     }
 
     /**

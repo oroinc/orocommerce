@@ -14,7 +14,6 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -250,7 +249,7 @@ class OroAccountBundle implements
             $schema,
             static::ORO_B2B_ACCOUNT_TABLE_NAME,
             'internal_rating',
-            Account::INTERNAL_RATING_CODE
+            'acc_internal_rating'
         );
     }
 

@@ -4,12 +4,12 @@ namespace Oro\Bundle\PaymentBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
-class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInterface
+class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareInterface
 {
     /**
      * Table name for PaymentTerm
@@ -20,10 +20,16 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
     const ACCOUNT_TABLE                       = 'oro_account';
     const ACCOUNT_GROUP_TABLE                 = 'oro_account_group';
 
+    /** @var  ActivityExtension */
+    protected $activityExtension;
+
     /**
-     * @var NoteExtension
+     * {@inheritdoc}
      */
-    protected $noteExtension;
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
+    }
 
     /**
      * {@inheritdoc}
@@ -31,14 +37,6 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
     public function getMigrationVersion()
     {
         return 'v1_5';
-    }
-
-    /**
-     * @param NoteExtension $noteExtension
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
     }
 
     /**
@@ -77,7 +75,7 @@ class OroPaymentBundleInstaller implements Installation, NoteExtensionAwareInter
      */
     protected function addNoteAssociations(Schema $schema)
     {
-        $this->noteExtension->addNoteAssociation($schema, self::TABLE_NAME);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::TABLE_NAME);
     }
 
     /**

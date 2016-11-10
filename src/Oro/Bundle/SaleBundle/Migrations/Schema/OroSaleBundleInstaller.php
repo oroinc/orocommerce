@@ -15,15 +15,12 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class OroSaleBundleInstaller implements
     Installation,
-    NoteExtensionAwareInterface,
     AttachmentExtensionAwareInterface,
     ActivityExtensionAwareInterface,
     ExtendExtensionAwareInterface
@@ -39,11 +36,6 @@ class OroSaleBundleInstaller implements
     protected $attachmentExtension;
 
     /**
-     * @var NoteExtension
-     */
-    protected $noteExtension;
-
-    /**
      * @var ActivityExtension
      */
     protected $activityExtension;
@@ -54,14 +46,6 @@ class OroSaleBundleInstaller implements
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
         $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
     }
 
     /**
@@ -116,9 +100,8 @@ class OroSaleBundleInstaller implements
         $this->addOroSaleQuoteProductDemandForeignKeys($schema);
         $this->addOroSaleQuoteDemandForeignKeys($schema);
 
-        $this->addNoteAssociations($schema, $this->noteExtension);
-        $this->addAttachmentAssociations($schema, $this->attachmentExtension);
-        $this->addActivityAssociations($schema, $this->activityExtension);
+        $this->addAttachmentAssociations($schema);
+        $this->addActivityAssociations($schema);
 
         $this->addQuoteCheckoutSource($schema);
     }
@@ -468,25 +451,13 @@ class OroSaleBundleInstaller implements
     }
 
     /**
-     * Enable notes for Quote entity
-     *
-     * @param Schema $schema
-     * @param NoteExtension $noteExtension
-     */
-    protected function addNoteAssociations(Schema $schema, NoteExtension $noteExtension)
-    {
-        $noteExtension->addNoteAssociation($schema, 'oro_sale_quote');
-    }
-
-    /**
      * Enable Attachment for Quote entity
      *
      * @param Schema $schema
-     * @param AttachmentExtension $attachmentExtension
      */
-    protected function addAttachmentAssociations(Schema $schema, AttachmentExtension $attachmentExtension)
+    protected function addAttachmentAssociations(Schema $schema)
     {
-        $attachmentExtension->addAttachmentAssociation(
+        $this->attachmentExtension->addAttachmentAssociation(
             $schema,
             'oro_sale_quote',
             [
@@ -509,11 +480,11 @@ class OroSaleBundleInstaller implements
      * Enable Events for Quote entity
      *
      * @param Schema $schema
-     * @param ActivityExtension $activityExtension
      */
-    protected function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
+    protected function addActivityAssociations(Schema $schema)
     {
-        $activityExtension->addActivityAssociation($schema, 'oro_email', 'oro_sale_quote', true);
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_sale_quote');
+        $this->activityExtension->addActivityAssociation($schema, 'oro_email', 'oro_sale_quote', true);
     }
 
     /**
