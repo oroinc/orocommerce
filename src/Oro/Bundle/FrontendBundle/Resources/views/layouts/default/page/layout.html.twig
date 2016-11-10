@@ -117,18 +117,15 @@
     </div>
 {% endblock %}
 
-{% block _page_title_container_widget %}
+{% block _page_title_widget %}
     {% set content = block_widget(block)|trim %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' page-title ' ~ (class_prefix ? ' {{ class_prefix }}-page-title')
+        '~class': ' title--uppercase'
     }) %}
+
     {% if content|length %}
         <h1{{ block('block_attributes') }}>{{ content|raw }}</h1>
     {% endif %}
-{% endblock %}
-
-{% block _page_title_widget %}
-    {{ block_widget(block) }}
 {% endblock %}
 
 {% block _sidebar_left_widget %}

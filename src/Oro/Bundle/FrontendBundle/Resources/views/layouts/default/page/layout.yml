@@ -18,8 +18,6 @@ layout:
                     blockType: container
                 sidebar_left:
                     blockType: container
-                page_title_container:
-                    blockType: container
                 page_title:
                     blockType: text
                     options:
@@ -32,8 +30,7 @@ layout:
                     notification: ~
                     main:
                         content:
-                            page_title_container:
-                                page_title: ~
+                            page_title: ~
                         sidebar_left: ~
         - '@add':
             id: require_js_config

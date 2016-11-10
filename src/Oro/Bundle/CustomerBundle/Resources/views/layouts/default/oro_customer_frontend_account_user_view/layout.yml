@@ -19,11 +19,6 @@ layout:
                 parameters:
                     '%identifier%': '=data["entity"].getFullName()'
 
-        - '@setOption':
-            id: content
-            optionName: class_prefix
-            optionValue: 'section'
-
         - '@add':
             id: account_user_list_link
             blockType: link

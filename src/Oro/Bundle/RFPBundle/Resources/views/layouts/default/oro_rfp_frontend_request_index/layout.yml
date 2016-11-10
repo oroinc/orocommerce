@@ -16,11 +16,6 @@ layout:
             optionValue: 'oro.frontend.rfp.request.entity_plural_label'
 
         - '@setOption':
-            id: content
-            optionName: class_prefix
-            optionValue: 'section'
-
-        - '@setOption':
             id: datagrid_toolbar_button_container
             optionName: visible
             optionValue: true
