@@ -49,7 +49,7 @@ class ContentNodeListener
      */
     public function prePersist(ContentNode $contentNode)
     {
-        $contentNode->setName($this->contentNodeNameFiller->fillName($contentNode));
+        $this->contentNodeNameFiller->fillName($contentNode);
     }
 
     /**
