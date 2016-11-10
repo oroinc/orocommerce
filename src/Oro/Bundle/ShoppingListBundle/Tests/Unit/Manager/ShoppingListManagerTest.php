@@ -25,6 +25,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -55,10 +56,15 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     /** @var ManagerRegistry */
     protected $registry = [];
 
+    /** @var  AclHelper */
+    protected $aclHelper;
+
     protected function setUp()
     {
         $this->shoppingListOne = $this->getShoppingList(1, true);
         $this->shoppingListTwo = $this->getShoppingList(2, false);
+
+        $this->aclHelper = $this->getAclHelperMock();
 
         $tokenStorage = $this->getTokenStorage(
             (new AccountUser())
@@ -76,7 +82,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getRoundingService(),
             $this->getUserCurrencyManager(),
             $this->getWebsiteManager(),
-            $this->getShoppingListTotalManager()
+            $this->getShoppingListTotalManager(),
+            $this->aclHelper
         );
     }
 
@@ -294,7 +301,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $repository->expects($this->once())
             ->method('findByUser')
-            ->with($user)
+            ->with($this->aclHelper)
             ->willReturn([$shoppingList3, $shoppingList1, $shoppingList2]);
 
         /* @var $entityManager EntityManager|\PHPUnit_Framework_MockObject_MockObject */
@@ -319,7 +326,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             $this->getRoundingService(),
             $this->getUserCurrencyManager(),
             $this->getWebsiteManager(),
-            $this->getShoppingListTotalManager()
+            $this->getShoppingListTotalManager(),
+            $this->aclHelper
         );
 
         $this->assertEquals(
@@ -513,5 +521,15 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList',
             ['id' => $id, 'current' => $isCurrent]
         );
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|AclHelper
+     */
+    protected function getAclHelperMock()
+    {
+        return $this->getMockBuilder('Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 }

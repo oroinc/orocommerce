@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Collections\Criteria;
 
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
@@ -20,6 +21,11 @@ class ShoppingListRepositoryTest extends WebTestCase
     /** @var AccountUser */
     protected $accountUser;
 
+    /**
+     * @var AclHelper
+     */
+    protected $aclHelper;
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -35,6 +41,8 @@ class ShoppingListRepositoryTest extends WebTestCase
             ->get('doctrine')
             ->getRepository('OroCustomerBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
+
+        $this->aclHelper = $this->getContainer()->get('oro_security.acl_helper');
     }
 
     public function testFindCurrentForAccountUser()
@@ -74,7 +82,7 @@ class ShoppingListRepositoryTest extends WebTestCase
 
     public function testFindByUser()
     {
-        $shoppingLists = $this->getRepository()->findByUser($this->accountUser, ['list.updatedAt' => Criteria::ASC]);
+        $shoppingLists = $this->getRepository()->findByUser($this->aclHelper, ['list.updatedAt' => Criteria::ASC]);
         $this->assertTrue(count($shoppingLists) > 0);
         /** @var ShoppingList $secondShoppingList */
         $shoppingList = array_shift($shoppingLists);
