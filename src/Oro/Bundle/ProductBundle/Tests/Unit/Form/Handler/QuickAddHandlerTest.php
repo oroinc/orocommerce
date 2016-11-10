@@ -123,6 +123,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
+        // TODO REMOVE IT IN BB-5245
         $formAccessor = $this->getMock('Oro\Bundle\LayoutBundle\Layout\Form\FormAccessorInterface');
         $this->productFormProvider
             ->expects($this->never())
