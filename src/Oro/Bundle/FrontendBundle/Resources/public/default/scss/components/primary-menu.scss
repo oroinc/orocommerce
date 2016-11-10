@@ -4,8 +4,6 @@
     &__item {
         position: relative;
 
-        padding: $primary-menu-item-inner-offset;
-
         &--current {
             font-weight: $primary-menu-link-font-weight-current;
 
