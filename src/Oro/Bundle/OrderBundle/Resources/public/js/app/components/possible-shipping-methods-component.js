@@ -8,7 +8,8 @@ define(function(require) {
         mediator = require('oroui/js/mediator'),
         __ = require('orotranslation/js/translator'),
         BaseComponent = require('oroui/js/app/components/base/component'),
-        LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+        LoadingMaskView = require('oroui/js/app/views/loading-mask-view'),
+        StandardConfirmation = require('oroui/js/standart-confirmation');
     
     PossibleShippingMethodsComponent = BaseComponent.extend({
         selectors: {
@@ -33,6 +34,7 @@ define(function(require) {
             this.initialEstimatedCost = options.estimatedCost;
             this.initialPossibleMethods = options.possibleMethods;
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
+            this.orderHasChanged = false;
             var self = this;
             this.getPossibleShippingMethodForm().hide();
             this.getToggleButton().on('click', function(){
@@ -48,6 +50,38 @@ define(function(require) {
             mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
             mediator.on('entry-point:order:load', this.onOrderChange, this);
             mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
+
+            this.$el.closest('form').on('submit', function() {
+                return self.onSaveForm(self.orderHasChanged);
+            });
+        },
+
+        /**
+         * Show error
+         *
+         */
+        onSaveForm: function (orderChanged) {
+            if (orderChanged) {
+                this.showConfirmation();
+
+                return false;
+            }
+
+            return true;
+        },
+
+        showConfirmation: function() {
+            var confirmation = new StandardConfirmation({
+                title: __('oro.order.possible_shipping_methods.confirmation.title'),
+                content: __('oro.order.possible_shipping_methods.confirmation.content'),
+                allowOk: true,
+                allowCancel: false
+            });
+
+            confirmation
+                .off('ok')
+                .on('ok')
+                .open();
         },
 
         showLoadingMask: function() {
@@ -69,9 +103,11 @@ define(function(require) {
                 this.$data = e.possibleShippingMethods;
                 this.updatePossibleShippingMethods(e.possibleShippingMethods);
                 this.getPossibleShippingMethodForm().show();
+                this.orderHasChanged = false;
             } else {
                 this.getPossibleShippingMethodForm().hide();
                 this.getToggleButton().parent('div').show();
+                this.orderHasChanged = true;
             }
         },
 
