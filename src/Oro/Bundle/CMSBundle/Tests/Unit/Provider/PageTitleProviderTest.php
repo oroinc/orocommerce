@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\Page;
 use Oro\Bundle\CMSBundle\Provider\PageTitleProvider;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -23,7 +24,7 @@ class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetTitle()
     {
         $page = new Page();
-        $page->addTitle((new LocalizedFallbackValue())->setText('some title'));
+        $page->addTitle((new LocalizedFallbackValue())->setString('some title'));
 
         $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
@@ -41,6 +42,37 @@ class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getLandingPageCMSPage')
             ->will($this->returnValue($page));
 
+        $this->assertEquals('some title', $this->pageTitleProvider->getTitle($contentVariant));
+    }
+
+    public function testGetTitleWithNonDefaultTitleUse()
+    {
+        $page = new Page();
+
+        $contentVariant = $this
+            ->getMockBuilder(ContentVariantInterface::class)
+            ->setMethods(['getLandingPageCMSPage', 'getType'])
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+
+        $contentVariant
+            ->expects($this->once())
+            ->method('getType')
+            ->will($this->returnValue(PageTitleProvider::SUPPORTED_TYPE));
+
+        $contentVariant
+            ->expects($this->any())
+            ->method('getLandingPageCMSPage')
+            ->will($this->returnValue($page));
+
+        $localization = new Localization();
+        $localization->setName('de');
+
+        $localizedValue = new LocalizedFallbackValue();
+        $localizedValue->setString('some title');
+        $localizedValue->setLocalization($localization);
+
+        $page->addTitle($localizedValue);
         $this->assertEquals('some title', $this->pageTitleProvider->getTitle($contentVariant));
     }
 

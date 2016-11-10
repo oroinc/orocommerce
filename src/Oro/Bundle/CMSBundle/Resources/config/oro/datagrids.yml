@@ -19,7 +19,7 @@ datagrids:
             id: ~
             title:
                 type: localized_value
-                data_name: title
+                data_name: titles
         sorters:
             columns:
                 id:
@@ -88,7 +88,7 @@ datagrids:
             id: ~
             title:
                 type: localized_value
-                data_name: title
+                data_name: titles
             view_link:
                 type:   url
                 route:  oro_cms_page_view

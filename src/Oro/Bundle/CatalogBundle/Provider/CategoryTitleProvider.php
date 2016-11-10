@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Provider;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\WebCatalog\ContentVariantTitleProviderInterface;
@@ -36,8 +37,18 @@ class CategoryTitleProvider implements ContentVariantTitleProviderInterface
         }
 
         $category  = $this->propertyAccessor->getValue($contentVariant, self::FIELD_NAME);
-        if ($category instanceof Category && $category->getDefaultTitle() instanceof LocalizedFallbackValue) {
-            return $category->getDefaultTitle()->getText();
+        if ($category instanceof Category) {
+            if ($category->getDefaultTitle() instanceof LocalizedFallbackValue
+                && '' !== $category->getDefaultTitle()->getString()
+            ) {
+                return $category->getDefaultTitle()->getString();
+            } elseif ($category->getTitles() instanceof ArrayCollection) {
+                foreach ($category->getTitles() as $localizedTitle) {
+                    if ('' !== $localizedTitle->getString()) {
+                        return $localizedTitle->getString();
+                    }
+                }
+            }
         }
 
         return null;

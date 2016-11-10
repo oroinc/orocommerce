@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Provider;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Component\WebCatalog\ContentVariantTitleProviderInterface;
@@ -36,8 +37,18 @@ class PageTitleProvider implements ContentVariantTitleProviderInterface
         }
 
         $page  = $this->propertyAccessor->getValue($contentVariant, self::FIELD_NAME);
-        if ($page instanceof Page && $page->getDefaultTitle() instanceof LocalizedFallbackValue) {
-            return $page->getDefaultTitle()->getText();
+        if ($page instanceof Page) {
+            if ($page->getDefaultTitle() instanceof LocalizedFallbackValue
+                && '' !== $page->getDefaultTitle()->getString()
+            ) {
+                return $page->getDefaultTitle()->getString();
+            } elseif ($page->getTitles() instanceof ArrayCollection) {
+                foreach ($page->getTitles() as $localizedTitle) {
+                    if ('' !== $localizedTitle->getString()) {
+                        return $localizedTitle->getString();
+                    }
+                }
+            }
         }
 
         return null;

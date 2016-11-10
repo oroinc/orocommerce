@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CategoryBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTitleProvider;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
@@ -23,7 +24,7 @@ class CategoryTitleProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetTitle()
     {
         $category = new Category();
-        $category->addTitle((new LocalizedFallbackValue())->setText('some title'));
+        $category->addTitle((new LocalizedFallbackValue())->setString('some title'));
 
         $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
@@ -41,6 +42,37 @@ class CategoryTitleProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getCatalogPageCategory')
             ->will($this->returnValue($category));
 
+        $this->assertEquals('some title', $this->categoryTitleProvider->getTitle($contentVariant));
+    }
+
+    public function testGetTitleWithNonDefaultTitleUse()
+    {
+        $page = new Category();
+
+        $contentVariant = $this
+            ->getMockBuilder(ContentVariantInterface::class)
+            ->setMethods(['getCatalogPageCategory', 'getType'])
+            ->disableOriginalConstructor()
+            ->getMockForAbstractClass();
+
+        $contentVariant
+            ->expects($this->once())
+            ->method('getType')
+            ->will($this->returnValue(CategoryTitleProvider::SUPPORTED_TYPE));
+
+        $contentVariant
+            ->expects($this->any())
+            ->method('getCatalogPageCategory')
+            ->will($this->returnValue($page));
+
+        $localization = new Localization();
+        $localization->setName('de');
+
+        $localizedValue = new LocalizedFallbackValue();
+        $localizedValue->setString('some title');
+        $localizedValue->setLocalization($localization);
+
+        $page->addTitle($localizedValue);
         $this->assertEquals('some title', $this->categoryTitleProvider->getTitle($contentVariant));
     }
 
