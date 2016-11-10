@@ -1,7 +1,8 @@
 oro:
     order:
         shipping_method.label: Shipping Method
-        possible_shipping_methods.no_method: 'No shipping methods are available, please contact us to complete the order submission.'
+        previous_shipping_method.label: Previously selected Shipping Method
+        possible_shipping_methods.no_method: No shipping methods are available
 
         notes_widget:
             edit: Edit Notes

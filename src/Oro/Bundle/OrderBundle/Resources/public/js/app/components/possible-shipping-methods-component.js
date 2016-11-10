@@ -18,7 +18,8 @@ define(function(require) {
             calculateShipping: '[name$="[calculateShipping]"]',
             shippingMethod: '[name$="[shippingMethod]"]',
             shippingMethodType: '[name$="[shippingMethodType]"]',
-            shippingCost: '[name$="[estimatedShippingCost]"]'
+            estimatedShippingCost: '[name$="[estimatedShippingCost]"]',
+            overriddenShippingCost: '[name$="[overriddenShippingCost]"]'
         },
 
         /**
@@ -27,6 +28,10 @@ define(function(require) {
          */
         initialize: function(options) {
             this.$el = options._sourceElement;
+            this.initialMethod = options.method;
+            this.initialType = options.type;
+            this.initialEstimatedCost = options.estimatedCost;
+            this.initialPossibleMethods = options.possibleMethods;
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
             var self = this;
             this.getPossibleShippingMethodForm().hide();
@@ -62,7 +67,7 @@ define(function(require) {
                 this.getCalculateShippingElement().val(false);
                 this.getToggleButton().parent('div').hide();
                 this.$data = e.possibleShippingMethods;
-                this.refreshPossibleShippingMethods(e.possibleShippingMethods);
+                this.updatePossibleShippingMethods(e.possibleShippingMethods);
                 this.getPossibleShippingMethodForm().show();
             } else {
                 this.getPossibleShippingMethodForm().hide();
@@ -70,10 +75,13 @@ define(function(require) {
             }
         },
 
-        refreshPossibleShippingMethods: function(methods) {
+        updatePossibleShippingMethods: function(methods) {
+            var self = this;
             var selectedMethod = this.getShippingMethodElement().val();
             var selectedType = this.getShippingMethodTypeElement().val();
+            var selectedCost = this.getEstimatedShippingCostElement().val();
             var selectedFound = false;
+            var priceMatched = false;
             var len = $.map(methods, function(n, i) { return i; }).length;
             var str = '';
             if (len > 0 ) {
@@ -92,6 +100,10 @@ define(function(require) {
                             if (method.identifier === selectedMethod && type.identifier === selectedType) {
                                 checked = 'checked="checked"';
                                 selectedFound = true;
+                                if (parseFloat(selectedCost) === parseFloat(type.price.value)) {
+                                    priceMatched = true;
+                                }
+                                self.updateElementsValue(selectedType, selectedMethod, type.price.value, priceMatched);
                             }
                             str = str + '<input type="radio" ' + checked + ' name="possibleShippingMethodType" value="' + type.identifier + 
                             '" data-shipping-method="' + method.identifier + '" data-shipping-price="' + type.price.value + '" data-choice="' + type.identifier + '" />';
@@ -106,15 +118,13 @@ define(function(require) {
                     }
                 });
                 if (selectedFound === false) {
-                    $(document).find('.selected-shipping-method').find('input').css('text-decoration', 'line-through');
+                    $(document).find('.selected-shipping-method').css('text-decoration', 'line-through');
                     this.setElementsValue(null, null, null);
                 }
                 this.getPossibleShippingMethodForm().html(str);
             } else {
-                if (selectedFound === false) {
-                    $(document).find('.selected-shipping-method').find('input').css('text-decoration', 'line-through');
-                    this.setElementsValue(null, null, null);
-                }
+                $(document).find('.selected-shipping-method').css('text-decoration', 'line-through');
+                this.setElementsValue(null, null, null);
                 str = '<span class="notification notification_xmd notification_alert notification-radiused mb1-md">' +
                     __('oro.order.possible_shipping_methods.no_method') +
                     '</span>';
@@ -123,35 +133,72 @@ define(function(require) {
         },
 
         /**
-         *
          * @param {string|null} type
          * @param {string|null} method
-         * @param {float} cost
+         * @param {number|null} cost
          */
         setElementsValue: function (type, method, cost) {
             this.getShippingMethodTypeElement().val(type);
             this.getShippingMethodElement().val(method);
-            this.getShippingCostElement().val(cost);
+            this.getEstimatedShippingCostElement().val(cost);
         },
 
         /**
-         *
          * @param {string|null} type
          * @param {string|null} method
-         * @param {float} cost
+         * @param {number|null} cost
+         * @param {boolean} matched
          */
-        refreshSelectedShippingMethod: function (type, method, cost) {
+        updateSelectedShippingMethod: function (type, method, cost, matched) {
             if (type !== null && method != null) {
                 var methodLabel = (this.$data[method].isGrouped == true) ? __(this.$data[method].label) + ', ' : '';
                 var typeLabel = __(this.$data[method].types[type].label);
                 var currency = this.$data[method].types[type].price.currency;
-                var $div = $("<div>", {"class": "control-group selected-shipping-method"});
+                var $div = $("<div>", {"class": "control-group"});
                 $div.append('<label class="control-label">' + __('oro.order.shipping_method.label') + '</label>');
-                $div.append('<div class="controls"><input type="text" readonly value="' + methodLabel +
-                    typeLabel + ': ' + currency + ' ' + cost + '"></div>');
-                $(document).find('.selected-shipping-method').remove();
+                $div.append('<div class="controls"><div class="control-label selected-shipping-method">' +
+                    methodLabel + typeLabel + ': ' + currency + ' ' + cost + '</div>');
+
+                if ($(document).find('.selected-shipping-method').length > 0) {
+                    var prevVal = $(document).find('.selected-shipping-method').text();
+                    $(document).find('.previously-selected-shipping-method').closest('.control-group').remove();
+                    $(document).find('.selected-shipping-method').closest('.control-group').remove();
+                    if (matched === false) {
+                        var $prevDiv = $("<div>", {"class": "control-group"});
+                        $prevDiv.append('<label class="control-label">' + __('oro.order.previous_shipping_method.label') + '</label>');
+                        $prevDiv.append('<div class="controls"><div class="control-label previously-selected-shipping-method">' +
+                            prevVal + '</div>');
+
+                        this.$el.closest('.responsive-cell').prepend($prevDiv);
+                    }
+                }
                 this.$el.closest('.responsive-cell').prepend($div);
             }
+        },
+
+        /**
+         * 
+         * @param {string} inputClass
+         * @param {string} label
+         * @param {string} value
+         */
+        createShippingMethodDiv: function(inputClass, label, value) {
+            var $div = $("<div>", {"class": "control-group"});
+            $div.append('<label class="control-label">' + __(label) + '</label>');
+            $div.append('<div class="controls"><input class="' + inputClass +'" type="text" readonly value="' + value + '"></div>');
+            
+            return $div;
+        },
+
+        /**
+         * @param {string|null} type
+         * @param {string|null} method
+         * @param {number|null} estimated_cost
+         * @param {boolean} matched
+         */
+        updateElementsValue: function (type, method, estimated_cost, matched) {
+            this.setElementsValue(type, method, estimated_cost);
+            this.updateSelectedShippingMethod(type, method, estimated_cost, matched);
         },
 
         /**
@@ -160,9 +207,8 @@ define(function(require) {
         onShippingMethodTypeChange: function(event) {
             var method_type = $(event.target);
             var method = method_type.data('shipping-method');
-            var cost = method_type.data('shipping-price');
-            this.setElementsValue(method_type.val(), method, cost);
-            this.refreshSelectedShippingMethod(method_type.val(), method, cost);
+            var estimated_cost = method_type.data('shipping-price');
+            this.updateElementsValue(method_type.val(), method, estimated_cost, false);
         },
 
         /**
@@ -223,12 +269,23 @@ define(function(require) {
         /**
          * @returns {jQuery|HTMLElement}
          */
-        getShippingCostElement: function() {
-            if (!this.hasOwnProperty('$shippingCostElement')) {
-                this.$shippingCostElement = this.$el.find(this.selectors.shippingCost);
+        getEstimatedShippingCostElement: function() {
+            if (!this.hasOwnProperty('$estimatedShippingCostElement')) {
+                this.$estimatedShippingCostElement = this.$el.find(this.selectors.estimatedShippingCost);
             }
 
-            return this.$shippingCostElement;
+            return this.$estimatedShippingCostElement;
+        },
+
+        /**
+         * @returns {jQuery|HTMLElement}
+         */
+        getOverriddenShippingCostElement: function() {
+            if (!this.hasOwnProperty('$overriddenShippingCostElement')) {
+                this.$overriddenShippingCostElement = $(document).find(this.selectors.overriddenShippingCost);
+            }
+
+            return this.$overriddenShippingCostElement;
         },
 
         /**

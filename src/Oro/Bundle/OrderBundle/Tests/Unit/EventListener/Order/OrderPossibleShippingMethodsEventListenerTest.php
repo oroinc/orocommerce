@@ -90,7 +90,7 @@ class OrderPossibleShippingMethodsEventListenerTest extends \PHPUnit_Framework_T
         return [
             [
                 'submitted' => [],
-                'hasKey' => false,
+                'hasKey' => true,
             ],
             [
                 'submitted' => [OrderPossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY => 'false'],
