@@ -10,7 +10,7 @@ oro.cms:
         organization.label:     'Organization'
         slugs:
             label:              'Slugs'
-            singular_label:     'Title'
+            singular_label:     'Slug'
         form.choose:            'Choose a Landing Page...'
 
     controller:
