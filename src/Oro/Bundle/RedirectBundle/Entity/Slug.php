@@ -10,7 +10,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
  * @ORM\Table(name="oro_redirect_slug", indexes={@ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"})})
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository")
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -177,6 +177,42 @@ class Slug
     }
 
     /**
+     * @return Collection|Scope[]
+     */
+    public function getScopes()
+    {
+        return $this->scopes;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     *
+     */
+    public function addScope(Scope $scope)
+    {
+        if (!$this->scopes->contains($scope)) {
+            $this->scopes->add($scope);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Scope $scope
+     *
+     * @return $this
+     */
+    public function removeScope(Scope $scope)
+    {
+        if ($this->scopes->contains($scope)) {
+            $this->scopes->removeElement($scope);
+        }
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function __toString()
@@ -216,42 +252,6 @@ class Slug
     {
         if ($this->redirects->contains($redirect)) {
             $this->redirects->removeElement($redirect);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Scope[]|Collection
-     */
-    public function getScopes()
-    {
-        return $this->scopes;
-    }
-
-    /**
-     * @param Scope $scope
-     *
-     * @return $this
-     */
-    public function addScope(Scope $scope)
-    {
-        if (!$this->scopes->contains($scope)) {
-            $this->scopes->add($scope);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Scope $scope
-     *
-     * @return $this
-     */
-    public function removeScope(Scope $scope)
-    {
-        if ($this->scopes->contains($scope)) {
-            $this->scopes->removeElement($scope);
         }
 
         return $this;

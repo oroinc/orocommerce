@@ -16,5 +16,12 @@ class OroRedirectExtension extends Extension
     {
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+
+        $this->addClassesToCompile(
+            [
+                'Oro\Bundle\RedirectBundle\Security\Firewall',
+                'Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher'
+            ]
+        );
     }
 }
