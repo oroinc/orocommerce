@@ -92,6 +92,7 @@ class RequestControllerTest extends WebTestCase
             sort($testedColumns);
             sort($expectedColumns);
 
+            static::assertEquals($expectedData['action_configuration'], $data[0]['action_configuration']);
             static::assertEquals($expectedColumns, $testedColumns);
         }
 
@@ -149,7 +150,6 @@ class RequestControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
-
         $this->assertContains($request->getFirstName(), $result->getContent());
         $this->assertContains($request->getLastName(), $result->getContent());
         $this->assertContains($request->getEmail(), $result->getContent());
@@ -160,8 +160,13 @@ class RequestControllerTest extends WebTestCase
         }
 
         if (isset($expectedData['columnsCount'])) {
-            $controls = $crawler->filter('.account-oq__order-info__control');
-            static::assertEquals($expectedData['columnsCount'], count($controls));
+            $controls = $crawler->filter('.account-oq__order-info__control')->count();
+            static::assertEquals($expectedData['columnsCount'], $controls);
+        }
+
+        if (isset($expectedData['hideButtonEdit'])) {
+            $buttonEdit = $crawler->filter('.oro-account-user-role__controls-list')->html();
+            static::assertNotContains('edit', $buttonEdit);
         }
     }
 
@@ -195,6 +200,11 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                     ],
+                    'action_configuration' => [
+                        'view' => true,
+                        'update' => true,
+                        'delete' => false
+                    ]
                 ],
             ],
             'account1 user2 (all account requests)' => [
@@ -222,6 +232,11 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                     ],
+                    'action_configuration' => [
+                        'view' => true,
+                        'update' => false,
+                        'delete' => false
+                    ]
                 ],
             ],
             'account1 user3 (all account requests and submittedTo)' => [
@@ -244,6 +259,11 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                     ],
+                    'action_configuration' => [
+                        'view' => true,
+                        'update' => false,
+                        'delete' => false
+                    ]
                 ],
             ],
             'account2 user1 (only account user requests)' => [
@@ -267,6 +287,11 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                     ],
+                    'action_configuration' => [
+                        'view' => true,
+                        'update' => true,
+                        'delete' => false
+                    ]
                 ],
             ],
             'parent account user1 (all requests)' => [
@@ -329,6 +354,7 @@ class RequestControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'columnsCount' => 10,
+                    'hideButtonEdit' => true
                 ],
             ],
         ];
