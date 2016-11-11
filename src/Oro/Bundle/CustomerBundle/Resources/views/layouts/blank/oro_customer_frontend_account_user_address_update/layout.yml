@@ -1,0 +1,12 @@
+layout:
+    imports:
+        -
+            id: oro_customer_menu
+            root: page_sidebar
+    actions:
+        - '@appendOption':
+            id: title
+            optionName: value
+            optionValue:
+                - oro.customer.frontend.address.title.edit
+                - oro.customer.frontend.address.title.subject

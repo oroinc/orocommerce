@@ -1,6 +1,5 @@
 layout:
     imports:
-        - oro_account_menu
         -
             id: oro_sale_quote_grid
             root: page_content

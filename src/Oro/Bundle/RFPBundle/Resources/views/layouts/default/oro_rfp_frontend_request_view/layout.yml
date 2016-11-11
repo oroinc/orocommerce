@@ -1,6 +1,4 @@
 layout:
-    imports:
-        - oro_account_menu
     actions:
         - '@setBlockTheme':
             themes: 'OroRFPBundle:layouts:default/oro_rfp_frontend_request_view/layout.html.twig'

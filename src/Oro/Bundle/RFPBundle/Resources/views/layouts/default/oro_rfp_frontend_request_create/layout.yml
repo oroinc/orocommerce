@@ -3,7 +3,6 @@ layout:
         -
             id: oro_rfp_frontend_request_edit
             root: page_content
-        - oro_account_menu
     actions:
         - '@appendOption':
             id: title

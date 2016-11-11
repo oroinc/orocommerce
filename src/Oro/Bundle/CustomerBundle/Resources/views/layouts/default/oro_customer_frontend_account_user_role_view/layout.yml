@@ -1,6 +1,5 @@
 layout:
     imports:
-        - oro_account_menu
         -
             id: oro_account_user_role_permission_grid
             root: account_user_role_items

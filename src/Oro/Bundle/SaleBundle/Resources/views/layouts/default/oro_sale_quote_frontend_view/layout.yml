@@ -1,6 +1,4 @@
 layout:
-    imports:
-        - oro_account_menu
     actions:
         - '@setBlockTheme':
             themes: 'OroSaleBundle:layouts:default/oro_sale_quote_frontend_view/layout.html.twig'
