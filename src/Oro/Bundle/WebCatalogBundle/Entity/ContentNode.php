@@ -12,6 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendContentNode;
 use Oro\Component\Tree\Entity\TreeTrait;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
@@ -160,6 +161,24 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
     protected $slugs;
 
     /**
+     * @var Collection|Scope[]
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope",
+     *      cascade={"ALL"}
+     * )
+     * @ORM\JoinTable(name="oro_web_catalog_node_scope",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="node_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="scope_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     */
+    protected $scopes;
+
+    /**
      * @var Collection|ContentVariant[]
      *
      * @ORM\OneToMany(
@@ -196,6 +215,7 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
         $this->childNodes = new ArrayCollection();
         $this->slugPrototypes = new ArrayCollection();
         $this->slugs = new ArrayCollection();
+        $this->scopes = new ArrayCollection();
         $this->contentVariants = new ArrayCollection();
     }
 
@@ -392,6 +412,40 @@ class ContentNode extends ExtendContentNode implements ContentNodeInterface, Dat
         if ($this->slugs->contains($slug)) {
             $this->slugs->removeElement($slug);
         }
+        return $this;
+    }
+
+    /**
+     * @return Collection|Scope[]
+     */
+    public function getScopes()
+    {
+        return $this->scopes;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     */
+    public function addScope(Scope $scope)
+    {
+        if (!$this->scopes->contains($scope)) {
+            $this->scopes->add($scope);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     */
+    public function removeScope(Scope $scope)
+    {
+        if ($this->scopes->contains($scope)) {
+            $this->scopes->removeElement($scope);
+        }
+
         return $this;
     }
 
