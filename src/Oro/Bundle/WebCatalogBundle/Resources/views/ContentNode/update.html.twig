@@ -68,6 +68,10 @@
         form_row(form.titles)
     ] %}
 
+    {% set scopes %}
+        {{ form_widget(form.scopes) }}
+    {% endset %}
+
     {% if form.slugPrototypes is defined %}
         {% set formRows = formRows|merge([form_row(form.slugPrototypes)]) %}
     {% endif %}
@@ -79,6 +83,13 @@
             'subblocks': [{
                 'title': '',
                 'data': formRows
+            }]
+        },
+        {
+            'title': 'oro.webcatalog.sections.use_for'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [scopes]
             }]
         }
     ] %}
