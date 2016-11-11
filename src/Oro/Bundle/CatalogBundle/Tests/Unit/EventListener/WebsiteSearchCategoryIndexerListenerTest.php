@@ -198,8 +198,6 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit_Framework_TestCa
             ],
         ];
 
-
-
         $this->assertEquals($expected, $event->getEntitiesData());
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
@@ -11,6 +10,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SEOBundle\EventListener\ProductSearchIndexListener;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
 class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
 {
