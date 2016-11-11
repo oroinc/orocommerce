@@ -1,0 +1,4 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroMenuBundle:layouts:default/page/top_bar.html.twig'

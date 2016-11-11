@@ -1,6 +1,6 @@
 {% block _top_nav_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " topbar"
+    '~class': " topbar"
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="container-fluid">
@@ -14,7 +14,7 @@
 {% block _top_nav_widget %}
     {% spaceless %}
         {% set attr = layout_attr_defaults(attr, {
-            '~class': " topbar__navigation topbar__navigation--has-sibling"
+        '~class': " topbar__navigation topbar__navigation--has-sibling"
         }) %}
 
         <nav {{ block('block_attributes') }}
@@ -26,7 +26,7 @@
 
 {% block _top_nav_menu_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " col-md-7 col-sm-7 text-right"
+    '~class': " col-md-7 col-sm-7 text-right"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -36,15 +36,15 @@
 
 {% block _top_nav_controls_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " col-md-5 col-sm-5"
+    '~class': " col-md-5 col-sm-5"
     }) %}
     {% set dom_relocation_options =  {
-        responsive: [
-            {
-                breakpoint: 990,
-                moveTo: '[data-main-menu-container]'
-            }
-        ]}|json_encode
+    responsive: [
+    {
+    breakpoint: 990,
+    moveTo: '[data-main-menu-container]'
+    }
+    ]}|json_encode
     %}
 
     <div {{ block('block_attributes') }}>
