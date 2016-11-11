@@ -31,7 +31,7 @@
             attr.class|default(''),
             "form-field-" ~ form.vars.name,
         ]|join(' '),
-        placeholder: label
+        placeholder: label|default('')
     }) %}
 
     <fieldset class="{{ class_prefix }}__form__row">
