@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
@@ -18,6 +19,8 @@ use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountSelectType;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
 
 class FrontendAccountTypedAddressTypeTest extends AccountTypedAddressTypeTest
 {
@@ -154,24 +157,51 @@ class FrontendAccountTypedAddressTypeTest extends AccountTypedAddressTypeTest
     }
 
     /**
-     * @dataProvider submitWithFormSubscribersProvider
-     * @param array $options
-     * @param       $defaultData
-     * @param       $viewData
-     * @param       $submittedData
-     * @param       $expectedData
-     * @param       $otherAddresses
-     * @param null  $updateOwner
+     * @return array
      */
-    public function testSubmitWithSubscribers(
-        array $options,
-        $defaultData,
-        $viewData,
-        $submittedData,
-        $expectedData,
-        $otherAddresses,
-        $updateOwner = null
-    ) {
+    public function submitWithFormSubscribersProvider()
+    {
+        $accountAddress1 = new AccountAddress();
+        $accountAddress1
+            ->setTypes(new ArrayCollection([$this->billingType, $this->shippingType]));
+
+        $accountAddress2 = new AccountAddress();
+        $accountAddress2
+            ->setTypes(new ArrayCollection([$this->billingType, $this->shippingType]))
+            ->setDefaults(new ArrayCollection([$this->billingType, $this->shippingType]));
+
+        $account = new Account();
+        $account->addAddress($accountAddress1);
+        $account->addAddress($accountAddress2);
+
+        $accountAddressExpected = new AccountAddress();
+        $accountAddressExpected
+            ->setPrimary(true)
+            ->addType($this->billingType)
+            ->addType($this->shippingType)
+            ->removeType($this->billingType) // emulate working of forms. It first delete types and after add it
+            ->removeType($this->shippingType)
+            ->addType($this->billingType)
+            ->addType($this->shippingType)
+            ->setDefaults(new ArrayCollection([$this->billingType, $this->shippingType]))
+            ->setFrontendOwner($account);
+
+        return [
+            'FixAccountAddressesDefaultSubscriber check' => [
+                'options' => [],
+                'defaultData' => $accountAddress1,
+                'viewData' => $accountAddress1,
+                'submittedData' => [
+                    'types' => [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING],
+                    'defaults' => ['default' => [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING]],
+                    'primary' => true,
+                    'frontendOwner' => $account
+                ],
+                'expectedData' => $accountAddressExpected,
+                'otherAddresses' => [$accountAddress2],
+                'updateOwner' => $account
+            ]
+        ];
     }
 
     public function testGetName()

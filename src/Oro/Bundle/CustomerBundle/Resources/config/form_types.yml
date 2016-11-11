@@ -52,6 +52,7 @@ services:
         tags:
             - { name: form.type, alias: oro_account_frontend_account_user_select }
 
+    oro_customer.form.type.account_user_multiselect_type:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserMultiSelectType'
         tags:
             - { name: form.type, alias: oro_account_account_user_multiselect }
