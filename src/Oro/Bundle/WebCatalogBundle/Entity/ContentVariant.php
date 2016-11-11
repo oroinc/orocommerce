@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendContentVariant;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
@@ -42,6 +45,31 @@ class ContentVariant extends ExtendContentVariant implements ContentVariantInter
      * @ORM\JoinColumn(name="node_id", referencedColumnName="id")
      */
     protected $node;
+
+    /**
+     * @var Collection|Scope[]
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope",
+     *      cascade={"ALL"}
+     * )
+     * @ORM\JoinTable(name="oro_web_catalog_variant_scope",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="variant_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="scope_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
+     */
+    protected $scopes;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->scopes = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -106,7 +134,41 @@ class ContentVariant extends ExtendContentVariant implements ContentVariantInter
     public function setNode(ContentNode $node)
     {
         $this->node = $node;
-        
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Scope[]
+     */
+    public function getScopes()
+    {
+        return $this->scopes;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     */
+    public function addScope(Scope $scope)
+    {
+        if (!$this->scopes->contains($scope)) {
+            $this->scopes->add($scope);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     */
+    public function removeScope(Scope $scope)
+    {
+        if ($this->scopes->contains($scope)) {
+            $this->scopes->removeElement($scope);
+        }
+
         return $this;
     }
 }
