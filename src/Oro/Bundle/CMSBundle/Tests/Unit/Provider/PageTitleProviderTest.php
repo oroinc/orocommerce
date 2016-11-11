@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\Page;
 use Oro\Bundle\CMSBundle\Provider\PageTitleProvider;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -16,15 +16,27 @@ class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $pageTitleProvider;
 
+    /**
+     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $localizationHelper;
+
     protected function setUp()
     {
-        $this->pageTitleProvider = new PageTitleProvider(PropertyAccess::createPropertyAccessor());
+        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->pageTitleProvider = new PageTitleProvider(
+            PropertyAccess::createPropertyAccessor(),
+            $this->localizationHelper
+        );
     }
 
     public function testGetTitle()
     {
+        $title = (new LocalizedFallbackValue())->setString('some title');
         $page = new Page();
-        $page->addTitle((new LocalizedFallbackValue())->setString('some title'));
+        $page->addTitle($title);
 
         $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
@@ -42,37 +54,11 @@ class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getLandingPageCMSPage')
             ->will($this->returnValue($page));
 
-        $this->assertEquals('some title', $this->pageTitleProvider->getTitle($contentVariant));
-    }
+        $this->localizationHelper->expects($this->once())
+            ->method('getFirstNonEmptyLocalizedValue')
+            ->with($page->getTitles())
+            ->willReturn($title->getString());
 
-    public function testGetTitleWithNonDefaultTitleUse()
-    {
-        $page = new Page();
-
-        $contentVariant = $this
-            ->getMockBuilder(ContentVariantInterface::class)
-            ->setMethods(['getLandingPageCMSPage', 'getType'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $contentVariant
-            ->expects($this->once())
-            ->method('getType')
-            ->will($this->returnValue(PageTitleProvider::SUPPORTED_TYPE));
-
-        $contentVariant
-            ->expects($this->any())
-            ->method('getLandingPageCMSPage')
-            ->will($this->returnValue($page));
-
-        $localization = new Localization();
-        $localization->setName('de');
-
-        $localizedValue = new LocalizedFallbackValue();
-        $localizedValue->setString('some title');
-        $localizedValue->setLocalization($localization);
-
-        $page->addTitle($localizedValue);
         $this->assertEquals('some title', $this->pageTitleProvider->getTitle($contentVariant));
     }
 

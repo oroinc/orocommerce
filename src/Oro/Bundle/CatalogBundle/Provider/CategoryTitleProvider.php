@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\CatalogBundle\Provider;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\WebCatalog\ContentVariantTitleProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -20,11 +19,18 @@ class CategoryTitleProvider implements ContentVariantTitleProviderInterface
     protected $propertyAccessor;
 
     /**
-     * @param PropertyAccessor $propertyAccessor
+     * @var LocalizationHelper
      */
-    public function __construct(PropertyAccessor $propertyAccessor)
+    protected $localizationHelper;
+
+    /**
+     * @param PropertyAccessor $propertyAccessor
+     * @param LocalizationHelper $localizationHelper
+     */
+    public function __construct(PropertyAccessor $propertyAccessor, LocalizationHelper $localizationHelper)
     {
         $this->propertyAccessor = $propertyAccessor;
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
@@ -38,17 +44,7 @@ class CategoryTitleProvider implements ContentVariantTitleProviderInterface
 
         $category  = $this->propertyAccessor->getValue($contentVariant, self::FIELD_NAME);
         if ($category instanceof Category) {
-            if ($category->getDefaultTitle() instanceof LocalizedFallbackValue
-                && '' !== $category->getDefaultTitle()->getString()
-            ) {
-                return $category->getDefaultTitle()->getString();
-            } elseif ($category->getTitles() instanceof ArrayCollection) {
-                foreach ($category->getTitles() as $localizedTitle) {
-                    if ('' !== $localizedTitle->getString()) {
-                        return $localizedTitle->getString();
-                    }
-                }
-            }
+            return $this->localizationHelper->getFirstNonEmptyLocalizedValue($category->getTitles());
         }
 
         return null;

@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CategoryBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTitleProvider;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -16,15 +16,27 @@ class CategoryTitleProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $categoryTitleProvider;
 
+    /**
+     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $localizationHelper;
+
     protected function setUp()
     {
-        $this->categoryTitleProvider = new CategoryTitleProvider(PropertyAccess::createPropertyAccessor());
+        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->categoryTitleProvider = new CategoryTitleProvider(
+            PropertyAccess::createPropertyAccessor(),
+            $this->localizationHelper
+        );
     }
 
     public function testGetTitle()
     {
+        $title = (new LocalizedFallbackValue())->setString('some title');
         $category = new Category();
-        $category->addTitle((new LocalizedFallbackValue())->setString('some title'));
+        $category->addTitle($title);
 
         $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
@@ -42,37 +54,11 @@ class CategoryTitleProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getCatalogPageCategory')
             ->will($this->returnValue($category));
 
-        $this->assertEquals('some title', $this->categoryTitleProvider->getTitle($contentVariant));
-    }
+        $this->localizationHelper->expects($this->once())
+            ->method('getFirstNonEmptyLocalizedValue')
+            ->with($category->getTitles())
+            ->willReturn($title->getString());
 
-    public function testGetTitleWithNonDefaultTitleUse()
-    {
-        $page = new Category();
-
-        $contentVariant = $this
-            ->getMockBuilder(ContentVariantInterface::class)
-            ->setMethods(['getCatalogPageCategory', 'getType'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $contentVariant
-            ->expects($this->once())
-            ->method('getType')
-            ->will($this->returnValue(CategoryTitleProvider::SUPPORTED_TYPE));
-
-        $contentVariant
-            ->expects($this->any())
-            ->method('getCatalogPageCategory')
-            ->will($this->returnValue($page));
-
-        $localization = new Localization();
-        $localization->setName('de');
-
-        $localizedValue = new LocalizedFallbackValue();
-        $localizedValue->setString('some title');
-        $localizedValue->setLocalization($localization);
-
-        $page->addTitle($localizedValue);
         $this->assertEquals('some title', $this->categoryTitleProvider->getTitle($contentVariant));
     }
 

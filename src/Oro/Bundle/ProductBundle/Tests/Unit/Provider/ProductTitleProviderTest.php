@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Provider\ProductTitleProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
@@ -16,15 +16,27 @@ class ProductTitleProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $productTitleProvider;
 
+    /**
+     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $localizationHelper;
+
     protected function setUp()
     {
-        $this->productTitleProvider = new ProductTitleProvider(PropertyAccess::createPropertyAccessor());
+        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->productTitleProvider = new ProductTitleProvider(
+            PropertyAccess::createPropertyAccessor(),
+            $this->localizationHelper
+        );
     }
 
     public function testGetTitle()
     {
+        $name = (new LocalizedFallbackValue())->setString('some title');
         $product = new Product();
-        $product->addName((new LocalizedFallbackValue())->setString('some title'));
+        $product->addName($name);
 
         $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
@@ -42,37 +54,11 @@ class ProductTitleProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getProductPageProduct')
             ->will($this->returnValue($product));
 
-        $this->assertEquals('some title', $this->productTitleProvider->getTitle($contentVariant));
-    }
+        $this->localizationHelper->expects($this->once())
+            ->method('getFirstNonEmptyLocalizedValue')
+            ->with($product->getNames())
+            ->willReturn($name->getString());
 
-    public function testGetTitleWithNonDefaultTitleUse()
-    {
-        $page = new Product();
-
-        $contentVariant = $this
-            ->getMockBuilder(ContentVariantInterface::class)
-            ->setMethods(['getProductPageProduct', 'getType'])
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $contentVariant
-            ->expects($this->once())
-            ->method('getType')
-            ->will($this->returnValue(ProductTitleProvider::SUPPORTED_TYPE));
-
-        $contentVariant
-            ->expects($this->any())
-            ->method('getProductPageProduct')
-            ->will($this->returnValue($page));
-
-        $localization = new Localization();
-        $localization->setName('de');
-
-        $localizedValue = new LocalizedFallbackValue();
-        $localizedValue->setString('some title');
-        $localizedValue->setLocalization($localization);
-
-        $page->addName($localizedValue);
         $this->assertEquals('some title', $this->productTitleProvider->getTitle($contentVariant));
     }
 
