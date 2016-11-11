@@ -87,6 +87,7 @@ class QuickAddRowCollectionBuilder
         $lineNumber = 0;
         $collection = new QuickAddRowCollection();
         $collection->setEventDispatcher($this->eventDispatcher);
+        $collectionBySkus = [];
 
         $reader = $this->createReaderForFile($file);
         $reader->open($file->getRealPath());
@@ -97,13 +98,22 @@ class QuickAddRowCollectionBuilder
                     $lineNumber++;
                     continue;
                 }
-
-                $collection->add(new QuickAddRow(
-                    $lineNumber++,
-                    isset($row[0]) ? trim($row[0]) : null,
-                    isset($row[1]) ? (float) trim($row[1]) : null
-                ));
+                $lineNumber++;
+                $sku = isset($row[0]) ? trim($row[0]) : null;
+                $quantity = isset($row[1]) ? (float)trim($row[1]) : null;
+                if (isset($collectionBySkus[$sku])) {
+                    $collectionBySkus[$sku]['quantity'] += $quantity;
+                } else {
+                    $collectionBySkus[$sku] = [
+                        'quantity' => $quantity,
+                        'lineNumber' => $lineNumber,
+                    ];
+                }
             }
+        }
+
+        foreach ($collectionBySkus as $sku => $row) {
+            $collection->add(new QuickAddRow($row['lineNumber'], $sku, $row['quantity']));
         }
 
         $this->mapProductsAndValidate($collection);
@@ -120,19 +130,26 @@ class QuickAddRowCollectionBuilder
         $collection = new QuickAddRowCollection();
         $collection->setEventDispatcher($this->eventDispatcher);
         $lineNumber = 1;
+        $collectionBySkus = [];
 
         $text = trim($text);
         if ($text) {
             foreach (explode(PHP_EOL, $text) as $line) {
                 $data = preg_split('/(\t|\,|\ )+/', $line);
-                $collection->add(
-                    new QuickAddRow(
-                        $lineNumber++,
-                        trim($data[0]),
-                        isset($data[1]) ? (float) trim($data[1]) : null
-                    )
-                );
+                $sku = trim($data[0]);
+                $quantity = isset($data[1]) ? (float)trim($data[1]) : null;
+                if (isset($collectionBySkus[$sku])) {
+                    $collectionBySkus[$sku]['quantity'] += $quantity;
+                } else {
+                    $collectionBySkus[$sku] = [
+                        'quantity' => $quantity,
+                        'lineNumber' => $lineNumber++,
+                    ];
+                }
             }
+        }
+        foreach ($collectionBySkus as $sku => $row) {
+            $collection->add(new QuickAddRow($row['lineNumber'], $sku, $row['quantity']));
         }
 
         $this->mapProductsAndValidate($collection);
