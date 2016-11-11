@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
@@ -16,6 +17,10 @@ class ContentVariantTest extends \PHPUnit_Framework_TestCase
             ['type', 'productPage'],
             ['systemPageRoute', 'some_route'],
             ['node', new ContentNode()]
+        ]);
+
+        $this->assertPropertyCollections(new ContentVariant(), [
+            ['scopes', new Scope()]
         ]);
     }
 }
