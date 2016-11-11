@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: 'oro_account_menu.html.twig'
+            themes: 'oro_customer_menu.html.twig'
         - '@setOption':
             id: account_sidebar
             optionName: attr.data-collapse-container
