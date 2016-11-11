@@ -11,7 +11,7 @@ layout:
                     options:
                         value: '=data["title_provider"].getTitle(context["route_name"], params)'
                         params:
-                            '%step_label%': '=data["workflowStep"].getLabel()'
+                            '%step_label%': '=data["translator"].getTrans(data["workflowStep"].getLabel(),[],"workflows")'
                 body:
                     blockType: body
                 raw_notification:

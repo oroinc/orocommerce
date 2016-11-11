@@ -93,8 +93,6 @@ define(function(require) {
 
             this.$el.html($el);
             this.delegateEvents();
-
-            mediator.trigger('shopping-list-event:update');
         },
 
         findCurrentShoppingList: function() {

@@ -39,7 +39,7 @@
                 {% if entity.methodConfigs.count %}
                     {{ UI.renderHtmlProperty(
                     'oro.shipping.shippingrule.method_configs.label'|trans,
-                    ShipRuleMacro.renderShippingMethodsConfigs(entity.methodConfigs)) }}
+                    ShipRuleMacro.renderShippingMethodsConfigs(entity.methodConfigs, entity.currency)) }}
                 {% endif %}
             </div>
             <div class="responsive-block">

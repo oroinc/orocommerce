@@ -1,5 +1,7 @@
 {% block _top_sign_in_widget %}
     <li>
-        {{ block_widget(block) }}
+        <a href="{{ path(route_name) }}">
+            <i class="icon-signin"></i> {{ text|trans }}
+        </a>
     </li>
 {% endblock %}

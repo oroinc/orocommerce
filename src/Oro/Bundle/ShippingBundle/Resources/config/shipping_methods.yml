@@ -19,5 +19,6 @@ services:
         public: false
         arguments:
             - "@oro_shipping.formatter.shipping_method_label"
+            - '@event_dispatcher'
         tags:
             - { name: twig.extension }

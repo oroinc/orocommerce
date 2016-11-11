@@ -86,7 +86,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function theOrderTotalIsRecalculatedTo($total)
     {
         $this->waitForAjax();
-        self::assertEquals($total, $this->createElement('CheckoutTotalSum')->getText());
+        $totalElement = $this->createElement('CheckoutTotalSum');
+        if (!$totalElement->isVisible()) {
+            $this->createElement('CheckoutTotalTrigger')->click();
+        }
+        self::assertEquals($total, $totalElement->getText());
     }
 
     /**
