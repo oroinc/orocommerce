@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Form\Extension;
 
 use Oro\Bundle\CustomerBundle\Form\Type\AccountGroupSelectType;
+use Oro\Bundle\ScopeBundle\Form\Type\ScopeType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -37,6 +38,6 @@ class AccountGroupScopeExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return 'oro_scope';
+        return ScopeType::class;
     }
 }

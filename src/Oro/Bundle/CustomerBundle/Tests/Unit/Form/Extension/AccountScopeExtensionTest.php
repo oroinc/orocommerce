@@ -40,9 +40,9 @@ class AccountScopeExtensionTest extends FormIntegrationTestCase
             ->willReturn(['account' => Account::class]);
 
         $form = $this->factory->create(
-            'oro_scope',
+            ScopeType::NAME,
             null,
-            ['scope_type' => 'web_content']
+            [ScopeType::SCOPE_TYPE_OPTION => 'web_content']
         );
 
         $this->assertTrue($form->has('account'));
@@ -50,7 +50,7 @@ class AccountScopeExtensionTest extends FormIntegrationTestCase
 
     public function testGetExtendedType()
     {
-        $this->assertEquals('oro_scope', $this->accountScopeExtension->getExtendedType());
+        $this->assertEquals(ScopeType::class, $this->accountScopeExtension->getExtendedType());
     }
 
     /**

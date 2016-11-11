@@ -208,9 +208,9 @@ services:
     oro_customer.form.extension.account_scope:
         class: 'Oro\Bundle\CustomerBundle\Form\Extension\AccountScopeExtension'
         tags:
-            - { name: form.type_extension, alias: "oro_scope" }
+            - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }
 
     oro_customer.form.extension.account_group_scope:
         class: 'Oro\Bundle\CustomerBundle\Form\Extension\AccountGroupScopeExtension'
         tags:
-            - { name: form.type_extension, alias: "oro_scope" }
+            - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }
