@@ -1,10 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var LocalizedSlugifyComponent;
+    var LocalizedFieldSlugifyComponent;
     var BaseSlugifyComponent = require('ororedirect/js/app/components/base-slugify-component');
 
-    LocalizedSlugifyComponent = BaseSlugifyComponent.extend({
+    LocalizedFieldSlugifyComponent = BaseSlugifyComponent.extend({
         /**
          * Populate target and recipient fields with jQuery element(s)
          *
@@ -45,5 +45,5 @@ define(function(require) {
         }
     });
 
-    return LocalizedSlugifyComponent;
+    return LocalizedFieldSlugifyComponent;
 });

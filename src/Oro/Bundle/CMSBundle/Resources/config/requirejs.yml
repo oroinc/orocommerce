@@ -1,3 +1,0 @@
-config:
-    paths:
-        'orocms/js/app/components/cms-slugify-component': 'bundles/orocms/js/app/components/cms-slugify-component.js'

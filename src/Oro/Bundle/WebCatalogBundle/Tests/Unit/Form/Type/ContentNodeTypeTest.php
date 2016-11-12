@@ -4,6 +4,8 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\RedirectBundle\Form\Type\SlugifyLocalizedFieldIntoSlugType;
+use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\SlugifyLocalizedFieldIntoSlugTypeStub;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
@@ -50,6 +52,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     TextType::class                            => new TextType(),
                     EntityIdentifierType::NAME                 => new StubEntityIdentifierType([]),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
+                    SlugifyLocalizedFieldIntoSlugType::NAME => new SlugifyLocalizedFieldIntoSlugTypeStub(),
                 ],
                 []
             ),

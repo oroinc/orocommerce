@@ -1,10 +1,10 @@
 define(function(require) {
     'use strict';
 
-    var BasicSlugifyComponent;
+    var TextFieldSlugifyComponent;
     var BaseSlugifyComponent = require('ororedirect/js/app/components/base-slugify-component');
 
-    BasicSlugifyComponent = BaseSlugifyComponent.extend({
+    TextFieldSlugifyComponent = BaseSlugifyComponent.extend({
         /**
          * @property {Object}
          */
@@ -15,7 +15,7 @@ define(function(require) {
          * @param {Object} options
          */
         initialize: function (options) {
-            BasicSlugifyComponent.__super__.initialize.call(this, options);
+            TextFieldSlugifyComponent.__super__.initialize.call(this, options);
 
             var modeName = options.modeName;
             this.$mode = $('input[name="'+modeName+'"]').filter(':radio');
@@ -32,8 +32,8 @@ define(function(require) {
         initTargetAndRecipient: function(options) {
             this.target = options.target;
             this.recipient = options.recipient;
-            this.$target = $(options.target);
-            this.$recipient = $(options.recipient);
+            this.$target = $('[name="'+options.target+'"]');
+            this.$recipient = $('[name="'+options.recipient+'"]');
         },
 
         /**
@@ -66,5 +66,5 @@ define(function(require) {
         }
     });
 
-    return BasicSlugifyComponent;
+    return TextFieldSlugifyComponent;
 });

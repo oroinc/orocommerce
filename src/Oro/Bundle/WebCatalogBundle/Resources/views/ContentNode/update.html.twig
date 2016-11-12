@@ -119,15 +119,4 @@
     <div class="web-catalog-page-data">
         {{ parent() }}
     </div>
-
-    {% if entity.parentNode is not empty %}
-        {% set options = {
-        'target': form.titles.vars.full_name,
-        'recipient': form.slugPrototypes.vars.full_name
-        } %}
-        <div
-                data-page-component-module="orowebcatalog/js/app/components/web-catalog-slugify-component"
-                data-page-component-options="{{ options|json_encode }}"
-        ></div>
-    {% endif %}
 {% endblock content_data %}

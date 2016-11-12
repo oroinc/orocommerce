@@ -1,0 +1,18 @@
+{% block oro_redirect_slugify_localized_field_into_slug_widget %}
+    {{ form_widget(form.values) }}
+    {{ form_errors(form.values) }}
+    {{ form_widget(form.ids) }}
+    {{ form_errors(form.ids) }}
+    <div
+            data-page-component-module="{{ form.vars.slugify_component }}"
+            data-page-component-options="{{ form.vars.slugify_component_options|json_encode }}"
+    ></div>
+{% endblock %}
+
+{% block oro_redirect_slugify_text_field_into_slug_widget %}
+    {{ form_widget(form) }}
+    <div
+            data-page-component-module="{{ form.vars.slugify_component }}"
+            data-page-component-options="{{ form.vars.slugify_component_options|json_encode }}"
+    ></div>
+{% endblock %}

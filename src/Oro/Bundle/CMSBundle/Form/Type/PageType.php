@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\RedirectBundle\Form\Type\SlugifyLocalizedFieldIntoSlugType;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Symfony\Component\Form\AbstractType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
@@ -45,11 +46,14 @@ class PageType extends AbstractType
             )
             ->add(
                 'slugs',
-                LocalizedFallbackValueCollectionType::NAME,
+                SlugifyLocalizedFieldIntoSlugType::NAME,
                 [
                     'label'    => 'oro.cms.page.slugs.label',
                     'required' => true,
-                    'options'  => ['constraints' => [new NotBlank(), new UrlSafe()]],
+                    'options'  => [
+                        'constraints' => [new NotBlank(), new UrlSafe()],
+                    ],
+                    'target_field_name' => 'titles',
                 ]
             );
     }
