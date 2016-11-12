@@ -17,8 +17,7 @@
         '~class': " topbar__navigation topbar__navigation--has-sibling"
         }) %}
 
-        <nav {{ block('block_attributes') }}
-        >
+        <nav {{ block('block_attributes') }}>
             {{ block_widget(block) }}
         </nav>
     {% endspaceless %}
@@ -32,7 +31,6 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
-
 
 {% block _top_nav_controls_widget %}
     {% set attr = layout_attr_defaults(attr, {
