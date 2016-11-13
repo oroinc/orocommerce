@@ -1,6 +1,6 @@
 {% block _checkout_form_fields_widget -%}
     <div class="notification notification_xmd notification_alert notification-radiused mb1-md">
-        {{ transitionData.transition.message|raw }}
+        {{ transitionData.transition.message|trans({},'workflows')|raw }}
     </div>
 
     <fieldset class="checkout__form__row">

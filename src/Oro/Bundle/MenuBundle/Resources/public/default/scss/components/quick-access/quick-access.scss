@@ -1,0 +1,106 @@
+.quick-access {
+    padding-top: 18px;
+
+    &__list {
+        text-align: right;
+
+        @include list-normalize();
+        @include clearfix();
+    }
+
+    &__item {
+        position: relative;
+
+        display: inline-block;
+        margin-left: 10px;
+
+        font-size: $base-font-size -1;
+    }
+
+    &__link {
+        display: inline-block;
+        vertical-align: middle;
+
+        font-weight: 400;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        color: get-color('additional', 'dark');
+
+        overflow: hidden;
+
+        &:hover,
+        &:visited,
+        &:focus {
+            text-decoration: none;
+
+            color: get-color('additional', 'darker');
+        }
+
+        &:hover {
+            .quick-access__text {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    &__text {
+        vertical-align: middle;
+    }
+
+    &__badge {
+        width: 20px;
+        height: 20px;
+
+        margin-right: 5px;
+
+        font-size: 12px;
+        line-height: 20px;
+
+        i {
+            font-size: 11px;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .quick-access {
+        padding-top: 7px;
+
+        border-bottom: 1px solid get-color('additional', 'light');
+
+        &__list {
+            margin: 7px 0 15px;
+
+            text-align: left;
+        }
+
+        &__item {
+            display: block;
+
+            margin: 0;
+            padding: 8px 15px 7px 10px;
+
+            text-transform: uppercase;
+        }
+
+        &__text {
+            font-weight: bold;
+        }
+
+        &__badge {
+            width: 26px;
+            height: 26px;
+
+            line-height: 26px;
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .quick-access {
+        &__item {
+            margin-left: 5px;
+        }
+    }
+}

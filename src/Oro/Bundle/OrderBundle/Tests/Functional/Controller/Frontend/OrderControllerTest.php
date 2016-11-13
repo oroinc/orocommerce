@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Form\Type\FrontendOrderType;
+use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 
 /**
  * @dbIsolation
@@ -67,15 +67,21 @@ class OrderControllerTest extends WebTestCase
 
         $result = static::getJsonResponseContent($response, 200);
 
-        $first = reset($result['data']);
+        $myOrderData = [];
+        foreach ($result['data'] as $row) {
+            if ($row['identifier'] === LoadOrders::MY_ORDER) {
+                $myOrderData = $row;
+                break;
+            }
+        }
 
-        $this->assertArrayHasKey('shippingMethod', $first);
-        $this->assertEquals('N/A', $first['shippingMethod']);
+        $shippingMethodLabel = $this->getContainer()->get('oro_order.formatter.shipping_method')
+            ->formatShippingMethodWithTypeLabel('flat_rate', 'primary');
+        $shippingMethodLabel = $this->getContainer()->get('translator')->trans($shippingMethodLabel);
+        $this->assertArrayHasKey('shippingMethod', $myOrderData);
+        $this->assertEquals($shippingMethodLabel, $myOrderData['shippingMethod']);
     }
 
-    /**
-     * @return int
-     */
     public function testCreate()
     {
         $this->markTestIncomplete('Should be fixed in scope of task BB-3686');

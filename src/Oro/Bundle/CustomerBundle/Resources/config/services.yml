@@ -13,19 +13,7 @@ parameters:
     oro_customer.entity.sidebar_state.class: Oro\Bundle\CustomerBundle\Entity\AccountUserSidebarState
     oro_customer.entity.widget.class: Oro\Bundle\CustomerBundle\Entity\AccountUserSidebarWidget
     oro_customer.entity.page_state.class: Oro\Bundle\CustomerBundle\Entity\PageState
-    oro_customer.entity.category_visibility.class: Oro\Bundle\CustomerBundle\Entity\Visibility\CategoryVisibility
-    oro_customer.entity.account_category_visibility.class: Oro\Bundle\CustomerBundle\Entity\Visibility\AccountCategoryVisibility
-    oro_customer.entity.account_group_category_visibility.class: Oro\Bundle\CustomerBundle\Entity\Visibility\AccountGroupCategoryVisibility
-    oro_customer.entity.category_visibility_resolved.class: Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\CategoryVisibilityResolved
-    oro_customer.entity.account_category_visibility_resolved.class: Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved
-    oro_customer.entity.account_group_category_visibility_resolved.class: Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved
-    oro_customer.entity.product_visibility.class: Oro\Bundle\CustomerBundle\Entity\Visibility\ProductVisibility
-    oro_customer.entity.account_product_visibility.class: Oro\Bundle\CustomerBundle\Entity\Visibility\AccountProductVisibility
-    oro_customer.entity.account_group_product_visibility.class: Oro\Bundle\CustomerBundle\Entity\Visibility\AccountGroupProductVisibility
     oro_customer.entity.windows_state.class: Oro\Bundle\CustomerBundle\Entity\WindowsState
-    oro_customer.entity.account_product_visibility_resolved.class: Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved
-    oro_customer.entity.account_group_product_visibility_resolved.class: Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved
-    oro_customer.entity.product_visibility_resolved.class: Oro\Bundle\CustomerBundle\Entity\VisibilityResolved\ProductVisibilityResolved
 
 services:
     oro_customer.security.account_user_provider:
@@ -55,18 +43,6 @@ services:
         calls:
             - [setClassName, ["%oro_customer.entity.account_group.class%"]]
             - [setConfigManager, ["@oro_config.global"]]
-        tags:
-            - { name: security.voter }
-
-    oro_product_visibility.acl.voter.account:
-        class: 'Oro\Bundle\CustomerBundle\Acl\Voter\ProductVisibilityVoter'
-        public: false
-        arguments:
-            - "@oro_entity.doctrine_helper"
-        calls:
-            - [setClassName, ['%oro_product.entity.product.class%']]
-            - [setModifier, ["@oro_customer.model.product_visibility_query_builder_modifier"]]
-            - [setFrontendHelper, ["@oro_frontend.request.frontend_helper"]]
         tags:
             - { name: security.voter }
 
@@ -243,15 +219,6 @@ services:
     oro_customer.account_user.password_reset.handler:
         class: 'Oro\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordResetHandler'
         parent: oro_customer.account_user.password.handler.abstract
-
-    oro_customer.event_listener.form_view:
-        class: 'Oro\Bundle\CustomerBundle\Form\EventListener\FormViewListener'
-        arguments:
-            - "@translator"
-            - "@oro_entity.doctrine_helper"
-            - "@request_stack"
-        tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
 
     oro_customer.acl.voter.account_user_role:
         class: 'Oro\Bundle\CustomerBundle\Acl\Voter\AccountUserRoleVoter'
@@ -462,72 +429,10 @@ services:
         tags:
             - { name: oro_ui.content_provider }
 
-    oro_customer.event_listener.visibility_grid_listener:
-        class: 'Oro\Bundle\CustomerBundle\EventListener\VisibilityGridListener'
-        arguments:
-            - "@doctrine"
-            - "@oro_customer.provider.visibility_choices"
-        calls:
-            - [ addSubscribedGridConfig, { datagrid: account-group-category-visibility-grid, visibilityEntityClass: '%oro_customer.entity.account_group_category_visibility.class%', targetEntityClass: '%oro_catalog.entity.category.class%' }]
-            - [ addSubscribedGridConfig, { datagrid: account-category-visibility-grid, visibilityEntityClass: '%oro_customer.entity.account_category_visibility.class%', targetEntityClass: '%oro_catalog.entity.category.class%' }]
-            - [ addSubscribedGridConfig, { datagrid: account-group-product-visibility-grid, visibilityEntityClass: '%oro_customer.entity.account_group_product_visibility.class%', targetEntityClass: '%oro_product.entity.product.class%' }]
-            - [ addSubscribedGridConfig, { datagrid: account-product-visibility-grid, visibilityEntityClass: '%oro_customer.entity.account_product_visibility.class%', targetEntityClass: '%oro_product.entity.product.class%' }]
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-category-visibility-grid, method: onPreBuild }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-group-category-visibility-grid, method: onPreBuild }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-category-visibility-grid, method: onResultBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-group-category-visibility-grid, method: onResultBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-product-visibility-grid, method: onPreBuild }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-group-product-visibility-grid, method: onPreBuild }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-product-visibility-grid, method: onResultBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-group-product-visibility-grid, method: onResultBefore }
-
-    oro_customer.event_listener.product_duplicate_listener:
-        class: 'Oro\Bundle\CustomerBundle\EventListener\ProductDuplicateListener'
-        arguments:
-            - "@doctrine"
-        tags:
-            - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateProduct }
-        calls:
-            - [ setVisibilityToAllClassName, ['%oro_customer.entity.product_visibility.class%'] ]
-            - [ setVisibilityAccountGroupClassName, ['%oro_customer.entity.account_group_product_visibility.class%'] ]
-            - [ setVisibilityAccountClassName, ['%oro_customer.entity.account_product_visibility.class%'] ]
-            - [ setFieldName, ['product'] ]
-
-    oro_customer.event_listener.default_visibility:
-        class: 'Oro\Bundle\CustomerBundle\EventListener\DefaultVisibilityListener'
-        public: false
-        tags:
-            - { name: doctrine.event_listener, event: onFlush }
-
-    oro_customer.form.event_listener.category_visibility_post_submit:
-        class: 'Oro\Bundle\CustomerBundle\Form\EventListener\CategoryVisibilityPostSubmitListener'
-        parent: oro_customer.form.event_listener.abstract_visibility_post_submit
-        tags:
-            - { name: kernel.event_listener, event: oro_catalog.category.edit, method: onPostSubmit }
-
-    oro_customer.form.event_listener.product_visibility_post_submit:
-        class: 'Oro\Bundle\CustomerBundle\Form\EventListener\ProductVisibilityPostSubmitListener'
-        parent: oro_customer.form.event_listener.abstract_visibility_post_submit
-        tags:
-            - { name: kernel.event_listener, event: oro_product.product.edit, method: onPostSubmit }
-
     oro_customer.account_delete_handler:
         class: 'Oro\Bundle\CustomerBundle\Handler\UserDeleteHandler'
         arguments:
             - "@oro_security.security_facade"
-
-    oro.customer.catalog.visibility.change_set.validatior:
-        class: 'Oro\Bundle\CustomerBundle\Validator\Constraints\VisibilityChangeSetValidator'
-        tags:
-            - { name: validator.constraint_validator, alias: oro.customer.catalog.visibility.change_set.validatior }
-
-    oro_customer.provider.visibility_choices:
-        class: 'Oro\Bundle\CustomerBundle\Provider\VisibilityChoicesProvider'
-        public: false
-        arguments:
-            - "@translator"
-            - "@doctrine"
 
     oro_customer.audit.discriminator_map_listener:
         class: 'Oro\Bundle\CustomerBundle\Audit\DiscriminatorMapListener'
@@ -537,165 +442,12 @@ services:
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata }
 
-    oro_customer.visibility.resolver.category_visibility_resolver:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Resolver\CategoryVisibilityResolver'
-        arguments:
-            - "@doctrine"
-            - "@oro_config.manager"
-
-    oro_customer.event_listener.category_tree_handler_listener:
-        class: 'Oro\Bundle\CustomerBundle\EventListener\CategoryTreeHandlerListener'
-        arguments:
-            - "@oro_customer.visibility.resolver.category_visibility_resolver"
-            - "@oro_customer.provider.account_user_relations_provider"
-        tags:
-            - {name: kernel.event_listener, event: oro_catalog.category.tree.create_after, method: onCreateAfter }
-
     oro_customer.event_listener.frontend_dataaudit_history_grid_listener:
         class: 'Oro\Bundle\DataAuditBundle\EventListener\AuditHistoryGridListener'
         arguments:
             - [objectClass, objectId]
         tags:
           - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-audit-history-grid, method: onBuildAfter }
-
-    oro_customer.model.product_visibility_query_builder_modifier:
-        class: 'Oro\Bundle\CustomerBundle\Model\ProductVisibilityQueryBuilderModifier'
-        public: false
-        arguments:
-            - "@oro_config.global"
-            - "@security.token_storage"
-            - "@oro_website.manager"
-            - "@oro_customer.provider.account_user_relations_provider"
-        calls:
-            - [setProductVisibilitySystemConfigurationPath, ['oro_customer.product_visibility']]
-            - [setCategoryVisibilitySystemConfigurationPath, ['oro_customer.category_visibility']]
-
-    oro_customer.visibility.cache.product.cache_builder.abstract:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder'
-        public: false
-        abstract: true
-        arguments:
-            - "@doctrine"
-            - "@oro_entity.orm.insert_from_select_query_executor"
-
-    oro_customer.visibility.cache.product.account_group_product_resolved_cache_builder:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\Product\AccountGroupProductResolvedCacheBuilder'
-        public: false
-        parent: oro_customer.visibility.cache.product.cache_builder.abstract
-        calls:
-            - [setCacheClass, ['%oro_customer.entity.account_group_product_visibility_resolved.class%']]
-
-    oro_customer.visibility.cache.product.account_product_resolved_cache_builder:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\Product\AccountProductResolvedCacheBuilder'
-        public: false
-        parent: oro_customer.visibility.cache.product.cache_builder.abstract
-        calls:
-            - [setCacheClass, ['%oro_customer.entity.account_product_visibility_resolved.class%']]
-
-    oro_customer.visibility.cache.product.product_resolved_cache_builder:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder'
-        public: false
-        parent: oro_customer.visibility.cache.product.cache_builder.abstract
-        calls:
-            - [setCacheClass, ['%oro_customer.entity.product_visibility_resolved.class%']]
-
-    oro_customer.visibility.cache.product.cache_builder:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\Product\CacheBuilder'
-        calls:
-            - [addBuilder, ["@oro_customer.visibility.cache.product.product_resolved_cache_builder"]]
-            - [addBuilder, ["@oro_customer.visibility.cache.product.account_group_product_resolved_cache_builder"]]
-            - [addBuilder, ["@oro_customer.visibility.cache.product.account_product_resolved_cache_builder"]]
-
-    oro_customer.visibility.cache.product.category.account_group_category_resolved_cache_builder:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\AccountGroupCategoryResolvedCacheBuilder'
-        public: false
-        parent: oro_customer.visibility.cache.product.cache_builder.abstract
-        calls:
-            - [setCacheClass, ['%oro_customer.entity.account_group_category_visibility_resolved.class%']]
-            - [setVisibilityChangeAccountSubtreeCacheBuilder, ["@oro_customer.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder"]]
-
-    oro_customer.visibility.cache.product.category.account_category_resolved_cache_builder:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\AccountCategoryResolvedCacheBuilder'
-        public: false
-        parent: oro_customer.visibility.cache.product.cache_builder.abstract
-        calls:
-            - [setCacheClass, ['%oro_customer.entity.account_category_visibility_resolved.class%']]
-            - [setVisibilityChangeAccountSubtreeCacheBuilder, ["@oro_customer.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder"]]
-
-    oro_customer.visibility.cache.product.category.category_resolved_cache_builder:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\CategoryResolvedCacheBuilder'
-        public: false
-        parent: oro_customer.visibility.cache.product.cache_builder.abstract
-        calls:
-            - [setCacheClass, ['%oro_customer.entity.category_visibility_resolved.class%']]
-            - [setVisibilityChangeCategorySubtreeCacheBuilder, ["@oro_customer.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder"]]
-            - [setPositionChangeCategorySubtreeCacheBuilder, ["@oro_customer.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder"]]
-
-    oro_customer.visibility.cache.product.category.cache_builder:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\CacheBuilder'
-        calls:
-            - [addBuilder, ["@oro_customer.visibility.cache.product.category.category_resolved_cache_builder"]]
-            - [addBuilder, ["@oro_customer.visibility.cache.product.category.account_group_category_resolved_cache_builder"]]
-            - [addBuilder, ["@oro_customer.visibility.cache.product.category.account_category_resolved_cache_builder"]]
-
-    oro_customer.visibility.cache.cache_builder:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\CompositeCacheBuilder'
-        calls:
-            - [addBuilder, ["@oro_customer.visibility.cache.product.category.cache_builder"]]
-            - [addBuilder, ["@oro_customer.visibility.cache.product.cache_builder"]]
-
-    oro_customer.visibility.cache.product.category.subtree.category_subtree_cache_builder:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\Subtree\AbstractSubtreeCacheBuilder'
-        abstract: true
-        arguments:
-            - "@doctrine"
-            - "@oro_customer.visibility.resolver.category_visibility_resolver"
-            - "@oro_config.manager"
-
-    oro_customer.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCategorySubtreeCacheBuilder'
-        public: false
-        parent: oro_customer.visibility.cache.product.category.subtree.category_subtree_cache_builder
-
-    oro_customer.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\Subtree\PositionChangeCategorySubtreeCacheBuilder'
-        public: false
-        parent: oro_customer.visibility.cache.product.category.subtree.category_subtree_cache_builder
-
-    oro_customer.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder'
-        public: false
-        parent: oro_customer.visibility.cache.product.category.subtree.category_subtree_cache_builder
-
-    oro_customer.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder:
-        class: 'Oro\Bundle\CustomerBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeGroupSubtreeCacheBuilder'
-        public: false
-        parent: oro_customer.visibility.cache.product.category.subtree.category_subtree_cache_builder
-
-    oro_customer.event_listener.product_select_db_query:
-        class: 'Oro\Bundle\CustomerBundle\EventListener\ProductSelectDBQueryEventListener'
-        arguments:
-            - "@oro_frontend.request.frontend_helper"
-            - "@oro_customer.model.product_visibility_query_builder_modifier"
-        tags:
-            - { name: kernel.event_listener, event: oro_product.product_select.db.query, method: onDBQuery }
-
-    oro_customer.entity.entity_listener.category_listener:
-        class: 'Oro\Bundle\CustomerBundle\Entity\EntityListener\CategoryListener'
-        public: false
-        arguments:
-            - "@oro_catalog.model.category_message_handler"
-        tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_catalog.entity.category.class%', event: postRemove }
-
-    oro_customer.event_listener.category_listener:
-        class: 'Oro\Bundle\CustomerBundle\EventListener\CategoryListener'
-        public: false
-        arguments:
-            - '@oro_product.model.product_message_handler'
-        tags:
-            - { name: doctrine.event_listener, event: onFlush }
 
     oro_customer.provider.frontend_account_user_registration_form:
         class: 'Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendAccountUserRegistrationFormProvider'
@@ -825,147 +577,32 @@ services:
         tags:
              - { name: layout.data_provider, alias: account_user_address_provider }
 
-    oro_customer.visibility_message_factory:
-        class: 'Oro\Bundle\CustomerBundle\Model\VisibilityMessageFactory'
-        arguments:
-            - '@doctrine'
-
-    oro_customer.product_visibility_message_factory:
-        class: 'Oro\Bundle\CustomerBundle\Model\ProductVisibilityMessageFactory'
-        arguments:
-            - '@doctrine'
-
-    oro_customer.category_visibility_message_factory:
-        class: 'Oro\Bundle\CustomerBundle\Model\CategoryVisibilityMessageFactory'
-        arguments:
-            - '@doctrine'
-
-    oro_customer.visibility_message_handler:
-        class: 'Oro\Bundle\CustomerBundle\Model\VisibilityMessageHandler'
-        arguments:
-            - '@oro_customer.visibility_message_factory'
-            - '@oro_message_queue.client.message_producer'
-        tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
-
-    oro_customer.product_visibility_message_handler:
-        class: 'Oro\Bundle\CustomerBundle\Model\VisibilityMessageHandler'
-        arguments:
-            - '@oro_customer.product_visibility_message_factory'
-            - '@oro_message_queue.client.message_producer'
-        tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
-
-    oro_customer.category_visibility_message_handler:
-        class: 'Oro\Bundle\CustomerBundle\Model\VisibilityMessageHandler'
-        arguments:
-            - '@oro_customer.category_visibility_message_factory'
-            - '@oro_message_queue.client.message_producer'
-        tags:
-            - { name: kernel.event_listener, event: kernel.terminate, method: sendScheduledMessages }
-
-    oro_customer.entity_listener.abstract_visibility_listener:
-        class: 'Oro\Bundle\CustomerBundle\Entity\EntityListener\AbstractAffectVisibilityListener'
-        abstract: true
+    oro_customer.account_scope_criteria_provider:
+        class: 'Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider'
         public: false
         arguments:
-            - '@oro_customer.visibility_message_handler'
+            - "@security.token_storage"
 
-    oro_customer.entity_listener.product_visibility_change:
-        class: 'Oro\Bundle\CustomerBundle\Entity\EntityListener\ProductVisibilityListener'
+    oro_customer.account_group_scope_criteria_provider:
+        class: 'Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider'
         public: false
         arguments:
-            - '@oro_customer.product_visibility_message_handler'
-        calls:
-            - [setTopic, ['oro_customer.visibility.resolve_product_visibility']]
-        tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.product_visibility.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.product_visibility.class%', event: preRemove }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.product_visibility.class%', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.account_product_visibility.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.account_product_visibility.class%', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.account_group_product_visibility.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.account_group_product_visibility.class%', event: postPersist }
+            - "@security.token_storage"
+            - "@oro_customer.provider.account_user_relations_provider"
 
-    oro_customer.entity_listener.category_visibility_change:
-        class: 'Oro\Bundle\CustomerBundle\Entity\EntityListener\CategoryVisibilityListener'
+    oro_customer.account_group_scope_criteria_provider.link:
         public: false
-        arguments:
-            - '@oro_customer.category_visibility_message_handler'
-        calls:
-            - [setTopic, ['oro_customer.visibility.change_category_visibility']]
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.category_visibility.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.category_visibility.class%', event: preRemove }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.category_visibility.class%', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.account_group_category_visibility.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.account_group_category_visibility.class%', event: preRemove }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.account_group_category_visibility.class%', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.account_category_visibility.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.account_category_visibility.class%', event: preRemove }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_customer.entity.account_category_visibility.class%', event: postPersist }
+            - { name: oro_service_link, service: oro_customer.account_group_scope_criteria_provider }
+            - { name: oro_scope.provider, scopeType: account_group_category_visibility, priority: 30 }
+            - { name: oro_scope.provider, scopeType: account_group_product_visibility, priority: 30 }
 
-    oro_customer.entity_listener.change_product_category:
-        class: 'Oro\Bundle\CustomerBundle\Entity\EntityListener\ProductListener'
+    oro_customer.account_scope_criteria_provider.link:
         public: false
-        parent: oro_customer.entity_listener.abstract_visibility_listener
-        calls:
-            - [setTopic, ['oro_customer.visibility.change_product_category']]
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_product.entity.product.class%', event: postPersist }
-
-    oro_customer.async.visibility.product_visibility_processor:
-        class: Oro\Bundle\CustomerBundle\Async\Visibility\ProductVisibilityProcessor
-        arguments:
-            - '@doctrine'
-            - '@oro_customer.product_visibility_message_factory'
-            - '@logger'
-            - '@oro_customer.visibility.cache.product.cache_builder'
-            - '@oro_entity.database_exception_helper'
-        calls:
-            - [setResolvedVisibilityClassName, ['%oro_customer.entity.account_product_visibility_resolved.class%']]
-        tags:
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_customer.visibility.resolve_product_visibility' }
-
-    oro_customer.async.visibility.category_visibility_processor:
-        class: Oro\Bundle\CustomerBundle\Async\Visibility\CategoryVisibilityProcessor
-        arguments:
-            - '@doctrine'
-            - '@oro_customer.category_visibility_message_factory'
-            - '@logger'
-            - '@oro_customer.visibility.cache.product.category.cache_builder'
-            - '@oro_entity.database_exception_helper'
-            - '@oro_product.model.product_message_handler'
-        calls:
-            - [setResolvedVisibilityClassName, ['%oro_customer.entity.category_visibility_resolved.class%']]
-        tags:
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_customer.visibility.change_category_visibility' }
-
-    oro_customer.async.visibility.product_processor:
-        class: Oro\Bundle\CustomerBundle\Async\Visibility\ProductProcessor
-        arguments:
-            - '@doctrine'
-            - '@oro_product.model.product_message_factory'
-            - '@logger'
-            - '@oro_customer.visibility.cache.product.cache_builder'
-            - '@oro_entity.database_exception_helper'
-        calls:
-            - [setResolvedVisibilityClassName, ['%oro_customer.entity.account_product_visibility_resolved.class%']]
-        tags:
-            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro_customer.visibility.change_product_category' }
-
-    oro_customer.async.category_processor:
-        class: Oro\Bundle\CustomerBundle\Async\Visibility\CategoryProcessor
-        arguments:
-            - '@doctrine'
-            - '@oro_entity.orm.insert_from_select_query_executor'
-            - '@logger'
-            - '@oro_catalog.model.category_message_factory'
-            - '@oro_customer.visibility.cache.product.category.cache_builder'
-            - '@oro_entity.database_exception_helper'
-        tags:
-            - { name: oro_message_queue.client.message_processor, topicName: 'oro_customer.visibility.category_remove' }
-            - { name: oro_message_queue.client.message_processor, topicName: 'oro_customer.visibility.category_position_change' }
+            - { name: oro_service_link, service: oro_customer.account_scope_criteria_provider }
+            - { name: oro_scope.provider, scopeType: account_category_visibility, priority: 30 }
+            - { name: oro_scope.provider, scopeType: account_product_visibility, priority: 30 }
 
     oro_customer.entity_ownership.listener:
         class: Oro\Bundle\CustomerBundle\EventListener\RecordOwnerDataListener

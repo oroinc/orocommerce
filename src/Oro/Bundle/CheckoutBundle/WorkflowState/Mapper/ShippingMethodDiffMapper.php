@@ -56,18 +56,18 @@ class ShippingMethodDiffMapper implements CheckoutStateDiffMapperInterface
     {
         $shippingMethod = $checkout->getShippingMethod();
         if ($shippingMethod) {
-            $shippingContext = $this->shippingContextProviderFactory->create($checkout);
-            $allMethodsData = $this->shippingPriceProvider->getApplicableMethodsWithTypesData($shippingContext);
-
-            if (array_key_exists($checkout->getShippingMethod(), $allMethodsData)) {
-                $method = $allMethodsData[$checkout->getShippingMethod()];
-                foreach ($method['types'] as $type) {
-                    if (array_key_exists('identifier', $type)
-                        && $type['identifier'] === $checkout->getShippingMethodType()
-                    ) {
-                        return md5(serialize($method));
-                    }
-                }
+            $shippingMethodType = $checkout->getShippingMethodType();
+            $price = $this->shippingPriceProvider->getPrice(
+                $this->shippingContextProviderFactory->create($checkout),
+                $shippingMethod,
+                $shippingMethodType
+            );
+            if ($price) {
+                return md5(serialize([
+                    'method' => $shippingMethod,
+                    'type' => $shippingMethodType,
+                    'price' => $price,
+                ]));
             }
         }
 
