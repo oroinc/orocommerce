@@ -7,6 +7,7 @@ parameters:
     oro_product.entity.product_image_type.class: Oro\Bundle\ProductBundle\Entity\ProductImageType
 
     oro_product.event_listener.scoped_product_select_db_query.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener
+    oro.product.event_listener.product_images_configuration_listener.class: 'Oro\Bundle\ProductBundle\EventListener\ProductImagesConfigurationListener'
 
 services:
     oro_product.product.manager.api:
@@ -397,7 +398,7 @@ services:
             - { name: kernel.event_listener, event: oro_product.product_image.resize, method: resizeProductImage }
 
     oro.product.event_listener.product_images_configuration_listener:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductImagesConfigurationListener'
+        class: '%oro.product.event_listener.product_images_configuration_listener.class%'
         arguments:
             - '@session'
             - '@translator'
