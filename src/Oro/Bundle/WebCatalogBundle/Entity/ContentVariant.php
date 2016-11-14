@@ -50,8 +50,7 @@ class ContentVariant extends ExtendContentVariant implements ContentVariantInter
      * @var Collection|Scope[]
      *
      * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope",
-     *      cascade={"ALL"}
+     *      targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope"
      * )
      * @ORM\JoinTable(name="oro_web_catalog_variant_scope",
      *      joinColumns={

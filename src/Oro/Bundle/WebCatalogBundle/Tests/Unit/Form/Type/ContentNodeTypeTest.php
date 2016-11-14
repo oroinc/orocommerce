@@ -9,6 +9,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
 use Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -18,6 +19,8 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueColl
 
 class ContentNodeTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
     /**
      * @var WebCatalogType
      */
@@ -77,6 +80,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('parentNode'));
         $this->assertTrue($form->has('titles'));
         $this->assertTrue($form->has('slugPrototypes'));
+        $this->assertTrue($form->has('scopes'));
     }
 
     public function testGetName()

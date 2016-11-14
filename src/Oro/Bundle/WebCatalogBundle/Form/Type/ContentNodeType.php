@@ -40,7 +40,6 @@ class ContentNodeType extends AbstractType
                 'scopes',
                 ScopeCollectionType::NAME,
                 [
-                    'mapped' => false,
                     'entry_options' => [
                         'scope_type' => 'web_content'
                     ]
