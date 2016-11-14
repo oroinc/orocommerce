@@ -191,7 +191,7 @@
             SM.renderPossibleShippingMethods(
                 entity.shippingMethod,
                 entity.shippingMethodType,
-                entity.estimatedShippingCost.value,
+                entity.estimatedShippingCost ? entity.estimatedShippingCost.value : null,
                 orderData.possibleShippingMethods,
                 form
             )
