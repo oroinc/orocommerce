@@ -14,12 +14,12 @@ datagrids:
             id:
                 label: oro.cms.page.id.label
             title:
-                label: oro.cms.page.title.label
+                label: oro.cms.page.titles.singular_label
         properties:
             id: ~
             title:
                 type: localized_value
-                data_name: title
+                data_name: titles
         sorters:
             columns:
                 id:
@@ -83,12 +83,12 @@ datagrids:
             id:
               label: oro.cms.page.id.label
             title:
-              label: oro.cms.page.title.label
+              label: oro.cms.page.titles.singular_label
         properties:
             id: ~
             title:
                 type: localized_value
-                data_name: title
+                data_name: titles
             view_link:
                 type:   url
                 route:  oro_cms_page_view

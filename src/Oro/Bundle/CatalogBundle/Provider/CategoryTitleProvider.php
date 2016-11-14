@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CatalogBundle\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\WebCatalog\ContentVariantTitleProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -19,11 +19,18 @@ class CategoryTitleProvider implements ContentVariantTitleProviderInterface
     protected $propertyAccessor;
 
     /**
-     * @param PropertyAccessor $propertyAccessor
+     * @var LocalizationHelper
      */
-    public function __construct(PropertyAccessor $propertyAccessor)
+    protected $localizationHelper;
+
+    /**
+     * @param PropertyAccessor $propertyAccessor
+     * @param LocalizationHelper $localizationHelper
+     */
+    public function __construct(PropertyAccessor $propertyAccessor, LocalizationHelper $localizationHelper)
     {
         $this->propertyAccessor = $propertyAccessor;
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
@@ -36,8 +43,8 @@ class CategoryTitleProvider implements ContentVariantTitleProviderInterface
         }
 
         $category  = $this->propertyAccessor->getValue($contentVariant, self::FIELD_NAME);
-        if ($category instanceof Category && $category->getDefaultTitle() instanceof LocalizedFallbackValue) {
-            return $category->getDefaultTitle()->getText();
+        if ($category instanceof Category) {
+            return $this->localizationHelper->getFirstNonEmptyLocalizedValue($category->getTitles());
         }
 
         return null;

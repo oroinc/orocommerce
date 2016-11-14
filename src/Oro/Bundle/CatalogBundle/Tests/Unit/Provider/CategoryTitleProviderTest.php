@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\CategoryBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTitleProvider;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -15,15 +16,27 @@ class CategoryTitleProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $categoryTitleProvider;
 
+    /**
+     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $localizationHelper;
+
     protected function setUp()
     {
-        $this->categoryTitleProvider = new CategoryTitleProvider(PropertyAccess::createPropertyAccessor());
+        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->categoryTitleProvider = new CategoryTitleProvider(
+            PropertyAccess::createPropertyAccessor(),
+            $this->localizationHelper
+        );
     }
 
     public function testGetTitle()
     {
+        $title = (new LocalizedFallbackValue())->setString('some title');
         $category = new Category();
-        $category->addTitle((new LocalizedFallbackValue())->setText('some title'));
+        $category->addTitle($title);
 
         $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
@@ -40,6 +53,11 @@ class CategoryTitleProviderTest extends \PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getCatalogPageCategory')
             ->will($this->returnValue($category));
+
+        $this->localizationHelper->expects($this->once())
+            ->method('getFirstNonEmptyLocalizedValue')
+            ->with($category->getTitles())
+            ->willReturn($title->getString());
 
         $this->assertEquals('some title', $this->categoryTitleProvider->getTitle($contentVariant));
     }

@@ -49,6 +49,8 @@ class OroWebCatalogBundleInstaller implements
         $this->createOroContentNodeSlugPrototypeTable($schema);
         $this->createOroContentNodeTitleTable($schema);
         $this->createOroContentNodeSlugTable($schema);
+        $this->createOroWebCatalogNodeScopeTable($schema);
+        $this->createOroWebCatalogVariantScopeTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroWebCatalogForeignKeys($schema);
@@ -57,6 +59,8 @@ class OroWebCatalogBundleInstaller implements
         $this->addOroContentNodeTitleForeignKeys($schema);
         $this->addOroContentNodeSlugForeignKeys($schema);
         $this->addOroContentVariantForeignKeys($schema);
+        $this->addOroWebCatalogNodeScopeForeignKeys($schema);
+        $this->addOroWebCatalogVariantScopeForeignKeys($schema);
     }
 
     /**
@@ -157,6 +161,32 @@ class OroWebCatalogBundleInstaller implements
         $table->addColumn('slug_id', 'integer', []);
         $table->setPrimaryKey(['node_id', 'slug_id']);
         $table->addUniqueIndex(['slug_id']);
+    }
+
+    /**
+     * Create oro_web_catalog_node_scope table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroWebCatalogNodeScopeTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_web_catalog_node_scope');
+        $table->addColumn('node_id', 'integer', []);
+        $table->addColumn('scope_id', 'integer', []);
+        $table->setPrimaryKey(['node_id', 'scope_id']);
+    }
+
+    /**
+     * Create oro_web_catalog_variant_scope table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroWebCatalogVariantScopeTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_web_catalog_variant_scope');
+        $table->addColumn('variant_id', 'integer', []);
+        $table->addColumn('scope_id', 'integer', []);
+        $table->setPrimaryKey(['variant_id', 'scope_id']);
     }
 
     /**
@@ -282,6 +312,50 @@ class OroWebCatalogBundleInstaller implements
             ['node_id'],
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_web_catalog_node_scope foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroWebCatalogNodeScopeForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_web_catalog_node_scope');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_scope'),
+            ['scope_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_web_catalog_content_node'),
+            ['node_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add oro_web_catalog_variant_scope foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroWebCatalogVariantScopeForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_web_catalog_variant_scope');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_scope'),
+            ['scope_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_web_catalog_variant'),
+            ['variant_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 }

@@ -2,12 +2,29 @@
 
 namespace Oro\Bundle\RedirectBundle\Migrations\Schema\v1_2;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroRedirectBundle implements Migration
+class OroRedirectBundle implements Migration, DatabasePlatformAwareInterface
 {
+    /**
+     * @var AbstractPlatform
+     */
+    private $platform;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDatabasePlatform(AbstractPlatform $platform)
+    {
+        $this->platform = $platform;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -21,7 +38,7 @@ class OroRedirectBundle implements Migration
         $this->addOroRedirectForeignKeys($schema);
         $this->addOroSlugScopeForeignKeys($schema);
 
-        $this->addUrlHashField($schema);
+        $this->addUrlHashField($schema, $queries);
         $this->addUrlHashIndex($schema);
     }
 
@@ -62,11 +79,24 @@ class OroRedirectBundle implements Migration
 
     /**
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function addUrlHashField(Schema $schema)
+    protected function addUrlHashField(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_redirect_slug');
-        $table->addColumn('url_hash', 'string', ['length' => 32]);
+        $table->addColumn('url_hash', 'string', ['length' => 32, 'notnull' => false]);
+        $queries->addQuery(
+            new ParametrizedSqlMigrationQuery(
+                'UPDATE oro_redirect_slug SET url_hash = MD5(url)'
+            )
+        );
+        $postSchema = clone $schema;
+        $postSchema->getTable('oro_redirect_slug')
+            ->changeColumn('url_hash', ['notnull' => true]);
+        $postQueries = $this->getSchemaDiff($schema, $postSchema);
+        foreach ($postQueries as $query) {
+            $queries->addPostQuery($query);
+        }
     }
 
     /**
@@ -117,5 +147,16 @@ class OroRedirectBundle implements Migration
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param Schema $toSchema
+     * @return array
+     */
+    private function getSchemaDiff(Schema $schema, Schema $toSchema)
+    {
+        $comparator = new Comparator();
+        return $comparator->compare($schema, $toSchema)->toSql($this->platform);
     }
 }

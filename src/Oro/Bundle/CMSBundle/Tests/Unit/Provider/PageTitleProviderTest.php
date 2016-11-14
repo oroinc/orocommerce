@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\Page;
 use Oro\Bundle\CMSBundle\Provider\PageTitleProvider;
+use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -15,15 +16,27 @@ class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $pageTitleProvider;
 
+    /**
+     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $localizationHelper;
+
     protected function setUp()
     {
-        $this->pageTitleProvider = new PageTitleProvider(PropertyAccess::createPropertyAccessor());
+        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->pageTitleProvider = new PageTitleProvider(
+            PropertyAccess::createPropertyAccessor(),
+            $this->localizationHelper
+        );
     }
 
     public function testGetTitle()
     {
+        $title = (new LocalizedFallbackValue())->setString('some title');
         $page = new Page();
-        $page->addTitle((new LocalizedFallbackValue())->setText('some title'));
+        $page->addTitle($title);
 
         $contentVariant = $this
             ->getMockBuilder(ContentVariantInterface::class)
@@ -40,6 +53,11 @@ class PageTitleProviderTest extends \PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('getLandingPageCMSPage')
             ->will($this->returnValue($page));
+
+        $this->localizationHelper->expects($this->once())
+            ->method('getFirstNonEmptyLocalizedValue')
+            ->with($page->getTitles())
+            ->willReturn($title->getString());
 
         $this->assertEquals('some title', $this->pageTitleProvider->getTitle($contentVariant));
     }
