@@ -6,9 +6,11 @@ use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Form\Type\SlugifyLocalizedFieldIntoSlugType;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\SlugifyLocalizedFieldIntoSlugTypeStub;
+use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
+use Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -53,6 +55,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     EntityIdentifierType::NAME                 => new StubEntityIdentifierType([]),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
                     SlugifyLocalizedFieldIntoSlugType::NAME => new SlugifyLocalizedFieldIntoSlugTypeStub(),
+                    ScopeCollectionType::NAME                  => new ScopeCollectionTypeStub()
                 ],
                 []
             ),

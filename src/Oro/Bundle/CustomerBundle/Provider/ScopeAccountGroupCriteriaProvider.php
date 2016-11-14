@@ -11,65 +11,65 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class ScopeAccountGroupCriteriaProvider extends AbstractScopeCriteriaProvider
 {
-        const FIELD_NAME = 'accountGroup';
-
-        /**
-         * @var SecurityFacade
-         */
-        protected $tokenStorage;
-
-        /**
-         * @var PropertyAccessor
-         */
-        protected $propertyAccessor;
-
-        /**
-         * @var AccountUserRelationsProvider
-         */
-        protected $accountUserProvider;
-
-        /**
-         * @param TokenStorageInterface $tokenStorage
-         * @param AccountUserRelationsProvider $accountUserRelationsProvider
-         */
-        public function __construct(
-            TokenStorageInterface $tokenStorage,
-            AccountUserRelationsProvider $accountUserRelationsProvider
-        ) {
-                $this->tokenStorage = $tokenStorage;
-                $this->accountUserProvider = $accountUserRelationsProvider;
+    const FIELD_NAME = 'accountGroup';
+    
+    /**
+     * @var SecurityFacade
+     */
+    protected $tokenStorage;
+    
+    /**
+     * @var PropertyAccessor
+     */
+    protected $propertyAccessor;
+    
+    /**
+     * @var AccountUserRelationsProvider
+     */
+    protected $accountUserProvider;
+    
+    /**
+     * @param TokenStorageInterface $tokenStorage
+     * @param AccountUserRelationsProvider $accountUserRelationsProvider
+     */
+    public function __construct(
+        TokenStorageInterface $tokenStorage,
+        AccountUserRelationsProvider $accountUserRelationsProvider
+    ) {
+        $this->tokenStorage = $tokenStorage;
+        $this->accountUserProvider = $accountUserRelationsProvider;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getCriteriaField()
+    {
+        return self::FIELD_NAME;
+    }
+    
+    /**
+     * @return array
+     */
+    public function getCriteriaForCurrentScope()
+    {
+        $token = $this->tokenStorage->getToken();
+        if (!$token) {
+            return [];
         }
-
-        /**
-         * @return string
-         */
-        public function getCriteriaField()
-        {
-                return self::FIELD_NAME;
+        $loggedUser = $token->getUser();
+        if (null === $loggedUser || $loggedUser instanceof AccountUser) {
+            return [$this->getCriteriaField() => $this->accountUserProvider->getAccountGroup($loggedUser)];
         }
-
-        /**
-         * @return array
-         */
-        public function getCriteriaForCurrentScope()
-        {
-                $token = $this->tokenStorage->getToken();
-                if (!$token) {
-                        return [];
-                }
-                $loggedUser = $token->getUser();
-                if (null === $loggedUser || $loggedUser instanceof AccountUser) {
-                        return [$this->getCriteriaField() => $this->accountUserProvider->getAccountGroup($loggedUser)];
-                }
-
-                return [];
-        }
-
-        /**
-         * @return string
-         */
-        protected function getCriteriaValueType()
-        {
-                return AccountGroup::class;
-        }
+    
+        return [];
+    }
+    
+    /**
+     * @return string
+     */
+    public function getCriteriaValueType()
+    {
+        return AccountGroup::class;
+    }
 }

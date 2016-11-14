@@ -41,6 +41,7 @@ oro:
 
         sections:
             general: 'General'
+            use_for: 'Use For'
         button:
             webcatalog:
                 edit_content_tree.label: 'Edit Content Tree'
