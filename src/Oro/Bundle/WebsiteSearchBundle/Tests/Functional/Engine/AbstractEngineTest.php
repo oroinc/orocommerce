@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine;
 
-use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Symfony\Component\HttpFoundation\Request;
 
+use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
