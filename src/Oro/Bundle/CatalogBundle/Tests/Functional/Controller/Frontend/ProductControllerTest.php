@@ -123,6 +123,22 @@ class ProductControllerTest extends WebTestCase
     }
 
     /**
+     * @dataProvider dataProviderForNotExistingCategories
+     */
+    public function testControllerActionWithNotExistingCategoryId($categoryId)
+    {
+        $this->client->request('GET', $this->getUrl(
+            'oro_product_frontend_product_index',
+            [
+                RequestProductHandler::CATEGORY_ID_KEY => $categoryId
+            ]
+        ));
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 404);
+    }
+
+    /**
      * @dataProvider navigationBarTestDataProvider
      *
      * @param $category
@@ -194,6 +210,19 @@ class ProductControllerTest extends WebTestCase
                     // filters are not expected to show as they render using javascript
                 ]
             ]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForNotExistingCategories()
+    {
+        return [
+            [99999],
+            ['99999'],
+            ['dummy-string'],
+            [null],
         ];
     }
 }
