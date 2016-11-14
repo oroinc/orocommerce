@@ -26,6 +26,6 @@ services:
         public: false
         arguments:
             - '@property_accessor'
-            - '@oro_locale.helper.localization'
+            - '@oro_locale.helper.localization.link'
         tags:
             - { name: oro_web_catalog.content_variant_title_provider }

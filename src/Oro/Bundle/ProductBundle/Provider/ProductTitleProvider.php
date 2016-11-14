@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Provider;
 
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\WebCatalog\ContentVariantTitleProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -19,18 +20,26 @@ class ProductTitleProvider implements ContentVariantTitleProviderInterface
     protected $propertyAccessor;
 
     /**
-     * @var LocalizationHelper
+     * @var ServiceLink
      */
-    protected $localizationHelper;
+    protected $localizationHelperLink;
 
     /**
      * @param PropertyAccessor $propertyAccessor
-     * @param LocalizationHelper $localizationHelper
+     * @param ServiceLink $localizationHelperLink
      */
-    public function __construct(PropertyAccessor $propertyAccessor, LocalizationHelper $localizationHelper)
+    public function __construct(PropertyAccessor $propertyAccessor, ServiceLink $localizationHelperLink)
     {
         $this->propertyAccessor = $propertyAccessor;
-        $this->localizationHelper = $localizationHelper;
+        $this->localizationHelperLink = $localizationHelperLink;
+    }
+
+    /**
+     * @return LocalizationHelper|object
+     */
+    protected function getLocalizationHelper()
+    {
+        return $this->localizationHelperLink->getService();
     }
 
     /**
@@ -44,7 +53,7 @@ class ProductTitleProvider implements ContentVariantTitleProviderInterface
 
         $product  = $this->propertyAccessor->getValue($contentVariant, self::FIELD_NAME);
         if ($product instanceof Product) {
-            return $this->localizationHelper->getFirstNonEmptyLocalizedValue($product->getNames());
+            return $this->getLocalizationHelper()->getFirstNonEmptyLocalizedValue($product->getNames());
         }
 
         return null;
