@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\WebCatalog\ContentVariantTitleProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
@@ -19,11 +19,18 @@ class ProductTitleProvider implements ContentVariantTitleProviderInterface
     protected $propertyAccessor;
 
     /**
-     * @param PropertyAccessor $propertyAccessor
+     * @var LocalizationHelper
      */
-    public function __construct(PropertyAccessor $propertyAccessor)
+    protected $localizationHelper;
+
+    /**
+     * @param PropertyAccessor $propertyAccessor
+     * @param LocalizationHelper $localizationHelper
+     */
+    public function __construct(PropertyAccessor $propertyAccessor, LocalizationHelper $localizationHelper)
     {
         $this->propertyAccessor = $propertyAccessor;
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
@@ -36,8 +43,8 @@ class ProductTitleProvider implements ContentVariantTitleProviderInterface
         }
 
         $product  = $this->propertyAccessor->getValue($contentVariant, self::FIELD_NAME);
-        if ($product instanceof Product && $product->getDefaultName() instanceof LocalizedFallbackValue) {
-            return $product->getDefaultName()->getText();
+        if ($product instanceof Product) {
+            return $this->localizationHelper->getFirstNonEmptyLocalizedValue($product->getNames());
         }
 
         return null;
