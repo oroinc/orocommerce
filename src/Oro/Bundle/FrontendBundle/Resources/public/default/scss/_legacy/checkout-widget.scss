@@ -15,11 +15,6 @@
   &.order-checkout-widget_fixed {
     display: none;
 
-    .dropdown-menu {
-      top: auto;
-      bottom: 50px;
-    }
-
     @media (max-width: $screen-md) {
       position: fixed;
       bottom: 0;
