@@ -2,40 +2,36 @@
 
 namespace Oro\Bundle\SEOBundle\EventListener;
 
-use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-use Symfony\Component\PropertyAccess\PropertyAccessor;
-
 class ProductSearchIndexListener
 {
-    use ContextTrait;
-
-    /**
-     * @var PropertyAccessor
-     */
-    private $propertyAccessor;
-
     /**
      * @var AbstractWebsiteLocalizationProvider
      */
     private $websiteLocalizationProvider;
 
     /**
+     * @var WebsiteContextManager
+     */
+    private $websiteContextManager;
+
+    /**
      * @param AbstractWebsiteLocalizationProvider $websiteLocalizationProvider
-     * @param PropertyAccessor                    $propertyAccessor
+     * @param WebsiteContextManager $websiteContextManager
      */
     public function __construct(
         AbstractWebsiteLocalizationProvider $websiteLocalizationProvider,
-        PropertyAccessor $propertyAccessor
+        WebsiteContextManager $websiteContextManager
     ) {
         $this->websiteLocalizationProvider = $websiteLocalizationProvider;
-        $this->propertyAccessor            = $propertyAccessor;
+        $this->websiteContextManager       = $websiteContextManager;
     }
 
     /**
@@ -43,12 +39,15 @@ class ProductSearchIndexListener
      */
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
+        $websiteId = $this->websiteContextManager->getWebsiteId($event->getContext());
+        if (!$websiteId) {
+            $event->stopPropagation();
+
+            return;
+        }
+
         /** @var Product[] $products */
         $products = $event->getEntities();
-
-        $context = $event->getContext();
-
-        $websiteId = $this->getContextCurrentWebsiteId($context);
 
         $localizations = $this->websiteLocalizationProvider->getLocalizationsByWebsiteId($websiteId);
 

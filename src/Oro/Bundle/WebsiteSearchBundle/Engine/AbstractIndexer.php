@@ -99,13 +99,41 @@ abstract class AbstractIndexer implements IndexerInterface
         $entityClassesToIndex = $this->getClassesForReindex($entityClassesToIndex);
 
         foreach ($websiteIdsToIndex as $websiteId) {
+            if (!$this->ensureWebsiteExists($websiteId)) {
+                continue;
+            }
             $websiteContext = $this->indexDataProvider->collectContextForWebsite($websiteId, $context);
             foreach ($entityClassesToIndex as $entityClass) {
                 $handledItems += $this->reindexEntityClass($entityClass, $websiteContext);
             }
+            //Check again to ensure Website was not deleted during reindexation otherwise drop index
+            if (!$this->ensureWebsiteExists($websiteId)) {
+                $handledItems = 0;
+            }
         }
 
         return $handledItems;
+    }
+
+    /**
+     * @param $websiteId
+     * @return bool
+     */
+    private function ensureWebsiteExists($websiteId)
+    {
+        /** @var WebsiteRepository $websiteRepository */
+        $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
+        $website = $websiteRepository->checkWebsiteExists($websiteId);
+
+        //Tries to reset index for not existing website
+        if (!$website) {
+            $context = $this->setContextCurrentWebsite([], $websiteId);
+            $this->resetIndex(null, $context);
+
+            return false;
+        }
+
+        return true;
     }
 
     /**

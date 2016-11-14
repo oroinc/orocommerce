@@ -5,20 +5,21 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\EventListener;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+use Oro\Bundle\SearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\CustomerBundle\EventListener\RestrictProductsIndexEventListener;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
-use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Event\RestrictIndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultLocalizationIdTestTrait;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 
 /**
  * @dbIsolationPerTest
@@ -49,11 +50,16 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        /** @var DoctrineHelper $doctrineHelper */
+        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
+        $websiteContextManager = new WebsiteContextManager($doctrineHelper);
+
         $listener = new RestrictProductsIndexEventListener(
-            $this->getContainer()->get('oro_entity.doctrine_helper'),
+            $doctrineHelper,
             $this->configManager,
             self::PRODUCT_VISIBILITY_CONFIGURATION_PATH,
-            self::CATEGORY_VISIBILITY_CONFIGURATION_PATH
+            self::CATEGORY_VISIBILITY_CONFIGURATION_PATH,
+            $websiteContextManager
         );
 
         $this->clearRestrictListeners($this->getRestrictEntityEventName());

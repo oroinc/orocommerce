@@ -8,6 +8,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
+use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
@@ -155,7 +156,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ->execute();
     }
 
-    public function testResetIndexOfAllWebsites()
+    public function testResetIndexOfCertainClass()
     {
         $this->clearIndexTextTable();
         $this->loadFixtures([LoadItemData::class]);
@@ -295,7 +296,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->assertEntityCount(0, IndexDecimal::class);
     }
 
-    public function testResetIndexForAllWebsitesAndClasses()
+    public function testResetWholeIndex()
     {
         $this->loadFixtures([LoadItemData::class]);
 
@@ -337,5 +338,48 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ]
         );
         $this->assertItemsCount(1);
+    }
+
+    public function testResetIndexForCertainWebsite()
+    {
+        $this->loadFixtures([LoadItemData::class]);
+
+        $this->mappingProviderMock
+            ->expects($this->exactly(1))
+            ->method('getEntityClasses')
+            ->willReturn([TestProduct::class, TestEmployee::class]);
+
+        $this->setEntityAliasExpectation();
+
+        $context = [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()];
+        $this->assertItemsCount(8);
+        $this->indexer->resetIndex(null, $context);
+        $this->assertItemsCount(4);
+    }
+
+    public function testReindexForNotExistingWebsite()
+    {
+        $this->loadFixtures([LoadProductsToIndex::class]);
+        $this->setClassSupportedExpectation(TestProduct::class, true);
+        $this->setEntityAliasExpectation();
+        $this->setGetEntityConfigExpectation();
+        $this->setListener();
+
+        $this->mappingProviderMock
+            ->expects($this->exactly(1))
+            ->method('getEntityClasses')
+            ->willReturn([TestProduct::class]);
+
+        $notExistingId = 77777;
+        $this->indexer->reindex(
+            TestProduct::class,
+            [
+                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$notExistingId]
+            ]
+        );
+
+        $items = $this->getResultItems(['alias' => 'oro_product_'.  $notExistingId]);
+
+        $this->assertCount(0, $items);
     }
 }

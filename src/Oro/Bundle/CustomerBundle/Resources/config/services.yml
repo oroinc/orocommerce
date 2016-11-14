@@ -837,6 +837,7 @@ services:
             - '@oro_config.global'
             - 'oro_customer.product_visibility'
             - 'oro_customer.category_visibility'
+            - '@oro_website_search.manager.website_context_manager'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.restrict_index_entity.product, method: onRestrictIndexEntityEvent }
 
@@ -1001,6 +1002,7 @@ services:
         class: 'Oro\Bundle\CustomerBundle\EventListener\WebsiteSearchProductVisibilityIndexerListener'
         arguments:
             - '@oro_customer.indexer.product_visibility_indexer'
+            - '@oro_website_search.manager.website_context_manager'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.index_entity, method: onWebsiteSearchIndex }
 
