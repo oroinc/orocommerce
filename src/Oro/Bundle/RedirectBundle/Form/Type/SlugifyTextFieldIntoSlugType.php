@@ -19,7 +19,7 @@ class SlugifyTextFieldIntoSlugType extends TextType
      */
     public function getName()
     {
-        return static::NAME;
+        return self::NAME;
     }
 
     /**
@@ -52,6 +52,6 @@ class SlugifyTextFieldIntoSlugType extends TextType
 
     public function getComponent()
     {
-        return static::COMPONENT;
+        return self::COMPONENT;
     }
 }
