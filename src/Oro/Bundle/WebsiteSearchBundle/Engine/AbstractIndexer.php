@@ -211,7 +211,6 @@ abstract class AbstractIndexer implements IndexerInterface
             $this->delete($entities, $context);
 
             $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", $contextEntityIds));
-            $temporaryAlias = $currentAlias; //Save context entities with real alias
         }
 
         $iterator = new BufferedQueryResultIterator($queryBuilder);
