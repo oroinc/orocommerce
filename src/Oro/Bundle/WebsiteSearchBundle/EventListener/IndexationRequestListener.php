@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\EventListener;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\Common\Util\ClassUtils;
 
@@ -17,7 +18,7 @@ use Oro\Bundle\SearchBundle\EventListener\IndexationListenerTrait;
 class IndexationRequestListener implements OptionalListenerInterface
 {
     use IndexationListenerTrait;
-    
+
     /**
      * @var bool
      */
@@ -39,18 +40,18 @@ class IndexationRequestListener implements OptionalListenerInterface
     protected $dispatcher;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
+     * @param DoctrineHelper               $doctrineHelper
      * @param WebsiteSearchMappingProvider $mappingProvider
-     * @param EventDispatcherInterface $dispatcher
+     * @param EventDispatcherInterface     $dispatcher
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         WebsiteSearchMappingProvider $mappingProvider,
         EventDispatcherInterface $dispatcher
     ) {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrineHelper  = $doctrineHelper;
         $this->mappingProvider = $mappingProvider;
-        $this->dispatcher = $dispatcher;
+        $this->dispatcher      = $dispatcher;
     }
 
     /**
@@ -63,12 +64,11 @@ class IndexationRequestListener implements OptionalListenerInterface
         }
 
         $entityManager = $args->getEntityManager();
-        $unitOfWork = $entityManager->getUnitOfWork();
+        $unitOfWork    = $entityManager->getUnitOfWork();
 
         foreach (array_merge(
             $unitOfWork->getScheduledEntityInsertions(),
-            $this->getEntitiesWithUpdatedIndexedFields($unitOfWork),
-            $unitOfWork->getScheduledEntityDeletions()
+            $this->getEntitiesWithUpdatedIndexedFields($unitOfWork)
         ) as $updatedEntity) {
             if (!$this->mappingProvider->hasFieldsMapping(
                 $this->doctrineHelper->getEntityClass($updatedEntity)
@@ -77,6 +77,17 @@ class IndexationRequestListener implements OptionalListenerInterface
             }
 
             $this->scheduleForSendingWithEvent($updatedEntity);
+        }
+
+        // deleted entities should be processed as references because on postFlush they are already deleted
+        $deletedEntities = $unitOfWork->getScheduledEntityDeletions();
+        foreach ($deletedEntities as $hash => $entity) {
+            if (!$this->mappingProvider->hasFieldsMapping(
+                $this->doctrineHelper->getEntityClass($entity)
+            )) {
+                continue;
+            }
+            $this->scheduleDeletedEntityForSendingWithEvent($entityManager, $entity);
         }
     }
 
@@ -145,6 +156,20 @@ class IndexationRequestListener implements OptionalListenerInterface
     }
 
     /**
+     * @param EntityManager $entityManager
+     * @param               $entity
+     */
+    protected function scheduleDeletedEntityForSendingWithEvent($entityManager, $entity)
+    {
+        $entityReference = $entityManager->getReference(
+            $this->doctrineHelper->getEntityClass($entity),
+            $this->doctrineHelper->getSingleEntityIdentifier($entity)
+        );
+
+        $this->scheduleForSendingWithEvent($entityReference);
+    }
+
+    /**
      * Trigger the event and clear the scheduled data
      */
     protected function triggerReindexationEvent()
@@ -156,7 +181,7 @@ class IndexationRequestListener implements OptionalListenerInterface
              * @var object $entity
              */
             foreach ($entities as $entity) {
-                $ids[] = $entity->getId();
+                $ids[] = $this->doctrineHelper->getSingleEntityIdentifier($entity);
             }
 
             $reindexationRequestEvent = new ReindexationRequestEvent(

@@ -110,6 +110,8 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder im
 
         $this->getRepository()->deleteByProduct($product);
         $this->getRepository()->insertByProduct($product, $this->insertFromSelectQueryExecutor, $category);
+
+        $this->triggerProductReindexation($product);
     }
 
     /**
